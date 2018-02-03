@@ -11,6 +11,7 @@ from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh.controller.MainController import MainController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
@@ -98,10 +99,8 @@ class TestSendRecvDialog(QtTestCase):
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        sniff_dialog = ProtocolSniffDialog(project_manager=self.form.project_manager,
-                                           signal=self.signal,
-                                           testing_mode=True,
-                                           parent=self.form)
+
+        sniff_dialog = self.form.create_protocol_sniff_dialog(testing_mode=True)
         if self.SHOW:
             sniff_dialog.show()
 
@@ -315,6 +314,11 @@ class TestSendRecvDialog(QtTestCase):
         self.assertTrue(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.click()
         self.assertFalse(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
+
+        n = self.form.compare_frame_controller.protocol_model.rowCount()
+        sniff_dialog.protocol_accepted.emit(sniff_dialog.sniffer.messages)
+        QTest.qWait(10)
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.rowCount(), n+3)
 
         target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
         if os.path.isfile(target_file):

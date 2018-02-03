@@ -646,20 +646,27 @@ class MainController(QMainWindow):
         r.files_recorded.connect(self.on_signals_recorded)
         r.show()
 
-    @pyqtSlot()
-    def show_proto_sniff_dialog(self):
+    def create_protocol_sniff_dialog(self, testing_mode=False):
         pm = self.project_manager
         signal = next((proto.signal for proto in self.compare_frame_controller.protocol_list), None)
         signals = [f.signal for f in self.signal_tab_controller.signal_frames if f.signal]
 
-        psd = ProtocolSniffDialog(project_manager=pm, signal=signal, signals=signals, parent=self)
+        psd = ProtocolSniffDialog(project_manager=pm, signal=signal, signals=signals,
+                                  testing_mode=testing_mode, parent=self)
 
         if psd.has_empty_device_list:
             Errors.no_device()
             psd.close()
+            return None
         else:
             psd.device_parameters_changed.connect(pm.set_device_parameters)
             psd.protocol_accepted.connect(self.compare_frame_controller.add_sniffed_protocol_messages)
+            return psd
+
+    @pyqtSlot()
+    def show_proto_sniff_dialog(self):
+        psd = self.create_protocol_sniff_dialog()
+        if psd:
             psd.show()
 
     @pyqtSlot()

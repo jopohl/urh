@@ -32,5 +32,5 @@ class SettingsProxy(object):
             num_samples = sys.maxsize // (8 * 2)
             logger.info("Correcting buffer size to {}".format(num_samples))
 
-        logger.info("Initializing receive buffer with size {0}B".format(Formatter.big_value_with_suffix(num_samples*8)))
+        logger.info("Try to allocate receive buffer with size {0}B".format(Formatter.big_value_with_suffix(num_samples*8)))
         return int(num_samples)

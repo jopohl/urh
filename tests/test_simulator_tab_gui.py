@@ -90,7 +90,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 0)
         self.assertEqual(stc.participant_table_model.rowCount(), 0)
-        self.form.simulator_tab_controller.load_simulator_file(filename)
+        self.form.add_files([filename])
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
         self.assertEqual(stc.participant_table_model.rowCount(), 2)

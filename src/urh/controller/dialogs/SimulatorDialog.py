@@ -12,6 +12,7 @@ from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
 from urh.simulator.Simulator import Simulator
+from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
@@ -31,7 +32,7 @@ class SimulatorDialog(QDialog):
         self.ui = Ui_DialogSimulator()
         self.ui.setupUi(self)
 
-        self.simulator_config = simulator_config
+        self.simulator_config = simulator_config  # type: SimulatorConfiguration
 
         self.simulator_scene = SimulatorScene(mode=1,
                                               simulator_config=self.simulator_config)

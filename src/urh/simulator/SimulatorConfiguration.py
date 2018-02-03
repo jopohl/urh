@@ -204,6 +204,10 @@ class SimulatorConfiguration(QObject):
         self.items_updated.emit(updated_messages)
 
     def get_all_messages(self):
+        """
+
+        :rtype: list[SimulatorMessage]
+        """
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
 
     def load_from_xml(self, xml_tag: ET.Element, message_types):

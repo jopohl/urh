@@ -247,6 +247,10 @@ class SimulatorScene(QGraphicsScene):
                 del self.items_dict[key]
 
     def get_all_messages(self):
+        """
+
+        :rtype: list[MessageItem]
+        """
         return [item for item in self.items() if isinstance(item, MessageItem)]
 
     def get_selected_messages(self):

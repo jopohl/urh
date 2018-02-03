@@ -324,13 +324,12 @@ class Simulator(QObject):
         # do we have a crc label?
         crc_label = next((lbl.label for lbl in received_msg.message_type if isinstance(lbl.label, ChecksumLabel)), None)
 
-        #      if crc_label is not None:
-        #          checksum = crc_label.calculate_checksum_for_message(received_msg, use_decoded_bits=True)
-        #          start, end = received_msg.get_label_range(crc_label, 0, True)
+        if crc_label is not None:
+            checksum = crc_label.calculate_checksum_for_message(received_msg, use_decoded_bits=True)
+            start, end = received_msg.get_label_range(crc_label, 0, True)
 
-        #           if checksum != received_msg.decoded_bits[start:end]:
-        # checksum wrong ...
-        #               return False, "CRC mismatch"
+            if checksum != received_msg.decoded_bits[start:end]:
+                return False, "CRC mismatch"
 
         for lbl in received_msg.message_type:
             if isinstance(lbl.label, ChecksumLabel):
@@ -374,6 +373,7 @@ class Simulator(QObject):
             if data is None:
                 continue
 
+            logger.debug("\t" + lbl.name + ": " + data)
             self.messages.append("\t" + lbl.name + ": " + data)
 
     def resend_last_message(self):

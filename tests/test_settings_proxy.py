@@ -5,6 +5,7 @@ from urh.util.SettingsProxy import SettingsProxy
 
 class TestSettingsProxy(QtTestCase):
     def test_get_receive_buffer_size(self):
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = None
         ns = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=True)
         self.assertEqual(ns, constants.SPECTRUM_BUFFER_SIZE)
 

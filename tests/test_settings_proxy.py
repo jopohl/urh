@@ -14,4 +14,4 @@ class TestSettingsProxy(QtTestCase):
 
         ns1 = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=True)
         ns2 = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=False)
-        self.assertEqual(ns1, ns2)
+        self.assertEqual(len(str(ns1)), len(str(ns2)))

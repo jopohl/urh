@@ -267,7 +267,7 @@ class SendRecvDialog(QDialog):
             logger.debug("Cleaning up device")
             try:
                 # For Protocol Sniffer
-                self.device.index_changed.disconnect()
+                self.device.data_received.disconnect()
             except TypeError:
                 pass
 

@@ -16,7 +16,6 @@ from urh.util.SettingsProxy import SettingsProxy
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
-    rcv_index_changed = pyqtSignal(int, int)  # int arguments are just for compatibility with native and grc backend
     show_proto_sniff_dialog_clicked = pyqtSignal()
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
@@ -25,6 +24,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     send_connection_established = pyqtSignal()
     receive_server_started = pyqtSignal()
     error_occurred = pyqtSignal(str)
+
+    data_received = pyqtSignal(np.ndarray)
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -41,8 +42,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             if hasattr(self.server, "received_bits"):
                 for data in filter(None, self.data.split(b"\n")):
                     self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(data))
-                # int arguments are just for compatibility with native and grc backend
-                self.server.signal.emit(0, 0)
+                # when receiving bits, the protocol sniffer will read them for property
+                if self.server.emit_data_received_signal:
+                    self.server.signal.emit(np.ndarray([]))
             else:
                 while len(self.data) % 8 != 0:
                     self.data += self.request.recv(len(self.data) % 8)
@@ -50,14 +52,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 received = np.frombuffer(self.data, dtype=np.complex64)
 
                 if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
-                    self.server.previous_receive_index = 0
                     self.server.current_receive_index = 0
 
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
-                self.server.previous_receive_index = self.server.current_receive_index
                 self.server.current_receive_index += len(received)
-                self.server.signal.emit(self.server.previous_receive_index, self.server.current_receive_index)
+                if self.server.emit_data_received_signal:
+                    self.server.signal.emit(received)
 
     def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
         """
@@ -85,6 +86,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_is_continuous = False
         self.continuous_send_ring_buffer = None
         self.num_samples_to_send = None  # Only used for continuous send mode
+
+        self.emit_data_received_signal = False
 
         self.raw_mode = raw_mode
         if not sending:
@@ -166,11 +169,11 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
-            self.server.previous_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
 
-        self.server.signal = self.rcv_index_changed
+        self.server.signal = self.data_received
+        self.server.emit_data_received_signal = self.emit_data_received_signal
 
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True

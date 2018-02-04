@@ -33,7 +33,7 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    rcv_index_changed = pyqtSignal(int, int)
+    data_received = pyqtSignal(np.ndarray)
 
     ASYNCHRONOUS = False
 
@@ -241,6 +241,8 @@ class Device(QObject):
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
+
+        self.emit_data_received_signal = False  # used for protocol sniffer
 
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
@@ -638,10 +640,10 @@ class Device(QObject):
                     return
 
             self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
-            old_index = self.current_recv_index
             self.current_recv_index += n_samples
 
-            self.rcv_index_changed.emit(old_index, self.current_recv_index)
+            if self.emit_data_received_signal:
+                self.data_received.emit(samples)
 
         logger.debug("Exiting read_receive_queue thread.")
 

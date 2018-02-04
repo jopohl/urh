@@ -38,7 +38,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
-        self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
+        self.rcv_device.emit_data_received_signal = True
+        self.rcv_device.data_received.connect(self.on_data_received)
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
@@ -86,19 +87,18 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
                                             resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
-            self.rcv_device.index_changed.connect(self.on_rcv_thread_index_changed)
+            self.rcv_device.emit_data_received_signal = True
+            self.rcv_device.data_received.connect(self.on_data_received)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
 
     def sniff(self):
         self.rcv_device.start()
 
-    @pyqtSlot(int, int)
-    def on_rcv_thread_index_changed(self, old_index, new_index):
+    @pyqtSlot(np.ndarray)
+    def on_data_received(self, data: np.ndarray):
         if self.rcv_device.is_raw_mode:
-            if old_index == new_index:
-                return
-            self.__demodulate_data(self.rcv_device.data[old_index:new_index])
+            self.__demodulate_data(data)
         elif self.rcv_device.backend == Backends.network:
             # We receive the bits here
             for bit_str in self.rcv_device.data:

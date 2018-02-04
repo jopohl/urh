@@ -160,7 +160,7 @@ class Simulator(QObject):
             if device.backend not in (Backends.none, Backends.network):
                 try:
                     # For Protocol Sniffer
-                    device.index_changed.disconnect()
+                    device.data_received.disconnect()
                 except TypeError:
                     pass
 

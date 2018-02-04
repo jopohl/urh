@@ -141,7 +141,7 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
-        if self.__dev:
+        if hasattr(self.__dev, "data_received"):
             self.__dev.data_received.connect(self.data_received.emit)
 
         if mode == Mode.spectrum:

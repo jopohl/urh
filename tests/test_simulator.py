@@ -206,7 +206,7 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
         modulator.modulate(msg1)
         self.alice.send_raw_data(modulator.modulated_samples, 1)
-        QTest.qWait(10)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 
@@ -222,7 +222,7 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
         modulator.modulate(msg2)
         self.alice.send_raw_data(modulator.modulated_samples, 1)
-        QTest.qWait(10)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 
@@ -238,7 +238,7 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
         modulator.modulate(msg3)
         self.alice.send_raw_data(modulator.modulated_samples, 1)
-        QTest.qWait(10)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 

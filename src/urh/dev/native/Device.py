@@ -615,31 +615,33 @@ class Device(QObject):
         while self.is_receiving:
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
-
                 samples = self.unpack_complex(byte_buffer)
                 n_samples = len(samples)
-                if n_samples > 0:
-                    if self.current_recv_index + n_samples >= len(self.receive_buffer):
-                        if self.resume_on_full_receive_buffer:
-                            self.current_recv_index = 0
-                            if n_samples >= len(self.receive_buffer):
-                                n_samples = len(self.receive_buffer) - 1
-                        else:
-                            self.stop_rx_mode(
-                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
-                                                                          len(self.receive_buffer)))
-                            return
-
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
-                    old_index = self.current_recv_index
-                    self.current_recv_index += n_samples
-
-                    self.rcv_index_changed.emit(old_index, self.current_recv_index)
-            except (BrokenPipeError, OSError):
-                pass
+                if n_samples == 0:
+                    continue
+            except OSError as e:
+                logger.exception(e)
+                continue
             except EOFError:
                 logger.info("EOF Error: Ending receive thread")
                 break
+
+            if self.current_recv_index + n_samples >= len(self.receive_buffer):
+                if self.resume_on_full_receive_buffer:
+                    self.current_recv_index = 0
+                    if n_samples >= len(self.receive_buffer):
+                        n_samples = len(self.receive_buffer) - 1
+                else:
+                    self.stop_rx_mode(
+                        "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
+                                                                  len(self.receive_buffer)))
+                    return
+
+            self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
+            old_index = self.current_recv_index
+            self.current_recv_index += n_samples
+
+            self.rcv_index_changed.emit(old_index, self.current_recv_index)
 
         logger.debug("Exiting read_receive_queue thread.")
 

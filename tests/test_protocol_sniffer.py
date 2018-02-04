@@ -78,5 +78,8 @@ class TestProtocolSniffer(QtTestCase):
 
         self.assertEqual(sniffer.plain_bits_str, data)
 
+        # needed to prevent crash on windows
+        QTest.qWait(10)
+
 
 

@@ -43,7 +43,7 @@ class Simulator(QObject):
         self.is_simulating = False
         self.do_restart = False
         self.current_repeat = 0
-        self.messages = []
+        self.log_messages = []
 
         self.sniffer_ready = False
         self.sender_ready = False
@@ -125,7 +125,7 @@ class Simulator(QObject):
         self.is_simulating = True
         self.do_restart = False
         self.current_repeat = 0
-        self.messages[:] = []
+        self.log_messages[:] = []
         self.measure_started = False
 
     @property
@@ -146,13 +146,13 @@ class Simulator(QObject):
 
         return result
 
-    def read_messages(self):
-        messages = "\n".join(self.messages)
+    def read_log_messages(self):
+        messages = "\n".join(self.log_messages)
 
         if messages and not messages.endswith("\n"):
             messages += "\n"
 
-        self.messages[:] = []
+        self.log_messages[:] = []
         return messages
 
     def cleanup(self):
@@ -317,7 +317,7 @@ class Simulator(QObject):
     def log_message(self, message):
         now = datetime.datetime.now()
         timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(now)
-        self.messages.append(timestamp + ": " + message)
+        self.log_messages.append(timestamp + ": " + message)
         logger.debug(timestamp + ": " + message)
 
     def check_message(self, received_msg, expected_msg, retry: int) -> (bool, str):
@@ -374,7 +374,7 @@ class Simulator(QObject):
                 continue
 
             logger.debug("\t" + lbl.name + ": " + data)
-            self.messages.append("\t" + lbl.name + ": " + data)
+            self.log_messages.append("\t" + lbl.name + ": " + data)
 
     def resend_last_message(self):
         self.log_message("Resending last message ...")

@@ -132,10 +132,10 @@ class SimulatorDialog(QDialog):
             self.ui.textEditDevices.setPlainText(txt + device_messages)
 
         txt = self.ui.textEditSimulation.toPlainText()
-        simulator_messages = self.simulator.read_messages()
+        simulator_log_messages = self.simulator.read_log_messages()
 
-        if len(simulator_messages) > 1:
-            self.ui.textEditSimulation.setPlainText(txt + simulator_messages)
+        if len(simulator_log_messages) > 1:
+            self.ui.textEditSimulation.setPlainText(txt + simulator_log_messages)
 
         self.ui.textEditSimulation.verticalScrollBar().setValue(
             self.ui.textEditSimulation.verticalScrollBar().maximum())

@@ -134,17 +134,17 @@ class Simulator(QObject):
         return result
 
     def device_messages(self):
-        messages = ""
+        result = ""
 
         for device in self.devices:
             new_messages = device.read_messages()
             if new_messages:
-                messages += new_messages
+                result += new_messages
 
-            if messages and not messages.endswith("\n"):
-                messages += "\n"
+            if result and not result.endswith("\n"):
+                result += "\n"
 
-        return messages
+        return result
 
     def read_messages(self):
         messages = "\n".join(self.messages)

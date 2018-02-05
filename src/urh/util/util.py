@@ -6,6 +6,7 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
 import shutil
+import subprocess
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
@@ -207,7 +208,6 @@ def get_name_from_filename(filename: str):
 
 
 def parse_command(command):
-    import os
     cmd = []
     param = []
     for substr in command.split(" "):
@@ -227,7 +227,6 @@ def run_command(command, param):
     command, argument = parse_command(command)
     cmd = '"{}"'.format(command) + " " + argument + " " + param
     try:
-        import subprocess
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         out, _ = p.communicate(param.encode())
         return out.decode()

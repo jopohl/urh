@@ -47,7 +47,10 @@ class SimulatorGraphicsView(QGraphicsView):
             self.add_empty_message(num_bits)
 
     def add_empty_message(self, num_bits):
-        message_type = MessageType("default") if not hasattr(self.sender(), "data") else self.sender().data()
+        if hasattr(self.sender(), "data") and self.sender().data():
+            message_type = self.sender().data()
+        else:
+            message_type = MessageType("default")
         ref_item = self.context_menu_item
         if isinstance(ref_item, RuleConditionItem):
             position = QAbstractItemView.OnItem

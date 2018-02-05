@@ -441,7 +441,7 @@ class Simulator(QObject):
                                                  else template_msg.destination)
                 direction = "->" if template_msg.source.simulate else "<-"
                 transcript += direction + new_message.plain_bits_str + "\n"
-                result = util.run_command_with_stdin(lbl.external_program, transcript)
+                result = util.run_command(lbl.external_program, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
                     log_msg = "Result value of external program {} ({}) does not match label length {}"
                     logger.error(log_msg.format(result, len(result), lbl.end-lbl.start))

@@ -222,31 +222,20 @@ def parse_command(command):
     return result
 
 
-def run_command(command, param):
-    # add shlex.quote(param) later for security reasons
-    command, argument = parse_command(command)
-    cmd = '"{}"'.format(command) + " " + argument + " " + param
-    try:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        out, _ = p.communicate(param.encode())
-        return out.decode()
-    except Exception as e:
-        logger.error("Could not run {} {} ({})".format(cmd, param, e))
-        return ""
-
-
-def run_command_with_stdin(command, param):
+def run_command(command, param, use_stdin=False):
     # add shlex.quote(param) later for security reasons
     command, argument = parse_command(command)
     cmd = '"{}"'.format(command) + " " + argument
     try:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        out, _ = p.communicate(param.encode())
-        return out.decode()
+        if use_stdin:
+            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            out, _ = p.communicate(param.encode())
+            return out.decode()
+        else:
+            return subprocess.check_output(cmd + " " + param, shell=True).decode()
     except Exception as e:
         logger.error("Could not run {} {} ({})".format(cmd, param, e))
         return ""
-
 
 def validate_command(command: str):
     if not isinstance(command, str):

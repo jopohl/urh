@@ -256,6 +256,8 @@ class TestSimulator(QtTestCase):
         conn.close()
         s.close()
 
+        QTest.qWait(100)
+
     def test_external_program_simulator(self):
         stc = self.form.simulator_tab_controller
         stc.ui.btnAddParticipant.click()
@@ -320,7 +322,7 @@ class TestSimulator(QtTestCase):
         conn.close()
         s.close()
 
-
+        QTest.qWait(100)
 
     def __demodulate(self, data):
         arr = np.array(np.frombuffer(data, dtype=np.complex64))

@@ -147,13 +147,13 @@ class Simulator(QObject):
         return result
 
     def read_log_messages(self):
-        messages = "\n".join(self.log_messages)
+        result = "\n".join(self.log_messages)
 
-        if messages and not messages.endswith("\n"):
-            messages += "\n"
+        if result and not result.endswith("\n"):
+            result += "\n"
 
-        self.log_messages[:] = []
-        return messages
+        self.log_messages.clear()
+        return result
 
     def cleanup(self):
         for device in self.devices:

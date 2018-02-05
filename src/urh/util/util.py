@@ -239,4 +239,9 @@ def validate_command(command: str):
     if not isinstance(command, str):
         return False
     cmd, _ = parse_command(command)
-    return shutil.which(cmd) is not None
+    if shutil.which(cmd) is not None:
+        return True
+
+    # maybe we have something like python /tmp/script.py
+    splitted = cmd.split(" ")
+    return shutil.which(splitted[0]) is not None and os.path.isfile(" ".join(splitted[1:]))

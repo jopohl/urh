@@ -5,6 +5,7 @@ from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 import xml.etree.ElementTree as ET
 
+from urh.util import util
 from urh.util.Formatter import Formatter
 
 
@@ -76,6 +77,8 @@ class SimulatorProtocolLabel(SimulatorItem):
 
         if self.value_type_index == 2:
             result, _, _ = self.expression_parser.validate_expression(self.formula)
+        elif self.value_type_index == 3:
+            result = util.validate_command(self.external_program)
 
         return result
 

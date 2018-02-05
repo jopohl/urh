@@ -203,3 +203,33 @@ def get_name_from_filename(filename: str):
         return "No Name"
 
     return os.path.basename(filename).split(".")[0]
+
+
+def parse_command(command):
+    import os
+    cmd = []
+    param = []
+    for substr in command.split(" "):
+        if not os.path.isfile(" ".join(cmd)):
+            # append to cmd until we have a valid file
+            cmd.append(substr)
+        else:
+            # append rest to param
+            param.append(substr)
+
+    result = '"{}"'.format(" ".join(cmd)), " ".join(param)
+    return result
+
+
+def run_command(command, param):
+    # add shlex.quote(param) later for security reasons
+    command, argument = parse_command(command)
+    cmd = command + " " + argument + " " + param
+    try:
+        import subprocess
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        out, _ = p.communicate(param.encode())
+        return out.decode()
+    except Exception as e:
+        logger.error("Could not run {} {} ({})".format(cmd, param, e))
+        return ""

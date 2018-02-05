@@ -5,6 +5,7 @@ import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
+import shutil
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
@@ -217,14 +218,14 @@ def parse_command(command):
             # append rest to param
             param.append(substr)
 
-    result = '"{}"'.format(" ".join(cmd)), " ".join(param)
+    result = " ".join(cmd), " ".join(param)
     return result
 
 
 def run_command(command, param):
     # add shlex.quote(param) later for security reasons
     command, argument = parse_command(command)
-    cmd = command + " " + argument + " " + param
+    cmd = '"{}"'.format(command) + " " + argument + " " + param
     try:
         import subprocess
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -233,3 +234,10 @@ def run_command(command, param):
     except Exception as e:
         logger.error("Could not run {} {} ({})".format(cmd, param, e))
         return ""
+
+
+def validate_command(command: str):
+    if not isinstance(command, str):
+        return False
+    cmd, _ = parse_command(command)
+    return shutil.which(cmd) is not None

@@ -1,6 +1,8 @@
+import xml.etree.ElementTree as ET
+
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorRule import SimulatorRuleCondition
-import xml.etree.ElementTree as ET
+from urh.util import util
 
 
 class SimulatorExternalProgramAction(SimulatorItem):
@@ -8,6 +10,9 @@ class SimulatorExternalProgramAction(SimulatorItem):
         super().__init__()
         self.ext_prog = None
         self.args = None
+
+    def validate(self):
+        return util.validate_command(self.ext_prog)
 
     def set_parent(self, value):
         if value is not None:

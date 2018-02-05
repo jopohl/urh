@@ -27,6 +27,10 @@ class SimulatorMessage(Message, SimulatorItem):
     def source(self):
         return self.participant
 
+    @source.setter
+    def source(self, participant):
+        self.participant = participant
+
     @property
     def children(self):
         return self.message_type

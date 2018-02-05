@@ -22,6 +22,7 @@ class SimulatorGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.proto_analyzer = None
+        self.context_menu_item = None
 
         self.delete_action = QAction(self.tr("Delete selected items"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)
@@ -43,19 +44,22 @@ class SimulatorGraphicsView(QGraphicsView):
                                            self.tr("Number of bits:"), 42, 1)
 
         if ok:
-            message_type = MessageType("default") if not self.sender().data() else self.sender().data()
-            ref_item = self.context_menu_item
-            if isinstance(ref_item, RuleConditionItem):
-                position = QAbstractItemView.OnItem
-            else:
-                position = QAbstractItemView.BelowItem
+            self.add_empty_message(num_bits)
 
-            message = self.scene().add_message(plain_bits=[0] * num_bits,
-                                               pause=1000000,
-                                               message_type=message_type,
-                                               ref_item=ref_item,
-                                               position=position)
-            self.jump_to_item(message)
+    def add_empty_message(self, num_bits):
+        message_type = MessageType("default") if not hasattr(self.sender(), "data") else self.sender().data()
+        ref_item = self.context_menu_item
+        if isinstance(ref_item, RuleConditionItem):
+            position = QAbstractItemView.OnItem
+        else:
+            position = QAbstractItemView.BelowItem
+
+        message = self.scene().add_message(plain_bits=[0] * num_bits,
+                                           pause=1000000,
+                                           message_type=message_type,
+                                           ref_item=ref_item,
+                                           position=position)
+        self.jump_to_item(message)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):

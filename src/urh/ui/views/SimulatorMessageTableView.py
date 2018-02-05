@@ -12,7 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QHeaderView
 
 class SimulatorMessageTableView(TableView):
-    create_fuzzing_label_clicked = pyqtSignal(int, int, int)
+    create_label_clicked = pyqtSignal(int, int, int)
     open_modulator_dialog_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -106,4 +106,4 @@ class SimulatorMessageTableView(TableView):
     @pyqtSlot()
     def on_create_label_action_triggered(self):
         min_row, _, start, end = self.selection_range()
-        self.create_fuzzing_label_clicked.emit(min_row, start, end)
+        self.create_label_clicked.emit(min_row, start, end)

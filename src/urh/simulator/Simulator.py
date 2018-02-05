@@ -12,6 +12,7 @@ from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
@@ -37,6 +38,8 @@ class Simulator(QObject):
         self.expression_parser = expression_parser
         self.modulators = modulators  # type: list[Modulator]
         self.backend_handler = BackendHandler()
+
+        self.transcript = []
 
         self.current_item = None
         self.last_sent_message = None
@@ -127,6 +130,7 @@ class Simulator(QObject):
         self.current_repeat = 0
         self.log_messages[:] = []
         self.measure_started = False
+        self.transcript.clear()
 
     @property
     def devices(self):
@@ -203,8 +207,10 @@ class Simulator(QObject):
         self.log_message("Start simulation ...")
 
         while self.is_simulating and not self.simulation_is_finished():
-            if (self.current_item is self.protocol_manager.rootItem or
-                    isinstance(self.current_item, SimulatorProtocolLabel)):
+            if self.current_item is self.protocol_manager.rootItem:
+                self.transcript.clear()
+                next_item = self.current_item.next()
+            elif isinstance(self.current_item, SimulatorProtocolLabel):
                 next_item = self.current_item.next()
             elif isinstance(self.current_item, SimulatorMessage):
                 self.process_message()
@@ -263,6 +269,7 @@ class Simulator(QObject):
                     new_message.plain_bits[start:end] = checksum + array.array("B", [0] * (
                             (end - start) - len(checksum)))
 
+            self.transcript.append((msg.source, msg.destination, new_message))
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
@@ -302,6 +309,7 @@ class Simulator(QObject):
                     decoded_msg = Message(received_msg.decoded_bits, 0,
                                           received_msg.message_type, decoder=received_msg.decoder)
                     msg.send_recv_messages.append(decoded_msg)
+                    self.transcript.append((msg.source, msg.destination, decoded_msg))
                     self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
@@ -407,16 +415,45 @@ class Simulator(QObject):
             self.log_message("Receive timeout")
             return None
 
-    def generate_message_from_template(self, template_msg):
+    def get_transcript(self, participant: Participant):
+        result = []
+        for source, destination, msg in self.transcript:
+            if participant == destination:
+                result.append("->" + msg.plain_bits_str)
+            elif participant == source:
+                result.append("<-" + msg.plain_bits_str)
+
+        return "\n".join(result)
+
+    def generate_message_from_template(self, template_msg: SimulatorMessage):
         new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,
                               message_type=template_msg.message_type, decoder=template_msg.decoder)
 
-        for lbl in template_msg.children:
+        for lbl in template_msg.children:  # type: SimulatorProtocolLabel
             if lbl.value_type_index == 2:
                 # formula
                 valid, _, node = self.expression_parser.validate_expression(lbl.formula)
                 assert valid
                 result = self.expression_parser.evaluate_node(node)
+            elif lbl.value_type_index == 3:
+                transcript = self.get_transcript(template_msg.source
+                                                 if template_msg.source.simulate
+                                                 else template_msg.destination)
+                direction = "->" if template_msg.source.simulate else "<-"
+                transcript += direction + new_message.plain_bits_str + "\n"
+                result = util.run_command_with_stdin(lbl.external_program, transcript)
+                if len(result) != lbl.end - lbl.start:
+                    log_msg = "Result value of external program {} ({}) does not match label length {}"
+                    logger.error(log_msg.format(result, len(result), lbl.end-lbl.start))
+                    continue
+
+                try:
+                    new_message[lbl.start:lbl.end] = array.array("B", (map(bool, map(int, result))))
+                except Exception as e:
+                    log_msg = "Could not assign {} to range because {}".format(result, e)
+                    logger.error(log_msg)
+
+                continue
             elif lbl.value_type_index == 4:
                 # random value
                 result = numpy.random.randint(lbl.random_min, lbl.random_max + 1)

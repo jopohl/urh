@@ -149,7 +149,7 @@ class SimulatorTabController(QWidget):
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
-        self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
+        self.ui.tblViewMessage.create_label_clicked.connect(self.create_simulator_label)
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
         self.ui.tblViewMessage.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
@@ -265,7 +265,7 @@ class SimulatorTabController(QWidget):
         self.simulator_scene.clear_all()
 
     @pyqtSlot(int, int, int)
-    def create_fuzzing_label(self, msg_index: int, start: int, end: int):
+    def create_simulator_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.simulator_config.add_label(start=start, end=end, parent_item=con.messages[msg_index])

@@ -235,6 +235,19 @@ def run_command(command, param):
         return ""
 
 
+def run_command_with_stdin(command, param):
+    # add shlex.quote(param) later for security reasons
+    command, argument = parse_command(command)
+    cmd = '"{}"'.format(command) + " " + argument
+    try:
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        out, _ = p.communicate(param.encode())
+        return out.decode()
+    except Exception as e:
+        logger.error("Could not run {} {} ({})".format(cmd, param, e))
+        return ""
+
+
 def validate_command(command: str):
     if not isinstance(command, str):
         return False

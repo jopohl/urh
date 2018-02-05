@@ -22,6 +22,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
 from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 from urh.simulator.Simulator import Simulator
@@ -254,6 +255,72 @@ class TestSimulator(QtTestCase):
 
         conn.close()
         s.close()
+
+    def test_external_program_simulator(self):
+        stc = self.form.simulator_tab_controller
+        stc.ui.btnAddParticipant.click()
+        stc.ui.btnAddParticipant.click()
+        stc.ui.gvSimulator.add_empty_message(42)
+        stc.ui.gvSimulator.add_empty_message(42)
+
+        stc.ui.cbViewType.setCurrentIndex(0)
+        stc.create_simulator_label(0, 10, 20)
+        stc.create_simulator_label(1, 10, 20)
+
+        messages = stc.simulator_config.get_all_messages()
+        messages[0].source = stc.project_manager.participants[0]
+        messages[0].destination = stc.project_manager.participants[1]
+        messages[0].destination.simulate = True
+        messages[1].source = stc.project_manager.participants[1]
+        messages[1].destination = stc.project_manager.participants[0]
+        lbl1 = messages[0].message_type[0]  # type: SimulatorProtocolLabel
+        lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
+
+        lbl1.value_type_index = 3
+        lbl1.external_program = get_path_for_data_file("external_program_simulator.py")
+        lbl2.value_type_index = 3
+        lbl2.external_program = get_path_for_data_file("external_program_simulator.py")
+
+        port = self.get_free_port()
+        self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
+        self.alice.client_port = port
+
+        dialog = stc.get_simulator_dialog()
+        name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
+        dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
+        dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(name)
+        QTest.qWait(10)
+        simulator = dialog.simulator
+        simulator.sniffer.rcv_device.set_server_port(port)
+
+        port = self.get_free_port()
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        s.bind(("", port))
+        s.listen(1)
+        QTest.qWait(10)
+
+        simulator.sender.device.set_client_port(port)
+        dialog.ui.btnStartStop.click()
+        QTest.qWait(1500)
+
+        conn, addr = s.accept()
+
+        modulator = dialog.project_manager.modulators[0]  # type: Modulator
+        modulator.modulate("0" * 42)
+        self.alice.send_raw_data(modulator.modulated_samples, 1)
+        QTest.qWait(100)
+        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
+        QTest.qWait(100)
+
+        QTest.qWait(100)
+        self.assertTrue(simulator.simulation_is_finished())
+
+        conn.close()
+        s.close()
+
+
 
     def __demodulate(self, data):
         arr = np.array(np.frombuffer(data, dtype=np.complex64))

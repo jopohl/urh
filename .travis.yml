@@ -1,7 +1,7 @@
 os: linux
 language: python
 dist: trusty
-sudo: required
+sudo: false
 
 env:
   global:
@@ -11,6 +11,7 @@ env:
 matrix:
   include:
     - python: 3.4_with_system_site_packages
+      sudo: required
     - python: 3.5
     - python: 3.6
 

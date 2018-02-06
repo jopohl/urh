@@ -173,7 +173,6 @@ class SendRecvDialog(QDialog):
         self.ui.btnStart.setEnabled(False)
 
         self.ui.btnClear.setEnabled(False)
-        self.device_settings_widget.ui.spinBoxNRepeat.setEnabled(False)
         self.ui.btnStop.setEnabled(True)
 
         self.timer.start(self.update_interval)

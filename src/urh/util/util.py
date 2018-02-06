@@ -271,11 +271,13 @@ def run_command(command, param: str, use_stdin=False):
 
     try:
         if use_stdin:
-            p = subprocess.Popen([cmd] + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=startupinfo)
+            p = subprocess.Popen([cmd] + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 startupinfo=startupinfo)
             out, _ = p.communicate(param.encode())
             return out.decode()
         else:
-            return subprocess.check_output([cmd] + arg + [param], startupinfo=startupinfo).decode()
+            return subprocess.check_output([cmd] + arg + [param], startupinfo=startupinfo,
+                                           stderr=subprocess.PIPE).decode()
     except Exception as e:
         logger.error("Could not run {} {} ({})".format(cmd, param, e))
         return ""

@@ -209,7 +209,7 @@ def get_name_from_filename(filename: str):
 
 
 def parse_command(command: str):
-    splitted = shlex.split(command)
+    splitted = shlex.split(command, posix=os.name != "nt")
     if len(splitted) == 0:
         return "", []
 
@@ -241,7 +241,7 @@ def run_command(command, param: str, use_stdin=False):
         else:
             return subprocess.check_output([cmd] + arg + [param], startupinfo=startupinfo).decode()
     except Exception as e:
-        logger.error("Could not run {} {} ({})".format(" ".join(cmd), param, e))
+        logger.error("Could not run {} {} ({})".format(cmd, param, e))
         return ""
 
 

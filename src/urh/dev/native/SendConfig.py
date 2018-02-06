@@ -28,11 +28,7 @@ class SendConfig(object):
             else:
                 result = self.send_buffer[
                          self.current_sent_index.value:self.current_sent_index.value + buffer_length]
-            got = len(result)
-            if got < buffer_length:
-                # pad rest with zeros
-                result = np.append(result, np.zeros(buffer_length-got, dtype=np.complex64))
-            self.progress_send_status(got)
+            self.progress_send_status(len(result))
             return result
         except (BrokenPipeError, EOFError):
             return np.array([], dtype=np.complex64)

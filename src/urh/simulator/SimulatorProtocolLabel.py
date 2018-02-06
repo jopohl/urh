@@ -10,7 +10,7 @@ from urh.util.Formatter import Formatter
 
 
 class SimulatorProtocolLabel(SimulatorItem):
-    VALUE_TYPES = ["Constant value", "Get live during simulation", "Formula", "External program", "Random value"]
+    VALUE_TYPES = ["Constant value", "Live input", "Formula", "External program", "Random value"]
 
     def __init__(self, label: ProtocolLabel):
         super().__init__()

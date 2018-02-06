@@ -211,7 +211,7 @@ def get_name_from_filename(filename: str):
 def parse_command(command: str):
     splitted = shlex.split(command)
     if len(splitted) == 0:
-        return [""], []
+        return "", []
 
     cmd = [splitted.pop(0)]
 
@@ -219,11 +219,15 @@ def parse_command(command: str):
     while shutil.which(" ".join(cmd)) is None and len(splitted) > 0:
         cmd.append(splitted.pop(0))
 
-    return [" ".join(cmd)], splitted
+    return " ".join(cmd), splitted
 
 
 def run_command(command, param: str, use_stdin=False):
     cmd, arg = parse_command(command)
+    if shutil.which(cmd) is None:
+        logger.error("Could not find {}".format(cmd))
+        return ""
+
     try:
         startupinfo = None
         if os.name == 'nt':
@@ -231,11 +235,11 @@ def run_command(command, param: str, use_stdin=False):
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
         if use_stdin:
-            p = subprocess.Popen(cmd + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=startupinfo)
+            p = subprocess.Popen([cmd] + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=startupinfo)
             out, _ = p.communicate(param.encode())
             return out.decode()
         else:
-            return subprocess.check_output(cmd + arg + [param], startupinfo=startupinfo).decode()
+            return subprocess.check_output([cmd] + arg + [param], startupinfo=startupinfo).decode()
     except Exception as e:
         logger.error("Could not run {} {} ({})".format(" ".join(cmd), param, e))
         return ""
@@ -246,4 +250,4 @@ def validate_command(command: str):
         return False
 
     cmd, _ = parse_command(command)
-    return shutil.which(cmd[0]) is not None
+    return shutil.which(cmd) is not None

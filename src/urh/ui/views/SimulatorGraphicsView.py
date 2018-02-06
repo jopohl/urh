@@ -111,21 +111,24 @@ class SimulatorGraphicsView(QGraphicsView):
     @pyqtSlot()
     def on_source_action_triggered(self):
         for msg_item in self.scene().get_selected_messages():
-            msg_item.model_item.participant = self.sender().data()
-            self.message_updated.emit(msg_item.model_item)
+            if msg_item.model_item.destination != self.sender().data():
+                msg_item.model_item.source = self.sender().data()
+                self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_destination_action_triggered(self):
         for msg_item in self.scene().get_selected_messages():
-            msg_item.model_item.destination = self.sender().data()
-            self.message_updated.emit(msg_item.model_item)
+            if msg_item.model_item.source != self.sender().data():
+                msg_item.model_item.destination = self.sender().data()
+                self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_swap_part_action_triggered(self):
         for msg_item in self.scene().get_selected_messages():
             model_item = msg_item.model_item
-            model_item.participant, model_item.destination = model_item.destination, model_item.participant
-            self.message_updated.emit(msg_item.model_item)
+            if model_item.destination != self.scene().simulator_config.broadcast_part:
+                model_item.participant, model_item.destination = model_item.destination, model_item.participant
+                self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
     def on_new_message_type_action_triggered(self):

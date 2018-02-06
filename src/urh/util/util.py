@@ -220,7 +220,7 @@ def get_default_windows_program_for_extension(extension: str):
         return DEFAULT_PROGRAMS_WINDOWS[extension]
 
     try:
-        assoc = subprocess.check_output("assoc " + extension, shell=True).decode().split("=")[1]
+        assoc = subprocess.check_output("assoc " + extension, shell=True, stderr=subprocess.PIPE).decode().split("=")[1]
         ftype = subprocess.check_output("ftype " + assoc, shell=True).decode().split("=")[1].split(" ")[0]
         ftype = ftype.replace('"', '')
         assert shutil.which(ftype) is not None
@@ -263,10 +263,11 @@ def run_command(command, param: str, use_stdin=False):
     if os.name == 'nt':
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        default_app = get_default_windows_program_for_extension(cmd.split(".")[-1])
-        if default_app:
-            arg.insert(0, cmd)
-            cmd = default_app
+        if "." in cmd:
+            default_app = get_default_windows_program_for_extension(cmd.split(".")[-1])
+            if default_app:
+                arg.insert(0, cmd)
+                cmd = default_app
 
     try:
         if use_stdin:

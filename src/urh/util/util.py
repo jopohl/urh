@@ -209,7 +209,11 @@ def get_name_from_filename(filename: str):
 
 
 def parse_command(command: str):
-    splitted = shlex.split(command, posix=os.name != "nt")
+    try:
+        splitted = shlex.split(command, posix=os.name != "nt")
+    except ValueError:
+        splitted = []   # e.g. when missing matching "
+
     if len(splitted) == 0:
         return "", []
 

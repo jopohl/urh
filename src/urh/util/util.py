@@ -210,7 +210,11 @@ def get_name_from_filename(filename: str):
 
 def parse_command(command: str):
     try:
-        splitted = shlex.split(command, posix=os.name != "nt")
+        posix = os.name != "nt"
+        splitted = shlex.split(command, posix=posix)
+        # strip quotations
+        if not posix:
+            splitted = [s.replace('"', '').replace("'", "") for s in splitted]
     except ValueError:
         splitted = []   # e.g. when missing matching "
 

@@ -210,6 +210,9 @@ def get_name_from_filename(filename: str):
 
 def parse_command(command: str):
     splitted = shlex.split(command)
+    if len(splitted) == 0:
+        return [""], []
+
     cmd = [splitted.pop(0)]
 
     # This is for legacy support, if you have filenames with spaces and did not quote them

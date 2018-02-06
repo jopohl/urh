@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetIt
 from urh import constants
 from urh.util.Logger import logger
 
+DEFAULT_PROGRAMS_WINDOWS = {}
 
 def profile(func):
     def func_wrapper(*args):
@@ -208,6 +209,28 @@ def get_name_from_filename(filename: str):
     return os.path.basename(filename).split(".")[0]
 
 
+def get_default_windows_program_for_extension(extension: str):
+    if os.name != "nt":
+        return None
+
+    if not extension.startswith("."):
+        extension = "." + extension
+
+    if extension in DEFAULT_PROGRAMS_WINDOWS:
+        return DEFAULT_PROGRAMS_WINDOWS[extension]
+
+    try:
+        assoc = subprocess.check_output("assoc " + extension, shell=True).decode().split("=")[1]
+        ftype = subprocess.check_output("ftype " + assoc, shell=True).decode().split("=")[1].split(" ")[0]
+        ftype = ftype.replace('"', '')
+        assert shutil.which(ftype) is not None
+    except Exception:
+        return None
+
+    DEFAULT_PROGRAMS_WINDOWS[extension] = ftype
+    return ftype
+
+
 def parse_command(command: str):
     try:
         posix = os.name != "nt"
@@ -236,12 +259,16 @@ def run_command(command, param: str, use_stdin=False):
         logger.error("Could not find {}".format(cmd))
         return ""
 
-    try:
-        startupinfo = None
-        if os.name == 'nt':
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo = None
+    if os.name == 'nt':
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        default_app = get_default_windows_program_for_extension(cmd.split(".")[-1])
+        if default_app:
+            arg.insert(0, cmd)
+            cmd = default_app
 
+    try:
         if use_stdin:
             p = subprocess.Popen([cmd] + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=startupinfo)
             out, _ = p.communicate(param.encode())

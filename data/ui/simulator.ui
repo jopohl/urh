@@ -581,7 +581,7 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Repeat:</string>
+                   <string>Copies:</string>
                   </property>
                  </widget>
                 </item>

@@ -377,7 +377,7 @@ class Ui_SimulatorTab(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabParticipants), _translate("SimulatorTab", "Participants"))
         self.lblMsgFieldsValues.setText(_translate("SimulatorTab", "Detail view for item"))
         self.label_9.setText(_translate("SimulatorTab", "Goto:"))
-        self.label_10.setText(_translate("SimulatorTab", "Repeat:"))
+        self.label_10.setText(_translate("SimulatorTab", "Copies:"))
         self.label_11.setText(_translate("SimulatorTab", "Labels:"))
         self.label_2.setText(_translate("SimulatorTab", "Coding:"))
         self.lblEncodingDecoding.setText(_translate("SimulatorTab", "-"))

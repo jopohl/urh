@@ -175,10 +175,6 @@ class TestDecoding(QtTestCase):
     def test_external(self):
         encoder = get_path_for_data_file("encode.py")
         decoder = get_path_for_data_file("decode.py")
-        if os.name == "nt":
-            encoder = '{} {}'.format(sys.executable, encoder)
-            decoder = '{} {}'.format(sys.executable, decoder)
-
         e = Encoding(["test external", constants.DECODING_EXTERNAL, decoder + ";" + encoder])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
@@ -193,7 +189,6 @@ class TestDecoding(QtTestCase):
         decoder = get_path_for_data_file("decode.py")
         dir_with_spaces = os.path.join(tempfile.gettempdir(), "directory", "with space")
 
-
         os.makedirs(dir_with_spaces, exist_ok=True)
 
         encoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "encode.py")
@@ -201,10 +196,6 @@ class TestDecoding(QtTestCase):
 
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
-
-        if os.name == "nt":
-            encoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, encoder_in_dir_with_spaces)
-            decoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, decoder_in_dir_with_spaces)
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       decoder_in_dir_with_spaces + ";" + encoder_in_dir_with_spaces])
@@ -231,9 +222,6 @@ class TestDecoding(QtTestCase):
         shutil.copy(code, coder_in_dir_with_spaces)
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
-
-        if os.name == "nt":
-            coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])

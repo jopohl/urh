@@ -80,7 +80,6 @@ class OptionsDialog(QDialog):
         self.set_device_enabled_suffix()
 
         self.ui.listWidgetDevices.setCurrentRow(0)
-        self.set_gnuradio_status()
         self.refresh_device_tab()
 
         self.create_connects()
@@ -153,7 +152,7 @@ class OptionsDialog(QDialog):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
         self.ui.lineEditGnuradioDirectory.setText(self.backend_handler.gnuradio_install_dir)
 
-        if self.backend_handler.gnuradio_installed:
+        if self.backend_handler.gnuradio_is_installed:
             self.ui.lGnuradioInstalled.setStyleSheet("")
             self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio interface is working."))
         else:
@@ -263,10 +262,15 @@ class OptionsDialog(QDialog):
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
+        constants.SETTINGS.setValue("python2_exe", self.ui.lineEditPython2Interpreter.text())
+
         self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
+        constants.SETTINGS.setValue("gnuradio_install_dir", self.ui.lineEditGnuradioDirectory.text())
+
         self.backend_handler.use_gnuradio_install_dir = self.ui.radioButtonGnuradioDirectory.isChecked()
         self.backend_handler.set_gnuradio_installed_status()
         constants.SETTINGS.setValue("use_gnuradio_install_dir", self.backend_handler.use_gnuradio_install_dir)
+
         self.refresh_device_tab()
 
     @pyqtSlot()

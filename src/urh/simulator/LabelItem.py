@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QPen
 
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -6,6 +6,7 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 
 from PyQt5.QtWidgets import QGraphicsTextItem
+from PyQt5.QtCore import Qt
 
 
 class LabelItem(GraphicsItem):
@@ -26,6 +27,9 @@ class LabelItem(GraphicsItem):
         pass
 
     def paint(self, painter: QPainter, option, widget):
+        style = Qt.DotLine if self.model_item.value_type_index == 1 else Qt.SolidLine
+        pen = QPen(constants.LINECOLOR, 1, style)
+        painter.setPen(pen)
         painter.setBrush(constants.LABEL_COLORS[self.model_item.color_index])
         painter.drawRect(self.boundingRect())
 

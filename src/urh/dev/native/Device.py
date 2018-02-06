@@ -556,10 +556,12 @@ class Device(QObject):
                 self.receive_process.join()
 
         self.is_receiving = False
-        self.parent_ctrl_conn.close()
-        self.parent_data_conn.close()
-        self.child_ctrl_conn.close()
-        self.child_data_conn.close()
+        for connection in (self.parent_ctrl_conn, self.parent_data_conn, self.child_ctrl_conn, self.child_data_conn):
+            try:
+                connection.close()
+            except OSError as e:
+                logger.exception(e)
+
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
@@ -591,8 +593,15 @@ class Device(QObject):
                 self.transmit_process.join()
 
         self.is_transmitting = False
-        self.parent_ctrl_conn.close()
-        self.child_ctrl_conn.close()
+        try:
+            self.parent_ctrl_conn.close()
+        except OSError as e:
+            logger.exception(e)
+
+        try:
+            self.child_ctrl_conn.close()
+        except OSError as e:
+            logger.exception(e)
 
     @staticmethod
     def unpack_complex(buffer):

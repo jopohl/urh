@@ -4,6 +4,8 @@ import os
 import shutil
 import tempfile
 
+import sys
+
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
@@ -220,6 +222,34 @@ class TestDecoding(QtTestCase):
         shutil.copy(code, coder_in_dir_with_spaces)
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
+
+        e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
+                      coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
+
+        data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
+        encoded = e.encode(data)
+        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+
+        decoded = e.decode(encoded)
+        self.assertEqual(decoded, data)
+
+    def test_external_with_interpreter(self):
+        code = get_path_for_data_file("code.py")
+        encoder = get_path_for_data_file("encode.py")
+        decoder = get_path_for_data_file("decode.py")
+        dir_with_spaces = os.path.join(tempfile.gettempdir(), "directory", "with extra space")
+
+        os.makedirs(dir_with_spaces, exist_ok=True)
+
+        coder_in_dir_with_spaces = os.path.join(dir_with_spaces, "code.py")
+        encoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "encode.py")
+        decoder_in_dir_with_spaces = os.path.join(dir_with_spaces, "decode.py")
+
+        shutil.copy(code, coder_in_dir_with_spaces)
+        shutil.copy(encoder, encoder_in_dir_with_spaces)
+        shutil.copy(decoder, decoder_in_dir_with_spaces)
+
+        coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])

@@ -1,5 +1,6 @@
 import array
 import os
+import shlex
 import sys
 import time
 from xml.dom import minidom
@@ -207,43 +208,39 @@ def get_name_from_filename(filename: str):
     return os.path.basename(filename).split(".")[0]
 
 
-def parse_command(command):
-    cmd = []
-    param = []
-    for substr in command.split(" "):
-        if not os.path.isfile(" ".join(cmd)):
-            # append to cmd until we have a valid file
-            cmd.append(substr)
-        else:
-            # append rest to param
-            param.append(substr)
+def parse_command(command: str):
+    splitted = shlex.split(command)
+    cmd = [splitted.pop(0)]
 
-    result = " ".join(cmd), " ".join(param)
-    return result
+    # This is for legacy support, if you have filenames with spaces and did not quote them
+    while shutil.which(" ".join(cmd)) is None and len(splitted) > 0:
+        cmd.append(splitted.pop(0))
+
+    return [" ".join(cmd)], splitted
 
 
-def run_command(command, param, use_stdin=False):
-    # add shlex.quote(param) later for security reasons
-    command, argument = parse_command(command)
-    cmd = '"{}"'.format(command) + " " + argument
+def run_command(command, param: str, use_stdin=False):
+    cmd, arg = parse_command(command)
     try:
+        startupinfo = None
+        if os.name == 'nt':
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
         if use_stdin:
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            p = subprocess.Popen(cmd + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, startupinfo=startupinfo)
             out, _ = p.communicate(param.encode())
             return out.decode()
         else:
-            return subprocess.check_output(cmd + " " + param, shell=True).decode()
+            return subprocess.check_output(cmd + arg + [param], startupinfo=startupinfo).decode()
     except Exception as e:
-        logger.error("Could not run {} {} ({})".format(cmd, param, e))
+        logger.error("Could not run {} {} ({})".format(" ".join(cmd), param, e))
         return ""
+
 
 def validate_command(command: str):
     if not isinstance(command, str):
         return False
-    cmd, _ = parse_command(command)
-    if shutil.which(cmd) is not None:
-        return True
 
-    # maybe we have something like python /tmp/script.py
-    splitted = cmd.split(" ")
-    return shutil.which(splitted[0]) is not None and os.path.isfile(" ".join(splitted[1:]))
+    cmd, _ = parse_command(command)
+    return shutil.which(cmd) is not None

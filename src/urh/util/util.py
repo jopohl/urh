@@ -243,4 +243,4 @@ def validate_command(command: str):
         return False
 
     cmd, _ = parse_command(command)
-    return shutil.which(cmd) is not None
+    return shutil.which(cmd[0]) is not None

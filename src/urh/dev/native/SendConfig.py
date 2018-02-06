@@ -21,17 +21,23 @@ class SendConfig(object):
     def get_data_to_send(self, buffer_length: int):
         try:
             if self.sending_is_finished():
-                return np.array([], dtype=np.complex64)
+                return np.zeros(buffer_length, dtype=np.complex64)
 
             if self.continuous:
                 result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
             else:
                 result = self.send_buffer[
                          self.current_sent_index.value:self.current_sent_index.value + buffer_length]
-            self.progress_send_status(len(result))
+
+            got = len(result)
+            if got < buffer_length:
+                kwargs = {"dtype": result.dtype} if hasattr(result, "dtype") else dict()
+                result = np.append(result, np.zeros(buffer_length-got, **kwargs))
+
+            self.progress_send_status(got)
             return result
         except (BrokenPipeError, EOFError):
-            return np.array([], dtype=np.complex64)
+            return np.zeros(buffer_length, dtype=np.complex64)
 
     def sending_is_finished(self):
         if self.sending_repeats == 0:  # 0 = infinity

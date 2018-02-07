@@ -160,3 +160,11 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             self.controller.simulator_config.delete_items([label])
         except IndexError:
             pass
+
+    def set_value_type_index(self, rows: list, value_type_index: int):
+        for row in rows:
+            label = self.message_type[row]
+            if not label.is_checksum_label:
+                label.value_type_index = value_type_index
+                self.protocol_label_updated.emit(label)
+        self.update()

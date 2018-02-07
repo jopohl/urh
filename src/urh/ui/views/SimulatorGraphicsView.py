@@ -116,7 +116,8 @@ class SimulatorGraphicsView(QGraphicsView):
         value_type_index = self.sender().data()
         for msg in self.scene().get_selected_messages():
             for lbl in msg.message_type:
-                lbl.value_type_index = value_type_index
+                if not lbl.is_checksum_label:
+                    lbl.value_type_index = value_type_index
             self.message_updated.emit(msg)
 
     @pyqtSlot()
@@ -195,7 +196,8 @@ class SimulatorGraphicsView(QGraphicsView):
                 va.setActionGroup(value_type_group)
                 va.setData(i)
 
-                if all(lbl.value_type_index == i for msg in messages for lbl in msg.message_type):
+                if all(lbl.value_type_index == i for msg in messages for lbl in msg.message_type
+                       if not lbl.is_checksum_label):
                     va.setChecked(True)
 
                 va.triggered.connect(self.on_set_value_type_action_triggered)

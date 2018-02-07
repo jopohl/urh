@@ -138,25 +138,11 @@ class Simulator(QObject):
         result = [self.sniffer.rcv_device, self.sender.device]
         return result
 
-    def device_messages(self):
-        result = ""
-
-        for device in self.devices:
-            new_messages = device.read_messages()
-            if new_messages:
-                result += new_messages
-
-            if result and not result.endswith("\n"):
-                result += "\n"
-
-        return result
+    def device_messages(self) -> list:
+        return [device.read_messages() for device in self.devices]
 
     def read_log_messages(self):
-        result = "\n".join(self.log_messages)
-
-        if result and not result.endswith("\n"):
-            result += "\n"
-
+        result = self.log_messages[:]
         self.log_messages.clear()
         return result
 

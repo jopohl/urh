@@ -26,7 +26,7 @@ class SimulatorDialog(QDialog):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, simulator_config, modulators,
-                 expression_parser, project_manager: ProjectManager, signals: list=None,
+                 expression_parser, project_manager: ProjectManager, signals: list = None,
                  parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogSimulator()
@@ -125,20 +125,13 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
     def update_view(self):
-        txt = self.ui.textEditDevices.toPlainText()
-        device_messages = self.simulator.device_messages()
+        for device_message in map(str.strip, self.simulator.device_messages()):
+            if device_message:
+                self.ui.textEditDevices.append(device_message)
 
-        if len(device_messages) > 1:
-            self.ui.textEditDevices.setPlainText(txt + device_messages)
-
-        txt = self.ui.textEditSimulation.toPlainText()
-        simulator_log_messages = self.simulator.read_log_messages()
-
-        if len(simulator_log_messages) > 1:
-            self.ui.textEditSimulation.setPlainText(txt + simulator_log_messages)
-
-        self.ui.textEditSimulation.verticalScrollBar().setValue(
-            self.ui.textEditSimulation.verticalScrollBar().maximum())
+        for log_msg in map(str.strip, self.simulator.read_log_messages()):
+            if log_msg:
+                self.ui.textEditSimulation.append(log_msg)
 
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
         self.ui.lblCurrentRepeatValue.setText(current_repeat)

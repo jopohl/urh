@@ -1,6 +1,7 @@
+import os
 import socket
+import tempfile
 import time
-import copy
 from multiprocessing import Process, Value
 
 import numpy as np
@@ -21,11 +22,12 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
+from urh.simulator.ActionItem import TriggerCommandActionItem
+from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
-from urh.simulator.Simulator import Simulator
 
 
 def receive(port, current_index, target_index, elapsed):
@@ -283,6 +285,17 @@ class TestSimulator(QtTestCase):
         lbl2.value_type_index = 3
         lbl2.external_program = get_path_for_data_file("external_program_simulator.py")
 
+        stc.simulator_scene.add_trigger_command_action(None, 200)
+        stc.simulator_scene.clearSelection()
+        action = next(item for item in stc.simulator_scene.items() if isinstance(item, TriggerCommandActionItem))
+        action.setSelected(True)
+        self.assertEqual(stc.ui.detail_view_widget.currentIndex(), 4)
+        fname = tempfile.mktemp()
+        self.assertFalse(os.path.isfile(fname))
+        external_command = "copy NUL {}".format(fname) if os.name == "nt" else "touch {}".format(fname)
+        stc.ui.lineEditTriggerCommand.setText(external_command)
+        self.assertEqual(action.model_item.command, external_command)
+
         port = self.get_free_port()
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port
@@ -324,6 +337,8 @@ class TestSimulator(QtTestCase):
         s.close()
 
         QTest.qWait(100)
+
+        self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, data):
         arr = np.array(np.frombuffer(data, dtype=np.complex64))

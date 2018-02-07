@@ -24,7 +24,7 @@ from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorTriggerCommandItem import SimulatorTriggerCommandItem
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -383,7 +383,7 @@ class SimulatorTabController(QWidget):
               self.active_item.type != ConditionType.ELSE):
             self.ui.ruleCondLineEdit.setText(self.active_item.condition)
             self.ui.detail_view_widget.setCurrentIndex(3)
-        elif isinstance(self.active_item, SimulatorTriggerCommandItem):
+        elif isinstance(self.active_item, SimulatorTriggerCommandAction):
             self.ui.lineEditTriggerCommand.setText(self.active_item.command)
             self.ui.detail_view_widget.setCurrentIndex(4)
         else:

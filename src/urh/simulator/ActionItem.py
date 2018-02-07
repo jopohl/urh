@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QGraphicsTextItem
 from PyQt5.QtCore import QRectF
 
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
-from urh.simulator.SimulatorTriggerCommandItem import SimulatorTriggerCommandItem
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorItem import SimulatorItem
 
@@ -49,7 +49,6 @@ class GotoActionItem(ActionItem):
 
 
 class TriggerCommandActionItem(ActionItem):
-    def __init__(self, model_item: SimulatorItem, parent=None):
-        assert isinstance(model_item, SimulatorTriggerCommandItem)
+    def __init__(self, model_item: SimulatorTriggerCommandAction, parent=None):
         super().__init__(model_item=model_item, parent=parent)
         self.text.setPlainText("Trigger command")

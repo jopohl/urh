@@ -20,6 +20,7 @@ from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.util import util
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -210,14 +211,23 @@ class Simulator(QObject):
             if self.current_item is self.protocol_manager.rootItem:
                 self.transcript.clear()
                 next_item = self.current_item.next()
+
             elif isinstance(self.current_item, SimulatorProtocolLabel):
                 next_item = self.current_item.next()
+
             elif isinstance(self.current_item, SimulatorMessage):
                 self.process_message()
                 next_item = self.current_item.next()
+
             elif isinstance(self.current_item, SimulatorGotoAction):
                 next_item = self.current_item.target
                 self.log_message("GOTO item " + next_item.index())
+
+            elif isinstance(self.current_item, SimulatorTriggerCommandAction):
+                next_item = self.current_item.next()
+                result = util.run_command(self.current_item.command, param=None, detailed_output=True)
+                self.log_message(result)
+
             elif isinstance(self.current_item, SimulatorRule):
                 condition = self.current_item.get_first_applying_condition()
 
@@ -229,15 +239,16 @@ class Simulator(QObject):
                 else:
                     next_item = self.current_item.next_sibling()
 
-            elif (isinstance(self.current_item, SimulatorRuleCondition) and
-                  self.current_item.type != ConditionType.IF):
-                next_item = self.current_item.parent().next_sibling()
-            elif (isinstance(self.current_item, SimulatorRuleCondition) and
-                  self.current_item.type == ConditionType.IF):
-                next_item = self.current_item.parent()
+            elif isinstance(self.current_item, SimulatorRuleCondition):
+                if self.current_item.type == ConditionType.IF:
+                    next_item = self.current_item.parent()
+                else:
+                    next_item = self.current_item.parent().next_sibling()
+
             elif self.current_item is None:
                 self.current_repeat += 1
                 next_item = self.protocol_manager.rootItem
+
             else:
                 raise NotImplementedError("TODO")
 

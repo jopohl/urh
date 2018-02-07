@@ -5,7 +5,7 @@ from urh.simulator.SimulatorRule import SimulatorRuleCondition
 from urh.util import util
 
 
-class SimulatorTriggerCommandItem(SimulatorItem):
+class SimulatorTriggerCommandAction(SimulatorItem):
     def __init__(self):
         super().__init__()
         self.command = None
@@ -27,6 +27,6 @@ class SimulatorTriggerCommandItem(SimulatorItem):
 
     @classmethod
     def from_xml(cls, tag):
-        result = SimulatorTriggerCommandItem()
+        result = SimulatorTriggerCommandAction()
         result.command = tag.get("command", None)
         return result

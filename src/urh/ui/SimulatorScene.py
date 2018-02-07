@@ -16,7 +16,7 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorTriggerCommandItem import SimulatorTriggerCommandItem
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
@@ -26,7 +26,7 @@ class SimulatorScene(QGraphicsScene):
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
         SimulatorGotoAction: GotoActionItem,
-        SimulatorTriggerCommandItem: TriggerCommandActionItem,
+        SimulatorTriggerCommandAction: TriggerCommandActionItem,
         SimulatorMessage: MessageItem,
         SimulatorProtocolLabel: LabelItem
     }
@@ -417,7 +417,7 @@ class SimulatorScene(QGraphicsScene):
         return goto_action
 
     def add_trigger_command_action(self, ref_item, position):
-        command_action = SimulatorTriggerCommandItem()
+        command_action = SimulatorTriggerCommandAction()
         pos, parent = self.insert_at(ref_item, position, False)
         self.simulator_config.add_items([command_action], pos, parent)
         return command_action

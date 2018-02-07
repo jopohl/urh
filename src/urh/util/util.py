@@ -253,7 +253,7 @@ def parse_command(command: str):
     return " ".join(cmd), splitted
 
 
-def run_command(command, param: str, use_stdin=False):
+def run_command(command, param: str=None, use_stdin=False, detailed_output=False):
     cmd, arg = parse_command(command)
     if shutil.which(cmd) is None:
         logger.error("Could not find {}".format(cmd))
@@ -269,18 +269,38 @@ def run_command(command, param: str, use_stdin=False):
                 arg.insert(0, cmd)
                 cmd = default_app
 
+    call_list = [cmd] + arg
     try:
-        if use_stdin:
-            p = subprocess.Popen([cmd] + arg, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
+        if detailed_output:
+            if param is not None:
+                call_list.append(param)
+
+            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
+            out, err = p.communicate()
+            result = "{} exited with {}".format(" ".join(call_list), p.returncode)
+            if out.decode():
+                result += " stdout: {}".format(out.decode())
+            if err.decode():
+                result += " stderr: {}".format(err.decode())
+            return result
+        elif use_stdin:
+            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
                                  startupinfo=startupinfo)
-            out, _ = p.communicate(param.encode())
+            param = param.encode() if param is not None else None
+            out, _ = p.communicate(param)
             return out.decode()
         else:
-            return subprocess.check_output([cmd] + arg + [param], startupinfo=startupinfo,
-                                           stderr=subprocess.PIPE).decode()
+            if param is not None:
+                call_list.append(param)
+
+            return subprocess.check_output(call_list, stderr=subprocess.PIPE, startupinfo=startupinfo).decode()
     except Exception as e:
-        logger.error("Could not run {} {} ({})".format(cmd, param, e))
-        return ""
+        msg = "Could not run {} ({})".format(cmd, e)
+        logger.error(msg)
+        if detailed_output:
+            return msg
+        else:
+            return ""
 
 
 def validate_command(command: str):

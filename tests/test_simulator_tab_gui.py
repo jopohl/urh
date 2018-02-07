@@ -45,7 +45,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.add_goto_action(None, 0)
         stc.simulator_scene.add_trigger_command_action(None, 0)
 
-        messages = stc.simulator_config.get_all_message_items()
+        messages = stc.simulator_config.get_all_messages()
         self.assertEqual(len(messages), 3)
         for i, msg in enumerate(messages):
             self.assertEqual(msg.source, self.carl, msg=str(i))

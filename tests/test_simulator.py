@@ -191,7 +191,7 @@ class TestSimulator(QtTestCase):
 
         conn, addr = s.accept()
 
-        msg = next(msg for msg in dialog.simulator_config.get_all_message_items() if msg.source.name == "Alice")
+        msg = next(msg for msg in dialog.simulator_config.get_all_messages() if msg.source.name == "Alice")
         checksum_label = next(lbl for lbl in msg.message_type if lbl.is_checksum_label).label # type: ChecksumLabel
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
@@ -271,7 +271,7 @@ class TestSimulator(QtTestCase):
         stc.create_simulator_label(0, 10, 20)
         stc.create_simulator_label(1, 10, 20)
 
-        messages = stc.simulator_config.get_all_message_items()
+        messages = stc.simulator_config.get_all_messages()
         messages[0].source = stc.project_manager.participants[0]
         messages[0].destination = stc.project_manager.participants[1]
         messages[0].destination.simulate = True

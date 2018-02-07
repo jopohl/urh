@@ -77,6 +77,4 @@ class TestProtocolLabelDialog(QtTestCase):
         remove_action = self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
         remove_action.trigger()
         self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 0)
-        remove_action = self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
-        remove_action.trigger()
-        self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 0)
+        self.assertEqual(len(self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()), 0)

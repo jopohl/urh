@@ -125,13 +125,11 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
     def update_view(self):
-        for device_message in map(str.strip, self.simulator.device_messages()):
-            if device_message:
-                self.ui.textEditDevices.append(device_message)
+        for device_message in filter(None, map(str.strip, self.simulator.device_messages())):
+            self.ui.textEditDevices.append(device_message)
 
-        for log_msg in map(str.strip, self.simulator.read_log_messages()):
-            if log_msg:
-                self.ui.textEditSimulation.append(log_msg)
+        for log_msg in filter(None, map(str.strip, self.simulator.read_log_messages())):
+            self.ui.textEditSimulation.append(log_msg)
 
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
         self.ui.lblCurrentRepeatValue.setText(current_repeat)

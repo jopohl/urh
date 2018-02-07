@@ -220,7 +220,9 @@ class SimulatorConfiguration(QObject):
 
         participants_tag = xml_tag.find("participants")
         if participants_tag:
-            self.project_manager.participants[:] = Participant.read_participants_from_xml_tag(participants_tag)
+            for participant in Participant.read_participants_from_xml_tag(participants_tag):
+                if participant not in self.project_manager.participants:
+                    self.project_manager.participants.append(participant)
             self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")

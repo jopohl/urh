@@ -195,6 +195,11 @@ class Device(QObject):
                     exit_requested = True
                     break
 
+        if not cls.ASYNCHRONOUS:
+            # Some Sync send calls (e.g. USRP) are not blocking, so we wait a bit here to ensure
+            # that the send buffer on the SDR is cleared
+            time.sleep(0.75)
+
         if exit_requested:
             logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
         if send_config.sending_is_finished():

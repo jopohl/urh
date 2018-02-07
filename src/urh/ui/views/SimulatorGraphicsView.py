@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.RuleItem import RuleConditionItem
 from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import ConditionType
 from urh.signalprocessing.MessageType import MessageType
 from urh.simulator.SimulatorMessage import SimulatorMessage
@@ -111,26 +112,33 @@ class SimulatorGraphicsView(QGraphicsView):
         self.scene().clear_all()
 
     @pyqtSlot()
+    def on_set_value_type_action_triggered(self):
+        value_type_index = self.sender().data()
+        for msg in self.scene().get_selected_messages():
+            for lbl in msg.message_type:
+                lbl.value_type_index = value_type_index
+            self.message_updated.emit(msg)
+
+    @pyqtSlot()
     def on_source_action_triggered(self):
-        for msg_item in self.scene().get_selected_messages():
-            if msg_item.model_item.destination != self.sender().data():
-                msg_item.model_item.source = self.sender().data()
-                self.message_updated.emit(msg_item.model_item)
+        for msg in self.scene().get_selected_messages():
+            if msg.destination != self.sender().data():
+                msg.source = self.sender().data()
+                self.message_updated.emit(msg)
 
     @pyqtSlot()
     def on_destination_action_triggered(self):
-        for msg_item in self.scene().get_selected_messages():
-            if msg_item.model_item.source != self.sender().data():
-                msg_item.model_item.destination = self.sender().data()
-                self.message_updated.emit(msg_item.model_item)
+        for msg in self.scene().get_selected_messages():
+            if msg.source != self.sender().data():
+                msg.destination = self.sender().data()
+                self.message_updated.emit(msg)
 
     @pyqtSlot()
     def on_swap_part_action_triggered(self):
-        for msg_item in self.scene().get_selected_messages():
-            model_item = msg_item.model_item
-            if model_item.destination != self.scene().simulator_config.broadcast_part:
-                model_item.participant, model_item.destination = model_item.destination, model_item.participant
-                self.message_updated.emit(msg_item.model_item)
+        for msg in self.scene().get_selected_messages():
+            if msg.destination != self.scene().simulator_config.broadcast_part:
+                msg.participant, msg.destination = msg.destination, msg.participant
+                self.message_updated.emit(msg)
 
     @pyqtSlot()
     def on_consolidate_messages_action_triggered(self):
@@ -177,6 +185,21 @@ class SimulatorGraphicsView(QGraphicsView):
         if isinstance(self.context_menu_item, MessageItem):
             menu.addSeparator()
 
+            value_type_group = QActionGroup(self.scene())
+            value_type_menu = menu.addMenu("Set value type")
+            messages = self.scene().get_selected_messages()
+
+            for i, value_type in enumerate(SimulatorProtocolLabel.VALUE_TYPES):
+                va = value_type_menu.addAction(value_type)
+                va.setCheckable(True)
+                va.setActionGroup(value_type_group)
+                va.setData(i)
+
+                if all(lbl.value_type_index == i for msg in messages for lbl in msg.message_type):
+                    va.setChecked(True)
+
+                va.triggered.connect(self.on_set_value_type_action_triggered)
+
             source_group = QActionGroup(self.scene())
             source_menu = menu.addMenu("Source")
 
@@ -221,7 +244,7 @@ class SimulatorGraphicsView(QGraphicsView):
 
         menu.addSeparator()
 
-        if len(self.scene().get_all_messages()) > 1:
+        if len(self.scene().get_all_message_items()) > 1:
             consolidate_messages_action = menu.addAction("Consolidate messages")
             consolidate_messages_action.triggered.connect(self.on_consolidate_messages_action_triggered)
 

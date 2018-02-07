@@ -50,7 +50,7 @@ class SimulatorTabController(QWidget):
 
         self.simulator_config = SimulatorConfiguration(self.project_manager)
         self.sim_expression_parser = SimulatorExpressionParser(self.simulator_config)
-        SimulatorItem.protocol_manager = self.simulator_config
+        SimulatorItem.simulator_config = self.simulator_config
         SimulatorItem.expression_parser = self.sim_expression_parser
 
         self.ui = Ui_SimulatorTab()

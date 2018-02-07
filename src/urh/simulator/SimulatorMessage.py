@@ -57,7 +57,7 @@ class SimulatorMessage(Message, SimulatorItem):
 
     def __delitem__(self, index):
         removed_labels = self._remove_labels_for_range(index, instant_remove=False)
-        self.protocol_manager.delete_items(removed_labels)
+        self.simulator_config.delete_items(removed_labels)
         del self.plain_bits[index]
 
     def to_xml(self, decoders=None, include_message_type=False, write_bits=True) -> ET.Element:

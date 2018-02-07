@@ -23,6 +23,10 @@ class SimulatorProtocolLabel(SimulatorItem):
         self.random_min = 0
         self.random_max = self.label.fuzz_maximum - 1
 
+    @property
+    def has_live_input(self):
+        return not self.is_checksum_label and self.value_type_index == 1
+
     def get_copy(self):
         # no copy needed in simulator
         return self

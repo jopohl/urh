@@ -45,7 +45,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.add_goto_action(None, 0)
         stc.simulator_scene.add_trigger_command_action(None, 0)
 
-        messages = stc.simulator_config.get_all_messages()
+        messages = stc.simulator_config.get_all_message_items()
         self.assertEqual(len(messages), 3)
         for i, msg in enumerate(messages):
             self.assertEqual(msg.source, self.carl, msg=str(i))
@@ -141,7 +141,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 0)
 
         # select first message
-        messages = stc.simulator_scene.get_all_messages()
+        messages = stc.simulator_scene.get_all_message_items()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
 
         QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
@@ -169,7 +169,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc = self.form.simulator_tab_controller # type: SimulatorTabController
         stc.ui.tabWidget.setCurrentIndex(1)
 
-        stc.simulator_scene.get_all_messages()[0].setSelected(True)
+        stc.simulator_scene.get_all_message_items()[0].setSelected(True)
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
         stc.ui.tblViewMessage.selectColumn(2)

@@ -246,7 +246,7 @@ class SimulatorScene(QGraphicsScene):
             if key not in sim_items:
                 del self.items_dict[key]
 
-    def get_all_messages(self):
+    def get_all_message_items(self):
         """
 
         :rtype: list[MessageItem]
@@ -254,10 +254,14 @@ class SimulatorScene(QGraphicsScene):
         return [item for item in self.items() if isinstance(item, MessageItem)]
 
     def get_selected_messages(self):
-        return [item for item in self.selectedItems() if isinstance(item, MessageItem)]
+        """
+
+        :rtype: list[SimulatorMessage]
+        """
+        return [item.model_item for item in self.selectedItems() if isinstance(item, MessageItem)]
 
     def select_messages_with_participant(self, participant: ParticipantItem, from_part=True):
-        messages = self.get_all_messages()
+        messages = self.get_all_message_items()
         self.clearSelection()
 
         for msg in messages:
@@ -266,7 +270,7 @@ class SimulatorScene(QGraphicsScene):
                 msg.select_all()
 
     def arrange_participants(self):
-        messages = self.get_all_messages()
+        messages = self.get_all_message_items()
 
         for participant in self.participant_items:
             if any(msg.source == participant or msg.destination == participant for msg in messages):

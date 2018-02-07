@@ -1,5 +1,5 @@
 class SimulatorItem(object):
-    protocol_manager = None
+    simulator_config = None
     expression_parser = None
 
     def __init__(self):

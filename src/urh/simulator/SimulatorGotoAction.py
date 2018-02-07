@@ -18,10 +18,10 @@ class SimulatorGotoAction(SimulatorItem):
 
     @property
     def target(self):
-        return self.protocol_manager.item_dict[self.goto_target] if self.validate() else None
+        return self.simulator_config.item_dict[self.goto_target] if self.validate() else None
 
     def validate(self):
-        target = self.protocol_manager.item_dict.get(self.goto_target, None)
+        target = self.simulator_config.item_dict.get(self.goto_target, None)
         return self.is_valid_goto_target(target)
 
     def to_xml(self) -> ET.Element:
@@ -52,7 +52,7 @@ class SimulatorGotoAction(SimulatorItem):
     def get_valid_goto_targets(cls):
         valid_targets = []
 
-        for key, value in cls.protocol_manager.item_dict.items():
+        for key, value in cls.simulator_config.item_dict.items():
             if SimulatorGotoAction.is_valid_goto_target(value):
                 valid_targets.append(key)
 

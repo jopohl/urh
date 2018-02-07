@@ -92,7 +92,7 @@ class SimulatorMessageTableView(TableView):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.sender().data()
             updated_messages.append(self.model().protocol.messages[row])
-        SimulatorItem.protocol_manager.items_updated.emit(updated_messages)
+        SimulatorItem.simulator_config.items_updated.emit(updated_messages)
 
     @pyqtSlot()
     def on_modulation_action_triggered(self):

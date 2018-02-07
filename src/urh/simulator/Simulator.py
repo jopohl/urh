@@ -30,11 +30,11 @@ class Simulator(QObject):
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
 
-    def __init__(self, protocol_manager: SimulatorConfiguration, modulators,
+    def __init__(self, simulator_config: SimulatorConfiguration, modulators,
                  expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
                  sniffer: ProtocolSniffer, sender: EndlessSender):
         super().__init__()
-        self.protocol_manager = protocol_manager
+        self.simulator_config = simulator_config
         self.project_manager = project_manager
         self.expression_parser = expression_parser
         self.modulators = modulators  # type: list[Modulator]
@@ -120,9 +120,9 @@ class Simulator(QObject):
         self.fatal_device_error_occurred = False
         self.sniffer.clear()
 
-        self.current_item = self.protocol_manager.rootItem
+        self.current_item = self.simulator_config.rootItem
 
-        for msg in self.protocol_manager.get_all_messages():
+        for msg in self.simulator_config.get_all_messages():
             msg.send_recv_messages[:] = []
 
         self.last_sent_message = None
@@ -194,7 +194,7 @@ class Simulator(QObject):
         self.log_message("Start simulation ...")
 
         while self.is_simulating and not self.simulation_is_finished():
-            if self.current_item is self.protocol_manager.rootItem:
+            if self.current_item is self.simulator_config.rootItem:
                 self.transcript.clear()
                 next_item = self.current_item.next()
 
@@ -233,7 +233,7 @@ class Simulator(QObject):
 
             elif self.current_item is None:
                 self.current_repeat += 1
-                next_item = self.protocol_manager.rootItem
+                next_item = self.simulator_config.rootItem
 
             else:
                 raise NotImplementedError("TODO")

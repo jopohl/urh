@@ -213,7 +213,7 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 
-        bits = self.__demodulate(conn.recv(65536))
+        bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
         self.assertTrue(bits.startswith(preamble_str+sync_str))
@@ -229,7 +229,7 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 
-        bits = self.__demodulate(conn.recv(65536))
+        bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
         self.assertTrue(bits.startswith(preamble_str+sync_str))
@@ -245,7 +245,7 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
 
-        bits = self.__demodulate(conn.recv(65536))
+        bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
         self.assertTrue(bits.startswith(preamble_str+sync_str))
@@ -292,7 +292,7 @@ class TestSimulator(QtTestCase):
         self.assertEqual(stc.ui.detail_view_widget.currentIndex(), 4)
         fname = tempfile.mktemp()
         self.assertFalse(os.path.isfile(fname))
-        external_command = "copy NUL {}".format(fname) if os.name == "nt" else "touch {}".format(fname)
+        external_command = "cmd.exe /C copy NUL {}".format(fname) if os.name == "nt" else "touch {}".format(fname)
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
@@ -340,7 +340,11 @@ class TestSimulator(QtTestCase):
 
         self.assertTrue(os.path.isfile(fname))
 
-    def __demodulate(self, data):
+    def __demodulate(self, connection):
+        data = connection.recv(65536)
+        while len(data) % 8 != 0:
+            data += connection.recv(65536)
+
         arr = np.array(np.frombuffer(data, dtype=np.complex64))
         signal = Signal("", "")
         signal._fulldata = arr

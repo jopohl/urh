@@ -143,6 +143,7 @@ class TestSimulatorTabGUI(QtTestCase):
         # select first message
         messages = stc.simulator_scene.get_all_messages()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
+
         QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
@@ -262,7 +263,7 @@ class TestSimulatorTabGUI(QtTestCase):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
                     and w.parent() is None and w not in self.menus_to_ignore)
         names = [action.text() for action in menu.actions()]
-        self.assertIn("Create new message type based on this message ...", names)
+        self.assertIn("Source", names)
         add_rule_action = next(action for action in menu.actions() if action.text() == "Add rule")
         add_rule_action.trigger()
         menu.close()

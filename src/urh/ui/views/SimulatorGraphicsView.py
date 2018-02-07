@@ -266,7 +266,7 @@ class SimulatorGraphicsView(QGraphicsView):
         items = [item for item in self.items(event.pos()) if isinstance(item, GraphicsItem) and item.is_selectable()]
         self.context_menu_item = None if len(items) == 0 else items[0]
         menu = self.create_context_menu()
-        action = menu.exec_(event.globalPos())
+        menu.exec_(event.globalPos())
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:

@@ -378,6 +378,7 @@ class Ui_SimulatorTab(object):
         self.label_12.setText(_translate("SimulatorTab", "Condition:"))
         self.ruleCondLineEdit.setPlaceholderText(_translate("SimulatorTab", "not (item1.crc == 0b1010 and item2.length >=3)"))
         self.label_14.setText(_translate("SimulatorTab", "Command:"))
+        self.lineEditTriggerCommand.setPlaceholderText(_translate("SimulatorTab", "Path [+arguments] to external command e.g. mail or sendsms"))
         self.btnChooseCommand.setText(_translate("SimulatorTab", "..."))
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit

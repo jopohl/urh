@@ -688,6 +688,9 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
                   <property name="readOnly">
                    <bool>false</bool>
                   </property>
+                  <property name="placeholderText">
+                   <string>Path [+arguments] to external command e.g. mail or sendsms</string>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="2" colspan="2">

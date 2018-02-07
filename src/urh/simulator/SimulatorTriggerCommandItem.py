@@ -5,14 +5,13 @@ from urh.simulator.SimulatorRule import SimulatorRuleCondition
 from urh.util import util
 
 
-class SimulatorExternalProgramAction(SimulatorItem):
+class SimulatorTriggerCommandItem(SimulatorItem):
     def __init__(self):
         super().__init__()
-        self.ext_prog = None
-        self.args = None
+        self.command = None
 
     def validate(self):
-        return util.validate_command(self.ext_prog)
+        return util.validate_command(self.command)
 
     def set_parent(self, value):
         if value is not None:
@@ -22,15 +21,12 @@ class SimulatorExternalProgramAction(SimulatorItem):
 
     def to_xml(self):
         attrib = dict()
-        if self.ext_prog:
-            attrib["ext_prog"] = self.ext_prog
-        if self.args:
-            attrib["args"] = self.args
-        return ET.Element("simulator_program_action", attrib=attrib)
+        if self.command:
+            attrib["command"] = self.command
+        return ET.Element("simulator_trigger_command_action", attrib=attrib)
 
     @classmethod
     def from_xml(cls, tag):
-        result = SimulatorExternalProgramAction()
-        result.ext_prog = tag.get("ext_prog", None)
-        result.args = tag.get("args", None)
+        result = SimulatorTriggerCommandItem()
+        result.command = tag.get("command", None)
         return result

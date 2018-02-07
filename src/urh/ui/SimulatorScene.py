@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstra
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.simulator.ActionItem import ActionItem, GotoActionItem, ProgramActionItem
+from urh.simulator.ActionItem import ActionItem, GotoActionItem, TriggerCommandActionItem
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.LabelItem import LabelItem
 from urh.simulator.MessageItem import MessageItem
@@ -16,7 +16,7 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorExternalProgramAction import SimulatorExternalProgramAction
+from urh.simulator.SimulatorTriggerCommandItem import SimulatorTriggerCommandItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 
@@ -26,7 +26,7 @@ class SimulatorScene(QGraphicsScene):
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
         SimulatorGotoAction: GotoActionItem,
-        SimulatorExternalProgramAction: ProgramActionItem,
+        SimulatorTriggerCommandItem: TriggerCommandActionItem,
         SimulatorMessage: MessageItem,
         SimulatorProtocolLabel: LabelItem
     }
@@ -416,11 +416,11 @@ class SimulatorScene(QGraphicsScene):
         self.simulator_config.add_items([goto_action], pos, parent)
         return goto_action
 
-    def add_program_action(self, ref_item, position):
-        program_action = SimulatorExternalProgramAction()
+    def add_trigger_command_action(self, ref_item, position):
+        command_action = SimulatorTriggerCommandItem()
         pos, parent = self.insert_at(ref_item, position, False)
-        self.simulator_config.add_items([program_action], pos, parent)
-        return program_action
+        self.simulator_config.add_items([command_action], pos, parent)
+        return command_action
 
     def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None,
                     destination=None):

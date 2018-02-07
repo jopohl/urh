@@ -36,6 +36,9 @@ class SimulatorGraphicsView(QGraphicsView):
         self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.select_all_action)
 
+    def scene(self) -> SimulatorScene:
+        return super().scene()
+
     @pyqtSlot()
     def on_add_message_action_triggered(self):
         num_bits, ok = QInputDialog.getInt(self,
@@ -77,10 +80,10 @@ class SimulatorGraphicsView(QGraphicsView):
         self.jump_to_item(ga)
 
     @pyqtSlot()
-    def on_add_program_action_triggered(self):
+    def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
-        pa = self.scene().add_program_action(ref_item, position)
+        pa = self.scene().add_trigger_command_action(ref_item, position)
         self.jump_to_item(pa)
 
     @pyqtSlot()
@@ -158,8 +161,8 @@ class SimulatorGraphicsView(QGraphicsView):
         action_menu = menu.addMenu("Add action")
         add_goto_action = action_menu.addAction("Goto")
         add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
-        add_program_action = action_menu.addAction("External program")
-        add_program_action.triggered.connect(self.on_add_program_action_triggered)
+        trigger_command_action = action_menu.addAction("Trigger command")
+        trigger_command_action.triggered.connect(self.on_trigger_command_action_triggered)
 
         if isinstance(self.context_menu_item, RuleConditionItem):
             menu.addSeparator()

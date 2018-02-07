@@ -24,7 +24,7 @@ from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorExternalProgramAction import SimulatorExternalProgramAction
+from urh.simulator.SimulatorTriggerCommandItem import SimulatorTriggerCommandItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -141,9 +141,8 @@ class SimulatorTabController(QWidget):
                                                                                 parent=self.ui.tblViewFieldValues))
 
     def create_connects(self):
-        self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
-        self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
-        self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
+        self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
+        self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
@@ -384,10 +383,8 @@ class SimulatorTabController(QWidget):
               self.active_item.type != ConditionType.ELSE):
             self.ui.ruleCondLineEdit.setText(self.active_item.condition)
             self.ui.detail_view_widget.setCurrentIndex(3)
-        elif isinstance(self.active_item, SimulatorExternalProgramAction):
-            self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)
-            self.ui.cmdLineArgsLineEdit.setText(self.active_item.args)
-
+        elif isinstance(self.active_item, SimulatorTriggerCommandItem):
+            self.ui.lineEditTriggerCommand.setText(self.active_item.command)
             self.ui.detail_view_widget.setCurrentIndex(4)
         else:
             self.ui.detail_view_widget.setCurrentIndex(0)
@@ -439,15 +436,15 @@ class SimulatorTabController(QWidget):
         return s
 
     @pyqtSlot()
-    def on_btn_choose_ext_prog_clicked(self):
-        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
+    def on_btn_choose_command_clicked(self):
+        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose program"), QDir.homePath())
 
         if file_name is not None and ok:
-            self.ui.extProgramLineEdit.setText(file_name)
+            self.ui.lineEditTriggerCommand.setText(file_name)
 
     @pyqtSlot()
-    def on_ext_program_line_edit_text_changed(self):
-        self.active_item.ext_prog = self.ui.extProgramLineEdit.text()
+    def on_line_edit_trigger_command_text_changed(self):
+        self.active_item.command = self.ui.lineEditTriggerCommand.text()
         self.item_updated(self.active_item)
 
     @pyqtSlot()
@@ -455,11 +452,6 @@ class SimulatorTabController(QWidget):
         self.update_vertical_table_header()
         self.participant_table_model.update()
         self.ui.listViewSimulate.model().update()
-
-    @pyqtSlot()
-    def on_cmd_line_args_line_edit_text_changed(self):
-        self.active_item.args = self.ui.cmdLineArgsLineEdit.text()
-        self.item_updated(self.active_item)
 
     def item_updated(self, item: SimulatorItem):
         self.simulator_config.items_updated.emit([item])

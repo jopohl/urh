@@ -170,7 +170,6 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model.protocol_label_updated.connect(self.item_updated)
         self.ui.gvSimulator.message_updated.connect(self.item_updated)
-        self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
         self.ui.gvSimulator.consolidate_messages_clicked.connect(self.consolidate_messages)
 
         self.simulator_config.items_added.connect(self.refresh_message_table)
@@ -193,35 +192,12 @@ class SimulatorTabController(QWidget):
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
 
-    def add_message_type(self, message: SimulatorMessage):
-        names = set(message_type.name for message_type in self.proto_analyzer.message_types)
-        name = "Message type #"
-        i = next(i for i in itertools.count(start=1) if name + str(i) not in names)
-
-        msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"),
-                                                 self.tr("Name:"), text=name + str(i))
-
-        if ok:
-            msg_type = MessageType(name=msg_type_name)
-
-            for lbl in message.message_type:
-                msg_type.add_protocol_label(start=lbl.start, end=lbl.end - 1, name=lbl.name,
-                                            color_ind=lbl.color_index, type=lbl.field_type)
-
-            self.proto_analyzer.message_types.append(msg_type)
-            self.compare_frame_controller.fill_message_type_combobox()
-            self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
-
-            message.message_type.name = msg_type_name
-            self.simulator_config.items_updated.emit([message])
-
     def on_repeat_value_changed(self, value):
         self.active_item.repeat = value
         self.simulator_config.items_updated.emit([self.active_item])
 
     def on_item_dict_updated(self):
         self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
-        # self.update_goto_combobox()
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:

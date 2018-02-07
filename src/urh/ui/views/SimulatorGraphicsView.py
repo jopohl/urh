@@ -13,7 +13,6 @@ from urh.ui.SimulatorScene import SimulatorScene
 
 class SimulatorGraphicsView(QGraphicsView):
     message_updated = pyqtSignal(SimulatorMessage)
-    new_messagetype_clicked = pyqtSignal(SimulatorMessage)
     consolidate_messages_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -131,10 +130,6 @@ class SimulatorGraphicsView(QGraphicsView):
                 self.message_updated.emit(msg_item.model_item)
 
     @pyqtSlot()
-    def on_new_message_type_action_triggered(self):
-        self.new_messagetype_clicked.emit(self.context_menu_item.model_item)
-
-    @pyqtSlot()
     def on_consolidate_messages_action_triggered(self):
         self.consolidate_messages_clicked.emit()
 
@@ -220,10 +215,6 @@ class SimulatorGraphicsView(QGraphicsView):
                 swap_part_action = menu.addAction("Swap source and destination")
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
                 swap_part_action.setIcon(QIcon.fromTheme("object-flip-horizontal"))
-
-            if len(self.context_menu_item.model_item.message_type):
-                new_message_type_action = menu.addAction("Create new message type based on this message ...")
-                new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
 
         menu.addSeparator()
 

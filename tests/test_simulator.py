@@ -329,7 +329,7 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(500)
 
-        bits = self.__demodulate(conn.recv(65536))
+        bits = self.__demodulate(conn)
         self.assertEqual(bits[0], "101010101")
         self.assertTrue(simulator.simulation_is_finished())
 

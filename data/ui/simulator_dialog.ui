@@ -399,7 +399,34 @@ QGroupBox::indicator:checked {
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
+            <widget class="QTextEdit" name="textEditTranscript">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>You will find the transcript of the simulation here.</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QRadioButton" name="radioButtonTranscriptBit">
+               <property name="text">
+                <string>Bit view</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButtonTranscriptHex">
+               <property name="text">
+                <string>Hex view</string>
+               </property>
+              </widget>
+             </item>
              <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
@@ -419,21 +446,12 @@ QGroupBox::indicator:checked {
                 <string>...</string>
                </property>
                <property name="icon">
-                <iconset theme="document-save"/>
+                <iconset theme="document-save">
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>
             </layout>
-           </item>
-           <item>
-            <widget class="QTextEdit" name="textEditTranscript">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-             <property name="placeholderText">
-              <string>You will find the transcript of the simulation here.</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>

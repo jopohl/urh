@@ -102,6 +102,9 @@ class SimulatorDialog(QDialog):
 
         self.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
 
+        self.ui.radioButtonTranscriptBit.clicked.connect(self.on_radio_button_transcript_bit_clicked)
+        self.ui.radioButtonTranscriptHex.clicked.connect(self.on_radio_button_transcript_hex_clicked)
+
         self.simulator_scene.selectionChanged.connect(self.update_buttons)
         self.simulator_config.items_updated.connect(self.update_buttons)
 
@@ -134,8 +137,8 @@ class SimulatorDialog(QDialog):
             self.ui.textEditSimulation.append(log_msg)
 
         for source, destination, msg in self.simulator.transcript[self.current_transcript_index:]:
-            self.ui.textEditTranscript.append("{}->{}: {}".format(source.shortname, destination.shortname,
-                                                                 msg.plain_bits_str))
+            data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
+            self.ui.textEditTranscript.append("{}->{}: {}".format(source.shortname, destination.shortname, data))
 
         self.current_transcript_index = len(self.simulator.transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
@@ -165,6 +168,13 @@ class SimulatorDialog(QDialog):
         self.device_settings_rx_widget.emit_editing_finished_signals()
         self.device_settings_tx_widget.emit_editing_finished_signals()
         self.sniff_settings_widget.emit_editing_finished_signals()
+
+    def update_transcript_view(self):
+        transcript = []
+        for source, destination, msg in self.simulator.transcript:
+            data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
+            transcript.append("{}->{}: {}".format(source.shortname, destination.shortname, data))
+        self.ui.textEditTranscript.setText("\n".join(transcript))
 
     def closeEvent(self, event: QCloseEvent):
         self.emit_editing_finished_signals()
@@ -297,3 +307,11 @@ class SimulatorDialog(QDialog):
         psd.finished.connect(on_dialog_finished)
         psd.ui.btnAccept.hide()
         psd.show()
+
+    @pyqtSlot()
+    def on_radio_button_transcript_hex_clicked(self):
+        self.update_transcript_view()
+
+    @pyqtSlot()
+    def on_radio_button_transcript_bit_clicked(self):
+        self.update_transcript_view()

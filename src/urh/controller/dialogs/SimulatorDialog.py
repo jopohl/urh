@@ -33,6 +33,7 @@ class SimulatorDialog(QDialog):
         self.ui.setupUi(self)
 
         self.simulator_config = simulator_config  # type: SimulatorConfiguration
+        self.current_transcript_index = 0
 
         self.simulator_scene = SimulatorScene(mode=1,
                                               simulator_config=self.simulator_config)
@@ -110,6 +111,7 @@ class SimulatorDialog(QDialog):
 
         self.ui.btnStartStop.clicked.connect(self.on_btn_start_stop_clicked)
         self.ui.btnSaveLog.clicked.connect(self.on_btn_save_log_clicked)
+        self.ui.btnSaveTranscript.clicked.connect(self.on_btn_save_transcript_clicked)
         self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
@@ -131,6 +133,11 @@ class SimulatorDialog(QDialog):
         for log_msg in filter(None, map(str.strip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
+        for source, destination, msg in self.simulator.transcript[self.current_transcript_index:]:
+            self.ui.textEditTranscript.append("{}->{}: {}".format(source.shortname, destination.shortname,
+                                                                 msg.plain_bits_str))
+
+        self.current_transcript_index = len(self.simulator.transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
         self.ui.lblCurrentRepeatValue.setText(current_repeat)
 
@@ -149,6 +156,8 @@ class SimulatorDialog(QDialog):
     def reset(self):
         self.ui.textEditDevices.clear()
         self.ui.textEditSimulation.clear()
+        self.ui.textEditTranscript.clear()
+        self.current_transcript_index = 0
         self.ui.lblCurrentRepeatValue.setText("-")
         self.ui.lblCurrentItemValue.setText("-")
 
@@ -223,6 +232,21 @@ class SimulatorDialog(QDialog):
                 f.write(log_string)
         except Exception as e:
             QMessageBox.critical(self, "Error saving log", e.args[0])
+
+    @pyqtSlot()
+    def on_btn_save_transcript_clicked(self):
+        file_path = QFileDialog.getSaveFileName(self, "Save transcript", "", "Text file (*.txt)")
+
+        if file_path[0] == "":
+            return
+
+        transcript = self.ui.textEditTranscript.toPlainText()
+
+        try:
+            with open(str(file_path[0]), "w") as f:
+                f.write(transcript)
+        except Exception as e:
+            QMessageBox.critical(self, "Error saving transcript", e.args[0])
 
     @pyqtSlot()
     def on_btn_start_stop_clicked(self):

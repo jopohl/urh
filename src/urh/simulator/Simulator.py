@@ -40,7 +40,7 @@ class Simulator(QObject):
         self.modulators = modulators  # type: list[Modulator]
         self.backend_handler = BackendHandler()
 
-        self.transcript = []
+        self.transcript = []  # type: list[tuple[Participant, Participant, Message]]
 
         self.current_item = None
         self.last_sent_message = None
@@ -195,7 +195,6 @@ class Simulator(QObject):
 
         while self.is_simulating and not self.simulation_is_finished():
             if self.current_item is self.simulator_config.rootItem:
-                self.transcript.clear()
                 next_item = self.current_item.next()
 
             elif isinstance(self.current_item, SimulatorProtocolLabel):

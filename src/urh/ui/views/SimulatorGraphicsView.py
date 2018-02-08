@@ -1,14 +1,16 @@
-from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
-from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+import copy
 
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QKeySequence, QIcon
+from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
+
+from urh.signalprocessing.MessageType import MessageType
+from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.RuleItem import RuleConditionItem
-from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import ConditionType
-from urh.signalprocessing.MessageType import MessageType
-from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.ui.SimulatorScene import SimulatorScene
 
 
@@ -23,6 +25,7 @@ class SimulatorGraphicsView(QGraphicsView):
 
         self.proto_analyzer = None
         self.context_menu_item = None
+        self.copied_items = []
 
         self.delete_action = QAction(self.tr("Delete selected items"), self)
         self.delete_action.setShortcut(QKeySequence.Delete)
@@ -36,6 +39,20 @@ class SimulatorGraphicsView(QGraphicsView):
         self.select_all_action.triggered.connect(self.on_select_all_action_triggered)
         self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.select_all_action)
+
+        self.copy_action = QAction(self.tr("Copy selected items"), self)  # type: QAction
+        self.copy_action.setShortcut(QKeySequence.Copy)
+        self.copy_action.triggered.connect(self.on_copy_action_triggered)
+        self.copy_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
+        self.addAction(self.copy_action)
+
+        self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
+        self.paste_action.setShortcut(QKeySequence.Paste)
+        self.paste_action.triggered.connect(self.on_paste_action_triggered)
+        self.paste_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.paste_action.setIcon(QIcon.fromTheme("edit-paste"))
+        self.addAction(self.paste_action)
 
     def scene(self) -> SimulatorScene:
         return super().scene()
@@ -183,6 +200,12 @@ class SimulatorGraphicsView(QGraphicsView):
                 add_else_cond_action = menu.addAction("Add else block")
                 add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
 
+        menu.addSeparator()
+        menu.addAction(self.copy_action)
+        self.copy_action.setEnabled(len(self.scene().selectedItems()) > 0)
+        menu.addAction(self.paste_action)
+        self.paste_action.setEnabled(len(self.copied_items) > 0)
+
         if isinstance(self.context_menu_item, MessageItem):
             menu.addSeparator()
 
@@ -292,12 +315,16 @@ class SimulatorGraphicsView(QGraphicsView):
         self.context_menu_item = None if len(items) == 0 else items[0]
         menu = self.create_context_menu()
         menu.exec_(event.globalPos())
+        self.copy_action.setEnabled(True)
+        self.paste_action.setEnabled(True)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
             self.navigate_backward()
         elif event.key() == Qt.Key_Down:
             self.navigate_forward()
+        else:
+            super().keyPressEvent(event)
 
     @classmethod
     def add_select_actions_to_menu(cls, menu, scene: SimulatorScene, select_to_trigger, select_from_trigger):
@@ -319,3 +346,14 @@ class SimulatorGraphicsView(QGraphicsView):
             vpa = select_to_menu.addAction(vp.text.toPlainText())
             vpa.setData(vp)
             vpa.triggered.connect(select_to_trigger)
+
+    @pyqtSlot()
+    def on_copy_action_triggered(self):
+        self.copied_items = self.scene().selectedItems()
+
+    @pyqtSlot()
+    def on_paste_action_triggered(self):
+        for item in self.copied_items:
+            assert isinstance(item, GraphicsItem)
+            parent = item.model_item.parent()
+            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], parent.child_count(), parent)

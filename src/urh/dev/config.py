@@ -23,7 +23,7 @@ M = 10 ** 6
 G = 10 ** 9
 # https://github.com/mossmann/hackrf/wiki/HackRF-One#features
 DEVICE_CONFIG["HackRF"] = {
-    "center_freq": dev_range(start=1*M, stop=6 * G, step=1),
+    "center_freq": dev_range(start=10, stop=6 * G, step=1),
     "sample_rate": dev_range(start=2*M, stop=20 * M, step=1),
     "bandwidth": dev_range(start=2 * M, stop=20 * M, step=1),
     "tx_rf_gain": [0, 14],

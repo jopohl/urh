@@ -25,8 +25,6 @@ class TestLimeSDR(unittest.TestCase):
         print("Open:", limesdr.open())
         print("-" * 20)
 
-        print("Is Open 0:", limesdr.is_open(0))
-        print("Is Open 1:", limesdr.is_open(1))
         print("Init", limesdr.init())
         limesdr.set_tx(True)
         self.assertTrue(limesdr.get_tx())

@@ -61,16 +61,6 @@ cpdef int close():
     """
     return LMS_Close(_c_device)
 
-cpdef int disconnect():
-    """
-    Disconnect device but keep configuration cache (device is not deallocated).
-    :return:  0 on success, (-1) on failure
-    """
-    return LMS_Disconnect(_c_device)
-
-cpdef bool is_open(int port):
-    return LMS_IsOpen(_c_device, port)
-
 cpdef int init():
     """
     Configure LMS chip with settings that make it ready for operation.

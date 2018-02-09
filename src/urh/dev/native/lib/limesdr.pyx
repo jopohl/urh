@@ -388,7 +388,7 @@ cpdef int recv_stream(connection, unsigned num_samples, unsigned timeout_ms):
     :param timeout_ms: how long to wait for data before timing out.
     :return: 
     """
-    cdef lms_stream_meta_t meta
+    cdef lms_stream_meta_t meta = lms_stream_meta_t(0, False, False)
     cdef float*buff = <float *> malloc(num_samples * 2 * sizeof(float))
 
     if not buff:
@@ -411,7 +411,7 @@ cpdef int send_stream(float[::1] samples, unsigned timeout_ms):
     :param timeout_ms: how long to wait for data before timing out
     :return: number of samples send on success, (-1) on failure
     """
-    cdef lms_stream_meta_t meta
+    cdef lms_stream_meta_t meta = lms_stream_meta_t(0, False, False)
     cdef size_t sample_count = len(samples) // 2
 
     if len(samples) > 0:

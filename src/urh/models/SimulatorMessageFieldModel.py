@@ -58,7 +58,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     message = lbl.parent()
 
                     try:
-                        data = message.decoded_bits[lbl.start:lbl.end]
+                        data = message.plain_bits[lbl.start:lbl.end]
                     except IndexError:
                         return None
 

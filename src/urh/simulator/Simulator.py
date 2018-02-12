@@ -401,7 +401,7 @@ class Simulator(QObject):
             curr_repeat += 1
 
     def receive_message(self, sniffer):
-        if sniffer.messages:
+        if len(sniffer.messages) > 0:
             return sniffer.messages.pop(0)
 
         spy = QSignalSpy(sniffer.message_sniffed)

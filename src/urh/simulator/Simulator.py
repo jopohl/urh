@@ -7,6 +7,7 @@ import numpy
 from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 from PyQt5.QtTest import QSignalSpy
 
+from urh import constants
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -87,17 +88,17 @@ class Simulator(QObject):
     @pyqtSlot()
     def on_sniffer_ready(self):
         if not self.sniffer_ready:
-            self.log_message("Sniffer is ready to operate")
+            self.log_message("RX is ready to operate")
             self.sniffer_ready = True
 
     @pyqtSlot()
     def on_sender_ready(self):
         if not self.sender_ready:
-            self.log_message("Sender is ready to operate")
+            self.log_message("TX is ready to operate")
             self.sender_ready = True
 
     def stop(self, msg=""):
-        self.log_message("Stop simulation ..." + "{}".format(msg))
+        self.log_message("Stop simulation: " + "{}".format(msg))
         self.is_simulating = False
 
         if msg == "Finished":
@@ -112,7 +113,7 @@ class Simulator(QObject):
 
     def restart(self):
         self.reset()
-        self.log_message("Restart simulation ...")
+        self.log_message("<b>Restarting simulation</b>")
 
     def reset(self):
         self.sniffer_ready = False
@@ -177,7 +178,7 @@ class Simulator(QObject):
                 return True
             if self.fatal_device_error_occurred:
                 return False
-            self.log_message("Waiting for devices ...")
+            self.log_message("<i>Waiting for devices</i>")
             time.sleep(1)
 
         return True
@@ -191,7 +192,7 @@ class Simulator(QObject):
             self.stop("Devices not ready")
             return
 
-        self.log_message("Start simulation ...")
+        self.log_message("<b>Simulation is running</b>")
 
         while self.is_simulating and not self.simulation_is_finished():
             if self.current_item is self.simulator_config.rootItem:
@@ -273,7 +274,7 @@ class Simulator(QObject):
             self.last_sent_message = msg
         else:
             # we have to receive a message
-            self.log_message("Waiting for message " + msg.index() + " ...")
+            self.log_message("<i>Waiting for message {}</i>".format(msg.index()))
             sniffer = self.sniffer
             retry = 0
 
@@ -299,7 +300,7 @@ class Simulator(QObject):
                 received_msg.decoder = new_message.decoder
                 received_msg.message_type = new_message.message_type
 
-                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry)
+                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry, msg_index=msg.index())
 
                 if check_result:
                     decoded_msg = Message(received_msg.decoded_bits, 0,
@@ -324,7 +325,7 @@ class Simulator(QObject):
         self.log_messages.append(timestamp + ": " + message)
         logger.debug(timestamp + ": " + message)
 
-    def check_message(self, received_msg, expected_msg, retry: int) -> (bool, str):
+    def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
         # do we have a crc label?
         crc_label = next((lbl.label for lbl in received_msg.message_type if isinstance(lbl.label, ChecksumLabel)), None)
 
@@ -349,12 +350,10 @@ class Simulator(QObject):
             actual = received_msg.decoded_bits[start_recv:end_recv]
             expected = expected_msg[start_exp:end_exp]
             if actual != expected:
-                error_msg = "\n  [Attempt {}/{}] Mismatch for label {}.\n" \
-                            "  Expected:\t{}\n  Got:\t{}".format(retry + 1,
-                                                                 self.project_manager.simulator_retries,
-                                                                 lbl.name,
-                                                                 "".join(map(str, expected)),
-                                                                 "".join(map(str, actual)))
+                error_msg = "Attempt for message {} [{}/{}]\n".format(msg_index, retry+1, self.project_manager.simulator_retries)
+                error_msg += util.indent_string("Mismatch for label {}".format(lbl.name))
+                error_msg += util.indent_string("* Expected:\t" + "".join(map(str, expected)))
+                error_msg += util.indent_string("* Got:\t\t" + "".join(map(str, actual)))
                 return False, error_msg
 
         return True, ""
@@ -377,11 +376,12 @@ class Simulator(QObject):
             if data is None:
                 continue
 
-            logger.debug("\t" + lbl.name + ": " + data)
-            self.log_messages.append("\t" + lbl.name + ": " + data)
+            log_msg = util.indent_string(lbl.name + ": " + data, 1, append_newline=False)
+            logger.debug(log_msg)
+            self.log_messages.append(log_msg)
 
     def resend_last_message(self):
-        self.log_message("Resending last message ...")
+        self.log_message("Resending last message")
         lsm = self.last_sent_message
 
         if lsm is None:

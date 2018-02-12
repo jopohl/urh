@@ -128,3 +128,6 @@ NUM_CENTERS = 16
 
 SHORTEST_PREAMBLE_IN_BITS = 8
 SHORTEST_CONSTANT_IN_BITS = 8
+
+# used for displaying indented logs e.g. in simulation dialog
+INDENT = 8

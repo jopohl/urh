@@ -16,6 +16,7 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
+from urh.util import util
 from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
@@ -130,10 +131,10 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
     def update_view(self):
-        for device_message in filter(None, map(str.strip, self.simulator.device_messages())):
+        for device_message in filter(None, map(str.rstrip, self.simulator.device_messages())):
             self.ui.textEditDevices.append(device_message)
 
-        for log_msg in filter(None, map(str.strip, self.simulator.read_log_messages())):
+        for log_msg in filter(None, map(str.rstrip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
         for source, destination, msg in self.simulator.transcript[self.current_transcript_index:]:

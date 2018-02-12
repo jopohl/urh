@@ -406,7 +406,11 @@ class Simulator(QObject):
 
         spy = QSignalSpy(sniffer.message_sniffed)
         if spy.wait(self.project_manager.simulator_timeout * 1000):
-            return sniffer.messages.pop(0)
+            try:
+                return sniffer.messages.pop(0)
+            except IndexError:
+                self.log_message("Could not receive message")
+                return None
         else:
             self.log_message("Receive timeout")
             return None

@@ -11,8 +11,10 @@ from urh.util import FileOperator
 
 
 class SendDialog(SendRecvDialog):
-    def __init__(self, project_manager, modulated_data, modulation_msg_indices=None, parent=None, testing_mode=False):
-        super().__init__(project_manager, is_tx=True, parent=parent, testing_mode=testing_mode)
+    def __init__(self, project_manager, modulated_data, modulation_msg_indices=None, continuous_send_mode=False,
+                 parent=None, testing_mode=False):
+        super().__init__(project_manager, is_tx=True, continuous_send_mode=continuous_send_mode,
+                         parent=parent, testing_mode=testing_mode)
 
         self.graphics_view = self.ui.graphicsViewSend
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_send)

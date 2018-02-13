@@ -71,9 +71,9 @@ class SimulatorDialog(QDialog):
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
         self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
 
-        self.device_settings_tx_widget = DeviceSettingsWidget(project_manager,
-                                                              is_tx=True,
-                                                              backend_handler=self.backend_handler)
+        self.device_settings_tx_widget = DeviceSettingsWidget(project_manager, is_tx=True,
+                                                              backend_handler=self.backend_handler,
+                                                              continuous_send_mode=True)
         self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
         self.device_settings_tx_widget.ui.labelNRepeat.hide()
 

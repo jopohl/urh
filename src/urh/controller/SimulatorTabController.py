@@ -144,7 +144,7 @@ class SimulatorTabController(QWidget):
         self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
         self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
-        self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
+        self.ui.btnStartSim.clicked.connect(self.on_btn_simulate_clicked)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
@@ -388,7 +388,7 @@ class SimulatorTabController(QWidget):
         self.update_ui()
 
     @pyqtSlot()
-    def on_show_simulate_dialog_action_triggered(self):
+    def on_btn_simulate_clicked(self):
         if not self.simulator_config.protocol_valid():
             QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
                                  self.tr(

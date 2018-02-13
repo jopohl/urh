@@ -20,7 +20,7 @@ class DeviceSettingsWidget(QWidget):
     device_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler = None,
-                 parent=None):
+                 continuous_send_mode=False, parent=None):
         super().__init__(parent)
         self.ui = Ui_FormDeviceSettings()
         self.ui.setupUi(self)
@@ -38,7 +38,7 @@ class DeviceSettingsWidget(QWidget):
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
         self.ui.cbDevice.clear()
-        items = self.get_devices_for_combobox()
+        items = self.get_devices_for_combobox(continuous_send_mode)
         self.ui.cbDevice.addItems(items)
         self.bootstrap(project_manager.device_conf, enforce_default=True)
 
@@ -272,12 +272,15 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxPort.setVisible("port" in conf)
         self.ui.labelPort.setVisible("port" in conf)
 
-    def get_devices_for_combobox(self):
+    def get_devices_for_combobox(self, continuous_send_mode):
         items = []
         for device_name in self.backend_handler.DEVICE_NAMES:
             dev = self.backend_handler.device_backends[device_name.lower()]
             if self.is_tx and dev.is_enabled and dev.supports_tx:
-                items.append(device_name)
+                if not continuous_send_mode:
+                    items.append(device_name)
+                elif dev.selected_backend != Backends.grc:
+                    items.append(device_name)
             elif self.is_rx and dev.is_enabled and dev.supports_rx:
                 items.append(device_name)
 

@@ -438,6 +438,19 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
+    def resume_on_full_receive_buffer(self) -> bool:
+        return self.__dev.resume_on_full_receive_buffer
+
+    @resume_on_full_receive_buffer.setter
+    def resume_on_full_receive_buffer(self, value: bool):
+        if value != self.__dev.resume_on_full_receive_buffer:
+            self.__dev.resume_on_full_receive_buffer = value
+            if self.backend == Backends.native:
+                self.__dev.receive_buffer = None
+            elif self.backend == Backends.grc:
+                self.__dev.data = None
+
+    @property
     def num_sending_repeats(self):
         if self.mode == Mode.send:
             if self.backend == Backends.grc:

@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
@@ -14,9 +14,10 @@ from urh.dev.EndlessSender import EndlessSender
 from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.ui.SimulatorScene import SimulatorScene
+from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.ui.painting.SniffSceneManager import SniffSceneManager
 from urh.ui.ui_simulator_dialog import Ui_DialogSimulator
-from urh.util import util
+from urh.util import util, FileOperator
 from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
@@ -124,6 +125,10 @@ class SimulatorDialog(QDialog):
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
 
+        self.ui.btnSaveRX.clicked.connect(self.on_btn_save_rx_clicked)
+
+        self.ui.checkBoxCaptureFullRX.clicked.connect(self.on_checkbox_capture_full_rx_clicked)
+
         self.ui.btnTestSniffSettings.clicked.connect(self.on_btn_test_sniff_settings_clicked)
 
     def update_buttons(self):
@@ -196,6 +201,7 @@ class SimulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_simulation_started(self):
+        self.ui.checkBoxCaptureFullRX.setDisabled(True)
         self.reset()
         self.timer.start(self.update_interval)
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-stop"))
@@ -208,10 +214,16 @@ class SimulatorDialog(QDialog):
 
         if hasattr(rx_device.data, "real"):
             self.ui.graphicsViewPreview.setEnabled(True)
-            self.scene_manager.data_array = rx_device.data.real
+            if self.ui.checkBoxCaptureFullRX.isChecked():
+                self.scene_manager.plot_data = rx_device.data.real
+            else:
+                self.scene_manager.data_array = rx_device.data.real
         else:
             self.ui.graphicsViewPreview.setEnabled(False)
-            self.scene_manager.data_array = np.array([])
+            if self.ui.checkBoxCaptureFullRX.isChecked():
+                self.scene_manager.plot_data = np.array([])
+            else:
+                self.scene_manager.data_array = np.array([])
             self.scene_manager.scene.addText("Could not generate RX preview.")
 
     @pyqtSlot()
@@ -220,6 +232,7 @@ class SimulatorDialog(QDialog):
         self.update_view()
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
         self.ui.btnStartStop.setText("Start")
+        self.ui.checkBoxCaptureFullRX.setEnabled(True)
 
     @pyqtSlot()
     def on_btn_log_all_clicked(self):
@@ -272,6 +285,9 @@ class SimulatorDialog(QDialog):
             self.device_settings_tx_widget.emit_editing_finished_signals()
             self.sniff_settings_widget.emit_editing_finished_signals()
 
+            self.simulator.sniffer.rcv_device.current_index = 0
+            self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
+
             self.simulator.start()
 
     @pyqtSlot()
@@ -320,3 +336,22 @@ class SimulatorDialog(QDialog):
     @pyqtSlot()
     def on_radio_button_transcript_bit_clicked(self):
         self.update_transcript_view()
+
+    @pyqtSlot()
+    def on_checkbox_capture_full_rx_clicked(self):
+        self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
+        if self.ui.checkBoxCaptureFullRX.isChecked():
+            self.scene_manager = LiveSceneManager(np.array([]), parent=self)
+            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+        else:
+            self.scene_manager = SniffSceneManager(np.array([]), parent=self)
+
+            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+
+    @pyqtSlot()
+    def on_btn_save_rx_clicked(self):
+        rx_device = self.simulator.sniffer.rcv_device
+        if isinstance(rx_device.data, np.ndarray):
+            filename = FileOperator.get_save_file_name("simulation_capture.complex")
+            if filename:
+                rx_device.data[:rx_device.current_index].tofile(filename)

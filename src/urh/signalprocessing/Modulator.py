@@ -39,8 +39,6 @@ class Modulator(object):
         self.param_for_zero = 0  # Freq, Amplitude (0..100%) or Phase (0..360)
         self.param_for_one = 100  # Freq, Amplitude (0..100%) or Phase (0..360)
 
-        self.modulated_samples = None
-
     def __eq__(self, other):
         return self.carrier_freq_hz == other.carrier_freq_hz and \
                self.carrier_amplitude == other.carrier_amplitude and \
@@ -154,7 +152,7 @@ class Modulator(object):
         mod_type = self.MODULATION_TYPES[self.modulation_type]
         total_samples = int(len(data) * self.samples_per_bit + pause)
 
-        self.modulated_samples = np.zeros(total_samples, dtype=np.complex64)
+        result = np.zeros(total_samples, dtype=np.complex64)
 
         # Lets build a param_vector
         param_vector = np.empty(total_samples - pause, dtype=np.float64)
@@ -198,11 +196,13 @@ class Modulator(object):
 
         # it may be tempting to do this with complex exp, but exp overflows for large values!
         # arg = ((2 * np.pi * f * t + phi) * 1j).astype(np.complex64)
-        # self.modulated_samples[:total_samples - pause] = a * np.exp(arg)
+        # result[:total_samples - pause] = a * np.exp(arg)
 
         arg = (2 * np.pi * f * t + phi)
-        self.modulated_samples[:total_samples - pause].real = a * np.cos(arg)
-        self.modulated_samples[:total_samples - pause].imag = a * np.sin(arg)
+        result[:total_samples - pause].real = a * np.cos(arg)
+        result[:total_samples - pause].imag = a * np.sin(arg)
+
+        return result
 
     def gauss_fir(self, bt=0.5, filter_width=1):
         """
@@ -224,7 +224,7 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("modulated_samples", "data", "_Modulator__sample_rate", "default_sample_rate"):
+            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))

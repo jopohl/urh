@@ -61,15 +61,12 @@ if __name__ == '__main__':
     modulator = Modulator("test_modulator")
     modulator.samples_per_bit = 1000
     modulator.carrier_freq_hz = 55e3
-    modulator.modulate(msg.encoded_bits)
-
-    modulator.modulated_samples.tofile("/tmp/test.complex")
 
     logger.debug("Starting endless sender")
     endless_sender.start()
     time.sleep(1)
     logger.debug("Pushing data")
-    endless_sender.push_data(modulator.modulated_samples)
+    endless_sender.push_data(modulator.modulate(msg.encoded_bits))
     logger.debug("Pushed data")
     time.sleep(5)
     logger.debug("Stopping endless sender")

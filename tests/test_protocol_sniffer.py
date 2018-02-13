@@ -48,8 +48,7 @@ class TestProtocolSniffer(QtTestCase):
 
         packages = []
         for d in data:
-            modulator.modulate(list(map(int, d)), pause)
-            packages.append(modulator.modulated_samples)
+            packages.append(modulator.modulate(list(map(int, d)), pause))
 
         # verify modulation was correct
         pa = ProtocolAnalyzer(None)

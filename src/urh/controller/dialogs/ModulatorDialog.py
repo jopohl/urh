@@ -162,8 +162,7 @@ class ModulatorDialog(QDialog):
         self.ui.gVData.update()
 
     def draw_modulated(self):
-        self.current_modulator.modulate(pause=0)
-        self.ui.gVModulated.plot_data(self.current_modulator.modulated_samples.imag.astype(numpy.float32))
+        self.ui.gVModulated.plot_data(self.current_modulator.modulate(pause=0).imag.astype(numpy.float32))
         if self.lock_samples_in_view:
             siv = self.ui.gVOriginalSignal.view_rect().width()
             self.adjust_samples_in_view(siv)

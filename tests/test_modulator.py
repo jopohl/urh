@@ -39,8 +39,7 @@ class TestModulator(QtTestCase):
                 modulator.param_for_zero = 0
                 modulator.param_for_one = 180
 
-            modulator.modulate(self.modulation_data, self.pause)
-            modulator.modulated_samples.tofile(filename)
+            modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 
             signal = Signal(filename, modulation)
             signal.modulation_type = i

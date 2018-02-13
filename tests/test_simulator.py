@@ -136,10 +136,10 @@ class TestSimulator(QtTestCase):
         modulator = Modulator("test_modulator")
         modulator.samples_per_bit = 100
         modulator.carrier_freq_hz = 55e3
-        modulator.modulate(msg_a.encoded_bits)
+
         # yappi.start()
 
-        self.network_sdr_plugin_sender.send_raw_data(modulator.modulated_samples, 1)
+        self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
         QTest.qWait(10)
         # send some zeros to simulate the end of a message
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
@@ -207,8 +207,8 @@ class TestSimulator(QtTestCase):
         checksum = list(checksum_label.calculate_checksum(seq+data))
 
         msg1 = preamble + sync + seq + data + checksum
-        modulator.modulate(msg1)
-        self.alice.send_raw_data(modulator.modulated_samples, 1)
+
+        self.alice.send_raw_data(modulator.modulate(msg1), 1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
@@ -223,8 +223,8 @@ class TestSimulator(QtTestCase):
         seq = list(map(int, "{0:08b}".format(seq_num+2)))
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg2 = preamble + sync + seq + data + checksum
-        modulator.modulate(msg2)
-        self.alice.send_raw_data(modulator.modulated_samples, 1)
+
+        self.alice.send_raw_data(modulator.modulate(msg2), 1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
@@ -239,8 +239,8 @@ class TestSimulator(QtTestCase):
         seq = list(map(int, "{0:08b}".format(seq_num+4)))
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg3 = preamble + sync + seq + data + checksum
-        modulator.modulate(msg3)
-        self.alice.send_raw_data(modulator.modulated_samples, 1)
+
+        self.alice.send_raw_data(modulator.modulate(msg3), 1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(100)
@@ -323,8 +323,8 @@ class TestSimulator(QtTestCase):
         conn, addr = s.accept()
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
-        modulator.modulate("0" * 42)
-        self.alice.send_raw_data(modulator.modulated_samples, 1)
+
+        self.alice.send_raw_data(modulator.modulate("0" * 42), 1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
         QTest.qWait(500)

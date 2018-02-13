@@ -22,7 +22,7 @@ class TestModulatorGUI(QtTestCase):
             self.dialog.show()
 
         logger.debug("Initializing Modulation dialog")
-        self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
+        self.dialog.initialize("1111")
         logger.debug("Preparation success")
 
     def test_add_remove_modulator(self):

@@ -28,6 +28,7 @@ class SimulatorDialog(QDialog):
 
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, signals: list = None,
+                 signal_tree_model=None,
                  parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogSimulator()
@@ -73,7 +74,8 @@ class SimulatorDialog(QDialog):
         self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
         self.device_settings_tx_widget.ui.labelNRepeat.hide()
 
-        self.modulation_settings_widget = ModulationSettingsWidget(modulators, parent=None)
+        self.modulation_settings_widget = ModulationSettingsWidget(modulators, signal_tree_model=signal_tree_model,
+                                                                   parent=None)
 
         self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
         self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(1, self.modulation_settings_widget)

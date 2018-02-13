@@ -256,14 +256,10 @@ class SimulatorTabController(QWidget):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
         preselected_index = selected_message.modulator_index
 
-        modulator_dialog = ModulatorDialog(self.project_manager.modulators, parent=self)
-        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
-        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog = ModulatorDialog(self.project_manager.modulators, tree_model=self.tree_model, parent=self)
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
         modulator_dialog.showMaximized()
-
-        self.generator_tab_controller.initialize_modulation_dialog(selected_message.encoded_bits_str[0:10],
-                                                                   modulator_dialog)
+        modulator_dialog.initialize(selected_message.encoded_bits_str[0:10])
 
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
@@ -427,7 +423,8 @@ class SimulatorTabController(QWidget):
         signals = [p.signal for p in protos if p.signal is not None]
 
         s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
-                            self.sim_expression_parser, self.project_manager, signals=signals, parent=self)
+                            self.sim_expression_parser, self.project_manager, signals=signals,
+                            signal_tree_model=self.tree_model, parent=self)
 
         s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
         s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)

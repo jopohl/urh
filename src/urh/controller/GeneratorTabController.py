@@ -263,9 +263,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialog(self.modulators, parent=self.parent())
-        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
-        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog = ModulatorDialog(self.modulators, tree_model=self.tree_model, parent=self.parent())
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
 
         modulator_dialog.finished.connect(self.refresh_modulators)
@@ -276,20 +274,6 @@ class GeneratorTabController(QWidget):
     def set_modulation_profile_status(self):
         visible = constants.SETTINGS.value("multiple_modulations", False, bool)
         self.ui.cBoxModulations.setVisible(visible)
-
-    def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialog):
-        dialog.on_modulation_type_changed()  # for drawing modulated signal initially
-        dialog.original_bits = bits
-        dialog.ui.linEdDataBits.setText(bits)
-        dialog.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
-        dialog.draw_original_signal()
-        dialog.ui.gVModulated.show_full_scene(reinitialize=True)
-        dialog.ui.gVData.show_full_scene(reinitialize=True)
-        dialog.ui.gVData.auto_fit_view()
-        dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
-        dialog.ui.gVCarrier.auto_fit_view()
-
-        dialog.mark_samples_in_view()
 
     def init_rfcat_plugin(self):
         self.set_rfcat_button_visibility()
@@ -310,7 +294,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog, message = self.prepare_modulation_dialog()
         modulator_dialog.showMaximized()
 
-        self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
+        modulator_dialog.initialize(message.encoded_bits_str[0:10])
         self.project_manager.modulation_was_edited = True
 
     @pyqtSlot()

@@ -674,7 +674,7 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.setFocus()
 
     def filter_search_results(self):
-        if self.ui.btnSearchSelectFilter.text() != "Filter":
+        if "Filter" not in self.ui.btnSearchSelectFilter.text():
             return
 
         if self.ui.lineEditSearch.text():

@@ -34,6 +34,8 @@ class SimulatorDialog(QDialog):
         self.ui = Ui_DialogSimulator()
         self.ui.setupUi(self)
 
+        self.setAttribute(Qt.WA_DeleteOnClose)
+
         self.simulator_config = simulator_config  # type: SimulatorConfiguration
         self.current_transcript_index = 0
 

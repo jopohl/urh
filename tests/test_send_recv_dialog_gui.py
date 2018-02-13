@@ -222,12 +222,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
                                        self.signal.data))
 
-        self.assertEqual(send_dialog.send_indicator.rect().width(), self.signal.num_samples)
-        self.assertFalse(send_dialog.ui.btnClear.isEnabled())
-
-        send_dialog.on_clear_clicked()
-        self.assertEqual(send_dialog.send_indicator.rect().width(), 0)
-        send_dialog.ui.btnStop.click()
+        self.assertEqual(send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished")
         self.assertFalse(send_dialog.ui.btnStop.isEnabled())
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())

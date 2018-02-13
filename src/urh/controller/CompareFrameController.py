@@ -679,17 +679,15 @@ class CompareFrameController(QWidget):
             # insert a & at beginning of the string
             return
 
+        self.setCursor(Qt.WaitCursor)
         if self.ui.lineEditSearch.text():
             self.search()
             self.ui.tblLabelValues.clearSelection()
 
             matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
-            self.ui.tblViewProtocol.blockSignals(True)
             rc = self.protocol_model.row_count
-            for i in set(range(0, rc)) - matching_rows:
-                self.ui.tblViewProtocol.hide_row(row=i)
-            self.ui.tblViewProtocol.blockSignals(False)
-            self.ui.tblViewProtocol.row_visibility_changed.emit()
+            rows_to_hide = set(range(0, rc)) - matching_rows
+            self.ui.tblViewProtocol.hide_row(rows_to_hide)
 
             self.ui.lFilterShown.setText(self.tr("shown: {}/{}".format(rc - len(self.protocol_model.hidden_rows), rc)))
 
@@ -699,6 +697,8 @@ class CompareFrameController(QWidget):
 
             self.ui.lFilterShown.setText("")
             self.set_shown_protocols()
+
+        self.unsetCursor()
 
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())

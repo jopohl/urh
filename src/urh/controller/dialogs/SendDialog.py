@@ -78,7 +78,8 @@ class SendDialog(SendRecvDialog):
             if not self.device.sending_finished:
                 self.ui.lblCurrentRepeatValue.setText(str(self.device.current_iteration + 1))
             else:
-                self.ui.lblCurrentRepeatValue.setText("Done")
+                self.ui.btnStop.click()
+                self.ui.lblCurrentRepeatValue.setText("Sending finished")
 
     def init_device(self):
         device_name = self.selected_device_name

@@ -79,7 +79,7 @@ DEVICE_CONFIG[NetworkSDRInterfacePlugin.NETWORK_SDR_NAME] = {}
 # http://www.rtl-sdr.com/review-airspy-vs-sdrplay-rsp-vs-hackrf/
 DEVICE_CONFIG["AirSpy R2"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [10*M, 10*M],
+    "sample_rate": [10*M, 10*M],    # This devices always uses 10M, no matter what is configured.
     "bandwidth": [10*M, 10*M],
     "rx_rf_gain":  list(range(0, 16)),
     "rx_if_gain":  list(range(0, 16)),
@@ -88,7 +88,7 @@ DEVICE_CONFIG["AirSpy R2"] = {
 
 DEVICE_CONFIG["AirSpy Mini"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [6*M, 6*M],
+    "sample_rate": [6*M, 6*M],      # This devices always uses 6M, no matter what is configured.
     "bandwidth": [6*M, 6*M],
     "rx_rf_gain":  list(range(0, 16)),
     "rx_if_gain":  list(range(0, 16)),

@@ -615,7 +615,6 @@ class CompareFrameController(QWidget):
     def refresh(self):
         self.__protocols = None
         self.set_shown_protocols()
-        self.updateUI()
 
     def reset(self):
         for message_type in self.proto_analyzer.message_types:

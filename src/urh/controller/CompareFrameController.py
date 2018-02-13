@@ -675,6 +675,8 @@ class CompareFrameController(QWidget):
 
     def filter_search_results(self):
         if "Filter" not in self.ui.btnSearchSelectFilter.text():
+            # Checking for equality is not enough as some desktop environments (I am watching at you KDE!)
+            # insert a & at beginning of the string
             return
 
         if self.ui.lineEditSearch.text():

@@ -44,4 +44,6 @@ class SignalSceneManager(SceneManager):
 
     def eliminate(self):
         super().eliminate()
+        if hasattr(self.signal, "eliminate"):
+            self.signal.eliminate()
         self.signal = None

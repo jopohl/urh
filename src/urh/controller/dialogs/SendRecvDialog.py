@@ -24,6 +24,9 @@ class SendRecvDialog(QDialog):
         self.is_tx = is_tx
         self.update_interval = 25
 
+        # This flag is needed. Will cause memory leak otherwise.
+        self.setAttribute(Qt.WA_DeleteOnClose)
+
         self.setWindowFlags(Qt.Window)
         self.testing_mode = testing_mode
 

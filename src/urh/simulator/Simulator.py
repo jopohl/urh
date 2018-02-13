@@ -173,7 +173,7 @@ class Simulator(QObject):
         return self.current_repeat >= self.project_manager.simulator_num_repeat
 
     def __wait_for_devices(self):
-        for i in range(5):
+        for i in range(10):
             if self.sniffer_ready and self.sender_ready:
                 return True
             if self.fatal_device_error_occurred:

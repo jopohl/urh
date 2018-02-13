@@ -140,7 +140,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     @current_receive_index.setter
     def current_receive_index(self, value):
-        if hasattr(self.server, "current_receive_index"):
+        if hasattr(self, "server") and hasattr(self.server, "current_receive_index"):
             self.server.current_receive_index = value
         else:
             pass

@@ -138,18 +138,9 @@ class SignalFrame(QFrame):
             self.show_protocol(refresh=False)
 
         else:
-            self.ui.btnFilter.setDisabled(True)
             self.ui.lSignalTyp.setText("Protocol")
-
-            scene, nsamples = SignalSceneManager.create_rectangle(proto_bits)
-
-            self.ui.lSamplesInView.setText("{0:n}".format(int(nsamples)))
-            self.ui.lSamplesTotal.setText("{0:n}".format(int(nsamples)))
-            self.ui.gvSignal.setScene(scene)
-            self.ui.btnReplay.hide()
-
+            self.set_empty_frame_visibilities()
             self.create_connects()
-            self.ui.btnSaveSignal.hide()
 
     @property
     def spectrogram_is_active(self) -> bool:
@@ -259,26 +250,11 @@ class SignalFrame(QFrame):
         self.ui.btnAutoDetect.blockSignals(False)
 
     def set_empty_frame_visibilities(self):
-        self.ui.lInfoLenText.hide()
-        self.ui.spinBoxInfoLen.hide()
-        self.ui.spinBoxCenterOffset.hide()
-        self.ui.spinBoxTolerance.hide()
-        self.ui.chkBoxShowProtocol.hide()
-        self.ui.cbProtoView.hide()
-        self.ui.lErrorTolerance.hide()
-        self.ui.lSignalViewText.hide()
-        self.ui.chkBoxSyncSelection.hide()
-        self.ui.txtEdProto.hide()
-        self.ui.gvLegend.hide()
-        self.ui.cbSignalView.hide()
-        self.ui.cbModulationType.hide()
-        self.ui.btnSaveSignal.hide()
-        self.ui.btnAutoDetect.hide()
-        self.ui.btnAdvancedModulationSettings.hide()
-        self.ui.lCenterOffset.hide()
-        self.ui.spinBoxNoiseTreshold.hide()
-        self.ui.labelNoise.hide()
-        self.ui.labelModulation.hide()
+        for widget in dir(self.ui):
+            w = getattr(self.ui, widget)
+            if hasattr(w, "hide") and w not in (self.ui.lSignalNr, self.ui.lSignalTyp,
+                                                self.ui.btnCloseSignal, self.ui.lineEditSignalName):
+                w.hide()
 
     def cancel_filtering(self):
         self.filter_abort_wanted = True

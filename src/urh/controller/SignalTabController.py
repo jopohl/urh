@@ -90,8 +90,6 @@ class SignalTabController(QWidget):
                                 parent=self)
 
         sig_frame.ui.lineEditSignalName.setText(filename)
-        sig_frame.setMinimumHeight(sig_frame.height())
-        sig_frame.set_empty_frame_visibilities()
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
 
         self.ui.splitter.insertWidget(self.num_frames, sig_frame)

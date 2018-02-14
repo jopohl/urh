@@ -62,6 +62,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="handleWidth">
+          <number>6</number>
+         </property>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <property name="leftMargin">
@@ -196,7 +199,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
               <string>Simulate...</string>
              </property>
              <property name="icon">
-              <iconset theme="media-playback-start"/>
+              <iconset theme="media-playback-start">
+               <normaloff>.</normaloff>.</iconset>
              </property>
             </widget>
            </item>

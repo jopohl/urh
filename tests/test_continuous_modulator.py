@@ -14,6 +14,7 @@ class TestContinuousModulator(unittest.TestCase):
 
     def test_modulate_continuously(self):
         modulator = Modulator("Test")
+        modulator.modulation_type_str = "FSK"
         continuous_modulator = ContinuousModulator(self.__create_messages(), [modulator])
 
         self.assertEqual(continuous_modulator.current_message_index.value, 0)

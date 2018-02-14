@@ -170,6 +170,13 @@ class Modulator(object):
                                                 self.carrier_freq_hz,
                                                 self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                 self.samples_per_bit)
+        elif mod_type == "PSK":
+            phi0 = self.param_for_zero * (np.pi / 180)
+            phi1 = self.param_for_one * (np.pi / 180)
+            return signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
+                                                self.carrier_freq_hz,
+                                                phi0, phi1, self.sample_rate,
+                                                self.samples_per_bit)
 
         # Lets build a param_vector
         param_vector = np.empty(total_samples - pause, dtype=np.float64)

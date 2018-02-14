@@ -79,7 +79,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Protocols (drag&amp;drop to Flow Graph):</string>
+              <string>Protocols (Drag&amp;Drop to Flow Graph):</string>
              </property>
             </widget>
            </item>
@@ -194,6 +194,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
             <widget class="QPushButton" name="btnStartSim">
              <property name="text">
               <string>Simulate...</string>
+             </property>
+             <property name="icon">
+              <iconset theme="media-playback-start"/>
              </property>
             </widget>
            </item>

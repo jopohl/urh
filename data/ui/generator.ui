@@ -622,7 +622,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </font>
                </property>
                <property name="text">
-                <string>Generated data</string>
+                <string>Generated Data</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -664,7 +664,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 <string>...</string>
                </property>
                <property name="icon">
-                <iconset theme="document-open"/>
+                <iconset theme="document-open">
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>

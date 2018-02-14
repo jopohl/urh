@@ -20,7 +20,7 @@
       <string notr="true">QTabWidget::pane { border: 0; }</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabLog">
       <attribute name="title">
@@ -103,8 +103,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1066</width>
-            <height>767</height>
+            <width>1076</width>
+            <height>781</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -168,8 +168,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1066</width>
-            <height>767</height>
+            <width>1076</width>
+            <height>781</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -387,7 +387,7 @@ QGroupBox::indicator:checked {
                    <item>
                     <widget class="QCheckBox" name="checkBoxCaptureFullRX">
                      <property name="text">
-                      <string>Capture full RX</string>
+                      <string>Capture complex file</string>
                      </property>
                     </widget>
                    </item>

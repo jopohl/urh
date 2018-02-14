@@ -12,6 +12,7 @@ from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 import array
 
+
 class Modulator(object):
     """
     This class can modulate bits to a carrier.
@@ -177,6 +178,11 @@ class Modulator(object):
                                                 self.carrier_freq_hz,
                                                 phi0, phi1, self.sample_rate,
                                                 self.samples_per_bit)
+        elif mod_type == "GFSK":
+            return signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
+                                                 self.param_for_zero, self.param_for_one,
+                                                 self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                 self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
 
         # Lets build a param_vector
         param_vector = np.empty(total_samples - pause, dtype=np.float64)

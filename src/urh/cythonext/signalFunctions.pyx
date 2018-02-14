@@ -119,6 +119,62 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_psk(unsigned char[:] bit_array
     return result
 
 
+cdef np.ndarray[np.float64_t, ndim=1] gauss_fir(double sample_rate, unsigned long samples_per_bit,
+                                                double bt=.5, double filter_width=1.0):
+    """
+
+    :param filter_width: Filter width
+    :param bt: normalized 3-dB bandwidth-symbol time product
+    :return:
+    """
+    # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
+    k = np.arange(-int(filter_width * samples_per_bit), int(filter_width * samples_per_bit) + 1)
+    ts = samples_per_bit / sample_rate  # symbol time
+    h = np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
+        -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_bit) ** 2))
+    return h / h.sum()
+
+cpdef np.ndarray[np.complex64_t, ndim=1] modulate_gfsk(unsigned char[:] bit_array,
+                                                      unsigned long pause, unsigned long start,
+                                                      double a, double freq0, double freq1,
+                                                      double phi, double sample_rate,
+                                                      unsigned long samples_per_bit,
+                                                      double gauss_bt, double filter_width):
+    cdef long long i, index
+    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
+
+    cdef np.ndarray[np.float64_t, ndim=1] frequencies = np.empty(total_samples - pause, dtype=np.float64)
+    cdef long long loop_end = total_samples-pause
+
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
+        index = <long long>(i/samples_per_bit)
+        frequencies[i] = freq0 if bit_array[index] == 0 else freq1
+
+    cdef np.ndarray[np.float64_t, ndim=1] t = np.arange(start, start + total_samples - pause) / sample_rate
+    cdef np.ndarray[np.float64_t, ndim=1] gfir = gauss_fir(sample_rate, samples_per_bit,
+                                                           bt=gauss_bt, filter_width=filter_width)
+
+    if len(frequencies) >= len(gfir):
+        frequencies = np.convolve(frequencies, gfir, mode="same")
+    else:
+        # Prevent dimension crash later, because gaussian finite impulse response is longer then param_vector
+        frequencies = np.convolve(gfir, frequencies, mode="same")[:len(frequencies)]
+
+    cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
+
+    cdef np.ndarray[np.float64_t, ndim=1] phases = np.empty(len(frequencies), dtype=np.float64)
+    phases[0] = phi
+    for i in range(0, len(phases) - 1):
+         # Correct the phase to prevent spiky jumps
+        phases[i + 1] = 2 * M_PI * t[i] * (frequencies[i] - frequencies[i + 1]) + phases[i]
+
+    cdef np.ndarray[np.float64_t, ndim=1] arg = (2 * M_PI * frequencies * t + phases)
+    result[:total_samples - pause].real = a * np.cos(arg)
+    result[:total_samples - pause].imag = a * np.sin(arg)
+
+
+    return result
+
 cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):
     cdef float phase_error

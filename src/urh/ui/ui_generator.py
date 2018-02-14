@@ -381,7 +381,7 @@ class Ui_GeneratorTab(object):
         self.cbViewType.setItemText(1, _translate("GeneratorTab", "Hex"))
         self.cbViewType.setItemText(2, _translate("GeneratorTab", "ASCII"))
         self.lViewType.setText(_translate("GeneratorTab", "Viewtype:"))
-        self.labelGeneratedData.setText(_translate("GeneratorTab", "Generated data"))
+        self.labelGeneratedData.setText(_translate("GeneratorTab", "Generated Data"))
         self.btnSave.setToolTip(_translate("GeneratorTab", "Save current fuzz profile."))
         self.btnSave.setText(_translate("GeneratorTab", "..."))
         self.btnOpen.setToolTip(_translate("GeneratorTab", "Load a fuzz profile."))

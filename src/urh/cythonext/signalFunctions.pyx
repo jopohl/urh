@@ -73,6 +73,30 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
 
     return result
 
+cpdef np.ndarray[np.complex64_t, ndim=1] modulate_ask(unsigned char[:] bit_array,
+                                                      unsigned long pause, unsigned long start,
+                                                      double a0, double a1, double f,
+                                                      double phi, double sample_rate,
+                                                      unsigned long samples_per_bit):
+    cdef long long i, index
+    cdef double t, a, arg
+    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
+
+    cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
+
+    cdef long long loop_end = total_samples-pause
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
+        index = <long long>(i/samples_per_bit)
+        a = a0 if bit_array[index] == 0 else a1
+
+        if a > 0:
+            t = (i+start) / sample_rate
+            arg = 2 * M_PI * f * t + phi
+            result[i] = a*(cos(arg) + imag_unit * sin(arg))
+
+    return result
+
+
 cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):
     cdef float phase_error

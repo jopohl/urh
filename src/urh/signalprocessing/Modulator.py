@@ -163,6 +163,13 @@ class Modulator(object):
                                                 self.param_for_zero, self.param_for_one,
                                                 self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                 self.samples_per_bit)
+        elif mod_type == "ASK":
+            a0 = self.carrier_amplitude * (self.param_for_zero / 100)
+            a1 = self.carrier_amplitude * (self.param_for_one / 100)
+            return signalFunctions.modulate_ask(data, pause, start, a0, a1,
+                                                self.carrier_freq_hz,
+                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                self.samples_per_bit)
 
         # Lets build a param_vector
         param_vector = np.empty(total_samples - pause, dtype=np.float64)

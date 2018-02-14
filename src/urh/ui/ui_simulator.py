@@ -100,6 +100,8 @@ class Ui_SimulatorTab(object):
         self.gridLayout.addWidget(self.spinBoxRetries, 3, 1, 1, 1)
         self.verticalLayout_3.addLayout(self.gridLayout)
         self.btnStartSim = QtWidgets.QPushButton(self.layoutWidget)
+        icon = QtGui.QIcon.fromTheme("media-playback-start")
+        self.btnStartSim.setIcon(icon)
         self.btnStartSim.setObjectName("btnStartSim")
         self.verticalLayout_3.addWidget(self.btnStartSim)
         self.splitter = QtWidgets.QSplitter(self.splitterLeftRight)
@@ -341,7 +343,7 @@ class Ui_SimulatorTab(object):
     def retranslateUi(self, SimulatorTab):
         _translate = QtCore.QCoreApplication.translate
         SimulatorTab.setWindowTitle(_translate("SimulatorTab", "Form"))
-        self.label.setText(_translate("SimulatorTab", "Protocols (drag&drop to Flow Graph):"))
+        self.label.setText(_translate("SimulatorTab", "Protocols (Drag&Drop to Flow Graph):"))
         self.label_6.setText(_translate("SimulatorTab", "Simulate these participants:"))
         self.label_4.setText(_translate("SimulatorTab", "Repeat simulation this often:"))
         self.spinBoxNRepeat.setSpecialValueText(_translate("SimulatorTab", "Infinite"))

@@ -44,6 +44,34 @@ cpdef float get_noise_for_mod_type(int mod_type):
     else:
         return 0
 
+cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array,
+                                                      unsigned long pause, unsigned long start,
+                                                      double a, double freq0, double freq1,
+                                                      double phi, double sample_rate,
+                                                      unsigned long samples_per_bit):
+    cdef long long i, index
+    cdef double t, f, arg, f_next
+    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
+
+    cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
+
+    cdef long long loop_end = total_samples-pause
+    for i in range(0, loop_end):
+        t = (i+start) / sample_rate
+        index = <long long>(i/samples_per_bit)
+        f = freq0 if bit_array[index] == 0 else freq1
+
+        arg = 2 * M_PI * f * t + phi
+        result[i] = a*(cos(arg) + imag_unit * sin(arg))
+
+        # We need to correct the phase on transitions between 0 and 1
+        if i < loop_end - 1 and (i+1) % samples_per_bit == 0:
+            index = <long long>((i+1)/samples_per_bit)
+            f_next = freq0 if bit_array[index] == 0 else freq1
+            phi += 2 * M_PI * t * (f - f_next)
+            phi = phi % (2 * M_PI)
+
+    return result
 
 cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):

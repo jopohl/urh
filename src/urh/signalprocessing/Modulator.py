@@ -7,10 +7,10 @@ from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
-from urh.cythonext import path_creator
+from urh.cythonext import path_creator, signalFunctions
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
-
+import array
 
 class Modulator(object):
     """
@@ -149,10 +149,20 @@ class Modulator(object):
         else:
             self.data = data
 
+        if isinstance(data, str):
+            data = array.array("B", map(int, data))
+        elif isinstance(data, list):
+            data = array.array("B", data)
+
         mod_type = self.MODULATION_TYPES[self.modulation_type]
         total_samples = int(len(data) * self.samples_per_bit + pause)
 
         result = np.zeros(total_samples, dtype=np.complex64)
+        if mod_type == "FSK":
+            return signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
+                                                self.param_for_zero, self.param_for_one,
+                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                self.samples_per_bit)
 
         # Lets build a param_vector
         param_vector = np.empty(total_samples - pause, dtype=np.float64)

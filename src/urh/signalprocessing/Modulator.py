@@ -156,9 +156,7 @@ class Modulator(object):
             data = array.array("B", data)
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
-        total_samples = int(len(data) * self.samples_per_bit + pause)
 
-        result = np.zeros(total_samples, dtype=np.complex64)
         if mod_type == "FSK":
             return signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
                                                 self.param_for_zero, self.param_for_one,
@@ -183,72 +181,6 @@ class Modulator(object):
                                                  self.param_for_zero, self.param_for_one,
                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                  self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
-
-        # Lets build a param_vector
-        param_vector = np.empty(total_samples - pause, dtype=np.float64)
-        sample_pos = 0
-
-        for i, bit in enumerate(data):
-            log_bit = bit
-            samples_per_bit = int(self.samples_per_bit)
-
-            if mod_type == "FSK" or mod_type == "GFSK":
-                param = 1 if log_bit else -1
-            else:
-                param = self.param_for_one if log_bit else self.param_for_zero
-            param_vector[sample_pos:sample_pos + samples_per_bit] = np.full(samples_per_bit, param, dtype=np.float64)
-            sample_pos += samples_per_bit
-
-        t = np.arange(start, start + total_samples - pause) / self.sample_rate
-        a = param_vector / 100 if mod_type == "ASK" else self.carrier_amplitude
-        phi = param_vector * (np.pi / 180) if mod_type == "PSK" else self.carrier_phase_deg * (np.pi / 180)
-
-        if mod_type == "FSK" or mod_type == "GFSK":
-            fmid = (self.param_for_one + self.param_for_zero) / 2
-            dist = abs(fmid - self.param_for_one)
-            if mod_type == "GFSK":
-                gfir = self.gauss_fir(bt=self.gauss_bt, filter_width=self.gauss_filter_width)
-                if len(param_vector) >= len(gfir):
-                    param_vector = np.convolve(param_vector, gfir, mode="same")
-                else:
-                    # Prevent dimension crash later, because gaussian finite impulse response is longer then param_vector
-                    param_vector = np.convolve(gfir, param_vector, mode="same")[:len(param_vector)]
-
-            f = fmid + dist * param_vector
-
-            # sin(2*pi*f_1*t_1 + phi_1) = sin(2*pi*f_2*t_1 + phi_2) <=> phi_2 = 2*pi*t_1*(f_1 - f_2) + phi_1
-            phi = np.empty(len(f))
-            phi[0] = self.carrier_phase_deg
-            for i in range(0, len(phi) - 1):
-                phi[i + 1] = 2 * np.pi * t[i] * (f[i] - f[i + 1]) + phi[i]  # Correct the phase to prevent spiky jumps
-        else:
-            f = self.carrier_freq_hz
-
-        # it may be tempting to do this with complex exp, but exp overflows for large values!
-        # arg = ((2 * np.pi * f * t + phi) * 1j).astype(np.complex64)
-        # result[:total_samples - pause] = a * np.exp(arg)
-
-        arg = (2 * np.pi * f * t + phi)
-        result[:total_samples - pause].real = a * np.cos(arg)
-        result[:total_samples - pause].imag = a * np.sin(arg)
-
-        return result
-
-    def gauss_fir(self, bt=0.5, filter_width=1):
-        """
-
-        :param filter_width: Filter width
-        :param bt: normalized 3-dB bandwidth-symbol time product
-        :return:
-        """
-        # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
-        k = np.arange(-int(filter_width * self.samples_per_bit), int(filter_width * self.samples_per_bit) + 1)
-        ts = self.samples_per_bit / self.sample_rate  # symbol time
-        # a = np.sqrt(np.log(2)/2)*(ts/bt)
-        # B = a / np.sqrt(np.log(2)/2) # filter bandwidth
-        h = np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
-            -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / self.samples_per_bit) ** 2))
-        return h / h.sum()
 
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")

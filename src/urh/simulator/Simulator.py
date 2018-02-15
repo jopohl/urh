@@ -211,6 +211,7 @@ class Simulator(QObject):
 
             elif isinstance(self.current_item, SimulatorTriggerCommandAction):
                 next_item = self.current_item.next()
+                self.log_message("Calling {}".format(self.current_item.command))
                 result = util.run_command(self.current_item.command, param=None, detailed_output=True)
                 self.log_message(result)
 

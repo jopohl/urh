@@ -253,7 +253,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(100)
+        QTest.qWait(1000)
         time.sleep(1)
         process.join(1)
 

@@ -128,7 +128,7 @@ class TestSimulator(QtTestCase):
         receive_process.start()
 
         # Ensure receiver is running
-        time.sleep(1)
+        time.sleep(2)
 
         # spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
         simulator.start()

@@ -2233,7 +2233,7 @@ static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha(float, struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_calc_costa_alpha *__pyx_optional_args); /*proto*/
 static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta(float, struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_calc_costa_beta *__pyx_optional_args); /*proto*/
 static float __pyx_f_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(int, int __pyx_skip_dispatch); /*proto*/
-static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fsk(__Pyx_memviewslice, unsigned long, unsigned long, double, double, double, double, double, unsigned long, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fsk(__Pyx_memviewslice, unsigned long, unsigned long, float, float, float, float, float, unsigned long, int __pyx_skip_dispatch); /*proto*/
 static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_ask(__Pyx_memviewslice, unsigned long, unsigned long, double, double, double, double, double, unsigned long, int __pyx_skip_dispatch); /*proto*/
 static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_psk(__Pyx_memviewslice, unsigned long, unsigned long, double, double, double, double, double, unsigned long, int __pyx_skip_dispatch); /*proto*/
 static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_gauss_fir(double, unsigned long, struct __pyx_opt_args_3src_3urh_9cythonext_15signalFunctions_gauss_fir *__pyx_optional_args); /*proto*/
@@ -2610,7 +2610,7 @@ static PyObject *__pyx_n_s_urh_cythonext;
 static PyObject *__pyx_n_s_util;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_get_noise_for_mod_type(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_mod_type); /* proto */
-static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2modulate_fsk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a, double __pyx_v_freq0, double __pyx_v_freq1, double __pyx_v_phi, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit); /* proto */
+static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2modulate_fsk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, float __pyx_v_a, float __pyx_v_freq0, float __pyx_v_freq1, float __pyx_v_phi, float __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_4modulate_ask(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a0, double __pyx_v_a1, double __pyx_v_f, double __pyx_v_phi, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_6modulate_psk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a, double __pyx_v_f, double __pyx_v_phi0, double __pyx_v_phi1, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit); /* proto */
 static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_8modulate_gfsk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a, double __pyx_v_freq0, double __pyx_v_freq1, double __pyx_v_phi, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit, double __pyx_v_gauss_bt, double __pyx_v_filter_width); /* proto */
@@ -3022,22 +3022,22 @@ static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_get_noise_for_m
  * 
  * cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array,             # <<<<<<<<<<<<<<
  *                                                       unsigned long pause, unsigned long start,
- *                                                       double a, double freq0, double freq1,
+ *                                                       float a, float freq0, float freq1,
  */
 
 static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3modulate_fsk(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fsk(__Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a, double __pyx_v_freq0, double __pyx_v_freq1, double __pyx_v_phi, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fsk(__Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, float __pyx_v_a, float __pyx_v_freq0, float __pyx_v_freq1, float __pyx_v_phi, float __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PY_LONG_LONG __pyx_v_i;
   PY_LONG_LONG __pyx_v_j;
   PY_LONG_LONG __pyx_v_index;
-  double __pyx_v_t;
-  double __pyx_v_f;
-  double __pyx_v_arg;
-  double __pyx_v_f_next;
-  double __pyx_v_phase;
+  float __pyx_v_t;
+  float __pyx_v_f;
+  float __pyx_v_arg;
+  float __pyx_v_f_next;
+  float __pyx_v_phase;
   PY_LONG_LONG __pyx_v_total_samples;
   PyArrayObject *__pyx_v_result = 0;
-  double *__pyx_v_phases;
+  float *__pyx_v_phases;
   CYTHON_UNUSED PY_LONG_LONG __pyx_v_loop_end;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_result;
   __Pyx_Buffer __pyx_pybuffer_result;
@@ -3055,7 +3055,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
   PY_LONG_LONG __pyx_t_10;
   PY_LONG_LONG __pyx_t_11;
   int __pyx_t_12;
-  double __pyx_t_13;
+  float __pyx_t_13;
   PY_LONG_LONG __pyx_t_14;
   PY_LONG_LONG __pyx_t_15;
   PY_LONG_LONG __pyx_t_16;
@@ -3071,7 +3071,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
 
   /* "src/urh/cythonext/signalFunctions.pyx":55
  *     cdef long long i, j, index
- *     cdef double t, f, arg, f_next, phase
+ *     cdef float t, f, arg, f_next, phase
  *     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)             # <<<<<<<<<<<<<<
  * 
  *     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
@@ -3083,7 +3083,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
  *     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
  * 
  *     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)             # <<<<<<<<<<<<<<
- *     cdef double* phases = <double *>malloc(total_samples * sizeof(double))
+ *     cdef float* phases = <float *>malloc(total_samples * sizeof(float))
  * 
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
@@ -3129,14 +3129,14 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
   /* "src/urh/cythonext/signalFunctions.pyx":58
  * 
  *     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
- *     cdef double* phases = <double *>malloc(total_samples * sizeof(double))             # <<<<<<<<<<<<<<
+ *     cdef float* phases = <float *>malloc(total_samples * sizeof(float))             # <<<<<<<<<<<<<<
  * 
  *     for i in range(0, samples_per_bit):
  */
-  __pyx_v_phases = ((double *)malloc((__pyx_v_total_samples * (sizeof(double)))));
+  __pyx_v_phases = ((float *)malloc((__pyx_v_total_samples * (sizeof(float)))));
 
   /* "src/urh/cythonext/signalFunctions.pyx":60
- *     cdef double* phases = <double *>malloc(total_samples * sizeof(double))
+ *     cdef float* phases = <float *>malloc(total_samples * sizeof(float))
  * 
  *     for i in range(0, samples_per_bit):             # <<<<<<<<<<<<<<
  *         phases[i] = phi
@@ -3195,7 +3195,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
  *                 f = freq0 if bit_array[i-1] == 0 else freq1
  *                 f_next = freq0 if bit_array[i] == 0 else freq1
  */
-      __pyx_v_t = (((double)(((__pyx_v_i * __pyx_v_samples_per_bit) + __pyx_v_start) - 1)) / __pyx_v_sample_rate);
+      __pyx_v_t = (((float)(((__pyx_v_i * __pyx_v_samples_per_bit) + __pyx_v_start) - 1)) / __pyx_v_sample_rate);
 
       /* "src/urh/cythonext/signalFunctions.pyx":70
  *             if bit_array[i-1] != bit_array[i]:
@@ -3313,10 +3313,10 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
                         {
                             __pyx_v_i = (PY_LONG_LONG)(0 + 1 * __pyx_t_16);
                             /* Initialize private variables to invalid values */
-                            __pyx_v_arg = ((double)__PYX_NAN());
-                            __pyx_v_f = ((double)__PYX_NAN());
+                            __pyx_v_arg = ((float)__PYX_NAN());
+                            __pyx_v_f = ((float)__PYX_NAN());
                             __pyx_v_index = ((PY_LONG_LONG)0xbad0bad0);
-                            __pyx_v_t = ((double)__PYX_NAN());
+                            __pyx_v_t = ((float)__PYX_NAN());
 
                             /* "src/urh/cythonext/signalFunctions.pyx":80
  *     cdef long long loop_end = total_samples-pause
@@ -3325,7 +3325,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
  *         index = <long long>(i/samples_per_bit)
  *         f = freq0 if bit_array[index] == 0 else freq1
  */
-                            __pyx_v_t = (((double)(__pyx_v_i + __pyx_v_start)) / __pyx_v_sample_rate);
+                            __pyx_v_t = (((float)(__pyx_v_i + __pyx_v_start)) / __pyx_v_sample_rate);
 
                             /* "src/urh/cythonext/signalFunctions.pyx":81
  *     for i in prange(0, loop_end, nogil=True, schedule="static"):
@@ -3428,7 +3428,7 @@ static PyArrayObject *__pyx_f_3src_3urh_9cythonext_15signalFunctions_modulate_fs
  * 
  * cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array,             # <<<<<<<<<<<<<<
  *                                                       unsigned long pause, unsigned long start,
- *                                                       double a, double freq0, double freq1,
+ *                                                       float a, float freq0, float freq1,
  */
 
   /* function exit code */
@@ -3462,11 +3462,11 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3modulate_fsk(P
   __Pyx_memviewslice __pyx_v_bit_array = { 0, 0, { 0 }, { 0 }, { 0 } };
   unsigned long __pyx_v_pause;
   unsigned long __pyx_v_start;
-  double __pyx_v_a;
-  double __pyx_v_freq0;
-  double __pyx_v_freq1;
-  double __pyx_v_phi;
-  double __pyx_v_sample_rate;
+  float __pyx_v_a;
+  float __pyx_v_freq0;
+  float __pyx_v_freq1;
+  float __pyx_v_phi;
+  float __pyx_v_sample_rate;
   unsigned long __pyx_v_samples_per_bit;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
@@ -3572,11 +3572,11 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3modulate_fsk(P
     __pyx_v_bit_array = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[0]); if (unlikely(!__pyx_v_bit_array.memview)) __PYX_ERR(0, 48, __pyx_L3_error)
     __pyx_v_pause = __Pyx_PyInt_As_unsigned_long(values[1]); if (unlikely((__pyx_v_pause == (unsigned long)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L3_error)
     __pyx_v_start = __Pyx_PyInt_As_unsigned_long(values[2]); if (unlikely((__pyx_v_start == (unsigned long)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L3_error)
-    __pyx_v_a = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_a == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
-    __pyx_v_freq0 = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_freq0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
-    __pyx_v_freq1 = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_freq1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
-    __pyx_v_phi = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_phi == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
-    __pyx_v_sample_rate = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sample_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+    __pyx_v_a = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_a == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
+    __pyx_v_freq0 = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_freq0 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
+    __pyx_v_freq1 = __pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_freq1 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
+    __pyx_v_phi = __pyx_PyFloat_AsFloat(values[6]); if (unlikely((__pyx_v_phi == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+    __pyx_v_sample_rate = __pyx_PyFloat_AsFloat(values[7]); if (unlikely((__pyx_v_sample_rate == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
     __pyx_v_samples_per_bit = __Pyx_PyInt_As_unsigned_long(values[8]); if (unlikely((__pyx_v_samples_per_bit == (unsigned long)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
@@ -3594,7 +3594,7 @@ static PyObject *__pyx_pw_3src_3urh_9cythonext_15signalFunctions_3modulate_fsk(P
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2modulate_fsk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, double __pyx_v_a, double __pyx_v_freq0, double __pyx_v_freq1, double __pyx_v_phi, double __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit) {
+static PyObject *__pyx_pf_3src_3urh_9cythonext_15signalFunctions_2modulate_fsk(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bit_array, unsigned long __pyx_v_pause, unsigned long __pyx_v_start, float __pyx_v_a, float __pyx_v_freq0, float __pyx_v_freq1, float __pyx_v_phi, float __pyx_v_sample_rate, unsigned long __pyx_v_samples_per_bit) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;

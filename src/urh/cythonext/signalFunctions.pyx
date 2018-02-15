@@ -47,15 +47,15 @@ cpdef float get_noise_for_mod_type(int mod_type):
 
 cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array,
                                                       unsigned long pause, unsigned long start,
-                                                      double a, double freq0, double freq1,
-                                                      double phi, double sample_rate,
+                                                      float a, float freq0, float freq1,
+                                                      float phi, float sample_rate,
                                                       unsigned long samples_per_bit):
     cdef long long i, j, index
-    cdef double t, f, arg, f_next, phase
+    cdef float t, f, arg, f_next, phase
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
-    cdef double* phases = <double *>malloc(total_samples * sizeof(double))
+    cdef float* phases = <float *>malloc(total_samples * sizeof(float))
 
     for i in range(0, samples_per_bit):
         phases[i] = phi

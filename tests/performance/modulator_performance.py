@@ -50,4 +50,4 @@ def test_gfsk_performance():
     print("GFSK {}ms".format(elapsed * 1000))
 
 if __name__ == '__main__':
-    test_gfsk_performance()
+    test_fsk_performance()

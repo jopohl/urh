@@ -1,5 +1,6 @@
 # noinspection PyUnresolvedReferences
 cimport numpy as np
+import cython
 import numpy as np
 from libcpp cimport bool
 
@@ -49,28 +50,48 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
                                                       double a, double freq0, double freq1,
                                                       double phi, double sample_rate,
                                                       unsigned long samples_per_bit):
-    cdef long long i, index
-    cdef double t, f, arg, f_next
+    cdef long long i, j, index
+    cdef double t, f, arg, f_next, phase
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
+    cdef double* phases = <double *>malloc(total_samples * sizeof(double))
+
+    for i in range(0, samples_per_bit):
+        phases[i] = phi
+
+    with cython.cdivision:
+        for i in range(1, len(bit_array)):
+            phase = phases[i*samples_per_bit-1]
+
+            # We need to correct the phase on transitions between 0 and 1
+            if bit_array[i-1] != bit_array[i]:
+                t = (i*samples_per_bit+start-1) / sample_rate
+                f = freq0 if bit_array[i-1] == 0 else freq1
+                f_next = freq0 if bit_array[i] == 0 else freq1
+                phase = (phase + 2 * M_PI * t * (f - f_next)) % (2 * M_PI)
+
+            for j in range(i*samples_per_bit, (i+1)*samples_per_bit):
+                phases[j] = phase
+
 
     cdef long long loop_end = total_samples-pause
-    for i in range(0, loop_end):
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
         t = (i+start) / sample_rate
         index = <long long>(i/samples_per_bit)
         f = freq0 if bit_array[index] == 0 else freq1
 
-        arg = 2 * M_PI * f * t + phi
+        arg = 2 * M_PI * f * t + phases[i]
         result[i] = a*(cos(arg) + imag_unit * sin(arg))
 
         # We need to correct the phase on transitions between 0 and 1
-        if i < loop_end - 1 and (i+1) % samples_per_bit == 0:
-            index = <long long>((i+1)/samples_per_bit)
-            f_next = freq0 if bit_array[index] == 0 else freq1
-            phi += 2 * M_PI * t * (f - f_next)
-            phi = phi % (2 * M_PI)
+        # if i < loop_end - 1 and (i+1) % samples_per_bit == 0:
+        #     index = <long long>((i+1)/samples_per_bit)
+        #     f_next = freq0 if bit_array[index] == 0 else freq1
+        #     phi += 2 * M_PI * t * (f - f_next)
+        #     phi = phi % (2 * M_PI)
 
+    free(phases)
     return result
 
 cpdef np.ndarray[np.complex64_t, ndim=1] modulate_ask(unsigned char[:] bit_array,

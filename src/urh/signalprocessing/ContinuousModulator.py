@@ -14,7 +14,7 @@ class ContinuousModulator(object):
     This avoids running out of RAM for large amounts of messages.
     """
 
-    BUFFER_SIZE_MB = 100
+    BUFFER_SIZE_MB = 50
     WAIT_TIMEOUT = 0.1
 
     def __init__(self, messages, modulators, num_repeats=-1):

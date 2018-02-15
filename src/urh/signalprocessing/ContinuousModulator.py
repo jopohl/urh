@@ -2,6 +2,7 @@ import time
 
 from multiprocessing import Process, Value
 
+from urh import constants
 from urh.signalprocessing.Modulator import Modulator
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
@@ -13,8 +14,6 @@ class ContinuousModulator(object):
     You pass a list of messages and modulators to it, and it takes care of modulating the messages sequentially.
     This avoids running out of RAM for large amounts of messages.
     """
-
-    BUFFER_SIZE_MB = 50
     WAIT_TIMEOUT = 0.1
 
     def __init__(self, messages, modulators, num_repeats=-1):
@@ -27,7 +26,7 @@ class ContinuousModulator(object):
         self.modulators = modulators
         self.num_repeats = num_repeats  # -1 or 0 = infinite
 
-        self.ring_buffer = RingBuffer(int(self.BUFFER_SIZE_MB*10**6)//8)
+        self.ring_buffer = RingBuffer(int(constants.CONTINUOUS_BUFFER_SIZE_MB*10**6)//8)
 
         self.current_message_index = Value("L", 0)
 

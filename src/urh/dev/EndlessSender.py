@@ -1,5 +1,6 @@
 import numpy as np
 
+from urh import constants
 from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.util.RingBuffer import RingBuffer
 
@@ -8,11 +9,10 @@ class EndlessSender(object):
     """
     Enter endless send mode for a device and send data if data gets pushed to ringbuffer.
     """
-    BUFFER_SIZE_MB = 100
 
     def __init__(self, backend_handler, name: str):
         self.__device = VirtualDevice(backend_handler=backend_handler, name=name, mode=Mode.send)
-        self.ringbuffer = RingBuffer(int(self.BUFFER_SIZE_MB * 10 ** 6) // 8)
+        self.ringbuffer = RingBuffer(int(constants.CONTINUOUS_BUFFER_SIZE_MB * 10 ** 6) // 8)
         self.__device.continuous_send_ring_buffer = self.ringbuffer
         self.__device.is_send_continuous = True
         self.__device.num_sending_repeats = 0

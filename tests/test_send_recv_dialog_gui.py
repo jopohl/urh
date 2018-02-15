@@ -245,7 +245,7 @@ class TestSendRecvDialog(QtTestCase):
         process = Process(target=receive, args=(port, current_index, 2*len(expected), buffer))
         process.daemon = True
         process.start()
-        time.sleep(0.1)  # ensure server is up
+        time.sleep(1)  # ensure server is up
 
         ContinuousModulator.BUFFER_SIZE_MB = 10
 

@@ -136,12 +136,13 @@ def main():
             app.setPalette(palette)
 
     main_window = MainController()
+    import multiprocessing as mp
+    # allow usage of prange (OpenMP) in Processes
+    mp.set_start_method("spawn")
 
     if sys.platform == "darwin":
         menu_bar = main_window.menuBar()
         menu_bar.setNativeMenuBar(False)
-        import multiprocessing as mp
-        mp.set_start_method("spawn")  # prevent errors with forking in native RTL-SDR backend
     elif sys.platform == "win32":
         # Ensure we get the app icon in windows taskbar
         import ctypes

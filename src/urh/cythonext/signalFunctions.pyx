@@ -85,7 +85,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_ask(unsigned char[:] bit_array
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
 
     cdef long long loop_end = total_samples-pause
-    for i in range(0, loop_end):
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
         index = <long long>(i/samples_per_bit)
         a = a0 if bit_array[index] == 0 else a1
 
@@ -108,7 +108,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_psk(unsigned char[:] bit_array
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
 
     cdef long long loop_end = total_samples-pause
-    for i in range(0, loop_end):
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
         index = <long long>(i/samples_per_bit)
         phi = phi0 if bit_array[index] == 0 else phi1
 
@@ -146,7 +146,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_gfsk(unsigned char[:] bit_arra
     cdef np.ndarray[np.float64_t, ndim=1] frequencies = np.empty(total_samples - pause, dtype=np.float64)
     cdef long long loop_end = total_samples-pause
 
-    for i in range(0, loop_end):
+    for i in prange(0, loop_end, nogil=True, schedule="static"):
         index = <long long>(i/samples_per_bit)
         frequencies[i] = freq0 if bit_array[index] == 0 else freq1
 

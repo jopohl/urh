@@ -16,7 +16,6 @@ import faulthandler
 
 faulthandler.enable()
 
-
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
     WAIT_TIMEOUT_BEFORE_NEW = 10
@@ -24,6 +23,13 @@ class QtTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        import multiprocessing as mp
+        try:
+            mp.set_start_method("spawn")
+        except RuntimeError:
+            pass
+        assert mp.get_start_method() == "spawn"
+
         write_settings()
         cls.app = QApplication(sys.argv)
 

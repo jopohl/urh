@@ -73,9 +73,6 @@ class CompareFrameController(QWidget):
         self.assign_participants_action = self.analyze_menu.addAction(self.tr("Assign participants"))
         self.assign_participants_action.setCheckable(True)
         self.assign_participants_action.setChecked(True)
-        self.assign_decodings_action = self.analyze_menu.addAction(self.tr("Assign decodings"))
-        self.assign_decodings_action.setCheckable(True)
-        self.assign_decodings_action.setChecked(True)
         self.assign_message_type_action = self.analyze_menu.addAction(self.tr("Assign message type"))
         self.assign_message_type_action.setCheckable(True)
         self.assign_message_type_action.setChecked(True)
@@ -974,16 +971,6 @@ class CompareFrameController(QWidget):
                 protocol.auto_assign_participants(self.protocol_model.participants)
             self.refresh_assigned_participants_ui()
             logger.debug("Time for auto assigning participants: " + str(time.time() - t))
-
-        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign decodings)")
-        self.ui.progressBarLogicAnalyzer.setValue(25)
-
-        if self.assign_decodings_action.isChecked():
-            t = time.time()
-            self.proto_analyzer.auto_assign_decodings(self.decodings)
-            self.protocol_model.update()
-            self.label_value_model.update()
-            logger.debug("Time for auto assigning decodings: " + str(time.time() - t))
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
         self.ui.progressBarLogicAnalyzer.setValue(50)

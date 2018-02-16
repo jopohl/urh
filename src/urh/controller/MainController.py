@@ -548,33 +548,36 @@ class MainController(QMainWindow):
 
     @pyqtSlot(int, int, int, int)
     def show_protocol_selection_in_interpretation(self, start_message, start, end_message, end):
-        cfc = self.compare_frame_controller
-        msg_total = 0
-        last_sig_frame = None
-        for protocol in cfc.protocol_list:
-            if not protocol.show:
-                continue
-            n = protocol.num_messages
-            view_type = cfc.ui.cbProtoView.currentIndex()
-            messages = [i - msg_total for i in range(msg_total, msg_total + n) if start_message <= i <= end_message]
-            if len(messages) > 0:
-                try:
-                    signal_frame = next((sf for sf, pf in self.signal_protocol_dict.items() if pf == protocol))
-                except StopIteration:
-                    QMessageBox.critical(self, self.tr("Error"),
-                                         self.tr("Could not find corresponding signal frame."))
-                    return
-                signal_frame.set_roi_from_protocol_analysis(min(messages), start, max(messages), end + 1, view_type)
-                last_sig_frame = signal_frame
-            msg_total += n
-        focus_frame = last_sig_frame
-        if last_sig_frame is not None:
-            self.signal_tab_controller.ui.scrollArea.ensureWidgetVisible(last_sig_frame, 0, 0)
+        try:
+            cfc = self.compare_frame_controller
+            msg_total = 0
+            last_sig_frame = None
+            for protocol in cfc.protocol_list:
+                if not protocol.show:
+                    continue
+                n = protocol.num_messages
+                view_type = cfc.ui.cbProtoView.currentIndex()
+                messages = [i - msg_total for i in range(msg_total, msg_total + n) if start_message <= i <= end_message]
+                if len(messages) > 0:
+                    try:
+                        signal_frame = next((sf for sf, pf in self.signal_protocol_dict.items() if pf == protocol))
+                    except StopIteration:
+                        QMessageBox.critical(self, self.tr("Error"),
+                                             self.tr("Could not find corresponding signal frame."))
+                        return
+                    signal_frame.set_roi_from_protocol_analysis(min(messages), start, max(messages), end + 1, view_type)
+                    last_sig_frame = signal_frame
+                msg_total += n
+            focus_frame = last_sig_frame
+            if last_sig_frame is not None:
+                self.signal_tab_controller.ui.scrollArea.ensureWidgetVisible(last_sig_frame, 0, 0)
 
-        QApplication.instance().processEvents()
-        self.ui.tabWidget.setCurrentIndex(0)
-        if focus_frame is not None:
-            focus_frame.ui.txtEdProto.setFocus()
+            QApplication.instance().processEvents()
+            self.ui.tabWidget.setCurrentIndex(0)
+            if focus_frame is not None:
+                focus_frame.ui.txtEdProto.setFocus()
+        except Exception as e:
+            logger.exception(e)
 
     @pyqtSlot(str)
     def on_file_tree_filter_text_changed(self, text: str):

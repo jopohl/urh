@@ -37,7 +37,7 @@ class ProjectManager(QObject):
 
         self.simulator_num_repeat = 1
         self.simulator_retries = 10
-        self.simulator_timeout = 60
+        self.simulator_timeout = 5
         self.simulator_error_handling_index = 0
 
         self.__project_file = None

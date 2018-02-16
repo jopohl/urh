@@ -1,4 +1,5 @@
 cimport chackrf
+import array
 from libc.stdlib cimport malloc
 from libc.string cimport memcpy
 import time
@@ -23,7 +24,7 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-    cdef bytes bytebuf = (<object> f)(transfer.valid_length).tostring()
+    cdef bytes bytebuf = array.array("b", (<object> f)(transfer.valid_length)).tostring()
     memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
     # Need to return -1 on finish, otherwise stop_tx_mode hangs forever
     # Furthermore, this leads to windows issue https://github.com/jopohl/urh/issues/360

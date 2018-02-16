@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
 import numpy as np
+from multiprocessing import Array
+from array import array
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import usrp
@@ -63,7 +65,7 @@ class USRP(Device):
 
     @classmethod
     def send_sync(cls, data):
-        usrp.send_stream(data)
+        usrp.send_stream(array("f", data))
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
@@ -87,7 +89,6 @@ class USRP(Device):
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
                             ("identifier", self.device_args)])
 
-
     @staticmethod
     def unpack_complex(buffer):
         return np.frombuffer(buffer, dtype=np.complex64)
@@ -95,4 +96,7 @@ class USRP(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the USRP Send API
-        return complex_samples.view(np.float32)
+        arr = Array("f", 2*len(complex_samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.float32)
+        numpy_view[:] = complex_samples.view(np.float32)
+        return arr

@@ -378,7 +378,7 @@ class ProtocolAnalyzer(object):
             num_samples = self.messages[end_message].bit_sample_pos[end_index] - start
 
             return start, num_samples
-        except KeyError:
+        except (KeyError, IndexError):
             return -1, -1
 
     def get_bitseq_from_selection(self, selection_start: int, selection_width: int):

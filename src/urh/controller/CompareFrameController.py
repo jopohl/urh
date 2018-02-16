@@ -261,6 +261,7 @@ class CompareFrameController(QWidget):
         self.search_action.triggered.connect(self.on_search_action_triggered)
         self.select_action.triggered.connect(self.on_select_action_triggered)
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
+        self.ui.lFilterShown.linkActivated.connect(self.on_label_filter_shown_link_activated)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
         self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
@@ -684,12 +685,8 @@ class CompareFrameController(QWidget):
             self.ui.tblLabelValues.clearSelection()
 
             matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
-            rc = self.protocol_model.row_count
-            rows_to_hide = set(range(0, rc)) - matching_rows
+            rows_to_hide = set(range(0, self.protocol_model.row_count)) - matching_rows
             self.ui.tblViewProtocol.hide_row(rows_to_hide)
-
-            self.ui.lFilterShown.setText(self.tr("shown: {}/{}".format(rc - len(self.protocol_model.hidden_rows), rc)))
-
         else:
             for i in range(0, self.protocol_model.row_count):
                 self.ui.tblViewProtocol.showRow(i)
@@ -697,7 +694,16 @@ class CompareFrameController(QWidget):
             self.ui.lFilterShown.setText("")
             self.set_shown_protocols()
 
+        self.__set_filter_status_label()
         self.unsetCursor()
+
+    def __set_filter_status_label(self):
+        if "Filter" in self.ui.btnSearchSelectFilter.text() and len(self.protocol_model.hidden_rows) > 0:
+            rc = self.protocol_model.row_count
+            text = self.tr("shown: {}/{} (<a href='reset_filter'>reset</a>)")
+            self.ui.lFilterShown.setText(text.format(rc - len(self.protocol_model.hidden_rows), rc))
+        else:
+            self.ui.lFilterShown.setText("")
 
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
@@ -1132,16 +1138,10 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_filter_action_triggered(self):
-        if len(self.protocol_model.hidden_rows) == 0:
-            self.ui.lFilterShown.setText("")
-        else:
-            nhidden = len(self.protocol_model.hidden_rows)
-            rc = self.protocol_model.row_count
-            self.ui.lFilterShown.setText("shown: {}/{}".format(rc - nhidden, rc))
-
         self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
+        self.__set_filter_status_label()
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
@@ -1424,3 +1424,9 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_participant_edited(self):
         self.refresh_assigned_participants_ui()
+
+    @pyqtSlot(str)
+    def on_label_filter_shown_link_activated(self, link: str):
+        if link == "reset_filter":
+            self.ui.lineEditSearch.clear()
+            self.ui.btnSearchSelectFilter.click()

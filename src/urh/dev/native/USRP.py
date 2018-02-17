@@ -10,7 +10,7 @@ from multiprocessing.connection import Connection
 
 
 class USRP(Device):
-    READ_SAMPLES = 16384
+    SYNC_RX_CHUNK_SIZE = 16384
     SYNC_TX_CHUNK_SIZE = 16384 * 2
     CONTINUOUS_TX_CHUNK_SIZE = SYNC_TX_CHUNK_SIZE * 64
 
@@ -19,7 +19,7 @@ class USRP(Device):
 
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
-        cls.READ_SAMPLES = 16384 * int(sample_rate / 1e6)
+        cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -48,11 +48,11 @@ class USRP(Device):
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
-        return usrp.start_stream(cls.READ_SAMPLES)
+        return usrp.start_stream(cls.SYNC_RX_CHUNK_SIZE)
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        usrp.recv_stream(data_conn, cls.READ_SAMPLES)
+        usrp.recv_stream(data_conn, cls.SYNC_RX_CHUNK_SIZE)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):

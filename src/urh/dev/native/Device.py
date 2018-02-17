@@ -130,7 +130,7 @@ class Device(QObject):
         try:
             cls.adapt_num_read_samples_to_sample_rate(dev_parameters[cls.Command.SET_SAMPLE_RATE.name])
         except NotImplementedError:
-            # Many SDRs like HackRF or AirSpy do not need to calculate READ_SAMPLES
+            # Many SDRs like HackRF or AirSpy do not need to calculate SYNC_RX_CHUNK_SIZE
             # as default values are either fine or given by the hardware
             pass
 

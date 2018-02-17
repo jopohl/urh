@@ -9,7 +9,7 @@ from multiprocessing.connection import Connection
 from array import array
 
 class LimeSDR(Device):
-    READ_SAMPLES = 32768
+    SYNC_RX_CHUNK_SIZE = 32768
     SYNC_TX_CHUNK_SIZE = 32768
 
     RECV_FIFO_SIZE = 1048576
@@ -32,8 +32,8 @@ class LimeSDR(Device):
 
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
-        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
-        cls.RECV_FIFO_SIZE = 16 * cls.READ_SAMPLES
+        cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
+        cls.RECV_FIFO_SIZE = 16 * cls.SYNC_RX_CHUNK_SIZE
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -87,7 +87,7 @@ class LimeSDR(Device):
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        limesdr.recv_stream(data_conn, cls.READ_SAMPLES, cls.LIME_TIMEOUT_RECEIVE_MS)
+        limesdr.recv_stream(data_conn, cls.SYNC_RX_CHUNK_SIZE, cls.LIME_TIMEOUT_RECEIVE_MS)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):

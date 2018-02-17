@@ -393,7 +393,7 @@ class Simulator(QObject):
 
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
-        modulated = modulator.modulate(message.encoded_bits, pause=message.pause)
+        modulated = modulator.modulate(message.encoded_bits, pause=0)
 
         curr_repeat = 0
 

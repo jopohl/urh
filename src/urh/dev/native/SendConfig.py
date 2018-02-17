@@ -24,7 +24,7 @@ class SendConfig(object):
                 return [0] * buffer_length
 
             if self.continuous:
-                result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
+                result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))[:]
             else:
                 result = self.send_buffer[
                          self.current_sent_index.value:self.current_sent_index.value + buffer_length]

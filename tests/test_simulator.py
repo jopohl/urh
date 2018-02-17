@@ -98,13 +98,14 @@ class TestSimulator(QtTestCase):
         simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
                               self.form.project_manager, sniffer=sniffer, sender=sender)
 
+        pause = 100000
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 pause=100000, message_type=MessageType("empty_message_type"), source=part_a)
+                                 pause=pause, message_type=MessageType("empty_message_type"), source=part_a)
 
         msg_b = SimulatorMessage(part_a,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1, 1, 0, 0] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 pause=100000, message_type=MessageType("empty_message_type"), source=part_b)
+                                 pause=pause, message_type=MessageType("empty_message_type"), source=part_b)
 
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
@@ -122,7 +123,7 @@ class TestSimulator(QtTestCase):
 
         current_index = Value("L")
         elapsed = Value("f")
-        target_num_samples = 113600
+        target_num_samples = 113600 - pause
         receive_process = Process(target=receive, args=(port, current_index, target_num_samples, elapsed))
         receive_process.daemon = True
         receive_process.start()

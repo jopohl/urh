@@ -8,19 +8,18 @@ from urh.dev.native.Device import Device
 from urh.dev.native.lib import usrp
 from multiprocessing.connection import Connection
 
+
 class USRP(Device):
     READ_SAMPLES = 16384
-    SEND_SAMPLES = 16384 * 2
+    SYNC_TX_CHUNK_SIZE = 16384 * 2
+    CONTINUOUS_TX_CHUNK_SIZE = SYNC_TX_CHUNK_SIZE * 64
 
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
 
-    SEND_BUFFER_SIZE = SEND_SAMPLES
-    CONTINUOUS_SEND_BUFFER_SIZE = SEND_SAMPLES * 64
-
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
-        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
+        cls.READ_SAMPLES = 16384 * int(sample_rate / 1e6)
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -96,7 +95,7 @@ class USRP(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the USRP Send API
-        arr = Array("f", 2*len(complex_samples), lock=False)
+        arr = Array("f", 2 * len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.float32)
         numpy_view[:] = complex_samples.view(np.float32)
         return arr

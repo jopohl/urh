@@ -17,8 +17,8 @@ from urh.util.SettingsProxy import SettingsProxy
 class Device(QObject):
     JOIN_TIMEOUT = 1.0
 
-    SEND_BUFFER_SIZE = 0
-    CONTINUOUS_SEND_BUFFER_SIZE = 0
+    SYNC_TX_CHUNK_SIZE = 0
+    CONTINUOUS_TX_CHUNK_SIZE = 0
 
     class Command(Enum):
         STOP = 0
@@ -177,7 +177,7 @@ class Device(QObject):
             return False
 
         exit_requested = False
-        buffer_size = cls.CONTINUOUS_SEND_BUFFER_SIZE if send_config.continuous else cls.SEND_BUFFER_SIZE
+        buffer_size = cls.CONTINUOUS_TX_CHUNK_SIZE if send_config.continuous else cls.SYNC_TX_CHUNK_SIZE
         if not cls.ASYNCHRONOUS and buffer_size == 0:
             logger.warning("Send buffer size is zero!")
 

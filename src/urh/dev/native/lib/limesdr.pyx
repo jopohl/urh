@@ -1,3 +1,4 @@
+import numpy as np
 from climesdr cimport *
 from libc.stdlib cimport malloc, free
 # noinspection PyUnresolvedReferences
@@ -412,6 +413,8 @@ cpdef int send_stream(float[::1] samples, unsigned timeout_ms):
     :return: number of samples send on success, (-1) on failure
     """
     cdef lms_stream_meta_t meta = lms_stream_meta_t(0, False, False)
+    if len(samples) == 1:
+        samples = np.zeros(1020, dtype=np.float32)
     cdef size_t sample_count = len(samples) // 2
 
     if len(samples) > 0:

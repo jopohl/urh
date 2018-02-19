@@ -394,11 +394,15 @@ class GeneratorTabController(QWidget):
         memory_size_for_buffer = total_samples * 8
         logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024 ** 2)))
         try:
-            return np.zeros(total_samples, dtype=np.complex64)
+            # allocate it three times as we need the same amount for the sending process
+            np.zeros(3*total_samples, dtype=np.complex64)
         except MemoryError:
+            # will go into continuous mode in this case
             if show_error:
-                Errors.not_enough_ram_for_sending_precache(memory_size_for_buffer)
+                Errors.not_enough_ram_for_sending_precache(3*memory_size_for_buffer)
             return None
+
+        return np.zeros(total_samples, dtype=np.complex64)
 
     def modulate_data(self, buffer: np.ndarray) -> np.ndarray:
         """

@@ -86,6 +86,8 @@ class RingBuffer(object):
         """
         Pop number of elements. If there are not enough elements, all remaining elements are returned and the
         buffer is cleared afterwards. If buffer is empty, an empty numpy array is returned.
+
+        If number is -1 (or any other value below zero) than complete buffer is returned
         """
         if ensure_even_length:
             number -= number % 2
@@ -93,7 +95,11 @@ class RingBuffer(object):
         if len(self) == 0 or number == 0:
             return np.array([], dtype=np.complex64)
 
-        number = min(number, len(self))
+        if number < 0:
+            # take everything
+            number = len(self)
+        else:
+            number = min(number, len(self))
 
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)

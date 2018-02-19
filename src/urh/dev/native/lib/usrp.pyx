@@ -122,10 +122,13 @@ cpdef uhd_error recv_stream(connection, int num_samples):
         free(result)
 
 cpdef uhd_error send_stream(float[::1] samples):
-    cdef size_t sample_count = len(samples)
-    cdef int i
-    cdef int index = 0
+    if len(samples) == 1 and samples[0] == 0:
+        # Fill with zeros
+        samples = np.zeros(2 * max_num_tx_samples, dtype=np.float32)
+
+    cdef int i, index = 0
     cdef size_t num_samps_sent = 0
+    cdef size_t sample_count = len(samples)
 
     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
     if not buff:
@@ -139,7 +142,8 @@ cpdef uhd_error send_stream(float[::1] samples):
             index += 1
             if index >= 2*max_num_tx_samples:
                 index = 0
-                uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+                uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples,
+                                     &tx_metadata_handle, 0.1, &num_samps_sent)
 
         uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
     finally:

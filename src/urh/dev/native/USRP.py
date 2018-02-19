@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 import numpy as np
 from multiprocessing import Array
-from array import array
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import usrp
@@ -12,7 +11,7 @@ from multiprocessing.connection import Connection
 class USRP(Device):
     SYNC_RX_CHUNK_SIZE = 16384
     SYNC_TX_CHUNK_SIZE = 16384 * 2
-    CONTINUOUS_TX_CHUNK_SIZE = SYNC_TX_CHUNK_SIZE * 64
+    CONTINUOUS_TX_CHUNK_SIZE = -1  # take everything from queue
 
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False

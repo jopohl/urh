@@ -64,7 +64,7 @@ class USRP(Device):
 
     @classmethod
     def send_sync(cls, data):
-        usrp.send_stream(array("f", data))
+        usrp.send_stream(data)
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

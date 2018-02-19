@@ -20,7 +20,7 @@
       <string notr="true">QTabWidget::pane { border: 0; }</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabLog">
       <attribute name="title">
@@ -103,8 +103,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1076</width>
-            <height>781</height>
+            <width>144</width>
+            <height>52</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -168,8 +168,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1076</width>
-            <height>781</height>
+            <width>100</width>
+            <height>30</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">

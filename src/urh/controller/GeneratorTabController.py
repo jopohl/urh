@@ -581,7 +581,7 @@ class GeneratorTabController(QWidget):
                     dialog = ContinuousSendDialog(self.project_manager, self.table_model.protocol.messages,
                                                   self.modulators, total_samples, parent=self)
             except OSError as e:
-                logger.error(repr(e))
+                logger.exception(e)
                 return
             if dialog.has_empty_device_list:
                 Errors.no_device()

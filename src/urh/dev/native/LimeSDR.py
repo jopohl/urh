@@ -99,7 +99,7 @@ class LimeSDR(Device):
 
     @classmethod
     def send_sync(cls, data):
-        limesdr.send_stream(array("f", data), cls.LIME_TIMEOUT_SEND_MS)
+        limesdr.send_stream(data, cls.LIME_TIMEOUT_SEND_MS)
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

@@ -6,9 +6,8 @@ from libc.stdlib cimport malloc, free
 # noinspection PyUnresolvedReferences
 from cython.view cimport array as cvarray  # needed for converting of malloc array to python array
 
+import cython
 from libc.string cimport memcpy
-
-np.import_array()
 
 cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
@@ -121,6 +120,9 @@ cpdef uhd_error recv_stream(connection, int num_samples):
         free(buff)
         free(result)
 
+@cython.boundscheck(False)
+@cython.initializedcheck(False)
+@cython.wraparound(False)
 cpdef uhd_error send_stream(float[::1] samples):
     if len(samples) == 1 and samples[0] == 0:
         # Fill with zeros

@@ -56,7 +56,7 @@ class DeviceSettingsWidget(QWidget):
 
         self.create_connects()
         self.sync_gain_sliders()
-    
+
     def bootstrap(self, conf_dict: dict, enforce_default=False):
         def set_val(ui_widget, key: str, default):
             try:
@@ -66,6 +66,8 @@ class DeviceSettingsWidget(QWidget):
 
             if value is not None:
                 ui_widget.setValue(value)
+
+        self.set_bandwidth_status()
 
         self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
         dev_name = self.ui.cbDevice.currentText()
@@ -290,7 +292,7 @@ class DeviceSettingsWidget(QWidget):
         return items
 
     def set_bandwidth_status(self):
-        if self.device is not None and self.device.backend != Backends.none:
+        if hasattr(self, "device") and self.device is not None and self.device.backend != Backends.none:
             self.ui.spinBoxBandwidth.setEnabled(self.device.bandwidth_is_adjustable)
             self.ui.btnLockBWSR.setEnabled(self.device.bandwidth_is_adjustable)
 

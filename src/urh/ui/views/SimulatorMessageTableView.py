@@ -12,6 +12,7 @@ from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QHeaderView
 
+
 class SimulatorMessageTableView(TableView):
     create_label_clicked = pyqtSignal(int, int, int)
     open_modulator_dialog_clicked = pyqtSignal()
@@ -40,57 +41,59 @@ class SimulatorMessageTableView(TableView):
         create_label_action.setEnabled(not self.selection_is_empty)
         create_label_action.triggered.connect(self.on_create_label_action_triggered)
 
-        if not self.selection_is_empty:
-            selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
+        if self.selection_is_empty:
+            return menu
 
-            if not all(self.model().protocol.messages[i].decoder is selected_encoding
-                    for i in self.selected_rows):
-                selected_encoding = None
+        selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
 
-            encoding_group = QActionGroup(self)
-            encoding_menu = menu.addMenu("Enforce encoding")
+        if not all(self.model().protocol.messages[i].decoder is selected_encoding
+                   for i in self.selected_rows):
+            selected_encoding = None
 
-            for decoding in self.model().project_manager.decodings:
-                ea = encoding_menu.addAction(decoding.name)
-                ea.setCheckable(True)
-                ea.setActionGroup(encoding_group)
+        encoding_group = QActionGroup(self)
+        encoding_menu = menu.addMenu("Enforce encoding")
 
-                if selected_encoding == decoding:
-                    ea.setChecked(True)
+        for decoding in self.model().project_manager.decodings:
+            ea = encoding_menu.addAction(decoding.name)
+            ea.setCheckable(True)
+            ea.setActionGroup(encoding_group)
 
-                ea.setData(decoding)
-                ea.triggered.connect(self.on_encoding_action_triggered)
+            if selected_encoding == decoding:
+                ea.setChecked(True)
 
-            if constants.SETTINGS.value("multiple_modulations", False, bool):
-                selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
+            ea.setData(decoding)
+            ea.triggered.connect(self.on_encoding_action_triggered)
 
-                if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
-                           for i in self.selected_rows):
-                    selected_modulation = -1
+        if constants.SETTINGS.value("multiple_modulations", False, bool):
+            selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
-                modulation_group = QActionGroup(self)
-                modulation_menu = menu.addMenu("Modulation")
+            if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
+                       for i in self.selected_rows):
+                selected_modulation = -1
 
-                for i, modulator in enumerate(self.model().project_manager.modulators):
-                    ma = modulation_menu.addAction(modulator.name)
-                    ma.setCheckable(True)
-                    ma.setActionGroup(modulation_group)
+            modulation_group = QActionGroup(self)
+            modulation_menu = menu.addMenu("Modulation")
 
-                    if selected_modulation == i:
-                        ma.setChecked(True)
+            for i, modulator in enumerate(self.model().project_manager.modulators):
+                ma = modulation_menu.addAction(modulator.name)
+                ma.setCheckable(True)
+                ma.setActionGroup(modulation_group)
 
-                    ma.setData(i)
-                    ma.triggered.connect(self.on_modulation_action_triggered)
+                if selected_modulation == i:
+                    ma.setChecked(True)
 
-                open_modulator_dialog_action = modulation_menu.addAction(self.tr("..."))
-                open_modulator_dialog_action.triggered.connect(self.on_open_modulator_dialog_action_triggered)
+                ma.setData(i)
+                ma.triggered.connect(self.on_modulation_action_triggered)
+
+            open_modulator_dialog_action = modulation_menu.addAction(self.tr("..."))
+            open_modulator_dialog_action.triggered.connect(self.on_open_modulator_dialog_action_triggered)
 
         return menu
 
     @pyqtSlot()
     def on_encoding_action_triggered(self):
         updated_messages = []
-        
+
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.sender().data()
             updated_messages.append(self.model().protocol.messages[row])

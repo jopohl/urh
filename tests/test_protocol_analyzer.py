@@ -35,6 +35,6 @@ class TestProtocolAnalyzer(QtTestCase):
                          "10110010100011111101110111000010111100111101001011101101011011010110101011100")
 
         freq = pa.estimate_frequency_for_one(1e6)
-        self.assertAlmostEqual(1, freq / 10000, places = 1)  # Freq for 1 is 10K
+        self.assertEqual(1, int(freq / 10000))  # Freq for 1 is 10K
         freq = pa.estimate_frequency_for_zero(1e6)
-        self.assertAlmostEqual(3, freq / 10000, places = 1)  # Freq for 0 is 30K
+        self.assertEqual(3, int(freq / 10000))  # Freq for 0 is 30K

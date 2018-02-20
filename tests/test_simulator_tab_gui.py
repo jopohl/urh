@@ -179,7 +179,7 @@ class TestSimulatorTabGUI(QtTestCase):
         menu = stc.ui.tblViewMessage.create_context_menu()
 
         names = [action.text() for action in menu.actions()]
-        self.assertIn("Modulation", names)
+        self.assertIn("Enforce encoding", names)
         add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
         add_label_action.trigger()
         menu.close()

@@ -41,6 +41,13 @@ class PLabelTableModel(QAbstractTableModel):
         # Ensure bit alignment positions in message are set
         self.__message.split(decode=True)
 
+    def __get_label_at(self, index: int) -> ProtocolLabel:
+        result = self.message_type[index]
+        if isinstance(result, SimulatorProtocolLabel):
+            return result.label
+        else:
+            return result
+
     def update(self):
         self.beginResetModel()
         self.endResetModel()
@@ -91,14 +98,15 @@ class PLabelTableModel(QAbstractTableModel):
         if i >= len(self.message_type):
             return False
 
-        lbl = self.message_type[i]
-        if isinstance(lbl, SimulatorProtocolLabel):
-            lbl = lbl.label
+        lbl = self.__get_label_at(i)
 
         if j == 0:
             lbl.name = value
             type_before = type(lbl)
             self.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(value, None))
+
+            lbl = self.__get_label_at(i)
+
             if type_before != ProtocolLabel or type(lbl) != ProtocolLabel:
                 self.special_status_label_changed.emit(lbl)
 

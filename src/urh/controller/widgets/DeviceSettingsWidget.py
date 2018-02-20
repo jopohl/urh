@@ -76,21 +76,21 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxFreq, "frequency", config.DEFAULT_FREQUENCY)
         set_val(self.ui.spinBoxSampleRate, "sample_rate", config.DEFAULT_SAMPLE_RATE)
         set_val(self.ui.spinBoxBandwidth, "bandwidth", config.DEFAULT_BANDWIDTH)
-        set_val(self.ui.spinBoxGain, "gain", config.DEFAULT_GAIN)
-        set_val(self.ui.spinBoxIFGain, "if_gain", config.DEFAULT_IF_GAIN)
-        set_val(self.ui.spinBoxBasebandGain, "baseband_gain", config.DEFAULT_BB_GAIN)
+        set_val(self.ui.spinBoxGain, self.rx_tx_prefix+"gain", config.DEFAULT_GAIN)
+        set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix+"if_gain", config.DEFAULT_IF_GAIN)
+        set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix+"baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
         self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
-        if "antenna_index" in conf_dict:
-            self.ui.comboBoxAntenna.setCurrentIndex(conf_dict["antenna_index"])
+        if self.rx_tx_prefix+"antenna_index" in conf_dict:
+            self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix+"antenna_index"])
 
-        if "gain" not in conf_dict:
+        if self.rx_tx_prefix+"gain" not in conf_dict:
             self.set_default_rf_gain()
 
-        if "if_gain" not in conf_dict:
+        if self.rx_tx_prefix+"if_gain" not in conf_dict:
             self.set_default_if_gain()
 
-        if "baseband_gain" not in conf_dict:
+        if self.rx_tx_prefix+"baseband_gain" not in conf_dict:
             self.set_default_bb_gain()
 
         self.emit_editing_finished_signals()
@@ -327,6 +327,8 @@ class DeviceSettingsWidget(QWidget):
             try:
                 value = getattr(self.device, attrib, None)
                 if value is not None:
+                    if "gain" in attrib or attrib == "antenna_index":
+                        attrib = self.rx_tx_prefix + attrib
                     settings[attrib] = value
             except (ValueError, AttributeError):
                 continue

@@ -2,6 +2,7 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMenu, QActionGroup
 
+from urh import constants
 from urh.ui.views.TableView import TableView
 
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -60,28 +61,29 @@ class SimulatorMessageTableView(TableView):
                 ea.setData(decoding)
                 ea.triggered.connect(self.on_encoding_action_triggered)
 
-            selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
+            if constants.SETTINGS.value("multiple_modulations", False, bool):
+                selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
-            if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
-                    for i in self.selected_rows):
-                selected_modulation = -1
+                if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
+                           for i in self.selected_rows):
+                    selected_modulation = -1
 
-            modulation_group = QActionGroup(self)
-            modulation_menu = menu.addMenu("Modulation")
+                modulation_group = QActionGroup(self)
+                modulation_menu = menu.addMenu("Modulation")
 
-            for i, modulator in enumerate(self.model().project_manager.modulators):
-                ma = modulation_menu.addAction(modulator.name)
-                ma.setCheckable(True)
-                ma.setActionGroup(modulation_group)
+                for i, modulator in enumerate(self.model().project_manager.modulators):
+                    ma = modulation_menu.addAction(modulator.name)
+                    ma.setCheckable(True)
+                    ma.setActionGroup(modulation_group)
 
-                if selected_modulation == i:
-                    ma.setChecked(True)
+                    if selected_modulation == i:
+                        ma.setChecked(True)
 
-                ma.setData(i)
-                ma.triggered.connect(self.on_modulation_action_triggered)
+                    ma.setData(i)
+                    ma.triggered.connect(self.on_modulation_action_triggered)
 
-            open_modulator_dialog_action = modulation_menu.addAction(self.tr("..."))
-            open_modulator_dialog_action.triggered.connect(self.on_open_modulator_dialog_action_triggered)
+                open_modulator_dialog_action = modulation_menu.addAction(self.tr("..."))
+                open_modulator_dialog_action.triggered.connect(self.on_open_modulator_dialog_action_triggered)
 
         return menu
 

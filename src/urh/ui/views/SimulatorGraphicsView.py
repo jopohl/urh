@@ -98,6 +98,13 @@ class SimulatorGraphicsView(QGraphicsView):
         self.jump_to_item(ga)
 
     @pyqtSlot()
+    def on_add_sleep_action_triggered(self):
+        ref_item = self.context_menu_item
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+        sa = self.scene().add_sleep_action(ref_item, position)
+        self.jump_to_item(sa)
+
+    @pyqtSlot()
     def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
@@ -187,6 +194,8 @@ class SimulatorGraphicsView(QGraphicsView):
         action_menu = menu.addMenu("Add action")
         add_goto_action = action_menu.addAction("Goto")
         add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
+        add_sleep_action = action_menu.addAction("Sleep")
+        add_sleep_action.triggered.connect(self.on_add_sleep_action_triggered)
         trigger_command_action = action_menu.addAction("Trigger command")
         trigger_command_action.triggered.connect(self.on_trigger_command_action_triggered)
 

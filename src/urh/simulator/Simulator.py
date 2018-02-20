@@ -21,6 +21,7 @@ from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.util import util
 from urh.util.Logger import logger
@@ -232,12 +233,17 @@ class Simulator(QObject):
                 else:
                     next_item = self.current_item.parent().next_sibling()
 
+            elif isinstance(self.current_item, SimulatorSleepAction):
+                self.log_message(self.current_item.caption)
+                time.sleep(self.current_item.sleep_time)
+                next_item = self.current_item.next()
+
             elif self.current_item is None:
                 self.current_repeat += 1
                 next_item = self.simulator_config.rootItem
 
             else:
-                raise NotImplementedError("TODO")
+                raise ValueError("Unknown action {}".format(type(self.current_item)))
 
             self.current_item = next_item
 

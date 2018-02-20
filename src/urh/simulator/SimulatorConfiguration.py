@@ -6,6 +6,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
 from urh.simulator.SimulatorMessage import SimulatorMessage
@@ -250,6 +251,8 @@ class SimulatorConfiguration(QObject):
             item = SimulatorProtocolLabel.from_xml(xml_tag, self.project_manager.field_types_by_caption)
         elif xml_tag.tag == "simulator_trigger_command_action":
             item = SimulatorTriggerCommandAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_sleep_action":
+            item = SimulatorSleepAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule":
             item = SimulatorRule.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule_condition":
@@ -287,11 +290,8 @@ class SimulatorConfiguration(QObject):
     def __save_item_to_xml(self, tag: ET.Element, item):
         if isinstance(item, SimulatorMessage):
             child_tag = item.to_xml(decoders=self.project_manager.decodings, include_message_type=True, write_bits=True)
-        elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorTriggerCommandAction, SimulatorGotoAction,
-                                               SimulatorRule, SimulatorRuleCondition)):
-            child_tag = item.to_xml()
         else:
-            raise ValueError("Unknown simulator item type {}".format(type(item)))
+            child_tag = item.to_xml()
 
         tag.append(child_tag)
 

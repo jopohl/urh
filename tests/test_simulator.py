@@ -22,7 +22,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
-from urh.simulator.ActionItem import TriggerCommandActionItem
+from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem
 from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -287,6 +287,9 @@ class TestSimulator(QtTestCase):
         lbl2.external_program = get_path_for_data_file("external_program_simulator.py")
 
         stc.simulator_scene.add_trigger_command_action(None, 200)
+        stc.simulator_scene.add_sleep_action(None, 200)
+        action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
+        action.model_item.sleep_time = 0.001
         stc.simulator_scene.clearSelection()
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, TriggerCommandActionItem))
         action.setSelected(True)

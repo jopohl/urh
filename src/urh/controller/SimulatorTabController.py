@@ -25,6 +25,7 @@ from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
@@ -144,6 +145,7 @@ class SimulatorTabController(QWidget):
     def create_connects(self):
         self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
         self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
+        self.ui.doubleSpinBoxSleep.editingFinished.connect(self.on_spinbox_sleep_editing_finished)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_btn_simulate_clicked)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
@@ -384,6 +386,9 @@ class SimulatorTabController(QWidget):
         elif isinstance(self.active_item, SimulatorTriggerCommandAction):
             self.ui.lineEditTriggerCommand.setText(self.active_item.command)
             self.ui.detail_view_widget.setCurrentIndex(4)
+        elif isinstance(self.active_item, SimulatorSleepAction):
+            self.ui.doubleSpinBoxSleep.setValue(self.active_item.sleep_time)
+            self.ui.detail_view_widget.setCurrentIndex(5)
         else:
             self.ui.detail_view_widget.setCurrentIndex(0)
 
@@ -444,6 +449,11 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_line_edit_trigger_command_text_changed(self):
         self.active_item.command = self.ui.lineEditTriggerCommand.text()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_sleep_editing_finished(self):
+        self.active_item.sleep_time = self.ui.doubleSpinBoxSleep.value()
         self.item_updated(self.active_item)
 
     @pyqtSlot()

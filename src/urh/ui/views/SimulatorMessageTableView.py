@@ -3,6 +3,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMenu, QActionGroup
 
 from urh import constants
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.ui.views.TableView import TableView
 
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -16,12 +17,20 @@ from PyQt5.QtWidgets import QHeaderView
 class SimulatorMessageTableView(TableView):
     create_label_clicked = pyqtSignal(int, int, int)
     open_modulator_dialog_clicked = pyqtSignal()
+    edit_labels_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+
+    @property
+    def selected_message(self) -> SimulatorMessage:
+        try:
+            return self.model().protocol.messages[self.selected_rows[0]]
+        except IndexError:
+            return None
 
     def model(self) -> SimulatorMessageTableModel:
         return super().model()
@@ -44,7 +53,12 @@ class SimulatorMessageTableView(TableView):
         if self.selection_is_empty:
             return menu
 
-        selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
+        if len(self.selected_message.message_type) > 0:
+            edit_labels_action = menu.addAction("Edit labels...")
+            edit_labels_action.setIcon(QIcon.fromTheme("configure"))
+            edit_labels_action.triggered.connect(self.edit_labels_clicked.emit)
+
+        selected_encoding = self.selected_message.decoder
 
         if not all(self.model().protocol.messages[i].decoder is selected_encoding
                    for i in self.selected_rows):

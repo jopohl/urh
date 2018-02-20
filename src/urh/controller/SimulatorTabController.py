@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMes
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.models.ParticipantTableModel import ParticipantTableModel
@@ -187,6 +188,7 @@ class SimulatorTabController(QWidget):
         self.ui.spinBoxRetries.valueChanged.connect(self.on_spinbox_retries_value_changed)
 
         self.ui.tblViewFieldValues.item_link_clicked.connect(self.on_table_item_link_clicked)
+        self.ui.tblViewMessage.edit_labels_clicked.connect(self.on_edit_labels_clicked)
 
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
@@ -515,3 +517,19 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_active_participants_updated(self):
         self.ui.listViewSimulate.model().update()
+
+    @pyqtSlot()
+    def on_edit_labels_clicked(self):
+        view_type = self.ui.cbViewType.currentIndex()
+        protocol_label_dialog = ProtocolLabelDialog(preselected_index=0,
+                                                    message=self.ui.tblViewMessage.selected_message,
+                                                    viewtype=view_type, parent=self)
+        protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
+
+        protocol_label_dialog.showMaximized()
+
+    @pyqtSlot()
+    def on_protocol_label_dialog_finished(self):
+        self.simulator_message_field_model.update()
+        self.simulator_message_table_model.update()
+        self.update_ui()

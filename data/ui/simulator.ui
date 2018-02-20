@@ -766,6 +766,68 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
                 </item>
                </layout>
               </widget>
+              <widget class="QWidget" name="page">
+               <layout class="QVBoxLayout" name="verticalLayout_11">
+                <item>
+                 <layout class="QGridLayout" name="gridLayout_2">
+                  <item row="2" column="1">
+                   <widget class="QSpinBox" name="spinBoxCounterStep">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>999999</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_15">
+                    <property name="text">
+                     <string>Start:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_16">
+                    <property name="text">
+                     <string>Step:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QSpinBox" name="spinBoxCounterStart">
+                    <property name="maximum">
+                     <number>999999</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_17">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This counter will increase by &lt;span style=&quot; font-weight:600;&quot;&gt;step&lt;/span&gt; each time it gets hit during simulation. It will preserve it's value during simulation repeats and retries. To reset all counters stop the simulation and start it again.&lt;/p&gt;&lt;p&gt;Access the value of this counter using item&amp;lt;Number&amp;gt;.counter_value in &lt;span style=&quot; font-weight:600;&quot;&gt;Formulas&lt;/span&gt; or as parameter in &lt;span style=&quot; font-weight:600;&quot;&gt;external programs&lt;/span&gt; e.g. &lt;span style=&quot; font-style:italic;&quot;&gt;external_py -c item5.counter_value&lt;/span&gt;. The value of this counter will be inserted during simulation time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>

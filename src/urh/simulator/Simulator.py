@@ -1,5 +1,6 @@
 import array
 import datetime
+import re
 import threading
 import time
 
@@ -16,6 +17,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
@@ -63,8 +65,15 @@ class Simulator(QObject):
         self.sniffer = sniffer
         self.sender = sender
 
+    def __initialize_counters(self):
+        for item in self.simulator_config.get_all_items():
+            if isinstance(item, SimulatorCounterAction):
+                item.reset_value()
+
     def start(self):
         self.reset()
+
+        self.__initialize_counters()
 
         # start devices
         self.sniffer.rcv_device.fatal_error_occurred.connect(self.stop_on_error)
@@ -184,6 +193,21 @@ class Simulator(QObject):
 
         return True
 
+    def __fill_counter_values(self, command: str):
+        result = []
+        regex = "(item[0-9]+\.counter_value)"
+        for token in re.split(regex, command):
+            if re.match(regex, token) is not None:
+                try:
+                    result.append(str(self.simulator_config.item_dict[token].value))
+                except (KeyError, ValueError, AttributeError):
+                    logger.error("Could not get counter value for " + token)
+            else:
+                result.append(token)
+
+        return "".join(result)
+
+
     def simulate(self):
         self.simulation_started.emit()
         self.is_simulating = self.__wait_for_devices()
@@ -212,8 +236,9 @@ class Simulator(QObject):
 
             elif isinstance(self.current_item, SimulatorTriggerCommandAction):
                 next_item = self.current_item.next()
-                self.log_message("Calling {}".format(self.current_item.command))
-                result = util.run_command(self.current_item.command, param=None, detailed_output=True)
+                command = self.__fill_counter_values(self.current_item.command)
+                self.log_message("Calling {}".format(command))
+                result = util.run_command(command, param=None, detailed_output=True)
                 self.log_message(result)
 
             elif isinstance(self.current_item, SimulatorRule):
@@ -236,6 +261,11 @@ class Simulator(QObject):
             elif isinstance(self.current_item, SimulatorSleepAction):
                 self.log_message(self.current_item.caption)
                 time.sleep(self.current_item.sleep_time)
+                next_item = self.current_item.next()
+
+            elif isinstance(self.current_item, SimulatorCounterAction):
+                self.current_item.progress_value()
+                self.log_message("Increase counter by {} to {}".format(self.current_item.step, self.current_item.value))
                 next_item = self.current_item.next()
 
             elif self.current_item is None:
@@ -448,7 +478,8 @@ class Simulator(QObject):
                                                  else template_msg.destination)
                 direction = "->" if template_msg.source.simulate else "<-"
                 transcript += direction + new_message.plain_bits_str + "\n"
-                result = util.run_command(lbl.external_program, transcript, use_stdin=True)
+                cmd = self.__fill_counter_values(lbl.external_program)
+                result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
                     log_msg = "Result value of external program {} ({}) does not match label length {}"
                     logger.error(log_msg.format(result, len(result), lbl.end-lbl.start))

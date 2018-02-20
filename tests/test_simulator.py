@@ -22,7 +22,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
-from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem
+from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem, CounterActionItem
 from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -265,6 +265,13 @@ class TestSimulator(QtTestCase):
         stc = self.form.simulator_tab_controller
         stc.ui.btnAddParticipant.click()
         stc.ui.btnAddParticipant.click()
+
+        stc.simulator_scene.add_counter_action(None, 0)
+        action = next(item for item in stc.simulator_scene.items() if isinstance(item, CounterActionItem))
+        action.model_item.start = 3
+        action.model_item.step = 2
+        counter_item_str = "item"+str(action.model_item.index()) + ".counter_value"
+
         stc.ui.gvSimulator.add_empty_message(42)
         stc.ui.gvSimulator.add_empty_message(42)
 
@@ -278,16 +285,19 @@ class TestSimulator(QtTestCase):
         messages[0].destination.simulate = True
         messages[1].source = stc.project_manager.participants[1]
         messages[1].destination = stc.project_manager.participants[0]
+
+
+        stc.simulator_scene.add_trigger_command_action(None, 200)
+        stc.simulator_scene.add_sleep_action(None, 200)
+
         lbl1 = messages[0].message_type[0]  # type: SimulatorProtocolLabel
         lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
 
         lbl1.value_type_index = 3
-        lbl1.external_program = get_path_for_data_file("external_program_simulator.py")
+        lbl1.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
         lbl2.value_type_index = 3
-        lbl2.external_program = get_path_for_data_file("external_program_simulator.py")
+        lbl2.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
 
-        stc.simulator_scene.add_trigger_command_action(None, 200)
-        stc.simulator_scene.add_sleep_action(None, 200)
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
         action.model_item.sleep_time = 0.001
         stc.simulator_scene.clearSelection()

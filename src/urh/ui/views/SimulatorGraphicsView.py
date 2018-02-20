@@ -105,6 +105,13 @@ class SimulatorGraphicsView(QGraphicsView):
         self.jump_to_item(sa)
 
     @pyqtSlot()
+    def on_add_counter_action_triggered(self):
+        ref_item = self.context_menu_item
+        position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
+        ca = self.scene().add_counter_action(ref_item, position)
+        self.jump_to_item(ca)
+
+    @pyqtSlot()
     def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
@@ -196,6 +203,8 @@ class SimulatorGraphicsView(QGraphicsView):
         add_goto_action.triggered.connect(self.on_add_goto_action_triggered)
         add_sleep_action = action_menu.addAction("Sleep")
         add_sleep_action.triggered.connect(self.on_add_sleep_action_triggered)
+        add_counter_action = action_menu.addAction("Counter")
+        add_counter_action.triggered.connect(self.on_add_counter_action_triggered)
         trigger_command_action = action_menu.addAction("Trigger command")
         trigger_command_action.triggered.connect(self.on_trigger_command_action_triggered)
 
@@ -366,3 +375,4 @@ class SimulatorGraphicsView(QGraphicsView):
             assert isinstance(item, GraphicsItem)
             parent = item.model_item.parent()
             self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], parent.child_count(), parent)
+

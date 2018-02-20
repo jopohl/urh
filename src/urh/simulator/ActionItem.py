@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QGraphicsTextItem
 from PyQt5.QtCore import QRectF
 
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
@@ -54,6 +55,7 @@ class TriggerCommandActionItem(ActionItem):
         super().__init__(model_item=model_item, parent=parent)
         self.text.setPlainText("Trigger command")
 
+
 class SleepActionItem(ActionItem):
     def __init__(self, model_item: SimulatorSleepAction, parent=None):
         super().__init__(model_item=model_item, parent=parent)
@@ -61,3 +63,9 @@ class SleepActionItem(ActionItem):
 
     def refresh(self):
         self.text.setPlainText(self.model_item.caption)
+
+
+class CounterActionItem(ActionItem):
+    def __init__(self, model_item: SimulatorCounterAction, parent=None):
+        super().__init__(model_item=model_item, parent=parent)
+        self.text.setPlainText("Counter")

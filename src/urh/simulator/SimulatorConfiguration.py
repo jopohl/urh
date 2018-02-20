@@ -4,6 +4,7 @@ from collections import OrderedDict
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
@@ -67,7 +68,10 @@ class SimulatorConfiguration(QObject):
 
             name = "item" + index.replace(".", "_") + suffix
 
-            self.item_dict[name] = item
+            if isinstance(item, SimulatorCounterAction):
+                self.item_dict[name+".counter_value"] = item
+            else:
+                self.item_dict[name] = item
 
         self.item_dict_updated.emit()
 
@@ -253,6 +257,8 @@ class SimulatorConfiguration(QObject):
             item = SimulatorTriggerCommandAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_sleep_action":
             item = SimulatorSleepAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_counter_action":
+            item = SimulatorCounterAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule":
             item = SimulatorRule.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule_condition":

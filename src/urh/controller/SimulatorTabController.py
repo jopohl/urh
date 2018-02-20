@@ -1,10 +1,9 @@
-import itertools
 import xml.etree.ElementTree as ET
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
+from PyQt5.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout, QToolButton, QDialog
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -17,18 +16,18 @@ from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
-from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
-from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -192,6 +191,9 @@ class SimulatorTabController(QWidget):
         self.ui.tblViewFieldValues.item_link_clicked.connect(self.on_table_item_link_clicked)
         self.ui.tblViewMessage.edit_labels_clicked.connect(self.on_edit_labels_clicked)
 
+        self.ui.spinBoxCounterStart.editingFinished.connect(self.on_spinbox_counter_start_editing_finished)
+        self.ui.spinBoxCounterStep.editingFinished.connect(self.on_spinbox_counter_step_editing_finished)
+
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
 
@@ -200,7 +202,7 @@ class SimulatorTabController(QWidget):
         self.simulator_config.items_updated.emit([self.active_item])
 
     def on_item_dict_updated(self):
-        self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
+        self.completer_model.setStringList(self.sim_expression_parser.get_identifiers())
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:
@@ -389,6 +391,10 @@ class SimulatorTabController(QWidget):
         elif isinstance(self.active_item, SimulatorSleepAction):
             self.ui.doubleSpinBoxSleep.setValue(self.active_item.sleep_time)
             self.ui.detail_view_widget.setCurrentIndex(5)
+        elif isinstance(self.active_item, SimulatorCounterAction):
+            self.ui.spinBoxCounterStart.setValue(self.active_item.start)
+            self.ui.spinBoxCounterStep.setValue(self.active_item.step)
+            self.ui.detail_view_widget.setCurrentIndex(6)
         else:
             self.ui.detail_view_widget.setCurrentIndex(0)
 
@@ -449,6 +455,16 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_line_edit_trigger_command_text_changed(self):
         self.active_item.command = self.ui.lineEditTriggerCommand.text()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_counter_start_editing_finished(self):
+        self.active_item.start = self.ui.spinBoxCounterStart.value()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_counter_step_editing_finished(self):
+        self.active_item.step = self.ui.spinBoxCounterStep.value()
         self.item_updated(self.active_item)
 
     @pyqtSlot()

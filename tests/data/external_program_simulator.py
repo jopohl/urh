@@ -14,8 +14,8 @@ message = messages[0]
 direction = message[0:2]
 message.replace(direction, "")
 if direction == "->":
-    result = "10" * 5
+    result = "10" * int(sys.argv[1])
 else:
-    result = "01" * 5
+    result = "01" * int(sys.argv[1])
 
 print("".join(result), end="")

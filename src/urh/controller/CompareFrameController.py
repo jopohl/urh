@@ -443,7 +443,15 @@ class CompareFrameController(QWidget):
     def add_protocol_label(self, start: int, end: int, messagenr: int, proto_view: int, edit_label_name=True):
         # Ensure atleast one Group is active
         start, end = self.proto_analyzer.convert_range(start, end, proto_view, 0, decoded=True, message_indx=messagenr)
-        proto_label = self.proto_analyzer.messages[messagenr].message_type.add_protocol_label(start=start, end=end)
+        message_type = self.proto_analyzer.messages[messagenr].message_type
+        try:
+            used_field_types = [lbl.field_type for lbl in message_type]
+            first_unused_type = next(ft for ft in self.field_types if ft not in used_field_types)
+            name = first_unused_type.caption
+        except (StopIteration, AttributeError):
+            first_unused_type, name = None, None
+
+        proto_label = message_type.add_protocol_label(start=start, end=end, name=name, type=first_unused_type)
 
         self.protocol_label_list_model.update()
         self.protocol_model.update()

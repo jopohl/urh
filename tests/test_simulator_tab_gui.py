@@ -115,9 +115,9 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
         self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
-        model.setData(model.index(0, 3), "item1.No_name + 42", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "item1.preamble + 42", role=Qt.EditRole)
         self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
-        model.setData(model.index(0, 3), "item1.No_name + 42/", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "item1.preamble + 42/", role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
 
         # external program

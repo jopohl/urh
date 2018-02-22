@@ -48,6 +48,7 @@ class QtTestCase(unittest.TestCase):
         if hasattr(self, "dialog"):
             self.dialog.close()
             sip.delete(self.dialog)
+            self.dialog = None
         if hasattr(self, "form"):
             self.form.close_all()
             self.form.close()

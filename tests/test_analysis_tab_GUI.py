@@ -1,5 +1,6 @@
 import copy
 
+import sip
 from PyQt5.QtCore import QPoint, Qt, QModelIndex
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QContextMenuEvent
@@ -361,6 +362,7 @@ class TestAnalysisTabGUI(QtTestCase):
             self.assertIsNotNone(dialog)
             self.assertEqual(dialog.windowTitle(), self.cfc.active_message_type.name)
             dialog.close()
+            sip.delete(dialog)
 
         assert isinstance(self.cfc, CompareFrameController)
         timer = QTimer(self.cfc)
@@ -369,6 +371,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.btnMessagetypeSettings.click()
         QTest.qWait(50)
 
+
     def test_open_label_dialog(self):
         def test_dialog():
             timer.stop()
@@ -376,6 +379,7 @@ class TestAnalysisTabGUI(QtTestCase):
             self.assertIsNotNone(dialog)
             self.assertEqual(dialog.model.rowCount(), 1)
             dialog.close()
+            sip.delete(dialog)
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         timer = QTimer(self.cfc)

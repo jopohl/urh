@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.util.Logger import logger
 
 faulthandler.enable()
 
@@ -31,7 +32,8 @@ class QtTestCase(unittest.TestCase):
         assert mp.get_start_method() == "spawn"
 
         write_settings()
-        cls.app = QApplication(sys.argv)
+        cls.app = QApplication([cls.__name__])
+        logger.debug("Start new app with name {}".format(cls.app.applicationName()))
 
     @classmethod
     def tearDownClass(cls):

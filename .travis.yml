@@ -35,7 +35,11 @@ install:
     else
       pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt; # PyQt5 is only installable via pip for Python >= 3.5
     fi
-  - pip3 install pytest-cov coveralls
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
+      pip3 install pytest-cov coveralls;
+    else
+      pip3 install pytest;
+    fi
   - sh -e /etc/init.d/xvfb start
   - sleep 5
 

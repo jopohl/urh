@@ -179,6 +179,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_thread.daemon = True
         self.server_thread.start()
 
+        logger.debug("Started TCP server for receiving")
+
         self.receive_server_started.emit()
 
     def stop_tcp_server(self):

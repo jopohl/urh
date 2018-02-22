@@ -55,8 +55,8 @@ script:
   - urh autoclose
 
 after_failure:
-  - cat /tmp/build_log.txt
   - cat /tmp/test_errors.txt
+  - cat /tmp/build_log.txt
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then

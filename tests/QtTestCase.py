@@ -1,10 +1,11 @@
+import faulthandler
 import os
+import sip
 import sys
+import time
 import unittest
 
-import sip
-
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
@@ -12,9 +13,8 @@ from PyQt5.QtWidgets import QApplication
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
 
-import faulthandler
-
 faulthandler.enable()
+
 
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
@@ -38,6 +38,8 @@ class QtTestCase(unittest.TestCase):
         cls.app.quit()
         sip.delete(cls.app)
         cls.app = None
+        QTest.qWait(10)
+        time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()
@@ -84,7 +86,7 @@ class QtTestCase(unittest.TestCase):
         sim_frame.ui.treeProtocols.selectAll()
         self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
         mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
-        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.CopyAction|Qt.MoveAction,
+        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.CopyAction | Qt.MoveAction,
                                 mimedata, Qt.LeftButton, Qt.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)

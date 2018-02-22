@@ -75,6 +75,7 @@ class TestProtocolSniffer(QtTestCase):
             self.network_sdr_plugin_sender.send_raw_data(np.zeros(bit_len, dtype=np.complex64), 1)
             QTest.qWait(10)
 
+        sniffer.stop()
         self.assertEqual(sniffer.plain_bits_str, data)
 
         # needed to prevent crash on windows

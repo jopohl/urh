@@ -1,19 +1,17 @@
 import os
 import socket
+import time
+from multiprocessing import Process, Value, Array
 
 import numpy as np
-import time
 from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh.controller.MainController import MainController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
-from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController

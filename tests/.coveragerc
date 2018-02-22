@@ -22,3 +22,4 @@ exclude_lines =
     def on_btn_choose_gnuradio_directory_clicked
     def on_new_project_action_triggered
     def on_label_non_project_mode_link_activated
+    raise NotImplementedError

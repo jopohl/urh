@@ -152,7 +152,7 @@ class TestSimulatorTabGUI(QtTestCase):
         rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
         self.assertEqual(len(rules), 0)
         self.menus_to_ignore = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setInterval(1)
         timer.setSingleShot(True)
         timer.timeout.connect(self.__on_context_menu_simulator_graphics_view_timer_timeout)

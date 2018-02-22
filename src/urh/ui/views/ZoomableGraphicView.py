@@ -41,7 +41,7 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 
-        self.redraw_timer = QTimer()
+        self.redraw_timer = QTimer(self)
         self.redraw_timer.setSingleShot(True)
         self.redraw_timer.timeout.connect(self.redraw_view)
 

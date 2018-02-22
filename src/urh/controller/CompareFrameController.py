@@ -95,7 +95,7 @@ class CompareFrameController(QWidget):
         self.ui.tblLabelValues.setModel(self.label_value_model)
         self.ui.listViewLabelNames.setModel(self.protocol_label_list_model)
 
-        self.selection_timer = QTimer()
+        self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
 
         self.setAcceptDrops(False)

@@ -34,13 +34,13 @@ class SpectrumDialogController(SendRecvDialog):
         self.init_device()
         self.device_settings_widget.set_bandwidth_status()
 
-        self.gain_timer = QTimer()
+        self.gain_timer = QTimer(self)
         self.gain_timer.setSingleShot(True)
 
-        self.if_gain_timer = QTimer()
+        self.if_gain_timer = QTimer(self)
         self.if_gain_timer.setSingleShot(True)
 
-        self.bb_gain_timer = QTimer()
+        self.bb_gain_timer = QTimer(self)
         self.bb_gain_timer.setSingleShot(True)
 
         self.create_connects()

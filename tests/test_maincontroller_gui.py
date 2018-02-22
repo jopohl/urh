@@ -70,7 +70,7 @@ class TestMaincontrollerGUI(QtTestCase):
         w.accept()
 
     def test_import_csv(self):
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setInterval(10)
         timer.setSingleShot(True)
         timer.timeout.connect(self.__accept_csv_dialog)

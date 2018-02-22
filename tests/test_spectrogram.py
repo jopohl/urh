@@ -42,7 +42,7 @@ class TestSpectrogram(QtTestCase):
         signal_frame.ui.spinBoxSelectionEnd.setValue(200)
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
         create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setSingleShot(True)
         timer.timeout.connect(self.form.cancel_action.trigger)
         timer.start(1)

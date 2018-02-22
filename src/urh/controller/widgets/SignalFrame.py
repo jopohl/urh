@@ -83,11 +83,11 @@ class SignalFrame(QFrame):
         self.set_filter_button_caption()
         self.filter_dialog = FilterDialog(self.dsp_filter, parent=self)
 
-        self.proto_selection_timer = QTimer()  # For Update Proto Selection from ROI
+        self.proto_selection_timer = QTimer(self)  # For Update Proto Selection from ROI
         self.proto_selection_timer.setSingleShot(True)
         self.proto_selection_timer.setInterval(1)
 
-        self.spectrogram_update_timer = QTimer()
+        self.spectrogram_update_timer = QTimer(self)
         self.spectrogram_update_timer.setSingleShot(True)
         self.spectrogram_update_timer.setInterval(500)
 

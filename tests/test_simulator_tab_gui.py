@@ -135,7 +135,7 @@ class TestSimulatorTabGUI(QtTestCase):
     def test_simulator_graphics_view(self):
         self.__setup_project()
         self.add_all_signals_to_simulator()
-        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 0)
@@ -166,7 +166,7 @@ class TestSimulatorTabGUI(QtTestCase):
     def test_simulator_message_table_context_menu(self):
         self.__setup_project()
         self.add_all_signals_to_simulator()
-        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         stc.ui.tabWidget.setCurrentIndex(1)
 
         stc.simulator_scene.get_all_message_items()[0].setSelected(True)

@@ -4,7 +4,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from urh.util.Logger import logger
 
 
 class TestLabels(QtTestCase):
@@ -18,24 +17,24 @@ class TestLabels(QtTestCase):
 
         # Create two labels on Compare Frame
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.cframe.add_protocol_label(start=0, end=40, messagenr=1, proto_view=0, edit_label_name = False)  # Sync
-        self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name = False)  # FuzzBit
+        self.cframe.add_protocol_label(start=0, end=40, messagenr=1, proto_view=0, edit_label_name=False)  # Sync
+        self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name=False)  # FuzzBit
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)
         for i in range(0, 40):
-            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
-        self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg = "Bit 43")
+            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i))
+        self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg="Bit 43")
         for i in range(44, self.cframe.protocol_model.col_count):
-            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Bit " + str(i))
+            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i))
 
         self.cframe.ui.cbProtoView.setCurrentIndex(1)  # Hex View
         for i in range(0, 10):
-            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Hex " + str(i))
+            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i))
         for i in range(13, self.cframe.protocol_model.col_count):
-            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg = "Hex " + str(i))
+            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i))
 
     def test_generator_label(self):
         labels = self.cframe.proto_analyzer.protocol_labels

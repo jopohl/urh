@@ -75,5 +75,6 @@ class TestRingBuffer(unittest.TestCase):
         self.assertTrue(ring_buffer.will_fit(4))
         self.assertFalse(ring_buffer.will_fit(5))
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -15,7 +15,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.num_messages, 1)
         for i, pos in enumerate(proto_analyzer.messages[0].bit_sample_pos):
-            self.assertLess(pos, signal.num_samples, msg = i)
+            self.assertLess(pos, signal.num_samples, msg=i)
 
     def test_fsk_freq_detection(self):
         s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")

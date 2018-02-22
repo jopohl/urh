@@ -8,6 +8,7 @@ from urh import constants
 from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.signalprocessing.Encoding import Encoding
 
+
 class TestDecodingGUI(QtTestCase):
     def setUp(self):
         super().setUp()

@@ -82,7 +82,6 @@ class TestSimulator(QtTestCase):
 
         self.network_sdr_plugin_sender = NetworkSDRInterfacePlugin(raw_mode=True)
 
-
         part_a = Participant("Device A", shortname="A", color_index=0)
         part_b = Participant("Device B", shortname="B", color_index=1)
         part_b.simulate = True
@@ -193,7 +192,7 @@ class TestSimulator(QtTestCase):
         conn, addr = s.accept()
 
         msg = next(msg for msg in dialog.simulator_config.get_all_messages() if msg.source.name == "Alice")
-        checksum_label = next(lbl for lbl in msg.message_type if lbl.is_checksum_label).label # type: ChecksumLabel
+        checksum_label = next(lbl for lbl in msg.message_type if lbl.is_checksum_label).label  # type: ChecksumLabel
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         preamble_str = "10101010"
@@ -205,7 +204,7 @@ class TestSimulator(QtTestCase):
 
         seq_num = int("".join(map(str, seq)), 2)
 
-        checksum = list(checksum_label.calculate_checksum(seq+data))
+        checksum = list(checksum_label.calculate_checksum(seq + data))
 
         msg1 = preamble + sync + seq + data + checksum
 
@@ -217,11 +216,11 @@ class TestSimulator(QtTestCase):
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
-        self.assertTrue(bits.startswith(preamble_str+sync_str))
-        bits = bits.replace(preamble_str+sync_str, "")
+        self.assertTrue(bits.startswith(preamble_str + sync_str))
+        bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 1)
 
-        seq = list(map(int, "{0:08b}".format(seq_num+2)))
+        seq = list(map(int, "{0:08b}".format(seq_num + 2)))
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg2 = preamble + sync + seq + data + checksum
 
@@ -233,11 +232,11 @@ class TestSimulator(QtTestCase):
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
-        self.assertTrue(bits.startswith(preamble_str+sync_str))
-        bits = bits.replace(preamble_str+sync_str, "")
+        self.assertTrue(bits.startswith(preamble_str + sync_str))
+        bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 3)
 
-        seq = list(map(int, "{0:08b}".format(seq_num+4)))
+        seq = list(map(int, "{0:08b}".format(seq_num + 4)))
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg3 = preamble + sync + seq + data + checksum
 
@@ -249,8 +248,8 @@ class TestSimulator(QtTestCase):
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
         bits = bits[0]
-        self.assertTrue(bits.startswith(preamble_str+sync_str))
-        bits = bits.replace(preamble_str+sync_str, "")
+        self.assertTrue(bits.startswith(preamble_str + sync_str))
+        bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
 
         QTest.qWait(100)
@@ -270,7 +269,7 @@ class TestSimulator(QtTestCase):
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, CounterActionItem))
         action.model_item.start = 3
         action.model_item.step = 2
-        counter_item_str = "item"+str(action.model_item.index()) + ".counter_value"
+        counter_item_str = "item" + str(action.model_item.index()) + ".counter_value"
 
         stc.ui.gvSimulator.add_empty_message(42)
         stc.ui.gvSimulator.add_empty_message(42)
@@ -285,7 +284,6 @@ class TestSimulator(QtTestCase):
         messages[0].destination.simulate = True
         messages[1].source = stc.project_manager.participants[1]
         messages[1].destination = stc.project_manager.participants[0]
-
 
         stc.simulator_scene.add_trigger_command_action(None, 200)
         stc.simulator_scene.add_sleep_action(None, 200)

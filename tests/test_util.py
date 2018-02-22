@@ -1,6 +1,6 @@
+import os
 import sys
 
-import os
 from PyQt5.QtGui import QIcon
 
 from tests.QtTestCase import QtTestCase

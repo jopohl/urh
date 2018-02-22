@@ -1,7 +1,5 @@
 from array import array
 
-from PyQt5.QtCore import Qt
-
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.dev.BackendHandler import BackendContainer, Backends

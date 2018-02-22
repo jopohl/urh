@@ -1,7 +1,6 @@
+import array
 import os
 import time
-
-import array
 import unittest
 
 from PyQt5.QtCore import QDir
@@ -61,6 +60,6 @@ class TestModulator(unittest.TestCase):
         t = time.time()
         modulator = Modulator("Perf")
         modulator.modulation_type = 1
-        modulator.modulate([True]*1000, pause=10000000)
+        modulator.modulate([True] * 1000, pause=10000000)
         elapsed = time.time() - t
         self.assertLess(elapsed, 0.5)

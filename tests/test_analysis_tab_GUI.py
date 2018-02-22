@@ -1,6 +1,6 @@
 import copy
-
 import sip
+
 from PyQt5.QtCore import QPoint, Qt, QModelIndex
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QContextMenuEvent
@@ -332,11 +332,12 @@ class TestAnalysisTabGUI(QtTestCase):
         menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
 
         global context_menu
-        context_menu = None # type: QMenu
+        context_menu = None  # type: QMenu
+
         def on_timeout():
             global context_menu
             context_menu = next(w for w in QApplication.topLevelWidgets()
-                        if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
+                                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
             context_menu.close()
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
@@ -350,7 +351,7 @@ class TestAnalysisTabGUI(QtTestCase):
         timer.setSingleShot(True)
         timer.timeout.connect(on_timeout)
         timer.start(1)
-        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0,0)))
+        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit Protocol Label...", names)
@@ -365,7 +366,6 @@ class TestAnalysisTabGUI(QtTestCase):
         sip.delete(dialog)
         QTest.qSleep(1)
         QTest.qWait(10)
-
 
     def test_open_label_dialog(self):
         def test_dialog():

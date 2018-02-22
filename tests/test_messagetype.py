@@ -23,5 +23,3 @@ class TestMessageType(unittest.TestCase):
 
         self.assertEqual(mt1.unlabeled_ranges_with_other_mt(mt2), mt2.unlabeled_ranges_with_other_mt(mt1))
         self.assertEqual(mt1.unlabeled_ranges_with_other_mt(mt2), [(0, 1), (11, 14), (21, 40), (71, None)])
-
-

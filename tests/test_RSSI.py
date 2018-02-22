@@ -6,7 +6,6 @@ from urh.signalprocessing.Signal import Signal
 
 
 class TestRSSI(unittest.TestCase):
-    # Testmethode muss immer mit Präfix test_* starten
     def test_get_rssi_of_message(self):
         signal = Signal(get_path_for_data_file("two_participants.complex"), "RSSI-Test")
         signal.modulation_type = 1

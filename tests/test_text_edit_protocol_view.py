@@ -3,6 +3,7 @@ from urh.controller.MainController import MainController
 from urh.signalprocessing.Participant import Participant
 from urh.util.Logger import logger
 
+
 class TestTextEditProtocolView(QtTestCase):
     def test_create_context_menu(self):
         assert isinstance(self.form, MainController)

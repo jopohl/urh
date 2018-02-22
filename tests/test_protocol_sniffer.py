@@ -67,7 +67,7 @@ class TestProtocolSniffer(QtTestCase):
         send_data = np.concatenate(packages)
         chunk_size = 128
         for i in range(0, len(send_data), chunk_size):
-            self.network_sdr_plugin_sender.send_raw_data(send_data[i:i+chunk_size], 1)
+            self.network_sdr_plugin_sender.send_raw_data(send_data[i:i + chunk_size], 1)
             QTest.qWait(10)
 
         # Send enough pauses to end sniffing
@@ -80,6 +80,3 @@ class TestProtocolSniffer(QtTestCase):
 
         # needed to prevent crash on windows
         QTest.qWait(10)
-
-
-

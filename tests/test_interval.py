@@ -12,7 +12,6 @@ class TestInterval(unittest.TestCase):
         self.assertTrue(i1.overlaps_with(i1))
         self.assertTrue(i2.overlaps_with(i2))
 
-
     def test_find_common_interval(self):
         i1 = Interval(0, 32)
         self.assertEqual(i1, i1.find_common_interval(i1))

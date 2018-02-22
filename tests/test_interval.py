@@ -1,11 +1,9 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from urh.signalprocessing.Interval import Interval
 
 
-class TestInterval(QtTestCase):
-    def setUp(self):
-        pass
-
+class TestInterval(unittest.TestCase):
     def test_is_overlapping(self):
         i1 = Interval(40, 64)
         i2 = Interval(64, 104)

@@ -1,14 +1,12 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 from urh.util.WSPChecksum import WSPChecksum
 
 
-class TestCRC(QtTestCase):
-    def setUp(self):
-        pass
-
+class TestCRC(unittest.TestCase):
     def test_crc(self):
         # http://depa.usst.edu.cn/chenjq/www2/software/crc/CRC_Javascript/CRCcalculation.htm
         # CRC-16: polynomial="16_standard", start_value = False, final_xor = False, reverse_polynomial=False, reverse_all=False

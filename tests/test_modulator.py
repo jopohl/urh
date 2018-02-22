@@ -2,15 +2,16 @@ import os
 import time
 
 import array
+import unittest
+
 from PyQt5.QtCore import QDir
 
-from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestModulator(QtTestCase):
+class TestModulator(unittest.TestCase):
     def setUp(self):
         self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
         self.samples_per_bit = 100

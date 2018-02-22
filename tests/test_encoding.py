@@ -5,8 +5,8 @@ import shutil
 import tempfile
 
 import sys
+import unittest
 
-from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.signalprocessing.Encoding import Encoding
@@ -14,10 +14,7 @@ from urh.util import util
 from urh.util.WSPChecksum import WSPChecksum
 
 
-class TestDecoding(QtTestCase):
-    def setUp(self):
-        pass
-
+class TestDecoding(unittest.TestCase):
     def test_carrier(self):
         e = Encoding()
 

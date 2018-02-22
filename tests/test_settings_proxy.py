@@ -1,9 +1,10 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from urh import constants
 from urh.util.SettingsProxy import SettingsProxy
 
 
-class TestSettingsProxy(QtTestCase):
+class TestSettingsProxy(unittest.TestCase):
     def test_get_receive_buffer_size(self):
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = None
         ns = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=True)

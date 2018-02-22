@@ -1,17 +1,15 @@
 import os
 import tempfile
+import unittest
 
 import numpy as np
 
-from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
-class GFSK(QtTestCase):
-    def setUp(self):
-        pass
 
+class GFSK(unittest.TestCase):
     def test_gfsk(self):
         target_file = os.path.join(tempfile.gettempdir(), "test.complex")
 

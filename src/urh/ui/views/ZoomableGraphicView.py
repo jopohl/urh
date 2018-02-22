@@ -168,7 +168,7 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.scene_manager.show_full_scene()
 
     def redraw_view(self, reinitialize=False):
-        if self.scene_manager is not None:
+        if hasattr(self, "scene_manager") and self.scene_manager is not None:
             self.scene_manager.scene_type = self.scene_type
             if reinitialize:
                 self.scene_manager.init_scene()

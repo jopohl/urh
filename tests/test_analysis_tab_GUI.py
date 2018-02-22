@@ -356,20 +356,15 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertIn("Edit Protocol Label...", names)
 
     def test_open_message_type_dialog(self):
-        def test_dialog():
-            timer.stop()
-            dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, MessageTypeDialog)), None)
-            self.assertIsNotNone(dialog)
-            self.assertEqual(dialog.windowTitle(), self.cfc.active_message_type.name)
-            dialog.close()
-            sip.delete(dialog)
-
         assert isinstance(self.cfc, CompareFrameController)
-        timer = QTimer(self.cfc)
-        timer.timeout.connect(test_dialog)
-        timer.start(20)
         self.cfc.ui.btnMessagetypeSettings.click()
-        QTest.qWait(50)
+        dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, MessageTypeDialog)), None)
+        self.assertIsNotNone(dialog)
+        self.assertEqual(dialog.windowTitle(), self.cfc.active_message_type.name)
+        dialog.close()
+        sip.delete(dialog)
+        QTest.qSleep(1)
+        QTest.qWait(10)
 
 
     def test_open_label_dialog(self):
@@ -386,4 +381,5 @@ class TestAnalysisTabGUI(QtTestCase):
         timer.timeout.connect(test_dialog)
         timer.start(20)
         self.cfc.on_edit_label_action_triggered(0)
-        QTest.qWait(50)
+        QTest.qSleep(1)
+        QTest.qWait(10)

@@ -5,6 +5,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
+from urh import constants
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWidget
@@ -23,6 +24,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorDialog(QDialog):
+    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
+
     rx_parameters_changed = pyqtSignal(dict)
     tx_parameters_changed = pyqtSignal(dict)
     sniff_parameters_changed = pyqtSignal(dict)
@@ -99,6 +102,9 @@ class SimulatorDialog(QDialog):
         self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
         self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
 
+        if constants.SETTINGS.value('default_view', 0, int) == 1:
+            self.ui.radioButtonTranscriptHex.setChecked(True)
+
     def create_connects(self):
         self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
         self.device_settings_rx_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
@@ -146,9 +152,9 @@ class SimulatorDialog(QDialog):
         for log_msg in filter(None, map(str.rstrip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
-        for source, destination, msg in self.simulator.transcript[self.current_transcript_index:]:
+        for source, destination, msg, msg_index in self.simulator.transcript[self.current_transcript_index:]:
             data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-            self.ui.textEditTranscript.append("{}->{}: {}".format(source.shortname, destination.shortname, data))
+            self.ui.textEditTranscript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
 
         self.current_transcript_index = len(self.simulator.transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
@@ -181,9 +187,9 @@ class SimulatorDialog(QDialog):
 
     def update_transcript_view(self):
         transcript = []
-        for source, destination, msg in self.simulator.transcript:
+        for source, destination, msg, msg_index in self.simulator.transcript:
             data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-            transcript.append("{}->{}: {}".format(source.shortname, destination.shortname, data))
+            transcript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
         self.ui.textEditTranscript.setText("\n".join(transcript))
 
     def closeEvent(self, event: QCloseEvent):
@@ -201,6 +207,8 @@ class SimulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_simulation_started(self):
+        for i in range(3):
+            self.ui.tabWidgetSimulatorSettings.setTabEnabled(i, False)
         self.ui.checkBoxCaptureFullRX.setDisabled(True)
         self.reset()
         self.timer.start(self.update_interval)
@@ -228,6 +236,8 @@ class SimulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_simulation_stopped(self):
+        for i in range(3):
+            self.ui.tabWidgetSimulatorSettings.setTabEnabled(i, True)
         self.timer.stop()
         self.update_view()
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))

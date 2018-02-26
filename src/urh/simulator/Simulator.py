@@ -299,7 +299,7 @@ class Simulator(QObject):
                     new_message.plain_bits[start:end] = checksum + array.array("B", [0] * (
                             (end - start) - len(checksum)))
 
-            self.transcript.append((msg.source, msg.destination, new_message))
+            self.transcript.append((msg.source, msg.destination, new_message, msg.index()))
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
@@ -339,7 +339,7 @@ class Simulator(QObject):
                     decoded_msg = Message(received_msg.decoded_bits, 0,
                                           received_msg.message_type, decoder=received_msg.decoder)
                     msg.send_recv_messages.append(decoded_msg)
-                    self.transcript.append((msg.source, msg.destination, decoded_msg))
+                    self.transcript.append((msg.source, msg.destination, decoded_msg, msg.index()))
                     self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
@@ -355,29 +355,20 @@ class Simulator(QObject):
     def log_message(self, message):
         now = datetime.datetime.now()
         timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(now)
-        self.log_messages.append(timestamp + ": " + message)
-        logger.debug(timestamp + ": " + message)
+        if isinstance(message, list) and len(message) > 0:
+            self.log_messages.append(timestamp + ": " + message[0])
+            logger.debug(timestamp + ": " + message[0])
+            self.log_messages.extend(message[1:])
+            logger.debug("\n".join(message[1:]))
+        else:
+            self.log_messages.append(timestamp + ": " + message)
+            logger.debug(timestamp + ": " + message)
 
     def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
-        # do we have a crc label?
-        crc_label = next((lbl.label for lbl in received_msg.message_type if isinstance(lbl.label, ChecksumLabel)), None)
-
-        if crc_label is not None:
-            checksum = crc_label.calculate_checksum_for_message(received_msg, use_decoded_bits=True)
-            start, end = received_msg.get_label_range(crc_label, 0, True)
-
-            if checksum != received_msg.decoded_bits[start:end]:
-                fmt_indx = crc_label.display_format_index
-                checksum_str = util.convert_bits_to_string(checksum, fmt_indx)
-                got_str = util.convert_bits_to_string(received_msg.decoded_bits[start:end], fmt_indx)
-                fmt_str = "<font color='red'><b>Checksum mismatch</b></font> for received message: {} <br>"
-                fmt_str += "<i>Expected Checksum:</i> {} <br><i>Actual Checksum:</i> {}"
-                return False, fmt_str.format(received_msg.decoded_bits_str, checksum_str, got_str)
+        if len(received_msg.decoded_bits) == 0:
+            return False, "Failed to decode message {}".format(msg_index)
 
         for lbl in received_msg.message_type:
-            if isinstance(lbl.label, ChecksumLabel):
-                continue
-
             if lbl.value_type_index in [1, 3, 4]:
                 # get live, external program, random
                 continue
@@ -385,13 +376,19 @@ class Simulator(QObject):
             start_recv, end_recv = received_msg.get_label_range(lbl.label, 0, True)
             start_exp, end_exp = expected_msg.get_label_range(lbl.label, 0, False)
 
-            actual = received_msg.decoded_bits[start_recv:end_recv]
-            expected = expected_msg[start_exp:end_exp]
+            if isinstance(lbl.label, ChecksumLabel):
+                expected = lbl.label.calculate_checksum_for_message(received_msg, use_decoded_bits=True)
+                start, end = received_msg.get_label_range(lbl.label, 0, True)
+                actual = received_msg.decoded_bits[start:end]
+            else:
+                actual = received_msg.decoded_bits[start_recv:end_recv]
+                expected = expected_msg[start_exp:end_exp]
             if actual != expected:
-                error_msg = "Attempt for message {} [{}/{}]\n".format(msg_index, retry+1, self.project_manager.simulator_retries)
-                error_msg += util.indent_string("Mismatch for label {}".format(lbl.name))
-                error_msg += util.indent_string("* Expected:\t" + "".join(map(str, expected)))
-                error_msg += util.indent_string("* Got:\t\t" + "".join(map(str, actual)))
+                error_msg = []
+                error_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry+1, self.project_manager.simulator_retries))
+                error_msg.append(util.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
+                error_msg.append(util.indent_string("* Expected:\t" + util.convert_bits_to_string(expected, lbl.label.display_format_index)))
+                error_msg.append(util.indent_string("* Got:\t\t" + util.convert_bits_to_string(actual, lbl.label.display_format_index)))
                 return False, error_msg
 
         return True, ""
@@ -443,7 +440,7 @@ class Simulator(QObject):
             return sniffer.messages.pop(0)
 
         spy = QSignalSpy(sniffer.message_sniffed)
-        if spy.wait(self.project_manager.simulator_timeout * 1000):
+        if spy.wait(self.project_manager.simulator_timeout_ms):
             try:
                 return sniffer.messages.pop(0)
             except IndexError:
@@ -455,7 +452,7 @@ class Simulator(QObject):
 
     def get_transcript(self, participant: Participant):
         result = []
-        for source, destination, msg in self.transcript:
+        for source, destination, msg, _ in self.transcript:
             if participant == destination:
                 result.append("->" + msg.plain_bits_str)
             elif participant == source:

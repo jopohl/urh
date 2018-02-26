@@ -164,8 +164,8 @@ int main(int argc, char **argv)
             }
             else
             {
-                dec[max-1] = 0xD0; // Set magic code for wrong CRC
-                dec[max-2] = 0x0F;                  
+                dec[max-1] = 0x0F; // Set magic code for wrong CRC
+                dec[max-2] = 0xD0;
             }
             
             for(i = 0; i < max; i++)

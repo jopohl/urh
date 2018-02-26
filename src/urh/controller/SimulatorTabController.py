@@ -96,7 +96,7 @@ class SimulatorTabController(QWidget):
 
         self.ui.listViewSimulate.setModel(SimulatorParticipantListModel(self.simulator_config))
         self.ui.spinBoxNRepeat.setValue(self.project_manager.simulator_num_repeat)
-        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout)
+        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout_ms)
         self.ui.spinBoxRetries.setValue(self.project_manager.simulator_retries)
         self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_error_handling_index)
 
@@ -507,7 +507,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot(int)
     def on_spinbox_timeout_value_changed(self, value):
-        self.project_manager.simulator_timeout = value
+        self.project_manager.simulator_timeout_ms = value
 
     @pyqtSlot(int)
     def on_spinbox_retries_value_changed(self, value):

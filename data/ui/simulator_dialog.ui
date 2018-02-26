@@ -53,6 +53,9 @@
            <property name="text">
             <string>Log all</string>
            </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -60,12 +63,18 @@
            <property name="text">
             <string>Log none</string>
            </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="btnToggleLog">
            <property name="text">
             <string>Toggle selected</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -103,8 +112,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>144</width>
-            <height>52</height>
+            <width>1076</width>
+            <height>783</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -116,6 +125,9 @@
              <property name="icon">
               <iconset resource="urh.qrc">
                <normaloff>:/icons/icons/sniffer.svg</normaloff>:/icons/icons/sniffer.svg</iconset>
+             </property>
+             <property name="autoDefault">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -168,8 +180,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>1076</width>
+            <height>783</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -520,6 +532,9 @@ QGroupBox::indicator:checked {
          <property name="icon">
           <iconset theme="media-playback-start">
            <normaloff>.</normaloff>.</iconset>
+         </property>
+         <property name="default">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

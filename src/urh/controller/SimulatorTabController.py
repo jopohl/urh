@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
+from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout, QToolButton, QDialog
@@ -39,6 +39,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorTabController(QWidget):
+    open_in_analysis_requested = pyqtSignal(str)
+
     def __init__(self, compare_frame_controller: CompareFrameController,
                  generator_tab_controller: GeneratorTabController,
                  project_manager: ProjectManager, parent):
@@ -442,6 +444,7 @@ class SimulatorTabController(QWidget):
         s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
         s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
         s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
+        s.open_in_analysis_requested.connect(self.open_in_analysis_requested.emit)
 
         return s
 

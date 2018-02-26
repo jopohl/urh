@@ -112,8 +112,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1076</width>
-            <height>783</height>
+            <width>144</width>
+            <height>52</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -180,8 +180,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1076</width>
-            <height>783</height>
+            <width>100</width>
+            <height>30</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -463,7 +463,7 @@ QGroupBox::indicator:checked {
              <item>
               <widget class="QRadioButton" name="radioButtonTranscriptBit">
                <property name="text">
-                <string>Bit view</string>
+                <string>Bit &amp;view</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -489,6 +489,13 @@ QGroupBox::indicator:checked {
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnOpenInAnalysis">
+               <property name="text">
+                <string>Open in Analysis</string>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QToolButton" name="btnSaveTranscript">

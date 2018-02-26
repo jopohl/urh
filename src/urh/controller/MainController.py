@@ -185,6 +185,8 @@ class MainController(QMainWindow):
         self.signal_tab_controller.files_dropped.connect(self.on_files_dropped)
         self.signal_tab_controller.frame_was_dropped.connect(self.set_frame_numbers)
 
+        self.simulator_tab_controller.open_in_analysis_requested.connect(self.on_simulator_open_in_analysis_requested)
+
         self.compare_frame_controller.show_interpretation_clicked.connect(
             self.show_protocol_selection_in_interpretation)
         self.compare_frame_controller.files_dropped.connect(self.on_files_dropped)
@@ -894,3 +896,8 @@ class MainController(QMainWindow):
         if dialog.exec_():
             for filename in dialog.selectedFiles():
                 self.add_protocol_file(filename)
+
+
+    @pyqtSlot(str)
+    def on_simulator_open_in_analysis_requested(self, text):
+        pass

@@ -33,6 +33,7 @@ from urh.util.ProjectManager import ProjectManager
 class Simulator(QObject):
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
+    simulation_restarted = pyqtSignal()
 
     def __init__(self, simulator_config: SimulatorConfiguration, modulators,
                  expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
@@ -120,6 +121,7 @@ class Simulator(QObject):
         self.simulation_stopped.emit()
 
     def restart(self):
+        self.simulation_restarted.emit()
         self.reset()
         self.log_message("<b>Restarting simulation</b>")
 

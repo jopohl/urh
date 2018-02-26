@@ -29,6 +29,7 @@ class SimulatorDialog(QDialog):
     rx_parameters_changed = pyqtSignal(dict)
     tx_parameters_changed = pyqtSignal(dict)
     sniff_parameters_changed = pyqtSignal(dict)
+    open_in_analysis_requested = pyqtSignal(str)
 
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, signals: list = None,
@@ -130,12 +131,14 @@ class SimulatorDialog(QDialog):
         self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
+        self.simulator.simulation_restarted.connect(self.on_simulation_restarted)
 
         self.ui.btnSaveRX.clicked.connect(self.on_btn_save_rx_clicked)
 
         self.ui.checkBoxCaptureFullRX.clicked.connect(self.on_checkbox_capture_full_rx_clicked)
 
         self.ui.btnTestSniffSettings.clicked.connect(self.on_btn_test_sniff_settings_clicked)
+        self.ui.btnOpenInAnalysis.clicked.connect(self.on_btn_open_in_analysis_clicked)
 
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
@@ -153,8 +156,11 @@ class SimulatorDialog(QDialog):
             self.ui.textEditSimulation.append(log_msg)
 
         for source, destination, msg, msg_index in self.simulator.transcript[self.current_transcript_index:]:
-            data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-            self.ui.textEditTranscript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            try:
+                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
+                self.ui.textEditTranscript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            except AttributeError:
+                self.ui.textEditTranscript.append("")
 
         self.current_transcript_index = len(self.simulator.transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
@@ -188,8 +194,11 @@ class SimulatorDialog(QDialog):
     def update_transcript_view(self):
         transcript = []
         for source, destination, msg, msg_index in self.simulator.transcript:
-            data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-            transcript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            try:
+                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
+                transcript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            except AttributeError:
+                transcript.append("")
         self.ui.textEditTranscript.setText("\n".join(transcript))
 
     def closeEvent(self, event: QCloseEvent):
@@ -243,6 +252,12 @@ class SimulatorDialog(QDialog):
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
         self.ui.btnStartStop.setText("Start")
         self.ui.checkBoxCaptureFullRX.setEnabled(True)
+
+    @pyqtSlot()
+    def on_simulation_restarted(self):
+        lines = self.ui.textEditTranscript.toPlainText().split("\n")
+        if len(lines) > 0 and lines[-1].strip():
+            self.simulator.transcript.append(("", "", "", ""))
 
     @pyqtSlot()
     def on_btn_log_all_clicked(self):
@@ -365,3 +380,8 @@ class SimulatorDialog(QDialog):
             filename = FileOperator.get_save_file_name("simulation_capture.complex")
             if filename:
                 rx_device.data[:rx_device.current_index].tofile(filename)
+
+    @pyqtSlot()
+    def on_btn_open_in_analysis_clicked(self):
+        text = self.ui.textEditTranscript.toPlainText()
+        self.open_in_analysis_requested.emit(text)

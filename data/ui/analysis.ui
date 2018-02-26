@@ -570,7 +570,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                </widget>
               </item>
               <item row="0" column="3">
-               <widget class="QLabel" name="lFilterShown">
+               <widget class="QLabel" name="lblShownRows">
                 <property name="text">
                  <string>shown: 42/108</string>
                 </property>
@@ -798,7 +798,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  <string>...</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="document-open"/>
+                 <iconset theme="document-open">
+                  <normaloff>.</normaloff>.</iconset>
                 </property>
                </widget>
               </item>

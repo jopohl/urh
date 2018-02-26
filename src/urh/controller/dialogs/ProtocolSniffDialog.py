@@ -29,6 +29,7 @@ class ProtocolSniffDialog(SendRecvDialog):
                                                          signal=signal, signals=signals,
                                                          backend_handler=self.backend_handler)
         self.ui.scrollAreaWidgetContents_2.layout().insertWidget(1, self.sniff_settings_widget)
+        self.sniff_settings_widget.ui.btn_sniff_use_signal.setAutoDefault(False)
 
         self.sniffer = self.sniff_settings_widget.sniffer
 

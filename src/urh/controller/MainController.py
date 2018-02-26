@@ -227,9 +227,28 @@ class MainController(QMainWindow):
 
     def add_plain_bits_from_txt(self, filename: str):
         protocol = ProtocolAnalyzer(None, filename=filename)
+
+        is_hex = False
         with open(filename) as f:
-            for line in f:
-                protocol.messages.append(Message.from_plain_bits_str(line.strip()))
+            for line in map(str.strip, f):
+                # support transcript files e.g 1 (A->B): 10101111
+                index = line.rfind(" ")
+                try:
+                    protocol.messages.append(Message.from_plain_bits_str(line[index+1:]))
+                except ValueError:
+                    is_hex = True
+                    break
+
+        if is_hex:
+            lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
+            with open(filename) as f:
+                for line in map(str.strip, f):
+                    # support transcript files e.g 1 (A->B): 10101111
+                    index = line.rfind(" ")
+                    bit_str  = []
+                    for char in line[index+1:]:
+                        bit_str.append(lookup[char.lower()])
+                    protocol.messages.append(Message.from_plain_bits_str("".join(bit_str)))
 
         self.compare_frame_controller.add_protocol(protocol)
         self.compare_frame_controller.refresh()

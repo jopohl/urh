@@ -33,7 +33,6 @@ from urh.util.ProjectManager import ProjectManager
 class Simulator(QObject):
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
-    simulation_restarted = pyqtSignal()
 
     def __init__(self, simulator_config: SimulatorConfiguration, modulators,
                  expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
@@ -45,7 +44,7 @@ class Simulator(QObject):
         self.modulators = modulators  # type: list[Modulator]
         self.backend_handler = BackendHandler()
 
-        self.transcript = []  # type: list[tuple[Participant, Participant, Message]]
+        self.transcript = []  # type: list[tuple[Participant, Participant, Message, int]]
 
         self.current_item = None
         self.last_sent_message = None
@@ -67,6 +66,10 @@ class Simulator(QObject):
         for item in self.simulator_config.get_all_items():
             if isinstance(item, SimulatorCounterAction):
                 item.reset_value()
+
+    def __add_newline_to_transcript(self):
+        if len(self.transcript) > 0 and self.transcript[-1] != ("", "", "", ""):
+            self.transcript.append(("", "", "", ""))
 
     def start(self):
         self.reset()
@@ -121,7 +124,7 @@ class Simulator(QObject):
         self.simulation_stopped.emit()
 
     def restart(self):
-        self.simulation_restarted.emit()
+        self.__add_newline_to_transcript()
         self.reset()
         self.log_message("<b>Restarting simulation</b>")
 
@@ -205,7 +208,6 @@ class Simulator(QObject):
 
         return "".join(result)
 
-
     def simulate(self):
         self.simulation_started.emit()
         self.is_simulating = self.__wait_for_devices()
@@ -269,6 +271,7 @@ class Simulator(QObject):
             elif self.current_item is None:
                 self.current_repeat += 1
                 next_item = self.simulator_config.rootItem
+                self.__add_newline_to_transcript()
 
             else:
                 raise ValueError("Unknown action {}".format(type(self.current_item)))
@@ -335,7 +338,8 @@ class Simulator(QObject):
                 received_msg.decoder = new_message.decoder
                 received_msg.message_type = new_message.message_type
 
-                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry, msg_index=msg.index())
+                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry,
+                                                             msg_index=msg.index())
 
                 if check_result:
                     decoded_msg = Message(received_msg.decoded_bits, 0,
@@ -387,10 +391,13 @@ class Simulator(QObject):
                 expected = expected_msg[start_exp:end_exp]
             if actual != expected:
                 error_msg = []
-                error_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry+1, self.project_manager.simulator_retries))
+                error_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry + 1,
+                                                                         self.project_manager.simulator_retries))
                 error_msg.append(util.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
-                error_msg.append(util.indent_string("* Expected:\t" + util.convert_bits_to_string(expected, lbl.label.display_format_index)))
-                error_msg.append(util.indent_string("* Got:\t\t" + util.convert_bits_to_string(actual, lbl.label.display_format_index)))
+                error_msg.append(util.indent_string(
+                    "* Expected:\t" + util.convert_bits_to_string(expected, lbl.label.display_format_index)))
+                error_msg.append(util.indent_string(
+                    "* Got:\t\t" + util.convert_bits_to_string(actual, lbl.label.display_format_index)))
                 return False, error_msg
 
         return True, ""
@@ -482,7 +489,7 @@ class Simulator(QObject):
                 result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
                     log_msg = "Result value of external program {} ({}) does not match label length {}"
-                    logger.error(log_msg.format(result, len(result), lbl.end-lbl.start))
+                    logger.error(log_msg.format(result, len(result), lbl.end - lbl.start))
                     continue
 
                 try:

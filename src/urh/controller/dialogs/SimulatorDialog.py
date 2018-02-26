@@ -131,7 +131,6 @@ class SimulatorDialog(QDialog):
         self.timer.timeout.connect(self.on_timer_timeout)
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
-        self.simulator.simulation_restarted.connect(self.on_simulation_restarted)
 
         self.ui.btnSaveRX.clicked.connect(self.on_btn_save_rx_clicked)
 
@@ -252,12 +251,6 @@ class SimulatorDialog(QDialog):
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
         self.ui.btnStartStop.setText("Start")
         self.ui.checkBoxCaptureFullRX.setEnabled(True)
-
-    @pyqtSlot()
-    def on_simulation_restarted(self):
-        lines = self.ui.textEditTranscript.toPlainText().split("\n")
-        if len(lines) > 0 and lines[-1].strip():
-            self.simulator.transcript.append(("", "", "", ""))
 
     @pyqtSlot()
     def on_btn_log_all_clicked(self):

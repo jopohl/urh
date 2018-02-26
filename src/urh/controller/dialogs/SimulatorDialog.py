@@ -201,15 +201,15 @@ class SimulatorDialog(QDialog):
         self.ui.textEditTranscript.setText("\n".join(transcript))
 
     def closeEvent(self, event: QCloseEvent):
-        self.emit_editing_finished_signals()
-        self.device_settings_rx_widget.emit_device_parameters_changed()
-        self.device_settings_tx_widget.emit_device_parameters_changed()
-        self.sniff_settings_widget.emit_sniff_parameters_changed()
-
         self.timer.stop()
         self.simulator.stop()
         time.sleep(0.1)
         self.simulator.cleanup()
+
+        self.emit_editing_finished_signals()
+        self.device_settings_rx_widget.emit_device_parameters_changed()
+        self.device_settings_tx_widget.emit_device_parameters_changed()
+        self.sniff_settings_widget.emit_sniff_parameters_changed()
 
         super().closeEvent(event)
 

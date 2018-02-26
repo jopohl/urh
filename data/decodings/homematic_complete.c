@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     len = strlen(argv[2]);    
     
     i = find_preamble_start_in_bit(argv[2], len);
-    if(i < 0) return -1;    // preamble+sync not found or wrong length    
+    if(i < 0) return 0;    // preamble+sync not found or wrong length
     
     len = (len-i)-(len-i)%8;
     memcpy(string, argv[2]+i, len);

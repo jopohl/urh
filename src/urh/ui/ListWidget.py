@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon
+from PyQt5.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
 from PyQt5.QtWidgets import QListWidget, QMenu
 
 from urh import constants
@@ -15,6 +15,16 @@ class ListWidget(QListWidget):
         self.active_element = 0
         self.active_element_text = ""
         self.context_menu_pos = None
+
+    def dropEvent(self, event: QDropEvent):
+        super().dropEvent(event)
+        if self.count() > 0:
+            item = self.itemAt(event.pos())
+            if item is not None:
+                index = self.indexFromItem(item).row()
+                self.setCurrentRow(index)
+            else:
+                self.setCurrentRow(self.count()-1)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         self.active_element = self.indexAt(event.pos()).row()

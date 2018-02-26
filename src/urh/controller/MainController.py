@@ -408,6 +408,8 @@ class MainController(QMainWindow):
             if self.project_manager.project_file is None:
                 self.adjust_for_current_file(filename)
 
+            self.refresh_main_menu()
+
     def set_frame_numbers(self):
         self.signal_tab_controller.set_frame_numbers()
 

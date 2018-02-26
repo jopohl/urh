@@ -384,4 +384,6 @@ class SimulatorDialog(QDialog):
     @pyqtSlot()
     def on_btn_open_in_analysis_clicked(self):
         text = self.ui.textEditTranscript.toPlainText()
-        self.open_in_analysis_requested.emit(text)
+        if len(text) > 0:
+            self.open_in_analysis_requested.emit(text)
+            self.close()

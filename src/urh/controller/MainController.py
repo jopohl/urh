@@ -29,7 +29,7 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_main import Ui_MainWindow
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -227,30 +227,36 @@ class MainController(QMainWindow):
             self.recentFileActionList.append(recent_file_action)
             self.ui.menuFile.addAction(self.recentFileActionList[i])
 
-    def add_plain_bits_from_txt(self, filename: str):
-        protocol = ProtocolAnalyzer(None, filename=filename)
-
+    @staticmethod
+    def get_protocol_from_string(message_strings: list):
+        protocol = ProtocolAnalyzer(None)
         is_hex = False
-        with open(filename) as f:
-            for line in map(str.strip, f):
-                # support transcript files e.g 1 (A->B): 10101111
-                index = line.rfind(" ")
-                try:
-                    protocol.messages.append(Message.from_plain_bits_str(line[index+1:]))
-                except ValueError:
-                    is_hex = True
-                    break
+        for line in filter(None, map(str.strip, message_strings)):
+            # support transcript files e.g 1 (A->B): 10101111
+            index = line.rfind(" ")
+            try:
+                protocol.messages.append(Message.from_plain_bits_str(line[index + 1:]))
+            except ValueError:
+                is_hex = True
+                break
 
         if is_hex:
+            protocol.messages.clear()
             lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
-            with open(filename) as f:
-                for line in map(str.strip, f):
-                    # support transcript files e.g 1 (A->B): 10101111
-                    index = line.rfind(" ")
-                    bit_str  = []
-                    for char in line[index+1:]:
-                        bit_str.append(lookup[char.lower()])
-                    protocol.messages.append(Message.from_plain_bits_str("".join(bit_str)))
+            for line in filter(None, map(str.strip, message_strings)):
+                # support transcript files e.g 1 (A->B): 10101111
+                index = line.rfind(" ")
+                bit_str = [lookup[line[i].lower()] for i in range(index+1, len(line))]
+                protocol.messages.append(Message.from_plain_bits_str("".join(bit_str)))
+
+        return protocol
+
+    def add_plain_bits_from_txt(self, filename: str):
+        with open(filename) as f:
+            protocol = self.get_protocol_from_string(f.readlines())
+
+        protocol.filename = filename
+        protocol.name = util.get_name_from_filename(filename)
 
         self.compare_frame_controller.add_protocol(protocol)
         self.compare_frame_controller.refresh()
@@ -897,7 +903,11 @@ class MainController(QMainWindow):
             for filename in dialog.selectedFiles():
                 self.add_protocol_file(filename)
 
-
     @pyqtSlot(str)
-    def on_simulator_open_in_analysis_requested(self, text):
-        pass
+    def on_simulator_open_in_analysis_requested(self, text: str):
+        protocol = self.get_protocol_from_string(text.split("\n"))
+        protocol.name = "Transcript"
+
+        self.ui.tabWidget.setCurrentIndex(1)
+        self.compare_frame_controller.add_protocol(protocol)
+        self.compare_frame_controller.refresh()

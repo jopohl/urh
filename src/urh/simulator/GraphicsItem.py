@@ -1,12 +1,12 @@
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView
-from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor, QBrush
 from PyQt5.QtCore import QRectF, Qt, QLineF
+from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
+from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
+    QAbstractItemView
 
 from urh import constants
-
 from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorRule import SimulatorRule
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule
 from urh.util import util
 
 
@@ -39,7 +39,7 @@ class GraphicsItem(QGraphicsObject):
 
     def update_flags(self):
         pass
-        
+
     def hoverEnterEvent(self, event):
         self.hover_active = True
         self.update()
@@ -159,7 +159,7 @@ class GraphicsItem(QGraphicsObject):
         return self.bounding_rect
 
     def update_numbering(self):
-        self.number.setPlainText(self.model_item.index())
+        self.number.setPlainText(self.model_item.index() + ".")
 
         for child in self.get_scene_children():
             child.update_numbering()

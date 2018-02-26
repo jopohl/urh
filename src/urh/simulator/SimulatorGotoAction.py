@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
@@ -44,6 +45,8 @@ class SimulatorGotoAction(SimulatorItem):
         if isinstance(item, SimulatorProtocolLabel) or isinstance(item, SimulatorRule):
             return False
         if isinstance(item, SimulatorRuleCondition) and item.type != ConditionType.IF:
+            return False
+        if isinstance(item, SimulatorCounterAction):
             return False
 
         return True

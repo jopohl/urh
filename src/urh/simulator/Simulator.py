@@ -393,7 +393,7 @@ class Simulator(QObject):
                 log_msg.append(HTMLFormatter.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
                 expected_str = util.convert_bits_to_string(expected, lbl.label.display_format_index)
                 got_str = util.convert_bits_to_string(actual, lbl.label.display_format_index)
-                log_msg.append(HTMLFormatter.align_expected_and_got_value(expected_str, got_str))
+                log_msg.append(HTMLFormatter.align_expected_and_got_value(expected_str, got_str, align_depth=2))
                 return False, log_msg
 
         return True, ""

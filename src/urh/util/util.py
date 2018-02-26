@@ -309,9 +309,3 @@ def validate_command(command: str):
 
     cmd, _ = parse_command(command)
     return shutil.which(cmd) is not None
-
-def indent_string(string, depth=1, append_newline=True):
-    result = " " * (depth * constants.INDENT) + string
-    if append_newline:
-        result += "\n"
-    return result

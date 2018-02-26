@@ -8,7 +8,6 @@ import numpy
 from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 from PyQt5.QtTest import QSignalSpy
 
-from urh import constants
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -25,7 +24,7 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
-from urh.util import util
+from urh.util import util, HTMLFormatter
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
@@ -359,16 +358,13 @@ class Simulator(QObject):
                 self.stop()
 
     def log_message(self, message):
-        now = datetime.datetime.now()
-        timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(now)
+        timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(datetime.datetime.now())
+
         if isinstance(message, list) and len(message) > 0:
             self.log_messages.append(timestamp + ": " + message[0])
-            logger.debug(timestamp + ": " + message[0])
             self.log_messages.extend(message[1:])
-            logger.debug("\n".join(message[1:]))
         else:
             self.log_messages.append(timestamp + ": " + message)
-            logger.debug(timestamp + ": " + message)
 
     def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
         if len(received_msg.decoded_bits) == 0:
@@ -389,16 +385,16 @@ class Simulator(QObject):
             else:
                 actual = received_msg.decoded_bits[start_recv:end_recv]
                 expected = expected_msg[start_exp:end_exp]
+
             if actual != expected:
-                error_msg = []
-                error_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry + 1,
-                                                                         self.project_manager.simulator_retries))
-                error_msg.append(util.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
-                error_msg.append(util.indent_string(
-                    "* Expected:\t" + util.convert_bits_to_string(expected, lbl.label.display_format_index)))
-                error_msg.append(util.indent_string(
-                    "* Got:\t\t" + util.convert_bits_to_string(actual, lbl.label.display_format_index)))
-                return False, error_msg
+                log_msg = []
+                log_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry + 1,
+                                                                       self.project_manager.simulator_retries))
+                log_msg.append(HTMLFormatter.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
+                expected_str = util.convert_bits_to_string(expected, lbl.label.display_format_index)
+                got_str = util.convert_bits_to_string(actual, lbl.label.display_format_index)
+                log_msg.append(HTMLFormatter.align_expected_and_got_value(expected_str, got_str))
+                return False, log_msg
 
         return True, ""
 
@@ -420,9 +416,8 @@ class Simulator(QObject):
             if data is None:
                 continue
 
-            log_msg = util.indent_string(lbl.name + ": " + data, 1, append_newline=False)
-            logger.debug(log_msg)
-            self.log_messages.append(log_msg)
+            log_msg = lbl.name + ": " + HTMLFormatter.monospace(data)
+            self.log_messages.append(HTMLFormatter.indent_string(log_msg))
 
     def resend_last_message(self):
         self.log_message("Resending last message")

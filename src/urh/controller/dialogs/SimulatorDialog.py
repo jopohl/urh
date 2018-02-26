@@ -103,6 +103,8 @@ class SimulatorDialog(QDialog):
         self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
         self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
 
+        self.ui.textEditTranscript.setFont(util.get_monospace_font())
+
         if constants.SETTINGS.value('default_view', 0, int) == 1:
             self.ui.radioButtonTranscriptHex.setChecked(True)
 

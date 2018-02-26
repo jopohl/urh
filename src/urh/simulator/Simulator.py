@@ -57,9 +57,6 @@ class Simulator(QObject):
         self.sender_ready = False
         self.fatal_device_error_occurred = False
 
-        self.measure_started = False
-        self.time = None
-
         self.verbose = True
 
         self.sniffer = sniffer
@@ -73,6 +70,7 @@ class Simulator(QObject):
     def start(self):
         self.reset()
 
+        self.transcript.clear()
         self.__initialize_counters()
 
         # start devices
@@ -141,8 +139,6 @@ class Simulator(QObject):
         self.do_restart = False
         self.current_repeat = 0
         self.log_messages[:] = []
-        self.measure_started = False
-        self.transcript.clear()
 
     @property
     def devices(self):
@@ -371,7 +367,12 @@ class Simulator(QObject):
             start, end = received_msg.get_label_range(crc_label, 0, True)
 
             if checksum != received_msg.decoded_bits[start:end]:
-                return False, "CRC mismatch"
+                fmt_indx = crc_label.display_format_index
+                checksum_str = util.convert_bits_to_string(checksum, fmt_indx)
+                got_str = util.convert_bits_to_string(received_msg.decoded_bits[start:end], fmt_indx)
+                fmt_str = "<font color='red'><b>Checksum mismatch</b></font> for received message: {} <br>"
+                fmt_str += "<i>Expected Checksum:</i> {} <br><i>Actual Checksum:</i> {}"
+                return False, fmt_str.format(received_msg.decoded_bits_str, checksum_str, got_str)
 
         for lbl in received_msg.message_type:
             if isinstance(lbl.label, ChecksumLabel):

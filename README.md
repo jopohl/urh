@@ -1,7 +1,7 @@
 # Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
 
 
-| Linux  | Windows | OSX | Test Coverage | Latest Version |
+| Tests Linux  | Tests Windows | Tests OSX | Test Coverage | Latest Release |
 | ------------- | ------------- | ------------- | -------- | -------- |  
 |[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) | [![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master) | [![CircleCI](https://circleci.com/gh/jopohl/urh/tree/master.svg?style=svg)](https://circleci.com/gh/jopohl/urh/tree/master) | [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master) | [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh) |
 

@@ -65,10 +65,21 @@ class ChecksumLabel(ProtocolLabel):
             else:
                 raise ValueError("Unknown Category")
 
+    def to_label(self, field_type: FieldType) -> ProtocolLabel:
+        result = ProtocolLabel(name=self.name, start=self.start, end=self.end - 1, color_index=self.color_index, field_type=field_type,
+                               auto_created=self.auto_created, fuzz_created=self.fuzz_created)
+        result.apply_decoding = self.apply_decoding
+        result.show = self.show
+        result.fuzz_me = self.fuzz_me
+        result.fuzz_values = self.fuzz_values
+        result.display_format_index = self.display_format_index
+        return result
+
     @classmethod
     def from_label(cls, label: ProtocolLabel):
-        result = ChecksumLabel(label.name, label.start, label.end - 1, label.color_index, label.field_type,
-                               label.fuzz_created, label.auto_created)
+        result = ChecksumLabel(name=label.name, start=label.start, end=label.end - 1, color_index=label.color_index,
+                               field_type=FieldType(label.name, FieldType.Function.CHECKSUM),
+                               fuzz_created=label.fuzz_created, auto_created=label.auto_created)
         result.apply_decoding = label.apply_decoding
         result.show = label.show
         result.fuzz_me = label.fuzz_me

@@ -20,7 +20,7 @@ class TestContinuousModulator(unittest.TestCase):
         self.assertTrue(continuous_modulator.ring_buffer.is_empty)
         continuous_modulator.start()
         self.assertTrue(continuous_modulator.process.is_alive())
-        time.sleep(0.5)
+        time.sleep(1)
         self.assertFalse(continuous_modulator.ring_buffer.is_empty)
         continuous_modulator.stop()
         self.assertFalse(continuous_modulator.process.is_alive())
@@ -28,6 +28,7 @@ class TestContinuousModulator(unittest.TestCase):
     def __create_messages(self):
         mt = MessageType("test")
         return [Message([True] * self.BITS_PER_MESSAGE, 1000, mt) for _ in range(self.NUM_MESSAGES)]
+
 
 if __name__ == '__main__':
     unittest.main()

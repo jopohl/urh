@@ -1,17 +1,18 @@
 import uuid
 import xml.etree.ElementTree as ET
 
-class Participant(object):
 
+class Participant(object):
     __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate", "relative_rssi", "__id"]
 
-    def __init__(self, name: str, shortname: str = None, address_hex: str = None, color_index = 0, id: str = None, relative_rssi = 0):
+    def __init__(self, name: str, shortname: str = None, address_hex: str = None,
+                 color_index=0, id: str = None, relative_rssi=0, simulate=False):
         self.name = name if name else "unknown"
         self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
         self.address_hex = address_hex if address_hex else ""
         self.color_index = color_index
         self.show = True
-        self.simulate = False
+        self.simulate = simulate
 
         self.relative_rssi = relative_rssi
 
@@ -54,6 +55,7 @@ class Participant(object):
         root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
         root.set("relative_rssi", str(self.relative_rssi))
+        root.set("simulate", str(int(self.simulate)))
 
         return root
 
@@ -65,8 +67,13 @@ class Participant(object):
         color_index = int(tag.get("color_index", 0))
         color_index = 0 if color_index < 0 else color_index
         relative_rssi = int(tag.get("relative_rssi", 0))
+        try:
+            simulate = bool(int(tag.get("simulate", "0")))
+        except ValueError:
+            simulate = False
+
         return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index,
-                           id=tag.attrib["id"], relative_rssi=relative_rssi)
+                           id=tag.attrib["id"], relative_rssi=relative_rssi, simulate=simulate)
 
     @staticmethod
     def participants_to_xml_tag(participants: list) -> ET.Element:

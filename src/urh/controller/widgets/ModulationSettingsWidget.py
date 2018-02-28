@@ -63,15 +63,11 @@ class ModulationSettingsWidget(QWidget):
 
     @pyqtSlot()
     def on_btn_configuration_dialog_clicked(self):
-        dialog = ModulatorDialog(self.modulators, parent=self)
-        if self.signal_tree_model:
-            dialog.ui.treeViewSignals.setModel(self.signal_tree_model)
-            dialog.ui.treeViewSignals.expandAll()
-
+        dialog = ModulatorDialog(self.modulators, tree_model=self.signal_tree_model, parent=self)
         dialog.ui.comboBoxCustomModulations.setCurrentIndex(self.ui.comboBoxModulationProfiles.currentIndex())
         dialog.finished.connect(self.refresh_modulators_from_dialog)
-
-        dialog.exec_()
+        dialog.show()
+        dialog.initialize("101010")
 
     @pyqtSlot()
     def refresh_modulators_from_dialog(self):

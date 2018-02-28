@@ -1,4 +1,5 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
@@ -15,7 +16,8 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
-class TestAWRE(QtTestCase):
+
+class TestAWRE(unittest.TestCase):
     def setUp(self):
         self.field_types = FieldType.default_field_types()
 

@@ -60,7 +60,8 @@ class TestMaincontrollerGUI(QtTestCase):
 
     def test_open_options_dialog(self):
         self.form.show_options_dialog_specific_tab(1)
-        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)), None) # type: OptionsDialog
+        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)),
+                 None)  # type: OptionsDialog
         self.assertIsNotNone(w)
         self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
         w.close()
@@ -70,7 +71,7 @@ class TestMaincontrollerGUI(QtTestCase):
         w.accept()
 
     def test_import_csv(self):
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setInterval(10)
         timer.setSingleShot(True)
         timer.timeout.connect(self.__accept_csv_dialog)
@@ -89,7 +90,6 @@ class TestMaincontrollerGUI(QtTestCase):
 
         os.remove(self.get_path_for_filename("csvtest.complex"))
         os.remove(self.get_path_for_filename("csvtest_1.complex"))
-
 
     def test_load_single_channel_wav(self):
         filename = os.path.join(tempfile.gettempdir(), "test_single_channel.wav")

@@ -10,6 +10,7 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
@@ -67,7 +68,10 @@ class ProtocolLabelDialog(QDialog):
 
     def configure_special_config_tabs(self):
         self.ui.tabWidgetAdvancedSettings.clear()
-        for lbl in self.model.message_type: # type: ProtocolLabel
+        for lbl in self.model.message_type:  # type: ProtocolLabel
+            if isinstance(lbl, SimulatorProtocolLabel):
+                lbl = lbl.label
+
             if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
                 if isinstance(lbl, ChecksumLabel):
                     w = ChecksumWidget(lbl, self.model.message, self.model.proto_view)

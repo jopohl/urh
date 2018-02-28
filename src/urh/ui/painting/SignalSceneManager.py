@@ -44,4 +44,7 @@ class SignalSceneManager(SceneManager):
 
     def eliminate(self):
         super().eliminate()
+        # do not eliminate the signal here, as it would cause data loss in tree models!
+        # if hasattr(self.signal, "eliminate"):
+        #    self.signal.eliminate()
         self.signal = None

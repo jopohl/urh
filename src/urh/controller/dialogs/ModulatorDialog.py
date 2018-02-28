@@ -10,7 +10,7 @@ from urh.ui.ui_modulation import Ui_DialogModulation
 
 
 class ModulatorDialog(QDialog):
-    def __init__(self, modulators, parent=None):
+    def __init__(self, modulators, tree_model=None, parent=None):
         """
         :type modulators: list of Modulator
         """
@@ -20,6 +20,11 @@ class ModulatorDialog(QDialog):
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.lock_samples_in_view = False
+
+        if tree_model is not None:
+            self.ui.treeViewSignals.setModel(tree_model)
+            self.ui.treeViewSignals.expandAll()
+            self.ui.gVOriginalSignal.signal_tree_root = tree_model.rootItem
 
         self.ui.comboBoxCustomModulations.clear()
         for modulator in modulators:
@@ -157,8 +162,7 @@ class ModulatorDialog(QDialog):
         self.ui.gVData.update()
 
     def draw_modulated(self):
-        self.current_modulator.modulate(pause=0)
-        self.ui.gVModulated.plot_data(self.current_modulator.modulated_samples.imag.astype(numpy.float32))
+        self.ui.gVModulated.plot_data(self.current_modulator.modulate(pause=0).imag.astype(numpy.float32))
         if self.lock_samples_in_view:
             siv = self.ui.gVOriginalSignal.view_rect().width()
             self.adjust_samples_in_view(siv)
@@ -333,6 +337,19 @@ class ModulatorDialog(QDialog):
             return
         else:
             super().keyPressEvent(event)
+
+    def initialize(self, bits: str):
+        self.on_modulation_type_changed()  # for drawing modulated signal initially
+        self.original_bits = bits
+        self.ui.linEdDataBits.setText(bits)
+        self.draw_original_signal()
+        self.ui.gVModulated.show_full_scene(reinitialize=True)
+        self.ui.gVData.show_full_scene(reinitialize=True)
+        self.ui.gVData.auto_fit_view()
+        self.ui.gVCarrier.show_full_scene(reinitialize=True)
+        self.ui.gVCarrier.auto_fit_view()
+
+        self.mark_samples_in_view()
 
     @pyqtSlot()
     def on_carrier_freq_changed(self):

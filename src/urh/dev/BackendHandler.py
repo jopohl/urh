@@ -92,8 +92,11 @@ class BackendHandler(object):
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
         self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
 
-        self.gnuradio_installed = False
-        self.set_gnuradio_installed_status()
+        self.gnuradio_is_installed = constants.SETTINGS.value('gnuradio_is_installed', -1, int)
+        if self.gnuradio_is_installed == -1:
+            self.set_gnuradio_installed_status()
+        else:
+            self.gnuradio_is_installed = bool(self.gnuradio_is_installed)
 
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
@@ -167,25 +170,22 @@ class BackendHandler(object):
             bin_dir = os.path.join(self.gnuradio_install_dir, "bin")
             site_packages_dir = os.path.join(self.gnuradio_install_dir, "lib", "site-packages")
             if all(os.path.isdir(dir) for dir in [self.gnuradio_install_dir, bin_dir, site_packages_dir]):
-                constants.SETTINGS.setValue("gnuradio_install_dir", self.gnuradio_install_dir)
-                self.gnuradio_installed = True
-                return
+                self.gnuradio_is_installed = True
             else:
-                self.gnuradio_installed = False
-                return
+                self.gnuradio_is_installed = False
         else:
             if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
                 try:
                     # Use shell=True to prevent console window popping up on windows
-                    self.gnuradio_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
-                                                   shell=True, stderr=DEVNULL) == 0
+                    self.gnuradio_is_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
+                                                      shell=True, stderr=DEVNULL) == 0
                 except OSError as e:
                     logger.error("Could not determine GNU Radio install status. Assuming true. Error: "+str(e))
-                    self.gnuradio_installed = True
-                constants.SETTINGS.setValue("python2_exe", self.python2_exe)
+                    self.gnuradio_is_installed = True
             else:
-                self.gnuradio_installed = False
-                return
+                self.gnuradio_is_installed = False
+
+        constants.SETTINGS.setValue("gnuradio_is_installed", int(self.gnuradio_is_installed))
 
     def __device_has_gr_scripts(self, devname: str):
         if not hasattr(sys, "frozen"):
@@ -206,7 +206,7 @@ class BackendHandler(object):
     def __avail_backends_for_device(self, devname: str):
         backends = set()
         supports_rx, supports_tx = self.__device_has_gr_scripts(devname)
-        if self.gnuradio_installed and (supports_rx or supports_tx):
+        if self.gnuradio_is_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
 
         if devname.lower() == "hackrf" and self.__hackrf_native_enabled:

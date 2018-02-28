@@ -6,9 +6,8 @@ from libc.stdlib cimport malloc, free
 # noinspection PyUnresolvedReferences
 from cython.view cimport array as cvarray  # needed for converting of malloc array to python array
 
+import cython
 from libc.string cimport memcpy
-
-np.import_array()
 
 cdef uhd_usrp_handle _c_device
 cdef uhd_rx_streamer_handle rx_streamer_handle
@@ -121,11 +120,17 @@ cpdef uhd_error recv_stream(connection, int num_samples):
         free(buff)
         free(result)
 
+@cython.boundscheck(False)
+@cython.initializedcheck(False)
+@cython.wraparound(False)
 cpdef uhd_error send_stream(float[::1] samples):
-    cdef size_t sample_count = len(samples)
-    cdef int i
-    cdef int index = 0
+    if len(samples) == 1 and samples[0] == 0:
+        # Fill with zeros
+        samples = np.zeros(2 * max_num_tx_samples, dtype=np.float32)
+
+    cdef int i, index = 0
     cdef size_t num_samps_sent = 0
+    cdef size_t sample_count = len(samples)
 
     cdef float* buff = <float *>malloc(max_num_tx_samples * 2 * sizeof(float))
     if not buff:
@@ -139,7 +144,8 @@ cpdef uhd_error send_stream(float[::1] samples):
             index += 1
             if index >= 2*max_num_tx_samples:
                 index = 0
-                uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples, &tx_metadata_handle, 0.1, &num_samps_sent)
+                uhd_tx_streamer_send(tx_streamer_handle, buffs, max_num_tx_samples,
+                                     &tx_metadata_handle, 0.1, &num_samps_sent)
 
         uhd_tx_streamer_send(tx_streamer_handle, buffs, int(index / 2), &tx_metadata_handle, 0.1, &num_samps_sent)
     finally:

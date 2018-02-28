@@ -210,6 +210,18 @@ class TestGenerator(QtTestCase):
         self.form.generator_tab_controller.generator_undo_stack.redo()
         self.assertEqual(l1 + 1, len(self.form.generator_tab_controller.table_model.protocol.messages[0]))
 
+    def test_clear(self):
+        self.add_signal_to_form("ask.complex")
+        self.add_signal_to_generator(0)
+
+        gframe = self.form.generator_tab_controller  # type: GeneratorTabController
+        rows = gframe.table_model.rowCount()
+        self.assertGreater(rows, 0)
+        gframe.ui.tableMessages.on_clear_action_triggered()
+        self.assertEqual(gframe.table_model.rowCount(), 0)
+        gframe.generator_undo_stack.undo()
+        self.assertEqual(gframe.table_model.rowCount(), rows)
+
     def test_edit_data(self):
         # load some bits from txt
         filename = os.path.join(tempfile.gettempdir(), "testdata.txt")

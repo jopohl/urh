@@ -1,18 +1,18 @@
+import faulthandler
 import os
+import sip
 import sys
+import time
 import unittest
 
-import sip
-
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
-
-import faulthandler
+from urh.util.Logger import logger
 
 faulthandler.enable()
 
@@ -24,14 +24,24 @@ class QtTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        import multiprocessing as mp
+        try:
+            mp.set_start_method("spawn")
+        except RuntimeError:
+            pass
+        assert mp.get_start_method() == "spawn"
+
         write_settings()
-        cls.app = QApplication(sys.argv)
+        cls.app = QApplication([cls.__name__])
+        logger.debug("Start new app with name {}".format(cls.app.applicationName()))
 
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
         sip.delete(cls.app)
         cls.app = None
+        QTest.qWait(10)
+        time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()
@@ -41,6 +51,8 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
+            sip.delete(self.dialog)
+            self.dialog = None
         if hasattr(self, "form"):
             self.form.close_all()
             self.form.close()
@@ -76,7 +88,15 @@ class QtTestCase(unittest.TestCase):
         sim_frame.ui.treeProtocols.selectAll()
         self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
         mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
-        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.CopyAction|Qt.MoveAction,
+        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.CopyAction | Qt.MoveAction,
                                 mimedata, Qt.LeftButton, Qt.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)
+
+    def get_free_port(self):
+        import socket
+        s = socket.socket()
+        s.bind(("", 0))
+        port = s.getsockname()[1]
+        s.close()
+        return port

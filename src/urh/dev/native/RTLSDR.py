@@ -93,6 +93,3 @@ class RTLSDR(Device):
         result.imag = (unpacked['i'] / 127.5) - 1.0
         return result
 
-    @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        return (127.5 * (complex_samples.view(np.float32) + 1.0)).astype(np.uint8).tostring()

@@ -73,9 +73,6 @@ class CompareFrameController(QWidget):
         self.assign_participants_action = self.analyze_menu.addAction(self.tr("Assign participants"))
         self.assign_participants_action.setCheckable(True)
         self.assign_participants_action.setChecked(True)
-        self.assign_decodings_action = self.analyze_menu.addAction(self.tr("Assign decodings"))
-        self.assign_decodings_action.setCheckable(True)
-        self.assign_decodings_action.setChecked(True)
         self.assign_message_type_action = self.analyze_menu.addAction(self.tr("Assign message type"))
         self.assign_message_type_action.setCheckable(True)
         self.assign_message_type_action.setChecked(True)
@@ -84,7 +81,7 @@ class CompareFrameController(QWidget):
         self.assign_labels_action.setChecked(False)
         self.ui.btnAnalyze.setMenu(self.analyze_menu)
 
-        self.ui.lFilterShown.hide()
+        self.ui.lblShownRows.hide()
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants,
                                                  self)  # type: ProtocolTableModel
@@ -98,7 +95,7 @@ class CompareFrameController(QWidget):
         self.ui.tblLabelValues.setModel(self.label_value_model)
         self.ui.listViewLabelNames.setModel(self.protocol_label_list_model)
 
-        self.selection_timer = QTimer()
+        self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
 
         self.setAcceptDrops(False)
@@ -261,6 +258,7 @@ class CompareFrameController(QWidget):
         self.search_action.triggered.connect(self.on_search_action_triggered)
         self.select_action.triggered.connect(self.on_select_action_triggered)
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
+        self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
         self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
@@ -623,7 +621,6 @@ class CompareFrameController(QWidget):
     def refresh(self):
         self.__protocols = None
         self.set_shown_protocols()
-        self.updateUI()
 
     def reset(self):
         for message_type in self.proto_analyzer.message_types:
@@ -682,29 +679,33 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.setFocus()
 
     def filter_search_results(self):
-        if self.ui.btnSearchSelectFilter.text() != "Filter":
+        if "Filter" not in self.ui.btnSearchSelectFilter.text():
+            # Checking for equality is not enough as some desktop environments (I am watching at you KDE!)
+            # insert a & at beginning of the string
             return
 
+        self.setCursor(Qt.WaitCursor)
         if self.ui.lineEditSearch.text():
             self.search()
             self.ui.tblLabelValues.clearSelection()
 
             matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
-            self.ui.tblViewProtocol.blockSignals(True)
-            rc = self.protocol_model.row_count
-            for i in set(range(0, rc)) - matching_rows:
-                self.ui.tblViewProtocol.hide_row(row=i)
-            self.ui.tblViewProtocol.blockSignals(False)
-            self.ui.tblViewProtocol.row_visibility_changed.emit()
-
-            self.ui.lFilterShown.setText(self.tr("shown: {}/{}".format(rc - len(self.protocol_model.hidden_rows), rc)))
-
+            rows_to_hide = set(range(0, self.protocol_model.row_count)) - matching_rows
+            self.ui.tblViewProtocol.hide_row(rows_to_hide)
         else:
-            for i in range(0, self.protocol_model.row_count):
-                self.ui.tblViewProtocol.showRow(i)
-
-            self.ui.lFilterShown.setText("")
+            self.show_all_rows()
             self.set_shown_protocols()
+
+        self.unsetCursor()
+
+    def __set_shown_rows_status_label(self):
+        if len(self.protocol_model.hidden_rows) > 0:
+            rc = self.protocol_model.row_count
+            text = self.tr("shown: {}/{} (<a href='reset_filter'>reset</a>)")
+            self.ui.lblShownRows.setText(text.format(rc - len(self.protocol_model.hidden_rows), rc))
+            self.ui.lblShownRows.show()
+        else:
+            self.ui.lblShownRows.hide()
 
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
@@ -774,6 +775,12 @@ class CompareFrameController(QWidget):
                 self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
         except Exception as e:
             pass
+
+    def show_all_rows(self):
+        self.ui.lblShownRows.hide()
+        for i in range(0, self.protocol_model.row_count):
+            self.ui.tblViewProtocol.showRow(i)
+        self.set_shown_protocols()
 
     def show_all_cols(self):
         for i in range(self.protocol_model.col_count):
@@ -976,16 +983,6 @@ class CompareFrameController(QWidget):
             self.refresh_assigned_participants_ui()
             logger.debug("Time for auto assigning participants: " + str(time.time() - t))
 
-        self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign decodings)")
-        self.ui.progressBarLogicAnalyzer.setValue(25)
-
-        if self.assign_decodings_action.isChecked():
-            t = time.time()
-            self.proto_analyzer.auto_assign_decodings(self.decodings)
-            self.protocol_model.update()
-            self.label_value_model.update()
-            logger.debug("Time for auto assigning decodings: " + str(time.time() - t))
-
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
         self.ui.progressBarLogicAnalyzer.setValue(50)
 
@@ -1091,6 +1088,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_tbl_view_protocol_row_visibility_changed(self):
+        self.__set_shown_rows_status_label()
         self.set_shown_protocols()
         self.set_show_only_status()
 
@@ -1121,7 +1119,6 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_search_action_triggered(self):
-        self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Search")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-find"))
         self.set_search_ui_visibility(True)
@@ -1130,7 +1127,6 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_select_action_triggered(self):
-        self.ui.lFilterShown.hide()
         self.ui.btnSearchSelectFilter.setText("Select all")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-select-all"))
         self.set_search_ui_visibility(False)
@@ -1139,14 +1135,6 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_filter_action_triggered(self):
-        if len(self.protocol_model.hidden_rows) == 0:
-            self.ui.lFilterShown.setText("")
-        else:
-            nhidden = len(self.protocol_model.hidden_rows)
-            rc = self.protocol_model.row_count
-            self.ui.lFilterShown.setText("shown: {}/{}".format(rc - nhidden, rc))
-
-        self.ui.lFilterShown.show()
         self.ui.btnSearchSelectFilter.setText("Filter")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
         self.set_search_ui_visibility(False)
@@ -1431,3 +1419,9 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_participant_edited(self):
         self.refresh_assigned_participants_ui()
+
+    @pyqtSlot(str)
+    def on_label_shown_link_activated(self, link: str):
+        if link == "reset_filter":
+            self.ui.lineEditSearch.clear()
+            self.show_all_rows()

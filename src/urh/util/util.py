@@ -1,10 +1,13 @@
 import array
 import os
+import shlex
 import sys
 import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
+import shutil
+import subprocess
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
@@ -14,6 +17,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetIt
 from urh import constants
 from urh.util.Logger import logger
 
+DEFAULT_PROGRAMS_WINDOWS = {}
 
 def profile(func):
     def func_wrapper(*args):
@@ -203,3 +207,105 @@ def get_name_from_filename(filename: str):
         return "No Name"
 
     return os.path.basename(filename).split(".")[0]
+
+
+def get_default_windows_program_for_extension(extension: str):
+    if os.name != "nt":
+        return None
+
+    if not extension.startswith("."):
+        extension = "." + extension
+
+    if extension in DEFAULT_PROGRAMS_WINDOWS:
+        return DEFAULT_PROGRAMS_WINDOWS[extension]
+
+    try:
+        assoc = subprocess.check_output("assoc " + extension, shell=True, stderr=subprocess.PIPE).decode().split("=")[1]
+        ftype = subprocess.check_output("ftype " + assoc, shell=True).decode().split("=")[1].split(" ")[0]
+        ftype = ftype.replace('"', '')
+        assert shutil.which(ftype) is not None
+    except Exception:
+        return None
+
+    DEFAULT_PROGRAMS_WINDOWS[extension] = ftype
+    return ftype
+
+
+def parse_command(command: str):
+    try:
+        posix = os.name != "nt"
+        splitted = shlex.split(command, posix=posix)
+        # strip quotations
+        if not posix:
+            splitted = [s.replace('"', '').replace("'", "") for s in splitted]
+    except ValueError:
+        splitted = []   # e.g. when missing matching "
+
+    if len(splitted) == 0:
+        return "", []
+
+    cmd = [splitted.pop(0)]
+
+    # This is for legacy support, if you have filenames with spaces and did not quote them
+    while shutil.which(" ".join(cmd)) is None and len(splitted) > 0:
+        cmd.append(splitted.pop(0))
+
+    return " ".join(cmd), splitted
+
+
+def run_command(command, param: str=None, use_stdin=False, detailed_output=False):
+    cmd, arg = parse_command(command)
+    if shutil.which(cmd) is None:
+        logger.error("Could not find {}".format(cmd))
+        return ""
+
+    startupinfo = None
+    if os.name == 'nt':
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        if "." in cmd:
+            default_app = get_default_windows_program_for_extension(cmd.split(".")[-1])
+            if default_app:
+                arg.insert(0, cmd)
+                cmd = default_app
+
+    call_list = [cmd] + arg
+    try:
+        if detailed_output:
+            if param is not None:
+                call_list.append(param)
+
+            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
+            out, err = p.communicate()
+            result = "{} exited with {}".format(" ".join(call_list), p.returncode)
+            if out.decode():
+                result += " stdout: {}".format(out.decode())
+            if err.decode():
+                result += " stderr: {}".format(err.decode())
+            return result
+        elif use_stdin:
+            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 startupinfo=startupinfo)
+            param = param.encode() if param is not None else None
+            out, _ = p.communicate(param)
+            return out.decode()
+        else:
+            if param is not None:
+                call_list.append(param)
+
+            return subprocess.check_output(call_list, stderr=subprocess.PIPE, startupinfo=startupinfo).decode()
+    except Exception as e:
+        msg = "Could not run {} ({})".format(cmd, e)
+        logger.error(msg)
+        if detailed_output:
+            return msg
+        else:
+            return ""
+
+
+def validate_command(command: str):
+    if not isinstance(command, str):
+        return False
+
+    cmd, _ = parse_command(command)
+    return shutil.which(cmd) is not None

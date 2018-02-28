@@ -518,6 +518,8 @@ class DecoderDialog(QDialog):
                     self.ui.external_encoder.setText("")
             self.ui.external_decoder.setEnabled(decoderEdit)
             self.ui.external_encoder.setEnabled(decoderEdit)
+            self.ui.btnChooseDecoder.setEnabled(decoderEdit)
+            self.ui.btnChooseEncoder.setEnabled(decoderEdit)
 
         elif constants.DECODING_INVERT in element:
             txt += "All bits are inverted, i.e. 0->1 and 1->0."
@@ -861,3 +863,4 @@ class DecoderDialog(QDialog):
 
         self.ui.graphicsView_signal.centerOn(0, 0)
         self.unsetCursor()
+

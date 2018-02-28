@@ -1,10 +1,9 @@
-import sys
 import platform
+import sys
+import unittest
 
-from tests.QtTestCase import QtTestCase
 
-
-class TestWinNativeBackend(QtTestCase):
+class TestWinNativeBackend(unittest.TestCase):
     def test_native_backends_installed(self):
         if sys.platform == "win32":
             if platform.architecture()[0] == "64bit":

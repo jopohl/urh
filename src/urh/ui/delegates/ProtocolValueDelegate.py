@@ -1,33 +1,46 @@
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QFileDialog, QLineEdit, QHBoxLayout, QToolButton, QCompleter, QLabel, QSpinBox
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, QDir, Qt, pyqtSlot
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QFileDialog, QLineEdit, QHBoxLayout, \
+    QToolButton, QCompleter, QLabel, QSpinBox
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+
 
 class ExternalProgramWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.extProgramLineEdit = QLineEdit()
+        self.line_edit_external_program = QLineEdit()
 
-        self.btnChooseExtProg = QToolButton()
-        self.btnChooseExtProg.setText("...")
-        self.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
+        self.btn_choose_ext_prog = QToolButton()
+        self.btn_choose_ext_prog.setText("...")
+        self.btn_choose_ext_prog.clicked.connect(self.on_btn_choose_ext_prog_clicked)
 
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
-        self.layout.addWidget(self.extProgramLineEdit)
-        self.layout.addWidget(self.btnChooseExtProg)
+        self.layout.addWidget(self.line_edit_external_program)
+        self.layout.addWidget(self.btn_choose_ext_prog)
 
         self.setLayout(self.layout)
 
     @pyqtSlot()
     def on_btn_choose_ext_prog_clicked(self):
-        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setWindowTitle("Choose external program")
 
-        if file_name is not None and ok:
-            self.extProgramLineEdit.setText(file_name)
+        if dialog.exec_():
+            try:
+                file_name = dialog.selectedFiles()[0]
+            except IndexError:
+                file_name = ""
+        else:
+            file_name = ""
+
+        if file_name:
+            self.line_edit_external_program.setText(file_name)
+
 
 class RandomValueWidget(QWidget):
     def __init__(self, parent=None):
@@ -35,25 +48,26 @@ class RandomValueWidget(QWidget):
 
         self.setAutoFillBackground(True)
 
-        self.lblRandomMin = QLabel("Minimum (Decimal):")
-        self.lblRandomMax = QLabel("Maximum (Decimal):")
-        self.spinBoxRandomMin = QSpinBox()
-        self.spinBoxRandomMax = QSpinBox()
+        self.lbl_random_min = QLabel("Minimum (Decimal):")
+        self.lbl_random_max = QLabel("Maximum (Decimal):")
+        self.spinbox_random_min = QSpinBox()
+        self.spinbox_random_max = QSpinBox()
 
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(10)
-        self.layout.addWidget(self.lblRandomMin)
-        self.layout.addWidget(self.spinBoxRandomMin)
-        self.layout.addWidget(self.lblRandomMax)
-        self.layout.addWidget(self.spinBoxRandomMax)
+        self.layout.addWidget(self.lbl_random_min)
+        self.layout.addWidget(self.spinbox_random_min)
+        self.layout.addWidget(self.lbl_random_max)
+        self.layout.addWidget(self.spinbox_random_max)
 
-        self.spinBoxRandomMax.valueChanged.connect(self.on_max_value_changed)
+        self.spinbox_random_max.valueChanged.connect(self.on_max_value_changed)
 
         self.setLayout(self.layout)
 
     def on_max_value_changed(self, value):
-        self.spinBoxRandomMin.setMaximum(value - 1)
+        self.spinbox_random_min.setMaximum(value - 1)
+
 
 class ProtocolValueDelegate(QStyledItemDelegate):
     def __init__(self, controller, parent=None):
@@ -76,10 +90,10 @@ class ProtocolValueDelegate(QStyledItemDelegate):
             return ExternalProgramWidget(parent)
         elif lbl.value_type_index == 4:
             random_widget = RandomValueWidget(parent)
-            random_widget.spinBoxRandomMin.setMaximum(lbl.fuzz_maximum - 2)
-            random_widget.spinBoxRandomMax.setMinimum(1)
-            random_widget.spinBoxRandomMax.setMaximum(lbl.fuzz_maximum - 1)
-            
+            random_widget.spinbox_random_min.setMaximum(lbl.fuzz_maximum - 2)
+            random_widget.spinbox_random_max.setMinimum(1)
+            random_widget.spinbox_random_max.setMaximum(lbl.fuzz_maximum - 1)
+
             return random_widget
         else:
             return super().createEditor(parent, option, index)
@@ -87,18 +101,18 @@ class ProtocolValueDelegate(QStyledItemDelegate):
     def setEditorData(self, editor: QWidget, index: QModelIndex):
         if isinstance(editor, ExternalProgramWidget):
             item = index.model().data(index)
-            editor.extProgramLineEdit.setText(item)
+            editor.line_edit_external_program.setText(item)
         elif isinstance(editor, RandomValueWidget):
             items = index.model().data(index, Qt.EditRole)
-            editor.spinBoxRandomMax.setValue(items[1])
-            editor.spinBoxRandomMin.setValue(items[0])
+            editor.spinbox_random_max.setValue(items[1])
+            editor.spinbox_random_min.setValue(items[0])
         else:
             super().setEditorData(editor, index)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         if isinstance(editor, ExternalProgramWidget):
-            model.setData(index, editor.extProgramLineEdit.text(), Qt.EditRole)
+            model.setData(index, editor.line_edit_external_program.text(), Qt.EditRole)
         elif isinstance(editor, RandomValueWidget):
-            model.setData(index, [editor.spinBoxRandomMin.value(), editor.spinBoxRandomMax.value()], Qt.EditRole)
+            model.setData(index, [editor.spinbox_random_min.value(), editor.spinbox_random_max.value()], Qt.EditRole)
         else:
             super().setModelData(editor, model, index)

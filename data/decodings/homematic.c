@@ -38,7 +38,7 @@ int main(int argc, char **argv)
                 enc[i/8] = str2byte(&string[i]);                
             max = i/8;
             memcpy(&dec, &enc, 256);
-            
+
             /*
              * byte[] Dec = new byte[Enc.Length];
              * Dec[0] = Enc[0]; //Packet length

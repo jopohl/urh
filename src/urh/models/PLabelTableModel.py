@@ -4,6 +4,7 @@ from PyQt5.QtGui import QFont
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 
 class PLabelTableModel(QAbstractTableModel):
@@ -39,6 +40,13 @@ class PLabelTableModel(QAbstractTableModel):
         self.__message = value
         # Ensure bit alignment positions in message are set
         self.__message.split(decode=True)
+
+    def __get_label_at(self, index: int) -> ProtocolLabel:
+        result = self.message_type[index]
+        if isinstance(result, SimulatorProtocolLabel):
+            return result.label
+        else:
+            return result
 
     def update(self):
         self.beginResetModel()
@@ -90,14 +98,17 @@ class PLabelTableModel(QAbstractTableModel):
         if i >= len(self.message_type):
             return False
 
-        lbl = self.message_type[i]
+        lbl = self.__get_label_at(i)
 
         if j == 0:
             lbl.name = value
             type_before = type(lbl)
             self.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(value, None))
-            if type_before != ProtocolLabel or type(self.message_type[i]) != ProtocolLabel:
-                self.special_status_label_changed.emit(self.message_type[i])
+
+            lbl = self.__get_label_at(i)
+
+            if type_before != ProtocolLabel or type(lbl) != ProtocolLabel:
+                self.special_status_label_changed.emit(lbl)
 
         elif j == 1:
             lbl.start = self.message.convert_index(int(value - 1), from_view=self.proto_view, to_view=0, decoded=True)[0]

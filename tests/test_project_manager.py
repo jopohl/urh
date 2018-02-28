@@ -54,7 +54,7 @@ class TestProjectManager(QtTestCase):
         self.gframe.modulators.clear()
         self.assertEqual(len(self.gframe.modulators), 0)
 
-        self.form.project_manager.project_file = None   # prevent saving of the zero modulators
+        self.form.project_manager.project_file = None  # prevent saving of the zero modulators
         self.form.project_manager.set_project_folder(self.form.project_manager.project_path, close_all=False)
         self.assertEqual(len(self.gframe.modulators), 2)
 
@@ -170,7 +170,6 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[0].field_type, preamble_field_type)
         self.assertEqual(self.form.compare_frame_controller.active_message_type[1].field_type, sync_field_type)
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
-
 
     def __set_label_name(self, index: int, name: str):
         list_model = self.form.compare_frame_controller.ui.listViewLabelNames.model()

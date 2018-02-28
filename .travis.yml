@@ -1,7 +1,7 @@
 os: linux
 language: python
 dist: trusty
-sudo: false
+sudo: required
 
 env:
   global:
@@ -11,7 +11,6 @@ env:
 matrix:
   include:
     - python: 3.4_with_system_site_packages
-      sudo: required
     - python: 3.5
     - python: 3.6
 
@@ -36,32 +35,36 @@ install:
     else
       pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt; # PyQt5 is only installable via pip for Python >= 3.5
     fi
-  - pip3 install pytest-cov coveralls
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
+      pip3 install pytest-cov coveralls;
+    else
+      pip3 install pytest;
+    fi
   - sh -e /etc/init.d/xvfb start
   - sleep 5
 
 before_script:
   - touch tests/show_gui
-  - python3 -c "from PyQt5.QtCore import QT_VERSION_STR; from PyQt5.Qt import PYQT_VERSION_STR; print('QT Version:', QT_VERSION_STR); print('PyQt Version:', PYQT_VERSION_STR)"
+  - python3 -c "from PyQt5.QtCore import QT_VERSION_STR; from PyQt5.Qt import PYQT_VERSION_STR; from sip import SIP_VERSION_STR; print('QT Version:', QT_VERSION_STR); print('PyQt Version:', PYQT_VERSION_STR); print('SIP version:', SIP_VERSION_STR)"
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
       pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt;
     else
-      pytest tests 2> /tmp/test_errors.txt;
+      pytest -s tests 2> /tmp/test_errors.txt;
     fi
   - pip3 install .
   - urh --version
   - urh autoclose
 
 after_failure:
-  - cat /tmp/build_log.txt
   - cat /tmp/test_errors.txt
+  - cat /tmp/build_log.txt
 
 after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION != "3.4"* ]]; then
+  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
       coveralls --rcfile=tests/.coveragerc;
     else
-      echo "coverage upload only for python > 3.4";
+      echo "coverage upload only for python 3.6";
     fi

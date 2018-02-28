@@ -1,14 +1,17 @@
 import copy
+import sip
 
 from PyQt5.QtCore import QPoint, Qt, QModelIndex
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu
+from PyQt5.QtWidgets import QApplication, QMenu, qApp
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.MainController import MainController
+from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.signalprocessing.FieldType import FieldType
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 
@@ -23,7 +26,11 @@ class TestAnalysisTabGUI(QtTestCase):
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
 
     def test_analyze_button_fsk(self):
+        assert isinstance(self.cfc, CompareFrameController)
         self.add_signal_to_form("fsk.complex")
+        self.cfc.assign_labels_action.setChecked(True)
+        self.cfc.assign_message_type_action.setChecked(True)
+        self.cfc.assign_participants_action.setChecked(True)
         self.cfc.ui.btnAnalyze.click()
         self.assertTrue(True)
 
@@ -35,6 +42,9 @@ class TestAnalysisTabGUI(QtTestCase):
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxNoiseTreshold
         w.setValue(0.0111)
         QTest.keyClick(w, Qt.Key_Enter)
+        self.cfc.assign_labels_action.setChecked(True)
+        self.cfc.assign_message_type_action.setChecked(True)
+        self.cfc.assign_participants_action.setChecked(True)
         self.cfc.ui.btnAnalyze.click()
         self.assertTrue(True)
 
@@ -322,11 +332,12 @@ class TestAnalysisTabGUI(QtTestCase):
         menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
 
         global context_menu
-        context_menu = None # type: QMenu
+        context_menu = None  # type: QMenu
+
         def on_timeout():
             global context_menu
             context_menu = next(w for w in QApplication.topLevelWidgets()
-                        if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
+                                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
             context_menu.close()
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
@@ -336,12 +347,39 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.tblViewProtocol.selectRow(0)
         self.assertEqual(self.cfc.ui.listViewLabelNames.model().rowCount(), 1)
 
-        timer = QTimer()
+        timer = QTimer(self.cfc)
         timer.setSingleShot(True)
         timer.timeout.connect(on_timeout)
         timer.start(1)
-        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0,0)))
+        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit Protocol Label...", names)
 
+    def test_open_message_type_dialog(self):
+        assert isinstance(self.cfc, CompareFrameController)
+        self.cfc.ui.btnMessagetypeSettings.click()
+        dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, MessageTypeDialog)), None)
+        self.assertIsNotNone(dialog)
+        self.assertEqual(dialog.windowTitle(), self.cfc.active_message_type.name)
+        dialog.close()
+        sip.delete(dialog)
+        QTest.qSleep(1)
+        QTest.qWait(10)
+
+    def test_open_label_dialog(self):
+        def test_dialog():
+            timer.stop()
+            dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, ProtocolLabelDialog)), None)
+            self.assertIsNotNone(dialog)
+            self.assertEqual(dialog.model.rowCount(), 1)
+            dialog.close()
+            sip.delete(dialog)
+
+        self.cfc.add_protocol_label(10, 20, 0, 0, False)
+        timer = QTimer(self.cfc)
+        timer.timeout.connect(test_dialog)
+        timer.start(20)
+        self.cfc.on_edit_label_action_triggered(0)
+        QTest.qSleep(1)
+        QTest.qWait(10)

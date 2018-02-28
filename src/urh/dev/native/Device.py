@@ -17,8 +17,8 @@ from urh.util.SettingsProxy import SettingsProxy
 class Device(QObject):
     JOIN_TIMEOUT = 1.0
 
-    SEND_BUFFER_SIZE = 0
-    CONTINUOUS_SEND_BUFFER_SIZE = 0
+    SYNC_TX_CHUNK_SIZE = 0
+    CONTINUOUS_TX_CHUNK_SIZE = 0
 
     class Command(Enum):
         STOP = 0
@@ -33,7 +33,7 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    rcv_index_changed = pyqtSignal(int, int)
+    data_received = pyqtSignal(np.ndarray)
 
     ASYNCHRONOUS = False
 
@@ -130,7 +130,7 @@ class Device(QObject):
         try:
             cls.adapt_num_read_samples_to_sample_rate(dev_parameters[cls.Command.SET_SAMPLE_RATE.name])
         except NotImplementedError:
-            # Many SDRs like HackRF or AirSpy do not need to calculate READ_SAMPLES
+            # Many SDRs like HackRF or AirSpy do not need to calculate SYNC_RX_CHUNK_SIZE
             # as default values are either fine or given by the hardware
             pass
 
@@ -148,7 +148,7 @@ class Device(QObject):
 
         while not exit_requested:
             if cls.ASYNCHRONOUS:
-                time.sleep(0.5)
+                time.sleep(0.25)
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():
@@ -177,7 +177,7 @@ class Device(QObject):
             return False
 
         exit_requested = False
-        buffer_size = cls.CONTINUOUS_SEND_BUFFER_SIZE if send_config.continuous else cls.SEND_BUFFER_SIZE
+        buffer_size = cls.CONTINUOUS_TX_CHUNK_SIZE if send_config.continuous else cls.SYNC_TX_CHUNK_SIZE
         if not cls.ASYNCHRONOUS and buffer_size == 0:
             logger.warning("Send buffer size is zero!")
 
@@ -194,6 +194,11 @@ class Device(QObject):
                 if result == cls.Command.STOP.name:
                     exit_requested = True
                     break
+
+        if not cls.ASYNCHRONOUS:
+            # Some Sync send calls (e.g. USRP) are not blocking, so we wait a bit here to ensure
+            # that the send buffer on the SDR is cleared
+            time.sleep(0.75)
 
         if exit_requested:
             logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
@@ -241,6 +246,8 @@ class Device(QObject):
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.send_buffer = None
         self.send_buffer_reader = None
+
+        self.emit_data_received_signal = False  # used for protocol sniffer
 
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
@@ -549,10 +556,12 @@ class Device(QObject):
                 self.receive_process.join()
 
         self.is_receiving = False
-        self.parent_ctrl_conn.close()
-        self.parent_data_conn.close()
-        self.child_ctrl_conn.close()
-        self.child_data_conn.close()
+        for connection in (self.parent_ctrl_conn, self.parent_data_conn, self.child_ctrl_conn, self.child_data_conn):
+            try:
+                connection.close()
+            except OSError as e:
+                logger.exception(e)
+
 
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
@@ -584,8 +593,15 @@ class Device(QObject):
                 self.transmit_process.join()
 
         self.is_transmitting = False
-        self.parent_ctrl_conn.close()
-        self.child_ctrl_conn.close()
+        try:
+            self.parent_ctrl_conn.close()
+        except OSError as e:
+            logger.exception(e)
+
+        try:
+            self.child_ctrl_conn.close()
+        except OSError as e:
+            logger.exception(e)
 
     @staticmethod
     def unpack_complex(buffer):
@@ -615,31 +631,33 @@ class Device(QObject):
         while self.is_receiving:
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
-
                 samples = self.unpack_complex(byte_buffer)
                 n_samples = len(samples)
-                if n_samples > 0:
-                    if self.current_recv_index + n_samples >= len(self.receive_buffer):
-                        if self.resume_on_full_receive_buffer:
-                            self.current_recv_index = 0
-                            if n_samples >= len(self.receive_buffer):
-                                n_samples = len(self.receive_buffer) - 1
-                        else:
-                            self.stop_rx_mode(
-                                "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
-                                                                          len(self.receive_buffer)))
-                            return
-
-                    self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
-                    old_index = self.current_recv_index
-                    self.current_recv_index += n_samples
-
-                    self.rcv_index_changed.emit(old_index, self.current_recv_index)
-            except (BrokenPipeError, OSError):
-                pass
+                if n_samples == 0:
+                    continue
+            except OSError as e:
+                logger.exception(e)
+                continue
             except EOFError:
                 logger.info("EOF Error: Ending receive thread")
                 break
+
+            if self.current_recv_index + n_samples >= len(self.receive_buffer):
+                if self.resume_on_full_receive_buffer:
+                    self.current_recv_index = 0
+                    if n_samples >= len(self.receive_buffer):
+                        n_samples = len(self.receive_buffer) - 1
+                else:
+                    self.stop_rx_mode(
+                        "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
+                                                                  len(self.receive_buffer)))
+                    return
+
+            self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
+            self.current_recv_index += n_samples
+
+            if self.emit_data_received_signal:
+                self.data_received.emit(samples)
 
         logger.debug("Exiting read_receive_queue thread.")
 

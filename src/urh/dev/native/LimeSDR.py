@@ -1,20 +1,20 @@
 from collections import OrderedDict
 
 import numpy as np
+from multiprocessing import Array
+
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
 from multiprocessing.connection import Connection
-
+from array import array
 
 class LimeSDR(Device):
-    READ_SAMPLES = 32768
-    SEND_SAMPLES = 32768
-    CONTINUOUS_SEND_SAMPLES = SEND_SAMPLES * 64
+    SYNC_RX_CHUNK_SIZE = 32768
+    SYNC_TX_CHUNK_SIZE = 32768
 
     RECV_FIFO_SIZE = 1048576
-    SEND_FIFO_SIZE = 8 * SEND_SAMPLES
-    SEND_BUFFER_SIZE = SEND_SAMPLES  # for compatibility with API
-    CONTINUOUS_SEND_BUFFER_SIZE = CONTINUOUS_SEND_SAMPLES
+    SEND_FIFO_SIZE = 8 * SYNC_TX_CHUNK_SIZE
+    CONTINUOUS_TX_CHUNK_SIZE = SYNC_TX_CHUNK_SIZE * 64
 
     LIME_TIMEOUT_RECEIVE_MS = 10
     LIME_TIMEOUT_SEND_MS = 500
@@ -32,8 +32,8 @@ class LimeSDR(Device):
 
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
-        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
-        cls.RECV_FIFO_SIZE = 16 * cls.READ_SAMPLES
+        cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
+        cls.RECV_FIFO_SIZE = 16 * cls.SYNC_RX_CHUNK_SIZE
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -87,7 +87,7 @@ class LimeSDR(Device):
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        limesdr.recv_stream(data_conn, cls.READ_SAMPLES, cls.LIME_TIMEOUT_RECEIVE_MS)
+        limesdr.recv_stream(data_conn, cls.SYNC_RX_CHUNK_SIZE, cls.LIME_TIMEOUT_RECEIVE_MS)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):
@@ -128,4 +128,7 @@ class LimeSDR(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the LimeSDR Send API
-        return complex_samples.view(np.float32)
+        arr = Array("f", 2*len(complex_samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.float32)
+        numpy_view[:] = complex_samples.view(np.float32)
+        return arr

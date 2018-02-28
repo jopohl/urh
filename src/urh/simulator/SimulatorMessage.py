@@ -27,6 +27,10 @@ class SimulatorMessage(Message, SimulatorItem):
     def source(self):
         return self.participant
 
+    @source.setter
+    def source(self, participant):
+        self.participant = participant
+
     @property
     def children(self):
         return self.message_type
@@ -35,27 +39,31 @@ class SimulatorMessage(Message, SimulatorItem):
         self.children.append(child)
         child.set_parent(self)
 
-    def check(self):
+    def validate(self):
         return all(child.is_valid for child in self.children)
 
     @property
     def plain_ascii_str(self) -> str:
-        plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array if len(
-            self.send_recv_messages) else self.plain_ascii_array
+        if len(self.send_recv_messages) > 0:
+            plain_ascii_array = self.send_recv_messages[-1].plain_ascii_array
+        else:
+            plain_ascii_array = self.plain_ascii_array
+
         return "".join(map(chr, plain_ascii_array))
 
     @property
     def plain_bits_str(self) -> str:
-        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) else str(self)
+        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) > 0 else str(self)
 
     def __delitem__(self, index):
         removed_labels = self._remove_labels_for_range(index, instant_remove=False)
-        self.protocol_manager.delete_items(removed_labels)
+        self.simulator_config.delete_items(removed_labels)
         del self.plain_bits[index]
 
     def to_xml(self, decoders=None, include_message_type=False, write_bits=True) -> ET.Element:
-        result = ET.Element("simulator_message", attrib={"destination_id": self.destination.id,
-                                                         "repeat": str(self.repeat)})
+        result = ET.Element("simulator_message",
+                            attrib={"destination_id": self.destination.id if self.destination else "",
+                                    "repeat": str(self.repeat)})
 
         result.append(super().to_xml(decoders, include_message_type, write_bits=write_bits))
 

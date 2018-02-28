@@ -156,10 +156,9 @@ class SpectrogramTest(unittest.TestCase):
         modulator2.carrier_freq_hz = channel2_freq
         modulator3.carrier_freq_hz = -channel2_freq
         modulator1.sample_rate = modulator2.sample_rate = modulator3.sample_rate = sample_rate
-        modulator1.modulate(channel1_data)
-        modulator2.modulate(channel2_data)
-        modulator3.modulate(channel3_data)
-        data1, data2, data3 = modulator1.modulated_samples, modulator2.modulated_samples, modulator3.modulated_samples
+        data1 = modulator1.modulate(channel1_data)
+        data2 = modulator2.modulate(channel2_data)
+        data3 = modulator3.modulate(channel3_data)
 
         mixed_signal = data1 + data2 + data3
 

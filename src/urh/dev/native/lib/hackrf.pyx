@@ -1,6 +1,6 @@
 cimport chackrf
+import cython
 from libc.stdlib cimport malloc
-from libc.string cimport memcpy
 import time
 
 from urh.util.Logger import logger
@@ -9,7 +9,6 @@ TIMEOUT = 0.2
 
 cdef object f
 cdef int RUNNING = 0
-from cpython cimport PyBytes_GET_SIZE
 
 cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
@@ -20,11 +19,22 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
         logger.error("Cython-HackRF:" + str(e))
         return -1
 
+@cython.boundscheck(False)
+@cython.initializedcheck(False)
+@cython.wraparound(False)
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-    cdef bytes bytebuf = (<object> f)(transfer.valid_length).tostring()
-    memcpy(transfer.buffer, <void*> bytebuf, PyBytes_GET_SIZE(bytebuf))
+    cdef int i
+    cdef unsigned char[:] data  = (<object> f)(transfer.valid_length)
+    cdef int loop_end = min(len(data), transfer.valid_length)
+
+    for i in range(0, loop_end):
+        transfer.buffer[i] = data[i]
+
+    for i in range(loop_end, transfer.valid_length):
+        transfer.buffer[i] = 0
+
     # Need to return -1 on finish, otherwise stop_tx_mode hangs forever
     # Furthermore, this leads to windows issue https://github.com/jopohl/urh/issues/360
     return RUNNING
@@ -60,7 +70,7 @@ cpdef int start_rx_mode(callback):
     global f, RUNNING
     RUNNING = 0
     f = callback
-    return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, <void*> _c_callback_recv)
+    return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, NULL)
 
 cpdef stop_rx_mode():
     global RUNNING
@@ -72,7 +82,7 @@ cpdef start_tx_mode(callback):
     global f, RUNNING
     RUNNING = 0
     f = callback
-    return chackrf.hackrf_start_tx(_c_device, _c_callback_send, <void *> _c_callback_send)
+    return chackrf.hackrf_start_tx(_c_device, _c_callback_send, NULL)
 
 cpdef stop_tx_mode():
     global RUNNING

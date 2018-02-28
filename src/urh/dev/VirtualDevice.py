@@ -24,11 +24,12 @@ class VirtualDevice(QObject):
     """
     started = pyqtSignal()
     stopped = pyqtSignal()
-    index_changed = pyqtSignal(int, int)
     sender_needs_restart = pyqtSignal()
 
     fatal_error_occurred = pyqtSignal(str)
     ready_for_action = pyqtSignal()
+
+    data_received = pyqtSignal(np.ndarray)  # for direct demodulation in sniffer
 
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."
@@ -67,7 +68,6 @@ class VirtualDevice(QObject):
                 from urh.dev.gr.ReceiverThread import ReceiverThread
                 self.__dev = ReceiverThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
                                             parent=parent, resume_on_full_receive_buffer=resume_on_full_receive_buffer)
-                self.__dev.index_changed.connect(self.emit_index_changed)
             elif mode == Mode.send:
                 from urh.dev.gr.SenderThread import SenderThread
                 self.__dev = SenderThread(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
@@ -126,22 +126,23 @@ class VirtualDevice(QObject):
                 raise ValueError("Unknown device name {0}".format(name))
             self.__dev.portnumber = portnumber
             self.__dev.device_ip = device_ip
-            self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             if mode == Mode.send:
                 self.__dev.init_send_parameters(samples_to_send, sending_repeats)
         elif self.backend == Backends.network:
             self.__dev = NetworkSDRInterfacePlugin(raw_mode=raw_mode,
                                                    resume_on_full_receive_buffer=resume_on_full_receive_buffer,
                                                    spectrum=self.mode == Mode.spectrum, sending=self.mode == Mode.send)
-            self.__dev.rcv_index_changed.connect(self.emit_index_changed)
             self.__dev.send_connection_established.connect(self.emit_ready_for_action)
             self.__dev.receive_server_started.connect(self.emit_ready_for_action)
-            self.__dev.error_occurred.connect(self.emit_fatal_error_occured)
+            self.__dev.error_occurred.connect(self.emit_fatal_error_occurred)
             self.__dev.samples_to_send = samples_to_send
         elif self.backend == Backends.none:
             self.__dev = None
         else:
             raise ValueError("Unsupported Backend")
+
+        if hasattr(self.__dev, "data_received"):
+            self.__dev.data_received.connect(self.data_received.emit)
 
         if mode == Mode.spectrum:
             self.__dev.is_in_spectrum_mode = True
@@ -322,6 +323,14 @@ class VirtualDevice(QObject):
         self.__dev.direct_sampling_mode = value
 
     @property
+    def emit_data_received_signal(self):
+        return self.__dev.emit_data_received_signal
+
+    @emit_data_received_signal.setter
+    def emit_data_received_signal(self, value):
+        self.__dev.emit_data_received_signal = value
+
+    @property
     def samples_to_send(self):
         if self.backend == Backends.grc:
             return self.__dev.data
@@ -427,6 +436,19 @@ class VirtualDevice(QObject):
             pass
         else:
             raise ValueError("Unsupported Backend")
+
+    @property
+    def resume_on_full_receive_buffer(self) -> bool:
+        return self.__dev.resume_on_full_receive_buffer
+
+    @resume_on_full_receive_buffer.setter
+    def resume_on_full_receive_buffer(self, value: bool):
+        if value != self.__dev.resume_on_full_receive_buffer:
+            self.__dev.resume_on_full_receive_buffer = value
+            if self.backend == Backends.native:
+                self.__dev.receive_buffer = None
+            elif self.backend == Backends.grc:
+                self.__dev.data = None
 
     @property
     def num_sending_repeats(self):
@@ -602,9 +624,6 @@ class VirtualDevice(QObject):
     def emit_sender_needs_restart(self):
         self.sender_needs_restart.emit()
 
-    def emit_index_changed(self, old, new):
-        self.index_changed.emit(old, new)
-
     def read_messages(self) -> str:
         """
         returns a string of new device messages separated by newlines
@@ -615,11 +634,13 @@ class VirtualDevice(QObject):
             errors = self.__dev.read_errors()
 
             if "FATAL: " in errors:
-                self.fatal_error_occurred.emit(errors[errors.index["FATAL: "]])
+                self.fatal_error_occurred.emit(errors[errors.index("FATAL: "):])
 
             return errors
         elif self.backend == Backends.native:
             messages = "\n".join(self.__dev.device_messages)
+            self.__dev.device_messages.clear()
+
             if messages and not messages.endswith("\n"):
                 messages += "\n"
 
@@ -627,8 +648,6 @@ class VirtualDevice(QObject):
                 self.ready_for_action.emit()
             elif "failed to start" in messages:
                 self.fatal_error_occurred.emit(messages[messages.index("failed to start"):])
-
-            self.__dev.device_messages.clear()
 
             return messages
         elif self.backend == Backends.network:
@@ -662,5 +681,5 @@ class VirtualDevice(QObject):
         """
         self.ready_for_action.emit()
 
-    def emit_fatal_error_occured(self, msg: str):
+    def emit_fatal_error_occurred(self, msg: str):
         self.fatal_error_occurred.emit(msg)

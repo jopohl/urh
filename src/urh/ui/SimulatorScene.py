@@ -1,32 +1,37 @@
 import copy
 
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 from PyQt5.QtGui import QDropEvent
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
-from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.ActionItem import ActionItem, GotoActionItem, TriggerCommandActionItem, SleepActionItem, \
+    CounterActionItem
+from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.LabelItem import LabelItem
-from urh.simulator.ActionItem import ActionItem, GotoActionItem, ProgramActionItem
-from urh.simulator.RuleItem import RuleItem, RuleConditionItem
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.ParticipantItem import ParticipantItem
-from urh.simulator.GraphicsItem import GraphicsItem
+from urh.simulator.RuleItem import RuleItem, RuleConditionItem
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
+from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
+from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+
 
 class SimulatorScene(QGraphicsScene):
     model_to_scene_class_mapping = {
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
         SimulatorGotoAction: GotoActionItem,
-        SimulatorProgramAction: ProgramActionItem,
+        SimulatorTriggerCommandAction: TriggerCommandActionItem,
+        SimulatorCounterAction: CounterActionItem,
+        SimulatorSleepAction: SleepActionItem,
         SimulatorMessage: MessageItem,
         SimulatorProtocolLabel: LabelItem
     }
@@ -49,6 +54,14 @@ class SimulatorScene(QGraphicsScene):
         self.on_items_added([item for item in self.simulator_config.rootItem.children])
 
         self.create_connects()
+
+    @property
+    def visible_participants(self):
+        return [part for part in self.participant_items if part.isVisible()]
+
+    @property
+    def visible_participants_without_broadcast(self):
+        return [part for part in self.participant_items if part.isVisible() and part is not self.broadcast_part]
 
     def create_connects(self):
         self.simulator_config.participants_changed.connect(self.update_participants)
@@ -179,7 +192,7 @@ class SimulatorScene(QGraphicsScene):
 
     def selectable_items(self):
         return [item for item in self.items() if isinstance(item, GraphicsItem) and
-                 item.is_selectable()]
+                item.is_selectable()]
 
     def move_items(self, items, ref_item, position):
         new_pos, new_parent = self.insert_at(ref_item, position)
@@ -205,7 +218,7 @@ class SimulatorScene(QGraphicsScene):
         self.arrange_items()
 
         # resize scrollbar
-        self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0 , 0, 0))
+        self.setSceneRect(self.itemsBoundingRect().adjusted(-10, 0, 0, 0))
 
     def update_participants(self, refresh=True):
         for participant in list(self.participants_dict):
@@ -225,6 +238,12 @@ class SimulatorScene(QGraphicsScene):
         if refresh:
             self.update_view()
 
+    def refresh_participant(self, participant: Participant):
+        try:
+            self.participants_dict[participant].refresh()
+        except KeyError:
+            pass
+
     def update_items_dict(self):
         sim_items = self.simulator_config.get_all_items()
 
@@ -232,11 +251,22 @@ class SimulatorScene(QGraphicsScene):
             if key not in sim_items:
                 del self.items_dict[key]
 
-    def get_all_messages(self):
+    def get_all_message_items(self):
+        """
+
+        :rtype: list[MessageItem]
+        """
         return [item for item in self.items() if isinstance(item, MessageItem)]
 
+    def get_selected_messages(self):
+        """
+
+        :rtype: list[SimulatorMessage]
+        """
+        return [item.model_item for item in self.selectedItems() if isinstance(item, MessageItem)]
+
     def select_messages_with_participant(self, participant: ParticipantItem, from_part=True):
-        messages = self.get_all_messages()
+        messages = self.get_all_message_items()
         self.clearSelection()
 
         for msg in messages:
@@ -244,38 +274,30 @@ class SimulatorScene(QGraphicsScene):
                     (not from_part and msg.destination is participant)):
                 msg.select_all()
 
-    @property
-    def visible_participants(self):
-        return [part for part in self.participant_items if part.isVisible()]
-
-    @property
-    def visible_participants_without_broadcast(self):
-        return [part for part in self.participant_items if part.isVisible() and part is not self.broadcast_part]
-
     def arrange_participants(self):
-        messages = self.get_all_messages()
+        messages = self.get_all_message_items()
 
         for participant in self.participant_items:
             if any(msg.source == participant or msg.destination == participant for msg in messages):
                 participant.setVisible(True)
             else:
                 participant.setVisible(False)
-                participant.update_position(x_pos = 30)
+                participant.update_position(x_pos=30)
 
         vp = self.visible_participants
 
         if not vp:
             return
 
-        vp[0].update_position(x_pos = 0)
+        vp[0].update_position(x_pos=0)
 
         for i in range(1, len(vp)):
             curr_participant = vp[i]
             participants_left = vp[:i]
 
             items = [msg for msg in messages
-                    if ((msg.source == curr_participant and msg.destination in participants_left)
-                    or (msg.source in participants_left and msg.destination == curr_participant))]
+                     if ((msg.source == curr_participant and msg.destination in participants_left)
+                         or (msg.source in participants_left and msg.destination == curr_participant))]
 
             x_max = vp[i - 1].x_pos()
             x_max += (vp[i - 1].width() + curr_participant.width()) / 2
@@ -292,7 +314,7 @@ class SimulatorScene(QGraphicsScene):
                 if self.min_items_width() > x_max:
                     x_max = self.min_items_width()
 
-            curr_participant.update_position(x_pos = x_max)
+            curr_participant.update_position(x_pos=x_max)
 
     def arrange_items(self):
         x_pos = 0
@@ -304,7 +326,7 @@ class SimulatorScene(QGraphicsScene):
             y_pos += round(scene_item.boundingRect().height())
 
         for participant in self.participant_items:
-            participant.update_position(y_pos = max(y_pos, 50))
+            participant.update_position(y_pos=max(y_pos, 50))
 
     def dragMoveEvent(self, event: QGraphicsSceneDragDropEvent):
         if any(item.acceptDrops() for item in self.items(event.scenePos())):
@@ -313,7 +335,7 @@ class SimulatorScene(QGraphicsScene):
             event.setAccepted(True)
 
     def insert_at(self, ref_item, position, insert_rule=False):
-        if ref_item:        
+        if ref_item:
             ref_item = ref_item.model_item
 
         if ref_item is None:
@@ -378,13 +400,6 @@ class SimulatorScene(QGraphicsScene):
         self.add_protocols(ref_item, position, protocols_to_add)
         super().dropEvent(event)
 
-    def mousePressEvent(self, event):
-        if event.button() != Qt.LeftButton:
-            event.accept()
-            return
-
-        super().mousePressEvent(event)
-
     def add_rule(self, ref_item, position):
         rule = SimulatorRule()
         pos, parent = self.insert_at(ref_item, position, True)
@@ -398,7 +413,7 @@ class SimulatorScene(QGraphicsScene):
 
         pos = rule.child_count()
 
-        if type is ConditionType.ELSE_IF and rule.has_else_condition():
+        if type is ConditionType.ELSE_IF and rule.has_else_condition:
             pos -= 1
 
         self.simulator_config.add_items([rule_condition], pos, rule)
@@ -410,13 +425,26 @@ class SimulatorScene(QGraphicsScene):
         self.simulator_config.add_items([goto_action], pos, parent)
         return goto_action
 
-    def add_program_action(self, ref_item, position):
-        program_action = SimulatorProgramAction()
+    def add_sleep_action(self, ref_item, position):
+        sleep_action = SimulatorSleepAction()
         pos, parent = self.insert_at(ref_item, position, False)
-        self.simulator_config.add_items([program_action], pos, parent)
-        return program_action
+        self.simulator_config.add_items([sleep_action], pos, parent)
+        return sleep_action
 
-    def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None, destination=None):
+    def add_counter_action(self, ref_item, position):
+        counter_action = SimulatorCounterAction()
+        pos, parent = self.insert_at(ref_item, position, False)
+        self.simulator_config.add_items([counter_action], pos, parent)
+        return counter_action
+
+    def add_trigger_command_action(self, ref_item, position):
+        command_action = SimulatorTriggerCommandAction()
+        pos, parent = self.insert_at(ref_item, position, False)
+        self.simulator_config.add_items([command_action], pos, parent)
+        return command_action
+
+    def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None,
+                    destination=None):
         message = self.create_message(destination, plain_bits, pause, message_type, decoder, source)
         pos, parent = self.insert_at(ref_item, position, False)
         self.simulator_config.add_items([message], pos, parent)
@@ -427,7 +455,7 @@ class SimulatorScene(QGraphicsScene):
             destination = self.simulator_config.broadcast_part
 
         sim_message = SimulatorMessage(destination=destination, plain_bits=plain_bits, pause=pause,
-                        message_type=MessageType(message_type.name), decoder=decoder, source=source)
+                                       message_type=MessageType(message_type.name), decoder=decoder, source=source)
 
         for lbl in message_type:
             sim_label = SimulatorProtocolLabel(copy.deepcopy(lbl))
@@ -447,7 +475,7 @@ class SimulatorScene(QGraphicsScene):
                 source, destination = self.detect_source_destination(msg)
 
                 messages.append(self.create_message(destination, copy.copy(msg.decoded_bits),
-                                msg.pause, msg.message_type, msg.decoder, source))
+                                                    msg.pause, msg.message_type, msg.decoder, source))
 
         self.simulator_config.add_items(messages, pos, parent)
 
@@ -477,9 +505,9 @@ class SimulatorScene(QGraphicsScene):
         elif len(participants) > 2:
             if message.participant:
                 source = message.participant
-                #destination = participants[0] if message.participant == participants[1] else participants[1]
+                # destination = participants[0] if message.participant == participants[1] else participants[1]
             else:
                 source = participants[0]
-                #destination = participants[1]
+                # destination = participants[1]
 
         return (source, destination)

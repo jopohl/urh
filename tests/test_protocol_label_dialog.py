@@ -5,6 +5,7 @@ from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 
+
 class TestProtocolLabelDialog(QtTestCase):
 
     def setUp(self):
@@ -16,7 +17,7 @@ class TestProtocolLabelDialog(QtTestCase):
         self.cframe = self.form.compare_frame_controller
 
         self.cframe.add_protocol_label(9, 19, 0, 0, edit_label_name=False)  # equals 10-20 in view
-        self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False) # equals 40-55 in view
+        self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False)  # equals 40-55 in view
 
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), 2)
         self.dialog = ProtocolLabelDialog(preselected_index=1,
@@ -77,6 +78,4 @@ class TestProtocolLabelDialog(QtTestCase):
         remove_action = self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
         remove_action.trigger()
         self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 0)
-        remove_action = self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
-        remove_action.trigger()
-        self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 0)
+        self.assertEqual(len(self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()), 0)

@@ -418,32 +418,6 @@ class Encoding(object):
 
         return inpt[inpt_from:inpt_to], 0, self.ErrorState.SUCCESS
 
-    def parse_command(self, command):
-        import os
-        cl = command.split(" ")
-        cmd = cl[0]
-        param = ""
-        if len(cl) > 0:
-            for i in range(1, len(cl)):
-                if not os.path.isfile(cmd):
-                    cmd += " " + cl[i]
-                else:
-                    param += " " + cl[i] if param != "" else cl[i]
-        return ('"%s"' % cmd), param
-
-    def run_command(self, command, param):
-        # add shlex.quote(param) later for security reasons
-        command, argument = self.parse_command(command)
-        cmd = command + " " + argument + " " + param
-        try:
-            import subprocess
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-            out, _ = p.communicate(param.encode())
-            return out.decode()
-        except:
-            logger.error("Could not run {} {}".format(cmd, param))
-            return ""
-
     def code_carrier(self, decoding, inpt):
         output = array.array("B", [])
         errors = 0
@@ -669,9 +643,9 @@ class Encoding(object):
         errors = 0
 
         if decoding and self.external_decoder != "":
-            output = self.charstr2bit(self.run_command(self.external_decoder, self.bit2str(inpt)))
+            output = self.charstr2bit(util.run_command(self.external_decoder, self.bit2str(inpt)))
         elif not decoding and self.external_encoder != "":
-            output = self.charstr2bit(self.run_command(self.external_encoder, self.bit2str(inpt)))
+            output = self.charstr2bit(util.run_command(self.external_encoder, self.bit2str(inpt)))
         else:
             return [], 1, self.ErrorState.MISSING_EXTERNAL_PROGRAM
 
@@ -872,5 +846,3 @@ class Encoding(object):
             conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
             decoders.append(Encoding(conf))
         return decoders
-
-

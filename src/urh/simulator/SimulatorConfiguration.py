@@ -4,9 +4,11 @@ from collections import OrderedDict
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.signalprocessing.FieldType import FieldType
@@ -22,6 +24,7 @@ import xml.etree.ElementTree as ET
 class SimulatorConfiguration(QObject):
     participants_changed = pyqtSignal()
     item_dict_updated = pyqtSignal()
+    active_participants_updated = pyqtSignal()
 
     items_deleted = pyqtSignal(list)
     items_updated = pyqtSignal(list)
@@ -48,9 +51,9 @@ class SimulatorConfiguration(QObject):
         self.items_updated.connect(self.update_item_dict)
         self.items_deleted.connect(self.update_item_dict)
 
-        self.items_added.connect(self.reset_active_participants)
-        self.items_updated.connect(self.reset_active_participants)
-        self.items_deleted.connect(self.reset_active_participants)
+        self.items_added.connect(self.update_active_participants)
+        self.items_updated.connect(self.update_active_participants)
+        self.items_deleted.connect(self.update_active_participants)
 
     def update_item_dict(self):
         self.item_dict.clear()
@@ -65,7 +68,10 @@ class SimulatorConfiguration(QObject):
 
             name = "item" + index.replace(".", "_") + suffix
 
-            self.item_dict[name] = item
+            if isinstance(item, SimulatorCounterAction):
+                self.item_dict[name+".counter_value"] = item
+            else:
+                self.item_dict[name] = item
 
         self.item_dict_updated.emit()
 
@@ -78,7 +84,7 @@ class SimulatorConfiguration(QObject):
         for child in node.children:
             SimulatorConfiguration.__update_valid_states(child)
 
-        node.is_valid = node.check()
+        node.is_valid = node.validate()
 
     def protocol_valid(self):
         self.update_valid_states()
@@ -163,9 +169,6 @@ class SimulatorConfiguration(QObject):
     def n_top_level_items(self):
         return self.rootItem.child_count()
 
-    def reset_active_participants(self):
-        self.__active_participants = None
-
     def update_active_participants(self):
         messages = self.get_all_messages()
         active_participants = []
@@ -175,6 +178,7 @@ class SimulatorConfiguration(QObject):
                 active_participants.append(part)
 
         self.__active_participants = active_participants
+        self.active_participants_updated.emit()
 
     def consolidate_messages(self):
         current_item = self.rootItem
@@ -205,6 +209,10 @@ class SimulatorConfiguration(QObject):
         self.items_updated.emit(updated_messages)
 
     def get_all_messages(self):
+        """
+
+        :rtype: list[SimulatorMessage]
+        """
         return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
 
     def load_from_xml(self, xml_tag: ET.Element, message_types):
@@ -217,7 +225,9 @@ class SimulatorConfiguration(QObject):
 
         participants_tag = xml_tag.find("participants")
         if participants_tag:
-            self.project_manager.participants[:] = Participant.read_participants_from_xml_tag(participants_tag)
+            for participant in Participant.read_participants_from_xml_tag(participants_tag):
+                if participant not in self.project_manager.participants:
+                    self.project_manager.participants.append(participant)
             self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")
@@ -243,8 +253,12 @@ class SimulatorConfiguration(QObject):
                                                  message_types)
         elif xml_tag.tag == "simulator_label":
             item = SimulatorProtocolLabel.from_xml(xml_tag, self.project_manager.field_types_by_caption)
-        elif xml_tag.tag == "simulator_program_action":
-            item = SimulatorProgramAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_trigger_command_action":
+            item = SimulatorTriggerCommandAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_sleep_action":
+            item = SimulatorSleepAction.from_xml(xml_tag)
+        elif xml_tag.tag == "simulator_counter_action":
+            item = SimulatorCounterAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule":
             item = SimulatorRule.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_rule_condition":
@@ -282,11 +296,8 @@ class SimulatorConfiguration(QObject):
     def __save_item_to_xml(self, tag: ET.Element, item):
         if isinstance(item, SimulatorMessage):
             child_tag = item.to_xml(decoders=self.project_manager.decodings, include_message_type=True, write_bits=True)
-        elif any(isinstance(item, c) for c in (SimulatorProtocolLabel, SimulatorProgramAction, SimulatorGotoAction,
-                                               SimulatorRule, SimulatorRuleCondition)):
-            child_tag = item.to_xml()
         else:
-            raise ValueError("Unknown simulator item type {}".format(type(item)))
+            child_tag = item.to_xml()
 
         tag.append(child_tag)
 

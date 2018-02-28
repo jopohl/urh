@@ -1,5 +1,5 @@
 class SimulatorItem(object):
-    protocol_manager = None
+    simulator_config = None
     expression_parser = None
 
     def __init__(self):
@@ -8,7 +8,7 @@ class SimulatorItem(object):
         self.logging_active = True
         self.is_valid = True
 
-    def check(self):
+    def validate(self):
         return True
 
     def get_pos(self):

@@ -77,10 +77,11 @@ DEVICE_CONFIG["RTL-TCP"]["port"] = ""
 DEVICE_CONFIG[NetworkSDRInterfacePlugin.NETWORK_SDR_NAME] = {}
 
 # http://www.rtl-sdr.com/review-airspy-vs-sdrplay-rsp-vs-hackrf/
+# https://airspy.com/products/
 DEVICE_CONFIG["AirSpy R2"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [2.5*M, 10*M],
-    "bandwidth": [2.5*M, 10*M],
+    "sample_rate": [10*M, 10*M],    # This device always uses 10M, no matter what is configured.
+    "bandwidth": [10*M, 10*M],
     "rx_rf_gain":  list(range(0, 16)),
     "rx_if_gain":  list(range(0, 16)),
     "rx_baseband_gain":  list(range(0, 16)),
@@ -88,8 +89,8 @@ DEVICE_CONFIG["AirSpy R2"] = {
 
 DEVICE_CONFIG["AirSpy Mini"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [3*M, 6*M],
-    "bandwidth": [3*M, 6*M],
+    "sample_rate": [6*M, 6*M],      # Documentation says: "10, 6 and 3 MSPS IQ output" but it always uses 6M, no matter what is configured.
+    "bandwidth": [6*M, 6*M],
     "rx_rf_gain":  list(range(0, 16)),
     "rx_if_gain":  list(range(0, 16)),
     "rx_baseband_gain":  list(range(0, 16)),

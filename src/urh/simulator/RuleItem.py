@@ -7,13 +7,15 @@ from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, C
 
 from urh import constants
 
+
 class RuleItem(GraphicsItem):
     def __init__(self, model_item: SimulatorRule, parent=None):
         assert isinstance(model_item, SimulatorRule)
         super().__init__(model_item=model_item, parent=parent)
 
-    def has_else_condition(self):
-        return self.model_item.has_else_condition()
+    @property
+    def has_else_condition(self) -> bool:
+        return self.model_item.has_else_condition
 
     def update_numbering(self):
         for child in self.get_scene_children():
@@ -37,23 +39,20 @@ class RuleItem(GraphicsItem):
     def paint(self, painter, option, widget):
         pass
 
+
 class RuleConditionItem(GraphicsItem):
     def __init__(self, model_item: SimulatorRuleCondition, parent=None):
         assert isinstance(model_item, SimulatorRuleCondition)
         super().__init__(model_item=model_item, parent=parent)
 
-        font_10_bold = QFont(GraphicsItem.font)
-        font_10_bold.setPointSize(10)
-        font_10_bold.setWeight(QFont.DemiBold)
-
-        self.number.setFont(font_10_bold)
+        self.number.setFont(self.font_bold)
 
         self.text = QGraphicsTextItem(self)
         self.text.setPlainText(self.model_item.type.value)
-        self.text.setFont(font_10_bold)
+        self.text.setFont(self.font_bold)
 
         self.desc = QGraphicsTextItem(self)
-        self.desc.setFont(GraphicsItem.font)
+        self.desc.setFont(self.font)
 
     def update_flags(self):
         if self.scene().mode == 0:
@@ -62,7 +61,8 @@ class RuleConditionItem(GraphicsItem):
             self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def labels_width(self):
-        return max(self.number.boundingRect().width() + self.text.boundingRect().width(), self.desc.boundingRect().width())
+        return max(self.number.boundingRect().width() + self.text.boundingRect().width(),
+                   self.desc.boundingRect().width())
 
     def refresh(self):
         if len(self.model_item.condition):
@@ -77,7 +77,8 @@ class RuleConditionItem(GraphicsItem):
         self.setPos(x_pos, y_pos)
 
         start_y = 0
-        start_x = ((self.scene().items_width() + 40) - (self.number.boundingRect().width() + self.text.boundingRect().width())) / 2
+        start_x = ((self.scene().items_width() + 40) - (
+                    self.number.boundingRect().width() + self.text.boundingRect().width())) / 2
         self.number.setPos(start_x, start_y)
         start_x += self.number.boundingRect().width()
         self.text.setPos(start_x, start_y)

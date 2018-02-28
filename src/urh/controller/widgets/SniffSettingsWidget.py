@@ -16,51 +16,68 @@ class SniffSettingsWidget(QWidget):
     sniff_parameters_changed = pyqtSignal(dict)
 
     def __init__(self, device_name: str, project_manager: ProjectManager, signal=None, backend_handler=None,
-                 network_raw_mode=False, real_time=False, parent=None):
+                 network_raw_mode=False, signals=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_SniffSettings()
         self.ui.setupUi(self)
 
-        conf = project_manager.device_conf
-        bit_length = conf.get("bit_len", signal.bit_len if signal else 100)
-        modulation_type_index = conf.get("modulation_index", signal.modulation_type if signal else 1)
-        tolerance = conf.get("tolerance", signal.tolerance if signal else 5)
-        noise = conf.get("noise", signal.noise_threshold if signal else 0.001)
-        center = conf.get("center", signal.qad_center if signal else 0.02)
-        decoding_name = conf.get("decoding_name", "")
-
-        self.sniffer = ProtocolSniffer(bit_len=bit_length,
-                                       center=center,
-                                       noise=noise,
-                                       tolerance=tolerance,
-                                       modulation_type=modulation_type_index,
-                                       device=device_name,
-                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler,
-                                       network_raw_mode=network_raw_mode,
-                                       real_time=real_time)
-
-        self.ui.spinbox_sniff_Noise.setValue(noise)
-        self.ui.spinbox_sniff_Center.setValue(center)
-        self.ui.spinbox_sniff_BitLen.setValue(bit_length)
-        self.ui.spinbox_sniff_ErrorTolerance.setValue(tolerance)
-        self.ui.combox_sniff_Modulation.setCurrentIndex(modulation_type_index)
-
+        signals = signals if signals is not None else []
         self.project_manager = project_manager
 
         for encoding in self.project_manager.decodings:
             self.ui.comboBox_sniff_encoding.addItem(encoding.name)
 
+        self.bootstrap(project_manager.device_conf, signal, enforce_default=True)
+
+        self.sniffer = ProtocolSniffer(bit_len=self.ui.spinbox_sniff_BitLen.value(),
+                                       center=self.ui.spinbox_sniff_Center.value(),
+                                       noise=self.ui.spinbox_sniff_Noise.value(),
+                                       tolerance=self.ui.spinbox_sniff_ErrorTolerance.value(),
+                                       modulation_type=self.ui.combox_sniff_Modulation.currentIndex(),
+                                       device=device_name,
+                                       backend_handler=BackendHandler() if backend_handler is None else backend_handler,
+                                       network_raw_mode=network_raw_mode)
+
         self.create_connects()
-
-        if decoding_name:
-            self.ui.comboBox_sniff_encoding.setCurrentText(decoding_name)
-
+        self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
 
         # Auto Complete like a Boss
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
+
+        self.signals = signals
+
+        if len(signals) == 0:
+            self.ui.label_sniff_Signal.hide()
+            self.ui.btn_sniff_use_signal.hide()
+            self.ui.comboBox_sniff_signal.hide()
+        else:
+            for signal in signals:
+                self.ui.comboBox_sniff_signal.addItem(signal.name)
+
+    def bootstrap(self, conf_dict: dict, signal=None, enforce_default=False):
+        def set_val(widget, key: str, default):
+            try:
+                value = conf_dict[key]
+            except KeyError:
+                value = default if enforce_default else None
+
+            if value is not None:
+                if hasattr(widget, "setValue"):
+                    widget.setValue(value)
+                elif hasattr(widget, "setCurrentIndex"):
+                    widget.setCurrentIndex(value)
+
+        set_val(self.ui.spinbox_sniff_BitLen, "bit_len",  signal.bit_len if signal else 100)
+        set_val(self.ui.spinbox_sniff_Center, "center", signal.qad_center if signal else 0.02)
+        set_val(self.ui.spinbox_sniff_ErrorTolerance, "tolerance", signal.tolerance if signal else 5)
+        set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold if signal else 0.001)
+        set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
+        self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
+
+        self.emit_editing_finished_signals()
 
     def create_connects(self):
         self.ui.spinbox_sniff_Noise.editingFinished.connect(self.on_noise_edited)
@@ -72,6 +89,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
         self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
+        self.ui.btn_sniff_use_signal.clicked.connect(self.on_btn_sniff_use_signal_clicked)
 
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
@@ -145,3 +163,18 @@ class SniffSettingsWidget(QWidget):
     @pyqtSlot()
     def on_checkbox_sniff_timestamp_clicked(self):
         self.sniff_setting_edited.emit()
+
+    @pyqtSlot()
+    def on_btn_sniff_use_signal_clicked(self):
+        try:
+            signal = self.signals[self.ui.comboBox_sniff_signal.currentIndex()]
+        except IndexError:
+            return
+
+        self.ui.spinbox_sniff_BitLen.setValue(signal.bit_len)
+        self.ui.spinbox_sniff_Center.setValue(signal.qad_center)
+        self.ui.spinbox_sniff_Noise.setValue(signal.noise_threshold)
+        self.ui.spinbox_sniff_ErrorTolerance.setValue(signal.tolerance)
+        self.ui.combox_sniff_Modulation.setCurrentIndex(signal.modulation_type)
+
+        self.emit_editing_finished_signals()

@@ -1,30 +1,33 @@
-import itertools
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel
+from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QFileDialog, QInputDialog, QCompleter, QMessageBox, QFrame, \
-    QHBoxLayout, QToolButton
+from PyQt5.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
+    QHBoxLayout, QToolButton, QDialog
 
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
+from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from urh.models.SimulatorParticipantListModel import SimulatorParticipantListModel
-from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorProgramAction import SimulatorProgramAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 from urh.ui.SimulatorScene import SimulatorScene
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -36,6 +39,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorTabController(QWidget):
+    open_in_analysis_requested = pyqtSignal(str)
+
     def __init__(self, compare_frame_controller: CompareFrameController,
                  generator_tab_controller: GeneratorTabController,
                  project_manager: ProjectManager, parent):
@@ -48,7 +53,7 @@ class SimulatorTabController(QWidget):
 
         self.simulator_config = SimulatorConfiguration(self.project_manager)
         self.sim_expression_parser = SimulatorExpressionParser(self.simulator_config)
-        SimulatorItem.protocol_manager = self.simulator_config
+        SimulatorItem.simulator_config = self.simulator_config
         SimulatorItem.expression_parser = self.sim_expression_parser
 
         self.ui = Ui_SimulatorTab()
@@ -93,7 +98,7 @@ class SimulatorTabController(QWidget):
 
         self.ui.listViewSimulate.setModel(SimulatorParticipantListModel(self.simulator_config))
         self.ui.spinBoxNRepeat.setValue(self.project_manager.simulator_num_repeat)
-        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout)
+        self.ui.spinBoxTimeout.setValue(self.project_manager.simulator_timeout_ms)
         self.ui.spinBoxRetries.setValue(self.project_manager.simulator_retries)
         self.ui.comboBoxError.setCurrentIndex(self.project_manager.simulator_error_handling_index)
 
@@ -139,20 +144,22 @@ class SimulatorTabController(QWidget):
                                                                                 parent=self.ui.tblViewFieldValues))
 
     def create_connects(self):
-        self.ui.btnChooseExtProg.clicked.connect(self.on_btn_choose_ext_prog_clicked)
-        self.ui.extProgramLineEdit.textChanged.connect(self.on_ext_program_line_edit_text_changed)
-        self.ui.cmdLineArgsLineEdit.textChanged.connect(self.on_cmd_line_args_line_edit_text_changed)
+        self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
+        self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
+        self.ui.doubleSpinBoxSleep.editingFinished.connect(self.on_spinbox_sleep_editing_finished)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
-        self.ui.btnStartSim.clicked.connect(self.on_show_simulate_dialog_action_triggered)
+        self.ui.btnStartSim.clicked.connect(self.on_btn_simulate_clicked)
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
-        self.ui.tblViewMessage.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
+        self.ui.tblViewMessage.create_label_clicked.connect(self.create_simulator_label)
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
         self.ui.tblViewMessage.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
         self.ui.btnSave.clicked.connect(self.on_btn_save_clicked)
         self.ui.btnLoad.clicked.connect(self.on_btn_load_clicked)
+
+        self.ui.listViewSimulate.model().participant_simulate_changed.connect(self.on_participant_simulate_changed)
 
         self.ui.btnAddParticipant.clicked.connect(self.ui.tableViewParticipants.on_add_action_triggered)
         self.ui.btnRemoveParticipant.clicked.connect(self.ui.tableViewParticipants.on_remove_action_triggered)
@@ -166,7 +173,6 @@ class SimulatorTabController(QWidget):
 
         self.simulator_message_field_model.protocol_label_updated.connect(self.item_updated)
         self.ui.gvSimulator.message_updated.connect(self.item_updated)
-        self.ui.gvSimulator.new_messagetype_clicked.connect(self.add_message_type)
         self.ui.gvSimulator.consolidate_messages_clicked.connect(self.consolidate_messages)
 
         self.simulator_config.items_added.connect(self.refresh_message_table)
@@ -175,6 +181,7 @@ class SimulatorTabController(QWidget):
         self.simulator_config.items_deleted.connect(self.refresh_message_table)
         self.simulator_config.participants_changed.connect(self.on_participants_changed)
         self.simulator_config.item_dict_updated.connect(self.on_item_dict_updated)
+        self.simulator_config.active_participants_updated.connect(self.on_active_participants_updated)
 
         self.ui.gvSimulator.message_updated.connect(self.on_message_source_or_destination_updated)
 
@@ -183,38 +190,21 @@ class SimulatorTabController(QWidget):
         self.ui.comboBoxError.currentIndexChanged.connect(self.on_combobox_error_handling_index_changed)
         self.ui.spinBoxRetries.valueChanged.connect(self.on_spinbox_retries_value_changed)
 
+        self.ui.tblViewFieldValues.item_link_clicked.connect(self.on_table_item_link_clicked)
+        self.ui.tblViewMessage.edit_labels_clicked.connect(self.on_edit_labels_clicked)
+
+        self.ui.spinBoxCounterStart.editingFinished.connect(self.on_spinbox_counter_start_editing_finished)
+        self.ui.spinBoxCounterStep.editingFinished.connect(self.on_spinbox_counter_step_editing_finished)
+
     def consolidate_messages(self):
         self.simulator_config.consolidate_messages()
-
-    def add_message_type(self, message: SimulatorMessage):
-        names = set(message_type.name for message_type in self.proto_analyzer.message_types)
-        name = "Message type #"
-        i = next(i for i in itertools.count(start=1) if name + str(i) not in names)
-
-        msg_type_name, ok = QInputDialog.getText(self, self.tr("Enter message type name"),
-                                                 self.tr("Name:"), text=name + str(i))
-
-        if ok:
-            msg_type = MessageType(name=msg_type_name)
-
-            for lbl in message.message_type:
-                msg_type.add_protocol_label(start=lbl.start, end=lbl.end - 1, name=lbl.name,
-                                            color_ind=lbl.color_index, type=lbl.field_type)
-
-            self.proto_analyzer.message_types.append(msg_type)
-            self.compare_frame_controller.fill_message_type_combobox()
-            self.compare_frame_controller.active_message_type = self.compare_frame_controller.active_message_type
-
-            message.message_type.name = msg_type_name
-            self.simulator_config.items_updated.emit([message])
 
     def on_repeat_value_changed(self, value):
         self.active_item.repeat = value
         self.simulator_config.items_updated.emit([self.active_item])
 
     def on_item_dict_updated(self):
-        self.completer_model.setStringList(self.sim_expression_parser.label_identifier())
-        # self.update_goto_combobox()
+        self.completer_model.setStringList(self.sim_expression_parser.get_identifiers())
 
     def on_selected_tab_changed(self, index: int):
         if index == 0:
@@ -258,7 +248,7 @@ class SimulatorTabController(QWidget):
         self.simulator_scene.clear_all()
 
     @pyqtSlot(int, int, int)
-    def create_fuzzing_label(self, msg_index: int, start: int, end: int):
+    def create_simulator_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = self.simulator_config.add_label(start=start, end=end, parent_item=con.messages[msg_index])
@@ -274,14 +264,10 @@ class SimulatorTabController(QWidget):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
         preselected_index = selected_message.modulator_index
 
-        modulator_dialog = ModulatorDialog(self.project_manager.modulators, parent=self)
-        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
-        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog = ModulatorDialog(self.project_manager.modulators, tree_model=self.tree_model, parent=self)
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
         modulator_dialog.showMaximized()
-
-        self.generator_tab_controller.initialize_modulation_dialog(selected_message.encoded_bits_str[0:10],
-                                                                   modulator_dialog)
+        modulator_dialog.initialize(selected_message.encoded_bits_str[0:10])
 
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
@@ -310,7 +296,7 @@ class SimulatorTabController(QWidget):
         goto_combobox.blockSignals(True)
         goto_combobox.clear()
         goto_combobox.addItem("Select item ...")
-        goto_combobox.addItems(SimulatorGotoAction.goto_identifier())
+        goto_combobox.addItems(SimulatorGotoAction.get_valid_goto_targets())
         goto_combobox.setCurrentIndex(-1)
         goto_combobox.blockSignals(False)
 
@@ -401,18 +387,23 @@ class SimulatorTabController(QWidget):
               self.active_item.type != ConditionType.ELSE):
             self.ui.ruleCondLineEdit.setText(self.active_item.condition)
             self.ui.detail_view_widget.setCurrentIndex(3)
-        elif isinstance(self.active_item, SimulatorProgramAction):
-            self.ui.extProgramLineEdit.setText(self.active_item.ext_prog)
-            self.ui.cmdLineArgsLineEdit.setText(self.active_item.args)
-
+        elif isinstance(self.active_item, SimulatorTriggerCommandAction):
+            self.ui.lineEditTriggerCommand.setText(self.active_item.command)
             self.ui.detail_view_widget.setCurrentIndex(4)
+        elif isinstance(self.active_item, SimulatorSleepAction):
+            self.ui.doubleSpinBoxSleep.setValue(self.active_item.sleep_time)
+            self.ui.detail_view_widget.setCurrentIndex(5)
+        elif isinstance(self.active_item, SimulatorCounterAction):
+            self.ui.spinBoxCounterStart.setValue(self.active_item.start)
+            self.ui.spinBoxCounterStep.setValue(self.active_item.step)
+            self.ui.detail_view_widget.setCurrentIndex(6)
         else:
             self.ui.detail_view_widget.setCurrentIndex(0)
 
         self.update_ui()
 
     @pyqtSlot()
-    def on_show_simulate_dialog_action_triggered(self):
+    def on_btn_simulate_clicked(self):
         if not self.simulator_config.protocol_valid():
             QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
                                  self.tr(
@@ -438,27 +429,50 @@ class SimulatorTabController(QWidget):
                 return
 
         try:
-            s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
-                                self.sim_expression_parser, self.project_manager, parent=self)
-
-            s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
-            s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
-            s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
-
-            s.exec_()
+            self.get_simulator_dialog().exec_()
         except Exception as e:
             Errors.generic_error("An error occurred", str(e))
 
+    def get_simulator_dialog(self) -> SimulatorDialog:
+        protos = [p for proto_list in self.tree_model.protocols.values() for p in proto_list]
+        signals = [p.signal for p in protos if p.signal is not None]
+
+        s = SimulatorDialog(self.simulator_config, self.project_manager.modulators,
+                            self.sim_expression_parser, self.project_manager, signals=signals,
+                            signal_tree_model=self.tree_model, parent=self)
+
+        s.rx_parameters_changed.connect(self.project_manager.on_simulator_rx_parameters_changed)
+        s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
+        s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
+        s.open_in_analysis_requested.connect(self.open_in_analysis_requested.emit)
+
+        return s
+
     @pyqtSlot()
-    def on_btn_choose_ext_prog_clicked(self):
-        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose external program"), QDir.homePath())
+    def on_btn_choose_command_clicked(self):
+        file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose program"), QDir.homePath())
 
         if file_name is not None and ok:
-            self.ui.extProgramLineEdit.setText(file_name)
+            self.ui.lineEditTriggerCommand.setText(file_name)
 
     @pyqtSlot()
-    def on_ext_program_line_edit_text_changed(self):
-        self.active_item.ext_prog = self.ui.extProgramLineEdit.text()
+    def on_line_edit_trigger_command_text_changed(self):
+        self.active_item.command = self.ui.lineEditTriggerCommand.text()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_counter_start_editing_finished(self):
+        self.active_item.start = self.ui.spinBoxCounterStart.value()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_counter_step_editing_finished(self):
+        self.active_item.step = self.ui.spinBoxCounterStep.value()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_spinbox_sleep_editing_finished(self):
+        self.active_item.sleep_time = self.ui.doubleSpinBoxSleep.value()
         self.item_updated(self.active_item)
 
     @pyqtSlot()
@@ -466,11 +480,6 @@ class SimulatorTabController(QWidget):
         self.update_vertical_table_header()
         self.participant_table_model.update()
         self.ui.listViewSimulate.model().update()
-
-    @pyqtSlot()
-    def on_cmd_line_args_line_edit_text_changed(self):
-        self.active_item.args = self.ui.cmdLineArgsLineEdit.text()
-        self.item_updated(self.active_item)
 
     def item_updated(self, item: SimulatorItem):
         self.simulator_config.items_updated.emit([item])
@@ -501,7 +510,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot(int)
     def on_spinbox_timeout_value_changed(self, value):
-        self.project_manager.simulator_timeout = value
+        self.project_manager.simulator_timeout_ms = value
 
     @pyqtSlot(int)
     def on_spinbox_retries_value_changed(self, value):
@@ -514,4 +523,42 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_message_source_or_destination_updated(self):
         self.simulator_config.update_active_participants()
+
+    @pyqtSlot(int, int)
+    def on_table_item_link_clicked(self, row: int, column: int):
+        try:
+            lbl = self.simulator_message_field_model.message_type[row]  # type: SimulatorProtocolLabel
+            assert lbl.is_checksum_label
+            assert isinstance(self.active_item, SimulatorMessage)
+        except (IndexError, AssertionError):
+            return
+
+        d = QDialog(parent=self)
+        layout = QHBoxLayout()
+        layout.addWidget(ChecksumWidget(lbl.label, self.active_item, self.ui.cbViewType.currentIndex()))
+        d.setLayout(layout)
+        d.show()
+
+    @pyqtSlot(Participant)
+    def on_participant_simulate_changed(self, participant: Participant):
+        self.simulator_scene.refresh_participant(participant)
+
+    @pyqtSlot()
+    def on_active_participants_updated(self):
         self.ui.listViewSimulate.model().update()
+
+    @pyqtSlot()
+    def on_edit_labels_clicked(self):
+        view_type = self.ui.cbViewType.currentIndex()
+        protocol_label_dialog = ProtocolLabelDialog(preselected_index=0,
+                                                    message=self.ui.tblViewMessage.selected_message,
+                                                    viewtype=view_type, parent=self)
+        protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
+
+        protocol_label_dialog.showMaximized()
+
+    @pyqtSlot()
+    def on_protocol_label_dialog_finished(self):
+        self.simulator_message_field_model.update()
+        self.simulator_message_table_model.update()
+        self.update_ui()

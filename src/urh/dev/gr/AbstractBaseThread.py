@@ -173,8 +173,6 @@ class AbstractBaseThread(QThread):
     @channel_index.setter
     def channel_index(self, value):
         self._channel_index = value
-        if self.tb_process:
-            raise NotImplementedError()
 
     @property
     def antenna_index(self):
@@ -183,8 +181,6 @@ class AbstractBaseThread(QThread):
     @antenna_index.setter
     def antenna_index(self, value):
         self._antenna_index = value
-        if self.tb_process:
-            raise NotImplementedError()
 
     @property
     def direct_sampling_mode(self):

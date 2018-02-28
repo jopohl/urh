@@ -24,7 +24,6 @@ from urh.util.Logger import logger
 class ProtocolAnalyzerSignals(QObject):
     protocol_updated = pyqtSignal()
     show_state_changed = pyqtSignal()
-    data_sniffed = pyqtSignal(int)
     sniff_device_errors_changed = pyqtSignal(str)
     line_duplicated = pyqtSignal()
     fuzzing_started = pyqtSignal(int)
@@ -379,7 +378,7 @@ class ProtocolAnalyzer(object):
             num_samples = self.messages[end_message].bit_sample_pos[end_index] - start
 
             return start, num_samples
-        except KeyError:
+        except (KeyError, IndexError):
             return -1, -1
 
     def get_bitseq_from_selection(self, selection_start: int, selection_width: int):

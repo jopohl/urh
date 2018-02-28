@@ -2,6 +2,8 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMenu, QActionGroup
 
+from urh import constants
+from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.ui.views.TableView import TableView
 
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -11,15 +13,24 @@ from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QHeaderView
 
+
 class SimulatorMessageTableView(TableView):
-    create_fuzzing_label_clicked = pyqtSignal(int, int, int)
+    create_label_clicked = pyqtSignal(int, int, int)
     open_modulator_dialog_clicked = pyqtSignal()
+    edit_labels_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+
+    @property
+    def selected_message(self) -> SimulatorMessage:
+        try:
+            return self.model().protocol.messages[self.selected_rows[0]]
+        except IndexError:
+            return None
 
     def model(self) -> SimulatorMessageTableModel:
         return super().model()
@@ -39,31 +50,39 @@ class SimulatorMessageTableView(TableView):
         create_label_action.setEnabled(not self.selection_is_empty)
         create_label_action.triggered.connect(self.on_create_label_action_triggered)
 
-        if not self.selection_is_empty:
-            selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
+        if self.selection_is_empty:
+            return menu
 
-            if not all(self.model().protocol.messages[i].decoder is selected_encoding
-                    for i in self.selected_rows):
-                selected_encoding = None
+        if len(self.selected_message.message_type) > 0:
+            edit_labels_action = menu.addAction("Edit labels...")
+            edit_labels_action.setIcon(QIcon.fromTheme("configure"))
+            edit_labels_action.triggered.connect(self.edit_labels_clicked.emit)
 
-            encoding_group = QActionGroup(self)
-            encoding_menu = menu.addMenu("Enforce encoding")
+        selected_encoding = self.selected_message.decoder
 
-            for decoding in self.model().project_manager.decodings:
-                ea = encoding_menu.addAction(decoding.name)
-                ea.setCheckable(True)
-                ea.setActionGroup(encoding_group)
+        if not all(self.model().protocol.messages[i].decoder is selected_encoding
+                   for i in self.selected_rows):
+            selected_encoding = None
 
-                if selected_encoding == decoding:
-                    ea.setChecked(True)
+        encoding_group = QActionGroup(self)
+        encoding_menu = menu.addMenu("Enforce encoding")
 
-                ea.setData(decoding)
-                ea.triggered.connect(self.on_encoding_action_triggered)
+        for decoding in self.model().project_manager.decodings:
+            ea = encoding_menu.addAction(decoding.name)
+            ea.setCheckable(True)
+            ea.setActionGroup(encoding_group)
 
+            if selected_encoding == decoding:
+                ea.setChecked(True)
+
+            ea.setData(decoding)
+            ea.triggered.connect(self.on_encoding_action_triggered)
+
+        if constants.SETTINGS.value("multiple_modulations", False, bool):
             selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
             if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
-                    for i in self.selected_rows):
+                       for i in self.selected_rows):
                 selected_modulation = -1
 
             modulation_group = QActionGroup(self)
@@ -88,11 +107,11 @@ class SimulatorMessageTableView(TableView):
     @pyqtSlot()
     def on_encoding_action_triggered(self):
         updated_messages = []
-        
+
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.sender().data()
             updated_messages.append(self.model().protocol.messages[row])
-        SimulatorItem.protocol_manager.items_updated.emit(updated_messages)
+        SimulatorItem.simulator_config.items_updated.emit(updated_messages)
 
     @pyqtSlot()
     def on_modulation_action_triggered(self):
@@ -106,4 +125,4 @@ class SimulatorMessageTableView(TableView):
     @pyqtSlot()
     def on_create_label_action_triggered(self):
         min_row, _, start, end = self.selection_range()
-        self.create_fuzzing_label_clicked.emit(min_row, start, end)
+        self.create_label_clicked.emit(min_row, start, end)

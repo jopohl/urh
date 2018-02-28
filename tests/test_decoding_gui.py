@@ -1,12 +1,14 @@
+import os
 import tempfile
 
-import os
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, QTimer
+from PyQt5.QtWidgets import qApp, QInputDialog, QMessageBox
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.signalprocessing.Encoding import Encoding
+
 
 class TestDecodingGUI(QtTestCase):
     def setUp(self):
@@ -41,6 +43,7 @@ class TestDecodingGUI(QtTestCase):
                  (constants.DECODING_CARRIER,),
                  (constants.DECODING_BITORDER,),
                  (constants.DECODING_EDGE,),
+                 (constants.DECODING_INVERT,),
                  (constants.DECODING_DATAWHITENING,),
                  (constants.DECODING_REDUNDANCY, "2"),
                  (constants.DECODING_MORSE, "1;3;1"),
@@ -92,3 +95,47 @@ class TestDecodingGUI(QtTestCase):
         menu = self.dialog.ui.decoderchain.create_context_menu()
         menu_actions = [action.text() for action in menu.actions() if action.text()]
         self.assertEqual(3, len(menu_actions))
+
+    def test_disable_enable_decoding_item(self):
+        self.dialog.ui.decoderchain.addItem(constants.DECODING_INVERT)
+        self.dialog.decoderchainUpdate()
+
+        self.assertEqual(self.dialog.ui.decoderchain.count(), 1)
+
+        self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
+        self.dialog.ui.decoderchain.on_disable_function_triggered()
+        self.assertIn(constants.DECODING_DISABLED_PREFIX, self.dialog.ui.decoderchain.item(0).text())
+        self.dialog.ui.decoderchain.on_disable_function_triggered()
+        self.assertNotIn(self.dialog.ui.decoderchain.item(0).text(), constants.DECODING_DISABLED_PREFIX)
+
+    def test_save_remove_decoding(self):
+        def set_save_name():
+            timer.stop()
+            input_dialog = next(w for w in qApp.topLevelWidgets() if isinstance(w, QInputDialog))
+            input_dialog.setTextValue("Test decoding")
+            input_dialog.accept()
+
+        def accept_delete():
+            timer.stop()
+            message_box = next(w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox))
+            message_box.button(QMessageBox.Yes).click()
+
+        self.dialog.ui.decoderchain.addItem(constants.DECODING_CUT)
+        self.dialog.decoderchainUpdate()
+
+        self.assertEqual(self.dialog.ui.decoderchain.count(), 1)
+
+        timer = QTimer(self.dialog)
+        timer.timeout.connect(set_save_name)
+        timer.start(10)
+        self.dialog.ui.saveas.click()
+
+        self.assertEqual(self.dialog.ui.combobox_decodings.currentText(), "Test decoding")
+
+        timer.timeout.disconnect(set_save_name)
+        timer.timeout.connect(accept_delete)
+        timer.start(10)
+
+        self.dialog.ui.delete_decoding.click()
+
+        self.assertNotEqual(self.dialog.ui.combobox_decodings.currentText(), "Test decoding")

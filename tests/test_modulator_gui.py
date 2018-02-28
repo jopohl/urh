@@ -8,7 +8,7 @@ from urh.util.Logger import logger
 
 
 class TestModulatorGUI(QtTestCase):
-    
+
     def setUp(self):
         super().setUp()
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -22,7 +22,7 @@ class TestModulatorGUI(QtTestCase):
             self.dialog.show()
 
         logger.debug("Initializing Modulation dialog")
-        self.form.generator_tab_controller.initialize_modulation_dialog("1111", self.dialog)
+        self.dialog.initialize("1111")
         logger.debug("Preparation success")
 
     def test_add_remove_modulator(self):
@@ -108,7 +108,8 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")
         self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Amplitude for 1:")
 
-        self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()), int(self.dialog.ui.gVModulated.view_rect().width()))
+        self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()),
+                         int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
         self.add_signal_to_form("esaver.complex")
@@ -121,7 +122,7 @@ class TestModulatorGUI(QtTestCase):
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.LeftButton, pos=rect.center())
         mime_data = tree_model.mimeData([index])
-        drag_drop = QDropEvent(rect.center(), Qt.CopyAction|Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)
+        drag_drop = QDropEvent(rect.center(), Qt.CopyAction | Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)
         drag_drop.acceptProposedAction()
         self.dialog.ui.gVOriginalSignal.dropEvent(drag_drop)
         self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples)

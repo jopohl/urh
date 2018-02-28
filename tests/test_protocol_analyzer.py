@@ -1,14 +1,11 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestProtocolAnalyzer(QtTestCase):
-    def setUp(self):
-        pass
-
+class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
         signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = 0
@@ -18,7 +15,7 @@ class TestProtocolAnalyzer(QtTestCase):
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.num_messages, 1)
         for i, pos in enumerate(proto_analyzer.messages[0].bit_sample_pos):
-            self.assertLess(pos, signal.num_samples, msg = i)
+            self.assertLess(pos, signal.num_samples, msg=i)
 
     def test_fsk_freq_detection(self):
         s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
@@ -35,6 +32,6 @@ class TestProtocolAnalyzer(QtTestCase):
                          "10110010100011111101110111000010111100111101001011101101011011010110101011100")
 
         freq = pa.estimate_frequency_for_one(1e6)
-        self.assertAlmostEqual(1, freq / 10000, places = 1)  # Freq for 1 is 10K
+        self.assertEqual(1, int(freq / 10000))  # Freq for 1 is 10K
         freq = pa.estimate_frequency_for_zero(1e6)
-        self.assertAlmostEqual(3, freq / 10000, places = 1)  # Freq for 0 is 30K
+        self.assertEqual(3, int(freq / 10000))  # Freq for 0 is 30K

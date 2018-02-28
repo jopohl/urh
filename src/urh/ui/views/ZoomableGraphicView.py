@@ -41,7 +41,7 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 
-        self.redraw_timer = QTimer()
+        self.redraw_timer = QTimer(self)
         self.redraw_timer.setSingleShot(True)
         self.redraw_timer.timeout.connect(self.redraw_view)
 
@@ -168,7 +168,7 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.scene_manager.show_full_scene()
 
     def redraw_view(self, reinitialize=False):
-        if self.scene_manager is not None:
+        if hasattr(self, "scene_manager") and self.scene_manager is not None:
             self.scene_manager.scene_type = self.scene_type
             if reinitialize:
                 self.scene_manager.init_scene()

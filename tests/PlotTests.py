@@ -22,11 +22,10 @@ class PlotTests(unittest.TestCase):
         modulator.carrier_freq_hz = 15e3
         modulator.carrier_phase_deg = 90
 
-
-        modulator.modulate([True, False, True, False, False], 77)
-        data = copy.deepcopy(modulator.modulated_samples)
-        modulator.modulate([False, True, True, True, True, False, True], 100, start=len(data))
-        data = np.concatenate((data, modulator.modulated_samples))
+        modulated_samples = modulator.modulate([True, False, True, False, False], 77)
+        data = copy.deepcopy(modulated_samples)
+        modulated_samples = modulator.modulate([False, True, True, True, True, False, True], 100, start=len(data))
+        data = np.concatenate((data, modulated_samples))
 
         plt.subplot(2, 1, 1)
         axes = plt.gca()

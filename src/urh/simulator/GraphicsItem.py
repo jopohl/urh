@@ -1,17 +1,16 @@
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, QAbstractItemView
-from PyQt5.QtGui import QFontDatabase, QFont, QDropEvent, QPen, QColor, QBrush
 from PyQt5.QtCore import QRectF, Qt, QLineF
+from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
+from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
+    QAbstractItemView
 
 from urh import constants
-
 from urh.simulator.SimulatorItem import SimulatorItem
-from urh.simulator.SimulatorRule import SimulatorRule
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRule
+from urh.util import util
+
 
 class GraphicsItem(QGraphicsObject):
-    font = None
-    font_bold = None
-
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(parent)
         self.model_item = model_item
@@ -23,14 +22,12 @@ class GraphicsItem(QGraphicsObject):
         self.drop_indicator_position = None
         self.item_under_mouse = None
 
-        GraphicsItem.font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        GraphicsItem.font.setPointSize(8)
-
-        GraphicsItem.font_bold = QFont(GraphicsItem.font)
-        GraphicsItem.font_bold.setWeight(QFont.DemiBold)
+        self.font = util.get_monospace_font()
+        self.font_bold = QFont(self.font)
+        self.font_bold.setWeight(QFont.DemiBold)
 
         self.number = QGraphicsTextItem(self)
-        self.number.setFont(GraphicsItem.font_bold)
+        self.number.setFont(self.font_bold)
 
         self.setFlag(QGraphicsItem.ItemIgnoresParentOpacity, True)
 
@@ -42,7 +39,7 @@ class GraphicsItem(QGraphicsObject):
 
     def update_flags(self):
         pass
-        
+
     def hoverEnterEvent(self, event):
         self.hover_active = True
         self.update()
@@ -162,7 +159,7 @@ class GraphicsItem(QGraphicsObject):
         return self.bounding_rect
 
     def update_numbering(self):
-        self.number.setPlainText(self.model_item.index())
+        self.number.setPlainText(self.model_item.index() + ".")
 
         for child in self.get_scene_children():
             child.update_numbering()

@@ -4,6 +4,7 @@ from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
 from urh.signalprocessing.Signal import Signal
 from urh.util.Formatter import Formatter
 
+
 class TestSignalDetailsGUI(QtTestCase):
     def setUp(self):
         self.signal = Signal(get_path_for_data_file("esaver.complex"), "test")
@@ -21,4 +22,3 @@ class TestSignalDetailsGUI(QtTestCase):
         self.assertEqual(self.signal.sample_rate, 5e6)
         self.assertEqual(Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
                          self.dialog.ui.lDuration.text())
-

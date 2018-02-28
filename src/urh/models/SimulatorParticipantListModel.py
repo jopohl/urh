@@ -1,9 +1,12 @@
-from PyQt5.QtCore import Qt, QModelIndex, QAbstractListModel
+from PyQt5.QtCore import Qt, QModelIndex, QAbstractListModel, pyqtSignal
 
+from urh.signalprocessing.Participant import Participant
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 
 class SimulatorParticipantListModel(QAbstractListModel):
+
+    participant_simulate_changed = pyqtSignal(Participant)
 
     def __init__(self, config: SimulatorConfiguration, parent=None):
         super().__init__(parent)
@@ -34,6 +37,7 @@ class SimulatorParticipantListModel(QAbstractListModel):
         if role == Qt.CheckStateRole:
             participants[i].simulate = value
             self.update()
+            self.participant_simulate_changed.emit(participants[i])
 
         return True
 

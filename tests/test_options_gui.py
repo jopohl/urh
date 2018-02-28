@@ -3,6 +3,7 @@ from urh.controller.dialogs.OptionsDialog import OptionsDialog
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
+
 class TestOptionsGUI(QtTestCase):
     def setUp(self):
         super().setUp()
@@ -69,6 +70,6 @@ class TestOptionsGUI(QtTestCase):
         self.assertGreater(n_rows, 1)
         self.dialog.ui.btnAddLabelType.click()
         self.wait_before_new_file()
-        self.assertEqual(n_rows+1, self.dialog.ui.tblLabeltypes.model().rowCount())
+        self.assertEqual(n_rows + 1, self.dialog.ui.tblLabeltypes.model().rowCount())
         self.dialog.ui.btnRemoveLabeltype.click()
         self.assertEqual(n_rows, self.dialog.ui.tblLabeltypes.model().rowCount())

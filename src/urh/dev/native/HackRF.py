@@ -1,12 +1,10 @@
-import numpy as np
-
+from multiprocessing import Array
 from multiprocessing.connection import Connection
 
-import time
+import numpy as np
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import hackrf
-from urh.util.Logger import logger
 
 
 class HackRF(Device):
@@ -86,4 +84,7 @@ class HackRF(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
-        return (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
+        arr = Array("B", 2*len(complex_samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.int8)
+        numpy_view[:] = (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
+        return arr

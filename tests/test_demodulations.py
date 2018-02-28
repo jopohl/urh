@@ -1,11 +1,11 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestDemodulations(QtTestCase):
-    # Testmethode muss immer mit Präfix test_* starten
+class TestDemodulations(unittest.TestCase):
     def test_ask(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = 0

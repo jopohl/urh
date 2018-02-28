@@ -5,14 +5,15 @@ from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 import xml.etree.ElementTree as ET
 
+from urh.util import util
 from urh.util.Formatter import Formatter
 
 
 class SimulatorProtocolLabel(SimulatorItem):
-    VALUE_TYPES = ["Constant value", "Get live during simulation", "Formula", "External program", "Random value"]
+    VALUE_TYPES = ["Constant value", "Live input", "Formula", "External program", "Random value"]
 
     def __init__(self, label: ProtocolLabel):
-        SimulatorItem.__init__(self)
+        super().__init__()
 
         self.label = label
 
@@ -21,6 +22,10 @@ class SimulatorProtocolLabel(SimulatorItem):
         self.formula = ""
         self.random_min = 0
         self.random_max = self.label.fuzz_maximum - 1
+
+    @property
+    def has_live_input(self):
+        return not self.is_checksum_label and self.value_type_index == 1
 
     def get_copy(self):
         # no copy needed in simulator
@@ -33,84 +38,51 @@ class SimulatorProtocolLabel(SimulatorItem):
         super().set_parent(value)
 
     def __lt__(self, other):
-        if self.label.start != other.label.start:
-            return self.label.start < other.label.start
-        elif self.label.end != other.label.end:
-            return self.label.end < other.label.end
-        elif self.label.name is not None and other.label.name is not None:
-            return len(self.label.name) < len(other.label.name)
-        else:
-            return False
+        return self.label < other.label
 
-    @property
-    def name(self):
-        return self.label.name
+    def __getattr__(self, name):
+        if name == "label":
+            return self.__getattribute__("label")
 
-    @name.setter
-    def name(self, val):
-        self.label.name = val
+        return self.label.__getattribute__(name)
 
-    @property
-    def color_index(self):
-        return self.label.color_index
-
-    @property
-    def start(self):
-        return self.label.start
-
-    @start.setter
-    def start(self, value):
-        self.label.start = value
-
-    @property
-    def end(self):
-        return self.label.end
-
-    @end.setter
-    def end(self, value):
-        self.label.end = value
-
-    @property
-    def display_format_index(self):
-        return self.label.display_format_index
-
-    @display_format_index.setter
-    def display_format_index(self, val):
-        self.label.display_format_index = val
+    def __setattr__(self, key, value):
+        if key == "field_type":
+            # Use special field type property for changing the label type when changing the field type
+            super().__setattr__(key, value)
+        try:
+            self.label.__setattr__(key, value)
+        except AttributeError:
+            super().__setattr__(key, value)
 
     @property
     def field_type(self) -> FieldType:
         return self.label.field_type
 
-    @property
-    def fuzz_maximum(self):
-        return self.label.fuzz_maximum
-
     @field_type.setter
-    def field_type(self, val):
+    def field_type(self, val: FieldType):
+        if val is None:
+            return
+
+        if self.is_checksum_label and val.function != FieldType.Function.CHECKSUM:
+            assert isinstance(self.label, ChecksumLabel)
+            self.label = self.label.to_label(val)
+        elif not self.is_checksum_label and val.function == FieldType.Function.CHECKSUM:
+            self.label = ChecksumLabel.from_label(self.label)
+            self.value_type_index = 0
         self.label.field_type = val
-
-    @property
-    def apply_decoding(self):
-        return self.label.apply_decoding
-
-    @property
-    def show(self):
-        return self.label.show
-
-    @show.setter
-    def show(self, value):
-        self.label.show = value
 
     @property
     def is_checksum_label(self):
         return isinstance(self.label, ChecksumLabel)
 
-    def check(self):
+    def validate(self):
         result = True
 
         if self.value_type_index == 2:
             result, _, _ = self.expression_parser.validate_expression(self.formula)
+        elif self.value_type_index == 3:
+            result = util.validate_command(self.external_program)
 
         return result
 

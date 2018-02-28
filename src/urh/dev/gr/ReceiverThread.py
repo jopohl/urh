@@ -8,7 +8,7 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class ReceiverThread(AbstractBaseThread):
-    index_changed = pyqtSignal(int, int)
+    data_received = pyqtSignal(np.ndarray)
 
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
                  parent=None, resume_on_full_receive_buffer=False):
@@ -16,6 +16,8 @@ class ReceiverThread(AbstractBaseThread):
 
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
         self.data = None
+
+        self.emit_data_received_signal = False
 
     def init_recv_buffer(self):
         n_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
@@ -67,8 +69,8 @@ class ReceiverThread(AbstractBaseThread):
                             return
                     self.data[self.current_index:self.current_index + num_samples] = tmp
                     self.current_index += num_samples
-                    self.index_changed.emit(self.current_index - num_samples,
-                                            self.current_index)
+                    if self.emit_data_received_signal:
+                        self.data_received.emit(tmp)
 
                     rcvd = b""
                 except ValueError:

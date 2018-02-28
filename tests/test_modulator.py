@@ -1,16 +1,16 @@
+import array
 import os
 import time
+import unittest
 
-import array
 from PyQt5.QtCore import QDir
 
-from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-class TestModulator(QtTestCase):
+class TestModulator(unittest.TestCase):
     def setUp(self):
         self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
         self.samples_per_bit = 100
@@ -39,8 +39,7 @@ class TestModulator(QtTestCase):
                 modulator.param_for_zero = 0
                 modulator.param_for_one = 180
 
-            modulator.modulate(self.modulation_data, self.pause)
-            modulator.modulated_samples.tofile(filename)
+            modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 
             signal = Signal(filename, modulation)
             signal.modulation_type = i
@@ -61,6 +60,6 @@ class TestModulator(QtTestCase):
         t = time.time()
         modulator = Modulator("Perf")
         modulator.modulation_type = 1
-        modulator.modulate([True]*1000, pause=10000000)
+        modulator.modulate([True] * 1000, pause=10000000)
         elapsed = time.time() - t
         self.assertLess(elapsed, 0.5)

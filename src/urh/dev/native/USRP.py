@@ -1,24 +1,24 @@
 from collections import OrderedDict
 
 import numpy as np
+from multiprocessing import Array
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import usrp
 from multiprocessing.connection import Connection
 
+
 class USRP(Device):
-    READ_SAMPLES = 16384
-    SEND_SAMPLES = 16384 * 2
+    SYNC_RX_CHUNK_SIZE = 16384
+    SYNC_TX_CHUNK_SIZE = 16384 * 2
+    CONTINUOUS_TX_CHUNK_SIZE = -1  # take everything from queue
 
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
 
-    SEND_BUFFER_SIZE = SEND_SAMPLES
-    CONTINUOUS_SEND_BUFFER_SIZE = SEND_SAMPLES * 64
-
     @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
-        cls.READ_SAMPLES = 16384 * int(sample_rate/1e6)
+        cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -47,11 +47,11 @@ class USRP(Device):
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
-        return usrp.start_stream(cls.READ_SAMPLES)
+        return usrp.start_stream(cls.SYNC_RX_CHUNK_SIZE)
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
-        usrp.recv_stream(data_conn, cls.READ_SAMPLES)
+        usrp.recv_stream(data_conn, cls.SYNC_RX_CHUNK_SIZE)
 
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):
@@ -87,7 +87,6 @@ class USRP(Device):
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
                             ("identifier", self.device_args)])
 
-
     @staticmethod
     def unpack_complex(buffer):
         return np.frombuffer(buffer, dtype=np.complex64)
@@ -95,4 +94,7 @@ class USRP(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the USRP Send API
-        return complex_samples.view(np.float32)
+        arr = Array("f", 2 * len(complex_samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.float32)
+        numpy_view[:] = complex_samples.view(np.float32)
+        return arr

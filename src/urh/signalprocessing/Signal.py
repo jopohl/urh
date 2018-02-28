@@ -13,7 +13,7 @@ from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.util import FileOperator
 from urh.util.Logger import logger
-
+import math
 
 class Signal(QObject):
     """
@@ -404,7 +404,9 @@ class Signal(QObject):
         :param sample_rate: Sample rate of the signal
         :return:
         """
-        data = self.data[start:end]
+        # ensure power of 2 for faster fft
+        length = 2 ** int(math.log2(end-start))
+        data = self.data[start:start+length]
 
         try:
             w = np.fft.fft(data)

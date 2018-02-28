@@ -1,11 +1,10 @@
-from tests.QtTestCase import QtTestCase
+import unittest
+
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
-class TestMessageType(QtTestCase):
-    def setUp(self):
-        pass
 
+class TestMessageType(unittest.TestCase):
     def test_find_unlabeled_range(self):
         lbl11 = ProtocolLabel(name="Label 1.1", start=2, end=10, color_index=0)
         lbl12 = ProtocolLabel(name="Label 1.2", start=15, end=20, color_index=0)
@@ -24,5 +23,3 @@ class TestMessageType(QtTestCase):
 
         self.assertEqual(mt1.unlabeled_ranges_with_other_mt(mt2), mt2.unlabeled_ranges_with_other_mt(mt1))
         self.assertEqual(mt1.unlabeled_ranges_with_other_mt(mt2), [(0, 1), (11, 14), (21, 40), (71, None)])
-
-

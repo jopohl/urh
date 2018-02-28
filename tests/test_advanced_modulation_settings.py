@@ -43,7 +43,7 @@ class TestAdvancedModulationSettings(QtTestCase):
                     widget.ui.buttonBox.accepted.emit()
                     return
 
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setSingleShot(True)
         timer.timeout.connect(accept_dialog)
         timer.setInterval(10)

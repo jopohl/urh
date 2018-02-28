@@ -43,7 +43,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.add_rule_condition(rule, ConditionType.ELSE_IF)
 
         stc.simulator_scene.add_goto_action(None, 0)
-        stc.simulator_scene.add_program_action(None, 0)
+        stc.simulator_scene.add_trigger_command_action(None, 0)
 
         messages = stc.simulator_config.get_all_messages()
         self.assertEqual(len(messages), 3)
@@ -90,7 +90,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 0)
         self.assertEqual(stc.participant_table_model.rowCount(), 0)
-        self.form.simulator_tab_controller.load_simulator_file(filename)
+        self.form.add_files([filename])
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
         self.assertEqual(stc.simulator_message_table_model.rowCount(), 3)
         self.assertEqual(stc.participant_table_model.rowCount(), 2)
@@ -135,14 +135,15 @@ class TestSimulatorTabGUI(QtTestCase):
     def test_simulator_graphics_view(self):
         self.__setup_project()
         self.add_all_signals_to_simulator()
-        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         self.assertGreater(len(stc.simulator_config.get_all_items()), 0)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 0)
 
         # select first message
-        messages = stc.simulator_scene.get_all_messages()
+        messages = stc.simulator_scene.get_all_message_items()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
+
         QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
@@ -151,7 +152,7 @@ class TestSimulatorTabGUI(QtTestCase):
         rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
         self.assertEqual(len(rules), 0)
         self.menus_to_ignore = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
-        timer = QTimer()
+        timer = QTimer(self.form)
         timer.setInterval(1)
         timer.setSingleShot(True)
         timer.timeout.connect(self.__on_context_menu_simulator_graphics_view_timer_timeout)
@@ -165,10 +166,10 @@ class TestSimulatorTabGUI(QtTestCase):
     def test_simulator_message_table_context_menu(self):
         self.__setup_project()
         self.add_all_signals_to_simulator()
-        stc = self.form.simulator_tab_controller # type: SimulatorTabController
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         stc.ui.tabWidget.setCurrentIndex(1)
 
-        stc.simulator_scene.get_all_messages()[0].setSelected(True)
+        stc.simulator_scene.get_all_message_items()[0].setSelected(True)
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
         stc.ui.tblViewMessage.selectColumn(2)
@@ -178,7 +179,7 @@ class TestSimulatorTabGUI(QtTestCase):
         menu = stc.ui.tblViewMessage.create_context_menu()
 
         names = [action.text() for action in menu.actions()]
-        self.assertIn("Modulation", names)
+        self.assertIn("Enforce encoding", names)
         add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
         add_label_action.trigger()
         menu.close()
@@ -262,7 +263,7 @@ class TestSimulatorTabGUI(QtTestCase):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
                     and w.parent() is None and w not in self.menus_to_ignore)
         names = [action.text() for action in menu.actions()]
-        self.assertIn("Create new message type based on this message ...", names)
+        self.assertIn("Source", names)
         add_rule_action = next(action for action in menu.actions() if action.text() == "Add rule")
         add_rule_action.trigger()
         menu.close()

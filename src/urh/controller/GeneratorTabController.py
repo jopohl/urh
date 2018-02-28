@@ -263,9 +263,7 @@ class GeneratorTabController(QWidget):
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        modulator_dialog = ModulatorDialog(self.modulators, parent=self.parent())
-        modulator_dialog.ui.treeViewSignals.setModel(self.tree_model)
-        modulator_dialog.ui.treeViewSignals.expandAll()
+        modulator_dialog = ModulatorDialog(self.modulators, tree_model=self.tree_model, parent=self.parent())
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
 
         modulator_dialog.finished.connect(self.refresh_modulators)
@@ -276,20 +274,6 @@ class GeneratorTabController(QWidget):
     def set_modulation_profile_status(self):
         visible = constants.SETTINGS.value("multiple_modulations", False, bool)
         self.ui.cBoxModulations.setVisible(visible)
-
-    def initialize_modulation_dialog(self, bits: str, dialog: ModulatorDialog):
-        dialog.on_modulation_type_changed()  # for drawing modulated signal initially
-        dialog.original_bits = bits
-        dialog.ui.linEdDataBits.setText(bits)
-        dialog.ui.gVOriginalSignal.signal_tree_root = self.tree_model.rootItem
-        dialog.draw_original_signal()
-        dialog.ui.gVModulated.show_full_scene(reinitialize=True)
-        dialog.ui.gVData.show_full_scene(reinitialize=True)
-        dialog.ui.gVData.auto_fit_view()
-        dialog.ui.gVCarrier.show_full_scene(reinitialize=True)
-        dialog.ui.gVCarrier.auto_fit_view()
-
-        dialog.mark_samples_in_view()
 
     def init_rfcat_plugin(self):
         self.set_rfcat_button_visibility()
@@ -310,7 +294,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog, message = self.prepare_modulation_dialog()
         modulator_dialog.showMaximized()
 
-        self.initialize_modulation_dialog(message.encoded_bits_str[0:10], modulator_dialog)
+        modulator_dialog.initialize(message.encoded_bits_str[0:10])
         self.project_manager.modulation_was_edited = True
 
     @pyqtSlot()
@@ -410,11 +394,15 @@ class GeneratorTabController(QWidget):
         memory_size_for_buffer = total_samples * 8
         logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024 ** 2)))
         try:
-            return np.zeros(total_samples, dtype=np.complex64)
+            # allocate it three times as we need the same amount for the sending process
+            np.zeros(3*total_samples, dtype=np.complex64)
         except MemoryError:
+            # will go into continuous mode in this case
             if show_error:
-                Errors.not_enough_ram_for_sending_precache(memory_size_for_buffer)
+                Errors.not_enough_ram_for_sending_precache(3*memory_size_for_buffer)
             return None
+
+        return np.zeros(total_samples, dtype=np.complex64)
 
     def modulate_data(self, buffer: np.ndarray) -> np.ndarray:
         """
@@ -432,9 +420,9 @@ class GeneratorTabController(QWidget):
             message = self.table_model.protocol.messages[i]
             modulator = self.__get_modulator_of_message(message)
             # We do not need to modulate the pause extra, as result is already initialized with zeros
-            modulator.modulate(start=0, data=message.encoded_bits, pause=0)
-            buffer[pos:pos + len(modulator.modulated_samples)] = modulator.modulated_samples
-            pos += len(modulator.modulated_samples) + message.pause
+            modulated = modulator.modulate(start=0, data=message.encoded_bits, pause=0)
+            buffer[pos:pos + len(modulated)] = modulated
+            pos += len(modulated) + message.pause
             self.modulation_msg_indices.append(pos)
             self.ui.prBarGeneration.setValue(i + 1)
             QApplication.instance().processEvents()
@@ -597,7 +585,7 @@ class GeneratorTabController(QWidget):
                     dialog = ContinuousSendDialog(self.project_manager, self.table_model.protocol.messages,
                                                   self.modulators, total_samples, parent=self)
             except OSError as e:
-                logger.error(repr(e))
+                logger.exception(e)
                 return
             if dialog.has_empty_device_list:
                 Errors.no_device()

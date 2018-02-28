@@ -1,18 +1,17 @@
 import os
 import socket
+import time
+from multiprocessing import Process, Value, Array
 
 import numpy as np
-import time
 from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from multiprocessing import Process, Value, Array
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
-from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
@@ -42,7 +41,7 @@ def receive(port, current_index, target_index, buffer):
 
             arr = np.frombuffer(data, dtype=np.complex64)
             data = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
-            data[current_index.value:current_index.value+len(arr)] = arr
+            data[current_index.value:current_index.value + len(arr)] = arr
             current_index.value += len(arr)
 
         if current_index.value == target_index:
@@ -98,10 +97,8 @@ class TestSendRecvDialog(QtTestCase):
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-        sniff_dialog = ProtocolSniffDialog(project_manager=self.form.project_manager,
-                                           signal=self.signal,
-                                           testing_mode=True,
-                                           parent=self.form)
+
+        sniff_dialog = self.form.create_protocol_sniff_dialog(testing_mode=True)
         if self.SHOW:
             sniff_dialog.show()
 
@@ -132,13 +129,14 @@ class TestSendRecvDialog(QtTestCase):
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
-            items = [dialog.device_settings_widget.ui.cbDevice.itemText(i) for i in range(dialog.device_settings_widget.ui.cbDevice.count())]
+            items = [dialog.device_settings_widget.ui.cbDevice.itemText(i) for i in
+                     range(dialog.device_settings_widget.ui.cbDevice.count())]
             self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
             self.__close_dialog(dialog)
 
     def test_receive(self):
-        port = self.__get_free_port()
+        port = self.get_free_port()
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
@@ -167,7 +165,7 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(receive_dialog)
 
     def test_spectrum(self):
-        port = self.__get_free_port()
+        port = self.get_free_port()
         spectrum_dialog = self.__get_spectrum_dialog()
         spectrum_dialog.device.set_server_port(port)
         spectrum_dialog.ui.btnStart.click()
@@ -207,7 +205,7 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(spectrum_dialog)
 
     def test_send(self):
-        port = self.__get_free_port()
+        port = self.get_free_port()
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
@@ -223,12 +221,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
                                        self.signal.data))
 
-        self.assertEqual(send_dialog.send_indicator.rect().width(), self.signal.num_samples)
-        self.assertFalse(send_dialog.ui.btnClear.isEnabled())
-
-        send_dialog.on_clear_clicked()
-        self.assertEqual(send_dialog.send_indicator.rect().width(), 0)
-        send_dialog.ui.btnStop.click()
+        self.assertEqual(send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished")
         self.assertFalse(send_dialog.ui.btnStop.isEnabled())
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
@@ -240,7 +233,7 @@ class TestSendRecvDialog(QtTestCase):
         self.add_signal_to_form("esaver.complex")
         self.__add_first_signal_to_generator()
 
-        port = self.__get_free_port()
+        port = self.get_free_port()
 
         gframe = self.form.generator_tab_controller
         expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
@@ -248,10 +241,10 @@ class TestSendRecvDialog(QtTestCase):
         current_index = Value("L", 0)
         buffer = Array("f", 4 * len(expected))
 
-        process = Process(target=receive, args=(port, current_index, 2*len(expected), buffer))
+        process = Process(target=receive, args=(port, current_index, 2 * len(expected), buffer))
         process.daemon = True
         process.start()
-        time.sleep(0.1)  # ensure server is up
+        time.sleep(1)  # ensure server is up
 
         ContinuousModulator.BUFFER_SIZE_MB = 10
 
@@ -259,12 +252,12 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(100)
+        QTest.qWait(1000)
         time.sleep(1)
         process.join(1)
 
         # CI sometimes swallows a sample
-        self.assertGreaterEqual(current_index.value, len(expected)  - 1)
+        self.assertGreaterEqual(current_index.value, len(expected) - 1)
 
         buffer = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
         for i in range(len(expected)):
@@ -292,7 +285,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         sniff_dialog.sniff_settings_widget.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
-        port = self.__get_free_port()
+        port = self.get_free_port()
 
         sniff_dialog.device.set_server_port(port)
         generator_frame.network_sdr_plugin.client_port = port
@@ -316,8 +309,14 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.click()
         self.assertFalse(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
 
+        n = self.form.compare_frame_controller.protocol_model.rowCount()
+        sniff_dialog.protocol_accepted.emit(sniff_dialog.sniffer.messages)
+        QTest.qWait(10)
+        self.assertEqual(self.form.compare_frame_controller.protocol_model.rowCount(), n + 3)
+
         target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
-        self.assertFalse(os.path.isfile(target_file))
+        if os.path.isfile(target_file):
+            os.remove(target_file)
 
         sniff_dialog.ui.btnClear.click()
         QApplication.instance().processEvents()
@@ -335,8 +334,6 @@ class TestSendRecvDialog(QtTestCase):
             for i, line in enumerate(f):
                 pad = 0 if len(orig_msgs[i]) % 8 == 0 else 8 - len(orig_msgs[i]) % 8
                 self.assertEqual(line.strip(), orig_msgs[i] + "0" * pad)
-
-        os.remove(target_file)
 
         sniff_dialog.ui.btnStop.click()
         self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())
@@ -427,7 +424,7 @@ class TestSendRecvDialog(QtTestCase):
             dialog.device_settings_widget.ui.spinBoxFreqCorrection.setValue(40)
             dialog.device_settings_widget.ui.spinBoxFreqCorrection.editingFinished.emit()
             self.assertEqual(dialog.device.freq_correction, 40)
-            
+
             dialog.device_settings_widget.ui.comboBoxDirectSampling.clear()
             self.assertEqual(dialog.device_settings_widget.ui.comboBoxDirectSampling.count(), 0)
             dialog.device_settings_widget.ui.comboBoxDirectSampling.addItem("test")
@@ -443,11 +440,3 @@ class TestSendRecvDialog(QtTestCase):
                 self.assertEqual(dialog.device.num_sending_repeats, None)
 
             self.__close_dialog(dialog)
-
-    def __get_free_port(self):
-        import socket
-        s = socket.socket()
-        s.bind(("", 0))
-        port = s.getsockname()[1]
-        s.close()
-        return port

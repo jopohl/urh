@@ -10,7 +10,8 @@ from urh.ui.painting.ContinuousSceneManager import ContinuousSceneManager
 
 class ContinuousSendDialog(SendDialog):
     def __init__(self, project_manager, messages, modulators, total_samples: int, parent, testing_mode=False):
-        super().__init__(project_manager, modulated_data=None, modulation_msg_indices=None, parent=parent, testing_mode=testing_mode)
+        super().__init__(project_manager, modulated_data=None, modulation_msg_indices=None,
+                         continuous_send_mode=True, parent=parent, testing_mode=testing_mode)
         self.messages = messages
         self.modulators = modulators
 

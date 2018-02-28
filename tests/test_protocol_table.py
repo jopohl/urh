@@ -46,7 +46,6 @@ class TestProtocolTable(QtTestCase):
         #                                                self.cframe.protocol_model.col_count,
         #                                                time.time()-t))
 
-
     def __build_protocol(self):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
@@ -60,8 +59,9 @@ class TestProtocolTable(QtTestCase):
         start = 0
         label_len = 3
         for i in range(self.NUM_LABELS):
-            self.cframe.add_protocol_label(start=start, end=start+label_len, proto_view=0, messagenr=0, edit_label_name=False)
-            start += label_len +1
+            self.cframe.add_protocol_label(start=start, end=start + label_len, proto_view=0, messagenr=0,
+                                           edit_label_name=False)
+            start += label_len + 1
 
     def __role_to_str(self, role):
         if role == Qt.DisplayRole:
@@ -72,7 +72,7 @@ class TestProtocolTable(QtTestCase):
             return "Text-Alignment"
         if role == Qt.TextColorRole:
             return "TextColor"
-        if role ==  Qt.ToolTipRole:
+        if role == Qt.ToolTipRole:
             return "ToolTip"
         if role == Qt.FontRole:
             return "Font"

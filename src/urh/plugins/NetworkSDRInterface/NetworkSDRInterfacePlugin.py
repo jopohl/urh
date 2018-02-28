@@ -4,7 +4,7 @@ import threading
 import time
 
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
@@ -16,7 +16,6 @@ from urh.util.SettingsProxy import SettingsProxy
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
-    rcv_index_changed = pyqtSignal(int, int)  # int arguments are just for compatibility with native and grc backend
     show_proto_sniff_dialog_clicked = pyqtSignal()
     sending_status_changed = pyqtSignal(bool)
     sending_stop_requested = pyqtSignal()
@@ -25,6 +24,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     send_connection_established = pyqtSignal()
     receive_server_started = pyqtSignal()
     error_occurred = pyqtSignal(str)
+
+    data_received = pyqtSignal(np.ndarray)
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -41,6 +42,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             if hasattr(self.server, "received_bits"):
                 for data in filter(None, self.data.split(b"\n")):
                     self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(data))
+                # when receiving bits, the protocol sniffer will read them for property
+                if self.server.emit_data_received_signal:
+                    self.server.signal.emit(np.ndarray([]))
             else:
                 while len(self.data) % 8 != 0:
                     self.data += self.request.recv(len(self.data) % 8)
@@ -48,13 +52,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 received = np.frombuffer(self.data, dtype=np.complex64)
 
                 if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
-                    self.server.previous_receive_index = 0
                     self.server.current_receive_index = 0
 
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
-                self.server.previous_receive_index = self.server.current_receive_index
                 self.server.current_receive_index += len(received)
+                if self.server.emit_data_received_signal:
+                    self.server.signal.emit(received)
 
     def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
         """
@@ -70,11 +74,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
         self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
 
-        self.receive_check_timer = QTimer()
-        self.receive_check_timer.setInterval(10)
-        # need to make the connect for the time in constructor, as create connects is called elsewhere in base class
-        self.receive_check_timer.timeout.connect(self.__emit_rcv_index_changed)
-
         self.is_in_spectrum_mode = spectrum
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer
         self.__is_sending = False
@@ -87,6 +86,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_is_continuous = False
         self.continuous_send_ring_buffer = None
         self.num_samples_to_send = None  # Only used for continuous send mode
+
+        self.emit_data_received_signal = False
 
         self.raw_mode = raw_mode
         if not sending:
@@ -139,7 +140,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     @current_receive_index.setter
     def current_receive_index(self, value):
-        if hasattr(self.server, "current_receive_index"):
+        if hasattr(self, "server") and hasattr(self.server, "current_receive_index"):
             self.server.current_receive_index = value
         else:
             pass
@@ -168,20 +169,21 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         if self.raw_mode:
             self.server.receive_buffer = self.receive_buffer
             self.server.current_receive_index = 0
-            self.server.previous_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
 
-        self.receive_check_timer.start()
+        self.server.signal = self.data_received
+        self.server.emit_data_received_signal = self.emit_data_received_signal
 
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
 
+        logger.debug("Started TCP server for receiving")
+
         self.receive_server_started.emit()
 
     def stop_tcp_server(self):
-        self.receive_check_timer.stop()
         if hasattr(self, "server"):
             logger.debug("Shutdown TCP server")
             self.server.shutdown()
@@ -224,7 +226,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             return sock
         except Exception as e:
             msg = "Could not establish connection " + str(e)
-            self.error_occured.emit(msg)
+            self.error_occurred.emit(msg)
             logger.error(msg)
             return None
 
@@ -374,14 +376,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     def on_spinbox_server_port_editing_finished(self):
         self.server_port = self.settings_frame.spinBoxServerPort.value()
         self.qsettings.setValue('server_port', str(self.server_port))
-
-    def __emit_rcv_index_changed(self):
-        # for updating received bits in protocol sniffer
-        if hasattr(self, "received_bits") and self.received_bits:
-            # int arguments are just for compatibility with native and grc backend
-            self.rcv_index_changed.emit(0, 0)
-        elif self.raw_mode and self.server.previous_receive_index != self.server.current_receive_index:
-            self.rcv_index_changed.emit(self.server.previous_receive_index, self.server.current_receive_index)
 
     @pyqtSlot(str)
     def on_lopenprotosniffer_link_activated(self, link: str):

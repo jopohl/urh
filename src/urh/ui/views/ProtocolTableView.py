@@ -219,7 +219,7 @@ class ProtocolTableView(TableView):
     @pyqtSlot()
     def hide_row(self, row=None):
         if row is None:
-            rows = [index.row() for index in self.selectionModel().selectedIndexes()]
+            rows = self.selected_rows
         elif isinstance(row, set) or isinstance(row, list):
             rows = row
         else:

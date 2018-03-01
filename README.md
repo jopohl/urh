@@ -25,28 +25,22 @@ If you find URH useful, please consider giving this repository a :star: or even 
 
 ## Installation
 Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
-Furthermore, you can [install urh from source](#installing-from-source) or run it  [without installation](#without-installation) directly from source. Below you find more specific installation instructions for:
+Below you find more specific installation instructions for:
 - [Linux](#linux)
+  - [Via Package Manager](#via-package-manager)
+  - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-(ubuntu/debian))
 - [Windows](#windows)
+  - [MSI Installer](#msi-installer)
+  - [Pip](#pip)
 - [Mac OS X](#mac-os-x)
-
-### Dependencies
-
-| Required  | Optional |
-| ------------- | ------------- |
-|  Python 3.4+  | librtlsdr (for native RTL-SDR support)  |
-| python-numpy  | libhackrf (for native HackRF support)  |
-| python-psutil  | libairspy (for native AirSPy support)  |
-| python-zmq  | liblimesdr (for native LimeSDR support)  |
-| PyQt5  | libuhd (for native USRP suppport)  |
-| C++ Compiler | libsdrplay (for native SDRplay support) |
-| | rfcat (for RfCat plugin to send e.g. with YardStick One) |
-|   | gnuradio / gnuradio-osmosdr (for GNU Radio device backends)  |
-
+- [Updating your installation](#update-your-installation)
+  - [Updating with Pip](#updating-with-pip)
+  - [Updating with MSI](#updating-with-msi)
+- [Running from source](#running-from-source)
 
 ### Linux
 #### Via Package Manager
-If you run any of the following linux distributions you can install URH using your package manager.
+For the following linux distributions you can install URH using your package manager.
 
 | Distribution  | Install with |
 | ------------- | ------------- |
@@ -56,11 +50,11 @@ If you run any of the following linux distributions you can install URH using yo
 | openSUSE  | ``` zypper install urh ```  |
 
 
-#### Generic way with pip
-If your distribution does not provide a package for URH you can install it using ```pip3 install urh```. Below you find more detailed instructions for Ubuntu/Debian.
+#### Generic way with pip (Ubuntu/Debian)
+URH you can also be installed with __pip__ using ```pip3 install urh```. 
+In case you are running Ubuntu or Debian read on for more specific instructions.
 
-##### Ubuntu/Debian
-If you want to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.
+In order to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.
 
 If your device does not have a ``` -dev ``` package, e.g. LimeSDR, you need to manually create a symlink to the ``` .so ```, like this:
 ```bash
@@ -101,10 +95,10 @@ corresponding native device support.
 4. Type ``` urh ``` in a terminal to get it started.
 
 ### Update your installation
-#### Pip
+#### Updating with Pip
 If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
 
-#### MSI
+#### Updating with MSI
 If you experience issues after updating URH using the ``` .msi ``` installer on Windows, please perform a __full uninstallation__. That is, uninstall URH via Windows and after that remove the installation folder (something like ``` C:\Program Files\Universal Radio Hacker ```). Now, install the new version using the recent ```.msi ```.
 
 ### Running from source
@@ -137,7 +131,6 @@ See [wiki](https://github.com/jopohl/urh/wiki/External-decodings) for a list of 
 ### Screenshots
 #### Get the data out of raw signals
 ![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
-
 
 #### Keep an overview even on complex protocols
  ![Analysis phase](http://i.imgur.com/ubAL3pE.png)

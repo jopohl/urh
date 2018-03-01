@@ -28,7 +28,7 @@ Universal Radio Hacker can be installed via _pip_ or using the _package manager_
 Below you find more specific installation instructions for:
 - [Linux](#linux)
   - [Via Package Manager](#via-package-manager)
-  - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-(ubuntu/debian))
+  - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-ubuntudebian)
 - [Windows](#windows)
   - [MSI Installer](#msi-installer)
   - [Pip](#pip)

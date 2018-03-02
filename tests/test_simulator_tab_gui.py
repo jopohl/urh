@@ -259,6 +259,24 @@ class TestSimulatorTabGUI(QtTestCase):
         model.setData(model.index(0, 0), Qt.Checked, role=Qt.CheckStateRole)
         self.assertTrue(self.form.project_manager.participants[0].simulate)
 
+    def test_valid_goto_targets(self):
+        stc = self.form.simulator_tab_controller
+        assert isinstance(stc, SimulatorTabController)
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+
+        self.assertEqual(len(stc.simulator_config.get_all_messages()), 3)
+        stc.ui.gvSimulator.on_add_goto_action_triggered()
+
+        self.assertEqual(stc.ui.detail_view_widget.currentWidget(), stc.ui.page_goto_action)
+        self.assertEqual(stc.ui.goto_combobox.count(), 3 + 1)  # select item... also in combobox
+
+        stc.ui.gvSimulator.on_add_counter_action_triggered()
+        stc.ui.gvSimulator.on_add_sleep_action_triggered()
+        stc.ui.gvSimulator.on_add_goto_action_triggered()
+
+        self.assertEqual(stc.ui.goto_combobox.count(), 5 + 1)  # select item... also in combobox
+
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
                     and w.parent() is None and w not in self.menus_to_ignore)

@@ -1,7 +1,9 @@
 import os
+import socket
 import tempfile
 from array import array
 
+import numpy as np
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
@@ -11,6 +13,8 @@ from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.MessageItem import MessageItem
 from urh.simulator.RuleItem import RuleItem
@@ -276,6 +280,64 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.gvSimulator.on_add_goto_action_triggered()
 
         self.assertEqual(stc.ui.goto_combobox.count(), 5 + 1)  # select item... also in combobox
+
+    def test_open_simulator_dialog_and_send_mismatching_message(self):
+        stc = self.form.simulator_tab_controller
+        assert isinstance(stc, SimulatorTabController)
+
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+
+        stc.simulator_scene.select_all_items()
+
+        for msg in stc.simulator_scene.get_selected_messages():
+            msg.destination = self.dennis
+            stc.ui.gvSimulator.message_updated.emit(msg)
+
+        list_model = stc.ui.listViewSimulate.model()
+        self.assertEqual(list_model.rowCount(), 2)
+        list_model.setData(list_model.createIndex(1, 0), Qt.Checked, role=Qt.CheckStateRole)
+
+        dialog = stc.get_simulator_dialog()
+
+        network_sdr_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
+        dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
+        dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
+
+        send_port = self.get_free_port()
+        dialog.simulator.sender.device.set_client_port(send_port)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        s.bind(("", send_port))
+        s.listen(1)
+
+        rcv_port = self.get_free_port()
+        dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
+
+        dialog.ui.btnStartStop.click()
+        QTest.qWait(100)
+
+        modulator = dialog.project_manager.modulators[0]  # type: Modulator
+        sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
+        sender.client_port = rcv_port
+        sender.send_raw_data(modulator.modulate("1" * 352), 1)
+        sender.send_raw_data(np.zeros(10000, dtype=np.complex64), 1)
+        QTest.qWait(1000)
+
+        simulator_log = dialog.ui.textEditSimulation.toPlainText()
+        self.assertIn("Received message 1", simulator_log)
+        self.assertIn("preamble: 11111111", simulator_log)
+
+        sender.send_raw_data(modulator.modulate("10" * 176), 1)
+        sender.send_raw_data(np.zeros(10000, dtype=np.complex64), 1)
+        QTest.qWait(1000)
+
+        simulator_log = dialog.ui.textEditSimulation.toPlainText()
+        self.assertIn("Mismatch for label: preamble", simulator_log)
+
+        dialog.close()
+        s.close()
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)

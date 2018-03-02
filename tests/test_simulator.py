@@ -10,7 +10,6 @@ from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
 from urh.controller.MainController import MainController
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
@@ -65,7 +64,6 @@ def receive(port, current_index, target_index, elapsed):
 class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
-        constants.SETTINGS.setValue("NetworkSDRInterface", True)
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
 
     def test_performance(self):

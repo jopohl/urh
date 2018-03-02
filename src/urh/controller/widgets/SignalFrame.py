@@ -48,8 +48,7 @@ class SignalFrame(QFrame):
     def proto_view(self):
         return self.ui.txtEdProto.cur_view
 
-    def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack,
-                 project_manager, proto_bits=None, parent=None):
+    def __init__(self, proto_analyzer: ProtocolAnalyzer, undo_stack: QUndoStack, project_manager, parent=None):
         super().__init__(parent)
 
         self.undo_stack = undo_stack

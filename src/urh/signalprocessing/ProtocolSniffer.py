@@ -166,4 +166,5 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.started.emit()
 
     def __emit_stopped(self):
-        self.stopped.emit()
+        if hasattr(self, "stopped"):
+            self.stopped.emit()

@@ -135,6 +135,16 @@ def main():
             palette.setColor(QPalette.HighlightedText, text_color)
             app.setPalette(palette)
 
+    # use system colors for painting
+    widget = QWidget()
+    bg_color = widget.palette().color(QPalette.Background)
+    fg_color = widget.palette().color(QPalette.Foreground)
+    selection_color = widget.palette().color(QPalette.Highlight)
+    constants.BGCOLOR = bg_color
+    constants.LINECOLOR = fg_color
+    constants.SELECTION_COLOR = selection_color
+    constants.SEND_INDICATOR_COLOR = selection_color
+
     main_window = MainController()
     import multiprocessing as mp
     # allow usage of prange (OpenMP) in Processes
@@ -152,16 +162,6 @@ def main():
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube
-
-    # use system colors for painting
-    widget = QWidget()
-    bgcolor = widget.palette().color(QPalette.Background)
-    fgcolor = widget.palette().color(QPalette.Foreground)
-    selection_color = widget.palette().color(QPalette.Highlight)
-    constants.BGCOLOR = bgcolor
-    constants.LINECOLOR = fgcolor
-    constants.SELECTION_COLOR = selection_color
-    constants.SEND_INDICATOR_COLOR = selection_color
 
     if "autoclose" in sys.argv[1:]:
         # Autoclose after 1 second, this is useful for automated testing

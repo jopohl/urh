@@ -11,6 +11,7 @@ from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
+from urh.util import util
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -32,7 +33,7 @@ class SendRecvDialog(QDialog):
 
         self.ui = Ui_SendRecvDialog()
         self.ui.setupUi(self)
-        self.ui.splitter.setHandleWidth(6)
+        util.set_splitter_stylesheet(self.ui.splitter)
 
         self.graphics_view = None  # type: QGraphicsView
 

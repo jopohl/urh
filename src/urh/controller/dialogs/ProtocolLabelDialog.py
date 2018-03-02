@@ -15,6 +15,7 @@ from urh.ui.delegates.CheckBoxDelegate import CheckBoxDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.SpinBoxDelegate import SpinBoxDelegate
 from urh.ui.ui_properties_dialog import Ui_DialogLabels
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -27,6 +28,8 @@ class ProtocolLabelDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
+        util.set_splitter_stylesheet(self.ui.splitter)
+
         field_types = FieldType.load_from_xml()
         self.model = PLabelTableModel(message, field_types)
         self.preselected_index = preselected_index

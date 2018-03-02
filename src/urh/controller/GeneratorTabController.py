@@ -26,7 +26,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.Fuzz import Fuzz
 from urh.ui.ui_generator import Ui_GeneratorTab
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -38,6 +38,7 @@ class GeneratorTabController(QWidget):
         super().__init__(parent)
         self.ui = Ui_GeneratorTab()
         self.ui.setupUi(self)
+        util.set_splitter_stylesheet(self.ui.splitter)
 
         self.project_manager = project_manager
 

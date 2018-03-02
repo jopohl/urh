@@ -41,6 +41,8 @@ class MainController(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        util.set_splitter_stylesheet(self.ui.splitter)
+
         OptionsDialog.write_default_options()
 
         self.project_save_timer = QTimer()

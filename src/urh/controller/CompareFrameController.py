@@ -25,7 +25,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -48,6 +48,9 @@ class CompareFrameController(QWidget):
 
         self.ui = Ui_TabAnalysis()
         self.ui.setupUi(self)
+        util.set_splitter_stylesheet(self.ui.splitter)
+        util.set_splitter_stylesheet(self.ui.splitter_2)
+
         self.ui.lBitsSelection.setText("")
         self.ui.lDecimalSelection.setText("")
         self.ui.lHexSelection.setText("")

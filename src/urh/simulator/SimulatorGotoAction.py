@@ -25,6 +25,15 @@ class SimulatorGotoAction(SimulatorItem):
         target = self.simulator_config.item_dict.get(self.goto_target, None)
         return self.is_valid_goto_target(target)
 
+    def get_valid_goto_targets(self):
+        valid_targets = []
+
+        for key, value in self.simulator_config.item_dict.items():
+            if value != self and SimulatorGotoAction.is_valid_goto_target(value):
+                valid_targets.append(key)
+
+        return valid_targets
+
     def to_xml(self) -> ET.Element:
         attributes = dict()
         if self.goto_target is not None:
@@ -50,13 +59,3 @@ class SimulatorGotoAction(SimulatorItem):
             return False
 
         return True
-
-    @classmethod
-    def get_valid_goto_targets(cls):
-        valid_targets = []
-
-        for key, value in cls.simulator_config.item_dict.items():
-            if SimulatorGotoAction.is_valid_goto_target(value):
-                valid_targets.append(key)
-
-        return valid_targets

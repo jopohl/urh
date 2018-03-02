@@ -56,6 +56,8 @@ class SignalFrame(QFrame):
         self.ui = Ui_SignalFrame()
         self.ui.setupUi(self)
 
+        util.set_splitter_stylesheet(self.ui.splitter)
+
         self.__set_spectrogram_adjust_widgets_visibility()
         self.ui.gvSignal.init_undo_stack(self.undo_stack)
 

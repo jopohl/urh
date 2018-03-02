@@ -58,6 +58,8 @@ class SimulatorTabController(QWidget):
 
         self.ui = Ui_SimulatorTab()
         self.ui.setupUi(self)
+        util.set_splitter_stylesheet(self.ui.splitter)
+        util.set_splitter_stylesheet(self.ui.splitterLeftRight)
 
         self.ui.splitter.setSizes([self.width() / 0.7, self.width() / 0.3])
 

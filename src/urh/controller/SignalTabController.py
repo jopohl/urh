@@ -6,6 +6,7 @@ from urh import constants
 from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
+from urh.util import util
 
 
 class SignalTabController(QWidget):
@@ -37,6 +38,8 @@ class SignalTabController(QWidget):
         super().__init__(parent)
         self.ui = Ui_Interpretation()
         self.ui.setupUi(self)
+
+        util.set_splitter_stylesheet(self.ui.splitter)
 
         self.ui.placeholderLabel.setVisible(False)
         self.getting_started_status = None

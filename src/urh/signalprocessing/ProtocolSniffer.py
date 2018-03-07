@@ -118,13 +118,20 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if not self.__store_data:
             self.messages.clear()
 
-    def __demodulate_data(self, data):
+    def __demodulate_data(self, data, adaptive_noise=True):
         """
         Demodulates received IQ data and adds demodulated bits to messages
         :param data:
         :return:
         """
-        is_above_noise = np.mean(data.real ** 2 + data.imag ** 2) > self.signal.noise_threshold ** 2
+        noise_val = np.mean(data.real ** 2 + data.imag ** 2)
+        is_above_noise = noise_val  > self.signal.noise_threshold ** 2
+        if adaptive_noise and not is_above_noise:
+            old = self.signal.noise_threshold
+            self.signal.noise_threshold = 0.9*self.signal.noise_threshold + 0.15 * np.sqrt(noise_val)
+            with open("/tmp/noise_val.txt", "a") as f:
+                f.write("setting noise val from {} to {}\n".format(old, self.signal.noise_threshold))
+
         if is_above_noise:
             self.data_cache.append(data)
             self.pause_length = 0

@@ -10,6 +10,7 @@ omit =
        src/urh/plugins/RfCat/RfCatPlugin.py
 
 concurrency = multiprocessing
+source = src/urh
 
 [report]
 sort = Miss

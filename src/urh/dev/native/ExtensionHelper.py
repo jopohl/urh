@@ -136,7 +136,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
     else:
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
 
-    return Extension("src.urh.dev.native.lib." + dev_name,
+    return Extension("urh.dev.native.lib." + dev_name,
                      [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language=language)
@@ -164,11 +164,12 @@ def perform_health_check() -> str:
 
 if __name__ == "__main__":
     from setuptools import setup
-
-    extensions = pickle.load(open(os.path.join(tempfile.gettempdir(), "native_extensions"), "rb"))
-    assert isinstance(extensions, list)
+    if "-L" in sys.argv:
+        library_dirs = sys.argv[sys.argv.index("-L")+1].split(":")
+    else:
+        library_dirs = None
 
     setup(
         name="urh",
-        ext_modules=extensions,
+        ext_modules=get_device_extensions(False, library_dirs=library_dirs),
     )

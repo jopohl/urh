@@ -95,7 +95,7 @@ def get_package_data():
 
 def get_extensions():
     filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(EXT)]
-    extensions = [Extension("src.urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
+    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
                             extra_compile_args=[OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]

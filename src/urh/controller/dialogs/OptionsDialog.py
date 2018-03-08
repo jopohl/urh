@@ -33,6 +33,7 @@ class OptionsDialog(QDialog):
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
+
         self.setAttribute(Qt.WA_DeleteOnClose)
         layout = QHBoxLayout(self.ui.tab_plugins)
         self.plugin_controller = PluginFrame(installed_plugins, highlighted_plugins, parent=self)
@@ -398,40 +399,30 @@ class OptionsDialog(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
-        num_natives = self.backend_handler.num_native_backends
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
-        new_natives = len(extensions) - num_natives
 
-        if new_natives == 0:
-            self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
-            return
+        self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
+        target_dir = os.path.realpath(os.path.join(__file__, "../../../dev/native/lib"))
+        build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                     "build_ext", "-b", target_dir, "-t", tempfile.gettempdir()]
+        if library_dirs:
+            build_cmd.extend(["-L", ":".join(library_dirs)])
+
+        rc = call(build_cmd)
+
+        if rc == 0:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
+                                                             "Rebuilt {0} new device extensions. "
+                                                             "</font>"
+                                                             "Please restart URH.".format(len(extensions))))
         else:
-            s = "s" if new_natives > 1 else ""
-            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-            pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
-            target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
-            build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
-                         "build_ext", "-b", target_dir,
-                         "-t", tempfile.gettempdir()]
-            if library_dirs:
-                build_cmd.extend(["-L", ":".join(library_dirs)])
-            rc = call(build_cmd)
+            self.ui.labelRebuildNativeStatus.setText(self.tr("<font color='red'>"
+                                                             "Failed to rebuild {0} device extensions. "
+                                                             "</font>"
+                                                             "Run URH as root (<b>sudo urh</b>) "
+                                                             "and try again.".format(len(extensions))))
 
-            if rc == 0:
-                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
-                                                                 "Rebuilt {0} new device extension{1}. "
-                                                                 "</font>"
-                                                                 "Please restart URH.".format(new_natives, s)))
-            else:
-                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color='red'>"
-                                                                 "Failed to rebuild {0} device extension{1}. "
-                                                                 "</font>"
-                                                                 "Run URH as root (<b>sudo urh</b>) "
-                                                                 "and try again.".format(new_natives, s)))
-            try:
-                os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
-            except OSError:
-                pass
+        call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "clean", "--all"])
 
     @pyqtSlot()
     def on_btn_health_check_clicked(self):

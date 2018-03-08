@@ -30,12 +30,15 @@ git:
 
 install:
   - |
-    if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]; then
-      sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil;
+    if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]
+    then
+      sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil
     else
-      pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt; # PyQt5 is only installable via pip for Python >= 3.5
+      pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt
     fi
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
+  - |
+    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
+    then
       pip3 install pytest-cov coveralls
       coverage --version
     else
@@ -50,7 +53,9 @@ before_script:
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
+  - |
+    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
+    then
       pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt
     else
       pytest -s tests 2> /tmp/test_errors.txt
@@ -64,7 +69,9 @@ after_failure:
   - cat /tmp/build_log.txt
 
 after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
+  - |
+    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
+    then
       coverage combine
       coveralls --rcfile=tests/.coveragerc
     else

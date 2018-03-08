@@ -154,7 +154,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     if USE_RELATIVE_PATHS:
         # We need relative paths on windows
-        cpp_file_path = "urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
+        cpp_file_path = "src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
     else:
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
 

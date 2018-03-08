@@ -9,10 +9,10 @@ from urh.util.Logger import logger
 
 
 class Backends(Enum):
-    none = 0
-    native = 1
-    grc = 2
-    network = 3  # provided by network sdr plugin
+    none = "no backend"
+    native = "native backend"
+    grc = "GNU Radio backend"
+    network = "Network Backend"  # provided by network sdr plugin
 
 
 class BackendContainer(object):

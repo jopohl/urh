@@ -195,9 +195,10 @@ class OptionsDialog(QDialog):
             w = self.ui.listWidgetDevices.item(i)
             dev_key = self.__get_key_from_device_display_text(w.text())
             is_enabled = self.backend_handler.device_backends[dev_key].is_enabled
+            selected_backend = self.backend_handler.device_backends[dev_key].selected_backend.value
             suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
             dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
-            w.setText("{0} - {1}".format(dev_name, suffix))
+            w.setText("{0} - {1} ({2})".format(dev_name, suffix, selected_backend))
 
     def read_options(self):
         settings = constants.SETTINGS

@@ -18,12 +18,19 @@ DEVICES = {
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
-    "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp", "test_function": "mir_sdr_ApiVersion"}
+    "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
+                "test_function": "mir_sdr_ApiVersion"}
 }
 
 FALLBACKS = {
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
 }
+
+
+def compiler_has_function(compiler, function_name, libraries, library_dirs, include_dirs) -> bool:
+    result = compiler.has_function(function_name, libraries=libraries,
+                                   library_dirs=library_dirs, include_dirs=include_dirs)
+    return result
 
 
 def get_device_extensions(use_cython: bool, library_dirs=None):
@@ -74,30 +81,28 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
     compiler = ccompiler.new_compiler()
     for dev_name, params in DEVICES.items():
         if build_device_extensions[dev_name] == 0:
-            print("\nSkipping native {0} support\n".format(dev_name))
+            print("Skipping native {0} support".format(dev_name))
             continue
         if build_device_extensions[dev_name] == 1:
-            print("\nEnforcing native {0} support\n".format(dev_name))
+            print("Enforcing native {0} support".format(dev_name))
             result.append(
                 get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
             continue
 
-        if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
-                                 include_dirs=include_dirs):
-            print("\nFound {0} lib. Will compile with native {1} support\n".format(params["lib"], dev_name))
+        if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
+            print("Found {0} lib. Will compile with native {1} support".format(params["lib"], dev_name))
             result.append(
                 get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
         elif dev_name in FALLBACKS:
             print("Trying fallback for {0}".format(dev_name))
             params = FALLBACKS[dev_name]
             dev_name += "_fallback"
-            if compiler.has_function(params["test_function"], libraries=(params["lib"],), library_dirs=library_dirs,
-                                     include_dirs=include_dirs):
-                print("\nFound fallback. Will compile with native {0} support\n".format(dev_name))
+            if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
+                print("Found fallback. Will compile with native {0} support".format(dev_name))
                 result.append(
                     get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
         else:
-            print("\nSkipping native support for {1}\n".format(params["lib"], dev_name))
+            print("Skipping native support for {1}".format(params["lib"], dev_name))
 
         # remove Temp file for checking
         try:
@@ -131,7 +136,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
     else:
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
 
-    return Extension("urh.dev.native.lib." + dev_name,
+    return Extension("src.urh.dev.native.lib." + dev_name,
                      [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language=language)

@@ -1,5 +1,4 @@
 import os
-import pickle
 import platform
 import sys
 import tempfile
@@ -7,6 +6,7 @@ from collections import defaultdict
 from distutils import ccompiler
 from importlib import import_module
 
+import shutil
 from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
@@ -28,9 +28,31 @@ FALLBACKS = {
 
 
 def compiler_has_function(compiler, function_name, libraries, library_dirs, include_dirs) -> bool:
-    result = compiler.has_function(function_name, libraries=libraries,
-                                   library_dirs=library_dirs, include_dirs=include_dirs)
-    return result
+    tmp_dir = tempfile.mkdtemp(prefix='urh-')
+    devnull = old_stderr = None
+    try:
+        try:
+            file_name = os.path.join(tmp_dir, '{}.c'.format(function_name))
+            f = open(file_name, 'w')
+            f.write('int main(void) {\n')
+            f.write('    %s();\n' % function_name)
+            f.write('}\n')
+            f.close()
+            # Redirect stderr to /dev/null to hide any error messages from the compiler.
+            devnull = open(os.devnull, 'w')
+            old_stderr = os.dup(sys.stderr.fileno())
+            os.dup2(devnull.fileno(), sys.stderr.fileno())
+            objects = compiler.compile([file_name], include_dirs=include_dirs)
+            compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs, libraries=libraries)
+        except Exception as e:
+            return False
+        return True
+    finally:
+        if old_stderr is not None:
+            os.dup2(old_stderr, sys.stderr.fileno())
+        if devnull is not None:
+            devnull.close()
+        shutil.rmtree(tmp_dir)
 
 
 def get_device_extensions(use_cython: bool, library_dirs=None):
@@ -132,7 +154,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     if USE_RELATIVE_PATHS:
         # We need relative paths on windows
-        cpp_file_path = "src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
+        cpp_file_path = "urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
     else:
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
 

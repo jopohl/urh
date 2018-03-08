@@ -191,7 +191,10 @@ if __name__ == "__main__":
     else:
         library_dirs = None
 
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
+    os.chdir("..")
+
     setup(
         name="urh",
-        ext_modules=get_device_extensions(False, library_dirs=library_dirs),
+        ext_modules=get_device_extensions(use_cython=False, library_dirs=library_dirs),
     )

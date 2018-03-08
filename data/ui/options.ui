@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>709</height>
+    <width>727</width>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -217,8 +217,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>616</width>
-               <height>340</height>
+               <width>647</width>
+               <height>380</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -434,6 +434,16 @@
           <string>Native options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="3" column="2">
+           <widget class="QLabel" name="labelRebuildNativeStatus">
+            <property name="text">
+             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
@@ -475,62 +485,18 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLabel" name="labelRebuildNativeStatus">
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnViewBuildLog">
             <property name="text">
-             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
+             <string>View log</string>
+            </property>
+            <property name="icon">
+             <iconset theme="utilities-log-viewer"/>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Default sending repititions:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="spinBoxNumSendingRepeats">
-           <property name="specialValueText">
-            <string>Infinite</string>
-           </property>
-           <property name="showGroupSeparator" stdset="0">
-            <bool>false</bool>
-           </property>
-           <property name="maximum">
-            <number>999999999</number>
-           </property>
-           <property name="displayIntegerBase">
-            <number>10</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Use this percentage of available RAM for buffer allocation:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxRAMThreshold">
-           <property name="suffix">
-            <string>%</string>
-           </property>
-           <property name="minimum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>100.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <widget class="Line" name="line_2">
@@ -626,6 +592,60 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Default sending repititions:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="spinBoxNumSendingRepeats">
+           <property name="specialValueText">
+            <string>Infinite</string>
+           </property>
+           <property name="showGroupSeparator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>999999999</number>
+           </property>
+           <property name="displayIntegerBase">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Use this percentage of available RAM for buffer allocation:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxRAMThreshold">
+           <property name="suffix">
+            <string>%</string>
+           </property>
+           <property name="minimum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

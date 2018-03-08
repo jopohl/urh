@@ -90,6 +90,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
         self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
         self.ui.btn_sniff_use_signal.clicked.connect(self.on_btn_sniff_use_signal_clicked)
+        self.ui.checkBoxAdaptiveNoise.clicked.connect(self.on_check_box_adaptive_noise_clicked)
 
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
@@ -178,3 +179,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.combox_sniff_Modulation.setCurrentIndex(signal.modulation_type)
 
         self.emit_editing_finished_signals()
+
+    @pyqtSlot()
+    def on_check_box_adaptive_noise_clicked(self):
+        self.sniffer.adaptive_noise = self.ui.checkBoxAdaptiveNoise.isChecked()

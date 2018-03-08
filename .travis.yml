@@ -36,9 +36,10 @@ install:
       pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt; # PyQt5 is only installable via pip for Python >= 3.5
     fi
   - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
-      pip3 install pytest-cov coveralls;
+      pip3 install pytest-cov coveralls
+      coverage --version
     else
-      pip3 install pytest;
+      pip3 install pytest
     fi
   - sh -e /etc/init.d/xvfb start
   - sleep 5
@@ -50,9 +51,9 @@ before_script:
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
   - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
-      pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt;
+      pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt
     else
-      pytest -s tests 2> /tmp/test_errors.txt;
+      pytest -s tests 2> /tmp/test_errors.txt
     fi
   - pip3 install .
   - urh --version
@@ -64,7 +65,8 @@ after_failure:
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]; then
-      coveralls --rcfile=tests/.coveragerc;
+      coverage combine
+      coveralls --rcfile=tests/.coveragerc
     else
-      echo "coverage upload only for python 3.6";
+      echo "coverage upload only for python 3.6"
     fi

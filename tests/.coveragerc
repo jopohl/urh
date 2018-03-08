@@ -9,6 +9,8 @@ omit =
        src/urh/util/Errors.py
        src/urh/plugins/RfCat/RfCatPlugin.py
 
+concurrency = multiprocessing
+
 [report]
 sort = Miss
 exclude_lines =

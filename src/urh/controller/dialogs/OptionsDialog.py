@@ -408,6 +408,7 @@ class OptionsDialog(QDialog):
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
 
         self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
+        QApplication.instance().processEvents()
         build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
                      "build_ext", "--inplace", "-t", tempfile.gettempdir()]
         if library_dirs:

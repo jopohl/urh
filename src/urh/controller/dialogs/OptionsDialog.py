@@ -446,7 +446,7 @@ class OptionsDialog(QDialog):
         info = ExtensionHelper.perform_health_check()
 
         if util.get_windows_lib_path():
-            info += "\n\nINFO] Used DLLs from " + util.get_windows_lib_path()
+            info += "\n\n[INFO] Used DLLs from " + util.get_windows_lib_path()
 
         d = util.create_textbox_dialog(info, "Health check for native extensions", self)
         d.show()

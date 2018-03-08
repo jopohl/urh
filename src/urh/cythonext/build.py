@@ -1,7 +1,7 @@
 import os
 import sys
 import tempfile
-from subprocess import call, PIPE
+from subprocess import call
 
 build_dir = os.path.join(tempfile.gettempdir(), "build")
 

@@ -125,10 +125,10 @@ cpdef uhd_error recv_stream(connection, int num_samples):
 @cython.wraparound(False)
 cpdef uhd_error send_stream(float[::1] samples):
     if len(samples) == 1 and samples[0] == 0:
-        # Fill with zeros
-        samples = np.zeros(2 * max_num_tx_samples, dtype=np.float32)
+        # Fill with zeros. Use some more zeros to prevent underflows
+        samples = np.zeros(8 * max_num_tx_samples, dtype=np.float32)
 
-    cdef int i, index = 0
+    cdef unsigned long i, index = 0
     cdef size_t num_samps_sent = 0
     cdef size_t sample_count = len(samples)
 

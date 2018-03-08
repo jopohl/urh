@@ -81,7 +81,7 @@ class OptionsDialog(QDialog):
         for dev_name in self.backend_handler.DEVICE_NAMES:
             self.ui.listWidgetDevices.addItem(dev_name)
 
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
         self.ui.listWidgetDevices.setCurrentRow(0)
         self.refresh_device_tab()
@@ -114,7 +114,6 @@ class OptionsDialog(QDialog):
         try:
             devname = self.ui.listWidgetDevices.currentItem().text().lower()
             dev_key = self.__get_key_from_device_display_text(devname)
-
             return self.backend_handler.device_backends[dev_key]
         except:
             return ""
@@ -190,7 +189,7 @@ class OptionsDialog(QDialog):
                 self.ui.lSupport.setText(self.tr("device supports neither sending nor receiving"))
                 self.ui.lSupport.setStyleSheet("color: red")
 
-    def set_device_enabled_suffix(self):
+    def set_device_status(self):
         for i in range(self.ui.listWidgetDevices.count()):
             w = self.ui.listWidgetDevices.item(i)
             dev_key = self.__get_key_from_device_display_text(w.text())
@@ -198,7 +197,7 @@ class OptionsDialog(QDialog):
             selected_backend = self.backend_handler.device_backends[dev_key].selected_backend.value
             suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
             dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
-            w.setText("{0} - {1} ({2})".format(dev_name, suffix, selected_backend))
+            w.setText("{0}\t ({2})\t {1}".format(dev_name, suffix, selected_backend))
 
     def read_options(self):
         settings = constants.SETTINGS
@@ -216,7 +215,7 @@ class OptionsDialog(QDialog):
         self.backend_handler.get_backends()
         self.show_gnuradio_infos()
         self.show_selected_device_params()
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
         self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
         self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
@@ -364,7 +363,7 @@ class OptionsDialog(QDialog):
     def on_chk_box_device_enabled_clicked(self):
         self.selected_device.is_enabled = bool(self.ui.chkBoxDeviceEnabled.isChecked())
         self.selected_device.write_settings()
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
     @pyqtSlot()
     def on_rb_gnuradio_backend_clicked(self):
@@ -372,6 +371,7 @@ class OptionsDialog(QDialog):
             self.ui.rbGnuradioBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.grc
             self.selected_device.write_settings()
+            self.set_device_status()
 
     @pyqtSlot()
     def on_rb_native_backend_clicked(self):
@@ -379,6 +379,7 @@ class OptionsDialog(QDialog):
             self.ui.rbNativeBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.native
             self.selected_device.write_settings()
+            self.set_device_status()
 
     @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):

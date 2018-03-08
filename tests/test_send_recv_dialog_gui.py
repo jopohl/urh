@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh.controller.MainController import MainController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
 from urh.controller.dialogs.SendDialog import SendDialog
@@ -97,7 +98,7 @@ class TestSendRecvDialog(QtTestCase):
         return spectrum_dialog
 
     def __get_sniff_dialog(self):
-
+        assert isinstance(self.form, MainController)
         sniff_dialog = self.form.create_protocol_sniff_dialog(testing_mode=True)
         if self.SHOW:
             sniff_dialog.show()
@@ -270,6 +271,7 @@ class TestSendRecvDialog(QtTestCase):
         self.__close_dialog(continuous_send_dialog)
 
     def test_sniff(self):
+        assert isinstance(self.form, MainController)
         # add a signal so we can use it
         self.add_signal_to_form("esaver.complex")
         logger.debug("Added signalfile")
@@ -281,6 +283,13 @@ class TestSendRecvDialog(QtTestCase):
 
         QApplication.instance().processEvents()
         sniff_dialog = self.__get_sniff_dialog()
+
+        sniff_dialog.sniff_settings_widget.ui.checkBoxAdaptiveNoise.click()
+        self.assertTrue(sniff_dialog.sniffer.adaptive_noise)
+        sniff_dialog.sniff_settings_widget.ui.btn_sniff_use_signal.click()
+        self.assertEqual(sniff_dialog.sniff_settings_widget.ui.spinbox_sniff_BitLen.value(),
+                         self.form.signal_tab_controller.signal_frames[0].signal.bit_len)
+
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.setChecked(False)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         sniff_dialog.sniff_settings_widget.ui.comboBox_sniff_viewtype.setCurrentIndex(0)

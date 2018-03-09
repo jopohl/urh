@@ -155,15 +155,15 @@ class GenericCRC(object):
             # Bit 0,1 = Polynomial
             val = (i >> 0) & 3
             self.polynomial = self.choose_polynomial(val)
-            self.poly_order = len(self.polynomial)
+            poly_order = len(self.polynomial)
 
             # Bit 2 = Start Value
             val = (i >> 2) & 1
-            self.start_value = [val != 0] * (self.poly_order - 1)
+            self.start_value = [val != 0] * (poly_order - 1)
 
             # Bit 3 = Final XOR
             val = (i >> 3) & 1
-            self.final_xor = [val != 0] * (self.poly_order - 1)
+            self.final_xor = [val != 0] * (poly_order - 1)
 
             # Bit 4 = Reverse Polynomial
             val = (i >> 4) & 1
@@ -194,8 +194,24 @@ class GenericCRC(object):
                 self.lsb_first = True
 
             if self.crc(inpt) == vrfy_crc:
-                return True
+                return i #True
 
+        return False
+
+    def guess_standard_parameters_and_datarange(self, inpt, vrfy_crc):
+        # find vrfy_crc in inpt
+        len_crc = len(vrfy_crc)
+        for start_crc in range(len(inpt)-len_crc, -1, -1):
+            if vrfy_crc == inpt[start_crc:start_crc+len_crc]:
+                break
+        if start_crc == 0:   # Could not find crc position or there is no data
+            return False
+
+        # Test data range from 0...start_crc until start_crc-1...start_crc
+        for i in range (0, start_crc-1):
+            ret = self.guess_standard_parameters(inpt[i:start_crc], vrfy_crc)
+            if ret:
+                return (ret, i, start_crc-1)
         return False
 
     def reverse_engineer_polynomial(self, dataset, crcset):

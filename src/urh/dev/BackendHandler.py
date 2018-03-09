@@ -9,10 +9,10 @@ from urh.util.Logger import logger
 
 
 class Backends(Enum):
-    none = 0
-    native = 1
-    grc = 2
-    network = 3  # provided by network sdr plugin
+    none = "no backend"
+    native = "native backend"
+    grc = "GNU Radio backend"
+    network = "Network Backend"  # provided by network sdr plugin
 
 
 class BackendContainer(object):
@@ -84,7 +84,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube-Dongle", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
 
     def __init__(self):
 

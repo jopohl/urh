@@ -1,9 +1,9 @@
 import os
-import pickle
 import platform
 import sys
 import tempfile
-from subprocess import call
+import time
+import subprocess
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
@@ -33,11 +33,15 @@ class OptionsDialog(QDialog):
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
+
         self.setAttribute(Qt.WA_DeleteOnClose)
         layout = QHBoxLayout(self.ui.tab_plugins)
         self.plugin_controller = PluginFrame(installed_plugins, highlighted_plugins, parent=self)
         layout.addWidget(self.plugin_controller)
         self.ui.tab_plugins.setLayout(layout)
+
+        self.ui.btnViewBuildLog.hide()
+        self.build_log = ""
 
         # We use bundled native device backends on windows, so no need to reconfigure them
         self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
@@ -77,7 +81,7 @@ class OptionsDialog(QDialog):
         for dev_name in self.backend_handler.DEVICE_NAMES:
             self.ui.listWidgetDevices.addItem(dev_name)
 
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
         self.ui.listWidgetDevices.setCurrentRow(0)
         self.refresh_device_tab()
@@ -110,7 +114,6 @@ class OptionsDialog(QDialog):
         try:
             devname = self.ui.listWidgetDevices.currentItem().text().lower()
             dev_key = self.__get_key_from_device_display_text(devname)
-
             return self.backend_handler.device_backends[dev_key]
         except:
             return ""
@@ -147,6 +150,7 @@ class OptionsDialog(QDialog):
         self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
         self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
         self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
+        self.ui.btnViewBuildLog.clicked.connect(self.on_btn_view_build_log_clicked)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -185,14 +189,15 @@ class OptionsDialog(QDialog):
                 self.ui.lSupport.setText(self.tr("device supports neither sending nor receiving"))
                 self.ui.lSupport.setStyleSheet("color: red")
 
-    def set_device_enabled_suffix(self):
+    def set_device_status(self):
         for i in range(self.ui.listWidgetDevices.count()):
             w = self.ui.listWidgetDevices.item(i)
             dev_key = self.__get_key_from_device_display_text(w.text())
             is_enabled = self.backend_handler.device_backends[dev_key].is_enabled
+            selected_backend = self.backend_handler.device_backends[dev_key].selected_backend.value
             suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
             dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
-            w.setText("{0} - {1}".format(dev_name, suffix))
+            w.setText("{0}\t ({2})\t {1}".format(dev_name, suffix, selected_backend))
 
     def read_options(self):
         settings = constants.SETTINGS
@@ -210,7 +215,7 @@ class OptionsDialog(QDialog):
         self.backend_handler.get_backends()
         self.show_gnuradio_infos()
         self.show_selected_device_params()
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
         self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
         self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
@@ -358,7 +363,7 @@ class OptionsDialog(QDialog):
     def on_chk_box_device_enabled_clicked(self):
         self.selected_device.is_enabled = bool(self.ui.chkBoxDeviceEnabled.isChecked())
         self.selected_device.write_settings()
-        self.set_device_enabled_suffix()
+        self.set_device_status()
 
     @pyqtSlot()
     def on_rb_gnuradio_backend_clicked(self):
@@ -366,6 +371,7 @@ class OptionsDialog(QDialog):
             self.ui.rbGnuradioBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.grc
             self.selected_device.write_settings()
+            self.set_device_status()
 
     @pyqtSlot()
     def on_rb_native_backend_clicked(self):
@@ -373,6 +379,7 @@ class OptionsDialog(QDialog):
             self.ui.rbNativeBackend.setChecked(True)
             self.selected_device.selected_backend = Backends.native
             self.selected_device.write_settings()
+            self.set_device_status()
 
     @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
@@ -398,47 +405,48 @@ class OptionsDialog(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
-        num_natives = self.backend_handler.num_native_backends
         extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
-        new_natives = len(extensions) - num_natives
 
-        if new_natives == 0:
-            self.ui.labelRebuildNativeStatus.setText(self.tr("No new native backends were found."))
-            return
+        self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
+        QApplication.instance().processEvents()
+        build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
+                     "build_ext", "--inplace", "-t", tempfile.gettempdir()]
+        if library_dirs:
+            build_cmd.extend(["-L", ":".join(library_dirs)])
+
+        subprocess.call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "clean", "--all"])
+        p = subprocess.Popen(build_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        num_dots = 1
+        while p.poll() is None:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions" + ". " * num_dots))
+            QApplication.instance().processEvents()
+            time.sleep(0.1)
+            num_dots %= 10
+            num_dots += 1
+
+        rc = p.returncode
+        if rc == 0:
+            self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
+                                                             "Rebuilt {0} device extensions. "
+                                                             "</font>"
+                                                             "Please restart URH.".format(len(extensions))))
         else:
-            s = "s" if new_natives > 1 else ""
-            self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-            pickle.dump(extensions, open(os.path.join(tempfile.gettempdir(), "native_extensions"), "wb"))
-            target_dir = os.path.realpath(os.path.join(__file__, "../../../"))
-            build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
-                         "build_ext", "-b", target_dir,
-                         "-t", tempfile.gettempdir()]
-            if library_dirs:
-                build_cmd.extend(["-L", ":".join(library_dirs)])
-            rc = call(build_cmd)
+            self.ui.labelRebuildNativeStatus.setText(self.tr("<font color='red'>"
+                                                             "Failed to rebuild {0} device extensions. "
+                                                             "</font>"
+                                                             "Run URH as root (<b>sudo urh</b>) "
+                                                             "and try again.".format(len(extensions))))
 
-            if rc == 0:
-                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color=green>"
-                                                                 "Rebuilt {0} new device extension{1}. "
-                                                                 "</font>"
-                                                                 "Please restart URH.".format(new_natives, s)))
-            else:
-                self.ui.labelRebuildNativeStatus.setText(self.tr("<font color='red'>"
-                                                                 "Failed to rebuild {0} device extension{1}. "
-                                                                 "</font>"
-                                                                 "Run URH as root (<b>sudo urh</b>) "
-                                                                 "and try again.".format(new_natives, s)))
-            try:
-                os.remove(os.path.join(tempfile.gettempdir(), "native_extensions"))
-            except OSError:
-                pass
+        self.build_log = p.stdout.read().decode()
+        self.ui.btnViewBuildLog.show()
 
     @pyqtSlot()
     def on_btn_health_check_clicked(self):
         info = ExtensionHelper.perform_health_check()
 
         if util.get_windows_lib_path():
-            info += "\n\nINFO] Used DLLs from " + util.get_windows_lib_path()
+            info += "\n\n[INFO] Used DLLs from " + util.get_windows_lib_path()
 
         d = util.create_textbox_dialog(info, "Health check for native extensions", self)
         d.show()
@@ -446,6 +454,14 @@ class OptionsDialog(QDialog):
     @pyqtSlot()
     def on_checkbox_multiple_modulations_clicked(self):
         constants.SETTINGS.setValue("multiple_modulations", self.ui.checkBoxMultipleModulations.isChecked())
+
+    @pyqtSlot()
+    def on_btn_view_build_log_clicked(self):
+        if not self.build_log:
+            return
+
+        dialog = util.create_textbox_dialog(self.build_log, "Build log", parent=self)
+        dialog.show()
 
     @staticmethod
     def write_default_options():

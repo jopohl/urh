@@ -93,13 +93,19 @@ def get_package_data():
     return package_data
 
 
-def get_ext_modules():
+def get_extensions():
     filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(EXT)]
-
     extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
                             extra_compile_args=[OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]
+
+    ExtensionHelper.USE_RELATIVE_PATHS = True
+    extensions += ExtensionHelper.get_device_extensions(USE_CYTHON)
+
+    if USE_CYTHON:
+        from Cython.Build import cythonize
+        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
 
     return extensions
 
@@ -128,13 +134,6 @@ else:
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
 
-ExtensionHelper.USE_RELATIVE_PATHS = True
-extensions = get_ext_modules() + ExtensionHelper.get_device_extensions(USE_CYTHON)
-
-if USE_CYTHON:
-    from Cython.Build import cythonize
-
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES)
 
 setup(
     name="urh",
@@ -151,7 +150,7 @@ setup(
     install_requires=install_requires,
     setup_requires=['numpy'],
     packages=get_packages(),
-    ext_modules=extensions,
+    ext_modules=get_extensions(),
     cmdclass={'build_ext': build_ext},
     zip_safe=False,
     entry_points={

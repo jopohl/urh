@@ -49,7 +49,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
                                                       unsigned long pause, unsigned long start,
                                                       float a, float freq0, float freq1,
                                                       float phi, float sample_rate,
-                                                      unsigned long samples_per_bit):
+                                                      long long samples_per_bit):
     cdef long long i, j, index
     cdef float t, f, arg, f_next, phase
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
@@ -60,8 +60,9 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
     for i in range(0, samples_per_bit):
         phases[i] = phi
 
+    cdef long long num_bits = len(bit_array)
     with cython.cdivision:
-        for i in range(1, len(bit_array)):
+        for i in range(1, num_bits):
             phase = phases[i*samples_per_bit-1]
 
             # We need to correct the phase on transitions between 0 and 1
@@ -361,7 +362,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
     cdef unsigned long long i, pulse_length = 0
     cdef unsigned long long cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
     cdef float s, s_prev
-    cdef int cur_state, new_state
+    cdef unsigned short cur_state, new_state
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
     cdef unsigned long long num_samples = len(samples)
 

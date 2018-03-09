@@ -30,7 +30,7 @@ cpdef tuple minmax(float[:] arr):
 
 
 cpdef np.ndarray[np.int8_t, ndim=3] build_xor_matrix(list bitvectors):
-    cdef int maximum = 0
+    cdef unsigned int maximum = 0
     cdef np.int8_t[:] bitvector_i, bitvector_j
     cdef int i, j, l
     for i in range(0, len(bitvectors)):

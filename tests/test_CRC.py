@@ -62,4 +62,4 @@ class TestCRC(unittest.TestCase):
         vrfy_crc = "0011101111010001"
 
         result = c.guess_standard_parameters_and_datarange(c.str2bit(inpt), c.str2bit(vrfy_crc))
-        self.assertEqual(result, (2, 84, 171))
+        self.assertEqual(result, (2, 85, 171))

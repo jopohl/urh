@@ -9,7 +9,7 @@ from urh.util.Logger import logger
 
 
 class Backends(Enum):
-    none = "no backend"
+    none = "no available backend"
     native = "native backend"
     grc = "GNU Radio backend"
     network = "Network Backend"  # provided by network sdr plugin

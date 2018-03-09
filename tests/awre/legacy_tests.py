@@ -1,23 +1,17 @@
 import unittest
 
 from tests.utils_testing import get_path_for_data_file
-from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
-from urh.awre.components.Address import Address
-from urh.awre.components.Component import Component
-from urh.awre.components.Flags import Flags
-from urh.awre.components.Length import Length
-from urh.awre.components.Preamble import Preamble
-from urh.awre.components.SequenceNumber import SequenceNumber
-from urh.awre.components.Type import Type
+from urh.awre.engines.AddressEngine import AddressEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.util import util
 
 
-class TestAWRE(unittest.TestCase):
+class LegacyAWRE(unittest.TestCase):
     def setUp(self):
         self.field_types = FieldType.default_field_types()
 
@@ -55,31 +49,6 @@ class TestAWRE(unittest.TestCase):
     @staticmethod
     def __field_type_with_function(field_types, function) -> FieldType:
         return next(ft for ft in field_types if ft.function == function)
-
-    def test_build_component_order(self):
-        expected_default = [Preamble(fieldtypes=[]), Length(fieldtypes=[], length_cluster=None),
-                            Address(fieldtypes=[], xor_matrix=None), SequenceNumber(fieldtypes=[]), Type(), Flags()]
-
-        format_finder = FormatFinder(self.protocol)
-
-        for expected, actual in zip(expected_default, format_finder.build_component_order()):
-            assert type(expected) == type(actual)
-
-        expected_swapped = [Preamble(fieldtypes=[]), Address(fieldtypes=[],xor_matrix=None),
-                            Length(fieldtypes=[], length_cluster=None), SequenceNumber(fieldtypes=[]), Type(), Flags()]
-        format_finder.length_component.priority = 2
-        format_finder.address_component.priority = 1
-
-        for expected, actual in zip(expected_swapped, format_finder.build_component_order()):
-            assert type(expected) == type(actual)
-
-        # Test duplicate Priority
-        format_finder.sequence_number_component.priority = 4
-        with self.assertRaises(ValueError) as context:
-            format_finder.build_component_order()
-            self.assertTrue('Duplicate priority' in context.exception)
-        format_finder.sequence_number_component.priority = 3
-        self.assertTrue(format_finder.build_component_order())
 
     def test_format_finding_rwe(self):
         preamble_start, preamble_end = 0, 31
@@ -127,8 +96,6 @@ class TestAWRE(unittest.TestCase):
         ff = FormatFinder(self.zero_crc_protocol, self.participants)
         ff.perform_iteration()
 
-
-
     def test_format_finding_enocean(self):
         enocean_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("enocean_bits.txt")) as f:
@@ -159,8 +126,7 @@ class TestAWRE(unittest.TestCase):
         self.assertTrue(not any("address" in lbl.name.lower() for lbl in enocean_protocol.default_message_type))
 
     def test_address_candidate_finding(self):
-        fh = CommonRange.from_hex
-
+        fh = util.hex2bit
 
         candidates_participant_1 = [fh('1b6033'), fh('1b6033fd57'), fh('701b603378e289'), fh('20701b603378e289000c62')]
         candidates_participant_2 = [fh('1b603300'), fh('78e289757e'), fh('7078e2891b6033000000'), fh('207078e2891b6033000000')]
@@ -173,7 +139,7 @@ class TestAWRE(unittest.TestCase):
         #print(Address.find_candidates(candidates_participant_2))
         combined = candidates_participant_1+candidates_participant_2
         combined.sort(key=len)
-        score = Address.find_candidates(combined)
+        score = AddressEngine.find_addresses(combined)
         #print(score)
         #print("=================")
         #print(sorted(score, key=lambda k: score[k], reverse=True))
@@ -197,15 +163,6 @@ class TestAWRE(unittest.TestCase):
         for clustername, msg_indices in clusters.items():
             for msg in msg_indices:
                 self.assertEqual(self.protocol.messages[msg].message_type.name, clustername, msg=str(msg))
-
-
-    def test_choose_candidate(self):
-
-        candidates1 = {'78e289': 8, '207078e2891b6033000000': 1, '57': 1, '20701b603378e289000c62': 1, '1b6033fd57': 1, '1b603300': 3, '7078e2891b6033000000': 2, '78e289757e': 1, '1b6033': 14, '701b603378e289': 2}
-        candidates2 = {'1b603300': 4, '701b603378e289': 2, '20701b603378e289000c62': 1, '000': 3, '0000': 19, '1b6033': 11, '78e2890000': 1, '00': 4, '7078e2891b6033000000': 2, '207078e2891b6033000000': 1, '78e289000': 1, '78e289': 7, '0': 7, '1b60330000': 3}
-
-        self.assertEqual(next(Address.choose_candidate_pair(candidates1)), ("1b6033", "78e289"))
-        self.assertEqual(next(Address.choose_candidate_pair(candidates2)), ("1b6033", "78e289"))
 
     def test_format_finding_without_participants(self):
         for msg in self.zero_crc_protocol.messages:

@@ -81,3 +81,13 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
         for j in range(y):
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result
+
+cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
+    cdef int i
+    cdef int smaller_len = min(len(bits1), len(bits2))
+
+    for i in range(smaller_len):
+        if bits1[i] != bits2[i]:
+            return i
+
+    return smaller_len

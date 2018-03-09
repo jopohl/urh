@@ -1,65 +1,130 @@
-class CommonRange(object):
+import numpy as np
+import itertools
 
-    __slots__ = ["start", "end", "__bits", "__hex", "messages"]
 
-    def __init__(self, start: int, end: int, bits: str):
+
+class CommonBitRange(object):
+    def __init__(self, start, length, value: str=None, score=None, field_type="Generic", message_indices=None):
         """
 
-        :param start: Start of the common range
-        :param end: End of the common range
-        :param bits: Value of the common range
+        :param start:
+        :param length:
+        :param value: Bit value for this common range as Bitstring
         """
         self.start = start
-        self.end = end
-        self.__bits = bits
-        self.__hex = ("{0:0"+str(len(self.__bits)//4)+"x}").format(int(self.__bits, 2))
-        self.messages = set()
-        """:type: set of int """
+        self.length = length
+        self.values = [value] if value is not None else []
+        self.score = score
+        self.field_type = field_type  # can also be length, address etc.
+
+        self.message_indices = set() if message_indices is None else message_indices
+        """
+        Set of message indices, this range applies to
+        """
 
     @property
-    def bits(self) -> str:
-        return self.__bits
-
-    @property
-    def hex_value(self) -> str:
-        return self.__hex
-
-    @property
-    def byte_len(self) -> int:
-        return (self.end - self.start) // 8
-
-    def __len__(self):
-        return self.end - self.start
-
-    def __hash__(self):
-        return hash(self.start) + hash(self.end) + hash(self.bits)
-
-    def pos_of_hex(self, hex_str) -> tuple:
-        try:
-            start = 4 * self.hex_value.index(hex_str)
-            return start, start + 4 * len(hex_str)
-        except ValueError:
-            return None
-
-    @staticmethod
-    def from_hex(hex_str):
-        return CommonRange(start=0, end=0, bits="{0:b}".format(int(hex_str, 16)))
-
-    def __eq__(self, other):
-        if isinstance(other, CommonRange):
-            return self.start == other.start and self.end == other.end and self.bits == other.bits
-        else:
-            return False
-
-    def __lt__(self, other):
-        if isinstance(other, CommonRange):
-            if self.start != other.start:
-                return self.start < other.start
-            else:
-                return self.end <= other.end
-        else:
-            return -1
+    def end(self):
+        return self.start + self.length - 1
 
     def __repr__(self):
-        return "{}-{} {} ({})".format(self.start,  self.end, self.hex_value, self.messages)
-        
+        result = "{} {}-{} ({})".format(self.field_type, self.start,
+                                        self.end, self.length)
+
+        result += " Values: " + " ".join(self.values)
+        if self.score is not None:
+            result += " Score: " + str(self.score)
+        result += " Message indices: {" + ",".join(map(str, sorted(self.message_indices))) + "}"
+        return result
+
+    def __eq__(self, other):
+        if not isinstance(other, CommonBitRange):
+            return False
+
+        return self.start == other.start and \
+               self.length == other.length and \
+               self.field_type == other.field_type
+
+    def __hash__(self):
+        return hash((self.start, self.length, self.field_type))
+
+    def __lt__(self, other):
+        return self.start < other.start
+
+    def applies_to_bitvector(self, bitvector: np.ndarray) -> bool:
+        return "".join(map(str, bitvector[self.start:self.start + self.length])) in self.values
+
+    def overlaps_with(self, other) -> bool:
+        if not isinstance(other, CommonBitRange):
+            raise ValueError("Need another bit range to compare")
+        return any(i in range(self.start, self.end)
+                   for i in range(other.start, other.end))
+
+
+class EmptyCommonBitRange(CommonBitRange):
+    """
+    Empty Common Bit Range, to indicate, that no common Bit Range was found
+    """
+
+    def __init__(self, field_type="Generic"):
+        super().__init__(0, 0, "")
+        self.field_type = field_type
+
+    def __eq__(self, other):
+        return isinstance(other, EmptyCommonBitRange) \
+               and other.field_type == self.field_type
+
+    def __repr__(self):
+        return "No " + self.field_type
+
+    def __hash__(self):
+        return hash(super)
+
+
+class CommonRangeContainer(object):
+    """
+    This is the raw equivalent of a Message Type:
+    A container of common ranges
+    """
+    def __init__(self, ranges: list, message_indices=set()):
+        assert isinstance(ranges, list)
+
+        self.__ranges = ranges # type: list[CommonBitRange]
+        self.__ranges.sort()
+
+        self.message_indices = message_indices
+
+    @property
+    def ranges_overlap(self) -> bool:
+        return self.has_overlapping_ranges(self.__ranges)
+
+    def add_range(self, rng: CommonBitRange):
+        self.__ranges.append(rng)
+        self.__ranges.sort()
+
+    def add_ranges(self, ranges: list):
+        self.__ranges.extend(ranges)
+        self.__ranges.sort()
+
+    def has_same_ranges(self, ranges: list) -> bool:
+        return self.__ranges == ranges
+
+    @staticmethod
+    def has_overlapping_ranges(ranges: list) -> bool:
+        for rng1, rng2 in itertools.combinations(ranges, 2):
+            if rng1.overlaps_with(rng2):
+                return True
+        return False
+
+    def __len__(self):
+        return len(self.__ranges)
+
+    def __iter__(self):
+        return self.__ranges.__iter__()
+
+    def __repr__(self):
+        return "{" + "{}".format(" ".join(map(str, self.__ranges))) + "}"
+
+    def __eq__(self, other):
+        if not isinstance(other, CommonRangeContainer):
+            return False
+        return self.__ranges == other.__ranges and self.message_indices == other.message_indices

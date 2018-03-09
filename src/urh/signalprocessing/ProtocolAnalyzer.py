@@ -16,6 +16,7 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Signal import Signal
 from urh.util import util as urh_util
 from urh.util.Logger import logger
@@ -744,7 +745,13 @@ class ProtocolAnalyzer(object):
                 message.decoder = fallback
 
     def auto_assign_labels(self):
+        from urh.awre.FormatFinder import FormatFinder
         format_finder = FormatFinder(self)
-
-        # OPEN: Perform multiple iterations with varying priorities later
         format_finder.perform_iteration()
+
+        # TODO: Consider present labels and do not clear default message type
+        self.default_message_type.clear()
+        for i, rng in enumerate(format_finder.message_types[0]):
+            self.default_message_type.append(ProtocolLabel(name=rng.field_type,
+                                                           start=rng.start,
+                                                           end=rng.end, color_index=i))

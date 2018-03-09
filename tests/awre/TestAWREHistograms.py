@@ -11,7 +11,7 @@ from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
 
-SHOW_PLOTS = False
+SHOW_PLOTS = True
 
 class TestAWREHistograms(AWRETestCase):
     def test_very_simple_protocol(self):

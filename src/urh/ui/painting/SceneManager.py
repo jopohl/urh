@@ -44,10 +44,12 @@ class SceneManager(QObject):
         :type color: list of QColor
         :return:
         """
-        paths = path_creator.create_path(self.plot_data, start=self.__limit_value(x1),
-                                         end=self.__limit_value(x2),
-                                         subpath_ranges=subpath_ranges)
-        self.set_path(paths, colors=colors)
+        start, end = self.__limit_value(x1), self.__limit_value(x2)
+
+        if end > start:
+            paths = path_creator.create_path(self.plot_data, start=start, end=end,
+                                             subpath_ranges=subpath_ranges)
+            self.set_path(paths, colors=colors)
 
     def set_path(self, paths: list, colors=None):
         self.clear_path()

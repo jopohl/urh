@@ -1,7 +1,6 @@
 import faulthandler
 import os
 import sip
-import sys
 import time
 import unittest
 
@@ -58,7 +57,7 @@ class QtTestCase(unittest.TestCase):
             self.form.close()
             sip.delete(self.form)
             self.form = None
-        QTest.qSleep(1)
+        QTest.qSleep(self.CLOSE_TIMEOUT)
         QTest.qWait(self.CLOSE_TIMEOUT)
 
     def wait_before_new_file(self):

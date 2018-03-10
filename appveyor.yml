@@ -64,12 +64,10 @@ after_test:
 artifacts:
   # Archive the generated packages in the ci.appveyor.com build report.
   - path: dist\*
+  - path: build_log.txt
 
 on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
-
-on_failure:
-  - type build_log.txt
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)

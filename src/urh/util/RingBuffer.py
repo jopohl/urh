@@ -1,6 +1,8 @@
 import numpy as np
 from multiprocessing import Value, Array
 
+from urh.util.Logger import logger
+
 
 class RingBuffer(object):
     """
@@ -74,11 +76,14 @@ class RingBuffer(object):
 
         slide_1 = np.s_[self.right_index:min(self.right_index + n, self.size)]
         slide_2 = np.s_[:max(self.right_index + n - self.size, 0)]
-        with self.__data.get_lock():
-            data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-            data[slide_1] = values[:slide_1.stop - slide_1.start]
-            data[slide_2] = values[slide_1.stop - slide_1.start:]
-            self.right_index += n
+        try:
+            with self.__data.get_lock():
+                data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+                data[slide_1] = values[:slide_1.stop - slide_1.start]
+                data[slide_2] = values[slide_1.stop - slide_1.start:]
+                self.right_index += n
+        except Exception as e:
+            logger.exception(e)
 
         self.__length.value += n
 

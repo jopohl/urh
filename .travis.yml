@@ -53,7 +53,6 @@ before_script:
 
 script:
   - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-  - cat /tmp/build_log.txt
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
@@ -65,9 +64,6 @@ script:
   - urh --version
   - urh autoclose
 
-after_failure:
-  - cat /tmp/test_errors.txt
-
 after_success: 
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
@@ -77,3 +73,7 @@ after_success:
     else
       echo "coverage upload only for python 3.6"
     fi
+
+after_script:
+  - cat /tmp/test_errors.txt
+  - cat /tmp/build_log.txt

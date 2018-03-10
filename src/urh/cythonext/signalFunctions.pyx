@@ -50,8 +50,8 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
                                                       float a, float freq0, float freq1,
                                                       float phi, float sample_rate,
                                                       long long samples_per_bit):
-    cdef long long i, j, index
-    cdef float t, f, arg, f_next, phase
+    cdef long long i, j, index = 0
+    cdef float t, f, arg, f_next, phase = 0
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
@@ -205,8 +205,9 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise
     cdef float costa_phase = 0
     cdef float complex nco_out
     cdef float complex nco_times_sample, c
-    cdef float real, imag
-    cdef float magnitude
+    cdef float real = 0
+    cdef float imag = 0
+    cdef float magnitude = 0
 
     for i in range(0, num_samples):
         c = samples[i]
@@ -233,21 +234,26 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
-    cdef long long i, ns
+    cdef long long i
+    cdef long long ns = len(samples)
     cdef float complex tmp = 0
     cdef float complex c = 0
-    cdef float arg, noise_sqrd, complex_phase, prev_phase, NOISE
+    cdef float arg = 0
+    cdef float noise_sqrd = 0
+    cdef float complex_phase = 0
+    cdef float prev_phase = 0
+    cdef float NOISE = 0
     cdef float real = 0
     cdef float imag = 0
-    ns = len(samples)
 
     cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
-    cdef float phase_error
-    cdef float costa_alpha, costa_beta
-    cdef complex nco_times_sample
+    cdef float phase_error = 0
+    cdef float costa_alpha = 0
+    cdef float costa_beta = 0
+    cdef complex nco_times_sample = 0
     cdef float magnitude = 0
 
     # Atan2 liefert Werte im Bereich von -Pi bis Pi

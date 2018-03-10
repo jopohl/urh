@@ -73,7 +73,7 @@ cpdef str longest_common_substring(str s1, str s2):
 cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, ndim=2] arr):
     cdef long long x = arr.shape[0]
     cdef long long y  = arr.shape[1]
-    cdef long long i, j
+    cdef long long i, j = 0
     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
     cdef np.float32_t factor = 10.0
 

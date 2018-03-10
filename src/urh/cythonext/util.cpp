@@ -5,7 +5,8 @@
     "distutils": {
         "depends": [],
         "extra_compile_args": [
-            "-fopenmp"
+            "-fopenmp",
+            "-Wno-cpp"
         ],
         "extra_link_args": [
             "-fopenmp"
@@ -3530,7 +3531,7 @@ static PyArrayObject *__pyx_f_3urh_9cythonext_4util_arr2decibel(PyArrayObject *_
  * cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, ndim=2] arr):
  *     cdef long long x = arr.shape[0]             # <<<<<<<<<<<<<<
  *     cdef long long y  = arr.shape[1]
- *     cdef long long i, j
+ *     cdef long long i, j = 0
  */
   __pyx_v_x = (__pyx_v_arr->dimensions[0]);
 
@@ -3538,14 +3539,23 @@ static PyArrayObject *__pyx_f_3urh_9cythonext_4util_arr2decibel(PyArrayObject *_
  * cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, ndim=2] arr):
  *     cdef long long x = arr.shape[0]
  *     cdef long long y  = arr.shape[1]             # <<<<<<<<<<<<<<
- *     cdef long long i, j
+ *     cdef long long i, j = 0
  *     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
  */
   __pyx_v_y = (__pyx_v_arr->dimensions[1]);
 
+  /* "urh/cythonext/util.pyx":76
+ *     cdef long long x = arr.shape[0]
+ *     cdef long long y  = arr.shape[1]
+ *     cdef long long i, j = 0             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
+ *     cdef np.float32_t factor = 10.0
+ */
+  __pyx_v_j = 0;
+
   /* "urh/cythonext/util.pyx":77
  *     cdef long long y  = arr.shape[1]
- *     cdef long long i, j
+ *     cdef long long i, j = 0
  *     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)             # <<<<<<<<<<<<<<
  *     cdef np.float32_t factor = 10.0
  * 
@@ -3601,7 +3611,7 @@ static PyArrayObject *__pyx_f_3urh_9cythonext_4util_arr2decibel(PyArrayObject *_
   __pyx_t_5 = 0;
 
   /* "urh/cythonext/util.pyx":78
- *     cdef long long i, j
+ *     cdef long long i, j = 0
  *     cdef np.ndarray[np.float32_t, ndim=2] result = np.empty((x,y), dtype=np.float32)
  *     cdef np.float32_t factor = 10.0             # <<<<<<<<<<<<<<
  * 

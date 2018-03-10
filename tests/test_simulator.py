@@ -64,7 +64,7 @@ def receive(port, current_index, target_index, elapsed):
 class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 * 10 ** 6
 
     def test_performance(self):
         self.form = MainController()

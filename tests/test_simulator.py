@@ -209,9 +209,7 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        QTest.qWait(50)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(50)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -225,9 +223,7 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        QTest.qWait(50)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(50)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -241,9 +237,7 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        QTest.qWait(50)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(50)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -337,9 +331,7 @@ class TestSimulator(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
         self.alice.send_raw_data(modulator.modulate("10" * 42), 1)
-        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(500)
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0], "101010101")
@@ -353,6 +345,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
+        QTest.qWait(10)
         data = connection.recv(65536)
         while len(data) % 8 != 0:
             data += connection.recv(65536)

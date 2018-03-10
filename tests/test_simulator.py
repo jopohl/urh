@@ -345,7 +345,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
-        QTest.qWait(10)
+        QTest.qWait(100)
         data = connection.recv(65536)
         while len(data) % 8 != 0:
             data += connection.recv(65536)

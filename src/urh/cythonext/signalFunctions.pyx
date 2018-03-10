@@ -50,8 +50,8 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_fsk(unsigned char[:] bit_array
                                                       float a, float freq0, float freq1,
                                                       float phi, float sample_rate,
                                                       long long samples_per_bit):
-    cdef long long i, j, index
-    cdef float t, f, arg, f_next, phase
+    cdef long long i = 0, j = 0, index = 0
+    cdef float t = 0, f = 0, arg = 0, f_next = 0, phase = 0
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
@@ -100,8 +100,8 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_ask(unsigned char[:] bit_array
                                                       double a0, double a1, double f,
                                                       double phi, double sample_rate,
                                                       unsigned long samples_per_bit):
-    cdef long long i, index
-    cdef double t, a, arg
+    cdef long long i = 0, index = 0
+    cdef float t = 0, a = 0, arg = 0
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
@@ -123,8 +123,8 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_psk(unsigned char[:] bit_array
                                                       double a, double f,
                                                       double phi0, double phi1, double sample_rate,
                                                       unsigned long samples_per_bit):
-    cdef long long i, index
-    cdef double t, phi, arg
+    cdef long long i = 0, index = 0
+    cdef float t = 0, phi = 0, arg = 0
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(total_samples, dtype=np.complex64)
@@ -162,7 +162,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_gfsk(unsigned char[:] bit_arra
                                                       double phi, double sample_rate,
                                                       unsigned long samples_per_bit,
                                                       double gauss_bt, double filter_width):
-    cdef long long i, index
+    cdef long long i = 0, index = 0
     cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
     cdef np.ndarray[np.float64_t, ndim=1] frequencies = np.empty(total_samples - pause, dtype=np.float64)
@@ -199,14 +199,11 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_gfsk(unsigned char[:] bit_arra
 
 cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):
-    cdef float phase_error
-    cdef long long i
-    cdef float costa_freq = 0
-    cdef float costa_phase = 0
-    cdef float complex nco_out
-    cdef float complex nco_times_sample, c
-    cdef float real, imag
-    cdef float magnitude
+    cdef float phase_error = 0
+    cdef long long i = 0
+    cdef float costa_freq = 0, costa_phase = 0
+    cdef float complex nco_out = 0, nco_times_sample = 0, c = 0
+    cdef float real = 0, imag = 0, magnitude = 0
 
     for i in range(0, num_samples):
         c = samples[i]
@@ -233,21 +230,24 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
-    cdef long long i, ns
-    cdef float complex tmp = 0
-    cdef float complex c = 0
-    cdef float arg, noise_sqrd, complex_phase, prev_phase, NOISE
+    cdef long long i = 0, ns = len(samples)
+    cdef float complex tmp = 0, c = 0
+    cdef float arg = 0
+    cdef float noise_sqrd = 0
+    cdef float complex_phase = 0
+    cdef float prev_phase = 0
+    cdef float NOISE = 0
     cdef float real = 0
     cdef float imag = 0
-    ns = len(samples)
 
     cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
-    cdef float phase_error
-    cdef float costa_alpha, costa_beta
-    cdef complex nco_times_sample
+    cdef float phase_error = 0
+    cdef float costa_alpha = 0
+    cdef float costa_beta = 0
+    cdef complex nco_times_sample = 0
     cdef float magnitude = 0
 
     # Atan2 liefert Werte im Bereich von -Pi bis Pi
@@ -285,20 +285,18 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
 
 cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):
 
-    cdef unsigned long long i, ns, l
-    cdef float dsample
-    cdef int has_oversteuern, conseq_noise, conseq_not_noise, behind_oversteuern
-    cdef float NOISE = get_noise_for_mod_type(mod_type)
-
-    has_oversteuern = 0
-    behind_oversteuern = 0
-    conseq_noise = 0
-    conseq_not_noise = 0
-
-    ns = len(demod_samples)
-    l = 100
+    cdef unsigned long i = 0
+    cdef unsigned long ns = len(demod_samples)
+    cdef unsigned long l = 100
     if ns < 100:
         l = ns
+
+    cdef float dsample = 0
+    cdef int has_oversteuern = 0
+    cdef int conseq_noise = 0
+    cdef int conseq_not_noise = 0
+    cdef int behind_oversteuern = 0
+    cdef float NOISE = get_noise_for_mod_type(mod_type)
 
     for i in range(0, l):
         dsample = demod_samples[i]
@@ -330,8 +328,8 @@ cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_typ
 
 cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type):
 
-    cdef unsigned long long i
-    cdef float dsample
+    cdef unsigned long long i = 0
+    cdef float dsample = 0
     cdef int conseq_not_noise = 0
     cdef float NOISE = get_noise_for_mod_type(mod_type)
     cdef unsigned long long ns = len(demod_samples)
@@ -361,8 +359,8 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
     cdef int is_ask = modulation_type == 0
     cdef unsigned long long i, pulse_length = 0
     cdef unsigned long long cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
-    cdef float s, s_prev
-    cdef unsigned short cur_state, new_state
+    cdef float s = 0, s_prev = 0
+    cdef unsigned short cur_state = 0, new_state = 0
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
     cdef unsigned long long num_samples = len(samples)
 
@@ -450,8 +448,8 @@ cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_cent
     return 100
 
 cpdef int find_nearest_center(float sample, float[::1] centers, int num_centers) nogil:
-    cdef int i
-    cdef float center
+    cdef int i = 0
+    cdef float center = 0
     cdef int result = 0
     cdef float min_diff = 99999
     cdef float cur_diff = 0
@@ -488,7 +486,7 @@ cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
 
     cdef Cluster *clusters = <Cluster *>malloc(num_centers * sizeof(Cluster))
 
-    cdef unsigned long long i
+    cdef unsigned long long i = 0
 
     for i in range(0, num_centers):
         clusters[i].nitems = 0
@@ -515,7 +513,7 @@ cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
     cdef unsigned long long[::1] cluster_lens = np.array([clusters[i].nitems for i in range(num_centers)], dtype=np.uint64)
     # can't to static typing here, because resulting type of argsort depends on x64/x86
     sorted_indexes = np.argsort(cluster_lens)
-    cdef float center1, center2
+    cdef float center1 = 0, center2 = 0
     cdef int index1 = sorted_indexes[len(sorted_indexes)-1]
     cdef int index2 = sorted_indexes[len(sorted_indexes)-2]
 
@@ -533,7 +531,7 @@ cpdef float estimate_qad_center(float[::1] samples, unsigned int num_centers):
     return (center1 + center2)/2
 
 cpdef np.ndarray[np.complex64_t, ndim=1] fir_filter(float complex[::1] input_samples, float complex[::1] filter_taps):
-    cdef int i, j
+    cdef int i = 0, j = 0
     cdef int N = len(input_samples)
     cdef int M = len(filter_taps)
     cdef np.ndarray[np.complex64_t, ndim=1] output = np.zeros(N+M-1, dtype=np.complex64)
@@ -551,7 +549,7 @@ cpdef np.ndarray[np.complex64_t, ndim=1] iir_filter(np.ndarray[np.float64_t, ndi
                                                     np.ndarray[np.complex64_t, ndim=1] signal):
     cdef np.ndarray[np.complex64_t, ndim=1] result = np.zeros(len(signal), dtype=np.complex64)
 
-    cdef long n, j, k
+    cdef long n = 0, j = 0, k = 0
     cdef long M = len(a)
     cdef long N = len(b)
     for n in range(max(M, N+1) , len(signal)):

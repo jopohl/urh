@@ -50,7 +50,6 @@ cpdef np.ndarray[np.int8_t, ndim=3] build_xor_matrix(list bitvectors):
 
     return result
 
-
 cpdef str longest_common_substring(str s1, str s2):
     cdef int len_s1 = len(s1)
     cdef int len_s2 = len(s2)

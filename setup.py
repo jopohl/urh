@@ -21,10 +21,13 @@ import src.urh.version as version
 
 if sys.platform == "win32":
     OPEN_MP_FLAG = "/openmp"
+    NO_NUMPY_WARNINGS_FLAG = ""
 elif sys.platform == "darwin":
     OPEN_MP_FLAG = ""  # no OpenMP support in default Mac OSX compiler
+    NO_NUMPY_WARNINGS_FLAG = "-Wno-#warnings"
 else:
     OPEN_MP_FLAG = "-fopenmp"
+    NO_NUMPY_WARNINGS_FLAG = "-Wno-cpp"
 
 COMPILER_DIRECTIVES = {'language_level': 3,
                        'cdivision': True,
@@ -102,6 +105,10 @@ def get_extensions():
 
     ExtensionHelper.USE_RELATIVE_PATHS = True
     extensions += ExtensionHelper.get_device_extensions(USE_CYTHON)
+
+    if NO_NUMPY_WARNINGS_FLAG:
+        for extension in extensions:
+            extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
     if USE_CYTHON:
         from Cython.Build import cythonize

@@ -48,7 +48,7 @@ install:
 
 build_script:
   # Build the compiled extension
-  - python setup.py build_ext --inplace > build_log.txt
+  - python setup.py build_ext --inplace
 
 test_script:
   - python src\urh\main.py --version
@@ -67,9 +67,6 @@ artifacts:
 
 on_success:
   -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
-
-on_failure:
-  - type build_log.txt
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)

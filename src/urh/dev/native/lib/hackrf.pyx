@@ -25,14 +25,15 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
-    cdef int i
-    cdef unsigned char[:] data  = (<object> f)(transfer.valid_length)
-    cdef int loop_end = min(len(data), transfer.valid_length)
+    cdef unsigned int i
+    cdef unsigned int valid_length = <unsigned int>transfer.valid_length
+    cdef unsigned char[:] data  = (<object> f)(valid_length)
+    cdef unsigned int loop_end = min(len(data), valid_length)
 
     for i in range(0, loop_end):
         transfer.buffer[i] = data[i]
 
-    for i in range(loop_end, transfer.valid_length):
+    for i in range(loop_end, valid_length):
         transfer.buffer[i] = 0
 
     # Need to return -1 on finish, otherwise stop_tx_mode hangs forever

@@ -66,6 +66,8 @@ class TestSimulator(QtTestCase):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 * 10 ** 6
 
+        self.num_zeros_for_pause = 1000
+
     def test_performance(self):
         self.form = MainController()
         self.cfc = self.form.compare_frame_controller
@@ -140,7 +142,7 @@ class TestSimulator(QtTestCase):
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
         QTest.qWait(10)
         # send some zeros to simulate the end of a message
-        self.network_sdr_plugin_sender.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
+        self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(100)
         receive_process.join(10)
 
@@ -208,7 +210,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
         QTest.qWait(50)
-        self.alice.send_raw_data(np.zeros(10000, dtype=np.complex64), 1)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(50)
 
         bits = self.__demodulate(conn)
@@ -224,7 +226,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         QTest.qWait(50)
-        self.alice.send_raw_data(np.zeros(10000, dtype=np.complex64), 1)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(50)
 
         bits = self.__demodulate(conn)
@@ -240,7 +242,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         QTest.qWait(50)
-        self.alice.send_raw_data(np.zeros(10000, dtype=np.complex64), 1)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(50)
 
         bits = self.__demodulate(conn)
@@ -336,7 +338,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate("10" * 42), 1)
         QTest.qWait(100)
-        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(500)
 
         bits = self.__demodulate(conn)

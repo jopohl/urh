@@ -207,9 +207,9 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -223,9 +223,9 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -239,9 +239,9 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
         self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -250,13 +250,13 @@ class TestSimulator(QtTestCase):
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
 
-        QTest.qWait(100)
+        QTest.qWait(250)
         self.assertTrue(simulator.simulation_is_finished())
 
         conn.close()
         s.close()
 
-        QTest.qWait(100)
+        QTest.qWait(250)
 
     def test_external_program_simulator(self):
         stc = self.form.simulator_tab_controller

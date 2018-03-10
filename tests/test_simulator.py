@@ -64,7 +64,9 @@ def receive(port, current_index, target_index, elapsed):
 class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 * 10 ** 6
+
+        self.num_zeros_for_pause = 1000
 
     def test_performance(self):
         self.form = MainController()
@@ -140,7 +142,7 @@ class TestSimulator(QtTestCase):
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
         QTest.qWait(10)
         # send some zeros to simulate the end of a message
-        self.network_sdr_plugin_sender.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
+        self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QTest.qWait(100)
         receive_process.join(10)
 
@@ -207,9 +209,7 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        QTest.qWait(250)
-        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(250)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -223,9 +223,7 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        QTest.qWait(250)
-        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(250)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -239,9 +237,7 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        QTest.qWait(250)
-        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(250)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -250,13 +246,13 @@ class TestSimulator(QtTestCase):
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
 
-        QTest.qWait(250)
+        QTest.qWait(50)
         self.assertTrue(simulator.simulation_is_finished())
 
         conn.close()
         s.close()
 
-        QTest.qWait(250)
+        QTest.qWait(100)
 
     def test_external_program_simulator(self):
         stc = self.form.simulator_tab_controller
@@ -335,12 +331,12 @@ class TestSimulator(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
         self.alice.send_raw_data(modulator.modulate("10" * 42), 1)
-        QTest.qWait(100)
-        self.alice.send_raw_data(np.zeros(100000, dtype=np.complex64), 1)
-        QTest.qWait(500)
+        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0], "101010101")
+
+        QTest.qWait(100)
         self.assertTrue(simulator.simulation_is_finished())
 
         conn.close()
@@ -351,6 +347,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
+        QTest.qWait(100)
         data = connection.recv(65536)
         while len(data) % 8 != 0:
             data += connection.recv(65536)

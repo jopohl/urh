@@ -1,7 +1,6 @@
 import faulthandler
 import os
 import sip
-import sys
 import time
 import unittest
 

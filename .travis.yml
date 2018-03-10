@@ -52,7 +52,8 @@ before_script:
   - python3 -c "from PyQt5.QtCore import QT_VERSION_STR; from PyQt5.Qt import PYQT_VERSION_STR; from sip import SIP_VERSION_STR; print('QT Version:', QT_VERSION_STR); print('PyQt Version:', PYQT_VERSION_STR); print('SIP version:', SIP_VERSION_STR)"
 
 script:
-  - python3 src/urh/cythonext/build.py
+  - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
+  - cat /tmp/build_log.txt
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then

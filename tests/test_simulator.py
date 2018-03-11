@@ -222,6 +222,7 @@ class TestSimulator(QtTestCase):
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg2 = preamble + sync + seq + data + checksum
 
+        QTest.qWait(100)
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
@@ -236,6 +237,7 @@ class TestSimulator(QtTestCase):
         checksum = list(checksum_label.calculate_checksum(seq + data))
         msg3 = preamble + sync + seq + data + checksum
 
+        QTest.qWait(100)
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
@@ -350,6 +352,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
+        time.sleep(0.5)
         QTest.qWait(100)
         data = connection.recv(65536)
         while len(data) % 8 != 0:

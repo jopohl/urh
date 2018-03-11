@@ -1,8 +1,10 @@
 import array
 import os
+import tempfile
 import time
 import unittest
 
+import numpy as np
 from PyQt5.QtCore import QDir
 
 from urh.signalprocessing.Modulator import Modulator
@@ -55,6 +57,25 @@ class TestModulator(unittest.TestCase):
             pa.get_protocol_from_signal()
             self.assertEqual(1, len(pa.messages), msg=modulation)
             self.assertEqual(self.modulation_data, pa.messages[0].plain_bits, msg=modulation)
+
+    def test_gfsk(self):
+        target_file = os.path.join(tempfile.gettempdir(), "test.complex")
+
+        modulator = Modulator("gfsk")
+        modulator.modulation_type_str = "FSK"
+        modulator.samples_per_bit = 100
+        modulator.sample_rate = 1e6
+        modulator.param_for_one = 20e3
+        modulator.param_for_zero = -10e3
+        data1 = modulator.modulate([True, False, False, True, False], 9437)
+        data2 = modulator.modulate([True, False, True], 9845) #, start=len(s))
+        data3 = modulator.modulate([True, False, True, False], 8457) #, start=len(s))
+        s = np.concatenate((data1, data2, data3))
+
+        s.tofile(target_file)
+
+        pa = ProtocolAnalyzer(Signal(target_file, "test", modulation="FSK"))
+        pa.get_protocol_from_signal()
 
     def test_performance(self):
         t = time.time()

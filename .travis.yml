@@ -39,10 +39,10 @@ install:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
-      pip3 install pytest-cov coveralls
+      pip3 install pytest-cov coveralls pytest-xdist
       coverage --version
     else
-      pip3 install pytest
+      pip3 install pytest pytest-xdist
     fi
   - sh -e /etc/init.d/xvfb start
   - sleep 5
@@ -56,9 +56,9 @@ script:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
-      pytest -s --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests 2> /tmp/test_errors.txt
+      pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
     else
-      pytest -s tests 2> /tmp/test_errors.txt
+      pytest -s --boxed tests
     fi
   - pip3 install .
   - urh --version
@@ -75,5 +75,4 @@ after_success:
     fi
 
 after_script:
-  - tail -n 250 /tmp/test_errors.txt
   - cat /tmp/build_log.txt

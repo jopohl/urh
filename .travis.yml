@@ -56,9 +56,9 @@ script:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
-      pytest --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
+      pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
     else
-      pytest --boxed tests
+      pytest -s --boxed tests
     fi
   - pip3 install .
   - urh --version

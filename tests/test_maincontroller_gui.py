@@ -3,10 +3,11 @@ import tempfile
 import wave
 
 import numpy as np
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QDir
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.MainController import MainController
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
 
@@ -122,3 +123,21 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertEqual(sig_frame.signal.num_samples, 3)
         self.assertNotEqual(sig_frame.signal.data.real.sum(), 0)
         self.assertNotEqual(sig_frame.signal.data.imag.sum(), 0)
+
+    def test_remove_file_from_directory_tree_view(self):
+        assert isinstance(self.form, MainController)
+        file_proxy_model = self.form.file_proxy_model
+        file_model = self.form.filemodel
+        self.form.ui.fileTree.setRootIndex(file_proxy_model.mapFromSource(file_model.index(QDir.tempPath())))
+
+        menu = self.form.ui.fileTree.create_context_menu()
+        remove_action = next((action for action in menu.actions() if action.text() == "Delete"), None)
+        self.assertIsNotNone(remove_action)
+
+        f = os.path.join(QDir.tempPath(), "test")
+        open(f, "w").close()
+        self.assertTrue(os.path.isfile(f))
+        self.form.ui.fileTree.setCurrentIndex(file_proxy_model.mapFromSource(file_model.index(f)))
+
+        remove_action.trigger()
+        self.assertFalse(os.path.isfile(f))

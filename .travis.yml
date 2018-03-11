@@ -75,5 +75,5 @@ after_success:
     fi
 
 after_script:
-  - tail -n 500 /tmp/test_errors.txt
+  - tail -n 250 /tmp/test_errors.txt
   - cat /tmp/build_log.txt

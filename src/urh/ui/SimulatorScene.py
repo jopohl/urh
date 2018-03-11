@@ -72,6 +72,9 @@ class SimulatorScene(QGraphicsScene):
         self.simulator_config.items_added.connect(self.on_items_added)
 
     def on_items_deleted(self, items):
+        if self is None:
+            return
+
         for item in items:
             scene_item = self.model_to_scene(item)
 

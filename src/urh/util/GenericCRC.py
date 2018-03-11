@@ -204,7 +204,7 @@ class GenericCRC(object):
         for start_crc in range(len(inpt)-len_crc, -1, -1):
             if vrfy_crc == inpt[start_crc:start_crc+len_crc]:
                 break
-        if start_crc == 0:   # Could not find crc position or there is no data
+        if len(inpt) <= len_crc or start_crc == 0:   # Could not find crc position or there is no data
             return False
 
         # Test data range from 0...start_crc until start_crc-1...start_crc
@@ -275,6 +275,10 @@ class GenericCRC(object):
     @staticmethod
     def str2bit(inpt):
         return [True if x == "1" else False for x in inpt]
+
+    @staticmethod
+    def bit2int(inpt):
+        return int(GenericCRC.bit2str(inpt), 2)
 
     @staticmethod
     def hex2str(inpt):

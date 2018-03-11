@@ -249,6 +249,9 @@ class TestSimulator(QtTestCase):
         QTest.qWait(50)
         self.assertTrue(simulator.simulation_is_finished())
 
+        while simulator.simulation_thread.is_alive():
+            time.sleep(1)
+
         conn.close()
         s.close()
 
@@ -348,7 +351,6 @@ class TestSimulator(QtTestCase):
 
     def __demodulate(self, connection):
         QTest.qWait(100)
-        time.sleep(0.1)
         data = connection.recv(65536)
         while len(data) % 8 != 0:
             data += connection.recv(65536)

@@ -184,10 +184,9 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.receive_server_started.emit()
 
     def stop_tcp_server(self):
-        logger.debug("Shutdown TCP server")
         if hasattr(self, "server"):
+            logger.debug("Shutdown TCP server")
             self.server.shutdown()
-            time.sleep(0.05)
             self.server.server_close()
         if hasattr(self, "server_thread"):
             self.server_thread.join()

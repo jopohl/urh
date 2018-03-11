@@ -183,7 +183,9 @@ class TestSimulator(QtTestCase):
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         s.bind(("", port))
         s.listen(1)
+        time.sleep(0.2)
         QTest.qWait(10)
+
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()

@@ -44,6 +44,8 @@ class EndlessSender(object):
         self.device.stop("EndlessSender stopped.")
 
     def push_data(self, data: np.ndarray):
+        print("PREPUSH dtype", data.dtype)
+        print("PREPUSH 0", data[0])
         self.ringbuffer.push(data)
 
 

@@ -161,29 +161,30 @@ class Modulator(object):
 
         if mod_type == "FSK":
             result = signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
-                                                self.param_for_zero, self.param_for_one,
-                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                self.samples_per_bit)
+                                                  self.param_for_zero, self.param_for_one,
+                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "ASK":
             a0 = self.carrier_amplitude * (self.param_for_zero / 100)
             a1 = self.carrier_amplitude * (self.param_for_one / 100)
             result = signalFunctions.modulate_ask(data, pause, start, a0, a1,
-                                                self.carrier_freq_hz,
-                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                self.samples_per_bit)
+                                                  self.carrier_freq_hz,
+                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "PSK":
             phi0 = self.param_for_zero * (np.pi / 180)
             phi1 = self.param_for_one * (np.pi / 180)
             result = signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
-                                                self.carrier_freq_hz,
-                                                phi0, phi1, self.sample_rate,
-                                                self.samples_per_bit)
+                                                  self.carrier_freq_hz,
+                                                  phi0, phi1, self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "GFSK":
             result = signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
-                                                 self.param_for_zero, self.param_for_one,
-                                                 self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                 self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
+                                                   self.param_for_zero, self.param_for_one,
+                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                   self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
 
+        print("mod type", mod_type)
         print("result", type(result))
         print("result dtype", result.dtype)
         return result

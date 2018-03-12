@@ -1,6 +1,5 @@
 import os
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 
 from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox, QApplication
@@ -15,6 +14,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.Signal import Signal
 from urh.util import FileOperator, util
+from urh.util.Logger import logger
 
 
 class ProjectManager(QObject):
@@ -252,6 +252,14 @@ class ProjectManager(QObject):
                                             decodings=cfc.decodings)
 
             cfc.updateUI()
+
+            try:
+                for message_type in cfc.proto_analyzer.message_types:
+                    for lbl in filter(lambda x: not x.show, message_type):
+                        cfc.set_protocol_label_visibility(lbl)
+            except Exception as e:
+                logger.exception(e)
+
             self.modulators = self.read_modulators_from_project_file()
             self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
 

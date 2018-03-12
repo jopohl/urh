@@ -1,4 +1,4 @@
-import unittest
+import unittest, time
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
@@ -92,6 +92,40 @@ class TestCRC(unittest.TestCase):
                 crc_old = c.reference_crc(c.str2bit(i))
                 self.assertEqual(crc_new, crc_old)
                 c.reverse_all = False
+
+    def test_implementation_performance(self):
+        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        bitstring_set = [
+            "101001001010101010101011101111111000000000000111101010011101",
+            "101001001010101101111010110111101010010110111010",
+            "00000000000000000000000000000000100000000000000000000000000000000001111111111111",
+            "1111111111111111111111111111111110111111111111111111110111111111111111110000000000"
+            "1"]
+
+        ges_s1, ges_s2, ges_s3 = 0, 0, 0
+
+        for j in range(0, 10000):
+            for i in bitstring_set:
+                # Standard
+                s1 = time.time()
+                crc1 = c.crc(c.str2bit(i))
+                ges_s1 += time.time() - s1
+
+                s2 = time.time()
+                crc2 = c.reference_crc(c.str2bit(i))
+                ges_s2 += time.time() - s2
+
+                s3 = time.time()
+                crc3 = c.crc_test(c.str2bit(i))
+                ges_s3 += time.time() - s3
+
+                self.assertEqual(crc1, crc2)
+                self.assertEqual(crc2, crc3)
+
+        print("Cython:", ges_s1)
+        print("Python:", ges_s2)
+        print("Cython in Python:", ges_s3)
 
     def test_reverse_engineering(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,

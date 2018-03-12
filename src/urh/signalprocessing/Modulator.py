@@ -157,30 +157,35 @@ class Modulator(object):
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
 
+        # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)
+        result = np.zeros(0, dtype=np.complex64)
+
         if mod_type == "FSK":
-            return signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
-                                                self.param_for_zero, self.param_for_one,
-                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                self.samples_per_bit)
+            result = signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
+                                                  self.param_for_zero, self.param_for_one,
+                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "ASK":
             a0 = self.carrier_amplitude * (self.param_for_zero / 100)
             a1 = self.carrier_amplitude * (self.param_for_one / 100)
-            return signalFunctions.modulate_ask(data, pause, start, a0, a1,
-                                                self.carrier_freq_hz,
-                                                self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                self.samples_per_bit)
+            result = signalFunctions.modulate_ask(data, pause, start, a0, a1,
+                                                  self.carrier_freq_hz,
+                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "PSK":
             phi0 = self.param_for_zero * (np.pi / 180)
             phi1 = self.param_for_one * (np.pi / 180)
-            return signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
-                                                self.carrier_freq_hz,
-                                                phi0, phi1, self.sample_rate,
-                                                self.samples_per_bit)
+            result = signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
+                                                  self.carrier_freq_hz,
+                                                  phi0, phi1, self.sample_rate,
+                                                  self.samples_per_bit)
         elif mod_type == "GFSK":
-            return signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
-                                                 self.param_for_zero, self.param_for_one,
-                                                 self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                 self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
+            result = signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
+                                                   self.param_for_zero, self.param_for_one,
+                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
+                                                   self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
+
+        return result
 
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")

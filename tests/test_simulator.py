@@ -185,7 +185,6 @@ class TestSimulator(QtTestCase):
         s.listen(1)
         QTest.qWait(10)
 
-        dialog.ui.graphicsViewPreview.setDisabled(True)
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
         QTest.qWait(1500)

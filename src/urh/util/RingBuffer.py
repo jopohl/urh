@@ -74,8 +74,12 @@ class RingBuffer(object):
 
         slide_1 = np.s_[self.right_index:min(self.right_index + n, self.size)]
         slide_2 = np.s_[:max(self.right_index + n - self.size, 0)]
+        print("slide1", slide_1)
+        print("slide2", slide_2)
+        print("values shape", values.shape)
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+            print("data shape", data.shape)
             data[slide_1] = values[:slide_1.stop - slide_1.start]
             data[slide_2] = values[slide_1.stop - slide_1.start:]
             self.right_index += n

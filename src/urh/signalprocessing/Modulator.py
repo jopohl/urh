@@ -157,7 +157,8 @@ class Modulator(object):
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
 
-        result = np.zeros(1, dtype=np.complex64)
+        # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)
+        result = None
 
         if mod_type == "FSK":
             result = signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,

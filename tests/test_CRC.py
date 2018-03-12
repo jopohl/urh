@@ -33,6 +33,66 @@ class TestCRC(unittest.TestCase):
 
             self.assertEqual(util.bit2hex(c.crc(e.str2bit(value[4:-8]))), expect)
 
+    def test_different_crcs(self):
+        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        bitstring_set = [
+            "101001001010101010101011101111111000000000000111101010011101",
+            "101001001010101101111010110111101010010110111010",
+            "00000000000000000000000000000000100000000000000000000000000000000001111111111111",
+            "1111111111111111111111111111111110111111111111111111110111111111111111110000000000"
+            "1"]
+
+        for j in c.DEFAULT_POLYNOMIALS:
+            c.choose_polynomial(j)
+            for i in bitstring_set:
+                # Standard
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+
+                # Special final xor
+                c.final_xor = c.str2bit("0000111100001111")
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.final_xor = [False] * 16
+
+                # Special start value
+                c.start_value = c.str2bit("1010101010101010")
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.start_value = [False] * 16
+
+                # reverse_polynomial
+                c.reverse_polynomial = True
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.reverse_polynomial = False
+
+                # lsb_first
+                c.lsb_first = True
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.lsb_first = False
+
+                # little_endian
+                c.little_endian = True
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.little_endian = False
+
+                # reverse all
+                c.reverse_all = True
+                crc_new = c.crc(c.str2bit(i))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.reverse_all = False
+
     def test_reverse_engineering(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
@@ -63,3 +123,26 @@ class TestCRC(unittest.TestCase):
 
         result = c.guess_standard_parameters_and_datarange(c.str2bit(inpt), c.str2bit(vrfy_crc))
         self.assertEqual(result, (2, 85, 171))
+
+    def test_guess_standard_parameters_and_datarange_improved(self):
+        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        inpt = "1"
+        vrfy_crc = "0011101111010001"
+
+        for i in range(0, 0):
+            val = c.bit2int(c.crc(c.str2bit(inpt)))
+            nxt = val >> 1 if not val & 1 else 0xd00f
+            print(inpt, "\t", hex(val), hex(nxt))
+            inpt = "0" + inpt
+            #inpt = "00000000" + inpt
+            #inpt = inpt + "00000000"
+
+        inpt1 = "11110000"
+        val1 = c.bit2int(c.crc(c.str2bit(inpt1)))
+        inpt2 = "00001111"
+        val2 = c.bit2int(c.crc(c.str2bit(inpt2)))
+        inpt3 = "11111111"
+        val3 = c.bit2int(c.crc(c.str2bit(inpt3)))
+        print(hex(val1), hex(val2), hex(val3), hex(val1 ^ val2))
+

@@ -95,12 +95,13 @@ class GenericCRC(object):
 
     def crc(self, inpt):
         result = c_util.crc(array.array("B", inpt),
-                          array.array("B", self.polynomial),
-                          array.array("B", self.start_value),
-                          array.array("B", self.final_xor), self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+                            array.array("B", self.polynomial),
+                            array.array("B", self.start_value),
+                            array.array("B", self.final_xor),
+                            self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
 
-
+    def reference_crc(self, inpt):
         data = array.array("B", inpt)
         if not len(data) % 8 == 0:
             data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
@@ -116,22 +117,17 @@ class GenericCRC(object):
                 else:
                     idx = i + j
 
-                print(">>>", crc[0], data[idx], crc[0] != data[idx])
                 if crc[0] != data[idx]:
-                    print(crc)
                     crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
-                    print(crc)
                     for x in range(0, self.poly_order - 1):
                         if self.reverse_polynomial:
                             crc[x] ^= self.polynomial[self.poly_order - 1 - x]
                         else:
                             crc[x] ^= self.polynomial[x + 1]
-                    print("Nach XOR:\n", crc)
                 else:
                     crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
-                print(data[idx], hex(GenericCRC.bit2int(crc)))
 
         for i in range(0, self.poly_order - 1):
             if self.final_xor[i]:
@@ -151,8 +147,8 @@ class GenericCRC(object):
         elif self.poly_order - 1 == 64 and self.little_endian:
             for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
                 self.__swap_bytes(crc, pos1, pos2)
-
-        return crc
+        #return crc
+        return array.array("B", crc)
 
     def calculate(self, bits: array.array):
         return self.crc(bits)

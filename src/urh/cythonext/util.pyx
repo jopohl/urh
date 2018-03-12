@@ -86,18 +86,21 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
 cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsigned int start = 0):
     cdef unsigned long long result = 0
     cdef unsigned int i, len_inpt = len(inpt)
-
-    str_obj = (map(str, inpt))
-    if reverse:
-        return int("".join(reversed(str_obj)), 2)
-    else:
-        return int("".join(str_obj), 2)
+    for i in range(start, len_inpt):
+        if reverse == False:
+            if inpt[len_inpt - 1 - i + start]:
+                result |= (1 << (i-start))
+        else:
+            if inpt[i]:
+                result |= (1 << (i-start))
+    return result
 
 cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int len_data = len_inpt
     if len_data % 8 != 0:
         len_data += 8 - (len_data % 8)
+    # start value
     cdef unsigned long long temp, crc = arr_to_number(start_value, False, 0)
     cdef unsigned int i, idx, poly_order = len(polynomial)
     cdef unsigned long long crc_mask = (2**(poly_order - 1) - 1)
@@ -106,12 +109,6 @@ cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial,
     cdef unsigned short j, x
     cdef unsigned char current_bit
 
-    print("Inpt:", np.asarray(inpt, dtype=np.uint8))
-    print("Poly:", np.asarray(polynomial, dtype=np.uint8), hex(crc_mask))
-    print("Start:", np.asarray(start_value, dtype=np.uint8))
-    print("Final:", np.asarray(final_xor, dtype=np.uint8))
-    print("--> ", lsb_first, reverse_polynomial, reverse_all, little_endian)
-
     for i in range(0, len_data, 8):
         for j in range(0, 8):
             if lsb_first:
@@ -119,35 +116,26 @@ cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial,
             else:
                 idx = i + j
 
+            # generic crc algorithm
             current_bit = inpt[idx] if idx < len_inpt else 0
-            print(">>>", crc & poly_mask, current_bit, (crc & poly_mask) != current_bit)
-            if (crc & poly_mask == 1) != current_bit:
-                #crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]
-                print(hex(crc))
+            if (crc & poly_mask > 0) != current_bit:
                 crc = (crc << 1) & crc_mask
-                #for x in range(0, poly_order - 1):
-                #    if reverse_polynomial:
-                #        crc[x] ^= polynomial[poly_order - 1 - x]
-                #    else:
-                #        crc[x] ^= polynomial[x + 1]
-                print(hex(crc), "XOR with", hex(poly_int))
                 crc ^= poly_int
-                print("Nach XOR:\n", hex(crc))
             else:
                 crc = (crc << 1) & crc_mask
-            print(current_bit, hex(crc))
 
-    print("VOR FINAL XOR:", hex(crc))
+    # final XOR
     crc ^= arr_to_number(final_xor, False, 0)
-    print("NACH FINAL XOR:", hex(crc))
 
+    # reverse all bits
     if reverse_all:
         temp = 0
         for i in range(0, poly_order - 1):
-            if (crc & ((poly_order - 2 - i) << 1)):
-                temp |= (1 << i)
+            if crc & (1 << i):
+                temp |= (1 << (poly_order -2  -i))
         crc = temp & crc_mask
 
+    # little endian encoding, different for 16, 32, 64 bit
     if poly_order - 1 == 16 and little_endian:
         crc = ((crc << 8) & 0xFF00) | (crc >> 8)
     elif poly_order - 1 == 32 and little_endian:

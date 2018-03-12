@@ -9,6 +9,7 @@ import numpy as np
 cimport cython
 from cython.parallel import prange
 from libc.math cimport log10
+from libcpp cimport bool
 
 cpdef tuple minmax(float[:] arr):
     cdef long long i, ns = len(arr)
@@ -86,68 +87,75 @@ cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsi
     cdef unsigned long long result = 0
     cdef unsigned int i, len_inpt = len(inpt)
 
-    for i in range(start, len_inpt):
-        if reverse:
-            if inpt[i]:
-                result |= (1 << i)
-        else:
-            if inpt[len_inpt - i]:
-                result |= (1 << i)
-    return result
-
+    str_obj = (map(str, inpt))
+    if reverse:
+        return int("".join(reversed(str_obj)), 2)
+    else:
+        return int("".join(str_obj), 2)
 
 cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int len_data = len_inpt
     if len_data % 8 != 0:
         len_data += 8 - (len_data % 8)
-    cdef long long crc = start_value, temp
+    cdef unsigned long long temp, crc = arr_to_number(start_value, False, 0)
     cdef unsigned int i, idx, poly_order = len(polynomial)
+    cdef unsigned long long crc_mask = (2**(poly_order - 1) - 1)
+    cdef unsigned long long poly_mask = (crc_mask + 1) >> 1
+    cdef unsigned long long poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef unsigned short j, x
     cdef unsigned char current_bit
 
+    print("Inpt:", np.asarray(inpt, dtype=np.uint8))
+    print("Poly:", np.asarray(polynomial, dtype=np.uint8), hex(crc_mask))
+    print("Start:", np.asarray(start_value, dtype=np.uint8))
+    print("Final:", np.asarray(final_xor, dtype=np.uint8))
+    print("--> ", lsb_first, reverse_polynomial, reverse_all, little_endian)
 
     for i in range(0, len_data, 8):
         for j in range(0, 8):
-
             if lsb_first:
                 idx = i + (7 - j)
             else:
                 idx = i + j
 
             current_bit = inpt[idx] if idx < len_inpt else 0
-            if crc & 1 != current_bit:
+            print(">>>", crc & poly_mask, current_bit, (crc & poly_mask) != current_bit)
+            if (crc & poly_mask == 1) != current_bit:
                 #crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]
-                crc = crc << 1
+                print(hex(crc))
+                crc = (crc << 1) & crc_mask
                 #for x in range(0, poly_order - 1):
                 #    if reverse_polynomial:
                 #        crc[x] ^= polynomial[poly_order - 1 - x]
                 #    else:
                 #        crc[x] ^= polynomial[x + 1]
-                crc ^= arr_to_number(polynomial, reverse_polynomial, 1)
+                print(hex(crc), "XOR with", hex(poly_int))
+                crc ^= poly_int
+                print("Nach XOR:\n", hex(crc))
             else:
-                crc = crc << 1
+                crc = (crc << 1) & crc_mask
+            print(current_bit, hex(crc))
 
+    print("VOR FINAL XOR:", hex(crc))
     crc ^= arr_to_number(final_xor, False, 0)
+    print("NACH FINAL XOR:", hex(crc))
 
     if reverse_all:
         temp = 0
         for i in range(0, poly_order - 1):
             if (crc & ((poly_order - 2 - i) << 1)):
                 temp |= (1 << i)
-        crc = temp
+        crc = temp & crc_mask
 
     if poly_order - 1 == 16 and little_endian:
-        #self.__swap_bytes(crc, 0, 1)
-        temp = 0
-        memcpy((unsigned char *) &temp[1], (unsigned char *) &crc[0], 1)
-        memcpy((unsigned char *) &temp[0], (unsigned char *) &crc[1], 1)
-
-    elif self.poly_order - 1 == 32 and little_endian:
-        self.__swap_bytes(crc, 0, 3)
-        self.__swap_bytes(crc, 1, 2)
+        crc = ((crc << 8) & 0xFF00) | (crc >> 8)
+    elif poly_order - 1 == 32 and little_endian:
+        crc = ((crc << 24) & 0xFF000000) | ((crc << 8) & 0x00FF0000) | ((crc >> 8) & 0x0000FF00) | (crc >> 24)
     elif poly_order - 1 == 64 and little_endian:
-        for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
-            self.__swap_bytes(crc, pos1, pos2)
+        crc =   ((crc << 56) & 0xFF00000000000000) |  (crc >> 56) \
+              | ((crc >> 40) & 0x000000000000FF00) | ((crc << 40) & 0x00FF000000000000) \
+              | ((crc << 24) & 0x0000FF0000000000) | ((crc >> 24) & 0x0000000000FF0000) \
+              | ((crc << 8)  & 0x000000FF00000000) | ((crc >> 8)  & 0x00000000FF000000)
 
     return crc

@@ -4,6 +4,7 @@ from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
 from urh.util import util
+from urh.cythonext import util as c_util
 
 
 class GenericCRC(object):
@@ -93,6 +94,13 @@ class GenericCRC(object):
             return polynomial
 
     def crc(self, inpt):
+        result = c_util.crc(array.array("B", inpt),
+                          array.array("B", self.polynomial),
+                          array.array("B", self.start_value),
+                          array.array("B", self.final_xor), self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        return util.number_to_bits(result, self.poly_order - 1)
+
+
         data = array.array("B", inpt)
         if not len(data) % 8 == 0:
             data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
@@ -108,17 +116,22 @@ class GenericCRC(object):
                 else:
                     idx = i + j
 
+                print(">>>", crc[0], data[idx], crc[0] != data[idx])
                 if crc[0] != data[idx]:
+                    print(crc)
                     crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
+                    print(crc)
                     for x in range(0, self.poly_order - 1):
                         if self.reverse_polynomial:
                             crc[x] ^= self.polynomial[self.poly_order - 1 - x]
                         else:
                             crc[x] ^= self.polynomial[x + 1]
+                    print("Nach XOR:\n", crc)
                 else:
                     crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
+                print(data[idx], hex(GenericCRC.bit2int(crc)))
 
         for i in range(0, self.poly_order - 1):
             if self.final_xor[i]:

@@ -77,6 +77,7 @@ class RingBuffer(object):
         print("slide1", slide_1)
         print("slide2", slide_2)
         print("values shape", values.shape)
+        print("values 0", values[0])
         print("values dtype", values.dtype)
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)

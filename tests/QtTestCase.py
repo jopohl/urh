@@ -39,8 +39,6 @@ class QtTestCase(unittest.TestCase):
         cls.app.quit()
         sip.delete(cls.app)
         cls.app = None
-        QTest.qWait(10)
-        time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()
@@ -57,8 +55,6 @@ class QtTestCase(unittest.TestCase):
             self.form.close()
             sip.delete(self.form)
             self.form = None
-        QTest.qSleep(1)
-        QTest.qWait(self.CLOSE_TIMEOUT)
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

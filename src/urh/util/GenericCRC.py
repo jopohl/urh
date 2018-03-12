@@ -286,6 +286,10 @@ class GenericCRC(object):
         return [True if x == "1" else False for x in inpt]
 
     @staticmethod
+    def str2arr(inpt):
+        return array.array("B", GenericCRC.str2bit(inpt))
+
+    @staticmethod
     def bit2int(inpt):
         return int(GenericCRC.bit2str(inpt), 2)
 

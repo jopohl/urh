@@ -432,12 +432,10 @@ class Simulator(QObject):
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
         modulated = modulator.modulate(message.encoded_bits, pause=0)
-        print("MODULATED dtype", modulated.dtype)
 
         curr_repeat = 0
 
         while curr_repeat < repeat:
-            print("MODULATED dtype 2", modulated.dtype)
             sender.push_data(modulated)
             curr_repeat += 1
 

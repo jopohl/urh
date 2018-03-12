@@ -185,9 +185,6 @@ class Modulator(object):
                                                    self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                    self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
 
-        print("mod type", mod_type)
-        print("result", type(result))
-        print("result dtype", result.dtype)
         return result
 
     def to_xml(self, index: int) -> ET.Element:

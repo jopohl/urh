@@ -81,3 +81,73 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
         for j in range(y):
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result
+
+cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsigned int start = 0):
+    cdef unsigned long long result = 0
+    cdef unsigned int i, len_inpt = len(inpt)
+
+    for i in range(start, len_inpt):
+        if reverse:
+            if inpt[i]:
+                result |= (1 << i)
+        else:
+            if inpt[len_inpt - i]:
+                result |= (1 << i)
+    return result
+
+
+cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
+    cdef unsigned int len_inpt = len(inpt)
+    cdef unsigned int len_data = len_inpt
+    if len_data % 8 != 0:
+        len_data += 8 - (len_data % 8)
+    cdef long long crc = start_value, temp
+    cdef unsigned int i, idx, poly_order = len(polynomial)
+    cdef unsigned short j, x
+    cdef unsigned char current_bit
+
+
+    for i in range(0, len_data, 8):
+        for j in range(0, 8):
+
+            if lsb_first:
+                idx = i + (7 - j)
+            else:
+                idx = i + j
+
+            current_bit = inpt[idx] if idx < len_inpt else 0
+            if crc & 1 != current_bit:
+                #crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]
+                crc = crc << 1
+                #for x in range(0, poly_order - 1):
+                #    if reverse_polynomial:
+                #        crc[x] ^= polynomial[poly_order - 1 - x]
+                #    else:
+                #        crc[x] ^= polynomial[x + 1]
+                crc ^= arr_to_number(polynomial, reverse_polynomial, 1)
+            else:
+                crc = crc << 1
+
+    crc ^= arr_to_number(final_xor, False, 0)
+
+    if reverse_all:
+        temp = 0
+        for i in range(0, poly_order - 1):
+            if (crc & ((poly_order - 2 - i) << 1)):
+                temp |= (1 << i)
+        crc = temp
+
+    if poly_order - 1 == 16 and little_endian:
+        #self.__swap_bytes(crc, 0, 1)
+        temp = 0
+        memcpy((unsigned char *) &temp[1], (unsigned char *) &crc[0], 1)
+        memcpy((unsigned char *) &temp[0], (unsigned char *) &crc[1], 1)
+
+    elif self.poly_order - 1 == 32 and little_endian:
+        self.__swap_bytes(crc, 0, 3)
+        self.__swap_bytes(crc, 1, 2)
+    elif poly_order - 1 == 64 and little_endian:
+        for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
+            self.__swap_bytes(crc, pos1, pos2)
+
+    return crc

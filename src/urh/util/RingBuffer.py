@@ -80,6 +80,10 @@ class RingBuffer(object):
         with self.__data.get_lock():
             data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
             print("data shape", data.shape)
+            print("data dtype", data.dtype)
+            print("values dtype", values.dtype)
+            print("values 0", values[0])
+            print("data 0", data[0])
             data[slide_1] = values[:slide_1.stop - slide_1.start]
             data[slide_2] = values[slide_1.stop - slide_1.start:]
             self.right_index += n

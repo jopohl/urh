@@ -218,10 +218,14 @@ class GenericCRC(object):
             return False
 
         # Test data range from 0...start_crc until start_crc-1...start_crc
-        for i in range (0, start_crc-1):
+        i = 0
+        while i < start_crc - 1:
+            while(inpt[i]==False):  # skip leading 0s in data (doesn't change crc...)
+                i += 1
             ret = self.guess_standard_parameters(inpt[i:start_crc], vrfy_crc)
             if ret:
                 return (ret, i+1, start_crc-1)
+            i += 1
         return False
 
     def reverse_engineer_polynomial(self, dataset, crcset):

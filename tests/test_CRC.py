@@ -113,20 +113,12 @@ class TestCRC(unittest.TestCase):
             self.assertEqual(c.bit2str(polynomial), "1000000000000101")
             self.assertEqual(util.bit2hex(polynomial), "8005")
 
-    def test_guess_standard_parameters_and_datarange(self):
-        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
-        inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
-        vrfy_crc = "0011101111010001"
-
-        result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
-        self.assertEqual(result, (2, 85, 171))
-
     def test_not_aligned_data_len(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        polynomials = ["8_standard", "16_standard", "16_ccitt", "16_dnp"]
         crcs = {"8_standard": 0xd5, "16_standard": 0x8005, "16_ccitt": 0x1021, "16_dnp": 0x3d65}
-        for j in c.DEFAULT_POLYNOMIALS:
+        for j in polynomials:
             c.polynomial = c.choose_polynomial(j)
             inpt = "1"
             for i in range(0, 32):
@@ -134,24 +126,28 @@ class TestCRC(unittest.TestCase):
                 self.assertEqual(val, crcs[j])
                 inpt = "0" + inpt
 
-    def test_guess_standard_parameters_and_datarange_improved(self):
-        c = GenericCRC(polynomial="8_standard", start_value=False, final_xor=False,
+    def test_guess_standard_parameters_and_datarange(self):
+        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
-        inpt = "1"
+        inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
         vrfy_crc = "0011101111010001"
 
-        for i in range(0, 32):
-            val = c.bit2int(c.crc(c.str2bit(inpt)))
-            #print(inpt, "\t", hex(val))
-            inpt = "0" + inpt
-            #inpt = "00000000" + inpt
-            #inpt = inpt + "00000000"
+        result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
+        self.assertEqual(result, (2, 87, 171))
 
-        inpt1 = "11110000"
-        val1 = c.bit2int(c.crc(c.str2bit(inpt1)))
-        inpt2 = "00001111"
-        val2 = c.bit2int(c.crc(c.str2bit(inpt2)))
-        inpt3 = "11111111"
-        val3 = c.bit2int(c.crc(c.str2bit(inpt3)))
-        #print(hex(val1), hex(val2), hex(val3), hex(val1 ^ val2))
+    def test_guess_standard_parameters_and_datarange_improved(self):
+        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
+        vrfy_crc = "0011101111010001"
 
+        print(vrfy_crc)
+        inpt1 = inpt[85:172]
+        print(c.bit2str(c.crc(c.str2bit(inpt1))))
+        inpt2 = inpt[84:172]
+        print(c.bit2str(c.crc(c.str2bit(inpt2))))
+        inpt3 = inpt[83:172]
+        print(c.bit2str(c.crc(c.str2bit(inpt3))))
+        inpt3_delta = "1" + "0"*(len(inpt3)-1)
+        inpt3_crc = (c.bit2int(c.crc(c.str2bit(inpt3_delta))) ^ c.bit2int(c.crc(c.str2bit(inpt2))))
+        print(hex(inpt3_crc))

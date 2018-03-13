@@ -133,7 +133,7 @@ class TestCRC(unittest.TestCase):
         vrfy_crc = "0011101111010001"
 
         result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
-        self.assertEqual(result, (2, 87, 171))
+        self.assertEqual(result, (2, 85, 171))
 
     def test_guess_standard_parameters_and_datarange_improved(self):
         c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,

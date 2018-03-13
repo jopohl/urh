@@ -97,19 +97,16 @@ cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsi
 
 cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
-    cdef unsigned int len_data = len_inpt
-    if len_data % 8 != 0:
-        len_data += 8 - (len_data % 8)
-    # start value
-    cdef unsigned long long temp, crc = arr_to_number(start_value, False, 0)
     cdef unsigned int i, idx, poly_order = len(polynomial)
     cdef unsigned long long crc_mask = (2**(poly_order - 1) - 1)
     cdef unsigned long long poly_mask = (crc_mask + 1) >> 1
     cdef unsigned long long poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef unsigned short j, x
-    cdef unsigned char current_bit
 
-    for i in range(0, len_data, 8):
+    # start value
+    cdef unsigned long long temp, crc = arr_to_number(start_value, False, 0) & crc_mask
+
+    for i in range(0, len_inpt+7, 8):
         for j in range(0, 8):
             if lsb_first:
                 idx = i + (7 - j)
@@ -117,15 +114,17 @@ cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial,
                 idx = i + j
 
             # generic crc algorithm
-            current_bit = inpt[idx] if idx < len_inpt else 0
-            if (crc & poly_mask > 0) != current_bit:
+            if idx >= len_inpt:
+                break
+
+            if (crc & poly_mask > 0) != inpt[idx]:
                 crc = (crc << 1) & crc_mask
                 crc ^= poly_int
             else:
                 crc = (crc << 1) & crc_mask
 
     # final XOR
-    crc ^= arr_to_number(final_xor, False, 0)
+    crc ^= arr_to_number(final_xor, False, 0) & crc_mask
 
     # reverse all bits
     if reverse_all:
@@ -146,4 +145,4 @@ cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial,
               | ((crc << 24) & 0x0000FF0000000000) | ((crc >> 24) & 0x0000000000FF0000) \
               | ((crc << 8)  & 0x000000FF00000000) | ((crc >> 8)  & 0x00000000FF000000)
 
-    return crc
+    return crc & crc_mask

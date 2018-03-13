@@ -18,7 +18,7 @@ class GenericCRC(object):
         ("16_standard", array.array("B", [1,
                                           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
 
-        # x^16+x^12+x^5+x^
+        # x^16+x^12+x^5+x^0
         ("16_ccitt", array.array("B", [1,
                                        0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
 
@@ -102,14 +102,12 @@ class GenericCRC(object):
         return util.number_to_bits(result, self.poly_order - 1)
 
     def reference_crc(self, inpt):
-        data = array.array("B", inpt)
-        if not len(data) % 8 == 0:
-            data.extend([False] * int(8 - (len(data) % 8)))  # Padding with 0 to multiple of crc-order
-        len_data = len(data)
+        len_inpt = len(inpt)
+        if len(self.start_value) < self.poly_order - 1:
+            return False
+        crc = copy.copy(self.start_value[0:(self.poly_order-1)])
 
-        crc = copy.copy(self.start_value)
-
-        for i in range(0, len_data, 8):
+        for i in range(0, len_inpt+7, 8):
             for j in range(0, 8):
 
                 if self.lsb_first:
@@ -117,7 +115,10 @@ class GenericCRC(object):
                 else:
                     idx = i + j
 
-                if crc[0] != data[idx]:
+                if idx >= len_inpt:
+                    break
+
+                if crc[0] != inpt[idx]:
                     crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
                     for x in range(0, self.poly_order - 1):

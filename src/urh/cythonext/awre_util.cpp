@@ -2056,7 +2056,7 @@ static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyArrayObject *__pyx_f_3urh_9cythonext_9awre_util_build_xor_matrix(PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequence_indices(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_sub_sequence_indices(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
@@ -2126,6 +2126,8 @@ static const char __pyx_k_mode[] = "mode";
 static const char __pyx_k_name[] = "name";
 static const char __pyx_k_ndim[] = "ndim";
 static const char __pyx_k_pack[] = "pack";
+static const char __pyx_k_seq1[] = "seq1";
+static const char __pyx_k_seq2[] = "seq2";
 static const char __pyx_k_size[] = "size";
 static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
@@ -2298,6 +2300,8 @@ static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_reduce;
 static PyObject *__pyx_n_s_reduce_cython;
 static PyObject *__pyx_n_s_reduce_ex;
+static PyObject *__pyx_n_s_seq1;
+static PyObject *__pyx_n_s_seq2;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_shape;
@@ -2319,7 +2323,7 @@ static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_build_xor_matrix(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bitvectors); /* proto */
-static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_bit_sequence_indices(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bits1, __Pyx_memviewslice __pyx_v_bits2); /* proto */
+static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_sub_sequence_indices(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_seq1, __Pyx_memviewslice __pyx_v_seq2); /* proto */
 static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_4find_first_difference(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bits1, __Pyx_memviewslice __pyx_v_bits2); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
@@ -2724,7 +2728,7 @@ static PyArrayObject *__pyx_f_3urh_9cythonext_9awre_util_build_xor_matrix(PyObje
  * 
  *     return result             # <<<<<<<<<<<<<<
  * 
- * cpdef set find_longest_common_bit_sequence_indices(np.uint8_t[::1] bits1, np.uint8_t[::1] bits2):
+ * cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
  */
   __Pyx_XDECREF(((PyObject *)__pyx_r));
   __Pyx_INCREF(((PyObject *)__pyx_v_result));
@@ -2811,13 +2815,13 @@ static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_build_xor_matrix(CYTHON_UNU
 /* "urh/cythonext/awre_util.pyx":26
  *     return result
  * 
- * cpdef set find_longest_common_bit_sequence_indices(np.uint8_t[::1] bits1, np.uint8_t[::1] bits2):             # <<<<<<<<<<<<<<
- *     cdef unsigned int len_bits1 = len(bits1)
- *     cdef unsigned int len_bits2 = len(bits2)
+ * cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):             # <<<<<<<<<<<<<<
+ *     cdef unsigned int len_bits1 = len(seq1)
+ *     cdef unsigned int len_bits2 = len(seq2)
  */
 
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequence_indices(__Pyx_memviewslice __pyx_v_bits1, __Pyx_memviewslice __pyx_v_bits2, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_sub_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_sub_sequence_indices(__Pyx_memviewslice __pyx_v_seq1, __Pyx_memviewslice __pyx_v_seq2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   unsigned int __pyx_v_len_bits1;
   unsigned int __pyx_v_len_bits2;
   __Pyx_memviewslice __pyx_v_m = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -2862,30 +2866,30 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
   size_t __pyx_t_29;
   Py_ssize_t __pyx_t_30;
   int __pyx_t_31;
-  __Pyx_RefNannySetupContext("find_longest_common_bit_sequence_indices", 0);
+  __Pyx_RefNannySetupContext("find_longest_common_sub_sequence_indices", 0);
 
   /* "urh/cythonext/awre_util.pyx":27
  * 
- * cpdef set find_longest_common_bit_sequence_indices(np.uint8_t[::1] bits1, np.uint8_t[::1] bits2):
- *     cdef unsigned int len_bits1 = len(bits1)             # <<<<<<<<<<<<<<
- *     cdef unsigned int len_bits2 = len(bits2)
+ * cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
+ *     cdef unsigned int len_bits1 = len(seq1)             # <<<<<<<<<<<<<<
+ *     cdef unsigned int len_bits2 = len(seq2)
  * 
  */
-  __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_bits1); 
+  __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_seq1); 
   __pyx_v_len_bits1 = __pyx_t_1;
 
   /* "urh/cythonext/awre_util.pyx":28
- * cpdef set find_longest_common_bit_sequence_indices(np.uint8_t[::1] bits1, np.uint8_t[::1] bits2):
- *     cdef unsigned int len_bits1 = len(bits1)
- *     cdef unsigned int len_bits2 = len(bits2)             # <<<<<<<<<<<<<<
+ * cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
+ *     cdef unsigned int len_bits1 = len(seq1)
+ *     cdef unsigned int len_bits2 = len(seq2)             # <<<<<<<<<<<<<<
  * 
  *     cdef unsigned int[:, ::1] m = np.zeros((len_bits1+1, len_bits2+1), dtype=np.uint32, order="C")
  */
-  __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_bits2); 
+  __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_seq2); 
   __pyx_v_len_bits2 = __pyx_t_1;
 
   /* "urh/cythonext/awre_util.pyx":30
- *     cdef unsigned int len_bits2 = len(bits2)
+ *     cdef unsigned int len_bits2 = len(seq2)
  * 
  *     cdef unsigned int[:, ::1] m = np.zeros((len_bits1+1, len_bits2+1), dtype=np.uint32, order="C")             # <<<<<<<<<<<<<<
  *     cdef unsigned int longest = 0
@@ -3025,7 +3029,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  *     cdef unsigned int current_result = 0
  *     for i in range(0, len_bits1):             # <<<<<<<<<<<<<<
  *         for j in range(0, len_bits2):
- *             if bits1[i] == bits2[j]:
+ * 
  */
   __pyx_t_8 = __pyx_v_len_bits1;
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
@@ -3035,28 +3039,28 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  *     cdef unsigned int current_result = 0
  *     for i in range(0, len_bits1):
  *         for j in range(0, len_bits2):             # <<<<<<<<<<<<<<
- *             if bits1[i] == bits2[j]:
- *                 counter = m[i, j] + 1
+ * 
+ *             if seq1[i] == seq2[j]:
  */
     __pyx_t_10 = __pyx_v_len_bits2;
     for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
       __pyx_v_j = __pyx_t_11;
 
-      /* "urh/cythonext/awre_util.pyx":40
- *     for i in range(0, len_bits1):
+      /* "urh/cythonext/awre_util.pyx":41
  *         for j in range(0, len_bits2):
- *             if bits1[i] == bits2[j]:             # <<<<<<<<<<<<<<
+ * 
+ *             if seq1[i] == seq2[j]:             # <<<<<<<<<<<<<<
  *                 counter = m[i, j] + 1
  *                 m[i+1, j+1] = counter
  */
       __pyx_t_1 = __pyx_v_i;
       __pyx_t_12 = __pyx_v_j;
-      __pyx_t_13 = (((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_bits1.data) + __pyx_t_1)) ))) == (*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_bits2.data) + __pyx_t_12)) )))) != 0);
+      __pyx_t_13 = (((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_seq1.data) + __pyx_t_1)) ))) == (*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_seq2.data) + __pyx_t_12)) )))) != 0);
       if (__pyx_t_13) {
 
-        /* "urh/cythonext/awre_util.pyx":41
- *         for j in range(0, len_bits2):
- *             if bits1[i] == bits2[j]:
+        /* "urh/cythonext/awre_util.pyx":42
+ * 
+ *             if seq1[i] == seq2[j]:
  *                 counter = m[i, j] + 1             # <<<<<<<<<<<<<<
  *                 m[i+1, j+1] = counter
  *                 if counter > longest:
@@ -3065,8 +3069,8 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
         __pyx_t_15 = __pyx_v_j;
         __pyx_v_counter = ((*((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_m.data + __pyx_t_14 * __pyx_v_m.strides[0]) )) + __pyx_t_15)) ))) + 1);
 
-        /* "urh/cythonext/awre_util.pyx":42
- *             if bits1[i] == bits2[j]:
+        /* "urh/cythonext/awre_util.pyx":43
+ *             if seq1[i] == seq2[j]:
  *                 counter = m[i, j] + 1
  *                 m[i+1, j+1] = counter             # <<<<<<<<<<<<<<
  *                 if counter > longest:
@@ -3076,7 +3080,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
         __pyx_t_17 = (__pyx_v_j + 1);
         *((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_m.data + __pyx_t_16 * __pyx_v_m.strides[0]) )) + __pyx_t_17)) )) = __pyx_v_counter;
 
-        /* "urh/cythonext/awre_util.pyx":43
+        /* "urh/cythonext/awre_util.pyx":44
  *                 counter = m[i, j] + 1
  *                 m[i+1, j+1] = counter
  *                 if counter > longest:             # <<<<<<<<<<<<<<
@@ -3086,7 +3090,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
         __pyx_t_13 = ((__pyx_v_counter > __pyx_v_longest) != 0);
         if (__pyx_t_13) {
 
-          /* "urh/cythonext/awre_util.pyx":44
+          /* "urh/cythonext/awre_util.pyx":45
  *                 m[i+1, j+1] = counter
  *                 if counter > longest:
  *                     longest = counter             # <<<<<<<<<<<<<<
@@ -3095,7 +3099,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  */
           __pyx_v_longest = __pyx_v_counter;
 
-          /* "urh/cythonext/awre_util.pyx":46
+          /* "urh/cythonext/awre_util.pyx":47
  *                     longest = counter
  * 
  *                     current_result = 0             # <<<<<<<<<<<<<<
@@ -3104,7 +3108,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  */
           __pyx_v_current_result = 0;
 
-          /* "urh/cythonext/awre_util.pyx":47
+          /* "urh/cythonext/awre_util.pyx":48
  * 
  *                     current_result = 0
  *                     result_indices[current_result, 0] = i - counter + 1             # <<<<<<<<<<<<<<
@@ -3115,7 +3119,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
           __pyx_t_19 = 0;
           *((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_18 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_19)) )) = ((__pyx_v_i - __pyx_v_counter) + 1);
 
-          /* "urh/cythonext/awre_util.pyx":48
+          /* "urh/cythonext/awre_util.pyx":49
  *                     current_result = 0
  *                     result_indices[current_result, 0] = i - counter + 1
  *                     result_indices[current_result, 1] = i + 1             # <<<<<<<<<<<<<<
@@ -3126,7 +3130,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
           __pyx_t_21 = 1;
           *((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_20 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_21)) )) = (__pyx_v_i + 1);
 
-          /* "urh/cythonext/awre_util.pyx":43
+          /* "urh/cythonext/awre_util.pyx":44
  *                 counter = m[i, j] + 1
  *                 m[i+1, j+1] = counter
  *                 if counter > longest:             # <<<<<<<<<<<<<<
@@ -3136,7 +3140,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
           goto __pyx_L8;
         }
 
-        /* "urh/cythonext/awre_util.pyx":49
+        /* "urh/cythonext/awre_util.pyx":50
  *                     result_indices[current_result, 0] = i - counter + 1
  *                     result_indices[current_result, 1] = i + 1
  *                 elif counter == longest:             # <<<<<<<<<<<<<<
@@ -3146,7 +3150,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
         __pyx_t_13 = ((__pyx_v_counter == __pyx_v_longest) != 0);
         if (__pyx_t_13) {
 
-          /* "urh/cythonext/awre_util.pyx":50
+          /* "urh/cythonext/awre_util.pyx":51
  *                     result_indices[current_result, 1] = i + 1
  *                 elif counter == longest:
  *                     current_result += 1             # <<<<<<<<<<<<<<
@@ -3155,7 +3159,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  */
           __pyx_v_current_result = (__pyx_v_current_result + 1);
 
-          /* "urh/cythonext/awre_util.pyx":51
+          /* "urh/cythonext/awre_util.pyx":52
  *                 elif counter == longest:
  *                     current_result += 1
  *                     if current_result < max_results:             # <<<<<<<<<<<<<<
@@ -3165,7 +3169,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
           __pyx_t_13 = ((__pyx_v_current_result < __pyx_v_max_results) != 0);
           if (__pyx_t_13) {
 
-            /* "urh/cythonext/awre_util.pyx":52
+            /* "urh/cythonext/awre_util.pyx":53
  *                     current_result += 1
  *                     if current_result < max_results:
  *                         result_indices[current_result, 0] = i - counter + 1             # <<<<<<<<<<<<<<
@@ -3176,7 +3180,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
             __pyx_t_23 = 0;
             *((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_22 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_23)) )) = ((__pyx_v_i - __pyx_v_counter) + 1);
 
-            /* "urh/cythonext/awre_util.pyx":53
+            /* "urh/cythonext/awre_util.pyx":54
  *                     if current_result < max_results:
  *                         result_indices[current_result, 0] = i - counter + 1
  *                         result_indices[current_result, 1] = i + 1             # <<<<<<<<<<<<<<
@@ -3187,7 +3191,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
             __pyx_t_25 = 1;
             *((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_24 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_25)) )) = (__pyx_v_i + 1);
 
-            /* "urh/cythonext/awre_util.pyx":51
+            /* "urh/cythonext/awre_util.pyx":52
  *                 elif counter == longest:
  *                     current_result += 1
  *                     if current_result < max_results:             # <<<<<<<<<<<<<<
@@ -3196,7 +3200,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  */
           }
 
-          /* "urh/cythonext/awre_util.pyx":49
+          /* "urh/cythonext/awre_util.pyx":50
  *                     result_indices[current_result, 0] = i - counter + 1
  *                     result_indices[current_result, 1] = i + 1
  *                 elif counter == longest:             # <<<<<<<<<<<<<<
@@ -3206,10 +3210,10 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
         }
         __pyx_L8:;
 
-        /* "urh/cythonext/awre_util.pyx":40
- *     for i in range(0, len_bits1):
+        /* "urh/cythonext/awre_util.pyx":41
  *         for j in range(0, len_bits2):
- *             if bits1[i] == bits2[j]:             # <<<<<<<<<<<<<<
+ * 
+ *             if seq1[i] == seq2[j]:             # <<<<<<<<<<<<<<
  *                 counter = m[i, j] + 1
  *                 m[i+1, j+1] = counter
  */
@@ -3217,19 +3221,19 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
     }
   }
 
-  /* "urh/cythonext/awre_util.pyx":55
+  /* "urh/cythonext/awre_util.pyx":56
  *                         result_indices[current_result, 1] = i + 1
  * 
  *     cdef set result = set()             # <<<<<<<<<<<<<<
  *     for i in range(current_result+1):
  *         result.add((result_indices[i, 0], result_indices[i, 1]))
  */
-  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_result = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "urh/cythonext/awre_util.pyx":56
+  /* "urh/cythonext/awre_util.pyx":57
  * 
  *     cdef set result = set()
  *     for i in range(current_result+1):             # <<<<<<<<<<<<<<
@@ -3240,7 +3244,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_26; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "urh/cythonext/awre_util.pyx":57
+    /* "urh/cythonext/awre_util.pyx":58
  *     cdef set result = set()
  *     for i in range(current_result+1):
  *         result.add((result_indices[i, 0], result_indices[i, 1]))             # <<<<<<<<<<<<<<
@@ -3249,13 +3253,13 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
  */
     __pyx_t_27 = __pyx_v_i;
     __pyx_t_28 = 0;
-    __pyx_t_2 = __Pyx_PyInt_From_unsigned_int((*((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_27 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_28)) )))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_unsigned_int((*((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_27 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_28)) )))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_29 = __pyx_v_i;
     __pyx_t_30 = 1;
-    __pyx_t_4 = __Pyx_PyInt_From_unsigned_int((*((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_29 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_30)) )))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_unsigned_int((*((unsigned int *) ( /* dim=1 */ ((char *) (((unsigned int *) ( /* dim=0 */ (__pyx_v_result_indices.data + __pyx_t_29 * __pyx_v_result_indices.strides[0]) )) + __pyx_t_30)) )))); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_2);
@@ -3263,11 +3267,11 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
     PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_4);
     __pyx_t_2 = 0;
     __pyx_t_4 = 0;
-    __pyx_t_31 = PySet_Add(__pyx_v_result, __pyx_t_6); if (unlikely(__pyx_t_31 == ((int)-1))) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_31 = PySet_Add(__pyx_v_result, __pyx_t_6); if (unlikely(__pyx_t_31 == ((int)-1))) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
 
-  /* "urh/cythonext/awre_util.pyx":59
+  /* "urh/cythonext/awre_util.pyx":60
  *         result.add((result_indices[i, 0], result_indices[i, 1]))
  * 
  *     return result             # <<<<<<<<<<<<<<
@@ -3282,9 +3286,9 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
   /* "urh/cythonext/awre_util.pyx":26
  *     return result
  * 
- * cpdef set find_longest_common_bit_sequence_indices(np.uint8_t[::1] bits1, np.uint8_t[::1] bits2):             # <<<<<<<<<<<<<<
- *     cdef unsigned int len_bits1 = len(bits1)
- *     cdef unsigned int len_bits2 = len(bits2)
+ * cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):             # <<<<<<<<<<<<<<
+ *     cdef unsigned int len_bits1 = len(seq1)
+ *     cdef unsigned int len_bits2 = len(seq2)
  */
 
   /* function exit code */
@@ -3295,7 +3299,7 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
-  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_bit_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_sub_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_m, 1);
@@ -3307,15 +3311,15 @@ static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequ
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  __Pyx_memviewslice __pyx_v_bits1 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_bits2 = { 0, 0, { 0 }, { 0 }, { 0 } };
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_sub_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_sub_sequence_indices(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __Pyx_memviewslice __pyx_v_seq1 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_seq2 = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("find_longest_common_bit_sequence_indices (wrapper)", 0);
+  __Pyx_RefNannySetupContext("find_longest_common_sub_sequence_indices (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_bits1,&__pyx_n_s_bits2,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_seq1,&__pyx_n_s_seq2,0};
     PyObject* values[2] = {0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
@@ -3331,17 +3335,17 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_se
       kw_args = PyDict_Size(__pyx_kwds);
       switch (pos_args) {
         case  0:
-        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_bits1)) != 0)) kw_args--;
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seq1)) != 0)) kw_args--;
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
-        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_bits2)) != 0)) kw_args--;
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seq2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_longest_common_bit_sequence_indices", 1, 2, 2, 1); __PYX_ERR(0, 26, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_longest_common_sub_sequence_indices", 1, 2, 2, 1); __PYX_ERR(0, 26, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_longest_common_bit_sequence_indices") < 0)) __PYX_ERR(0, 26, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_longest_common_sub_sequence_indices") < 0)) __PYX_ERR(0, 26, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3349,31 +3353,31 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_se
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_bits1 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_uint8_t(values[0]); if (unlikely(!__pyx_v_bits1.memview)) __PYX_ERR(0, 26, __pyx_L3_error)
-    __pyx_v_bits2 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_uint8_t(values[1]); if (unlikely(!__pyx_v_bits2.memview)) __PYX_ERR(0, 26, __pyx_L3_error)
+    __pyx_v_seq1 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_uint8_t(values[0]); if (unlikely(!__pyx_v_seq1.memview)) __PYX_ERR(0, 26, __pyx_L3_error)
+    __pyx_v_seq2 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn___pyx_t_5numpy_uint8_t(values[1]); if (unlikely(!__pyx_v_seq2.memview)) __PYX_ERR(0, 26, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_longest_common_bit_sequence_indices", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 26, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_longest_common_sub_sequence_indices", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 26, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_bit_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_sub_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_bit_sequence_indices(__pyx_self, __pyx_v_bits1, __pyx_v_bits2);
+  __pyx_r = __pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_sub_sequence_indices(__pyx_self, __pyx_v_seq1, __pyx_v_seq2);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_bit_sequence_indices(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bits1, __Pyx_memviewslice __pyx_v_bits2) {
+static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_sub_sequence_indices(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_seq1, __Pyx_memviewslice __pyx_v_seq2) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("find_longest_common_bit_sequence_indices", 0);
+  __Pyx_RefNannySetupContext("find_longest_common_sub_sequence_indices", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3urh_9cythonext_9awre_util_find_longest_common_bit_sequence_indices(__pyx_v_bits1, __pyx_v_bits2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3urh_9cythonext_9awre_util_find_longest_common_sub_sequence_indices(__pyx_v_seq1, __pyx_v_seq2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3382,17 +3386,17 @@ static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_bit_se
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_bit_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_longest_common_sub_sequence_indices", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bits1, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_bits2, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_seq1, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_seq2, 1);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "urh/cythonext/awre_util.pyx":61
+/* "urh/cythonext/awre_util.pyx":62
  *     return result
  * 
  * cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):             # <<<<<<<<<<<<<<
@@ -3416,7 +3420,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
   int __pyx_t_8;
   __Pyx_RefNannySetupContext("find_first_difference", 0);
 
-  /* "urh/cythonext/awre_util.pyx":63
+  /* "urh/cythonext/awre_util.pyx":64
  * cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
  *     cdef int i
  *     cdef int smaller_len = min(len(bits1), len(bits2))             # <<<<<<<<<<<<<<
@@ -3432,7 +3436,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
   }
   __pyx_v_smaller_len = __pyx_t_3;
 
-  /* "urh/cythonext/awre_util.pyx":65
+  /* "urh/cythonext/awre_util.pyx":66
  *     cdef int smaller_len = min(len(bits1), len(bits2))
  * 
  *     for i in range(smaller_len):             # <<<<<<<<<<<<<<
@@ -3443,7 +3447,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
   for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
     __pyx_v_i = __pyx_t_5;
 
-    /* "urh/cythonext/awre_util.pyx":66
+    /* "urh/cythonext/awre_util.pyx":67
  * 
  *     for i in range(smaller_len):
  *         if bits1[i] != bits2[i]:             # <<<<<<<<<<<<<<
@@ -3455,7 +3459,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
     __pyx_t_8 = (((*((unsigned char *) ( /* dim=0 */ (__pyx_v_bits1.data + __pyx_t_6 * __pyx_v_bits1.strides[0]) ))) != (*((unsigned char *) ( /* dim=0 */ (__pyx_v_bits2.data + __pyx_t_7 * __pyx_v_bits2.strides[0]) )))) != 0);
     if (__pyx_t_8) {
 
-      /* "urh/cythonext/awre_util.pyx":67
+      /* "urh/cythonext/awre_util.pyx":68
  *     for i in range(smaller_len):
  *         if bits1[i] != bits2[i]:
  *             return i             # <<<<<<<<<<<<<<
@@ -3465,7 +3469,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
       __pyx_r = __pyx_v_i;
       goto __pyx_L0;
 
-      /* "urh/cythonext/awre_util.pyx":66
+      /* "urh/cythonext/awre_util.pyx":67
  * 
  *     for i in range(smaller_len):
  *         if bits1[i] != bits2[i]:             # <<<<<<<<<<<<<<
@@ -3475,7 +3479,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
     }
   }
 
-  /* "urh/cythonext/awre_util.pyx":69
+  /* "urh/cythonext/awre_util.pyx":70
  *             return i
  * 
  *     return smaller_len             # <<<<<<<<<<<<<<
@@ -3483,7 +3487,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
   __pyx_r = __pyx_v_smaller_len;
   goto __pyx_L0;
 
-  /* "urh/cythonext/awre_util.pyx":61
+  /* "urh/cythonext/awre_util.pyx":62
  *     return result
  * 
  * cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):             # <<<<<<<<<<<<<<
@@ -3528,11 +3532,11 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_5find_first_difference(PyOb
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_bits2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_first_difference", 1, 2, 2, 1); __PYX_ERR(0, 61, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_first_difference", 1, 2, 2, 1); __PYX_ERR(0, 62, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_first_difference") < 0)) __PYX_ERR(0, 61, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_first_difference") < 0)) __PYX_ERR(0, 62, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3540,12 +3544,12 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_5find_first_difference(PyOb
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_bits1 = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[0]); if (unlikely(!__pyx_v_bits1.memview)) __PYX_ERR(0, 61, __pyx_L3_error)
-    __pyx_v_bits2 = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[1]); if (unlikely(!__pyx_v_bits2.memview)) __PYX_ERR(0, 61, __pyx_L3_error)
+    __pyx_v_bits1 = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[0]); if (unlikely(!__pyx_v_bits1.memview)) __PYX_ERR(0, 62, __pyx_L3_error)
+    __pyx_v_bits2 = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[1]); if (unlikely(!__pyx_v_bits2.memview)) __PYX_ERR(0, 62, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_first_difference", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 61, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_first_difference", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 62, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("urh.cythonext.awre_util.find_first_difference", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3564,7 +3568,7 @@ static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_4find_first_difference(CYTH
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("find_first_difference", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__pyx_v_bits1, __pyx_v_bits2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__pyx_v_bits1, __pyx_v_bits2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -19645,7 +19649,7 @@ static PyTypeObject __pyx_type___pyx_memoryviewslice = {
 
 static PyMethodDef __pyx_methods[] = {
   {"build_xor_matrix", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_1build_xor_matrix, METH_O, 0},
-  {"find_longest_common_bit_sequence_indices", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_bit_sequence_indices, METH_VARARGS|METH_KEYWORDS, 0},
+  {"find_longest_common_sub_sequence_indices", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_sub_sequence_indices, METH_VARARGS|METH_KEYWORDS, 0},
   {"find_first_difference", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_5find_first_difference, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
@@ -19768,6 +19772,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
+  {&__pyx_n_s_seq1, __pyx_k_seq1, sizeof(__pyx_k_seq1), 0, 0, 1, 1},
+  {&__pyx_n_s_seq2, __pyx_k_seq2, sizeof(__pyx_k_seq2), 0, 0, 1, 1},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},

@@ -1,4 +1,4 @@
-from urh.awre.CommonRange import CommonBitRange
+from urh.awre.CommonRange import CommonRange
 from urh.awre.Histogram import Histogram
 import numpy as np
 
@@ -11,12 +11,12 @@ class Engine(object):
 
 
     @staticmethod
-    def find_common_ranges_by_cluster(bitvectors, clustered_bitvectors):
+    def find_common_ranges_by_cluster(bitvectors, clustered_bitvectors, range_type="bit"):
         """
 
         :type bitvectors: list of np.ndarray
         :type clustered_bitvectors: dict
-        :rtype: dict[int, list of CommonBitRange]
+        :rtype: dict[int, list of CommonRange]
         """
         histograms = {
             cluster: Histogram(bitvectors, message_indices)
@@ -24,7 +24,7 @@ class Engine(object):
         }
 
         common_ranges_by_cluster = {
-            cluster: histogram.find_common_ranges(alpha=0.95)
+            cluster: histogram.find_common_ranges(alpha=0.95, range_type=range_type)
             for cluster, histogram in histograms.items()
         }
 

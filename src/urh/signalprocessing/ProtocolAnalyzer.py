@@ -753,5 +753,5 @@ class ProtocolAnalyzer(object):
         self.default_message_type.clear()
         for i, rng in enumerate(format_finder.message_types[0]):
             self.default_message_type.append(ProtocolLabel(name=rng.field_type,
-                                                           start=rng.start,
-                                                           end=rng.end, color_index=i))
+                                                           start=rng.bit_start,
+                                                           end=rng.bit_end, color_index=i))

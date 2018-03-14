@@ -2,14 +2,14 @@ import numpy as np
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
-from urh.awre.CommonRange import CommonBitRange, CommonRangeContainer
+from urh.awre.CommonRange import CommonRange, CommonRangeContainer
 
 
 class TestLengthEngine(AWRETestCase):
     def test_create_message_types_1(self):
-        rng1 = CommonBitRange(0, 8, "1" * 8, score=1, field_type="Length")
+        rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}
-        rng2 = CommonBitRange(8, 8, "1" * 8, score=1, field_type="Address")
+        rng2 = CommonRange(8, 8, "1" * 8, score=1, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
         message_types = FormatFinder.create_message_types({rng1, rng2})
@@ -19,11 +19,11 @@ class TestLengthEngine(AWRETestCase):
         self.assertEqual(message_types[0], expected)
 
     def test_create_message_types_2(self):
-        rng1 = CommonBitRange(0, 8, "1" * 8, score=1, field_type="Length")
+        rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 2, 4, 6, 8, 12}
-        rng2 = CommonBitRange(8, 8, "1" * 8, score=1, field_type="Address")
+        rng2 = CommonRange(8, 8, "1" * 8, score=1, field_type="Address")
         rng2.message_indices = {1, 2, 3, 4, 5, 12}
-        rng3 = CommonBitRange(16, 8, "1" * 8, score=1, field_type="Seq")
+        rng3 = CommonRange(16, 8, "1" * 8, score=1, field_type="Seq")
         rng3.message_indices = {1, 3, 5, 7, 12}
 
         message_types = FormatFinder.create_message_types({rng1, rng2, rng3})
@@ -45,24 +45,24 @@ class TestLengthEngine(AWRETestCase):
         preamble_ends = np.array([8, 8, 8, 10, 10])
         sync_ends = np.array([12, 12, 12, 14, 14])
 
-        rng = CommonBitRange(0, 8, "1" * 8, score=1, field_type="Length")
+        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         container = CommonRangeContainer([rng], message_indices={0, 1, 2, 3, 4})
         retransformed = FormatFinder.retransform_message_types([container], preamble_ends, sync_ends)
         self.assertEqual(len(retransformed), 2)
 
         expected1 = CommonRangeContainer(
             [
-                CommonBitRange(0, 8, "1" * 8, score=1, field_type="Preamble"),
-                CommonBitRange(8, 4, "1" * 8, score=1, field_type="Sync"),
-                CommonBitRange(12, 8, "1" * 8, score=1, field_type="Length")
+                CommonRange(0, 8, "1" * 8, score=1, field_type="Preamble"),
+                CommonRange(8, 4, "1" * 8, score=1, field_type="Sync"),
+                CommonRange(12, 8, "1" * 8, score=1, field_type="Length")
             ],
             message_indices={0, 1, 2}
         )
         expected2 = CommonRangeContainer(
             [
-                CommonBitRange(0, 10, "1" * 8, score=1, field_type="Preamble"),
-                CommonBitRange(10, 4, "1" * 8, score=1, field_type="Sync"),
-                CommonBitRange(14, 8, "1" * 8, score=1, field_type="Length")
+                CommonRange(0, 10, "1" * 8, score=1, field_type="Preamble"),
+                CommonRange(10, 4, "1" * 8, score=1, field_type="Sync"),
+                CommonRange(14, 8, "1" * 8, score=1, field_type="Length")
             ],
             message_indices={3, 4}
         )
@@ -72,9 +72,9 @@ class TestLengthEngine(AWRETestCase):
 
 
     def test_handle_no_overlapping_conflict(self):
-        rng1 = CommonBitRange(0, 8, "1" * 8, score=1, field_type="Length")
+        rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}
-        rng2 = CommonBitRange(8, 8, "1" * 8, score=1, field_type="Address")
+        rng2 = CommonRange(8, 8, "1" * 8, score=1, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
         container = CommonRangeContainer([rng1, rng2], message_indices={0,1,2})
@@ -89,9 +89,9 @@ class TestLengthEngine(AWRETestCase):
 
     def test_handle_easy_overlapping_conflict(self):
         # Easy conflict: First Label has higher score
-        rng1 = CommonBitRange(8, 8, "1" * 8, score=1, field_type="Length")
+        rng1 = CommonRange(8, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}
-        rng2 = CommonBitRange(8, 8, "1" * 8, score=0.8, field_type="Address")
+        rng2 = CommonRange(8, 8, "1" * 8, score=0.8, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
         container = CommonRangeContainer([rng1, rng2], message_indices={0,1,2})
@@ -103,11 +103,11 @@ class TestLengthEngine(AWRETestCase):
 
 
     def test_handle_medium_overlapping_conflict(self):
-        rng1 = CommonBitRange(8, 8, "1" * 8, score=1, field_type="Length")
-        rng2 = CommonBitRange(4, 10, "1" * 8, score=0.8, field_type="Address")
-        rng3 = CommonBitRange(15, 20, "1" * 8, score=1, field_type="Seq")
-        rng4 = CommonBitRange(60, 80, "1" * 8, score=0.8, field_type="Type")
-        rng5 = CommonBitRange(70, 90, "1" * 8, score=0.9, field_type="Data")
+        rng1 = CommonRange(8, 8, "1" * 8, score=1, field_type="Length")
+        rng2 = CommonRange(4, 10, "1" * 8, score=0.8, field_type="Address")
+        rng3 = CommonRange(15, 20, "1" * 8, score=1, field_type="Seq")
+        rng4 = CommonRange(60, 80, "1" * 8, score=0.8, field_type="Type")
+        rng5 = CommonRange(70, 90, "1" * 8, score=0.9, field_type="Data")
 
         container = CommonRangeContainer([rng1, rng2, rng3, rng4, rng5])
         result = FormatFinder.handle_overlapping_conflict([container])

@@ -4,7 +4,7 @@ from collections import defaultdict, Counter
 
 import numpy as np
 
-from urh.awre.CommonRange import CommonBitRange, EmptyCommonBitRange, CommonRangeContainer
+from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.awre.engines.LengthEngine import LengthEngine
@@ -37,13 +37,14 @@ class FormatFinder(object):
 
         self.messages = protocol.messages
         self.bitvectors = self.get_bitvectors_from_messages(protocol.messages, self.sync_ends)
+        self.hexvectors = self.get_hexvectors(self.bitvectors)
         self.xor_matrix = self.build_xor_matrix()
         participants = list(sorted(set(msg.participant for msg in protocol.messages)))
         self.participant_indices = [participants.index(msg.participant) for msg in protocol.messages]
 
         self.engines = [
             LengthEngine(self.bitvectors),
-            AddressEngine(self.bitvectors, self.participant_indices)
+            AddressEngine(self.hexvectors, self.participant_indices)
         ]
 
         self.label_set = set()
@@ -73,12 +74,9 @@ class FormatFinder(object):
                 mt = self.message_types[-1]
             mt.append(merged_rng)
 
-    def init_bitvectors(self) -> list:
-        return self.get_bitvectors_from_messages(self.messages, self.sync_ends)
-
     def perform_iteration(self):
         for engine in self.engines:
-            high_scored_ranges = engine.find().values()  # type: list[CommonBitRange]
+            high_scored_ranges = engine.find().values()  # type: list[CommonRange]
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
             #self.update_message_types(merged_ranges)
@@ -93,22 +91,35 @@ class FormatFinder(object):
         """
         Merge common ranges if possible
 
-        :type common_ranges: list of CommonBitRange
+        :type common_ranges: list of CommonRange
         :rtype: list of CommonBitRange
         """
         merged_ranges = []
         for common_range in common_ranges:
-            assert isinstance(common_range, CommonBitRange)
+            assert isinstance(common_range, CommonRange)
             try:
                 same_range = next(rng for rng in merged_ranges
-                                  if rng.start == common_range.start
-                                  and rng.length == common_range.length)
+                                  if rng.bit_start == common_range.bit_start
+                                  and rng.bit_end == common_range.bit_end)
                 same_range.values.extend(common_range.values)
                 same_range.message_indices.update(common_range.message_indices)
             except StopIteration:
                 merged_ranges.append(common_range)
 
         return merged_ranges
+
+    @staticmethod
+    def get_hexvectors(bitvectors: list):
+        result = []
+
+        for bitvector in bitvectors:
+            hexvector = np.empty(int(math.ceil(len(bitvector) / 4)), dtype=np.uint8)
+            for i in range(0, len(hexvector)):
+                bits = bitvector[4*i:4*(i+1)]
+                hexvector[i] = int("".join(map(str, bits)), 2)
+            result.append(hexvector)
+
+        return result
 
     @staticmethod
     def get_bitvectors_from_messages(messages: list, sync_ends: np.ndarray = None):
@@ -141,7 +152,7 @@ class FormatFinder(object):
         result = []
         for i in message_indices:
             labels = sorted(set(rng for rng in label_set if i in rng.message_indices
-                         and not isinstance(rng, EmptyCommonBitRange)))
+                         and not isinstance(rng, EmptyCommonRange)))
 
             container = next((container for container in result if container.has_same_ranges(labels)), None)
             if container is None:
@@ -189,7 +200,7 @@ class FormatFinder(object):
         :param container:
         :return:
         """
-        partitions = []  # type: list[list[CommonBitRange]]
+        partitions = []  # type: list[list[CommonRange]]
         # partition the container into overlapping partitions
         # results in something like [[A], [B,C], [D], [E,F,G]]] where B and C and E, F, G are overlapping
         for cur_rng in container:
@@ -197,7 +208,7 @@ class FormatFinder(object):
                 partitions.append([cur_rng])
                 continue
 
-            last_rng = partitions[-1][-1]  # type: CommonBitRange
+            last_rng = partitions[-1][-1]  # type: CommonRange
             if cur_rng.overlaps_with(last_rng):
                 partitions[-1].append(cur_rng)
             else:
@@ -240,8 +251,8 @@ class FormatFinder(object):
         result = []
         message_types = copy.deepcopy(message_types)
         for i, sync_end in enumerate(sync_ends):
-            preamble = CommonBitRange(0, preamble_ends[i], field_type="Preamble")
-            sync = CommonBitRange(preamble_ends[i], sync_end-preamble_ends[i], field_type="Sync")
+            preamble = CommonRange(0, preamble_ends[i], field_type="Preamble")
+            sync = CommonRange(preamble_ends[i], sync_end - preamble_ends[i], field_type="Sync")
 
             mt = next((copy.deepcopy(mt) for mt in message_types if i in mt.message_indices),
                       CommonRangeContainer([], set()))
@@ -252,7 +263,7 @@ class FormatFinder(object):
 
             mt.add_ranges([preamble, sync])
 
-            existing = next((m for m in result if mt.has_same_ranges(list(m))), None)  # type: CommonBitRange
+            existing = next((m for m in result if mt.has_same_ranges(list(m))), None)  # type: CommonRange
             if existing is None:
                 result.append(mt)
             else:

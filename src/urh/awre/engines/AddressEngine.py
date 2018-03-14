@@ -30,7 +30,8 @@ class AddressEngine(Engine):
             message_indices_by_participant[participant_index].append(i)
 
         common_ranges_by_participant = self.find_common_ranges_by_cluster(self.bitvectors,
-                                                                          message_indices_by_participant)
+                                                                          message_indices_by_participant,
+                                                                          range_type="hex")
 
         self._debug("Common ranges by participant:", common_ranges_by_participant)
         # Here we have candidate ranges

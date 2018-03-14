@@ -1,9 +1,9 @@
 import math
-import numpy as np
 from collections import defaultdict
 
-from urh.awre.CommonRange import CommonBitRange, EmptyCommonBitRange
-from urh.awre.Histogram import Histogram
+import numpy as np
+
+from urh.awre.CommonRange import CommonRange, EmptyCommonRange
 from urh.awre.engines.Engine import Engine
 
 
@@ -59,9 +59,9 @@ class LengthEngine(Engine):
         # if it's score surpasses the minimum score
         high_scores_by_length = dict()
         for length, ranges in common_ranges_by_length.items():
-            high_score_range = max(ranges, key=lambda x: x.score, default=None)  # type: CommonBitRange
+            high_score_range = max(ranges, key=lambda x: x.score, default=None)  # type: CommonRange
             if high_score_range is None or high_score_range.score < minimum_score:
-                high_score_range = EmptyCommonBitRange(field_type="Length")
+                high_score_range = EmptyCommonRange(field_type="Length")
             high_scores_by_length[length] = high_score_range
 
         self._debug("Highscore ranges", high_scores_by_length)
@@ -69,7 +69,7 @@ class LengthEngine(Engine):
         return high_scores_by_length
 
     @staticmethod
-    def score_range(common_range: CommonBitRange, target_length: int):
+    def score_range(common_range: CommonRange, target_length: int):
         """
         Score a common bit range based on the target length.
         :param common_range:

@@ -1,21 +1,22 @@
-import numpy as np
 import itertools
 
 
-
-class CommonBitRange(object):
-    def __init__(self, start, length, value: str=None, score=None, field_type="Generic", message_indices=None):
+class CommonRange(object):
+    def __init__(self, start, length, value: str=None, score=None, field_type="Generic", message_indices=None,
+                 range_type="bit"):
         """
 
         :param start:
         :param length:
-        :param value: Bit value for this common range as Bitstring
+        :param value: Value for this common range as string
         """
         self.start = start
         self.length = length
         self.values = [value] if value is not None else []
         self.score = score
         self.field_type = field_type  # can also be length, address etc.
+
+        self.range_type = range_type.lower()  # one of bit/hex/byte
 
         self.message_indices = set() if message_indices is None else message_indices
         """
@@ -25,6 +26,24 @@ class CommonBitRange(object):
     @property
     def end(self):
         return self.start + self.length - 1
+
+    @property
+    def bit_start(self):
+        return self.__convert_number(self.start)
+
+    @property
+    def bit_end(self):
+        return self.__convert_number(self.end)
+
+    def __convert_number(self, n):
+        if self.range_type == "bit":
+            return n
+        elif self.range_type == "hex":
+            return n * 4
+        elif self.range_type == "byte":
+            return n * 8
+        else:
+            raise ValueError("Unknown range type {}".format(self.range_type))
 
     def __repr__(self):
         result = "{} {}-{} ({})".format(self.field_type, self.start,
@@ -37,7 +56,7 @@ class CommonBitRange(object):
         return result
 
     def __eq__(self, other):
-        if not isinstance(other, CommonBitRange):
+        if not isinstance(other, CommonRange):
             return False
 
         return self.start == other.start and \
@@ -50,17 +69,14 @@ class CommonBitRange(object):
     def __lt__(self, other):
         return self.start < other.start
 
-    def applies_to_bitvector(self, bitvector: np.ndarray) -> bool:
-        return "".join(map(str, bitvector[self.start:self.start + self.length])) in self.values
-
     def overlaps_with(self, other) -> bool:
-        if not isinstance(other, CommonBitRange):
+        if not isinstance(other, CommonRange):
             raise ValueError("Need another bit range to compare")
-        return any(i in range(self.start, self.end)
-                   for i in range(other.start, other.end))
+        return any(i in range(self.bit_start, self.bit_end)
+                   for i in range(other.bit_start, other.bit_end))
 
 
-class EmptyCommonBitRange(CommonBitRange):
+class EmptyCommonRange(CommonRange):
     """
     Empty Common Bit Range, to indicate, that no common Bit Range was found
     """
@@ -70,7 +86,7 @@ class EmptyCommonBitRange(CommonBitRange):
         self.field_type = field_type
 
     def __eq__(self, other):
-        return isinstance(other, EmptyCommonBitRange) \
+        return isinstance(other, EmptyCommonRange) \
                and other.field_type == self.field_type
 
     def __repr__(self):
@@ -88,7 +104,7 @@ class CommonRangeContainer(object):
     def __init__(self, ranges: list, message_indices=set()):
         assert isinstance(ranges, list)
 
-        self.__ranges = ranges # type: list[CommonBitRange]
+        self.__ranges = ranges # type: list[CommonRange]
         self.__ranges.sort()
 
         self.message_indices = message_indices
@@ -97,7 +113,7 @@ class CommonRangeContainer(object):
     def ranges_overlap(self) -> bool:
         return self.has_overlapping_ranges(self.__ranges)
 
-    def add_range(self, rng: CommonBitRange):
+    def add_range(self, rng: CommonRange):
         self.__ranges.append(rng)
         self.__ranges.sort()
 

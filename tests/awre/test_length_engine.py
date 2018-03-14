@@ -2,7 +2,7 @@ import random
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
-from urh.awre.CommonRange import CommonBitRange, EmptyCommonBitRange
+from urh.awre.CommonRange import CommonRange, EmptyCommonRange
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.LengthEngine import LengthEngine
@@ -11,7 +11,7 @@ from urh.signalprocessing.FieldType import FieldType
 
 class TestLengthEngine(AWRETestCase):
     def test_score_common_range(self):
-        common_range = CommonBitRange(0, 8, "0000011")
+        common_range = CommonRange(0, 8, "0000011")
         target_value = 1
         le = LengthEngine([])
         print(le.score_range(common_range, target_value))
@@ -48,7 +48,7 @@ class TestLengthEngine(AWRETestCase):
         self.assertGreater(len(ff.message_types[0]), 0)
         label = next(lbl for lbl in ff.message_types[0]
                      if lbl.field_type == "Length")
-        self.assertIsInstance(label, CommonBitRange)
+        self.assertIsInstance(label, CommonRange)
         self.assertEqual(label.field_type, "Length")
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 8)
@@ -87,7 +87,7 @@ class TestLengthEngine(AWRETestCase):
         self.assertGreater(len(ff.message_types[0]), 0)
         label = next(lbl for lbl in ff.message_types[0]
                      if lbl.field_type == "Length")
-        self.assertIsInstance(label, CommonBitRange)
+        self.assertIsInstance(label, CommonRange)
         self.assertEqual(label.field_type, "Length")
         self.assertEqual(label.start, 40)
         self.assertEqual(label.length, 8)
@@ -124,7 +124,7 @@ class TestLengthEngine(AWRETestCase):
 
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
-        length_mt = next(mt for mt in ff.message_types if EmptyCommonBitRange("Length") not in mt)
+        length_mt = next(mt for mt in ff.message_types if EmptyCommonRange("Length") not in mt)
         length_range = next(rng for rng in length_mt if rng.field_type == "Length")
 
         for i, sync_end in enumerate(ff.sync_ends):

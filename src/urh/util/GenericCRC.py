@@ -1,5 +1,6 @@
 import array
 import copy
+import time
 from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
@@ -102,12 +103,15 @@ class GenericCRC(object):
         return util.number_to_bits(result, self.poly_order - 1)
 
     def crc_steps(self, inpt):
+        #t = time.time()
         result = c_util.crc_steps(array.array("B", inpt),
                             array.array("B", self.polynomial),
                             array.array("B", self.start_value),
                             array.array("B", self.final_xor),
                             self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
-        return [util.number_to_bits(x, self.poly_order - 1) for x in result]
+        #print("Cython:", time.time() - t)
+        return result
+        #return [util.number_to_bits(x, self.poly_order - 1) for x in result]
 
     def reference_crc(self, inpt):
         len_inpt = len(inpt)
@@ -308,6 +312,7 @@ class GenericCRC(object):
                 break
         if len(inpt) <= len_crc or start_crc == 0:  # Could not find crc position or there is no data
             return False
+        delta_data = [True] + [False] * (start_crc + 2)
 
         # Test all standard parameters and return true, if a valid CRC could be computed.
         for i in range(0, 2 ** 8):
@@ -353,7 +358,6 @@ class GenericCRC(object):
                 self.lsb_first = True
 
             # Precaching
-            delta_data = [True] + [False] * (start_crc+2)
             deltas = self.crc_steps(delta_data)
 
             # Test data range from 0...start_crc until start_crc-1...start_crc
@@ -369,8 +373,8 @@ class GenericCRC(object):
 
                 # XOR delta=crc(10000...) to last crc value to create next crc value
                 for k in range(0, self.poly_order-1):
-                    if deltas[start_crc-j-offset-1][k] == True:
-                        crc[k] = not crc[k]
+                    if (deltas[start_crc-j-offset-1] // 2**k) % 2:
+                        crc[self.poly_order - 2 - k] = not crc[self.poly_order - 2 - k]
 
                 if found:
                     return (i, j, start_crc)  # Return (parameters_index, start_data, end_data)

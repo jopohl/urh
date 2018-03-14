@@ -1,3 +1,5 @@
+import numpy as np
+
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
@@ -41,4 +43,22 @@ class TestAddressEngine(AWRETestCase):
         address_engine = AddressEngine(ff.bitvectors, ff.participant_indices)
         address_engine.find_addresses()
 
+    def test_perf(self):
+        from urh.cythonext import awre_util
+        import time
+        str1 = "11110000" * 800
+        str2 = "00001111" * 800
+
+        bits1 = np.array(list(map(int, str1)), dtype=np.uint8, order="C")
+        bits2 = np.array(list(map(int, str2)), dtype=np.uint8, order="C")
+
+        t = time.time()
+        indices = awre_util.find_longest_common_bit_sequence_indices(bits1, bits2)
+        print(time.time()-t)
+        print(indices)
+        for ind in indices:
+            s = str1[slice(*ind)]
+            print(s)
+            print(s in str1)
+            print(s in str2)
 

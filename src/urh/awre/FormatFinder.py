@@ -8,7 +8,7 @@ from urh.awre.CommonRange import CommonBitRange, EmptyCommonBitRange, CommonRang
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.awre.engines.LengthEngine import LengthEngine
-from urh.cythonext import util
+from urh.cythonext import awre_util
 
 
 class FormatFinder(object):
@@ -86,7 +86,7 @@ class FormatFinder(object):
         self.message_types = self.retransform_message_types(self.message_types, self.preamble_ends, self.sync_ends)
 
     def build_xor_matrix(self):
-        return util.build_xor_matrix(self.bitvectors)
+        return awre_util.build_xor_matrix(self.bitvectors)
 
     @staticmethod
     def merge_common_ranges(common_ranges):

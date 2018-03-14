@@ -5,7 +5,7 @@ from collections import defaultdict
 import array
 import numpy as np
 
-from urh.cythonext import util
+from urh.cythonext import awre_util
 from urh.signalprocessing.Message import Message
 
 
@@ -151,7 +151,7 @@ class Preprocessor(object):
 
         for i in range(len(self.messages)):
             for j in range(i + 1, len(self.messages)):
-                result[i, j] = util.find_first_difference(self.messages[i].decoded_bits,
+                result[i, j] = awre_util.find_first_difference(self.messages[i].decoded_bits,
                                                                self.messages[j].decoded_bits)
 
         return result

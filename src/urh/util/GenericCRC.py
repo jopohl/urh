@@ -101,6 +101,14 @@ class GenericCRC(object):
                             self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
 
+    def crc_steps(self, inpt):
+        result = c_util.crc_steps(array.array("B", inpt),
+                            array.array("B", self.polynomial),
+                            array.array("B", self.start_value),
+                            array.array("B", self.final_xor),
+                            self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        return [util.number_to_bits(x, self.poly_order - 1) for x in result]
+
     def reference_crc(self, inpt):
         len_inpt = len(inpt)
         if len(self.start_value) < self.poly_order - 1:
@@ -225,8 +233,150 @@ class GenericCRC(object):
                 offset += 1
             ret = self.guess_standard_parameters(inpt[i+offset:start_crc], vrfy_crc)
             if ret:
-                return (ret, i+1, start_crc-1)
+                return (ret, i, start_crc)
             i += 1 + offset
+        return False
+
+    def guess_standard_parameters_and_datarange_improved(self, inpt, vrfy_crc):
+        # find vrfy_crc in inpt
+        len_crc = len(vrfy_crc)
+        for start_crc in range(len(inpt) - len_crc, -1, -1):
+            if vrfy_crc == inpt[start_crc:start_crc + len_crc]:
+                break
+        if len(inpt) <= len_crc or start_crc == 0:  # Could not find crc position or there is no data
+            return False
+
+        # Test all standard parameters and return true, if a valid CRC could be computed.
+        for i in range(0, 2 ** 8):
+            # Bit 0,1 = Polynomial
+            val = (i >> 0) & 3
+            self.polynomial = self.choose_polynomial(val)
+            poly_order = len(self.polynomial)
+
+            # Bit 2 = Start Value
+            val = (i >> 2) & 1
+            self.start_value = [val != 0] * (poly_order - 1)
+
+            # Bit 3 = Final XOR
+            val = (i >> 3) & 1
+            self.final_xor = [val != 0] * (poly_order - 1)
+
+            # Bit 4 = Reverse Polynomial
+            val = (i >> 4) & 1
+            if val == 0:
+                self.reverse_polynomial = False
+            else:
+                self.reverse_polynomial = True
+
+            # Bit 5 = Reverse (all) Result
+            val = (i >> 5) & 1
+            if val == 0:
+                self.reverse_all = False
+            else:
+                self.reverse_all = True
+
+            # Bit 6 = Little Endian
+            val = (i >> 6) & 1
+            if val == 0:
+                self.little_endian = False
+            else:
+                self.little_endian = True
+
+            # Bit 7 = Least Significant Bit (LSB) first
+            val = (i >> 7) & 1
+            if val == 0:
+                self.lsb_first = False
+            else:
+                self.lsb_first = True
+
+            # Test data range from 0...start_crc until start_crc-1...start_crc
+            j = 0
+            while j < start_crc - 1:
+                offset = 0
+                while (inpt[j + offset] == False):  # skip leading 0s in data (doesn't change crc...)
+                    offset += 1
+                if self.crc(inpt[j + offset:start_crc]) == vrfy_crc:
+                    return (i, j, start_crc)    # Return (parameters_index, start_data, end_data)
+                j += 1 + offset
+        return False
+
+    def guess_standard_parameters_and_datarange_improved2(self, inpt, vrfy_crc):
+        # find vrfy_crc in inpt
+        len_crc = len(vrfy_crc)
+        for start_crc in range(len(inpt) - len_crc, -1, -1):
+            if vrfy_crc == inpt[start_crc:start_crc + len_crc]:
+                break
+        if len(inpt) <= len_crc or start_crc == 0:  # Could not find crc position or there is no data
+            return False
+
+        # Test all standard parameters and return true, if a valid CRC could be computed.
+        for i in range(0, 2 ** 8):
+            # Bit 0,1 = Polynomial
+            val = (i >> 0) & 3
+            self.polynomial = self.choose_polynomial(val)
+            poly_order = len(self.polynomial)
+
+            # Bit 2 = Start Value
+            val = (i >> 2) & 1
+            self.start_value = [val != 0] * (poly_order - 1)
+
+            # Bit 3 = Final XOR
+            val = (i >> 3) & 1
+            self.final_xor = [val != 0] * (poly_order - 1)
+
+            # Bit 4 = Reverse Polynomial
+            val = (i >> 4) & 1
+            if val == 0:
+                self.reverse_polynomial = False
+            else:
+                self.reverse_polynomial = True
+
+            # Bit 5 = Reverse (all) Result
+            val = (i >> 5) & 1
+            if val == 0:
+                self.reverse_all = False
+            else:
+                self.reverse_all = True
+
+            # Bit 6 = Little Endian
+            val = (i >> 6) & 1
+            if val == 0:
+                self.little_endian = False
+            else:
+                self.little_endian = True
+
+            # Bit 7 = Least Significant Bit (LSB) first
+            val = (i >> 7) & 1
+            if val == 0:
+                self.lsb_first = False
+            else:
+                self.lsb_first = True
+
+            # Precaching
+            delta_data = [True] + [False] * (start_crc+2)
+            deltas = self.crc_steps(delta_data)
+
+            # Test data range from 0...start_crc until start_crc-1...start_crc
+            j = 0
+            crc = self.crc(inpt[0:start_crc])
+            if crc == vrfy_crc:
+                return (i, 0, start_crc)
+            found = False
+            while j < start_crc - 1:
+                offset = 0
+                while (inpt[j + offset] == False):  # skip leading 0s in data (doesn't change crc...)
+                    offset += 1
+
+                # XOR delta=crc(10000...) to last crc value to create next crc value
+                for k in range(0, self.poly_order-1):
+                    if deltas[start_crc-j-offset-1][k] == True:
+                        crc[k] = not crc[k]
+
+                if found:
+                    return (i, j, start_crc)  # Return (parameters_index, start_data, end_data)
+                if vrfy_crc == crc:
+                    found = True
+                j += 1 + offset
         return False
 
     def reverse_engineer_polynomial(self, dataset, crcset):

@@ -155,3 +155,20 @@ class TestCRC(unittest.TestCase):
             inpt = "0"+inpt if i%2 == 0 else "1"+inpt
         #print("Performance:", t1/runs)
         self.assertLess(t1/runs, 0.1)   # Should be faster than 100ms in average
+
+    def test_adaptive_crc_calculation(self):
+        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        inpt1 = "10101010101010"
+        inpt2 = "1010101010101001"
+
+        crc1 = c.crc(c.str2arr(inpt1))
+        crc2 = c.crc(c.str2arr(inpt2))
+
+        # Compute crc2 from crc1 in a faster way
+        # Note: In general only forward direction
+        delta = "01"
+        c.start_value = crc1
+        crcx = c.crc(c.str2arr(delta))
+
+        self.assertEqual(crcx, crc2)

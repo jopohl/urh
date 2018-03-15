@@ -34,7 +34,7 @@ class LengthEngine(Engine):
         for rng in ranges:
             count = len([r for r in ranges if rng.start == r.start
                          and rng.length == r.length
-                         and rng.values[0] == r.values[0]])
+                         and rng.value_str == r.value_str])
             if count < 2:
                 continue
 
@@ -83,7 +83,7 @@ class LengthEngine(Engine):
         #   - hardcore mode: try any n bit window
         # See if there are common equal ranges between the clusters -> try these first
         assert len(common_range.values) == 1
-        value = int(common_range.values[0], 2)
+        value = int(common_range.value_str, 2)
 
         if value < target_length or value == 0:
             return 0

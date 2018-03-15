@@ -1,8 +1,10 @@
 import itertools
+from urh.util import util
+import numpy as np
 
 
 class CommonRange(object):
-    def __init__(self, start, length, value: str=None, score=None, field_type="Generic", message_indices=None,
+    def __init__(self, start, length, value: np.ndarray=None, score=None, field_type="Generic", message_indices=None,
                  range_type="bit"):
         """
 
@@ -12,6 +14,10 @@ class CommonRange(object):
         """
         self.start = start
         self.length = length
+
+        if isinstance(value, str):
+            value = np.array(list(map(lambda x: int(x, 16), value)), dtype=np.uint8)
+
         self.values = [value] if value is not None else []
         self.score = score
         self.field_type = field_type  # can also be length, address etc.
@@ -35,6 +41,19 @@ class CommonRange(object):
     def bit_end(self):
         return self.__convert_number(self.end)
 
+    @property
+    def value(self):
+        if len(self.values) == 0:
+            return None
+        elif len(self.values) == 1:
+            return self.values[0]
+        else:
+            raise ValueError("This range has multiple values!")
+
+    @property
+    def value_str(self):
+        return util.convert_numbers_to_hex_string(self.value)
+
     def __convert_number(self, n):
         if self.range_type == "bit":
             return n
@@ -49,7 +68,7 @@ class CommonRange(object):
         result = "{} {}-{} ({})".format(self.field_type, self.start,
                                         self.end, self.length)
 
-        result += " Values: " + " ".join(self.values)
+        result += " Values: " + " ".join(map(util.convert_numbers_to_hex_string, self.values))
         if self.score is not None:
             result += " Score: " + str(self.score)
         result += " Message indices: {" + ",".join(map(str, sorted(self.message_indices))) + "}"

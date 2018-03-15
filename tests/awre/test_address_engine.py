@@ -1,5 +1,6 @@
 import numpy as np
 
+from urh.util import util
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
@@ -41,7 +42,10 @@ class TestAddressEngine(AWRETestCase):
         ff = FormatFinder(pg.protocol)
 
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
-        address_engine.find_addresses()
+        address_dict = address_engine.find_addresses()
+
+        self.assertEqual(len(address_dict), 1)
+        self.assertIn(self.alice.address_hex, map(util.convert_numbers_to_hex_string, address_dict[0]))
 
     def test_two_participants(self):
         mb = MessageTypeBuilder("address_two_participants")
@@ -71,7 +75,14 @@ class TestAddressEngine(AWRETestCase):
         ff = FormatFinder(pg.protocol)
 
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
-        address_engine.find_addresses()
+        address_dict = address_engine.find_addresses()
+        self.assertEqual(len(address_dict), 2)
+        addresses_1 = list(map(util.convert_numbers_to_hex_string, address_dict[0]))
+        addresses_2 = list(map(util.convert_numbers_to_hex_string, address_dict[1]))
+        self.assertIn(self.alice.address_hex, addresses_1)
+        self.assertIn(self.alice.address_hex, addresses_2)
+        self.assertIn(self.bob.address_hex, addresses_1)
+        self.assertIn(self.bob.address_hex, addresses_2)
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util

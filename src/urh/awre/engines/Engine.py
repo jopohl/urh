@@ -1,6 +1,7 @@
 from urh.awre.CommonRange import CommonRange
 from urh.awre.Histogram import Histogram
 import numpy as np
+from urh.cythonext import awre_util
 
 class Engine(object):
     _DEBUG_ = True
@@ -8,7 +9,6 @@ class Engine(object):
     def _debug(self, *args):
         if self._DEBUG_:
             print("[{}]".format(self.__class__.__name__), *args)
-
 
     @staticmethod
     def find_common_ranges_by_cluster(bitvectors, clustered_bitvectors, alpha=0.95, range_type="bit"):
@@ -32,3 +32,17 @@ class Engine(object):
         }
 
         return common_ranges_by_cluster
+
+    @staticmethod
+    def find_longest_common_sub_sequences(seq1, seq2) -> list:
+        result = []
+        if seq1 is None or seq2 is None:
+            return result
+        
+        indices = awre_util.find_longest_common_sub_sequence_indices(seq1, seq2)
+        for ind in indices:
+            s = seq1[slice(*ind)]
+            if len(s) > 0:
+                result.append(s)
+
+        return result

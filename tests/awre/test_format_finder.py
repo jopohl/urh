@@ -5,7 +5,7 @@ from urh.awre.FormatFinder import FormatFinder
 from urh.awre.CommonRange import CommonRange, CommonRangeContainer
 
 
-class TestLengthEngine(AWRETestCase):
+class TestFormatFinder(AWRETestCase):
     def test_create_message_types_1(self):
         rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}

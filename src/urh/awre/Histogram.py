@@ -95,12 +95,13 @@ class Histogram(object):
         :param length: Length of the common bit range
         :return:
         """
-        values = defaultdict(set)
+        values = defaultdict(list)
         for i in self.__active_indices:
             vector = self.__vectors[i]
-            values[self.__vector_to_string(vector[start:start + length])].add(i)
+            values[vector[start:start + length].tostring()].append(i)
         value = max(values, key=lambda x: len(x))
-        return value, values[value]
+        indices = values[value]
+        return self.__vectors[indices[0]][start:start + length], set(indices)
 
     def __vector_to_string(self, data_vector) -> str:
         lut = {i: "{0:x}".format(i) for i in range(16)}

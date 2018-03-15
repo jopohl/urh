@@ -8,6 +8,8 @@ from xml.etree import ElementTree as ET
 
 import shutil
 import subprocess
+
+import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
@@ -18,6 +20,7 @@ from urh import constants
 from urh.util.Logger import logger
 
 DEFAULT_PROGRAMS_WINDOWS = {}
+
 
 def profile(func):
     def func_wrapper(*args):
@@ -168,6 +171,17 @@ def aggregate_bits(bits: array.array, size=4) -> array.array:
     return result
 
 
+def convert_numbers_to_hex_string(arr: np.ndarray):
+    """
+    Convert an array like [0, 1, 10, 2] to string 012a2
+
+    :param arr:
+    :return:
+    """
+    lut = {i: "{0:x}".format(i) for i in range(16)}
+    return "".join(lut[x] if x in lut else " {} ".format(x) for x in arr)
+
+
 def clip(value, minimum, maximum):
     return max(minimum, min(value, maximum))
 
@@ -239,7 +253,7 @@ def parse_command(command: str):
         if not posix:
             splitted = [s.replace('"', '').replace("'", "") for s in splitted]
     except ValueError:
-        splitted = []   # e.g. when missing matching "
+        splitted = []  # e.g. when missing matching "
 
     if len(splitted) == 0:
         return "", []
@@ -253,7 +267,7 @@ def parse_command(command: str):
     return " ".join(cmd), splitted
 
 
-def run_command(command, param: str=None, use_stdin=False, detailed_output=False):
+def run_command(command, param: str = None, use_stdin=False, detailed_output=False):
     cmd, arg = parse_command(command)
     if shutil.which(cmd) is None:
         logger.error("Could not find {}".format(cmd))
@@ -316,14 +330,14 @@ def set_splitter_stylesheet(splitter: QSplitter):
     bgcolor = constants.BGCOLOR.lighter(120)
     r, g, b = bgcolor.red(), bgcolor.green(), bgcolor.blue()
     splitter.setStyleSheet("QSplitter::handle:vertical {{margin: 4px 0px; "
-                                   "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-                                   "stop:0 rgba(255, 255, 255, 0),"
-                                   "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                                   "stop:1 rgba(255, 255, 255, 0));"
-                                   "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
-                            "QSplitter::handle:horizontal {{margin: 4px 0px; "
-                                   "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-                                   "stop:0 rgba(255, 255, 255, 0),"
-                                   "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                                   "stop:1 rgba(255, 255, 255, 0));"
-                                   "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b))
+                           "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
+                           "stop:0 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
+                           "stop:1 rgba(255, 255, 255, 0));"
+                           "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
+                           "QSplitter::handle:horizontal {{margin: 4px 0px; "
+                           "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
+                           "stop:0 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
+                           "stop:1 rgba(255, 255, 255, 0));"
+                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b))

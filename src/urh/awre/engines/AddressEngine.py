@@ -3,7 +3,7 @@ from collections import defaultdict
 import numpy as np
 
 from urh.awre.engines.Engine import Engine
-
+import itertools
 
 class AddressEngine(Engine):
     def __init__(self, bitvectors, participant_indices):
@@ -24,7 +24,7 @@ class AddressEngine(Engine):
         # TODO
         return dict()
 
-    def find_addresses(self):
+    def find_addresses(self) -> dict:
         message_indices_by_participant = defaultdict(list)
         for i, participant_index in enumerate(self.participant_indices):
             message_indices_by_participant[participant_index].append(i)
@@ -34,8 +34,24 @@ class AddressEngine(Engine):
                                                                           range_type="hex")
 
         self._debug("Common ranges by participant:", common_ranges_by_participant)
-        # Here we have candidate ranges
-        # The ranges may be too long if they have e.g. common destination addresses
 
+        result = defaultdict(list)
+        participants = sorted(common_ranges_by_participant)  # type: list[int]
 
+        if len(participants) == 0:
+            return result
+        elif len(participants) == 1:
+            participant = participants[0]
+            result[participant] = [cr.values[0] for cr in common_ranges_by_participant[participant]]
+            return result
 
+        for p1, p2 in itertools.combinations(participants, 2):
+            # common ranges are not merged yet, so there is only one element in values
+            values1 = [cr.value for cr in common_ranges_by_participant[p1]]
+            values2 = [cr.value for cr in common_ranges_by_participant[p2]]
+            for seq1, seq2 in itertools.product(values1, values2):
+                for sub_seq in self.find_longest_common_sub_sequences(seq1, seq2):
+                    result[p1].append(sub_seq)
+                    result[p2].append(sub_seq)
+
+        return result

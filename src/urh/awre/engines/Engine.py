@@ -11,9 +11,12 @@ class Engine(object):
 
 
     @staticmethod
-    def find_common_ranges_by_cluster(bitvectors, clustered_bitvectors, range_type="bit"):
+    def find_common_ranges_by_cluster(bitvectors, clustered_bitvectors, alpha=0.95, range_type="bit"):
         """
 
+        :param alpha: How many percent of values must be equal per range?
+        :param range_type: Describes what kind of range this is: bit, hex or byte.
+                           Needed for conversion of range start / end later
         :type bitvectors: list of np.ndarray
         :type clustered_bitvectors: dict
         :rtype: dict[int, list of CommonRange]
@@ -24,7 +27,7 @@ class Engine(object):
         }
 
         common_ranges_by_cluster = {
-            cluster: histogram.find_common_ranges(alpha=0.95, range_type=range_type)
+            cluster: histogram.find_common_ranges(alpha=alpha, range_type=range_type)
             for cluster, histogram in histograms.items()
         }
 

@@ -24,23 +24,18 @@ cpdef np.ndarray[np.int8_t, ndim=3] build_xor_matrix(list bitvectors):
     return result
 
 cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
-    cdef unsigned int len_bits1 = len(seq1)
-    cdef unsigned int len_bits2 = len(seq2)
+    cdef unsigned int i, j, longest = 0, counter = 0, len_bits1 = len(seq1), len_bits2 = len(seq2)
+    cdef unsigned short max_results = 10, current_result = 0
 
     cdef unsigned int[:, ::1] m = np.zeros((len_bits1+1, len_bits2+1), dtype=np.uint32, order="C")
-    cdef unsigned int longest = 0
-    cdef unsigned int counter = 0
-    cdef unsigned int i, j
-
-    cdef np.uint32_t max_results = 10
     cdef unsigned int[:, ::1] result_indices = np.zeros((max_results, 2), dtype=np.uint32, order="C")
-    cdef unsigned int current_result = 0
+
     for i in range(0, len_bits1):
         for j in range(0, len_bits2):
-
             if seq1[i] == seq2[j]:
                 counter = m[i, j] + 1
                 m[i+1, j+1] = counter
+
                 if counter > longest:
                     longest = counter
 
@@ -48,8 +43,8 @@ cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint
                     result_indices[current_result, 0] = i - counter + 1
                     result_indices[current_result, 1] = i + 1
                 elif counter == longest:
-                    current_result += 1
-                    if current_result < max_results:
+                    if current_result < max_results - 1:
+                        current_result += 1
                         result_indices[current_result, 0] = i - counter + 1
                         result_indices[current_result, 1] = i + 1
 

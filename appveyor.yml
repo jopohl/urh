@@ -44,7 +44,7 @@ install:
   - pip install --disable-pip-version-check --user --upgrade pip
 
   - pip install -r data\requirements.txt
-  - pip install pytest
+  - pip install pytest pytest-xdist
 
 build_script:
   # Build the compiled extension
@@ -52,7 +52,7 @@ build_script:
 
 test_script:
   - python src\urh\main.py --version
-  - python -m pytest
+  - python -m pytest --boxed
 
 after_test:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging)

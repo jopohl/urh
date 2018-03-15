@@ -17,7 +17,7 @@ class Preprocessor(object):
     3) Align all given messages on the identified preamble information
     """
 
-    __DEBUG__ = False
+    __DEBUG__ = True
 
     def __init__(self, messages: list):
         self.messages = messages  # type: list[Message]

@@ -4,7 +4,7 @@ import numpy as np
 from urh.cythonext import awre_util
 
 class Engine(object):
-    _DEBUG_ = False
+    _DEBUG_ = True
 
     def _debug(self, *args):
         if self._DEBUG_:

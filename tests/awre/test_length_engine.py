@@ -10,16 +10,11 @@ from urh.signalprocessing.FieldType import FieldType
 
 
 class TestLengthEngine(AWRETestCase):
-    def test_score_common_range(self):
-        common_range = CommonRange(0, 8, "0000011")
-        target_value = 1
-        le = LengthEngine([])
-        print(le.score_range(common_range, target_value))
-
     def test_simple_protocol(self):
         """
         Test a simple protocol with
         preamble, sync and length field (8 bit) and some random data
+
         :return:
         """
         mb = MessageTypeBuilder("simple_length_test")
@@ -55,6 +50,7 @@ class TestLengthEngine(AWRETestCase):
     def test_easy_protocol(self):
         """
         preamble, sync, sequence number, length field (8 bit) and some random data
+
         :return:
         """
         mb = MessageTypeBuilder("easy_length_test")
@@ -101,6 +97,7 @@ class TestLengthEngine(AWRETestCase):
     def test_medium_protocol(self):
         """
         Protocol with two message types. Length field only present in one of them
+
         :return:
         """
         mb1 = MessageTypeBuilder("data")
@@ -136,9 +133,3 @@ class TestLengthEngine(AWRETestCase):
 
         self.assertEqual(16, length_range.start)
         self.assertEqual(8, length_range.length)
-
-    def test_nibble_protocol(self):
-        """
-        Nibble protocol
-        :return:
-        """

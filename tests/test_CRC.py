@@ -140,28 +140,18 @@ class TestCRC(unittest.TestCase):
         c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
         inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
-        inpt = "0101010101010101010101010101010101010101010101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
         vrfy_crc = "0011101111010001"
 
-        print(vrfy_crc)
-        t1 = time.time()
-        result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
-        t1 = time.time() - t1
-        print(result, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
-        self.assertEqual(result[2], len(inpt) - 1 - 16) # start of crc
-
-        t2 = time.time()
-        result2 = c.guess_standard_parameters_and_datarange_improved(c.str2arr(inpt), c.str2arr(vrfy_crc))
-        t2 = time.time() - t2
-        print(result2, c.bit2str(c.crc(c.str2arr(inpt[result2[1]:result2[2]]))))
-        self.assertEqual(result2, (2, len(inpt) - 1 - 16 - 88, len(inpt) - 1 - 16))
-
-        t3 = time.time()
-        result3 = c.guess_standard_parameters_and_datarange_improved2(c.str2arr(inpt), c.str2arr(vrfy_crc))
-        t3 = time.time() - t3
-        print(result3, c.bit2str(c.crc(c.str2arr(inpt[result3[1]:result3[2]]))))
-        self.assertEqual(result3[2], len(inpt) - 1 - 16)  # start of crc
-
-        print("Old", t1)
-        print("New", t2)
-        print("Opt", t3)
+        t1 = 0
+        runs = 100
+        for i in range(0, runs):
+            t = time.time()
+            result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
+            t1 += time.time() - t
+            #print(result, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
+            self.assertEqual(result[0], 2)                          # Parameters = 2
+            self.assertEqual(result[1], len(inpt) - 1 - 16 - 88)    # start of datarange
+            self.assertEqual(result[2], len(inpt) - 1 - 16)         # end of datarange
+            inpt = "0"+inpt if i%2 == 0 else "1"+inpt
+        #print("Performance:", t1/runs)
+        self.assertLess(t1/runs, 0.1)   # Should be faster than 100ms in average

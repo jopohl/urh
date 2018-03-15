@@ -22,7 +22,6 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "32"
 
-os: Previous Visual Studio 2015
 max_jobs: 4
 clone_depth: 5
 
@@ -52,7 +51,7 @@ build_script:
 
 test_script:
   - python src\urh\main.py --version
-  - python -m pytest
+  - python -m pytest -s
 
 after_test:
   - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging)

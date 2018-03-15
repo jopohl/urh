@@ -4,7 +4,7 @@ import numpy as np
 
 
 class CommonRange(object):
-    def __init__(self, start, length, value: np.ndarray=None, score=None, field_type="Generic", message_indices=None,
+    def __init__(self, start, length, value: np.ndarray=None, score=0, field_type="Generic", message_indices=None,
                  range_type="bit"):
         """
 

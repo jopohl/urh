@@ -31,9 +31,8 @@ class TestLengthEngine(AWRETestCase):
         pg = ProtocolGenerator([mb.message_type],
                                syncs_by_mt={mb.message_type: "0x9a9d"})
         for data_length, num_messages in num_messages_by_data_length.items():
-            for _ in range(num_messages):
-                n = random.randint(0, 2 ** data_length - 1)
-                pg.generate_message(data=pg.decimal_to_bits(n, data_length))
+            for i in range(num_messages):
+                pg.generate_message(data=pg.decimal_to_bits(5*i, data_length))
 
         self.save_protocol("simple_length", pg)
 
@@ -61,17 +60,24 @@ class TestLengthEngine(AWRETestCase):
         mb = MessageTypeBuilder("easy_length_test")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
         mb.add_label(FieldType.Function.SYNC, 16)
-        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
         mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
         num_messages_by_data_length = {32: 10, 64: 15, 16: 5, 24: 7}
         pg = ProtocolGenerator([mb.message_type],
                                preambles_by_mt={mb.message_type: "10"*8},
                                syncs_by_mt={mb.message_type: "0xcafe"})
         for data_length, num_messages in num_messages_by_data_length.items():
-            for _ in range(num_messages):
-                data = "".join(random.choice(["0", "1"])
-                               for _ in range(data_length))
+            for i in range(num_messages):
+                if i % 4 == 0:
+                    data = "1" * data_length
+                elif i % 4 == 1:
+                    data = "0" * data_length
+                elif i % 4 == 2:
+                    data = "10" * (data_length//2)
+                else:
+                    data = "01" * (data_length//2)
+
                 pg.generate_message(data=data)
 
         self.save_protocol("easy_length", pg)
@@ -89,7 +95,7 @@ class TestLengthEngine(AWRETestCase):
                      if lbl.field_type == "Length")
         self.assertIsInstance(label, CommonRange)
         self.assertEqual(label.field_type, "Length")
-        self.assertEqual(label.start, 40)
+        self.assertEqual(label.start, 32)
         self.assertEqual(label.length, 8)
 
     def test_medium_protocol(self):
@@ -100,8 +106,8 @@ class TestLengthEngine(AWRETestCase):
         mb1 = MessageTypeBuilder("data")
         mb1.add_label(FieldType.Function.PREAMBLE, 8)
         mb1.add_label(FieldType.Function.SYNC, 8)
-        mb1.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
         mb1.add_label(FieldType.Function.LENGTH, 8)
+        mb1.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
         mb2 = MessageTypeBuilder("ack")
         mb2.add_label(FieldType.Function.PREAMBLE, 8)
@@ -110,12 +116,10 @@ class TestLengthEngine(AWRETestCase):
         pg = ProtocolGenerator([mb1.message_type, mb2.message_type],
                                syncs_by_mt={mb1.message_type: "11110011",
                                             mb2.message_type: "11110011"})
-        num_messages_by_data_length = {8: 5, 16: 10, 24: 5}
+        num_messages_by_data_length = {8: 5, 16: 10, 32: 5}
         for data_length, num_messages in num_messages_by_data_length.items():
-            for _ in range(num_messages):
-                data = "".join(random.choice(["0", "1"])
-                               for _ in range(data_length))
-                pg.generate_message(data=data, message_type=mb1.message_type)
+            for i in range(num_messages):
+                pg.generate_message(data=pg.decimal_to_bits(10*i, data_length), message_type=mb1.message_type)
                 pg.generate_message(message_type=mb2.message_type)
 
         self.save_protocol("medium_length", pg)
@@ -130,7 +134,7 @@ class TestLengthEngine(AWRETestCase):
         for i, sync_end in enumerate(ff.sync_ends):
             self.assertEqual(sync_end, 16, msg=str(i))
 
-        self.assertEqual(24, length_range.start)
+        self.assertEqual(16, length_range.start)
         self.assertEqual(8, length_range.length)
 
     def test_nibble_protocol(self):

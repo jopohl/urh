@@ -74,7 +74,7 @@ class LengthEngine(Engine):
 
                     rng = CommonRange(max_start, window_length,
                                       common_range.value[max_start:max_start+window_length],
-                                      score=max_score, field_type="Length",
+                                      score=max_score, field_type="length",
                                       message_indices=common_range.message_indices,
                                       range_type=common_range.range_type)
                     scored_ranges[length][window_length].append(rng)
@@ -89,7 +89,7 @@ class LengthEngine(Engine):
                 high_score_range = max(ranges, key=lambda x: x.score, default=None)  # type: CommonRange
 
                 if high_score_range is None or high_score_range.score < minimum_score:
-                    high_score_range = EmptyCommonRange(field_type="Length")
+                    high_score_range = EmptyCommonRange(field_type="length")
 
                 if length not in high_scores_by_length or high_scores_by_length[length].score < high_score_range.score:
                     high_scores_by_length[length] = high_score_range

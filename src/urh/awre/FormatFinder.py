@@ -254,8 +254,8 @@ class FormatFinder(object):
 
         result = []
         for i, sync_end in enumerate(sync_ends):
-            preamble = CommonRange(0, preamble_ends[i], field_type="Preamble")
-            sync = CommonRange(preamble_ends[i], sync_end - preamble_ends[i], field_type="Sync")
+            preamble = CommonRange(0, preamble_ends[i], field_type="preamble")
+            sync = CommonRange(preamble_ends[i], sync_end - preamble_ends[i], field_type="synchronization")
 
             mt = next((copy.deepcopy(mt) for mt in message_types if i in mt.message_indices),
                       CommonRangeContainer([], set()))

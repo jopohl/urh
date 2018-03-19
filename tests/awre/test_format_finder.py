@@ -45,24 +45,24 @@ class TestFormatFinder(AWRETestCase):
         preamble_ends = np.array([8, 8, 8, 10, 10])
         sync_ends = np.array([12, 12, 12, 14, 14])
 
-        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
+        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="length")
         container = CommonRangeContainer([rng], message_indices={0, 1, 2, 3, 4})
         retransformed = FormatFinder.retransform_message_types([container], preamble_ends, sync_ends)
         self.assertEqual(len(retransformed), 2)
 
         expected1 = CommonRangeContainer(
             [
-                CommonRange(0, 8, "1" * 8, score=1, field_type="Preamble"),
-                CommonRange(8, 4, "1" * 8, score=1, field_type="Sync"),
-                CommonRange(12, 8, "1" * 8, score=1, field_type="Length")
+                CommonRange(0, 8, "1" * 8, score=1, field_type="preamble"),
+                CommonRange(8, 4, "1" * 8, score=1, field_type="synchronization"),
+                CommonRange(12, 8, "1" * 8, score=1, field_type="length")
             ],
             message_indices={0, 1, 2}
         )
         expected2 = CommonRangeContainer(
             [
-                CommonRange(0, 10, "1" * 8, score=1, field_type="Preamble"),
-                CommonRange(10, 4, "1" * 8, score=1, field_type="Sync"),
-                CommonRange(14, 8, "1" * 8, score=1, field_type="Length")
+                CommonRange(0, 10, "1" * 8, score=1, field_type="preamble"),
+                CommonRange(10, 4, "1" * 8, score=1, field_type="synchronization"),
+                CommonRange(14, 8, "1" * 8, score=1, field_type="length")
             ],
             message_indices={3, 4}
         )

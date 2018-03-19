@@ -85,7 +85,7 @@ class CommonRange(object):
         if not isinstance(other, CommonRange):
             return False
 
-        return self.start == other.start and \
+        return self.bit_start == other.bit_start and \
                self.length == other.length and \
                self.range_type == other.range_type and \
                self.field_type == other.field_type

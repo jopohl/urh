@@ -6,18 +6,18 @@ from urh.awre.engines.Engine import Engine
 import itertools
 
 class AddressEngine(Engine):
-    def __init__(self, bitvectors, participant_indices):
+    def __init__(self, msg_vectors, participant_indices):
         """
 
-        :param bitvectors: Bitvectors behind synchronization
-        :type bitvectors: list of np.ndarray
+        :param msg_vectors: Message data behind synchronization
+        :type msg_vectors: list of np.ndarray
         :param participant_indices: list of participant indices
                                     where ith position holds participants index for ith messages
         :type participant_indices: list of int
         """
-        assert len(bitvectors) == len(participant_indices)
+        assert len(msg_vectors) == len(participant_indices)
 
-        self.bitvectors = bitvectors
+        self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
 
         self.addresses_by_participant = dict()  # type: dict[int, np.ndarray]
@@ -26,6 +26,9 @@ class AddressEngine(Engine):
         self.addresses_by_participant.update(self.find_addresses())
         self._debug(self.addresses_by_participant)
 
+        ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
+        #for i, msg_vector in enumerate(self.msg_vectors):
+        #
 
 
         # TODO
@@ -40,7 +43,7 @@ class AddressEngine(Engine):
         if len(already_assigned) == len(message_indices_by_participant):
             return dict()
 
-        common_ranges_by_participant = self.find_common_ranges_by_cluster(self.bitvectors,
+        common_ranges_by_participant = self.find_common_ranges_by_cluster(self.msg_vectors,
                                                                           message_indices_by_participant,
                                                                           range_type="hex")
 

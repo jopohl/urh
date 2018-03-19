@@ -66,20 +66,21 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
     return smaller_len
 
-cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):
+cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):
     """
-    Find the index of first occurrence of b in a. 
-    Return -1 if a does not contain b at all
+    Find the indices of occurrences of b in a. 
+    
     :param a: Larger array
     :param b: Subarray to search for
-    :return: First index of b in a or -1 if b not in a
+    :return: List of start indices of b in a 
     """
-    cdef int i, j
-    cdef int len_a = len(a), len_b = len(b)
+    cdef unsigned int i, j
+    cdef unsigned int len_a = len(a), len_b = len(b)
 
     if len_b > len_a:
         return -1
 
+    cdef list result = []
     cdef bool found
     for i in range(0, (len_a-len_b) + 1):
         found = True
@@ -88,5 +89,5 @@ cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):
                 found = False
                 break
         if found:
-            return i
-    return -1
+            result.append(i)
+    return result

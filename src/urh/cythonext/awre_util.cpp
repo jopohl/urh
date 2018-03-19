@@ -1511,6 +1511,23 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
 
+/* ListAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
+        Py_INCREF(x);
+        PyList_SET_ITEM(list, len, x);
+        Py_SIZE(list) = len+1;
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
@@ -1726,23 +1743,6 @@ static CYTHON_INLINE int __Pyx_PyList_Extend(PyObject* L, PyObject* v) {
     return PyList_SetSlice(L, PY_SSIZE_T_MAX, PY_SSIZE_T_MAX, v);
 #endif
 }
-
-/* ListAppend.proto */
-#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
-static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
-    PyListObject* L = (PyListObject*) list;
-    Py_ssize_t len = Py_SIZE(list);
-    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
-        Py_INCREF(x);
-        PyList_SET_ITEM(list, len, x);
-        Py_SIZE(list) = len+1;
-        return 0;
-    }
-    return PyList_Append(list, x);
-}
-#else
-#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
-#endif
 
 /* None.proto */
 static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
@@ -2104,7 +2104,7 @@ static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyArrayObject *__pyx_f_3urh_9cythonext_9awre_util_build_xor_matrix(PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_longest_common_sub_sequence_indices(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_occurrences(__Pyx_memviewslice, __Pyx_memviewslice, int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo *); /*proto*/
@@ -2380,7 +2380,7 @@ static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_build_xor_matrix(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_bitvectors); /* proto */
 static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_2find_longest_common_sub_sequence_indices(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_seq1, __Pyx_memviewslice __pyx_v_seq2); /* proto */
 static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_4find_first_difference(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_bits1, __Pyx_memviewslice __pyx_v_bits2); /* proto */
-static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_6find_first_occurrence(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b); /* proto */
+static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_6find_occurrences(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
@@ -3521,7 +3521,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_difference(__Pyx_memvie
  * 
  *     return smaller_len             # <<<<<<<<<<<<<<
  * 
- * cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):
+ * cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):
  */
   __pyx_r = __pyx_v_smaller_len;
   goto __pyx_L0;
@@ -3629,36 +3629,38 @@ static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_4find_first_difference(CYTH
 /* "urh/cythonext/awre_util.pyx":69
  *     return smaller_len
  * 
- * cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):             # <<<<<<<<<<<<<<
+ * cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):             # <<<<<<<<<<<<<<
  *     """
- *     Find the index of first occurrence of b in a.
+ *     Find the indices of occurrences of b in a.
  */
 
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  int __pyx_v_i;
-  int __pyx_v_j;
-  int __pyx_v_len_a;
-  int __pyx_v_len_b;
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_occurrences(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_3urh_9cythonext_9awre_util_find_occurrences(__Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  unsigned int __pyx_v_i;
+  unsigned int __pyx_v_j;
+  unsigned int __pyx_v_len_a;
+  unsigned int __pyx_v_len_b;
+  PyObject *__pyx_v_result = 0;
   bool __pyx_v_found;
-  int __pyx_r;
+  PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   size_t __pyx_t_1;
   int __pyx_t_2;
-  long __pyx_t_3;
+  PyObject *__pyx_t_3 = NULL;
   long __pyx_t_4;
-  int __pyx_t_5;
-  int __pyx_t_6;
-  int __pyx_t_7;
-  int __pyx_t_8;
-  Py_ssize_t __pyx_t_9;
-  Py_ssize_t __pyx_t_10;
-  __Pyx_RefNannySetupContext("find_first_occurrence", 0);
+  long __pyx_t_5;
+  unsigned int __pyx_t_6;
+  unsigned int __pyx_t_7;
+  unsigned int __pyx_t_8;
+  unsigned int __pyx_t_9;
+  size_t __pyx_t_10;
+  int __pyx_t_11;
+  __Pyx_RefNannySetupContext("find_occurrences", 0);
 
   /* "urh/cythonext/awre_util.pyx":78
  *     """
- *     cdef int i, j
- *     cdef int len_a = len(a), len_b = len(b)             # <<<<<<<<<<<<<<
+ *     cdef unsigned int i, j
+ *     cdef unsigned int len_a = len(a), len_b = len(b)             # <<<<<<<<<<<<<<
  * 
  *     if len_b > len_a:
  */
@@ -3668,7 +3670,7 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
   __pyx_v_len_b = __pyx_t_1;
 
   /* "urh/cythonext/awre_util.pyx":80
- *     cdef int len_a = len(a), len_b = len(b)
+ *     cdef unsigned int len_a = len(a), len_b = len(b)
  * 
  *     if len_b > len_a:             # <<<<<<<<<<<<<<
  *         return -1
@@ -3682,13 +3684,16 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
  *     if len_b > len_a:
  *         return -1             # <<<<<<<<<<<<<<
  * 
- *     cdef bool found
+ *     cdef list result = []
  */
-    __pyx_r = -1;
+    __Pyx_XDECREF(__pyx_r);
+    if (!(likely(PyList_CheckExact(__pyx_int_neg_1))||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_int_neg_1)->tp_name), 0))) __PYX_ERR(0, 81, __pyx_L1_error)
+    __Pyx_INCREF(__pyx_int_neg_1);
+    __pyx_r = ((PyObject*)__pyx_int_neg_1);
     goto __pyx_L0;
 
     /* "urh/cythonext/awre_util.pyx":80
- *     cdef int len_a = len(a), len_b = len(b)
+ *     cdef unsigned int len_a = len(a), len_b = len(b)
  * 
  *     if len_b > len_a:             # <<<<<<<<<<<<<<
  *         return -1
@@ -3696,19 +3701,31 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
  */
   }
 
-  /* "urh/cythonext/awre_util.pyx":84
+  /* "urh/cythonext/awre_util.pyx":83
+ *         return -1
  * 
+ *     cdef list result = []             # <<<<<<<<<<<<<<
+ *     cdef bool found
+ *     for i in range(0, (len_a-len_b) + 1):
+ */
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_v_result = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
+
+  /* "urh/cythonext/awre_util.pyx":85
+ *     cdef list result = []
  *     cdef bool found
  *     for i in range(0, (len_a-len_b) + 1):             # <<<<<<<<<<<<<<
  *         found = True
  *         for j in range(0, len_b):
  */
-  __pyx_t_3 = ((__pyx_v_len_a - __pyx_v_len_b) + 1);
-  __pyx_t_4 = __pyx_t_3;
-  for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
-    __pyx_v_i = __pyx_t_5;
+  __pyx_t_4 = ((__pyx_v_len_a - __pyx_v_len_b) + 1);
+  __pyx_t_5 = __pyx_t_4;
+  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
+    __pyx_v_i = __pyx_t_6;
 
-    /* "urh/cythonext/awre_util.pyx":85
+    /* "urh/cythonext/awre_util.pyx":86
  *     cdef bool found
  *     for i in range(0, (len_a-len_b) + 1):
  *         found = True             # <<<<<<<<<<<<<<
@@ -3717,31 +3734,31 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
  */
     __pyx_v_found = 1;
 
-    /* "urh/cythonext/awre_util.pyx":86
+    /* "urh/cythonext/awre_util.pyx":87
  *     for i in range(0, (len_a-len_b) + 1):
  *         found = True
  *         for j in range(0, len_b):             # <<<<<<<<<<<<<<
  *             if a[i+j] != b[j]:
  *                 found = False
  */
-    __pyx_t_6 = __pyx_v_len_b;
-    __pyx_t_7 = __pyx_t_6;
-    for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
-      __pyx_v_j = __pyx_t_8;
+    __pyx_t_7 = __pyx_v_len_b;
+    __pyx_t_8 = __pyx_t_7;
+    for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
+      __pyx_v_j = __pyx_t_9;
 
-      /* "urh/cythonext/awre_util.pyx":87
+      /* "urh/cythonext/awre_util.pyx":88
  *         found = True
  *         for j in range(0, len_b):
  *             if a[i+j] != b[j]:             # <<<<<<<<<<<<<<
  *                 found = False
  *                 break
  */
-      __pyx_t_9 = (__pyx_v_i + __pyx_v_j);
+      __pyx_t_1 = (__pyx_v_i + __pyx_v_j);
       __pyx_t_10 = __pyx_v_j;
-      __pyx_t_2 = (((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_a.data) + __pyx_t_9)) ))) != (*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_b.data) + __pyx_t_10)) )))) != 0);
+      __pyx_t_2 = (((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_a.data) + __pyx_t_1)) ))) != (*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ ((char *) (((__pyx_t_5numpy_uint8_t *) __pyx_v_b.data) + __pyx_t_10)) )))) != 0);
       if (__pyx_t_2) {
 
-        /* "urh/cythonext/awre_util.pyx":88
+        /* "urh/cythonext/awre_util.pyx":89
  *         for j in range(0, len_b):
  *             if a[i+j] != b[j]:
  *                 found = False             # <<<<<<<<<<<<<<
@@ -3750,16 +3767,16 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
  */
         __pyx_v_found = 0;
 
-        /* "urh/cythonext/awre_util.pyx":89
+        /* "urh/cythonext/awre_util.pyx":90
  *             if a[i+j] != b[j]:
  *                 found = False
  *                 break             # <<<<<<<<<<<<<<
  *         if found:
- *             return i
+ *             result.append(i)
  */
         goto __pyx_L7_break;
 
-        /* "urh/cythonext/awre_util.pyx":87
+        /* "urh/cythonext/awre_util.pyx":88
  *         found = True
  *         for j in range(0, len_b):
  *             if a[i+j] != b[j]:             # <<<<<<<<<<<<<<
@@ -3770,66 +3787,76 @@ static int __pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__Pyx_memvie
     }
     __pyx_L7_break:;
 
-    /* "urh/cythonext/awre_util.pyx":90
+    /* "urh/cythonext/awre_util.pyx":91
  *                 found = False
  *                 break
  *         if found:             # <<<<<<<<<<<<<<
- *             return i
- *     return -1
+ *             result.append(i)
+ *     return result
  */
     __pyx_t_2 = (__pyx_v_found != 0);
     if (__pyx_t_2) {
 
-      /* "urh/cythonext/awre_util.pyx":91
+      /* "urh/cythonext/awre_util.pyx":92
  *                 break
  *         if found:
- *             return i             # <<<<<<<<<<<<<<
- *     return -1
+ *             result.append(i)             # <<<<<<<<<<<<<<
+ *     return result
  */
-      __pyx_r = __pyx_v_i;
-      goto __pyx_L0;
+      __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 92, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "urh/cythonext/awre_util.pyx":90
+      /* "urh/cythonext/awre_util.pyx":91
  *                 found = False
  *                 break
  *         if found:             # <<<<<<<<<<<<<<
- *             return i
- *     return -1
+ *             result.append(i)
+ *     return result
  */
     }
   }
 
-  /* "urh/cythonext/awre_util.pyx":92
+  /* "urh/cythonext/awre_util.pyx":93
  *         if found:
- *             return i
- *     return -1             # <<<<<<<<<<<<<<
+ *             result.append(i)
+ *     return result             # <<<<<<<<<<<<<<
  */
-  __pyx_r = -1;
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_result);
+  __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
   /* "urh/cythonext/awre_util.pyx":69
  *     return smaller_len
  * 
- * cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):             # <<<<<<<<<<<<<<
+ * cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):             # <<<<<<<<<<<<<<
  *     """
- *     Find the index of first occurrence of b in a.
+ *     Find the indices of occurrences of b in a.
  */
 
   /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_occurrences", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_result);
+  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_3urh_9cythonext_9awre_util_6find_first_occurrence[] = "\n    Find the index of first occurrence of b in a. \n    Return -1 if a does not contain b at all\n    :param a: Larger array\n    :param b: Subarray to search for\n    :return: First index of b in a or -1 if b not in a\n    ";
-static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_occurrences(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_3urh_9cythonext_9awre_util_6find_occurrences[] = "\n    Find the indices of occurrences of b in a. \n    \n    :param a: Larger array\n    :param b: Subarray to search for\n    :return: List of start indices of b in a \n    ";
+static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_occurrences(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_a = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_b = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("find_first_occurrence (wrapper)", 0);
+  __Pyx_RefNannySetupContext("find_occurrences (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_a,&__pyx_n_s_b,0};
     PyObject* values[2] = {0,0};
@@ -3853,11 +3880,11 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence(PyOb
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_b)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_first_occurrence", 1, 2, 2, 1); __PYX_ERR(0, 69, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("find_occurrences", 1, 2, 2, 1); __PYX_ERR(0, 69, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_first_occurrence") < 0)) __PYX_ERR(0, 69, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_occurrences") < 0)) __PYX_ERR(0, 69, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3870,26 +3897,26 @@ static PyObject *__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_first_occurrence", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 69, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("find_occurrences", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 69, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("urh.cythonext.awre_util.find_first_occurrence", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_occurrences", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_3urh_9cythonext_9awre_util_6find_first_occurrence(__pyx_self, __pyx_v_a, __pyx_v_b);
+  __pyx_r = __pyx_pf_3urh_9cythonext_9awre_util_6find_occurrences(__pyx_self, __pyx_v_a, __pyx_v_b);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_6find_first_occurrence(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b) {
+static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_6find_occurrences(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_a, __Pyx_memviewslice __pyx_v_b) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("find_first_occurrence", 0);
+  __Pyx_RefNannySetupContext("find_occurrences", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_3urh_9cythonext_9awre_util_find_first_occurrence(__pyx_v_a, __pyx_v_b, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3urh_9cythonext_9awre_util_find_occurrences(__pyx_v_a, __pyx_v_b, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3898,7 +3925,7 @@ static PyObject *__pyx_pf_3urh_9cythonext_9awre_util_6find_first_occurrence(CYTH
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("urh.cythonext.awre_util.find_first_occurrence", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("urh.cythonext.awre_util.find_occurrences", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_a, 1);
@@ -19961,7 +19988,7 @@ static PyMethodDef __pyx_methods[] = {
   {"build_xor_matrix", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_1build_xor_matrix, METH_O, 0},
   {"find_longest_common_sub_sequence_indices", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_3find_longest_common_sub_sequence_indices, METH_VARARGS|METH_KEYWORDS, 0},
   {"find_first_difference", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_5find_first_difference, METH_VARARGS|METH_KEYWORDS, 0},
-  {"find_first_occurrence", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_7find_first_occurrence, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3urh_9cythonext_9awre_util_6find_first_occurrence},
+  {"find_occurrences", (PyCFunction)__pyx_pw_3urh_9cythonext_9awre_util_7find_occurrences, METH_VARARGS|METH_KEYWORDS, __pyx_doc_3urh_9cythonext_9awre_util_6find_occurrences},
   {0, 0, 0, 0}
 };
 

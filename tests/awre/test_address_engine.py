@@ -104,11 +104,13 @@ class TestAddressEngine(AWRETestCase):
 
     def test_find_first_occurrence(self):
         from urh.cythonext import awre_util
-        str1 = "00" * 100 + "12345" + "00" * 100
+        str1 = "00" * 100 + "1234500012345" + "00" * 100
         str2 = "12345"
 
         seq1 = np.array(list(map(int, str1)), dtype=np.uint8, order="C")
         seq2 = np.array(list(map(int, str2)), dtype=np.uint8, order="C")
-        index = awre_util.find_first_occurrence(seq1, seq2)
+        indices = awre_util.find_occurrences(seq1, seq2)
+        self.assertEqual(len(indices), 2)
+        index = indices[0]
         self.assertEqual(str1[index:index+len(str2)], str2)
-        self.assertEqual(awre_util.find_first_occurrence(seq1, np.ones(10, dtype=np.uint8)), -1)
+        self.assertEqual(awre_util.find_occurrences(seq1, np.ones(10, dtype=np.uint8)), [])

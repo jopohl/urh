@@ -1,12 +1,16 @@
 from collections import defaultdict
+from pprint import pprint
 
 import numpy as np
 
+from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
+from urh.cythonext import awre_util
 import itertools
 
+
 class AddressEngine(Engine):
-    def __init__(self, msg_vectors, participant_indices):
+    def __init__(self, msg_vectors, participant_indices, range_type="hex"):
         """
 
         :param msg_vectors: Message data behind synchronization
@@ -22,13 +26,28 @@ class AddressEngine(Engine):
 
         self.addresses_by_participant = dict()  # type: dict[int, np.ndarray]
 
+        self.range_type = range_type
+
     def find(self):
         self.addresses_by_participant.update(self.find_addresses())
         self._debug(self.addresses_by_participant)
 
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
-        #for i, msg_vector in enumerate(self.msg_vectors):
-        #
+        for i, msg_vector in enumerate(self.msg_vectors):
+            participant = self.participant_indices[i]
+            for address in self.addresses_by_participant[participant]:
+                for index in awre_util.find_occurrences(msg_vector, address):
+                    common_ranges = ranges_by_participant[participant]
+                    rng = next((cr for cr in common_ranges if cr.matches(index, address)), None)  # type: CommonRange
+                    if rng is not None:
+                        rng.message_indices.add(i)
+                    else:
+                        common_ranges.append(CommonRange(index, len(address), address, message_indices={i},
+                                                         range_type=self.range_type))
+
+
+        pprint(ranges_by_participant)
+
 
 
         # TODO

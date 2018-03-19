@@ -54,6 +54,11 @@ class CommonRange(object):
     def value_str(self):
         return util.convert_numbers_to_hex_string(self.value)
 
+    def matches(self, start: int, value: np.ndarray):
+        return self.start == start and \
+               self.length == len(value) and \
+               self.value_str == util.convert_numbers_to_hex_string(value)
+
     def __convert_number(self, n):
         if self.range_type == "bit":
             return n

@@ -4,7 +4,7 @@ import numpy as np
 
 
 class CommonRange(object):
-    def __init__(self, start, length, value: np.ndarray=None, score=0, field_type="Generic", message_indices=None,
+    def __init__(self, start, length, value: np.ndarray = None, score=0, field_type="Generic", message_indices=None,
                  range_type="bit"):
         """
 
@@ -14,6 +14,8 @@ class CommonRange(object):
         """
         self.start = start
         self.length = length
+
+        self.sync_end = 0
 
         if isinstance(value, str):
             value = np.array(list(map(lambda x: int(x, 16), value)), dtype=np.uint8)
@@ -35,11 +37,11 @@ class CommonRange(object):
 
     @property
     def bit_start(self):
-        return self.__convert_number(self.start)
+        return self.__convert_number(self.start) + self.sync_end
 
     @property
     def bit_end(self):
-        return self.__convert_number(self.end)
+        return self.__convert_number(self.start) + self.__convert_number(self.length) - 1 + self.sync_end
 
     @property
     def value(self):
@@ -70,8 +72,8 @@ class CommonRange(object):
             raise ValueError("Unknown range type {}".format(self.range_type))
 
     def __repr__(self):
-        result = "{} {}-{} ({})".format(self.field_type, self.start,
-                                        self.end, self.length)
+        result = "{} {}-{} ({} {})".format(self.field_type, self.bit_start,
+                                           self.bit_end, self.length, self.range_type)
 
         result += " Values: " + " ".join(map(util.convert_numbers_to_hex_string, self.values))
         if self.score is not None:
@@ -85,13 +87,14 @@ class CommonRange(object):
 
         return self.start == other.start and \
                self.length == other.length and \
+               self.range_type == other.range_type and \
                self.field_type == other.field_type
 
     def __hash__(self):
         return hash((self.start, self.length, self.field_type))
 
     def __lt__(self, other):
-        return self.start < other.start
+        return self.bit_start < other.bit_start
 
     def overlaps_with(self, other) -> bool:
         if not isinstance(other, CommonRange):
@@ -125,10 +128,11 @@ class CommonRangeContainer(object):
     This is the raw equivalent of a Message Type:
     A container of common ranges
     """
+
     def __init__(self, ranges: list, message_indices=set()):
         assert isinstance(ranges, list)
 
-        self.__ranges = ranges # type: list[CommonRange]
+        self.__ranges = ranges  # type: list[CommonRange]
         self.__ranges.sort()
 
         self.message_indices = message_indices
@@ -162,7 +166,8 @@ class CommonRangeContainer(object):
         return self.__ranges.__iter__()
 
     def __repr__(self):
-        return "{" + "{}".format(" ".join(map(str, self.__ranges))) + "}"
+        from pprint import pformat
+        return pformat(self.__ranges)
 
     def __eq__(self, other):
         if not isinstance(other, CommonRangeContainer):

@@ -32,6 +32,7 @@ class AddressEngine(Engine):
         self.addresses_by_participant.update(self.find_addresses())
         self._debug(self.addresses_by_participant)
 
+        # Find the address candidates by participant in messages
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
@@ -42,16 +43,38 @@ class AddressEngine(Engine):
                     if rng is not None:
                         rng.message_indices.add(i)
                     else:
-                        common_ranges.append(CommonRange(index, len(address), address, message_indices={i},
+                        common_ranges.append(CommonRange(index, len(address), address,
+                                                         message_indices={i},
                                                          range_type=self.range_type))
 
+        num_messages_by_participant = defaultdict(int)
+        for participant in self.participant_indices:
+            num_messages_by_participant[participant] += 1
 
-        pprint(ranges_by_participant)
+        # Look for cross swapped values between participant clusters
+        for p1, p2 in itertools.combinations(ranges_by_participant, 2):
+            for rng1, rng2 in itertools.product(ranges_by_participant[p1], ranges_by_participant[p2]):
+                if rng1 in ranges_by_participant[p2] and rng2 in ranges_by_participant[p1] \
+                        and (rng1.start == rng2.start + rng1.length or rng1.start == rng2.start - rng1.length) \
+                        and rng1.value_str == rng2.value_str:
+                    rng1.score += len(rng1.message_indices) / num_messages_by_participant[p1]
+                    rng2.score += len(rng1.message_indices) / num_messages_by_participant[p2]
 
+        highscored_ranges_by_participant = defaultdict(list)
+        for participant, common_ranges in ranges_by_participant.items():
+            sorted_ranges = sorted(sorted(common_ranges, key=lambda cr: cr.score, reverse=True)[:2])
+            try:
+                sorted_ranges[0].field_type = "source address"
+                highscored_ranges_by_participant[participant].append(sorted_ranges[0])
+                sorted_ranges[1].field_type = "destination address"
+                highscored_ranges_by_participant[participant].append(sorted_ranges[1])
+            except IndexError:
+                continue
 
+        # TODO: Consider shorter message that have only one address (e.g. ACKs)
+        # TODO: If shorter messages with one address are available, adapt assignment of SRC/DST
 
-        # TODO
-        return dict()
+        return highscored_ranges_by_participant
 
     def find_addresses(self) -> dict:
         message_indices_by_participant = defaultdict(list)

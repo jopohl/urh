@@ -76,10 +76,14 @@ class FormatFinder(object):
 
     def perform_iteration(self):
         for engine in self.engines:
-            high_scored_ranges = engine.find().values()  # type: list[CommonRange]
+            high_scored_ranges = []  # type: list[CommonRange]
+            for val in engine.find().values():
+                if isinstance(val, list):
+                    high_scored_ranges.extend(val)
+                else:
+                    high_scored_ranges.append(val)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
-            #self.update_message_types(merged_ranges)
         self.message_types = self.create_message_types(self.label_set)
         self.message_types = self.retransform_message_types(self.message_types, self.preamble_ends, self.sync_ends)
 
@@ -92,7 +96,7 @@ class FormatFinder(object):
         Merge common ranges if possible
 
         :type common_ranges: list of CommonRange
-        :rtype: list of CommonBitRange
+        :rtype: list of CommonRange
         """
         merged_ranges = []
         for common_range in common_ranges:
@@ -100,7 +104,8 @@ class FormatFinder(object):
             try:
                 same_range = next(rng for rng in merged_ranges
                                   if rng.bit_start == common_range.bit_start
-                                  and rng.bit_end == common_range.bit_end)
+                                  and rng.bit_end == common_range.bit_end
+                                  and rng.field_type == common_range.field_type)
                 same_range.values.extend(common_range.values)
                 same_range.message_indices.update(common_range.message_indices)
             except StopIteration:
@@ -159,7 +164,6 @@ class FormatFinder(object):
                 result.append(CommonRangeContainer(labels, message_indices={i}))
             else:
                 container.message_indices.add(i)
-
 
         result = FormatFinder.handle_overlapping_conflict(result)
 
@@ -249,7 +253,6 @@ class FormatFinder(object):
         assert len(preamble_ends) == len(sync_ends)
 
         result = []
-        message_types = copy.deepcopy(message_types)
         for i, sync_end in enumerate(sync_ends):
             preamble = CommonRange(0, preamble_ends[i], field_type="Preamble")
             sync = CommonRange(preamble_ends[i], sync_end - preamble_ends[i], field_type="Sync")
@@ -259,7 +262,7 @@ class FormatFinder(object):
 
             mt.message_indices = {i}
             for rng in mt:
-                rng.start += sync_end
+                rng.sync_end = sync_end
 
             mt.add_ranges([preamble, sync])
 

@@ -20,10 +20,14 @@ class AddressEngine(Engine):
         self.bitvectors = bitvectors
         self.participant_indices = participant_indices
 
-        self.addresses_by_participant = dict()
+        self.addresses_by_participant = dict()  # type: dict[int, np.ndarray]
 
     def find(self):
         self.addresses_by_participant.update(self.find_addresses())
+        self._debug(self.addresses_by_participant)
+
+
+
         # TODO
         return dict()
 

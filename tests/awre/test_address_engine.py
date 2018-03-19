@@ -84,6 +84,8 @@ class TestAddressEngine(AWRETestCase):
         self.assertIn(self.bob.address_hex, addresses_1)
         self.assertIn(self.bob.address_hex, addresses_2)
 
+        address_engine.find()
+
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util
         str1 = "0612345678"
@@ -100,3 +102,13 @@ class TestAddressEngine(AWRETestCase):
             self.assertIn(s, str1)
             self.assertIn(s, str2)
 
+    def test_find_first_occurrence(self):
+        from urh.cythonext import awre_util
+        str1 = "00" * 100 + "12345" + "00" * 100
+        str2 = "12345"
+
+        seq1 = np.array(list(map(int, str1)), dtype=np.uint8, order="C")
+        seq2 = np.array(list(map(int, str2)), dtype=np.uint8, order="C")
+        index = awre_util.find_first_occurrence(seq1, seq2)
+        self.assertEqual(str1[index:index+len(str2)], str2)
+        self.assertEqual(awre_util.find_first_occurrence(seq1, np.ones(10, dtype=np.uint8)), -1)

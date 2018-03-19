@@ -2,6 +2,8 @@
 cimport numpy as np
 import numpy as np
 
+from libcpp cimport bool
+
 cpdef np.ndarray[np.int8_t, ndim=3] build_xor_matrix(list bitvectors):
     cdef unsigned int maximum = 0
     cdef np.int8_t[:] bitvector_i, bitvector_j
@@ -63,3 +65,28 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
             return i
 
     return smaller_len
+
+cpdef int find_first_occurrence(np.uint8_t[::1] a, np.uint8_t[::1] b):
+    """
+    Find the index of first occurrence of b in a. 
+    Return -1 if a does not contain b at all
+    :param a: Larger array
+    :param b: Subarray to search for
+    :return: First index of b in a or -1 if b not in a
+    """
+    cdef int i, j
+    cdef int len_a = len(a), len_b = len(b)
+
+    if len_b > len_a:
+        return -1
+
+    cdef bool found
+    for i in range(0, (len_a-len_b) + 1):
+        found = True
+        for j in range(0, len_b):
+            if a[i+j] != b[j]:
+                found = False
+                break
+        if found:
+            return i
+    return -1

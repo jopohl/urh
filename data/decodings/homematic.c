@@ -52,9 +52,9 @@ int main(int argc, char **argv)
             dec[offset+0] = enc[offset+0];
             
             dec[offset+1] = (~enc[offset+1])^0x89;
-            for(i = offset+2; i < max; i++)
+            for(i = offset + 2; i < max - 3; i++)
                 dec[i] = (enc[i-1]+0xdc) ^ enc[i];
-            dec[offset+i] = enc[offset+i] ^ dec[offset+2];
+            dec[i] = enc[i] ^ dec[offset+2];
             
             dec[max-1]=0; // Set CRC to 0x0000
             dec[max-2]=0;
@@ -85,9 +85,9 @@ int main(int argc, char **argv)
             enc[offset+0] = dec[offset+0];
             
             enc[offset+1] = ~(dec[offset+1]^0x89);
-            for(i = offset+2; i < max; i++)
+            for(i = offset + 2; i < max - 3; i++)
                 enc[i] = (enc[i-1]+0xdc) ^ dec[i];
-            enc[offset+i] = dec[offset+i] ^ dec[offset+2];
+            enc[i] = dec[i] ^ dec[offset+2];
             
             enc[max-1]=0; // Set CRC to 0x0000
             enc[max-2]=0;

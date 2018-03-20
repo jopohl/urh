@@ -104,6 +104,7 @@ class AddressEngine(Engine):
         for p1, p2 in itertools.combinations(participants, 2):
             p1_already_assigned = p1 in already_assigned
             p2_already_assigned = p2 in already_assigned
+
             if p1_already_assigned and p2_already_assigned:
                 continue
 
@@ -111,11 +112,16 @@ class AddressEngine(Engine):
             values1 = [cr.value for cr in common_ranges_by_participant[p1]]
             values2 = [cr.value for cr in common_ranges_by_participant[p2]]
             for seq1, seq2 in itertools.product(values1, values2):
-                for sub_seq in self.find_longest_common_sub_sequences(seq1, seq2):
+                lcs = self.find_longest_common_sub_sequences(seq1, seq2)
+                if len(lcs) > 0:
                     if not p1_already_assigned:
-                        result[p1].append(sub_seq)
-
+                        result[p1].extend(lcs)
                     if not p2_already_assigned:
-                        result[p2].append(sub_seq)
+                        result[p2].extend(lcs)
+                else:
+                    if not p1_already_assigned:
+                        result[p1].extend([seq1, seq2])
+                    if not p2_already_assigned:
+                        result[p2].extend([seq1, seq2])
 
         return result

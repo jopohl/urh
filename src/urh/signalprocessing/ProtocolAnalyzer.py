@@ -12,6 +12,7 @@ from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions, util
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -753,5 +754,5 @@ class ProtocolAnalyzer(object):
         self.default_message_type.clear()
         for i, rng in enumerate(format_finder.message_types[0]):
             self.default_message_type.append(ProtocolLabel(name=rng.field_type,
-                                                           start=rng.bit_start,
-                                                           end=rng.bit_end, color_index=i))
+                                                           start=rng.bit_start, end=rng.bit_end, color_index=i,
+                                                           field_type=FieldType.from_caption(rng.field_type)))

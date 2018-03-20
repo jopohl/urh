@@ -1,12 +1,11 @@
+import itertools
 from collections import defaultdict
-from pprint import pprint
 
 import numpy as np
 
 from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
 from urh.cythonext import awre_util
-import itertools
 
 
 class AddressEngine(Engine):
@@ -30,7 +29,7 @@ class AddressEngine(Engine):
 
     def find(self):
         self.addresses_by_participant.update(self.find_addresses())
-        self._debug(self.addresses_by_participant)
+        self._debug("Addresses by participant", self.addresses_by_participant)
 
         # Find the address candidates by participant in messages
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
@@ -64,15 +63,14 @@ class AddressEngine(Engine):
         for participant, common_ranges in ranges_by_participant.items():
             sorted_ranges = sorted(sorted(common_ranges, key=lambda cr: cr.score, reverse=True)[:2])
             try:
-                sorted_ranges[0].field_type = "source address"
+                # Here we have ranges sorted by score. We assign destination address to first (highest scored) range
+                # because it is more likely for a message to only have a destination address than only a source address
+                sorted_ranges[0].field_type = "destination address"
                 highscored_ranges_by_participant[participant].append(sorted_ranges[0])
-                sorted_ranges[1].field_type = "destination address"
+                sorted_ranges[1].field_type = "source address"
                 highscored_ranges_by_participant[participant].append(sorted_ranges[1])
             except IndexError:
                 continue
-
-        # TODO: Consider shorter message that have only one address (e.g. ACKs)
-        # TODO: If shorter messages with one address are available, adapt assignment of SRC/DST
 
         return highscored_ranges_by_participant
 

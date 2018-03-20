@@ -55,8 +55,8 @@ class TestAddressEngine(AWRETestCase):
         mb.add_label(FieldType.Function.PREAMBLE, 8)
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
-        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
         mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
 
         num_messages = 50
 
@@ -90,14 +90,14 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         mt = ff.message_types[0]
-        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
-        self.assertIsNotNone(src_addr)
-        self.assertEqual(src_addr.bit_start, 32)
-        self.assertEqual(src_addr.bit_end, 47)
         dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 48)
-        self.assertEqual(dst_addr.bit_end, 63)
+        self.assertEqual(dst_addr.bit_start, 32)
+        self.assertEqual(dst_addr.bit_end, 47)
+        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertIsNotNone(src_addr)
+        self.assertEqual(src_addr.bit_start, 48)
+        self.assertEqual(src_addr.bit_end, 63)
 
     def test_two_participants_with_ack_messages(self):
         mb = MessageTypeBuilder("data")
@@ -142,6 +142,24 @@ class TestAddressEngine(AWRETestCase):
         self.assertIn(self.alice.address_hex, addresses_2)
         self.assertIn(self.bob.address_hex, addresses_1)
         self.assertIn(self.bob.address_hex, addresses_2)
+
+        ff.perform_iteration()
+        self.assertEqual(len(ff.message_types), 2)
+        mt = ff.message_types[0]
+        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        self.assertIsNotNone(dst_addr)
+        self.assertEqual(dst_addr.bit_start, 32)
+        self.assertEqual(dst_addr.bit_end, 47)
+        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertIsNotNone(src_addr)
+        self.assertEqual(src_addr.bit_start, 48)
+        self.assertEqual(src_addr.bit_end, 63)
+
+        mt = ff.message_types[1]
+        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        self.assertIsNotNone(dst_addr)
+        self.assertEqual(dst_addr.bit_start, 32)
+        self.assertEqual(dst_addr.bit_end, 47)
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util

@@ -101,14 +101,6 @@ class GenericCRC(object):
                             self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
 
-    def crc_steps(self, inpt):
-        result = c_util.crc_steps(array.array("B", inpt),
-                            array.array("B", self.polynomial),
-                            array.array("B", self.start_value),
-                            array.array("B", self.final_xor),
-                            self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
-        return [util.number_to_bits(x, self.poly_order - 1) for x in result]
-
     def get_crc_datarange(self, inpt, vrfy_crc):
         return c_util.get_crc_datarange(array.array("B", inpt),
                             array.array("B", self.polynomial),

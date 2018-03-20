@@ -154,6 +154,9 @@ def string2bits(bit_str: str) -> array.array:
 def bit2hex(bits: array.array, pad_zeros=False) -> str:
     return convert_bits_to_string(bits, 1, pad_zeros)
 
+def number_to_bits(n: int, length: int) -> array.array:
+    fmt = "{0:0" + str(length) + "b}"
+    return array.array("B", map(int, fmt.format(n)))
 
 def aggregate_bits(bits: array.array, size=4) -> array.array:
     result = array.array("B", [])

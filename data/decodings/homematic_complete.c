@@ -148,12 +148,11 @@ int main(int argc, char **argv)
              */
             
             // Decrypt
-            dec[offset+0] = enc[offset+0];
-            
-            dec[offset+1] = (~enc[offset+1])^0x89;
-            for(i = offset+2; i < max; i++)
+            dec[offset+0] = enc[offset+0];            
+            dec[offset+1] = (~enc[offset+1])^0x89;            
+            for(i = offset + 2; i < max - 3; i++)
                 dec[i] = (enc[i-1]+0xdc) ^ enc[i];
-            dec[offset+i] = enc[offset+i] ^ dec[offset+2];
+            dec[i] = enc[i] ^ dec[offset+2];
             
             // Recompute CRC and overwrite with FAKE-CRC, if CRC was OK before
             if(crc_ok)
@@ -190,12 +189,11 @@ int main(int argc, char **argv)
              */
             
             // Encrypt
-            enc[offset+0] = dec[offset+0];
-            
-            enc[offset+1] = ~(dec[offset+1]^0x89);
-            for(i = offset+2; i < max; i++)
+            enc[offset+0] = dec[offset+0];            
+            enc[offset+1] = ~(dec[offset+1])^0x89;            
+            for(i = offset + 2; i < max - 3; i++)
                 enc[i] = (enc[i-1]+0xdc) ^ dec[i];
-            enc[offset+i] = dec[offset+i] ^ dec[offset+2];
+            enc[i] = dec[i] ^ dec[offset+2];
             
             // Overwrite with correct CRC
             crcvalue = crc(&enc[8], max-2-8);

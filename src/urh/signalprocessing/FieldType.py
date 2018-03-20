@@ -46,7 +46,7 @@ class FieldType(object):
         try:
             ft_function = FieldType.Function(caption)
         except ValueError:
-            ft_function = None
+            return None
         return FieldType(caption, ft_function)
 
     @staticmethod

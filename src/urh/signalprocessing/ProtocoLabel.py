@@ -40,7 +40,10 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__field_type = field_type  # type: FieldType
+        if field_type is None:
+            self.__field_type = FieldType.from_caption(name)
+        else:
+            self.__field_type = field_type  # type: FieldType
 
         self.display_format_index = 0 if field_type is None else field_type.display_format_index
         self.display_bit_order_index = 0

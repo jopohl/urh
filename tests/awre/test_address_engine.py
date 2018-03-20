@@ -47,8 +47,7 @@ class TestAddressEngine(AWRETestCase):
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         address_dict = address_engine.find_addresses()
 
-        self.assertEqual(len(address_dict), 1)
-        self.assertIn(self.alice.address_hex, map(util.convert_numbers_to_hex_string, address_dict[0]))
+        self.assertEqual(len(address_dict), 0)
 
     def test_two_participants(self):
         mb = MessageTypeBuilder("address_two_participants")

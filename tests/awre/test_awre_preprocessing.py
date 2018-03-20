@@ -112,8 +112,9 @@ class TestAWREPreprocessing(AWRETestCase):
         self.save_protocol("simple_preamble", pg)
 
         preprocessor = Preprocessor(pg.protocol.messages)
-        preamble_lengths = preprocessor.get_preamble_lengths_from_sync_words([sync])
-        preprocessor.align_messages(preamble_lengths)
+        preamble_starts = preprocessor.get_raw_preamble_positions()[:, 0]
+        preamble_positions = preprocessor.get_preamble_lengths_from_sync_words([sync], preamble_starts)
+        preprocessor.align_messages(preamble_positions)
 
         self.save_protocol("simple_preamble_cropped", pg)
 

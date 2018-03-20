@@ -42,12 +42,14 @@ class TestFormatFinder(AWRETestCase):
         self.assertIn(expected5, message_types)
 
     def test_retransform_message_types(self):
-        preamble_ends = np.array([8, 8, 8, 10, 10])
+        preamble_starts = np.array([0, 0, 0, 0, 0])
+        preamble_lengths = np.array([8, 8, 8, 10, 10])
         sync_ends = np.array([12, 12, 12, 14, 14])
 
         rng = CommonRange(0, 8, "1" * 8, score=1, field_type="length")
         container = CommonRangeContainer([rng], message_indices={0, 1, 2, 3, 4})
-        retransformed = FormatFinder.retransform_message_types([container], preamble_ends, sync_ends)
+        retransformed = FormatFinder.retransform_message_types([container], preamble_starts,
+                                                               preamble_lengths, sync_ends)
         self.assertEqual(len(retransformed), 2)
 
         expected1 = CommonRangeContainer(
@@ -70,21 +72,20 @@ class TestFormatFinder(AWRETestCase):
         self.assertIn(expected1, retransformed)
         self.assertIn(expected2, retransformed)
 
-
     def test_handle_no_overlapping_conflict(self):
         rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}
         rng2 = CommonRange(8, 8, "1" * 8, score=1, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
-        container = CommonRangeContainer([rng1, rng2], message_indices={0,1,2})
+        container = CommonRangeContainer([rng1, rng2], message_indices={0, 1, 2})
 
         # no conflict
         result = FormatFinder.handle_overlapping_conflict([container])
         self.assertEqual(len(result), 1)
         self.assertEqual(len(result[0]), 2)
         self.assertIn(rng1, result[0])
-        self.assertEqual(result[0].message_indices, {0,1,2})
+        self.assertEqual(result[0].message_indices, {0, 1, 2})
         self.assertIn(rng2, result[0])
 
     def test_handle_easy_overlapping_conflict(self):
@@ -94,13 +95,12 @@ class TestFormatFinder(AWRETestCase):
         rng2 = CommonRange(8, 8, "1" * 8, score=0.8, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
-        container = CommonRangeContainer([rng1, rng2], message_indices={0,1,2})
+        container = CommonRangeContainer([rng1, rng2], message_indices={0, 1, 2})
         result = FormatFinder.handle_overlapping_conflict([container])
         self.assertEqual(len(result), 1)
         self.assertEqual(len(result[0]), 1)
         self.assertIn(rng1, result[0])
-        self.assertEqual(result[0].message_indices, {0,1,2})
-
+        self.assertEqual(result[0].message_indices, {0, 1, 2})
 
     def test_handle_medium_overlapping_conflict(self):
         rng1 = CommonRange(8, 8, "1" * 8, score=1, field_type="Length")

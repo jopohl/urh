@@ -35,7 +35,7 @@ class AddressEngine(Engine):
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
-            for address in self.addresses_by_participant[participant]:
+            for address in self.addresses_by_participant.get(participant, []):
                 for index in awre_util.find_occurrences(msg_vector, address):
                     common_ranges = ranges_by_participant[participant]
                     rng = next((cr for cr in common_ranges if cr.matches(index, address)), None)  # type: CommonRange
@@ -92,11 +92,7 @@ class AddressEngine(Engine):
         result = defaultdict(list)
         participants = sorted(common_ranges_by_participant)  # type: list[int]
 
-        if len(participants) == 0:
-            return result
-        elif len(participants) == 1:
-            participant = participants[0]
-            result[participant] = [cr.values[0] for cr in common_ranges_by_participant[participant]]
+        if len(participants) < 2:
             return result
 
         for p1, p2 in itertools.combinations(participants, 2):

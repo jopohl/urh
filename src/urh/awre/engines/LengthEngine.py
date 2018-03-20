@@ -1,5 +1,6 @@
 import math
 from collections import defaultdict
+from pprint import pprint
 
 import numpy as np
 
@@ -72,7 +73,7 @@ class LengthEngine(Engine):
                             max_score = score
                             max_start = start
 
-                    rng = CommonRange(max_start, window_length,
+                    rng = CommonRange(common_range.start + max_start, window_length,
                                       common_range.value[max_start:max_start+window_length],
                                       score=max_score, field_type="length",
                                       message_indices=common_range.message_indices,

@@ -3,6 +3,8 @@ import math
 from collections import defaultdict
 
 import array
+from pprint import pprint
+
 import numpy as np
 
 from urh.cythonext import awre_util
@@ -23,11 +25,13 @@ class Preprocessor(object):
         self.messages = messages  # type: list[Message]
 
     def preprocess(self) -> (np.ndarray, int):
-        sync_words = self.find_possible_syncs()
-        preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words)
-        return preamble_lengths, len(sync_words[0])
+        raw_preamble_positions = self.get_raw_preamble_positions()
+        sync_words = self.find_possible_syncs(raw_preamble_positions)
+        preamble_starts = raw_preamble_positions[:, 0]
+        preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
+        return preamble_starts, preamble_lengths, len(sync_words[0])
 
-    def get_preamble_lengths_from_sync_words(self, sync_words: list):
+    def get_preamble_lengths_from_sync_words(self, sync_words: list, preamble_starts: np.ndarray):
         # If there should be varying sync word lengths we need to return an array of sync lengths per message
         assert all(len(sync_word) == len(sync_words[0]) for sync_word in sync_words)
 
@@ -35,11 +39,11 @@ class Preprocessor(object):
 
         for i, msg in enumerate(self.messages):
             bits = msg.decoded_bits_str
-            preamble_lengths[i] = min((bits.index(sync_word)
+            preamble_lengths[i] = min((bits.index(sync_word) - preamble_starts[i]
                                        for sync_word in sync_words
                                        if sync_word in bits
                                        # There must be at least 2 bits preamble
-                                       and bits.index(sync_word) > 2),
+                                       and bits.index(sync_word) > 2 + preamble_starts[i]),
                                       default=0)
 
         return preamble_lengths
@@ -65,30 +69,13 @@ class Preprocessor(object):
 
         return average_preamble_length
 
-    def find_possible_syncs(self):
-        raw_preamble_lengths = self.get_raw_preamble_lengths()
+    def find_possible_syncs(self, raw_preamble_positions=None):
         difference_matrix = self.get_difference_matrix()
-        return self.determine_sync_candidates(raw_preamble_lengths, difference_matrix)
+        if raw_preamble_positions is None:
+            raw_preamble_positions = self.get_raw_preamble_positions()
+        return self.determine_sync_candidates(raw_preamble_positions, difference_matrix)
 
-    def determine_preamble_length(self) -> int:
-        # Create a histogram with byte size
-        histogram = defaultdict(int)
-        for length in (self.get_raw_preamble_length(msg) for msg in self.messages):
-            histogram[length] += 1
-
-        # Return the most common size
-        return max(histogram, key=histogram.get)
-
-    def determine_preamble_start(self) -> int:
-        histogram = defaultdict(int)
-        for bits in (msg.decoded_bits for msg in self.messages):
-            if len(bits) == 0:
-                continue
-            histogram[bits[0]] += 1
-
-        return max(histogram, key=histogram.get)
-
-    def determine_sync_candidates(self, raw_preamble_lengths: np.ndarray,
+    def determine_sync_candidates(self, raw_preamble_positions: np.ndarray,
                                   difference_matrix: np.ndarray,
                                   n_gram_length=4) -> list:
         sync_lengths = defaultdict(int)
@@ -102,7 +89,7 @@ class Preprocessor(object):
                     continue
 
                 for index, k in itertools.product([i, j], range(2)):
-                    start = raw_preamble_lengths[index, k]
+                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k+1]
 
                     # We take the next lower multiple of n for the sync len
                     # In doubt, it is better to under estimate the sync len to prevent it from
@@ -129,16 +116,18 @@ class Preprocessor(object):
 
         return sorted(sync_words, key=sync_words.get, reverse=True)
 
-    def get_raw_preamble_lengths(self) -> np.ndarray:
+    def get_raw_preamble_positions(self) -> np.ndarray:
         """
-        Return a 2D numpy array where first column is lower and second column is upper bound for message
+        Return a 2D numpy array where first column is the start of preamble
+        second and third columns are lower and upper bound for preamble length by message, respectively
         """
-        result = np.zeros((len(self.messages), 2), dtype=int)
+        result = np.zeros((len(self.messages), 3), dtype=int)
 
         for i, msg in enumerate(self.messages):
-            lower, upper = self.get_raw_preamble_length(msg)
-            result[i, 0] = lower
-            result[i, 1] = upper
+            start, lower, upper = self.get_raw_preamble_position(msg)
+            result[i, 0] = start
+            result[i, 1] = lower - start
+            result[i, 2] = upper - start
 
         return result
 
@@ -173,7 +162,7 @@ class Preprocessor(object):
         return number if number % 2 == 0 else number - 1
 
     @staticmethod
-    def get_raw_preamble_length(message: Message) -> tuple:
+    def get_raw_preamble_position(message: Message) -> tuple:
         """
         Get the raw preamble length of a message by simply finding the first index of at least two equal bits
         The method ensures that the returned length is a multiple of 2.
@@ -217,7 +206,7 @@ class Preprocessor(object):
             k = (upper-start) / (n+m)
 
         if k > 2:
-            return lower, upper
+            return start, lower, upper
         else:
             # no preamble found
-            return 0, 0
+            return 0, 0, 0

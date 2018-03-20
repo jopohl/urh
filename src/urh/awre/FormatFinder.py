@@ -14,7 +14,7 @@ from urh.cythonext import awre_util
 class FormatFinder(object):
     MIN_MESSAGES_PER_CLUSTER = 2
 
-    def __init__(self, protocol, participants=None, shortest_field_length=8):
+    def __init__(self, protocol, participants=None, shortest_field_length=None):
         """
 
         :type protocol: urh.signalprocessing.ProtocolAnalyzer.ProtocolAnalyzer
@@ -22,18 +22,19 @@ class FormatFinder(object):
         """
         if participants is not None:
             protocol.auto_assign_participants(participants)
+        self.preamble_starts, self.preamble_lengths, sync_len = Preprocessor(protocol.messages).preprocess()
+        self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
 
-        self.shortest_field_length = shortest_field_length
-        self.preamble_ends, sync_len = Preprocessor(protocol.messages).preprocess()
-        self.sync_ends = self.preamble_ends + sync_len
+        if shortest_field_length is None:
+            self.shortest_field_length = 8 if sync_len >= 8 else 4 if sync_len >= 4 else 1
 
-        n = shortest_field_length
+        n = self.shortest_field_length
         for i, value in enumerate(self.sync_ends):
             # In doubt it is better to under estimate the sync end
-            self.sync_ends[i] = n * max(int(math.floor(value / n)), 1)
+            self.sync_ends[i] = n * max(int(math.floor((value - self.preamble_starts[i]) / n)), 1) + self.preamble_starts[i]
 
-            if self.sync_ends[i] < self.preamble_ends[i]:
-                self.preamble_ends[i] = self.sync_ends[i]
+            if self.sync_ends[i] - self.preamble_starts[i] < self.preamble_lengths[i]:
+                self.preamble_lengths[i] = self.sync_ends[i] - self.preamble_starts[i]
 
         self.messages = protocol.messages
         self.bitvectors = self.get_bitvectors_from_messages(protocol.messages, self.sync_ends)
@@ -85,7 +86,8 @@ class FormatFinder(object):
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
         self.message_types = self.create_message_types(self.label_set)
-        self.message_types = self.retransform_message_types(self.message_types, self.preamble_ends, self.sync_ends)
+        self.message_types = self.retransform_message_types(self.message_types, self.preamble_starts,
+                                                            self.preamble_lengths, self.sync_ends)
 
     def build_xor_matrix(self):
         return awre_util.build_xor_matrix(self.bitvectors)
@@ -234,9 +236,8 @@ class FormatFinder(object):
 
         return CommonRangeContainer(result, message_indices=copy.copy(container.message_indices))
 
-
     @staticmethod
-    def retransform_message_types(message_types, preamble_ends, sync_ends):
+    def retransform_message_types(message_types, preamble_starts, preamble_lengths, sync_ends):
         """
         Retransform the message types into original message space.
         That is, consider preamble and sync information.
@@ -246,16 +247,18 @@ class FormatFinder(object):
         3. While we are on it, we create Preamble and Sync ranges in this method
 
         :type message_types: list of CommonRangeContainer
-        :type preamble_ends: np.ndarray
+        :type preamble_starts: np.ndarray
+        :type preamble_lengths: np.ndarray
         :type sync_ends: np.ndarray
         :return:
         """
-        assert len(preamble_ends) == len(sync_ends)
+        assert len(preamble_starts) == len(preamble_lengths) == len(sync_ends)
 
         result = []
         for i, sync_end in enumerate(sync_ends):
-            preamble = CommonRange(0, preamble_ends[i], field_type="preamble")
-            sync = CommonRange(preamble_ends[i], sync_end - preamble_ends[i], field_type="synchronization")
+            preamble = CommonRange(preamble_starts[i], preamble_lengths[i], field_type="preamble")
+            preamble_end = preamble_starts[i] + preamble_lengths[i]
+            sync = CommonRange(preamble_end, sync_end - preamble_end, field_type="synchronization")
 
             mt = next((copy.deepcopy(mt) for mt in message_types if i in mt.message_indices),
                       CommonRangeContainer([], set()))

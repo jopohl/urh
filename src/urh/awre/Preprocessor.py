@@ -190,7 +190,7 @@ class Preprocessor(object):
                 n = bits.index(b, start) - start
                 m = bits.index(a, start + n) - n - start
             except ValueError:
-                return 0, 0
+                return 0, 0, 0
 
             preamble_pattern = a * n + b * m
             i = start

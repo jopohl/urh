@@ -7,6 +7,7 @@ from PyQt5.QtCore import QTimer, QDir
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
@@ -14,8 +15,10 @@ from urh.controller.dialogs.OptionsDialog import OptionsDialog
 
 class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent_file(self):
+        self.form.init_recent_file_action_list([])
+
         # Ensure we have at least one recent action
-        self.add_signal_to_form("esaver.complex")
+        self.form.add_files([get_path_for_data_file("esaver.complex")])
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
         self.form.recentFileActionList[0].trigger()
@@ -58,6 +61,14 @@ class TestMaincontrollerGUI(QtTestCase):
         for i, bit_seq in enumerate(bits):
             table_data = "".join(map(str, self.form.compare_frame_controller.protocol_model.display_data[i]))
             self.assertEqual(bit_seq, table_data)
+
+    def test_open_options_dialog(self):
+        self.form.show_options_dialog_specific_tab(1)
+        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)),
+                 None)  # type: OptionsDialog
+        self.assertIsNotNone(w)
+        self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
+        w.close()
 
     def test_import_csv(self):
         def accept_csv_dialog():

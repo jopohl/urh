@@ -4,6 +4,7 @@ import sip
 import time
 import unittest
 
+import gc
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
@@ -57,8 +58,7 @@ class QtTestCase(unittest.TestCase):
             self.form.close()
             sip.delete(self.form)
             self.form = None
-        QTest.qSleep(1)
-        QTest.qWait(self.CLOSE_TIMEOUT)
+        gc.collect()
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

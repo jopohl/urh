@@ -443,9 +443,6 @@ class TestSendRecvDialog(QtTestCase):
 
             dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(10)
             dialog.device_settings_widget.ui.spinBoxNRepeat.editingFinished.emit()
-            if dialog.is_tx:
-                self.assertEqual(dialog.device.num_sending_repeats, 10)
-            else:
-                self.assertEqual(dialog.device.num_sending_repeats, None)
+            self.assertEqual(dialog.device.num_sending_repeats, 10)
 
             self.__close_dialog(dialog)

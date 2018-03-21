@@ -26,7 +26,7 @@ branches:
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
 
 git:
-  depth: 3
+  depth: 5
 
 install:
   - |

@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
@@ -15,7 +16,7 @@ from urh.controller.dialogs.OptionsDialog import OptionsDialog
 
 class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent_file(self):
-        self.form.init_recent_file_action_list([])
+        constants.SETTINGS.setValue("recentFiles", [])
 
         # Ensure we have at least one recent action
         self.form.add_files([get_path_for_data_file("esaver.complex")])

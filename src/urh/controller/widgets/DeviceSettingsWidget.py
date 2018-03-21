@@ -80,7 +80,9 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix+"if_gain", config.DEFAULT_IF_GAIN)
         set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix+"baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
-        self.ui.spinBoxNRepeat.setValue(constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+        set_val(self.ui.spinBoxNRepeat, "num_sending_repeats",
+                constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+
         if self.rx_tx_prefix+"antenna_index" in conf_dict:
             self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix+"antenna_index"])
 
@@ -323,7 +325,7 @@ class DeviceSettingsWidget(QWidget):
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}
         for attrib in ("frequency", "sample_rate", "bandwidth", "gain", "if_gain", "baseband_gain", "freq_correction",
-                       "antenna_index"):
+                       "antenna_index", "num_sending_repeats"):
             try:
                 value = getattr(self.device, attrib, None)
                 if value is not None:

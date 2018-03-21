@@ -100,6 +100,7 @@ class OptionsDialog(QDialog):
         self.read_options()
 
         self.old_default_view = self.ui.comboBoxDefaultView.currentIndex()
+        self.old_num_sending_repeats = self.ui.spinBoxNumSendingRepeats.value()
         self.ui.labelRebuildNativeStatus.setText("")
 
         self.show_available_colormaps()
@@ -239,6 +240,8 @@ class OptionsDialog(QDialog):
             changed_values['show_pause_as_time'] = bool(self.ui.checkBoxPauseTime.isChecked())
         if self.old_default_view != self.ui.comboBoxDefaultView.currentIndex():
             changed_values['default_view'] = self.ui.comboBoxDefaultView.currentIndex()
+        if self.old_num_sending_repeats != self.ui.spinBoxNumSendingRepeats.value():
+            changed_values["num_sending_repeats"] = self.ui.spinBoxNumSendingRepeats.value()
 
         settings = constants.SETTINGS
         settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())

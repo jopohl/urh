@@ -452,25 +452,11 @@ class VirtualDevice(QObject):
 
     @property
     def num_sending_repeats(self):
-        if self.mode == Mode.send:
-            if self.backend == Backends.grc:
-                return self.__dev.max_repeats
-            elif self.backend == Backends.native:
-                return self.__dev.sending_repeats
-            else:
-                raise ValueError("Unsupported Backend")
+        return self.__dev.sending_repeats
 
     @num_sending_repeats.setter
     def num_sending_repeats(self, value):
-        if self.mode == Mode.send:
-            if self.backend == Backends.grc:
-                if value != self.__dev.max_repeats:
-                    self.__dev.max_repeats = value
-                    self.__dev.current_iteration = 0
-            elif self.backend in (Backends.native, Backends.network):
-                self.__dev.sending_repeats = value
-            else:
-                raise ValueError("Unsupported Backend")
+        self.__dev.sending_repeats = value
 
     @property
     def current_index(self):

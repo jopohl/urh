@@ -59,14 +59,6 @@ class TestMaincontrollerGUI(QtTestCase):
             table_data = "".join(map(str, self.form.compare_frame_controller.protocol_model.display_data[i]))
             self.assertEqual(bit_seq, table_data)
 
-    def test_open_options_dialog(self):
-        self.form.show_options_dialog_specific_tab(1)
-        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)),
-                 None)  # type: OptionsDialog
-        self.assertIsNotNone(w)
-        self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
-        w.close()
-
     def test_import_csv(self):
         def accept_csv_dialog():
             w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialog)), None)

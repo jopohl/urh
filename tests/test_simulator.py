@@ -249,8 +249,7 @@ class TestSimulator(QtTestCase):
         QTest.qWait(50)
         self.assertTrue(simulator.simulation_is_finished())
 
-        while simulator.simulation_thread.is_alive():
-            time.sleep(1)
+        time.sleep(1)
 
         conn.close()
         s.close()

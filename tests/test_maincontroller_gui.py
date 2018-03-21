@@ -7,6 +7,8 @@ from PyQt5.QtCore import QTimer, QDir
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from tests.utils_testing import get_path_for_data_file
+from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
@@ -14,8 +16,10 @@ from urh.controller.dialogs.OptionsDialog import OptionsDialog
 
 class TestMaincontrollerGUI(QtTestCase):
     def test_open_recent_file(self):
+        constants.SETTINGS.setValue("recentFiles", [])
+
         # Ensure we have at least one recent action
-        self.add_signal_to_form("esaver.complex")
+        self.form.add_files([get_path_for_data_file("esaver.complex")])
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
         self.form.recentFileActionList[0].trigger()
@@ -67,19 +71,21 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
         w.close()
 
-    def __accept_csv_dialog(self):
-        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialog)), None)
-        w.accept()
-
     def test_import_csv(self):
+        def accept_csv_dialog():
+            w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialog)), None)
+            w.accept()
+            timer.stop()
+
         timer = QTimer(self.form)
         timer.setInterval(10)
-        timer.setSingleShot(True)
-        timer.timeout.connect(self.__accept_csv_dialog)
+        timer.timeout.connect(accept_csv_dialog)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         timer.start()
         self.form.add_files([self.get_path_for_filename("csvtest.csv")])
+
+        self.assertFalse(timer.isActive())
 
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 100)
         self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest.complex")))

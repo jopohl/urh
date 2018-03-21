@@ -20,13 +20,13 @@ class SenderThread(AbstractBaseThread):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUSH)
         self.gr_port = self.socket.bind_to_random_port("tcp://{0}".format(self.ip))
-        self.max_repeats = 1  # How often shall we send the data?
+        self.sending_repeats = 1  # How often shall we send the data?
 
         self.__samples_per_transmission = self.MAX_SAMPLES_PER_TRANSMISSION
 
     @property
     def repeat_endless(self):
-        return self.max_repeats == 0 or self.max_repeats == -1
+        return self.sending_repeats == 0 or self.sending_repeats == -1
 
     @property
     def samples_per_transmission(self):
@@ -58,7 +58,7 @@ class SenderThread(AbstractBaseThread):
                 else:
                     continue
 
-                if self.repeat_endless or self.current_iteration < self.max_repeats:
+                if self.repeat_endless or self.current_iteration < self.sending_repeats:
                     self.current_index = 0
 
             self.current_index = len_data - 1

@@ -724,7 +724,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def show_options_dialog_action_triggered(self):
-        self.show_options_dialog_specific_tab(tab_index=0)
+        self.show_options_dialog_specific_tab(tab_index=4)
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):

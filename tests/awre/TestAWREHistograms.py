@@ -120,9 +120,53 @@ class TestAWREHistograms(AWRETestCase):
         if SHOW_PLOTS:
             plt.show()
 
-    def test_hard_protocol(self):
+    def test_ack_protocol(self):
         """
-        Test a protocol with multiple message types
+        Test a protocol with acks
         :return:
         """
-        pass  # todo
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 8)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 8)
+        mb_ack.add_label(FieldType.Function.SYNC, 8)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        alice = Participant("Alice", "A", "1234", color_index=0)
+        bob = Participant("Bob", "B", "5a9d", color_index=1)
+
+        num_messages = 50
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
+                               syncs_by_mt={mb.message_type: "0xbf", mb_ack.message_type: "0xbf"},
+                               little_endian=False)
+        for i in range(num_messages):
+            if i % 2 == 0:
+                source, dest = alice, bob
+            else:
+                source, dest = bob, alice
+            pg.generate_message(data="0xffff", source=source, destination=dest)
+            pg.generate_message(data="", source=dest, destination=source, message_type=mb_ack.message_type)
+
+        self.save_protocol("proto_with_acks", pg)
+
+        plt.subplot(2, 2, 1)
+        plt.title("All messages")
+        bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages)
+        h = Histogram(bitvectors)
+        h.subplot_on(plt)
+
+        for i, (participant, bitvectors) in enumerate(
+                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol).items())):
+            plt.subplot(2, 2, i + 3)
+            plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
+            Histogram(bitvectors).subplot_on(plt)
+
+        if SHOW_PLOTS:
+            plt.show()

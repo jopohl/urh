@@ -126,6 +126,8 @@ class ProtocolGenerator(object):
                     value *= 8
 
                 bits.append(self.decimal_to_bits(value, len_field))
+            elif lbl.field_type.function == FieldType.Function.TYPE:
+                bits.append(self.decimal_to_bits(hash(mt) % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.SEQUENCE_NUMBER:
                 bits.append(self.decimal_to_bits(self.sequence_numbers[mt], len_field))
             elif lbl.field_type.function == FieldType.Function.DST_ADDRESS:

@@ -58,7 +58,7 @@ class Histogram(object):
         :return:
         """
 
-        data_indices = np.argwhere(self.data > alpha).flatten()
+        data_indices = np.argwhere(self.data >= alpha).flatten()
 
         if len(data_indices) < 2:
             return []

@@ -1,9 +1,7 @@
 import random
-from pprint import pprint
 
 import numpy as np
 
-from urh.util import util
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
@@ -11,6 +9,7 @@ from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
+from urh.util import util
 
 
 class TestAddressEngine(AWRETestCase):
@@ -153,6 +152,69 @@ class TestAddressEngine(AWRETestCase):
         self.assertIsNotNone(src_addr)
         self.assertEqual(src_addr.bit_start, 48)
         self.assertEqual(src_addr.bit_end, 63)
+
+        mt = ff.message_types[1]
+        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        self.assertIsNotNone(dst_addr)
+        self.assertEqual(dst_addr.bit_start, 32)
+        self.assertEqual(dst_addr.bit_end, 47)
+
+    def test_two_participants_with_ack_messages_and_type(self):
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.TYPE, 8)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 8)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        num_messages = 50
+
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
+                               syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
+                               participants=[self.alice, self.bob])
+
+        random.seed(0)
+        for i in range(num_messages):
+            if i % 2 == 0:
+                source, destination = self.alice, self.bob
+                data_length = 8
+            else:
+                source, destination = self.bob, self.alice
+                data_length = 16
+            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                source=source, destination=destination)
+            pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
+
+        self.save_protocol("address_two_participants_with_acks_and_types", pg)
+
+        ff = FormatFinder(pg.protocol)
+        address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
+        address_dict = address_engine.find_addresses()
+        self.assertEqual(len(address_dict), 2)
+        addresses_1 = list(map(util.convert_numbers_to_hex_string, address_dict[0]))
+        addresses_2 = list(map(util.convert_numbers_to_hex_string, address_dict[1]))
+        self.assertIn(self.alice.address_hex, addresses_1)
+        self.assertIn(self.alice.address_hex, addresses_2)
+        self.assertIn(self.bob.address_hex, addresses_1)
+        self.assertIn(self.bob.address_hex, addresses_2)
+
+        ff.perform_iteration()
+        self.assertEqual(len(ff.message_types), 2)
+        mt = ff.message_types[0]
+        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        self.assertIsNotNone(dst_addr)
+        self.assertEqual(dst_addr.bit_start, 40)
+        self.assertEqual(dst_addr.bit_end, 55)
+        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertIsNotNone(src_addr)
+        self.assertEqual(src_addr.bit_start, 56)
+        self.assertEqual(src_addr.bit_end, 71)
 
         mt = ff.message_types[1]
         dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)

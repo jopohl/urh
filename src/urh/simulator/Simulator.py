@@ -371,8 +371,8 @@ class Simulator(QObject):
             return False, "Failed to decode message {}".format(msg_index)
 
         for lbl in received_msg.message_type:
-            if lbl.value_type_index in [1, 3, 4]:
-                # get live, external program, random
+            if lbl.value_type_index in (1, 4):
+                # get live, random
                 continue
 
             start_recv, end_recv = received_msg.get_label_range(lbl.label, 0, True)

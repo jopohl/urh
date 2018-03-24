@@ -332,7 +332,7 @@ class TestSimulator(QtTestCase):
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
-        self.alice.send_raw_data(modulator.modulate("10" * 42), 1)
+        self.alice.send_raw_data(modulator.modulate("100"+"10101010"*42), 1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)

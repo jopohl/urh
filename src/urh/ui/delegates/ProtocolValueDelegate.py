@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QFileDialog, QLineEdit, QHBoxLayout, \
-    QToolButton, QCompleter, QLabel, QSpinBox
+from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt
+from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QLineEdit, QHBoxLayout, \
+    QCompleter, QLabel, QSpinBox, QDirModel
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -10,36 +10,18 @@ class ExternalProgramWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        completer = QCompleter()
+        completer.setModel(QDirModel(completer))
         self.line_edit_external_program = QLineEdit()
-
-        self.btn_choose_ext_prog = QToolButton()
-        self.btn_choose_ext_prog.setText("...")
-        self.btn_choose_ext_prog.clicked.connect(self.on_btn_choose_ext_prog_clicked)
+        self.line_edit_external_program.setCompleter(completer)
+        self.line_edit_external_program.setPlaceholderText("Type in a path to external program.")
 
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.addWidget(self.line_edit_external_program)
-        self.layout.addWidget(self.btn_choose_ext_prog)
 
         self.setLayout(self.layout)
-
-    @pyqtSlot()
-    def on_btn_choose_ext_prog_clicked(self):
-        dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.ExistingFile)
-        dialog.setWindowTitle("Choose external program")
-
-        if dialog.exec_():
-            try:
-                file_name = dialog.selectedFiles()[0]
-            except IndexError:
-                file_name = ""
-        else:
-            file_name = ""
-
-        if file_name:
-            self.line_edit_external_program.setText(file_name)
 
 
 class RandomValueWidget(QWidget):

@@ -400,6 +400,7 @@ class Ui_SignalFrame(object):
         self.btnShowHideStartEnd.setCheckable(True)
         self.btnShowHideStartEnd.setObjectName("btnShowHideStartEnd")
         self.horizontalLayout_3.addWidget(self.btnShowHideStartEnd)
+
         self.lNumSelectedSamples = QtWidgets.QLabel(self.layoutWidget)
         self.lNumSelectedSamples.setObjectName("lNumSelectedSamples")
         self.horizontalLayout_3.addWidget(self.lNumSelectedSamples)
@@ -411,6 +412,19 @@ class Ui_SignalFrame(object):
         self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_3.setObjectName("line_3")
         self.horizontalLayout_3.addWidget(self.line_3)
+
+        self.lNumSelectedBits = QtWidgets.QLabel(self.layoutWidget)
+        self.lNumSelectedBits.setObjectName("lNumSelectedBits")
+        self.horizontalLayout_3.addWidget(self.lNumSelectedBits)
+        self.lTextSelectedBits = QtWidgets.QLabel(self.layoutWidget)
+        self.lTextSelectedBits.setObjectName("lTextSelectedBits")
+        self.horizontalLayout_3.addWidget(self.lTextSelectedBits)
+        self.line_4 = QtWidgets.QFrame(self.layoutWidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_3.addWidget(self.line_4)
+
         self.lDuration = QtWidgets.QLabel(self.layoutWidget)
         self.lDuration.setObjectName("lDuration")
         self.horizontalLayout_3.addWidget(self.lDuration)
@@ -574,6 +588,12 @@ class Ui_SignalFrame(object):
         self.lNumSelectedSamples.setText(_translate("SignalFrame", "0"))
         self.lTextSelectedSamples.setToolTip(_translate("SignalFrame", "Number of currently selected samples."))
         self.lTextSelectedSamples.setText(_translate("SignalFrame", "selected"))
+
+        self.lNumSelectedBits.setToolTip(_translate("SignalFrame", "Number of currently selected bits."))
+        self.lNumSelectedBits.setText(_translate("SignalFrame", "0"))
+        self.lTextSelectedBits.setToolTip(_translate("SignalFrame", "Number of currently selected bits."))
+        self.lTextSelectedBits.setText(_translate("SignalFrame", "bits selected"))
+
         self.lDuration.setText(_translate("SignalFrame", "42 µs"))
         self.labelRSSI.setText(_translate("SignalFrame", "RSSI: 0,434"))
         self.btnFilter.setText(_translate("SignalFrame", "Filter (moving average)"))

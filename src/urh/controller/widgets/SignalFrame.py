@@ -823,6 +823,9 @@ class SignalFrame(QFrame):
         start_pos *= factor
         end_pos *= factor
 
+        if not self.spectrogram_is_active:
+            self.ui.lNumSelectedBits.setText(str(abs(int(end_pos-start_pos))))
+
         try:
             include_last_pause = False
             s = text_edit.textCursor().selectionStart()
@@ -912,6 +915,9 @@ class SignalFrame(QFrame):
 
         start_index = int(protocol.convert_index(start_index, 0, self.proto_view, True)[0])
         end_index = int(math.ceil(protocol.convert_index(end_index, 0, self.proto_view, True)[1])) + 1
+
+        self.ui.lNumSelectedBits.setText(str(end_index - start_index - 1))
+
         text = self.ui.txtEdProto.toPlainText()
         n = 0
         message_pos = 0

@@ -53,7 +53,7 @@ class Signal(QObject):
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
         if modulation is None:
-            modulation = "FSK"
+            modulation = "ASK"
         self.__modulation_type = self.MODULATION_TYPES.index(modulation)
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 

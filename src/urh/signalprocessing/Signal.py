@@ -71,13 +71,13 @@ class Signal(QObject):
             self.filename = ""
 
     def __load_complex_file(self, filename: str):
-        if filename.endswith(".complex16u"):
+        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
             raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
             self._fulldata.real = (raw['r'] / 127.5) - 1.0
             self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-        elif filename.endswith(".complex16s"):
+        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
             raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)

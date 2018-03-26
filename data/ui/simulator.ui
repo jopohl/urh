@@ -123,6 +123,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                <property name="specialValueText">
                 <string>Infinite</string>
                </property>
+               <property name="maximum">
+                <number>9999999</number>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -692,6 +695,13 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
               </widget>
               <widget class="QWidget" name="page_ext_prog_action">
                <layout class="QGridLayout" name="gridLayout_9">
+                <item row="2" column="0" colspan="4">
+                 <widget class="QCheckBox" name="checkBoxPassTranscriptSTDIN">
+                  <property name="text">
+                   <string>Pass transcript to STDIN</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_14">
                   <property name="text">
@@ -716,7 +726,7 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0" colspan="4">
+                <item row="4" column="0" colspan="4">
                  <spacer name="verticalSpacer_6">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -729,10 +739,13 @@ image: url(:/icons/icons/splitter_handle_horizontal.svg);
                   </property>
                  </spacer>
                 </item>
-                <item row="2" column="0" colspan="4">
-                 <widget class="QCheckBox" name="checkBoxPassTranscriptSTDIN">
+                <item row="3" column="0" colspan="4">
+                 <widget class="QLabel" name="label_18">
                   <property name="text">
-                   <string>Pass transcript to STDIN</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can access the return code of this item in formulas and rules using the item identifier followed by &lt;span style=&quot; font-style:italic;&quot;&gt;.rc&lt;/span&gt; e.g.&lt;span style=&quot; font-style:italic;&quot;&gt; item5.rc&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>

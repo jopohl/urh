@@ -108,6 +108,8 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
         name_filter = ""
     elif caption == "Save simulator profile":
         name_filter = "Simulator (*.sim.xml *.sim);;All files (*)"
+    elif caption == "Export signal as png":
+        name_filter = "PNG (*.png);;All files (*)"
     else:
         name_filter = "Protocols (*.proto.xml *.proto);;All files (*)"
 

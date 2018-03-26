@@ -12,6 +12,7 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 class EditableGraphicView(ZoomableGraphicView):
     save_as_clicked = pyqtSignal()
+    export_as_png_clicked  = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
     participant_changed = pyqtSignal()
@@ -66,6 +67,12 @@ class EditableGraphicView(ZoomableGraphicView):
         self.save_as_action.triggered.connect(self.save_as_clicked.emit)
         self.save_as_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.save_as_action)
+
+        ## Export as PNG
+        self.export_as_png_action = QAction(self.tr("Export Signal as PNG"), self)  # type: QAction
+        self.export_as_png_action.triggered.connect(self.export_as_png_clicked.emit)
+        self.export_as_png_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.addAction(self.export_as_png_action)
 
         self.insert_sine_action = QAction(self.tr("Insert sine wave..."), self)
         font = self.insert_sine_action.font()
@@ -134,6 +141,9 @@ class EditableGraphicView(ZoomableGraphicView):
             menu.addAction(self.save_action)
 
         menu.addAction(self.save_as_action)
+        menu.addSeparator()
+
+        menu.addAction(self.export_as_png_action)
         menu.addSeparator()
 
         menu.addAction(self.copy_action)

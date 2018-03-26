@@ -191,6 +191,7 @@ class SignalFrame(QFrame):
 
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
+        self.ui.gvSignal.export_as_png_clicked.connect(self.export_signal_as_png)
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
@@ -408,6 +409,27 @@ class SignalFrame(QFrame):
                 self.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+
+    def export_signal_as_png(self):
+        if self.signal.filename:
+            initial_name = self.signal.filename + ".png"
+        else:
+            initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".png"
+
+        filename = FileOperator.get_save_file_name(initial_name, caption="Export signal as png")
+        if filename:
+            try:
+                QApplication.instance().setOverrideCursor(Qt.WaitCursor)
+
+                # This works
+                pixmap = self.ui.gvSignal.grab()
+                pixmap.save(filename)
+
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+
+            QApplication.instance().restoreOverrideCursor()
+
 
     def draw_signal(self, full_signal=False):
         gv_legend = self.ui.gvLegend

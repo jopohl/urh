@@ -24,8 +24,6 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorDialog(QDialog):
-    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
-
     rx_parameters_changed = pyqtSignal(dict)
     tx_parameters_changed = pyqtSignal(dict)
     sniff_parameters_changed = pyqtSignal(dict)
@@ -181,13 +179,9 @@ class SimulatorDialog(QDialog):
         for log_msg in filter(None, map(str.rstrip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
-        for source, destination, msg, msg_index in self.simulator.transcript[self.current_transcript_index:]:
-            try:
-                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-                self.ui.textEditTranscript.append(
-                    self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
-            except AttributeError:
-                self.ui.textEditTranscript.append("")
+        for line in self.simulator.get_full_transcript(start=self.current_transcript_index,
+                                                       use_bit=self.ui.radioButtonTranscriptBit.isChecked()):
+            self.ui.textEditTranscript.append(line)
 
         self.current_transcript_index = len(self.simulator.transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
@@ -224,14 +218,7 @@ class SimulatorDialog(QDialog):
             self.sniff_settings_widget.emit_editing_finished_signals()
 
     def update_transcript_view(self):
-        transcript = []
-        for source, destination, msg, msg_index in self.simulator.transcript:
-            try:
-                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-                transcript.append(
-                    self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
-            except AttributeError:
-                transcript.append("")
+        transcript = self.simulator.get_full_transcript(start=0, use_bit=self.ui.radioButtonTranscriptBit.isChecked())
         self.ui.textEditTranscript.setText("\n".join(transcript))
 
     def closeEvent(self, event: QCloseEvent):

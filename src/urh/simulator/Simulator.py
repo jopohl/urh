@@ -30,6 +30,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class Simulator(QObject):
+    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
+
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
 
@@ -252,7 +254,11 @@ class Simulator(QObject):
                 next_item = self.current_item.next()
                 command = self.__fill_counter_values(self.current_item.command)
                 self.log_message("Calling {}".format(command))
-                result = util.run_command(command, param=None, detailed_output=True)
+                if self.current_item.pass_transcript:
+                    transcript = "\n".join(self.get_full_transcript())
+                    result = util.run_command(command, transcript, use_stdin=True)
+                else:
+                    result = util.run_command(command, param=None, detailed_output=True)
                 self.log_message(result)
 
             elif isinstance(self.current_item, SimulatorRule):
@@ -485,6 +491,16 @@ class Simulator(QObject):
                 result.append("<-" + msg.plain_bits_str)
 
         return "\n".join(result)
+
+    def get_full_transcript(self, start=0, use_bit=True):
+        result = []
+        for source, destination, msg, msg_index in self.transcript[start:]:
+            try:
+                data = msg.plain_bits_str if use_bit else msg.plain_hex_str
+                result.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            except AttributeError:
+                result.append("")
+        return result
 
     def generate_message_from_template(self, template_msg: SimulatorMessage):
         new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,

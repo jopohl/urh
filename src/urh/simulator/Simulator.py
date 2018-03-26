@@ -256,9 +256,10 @@ class Simulator(QObject):
                 self.log_message("Calling {}".format(command))
                 if self.current_item.pass_transcript:
                     transcript = "\n".join(self.get_full_transcript())
-                    result = util.run_command(command, transcript, use_stdin=True)
+                    result, rc = util.run_command(command, transcript, use_stdin=True, return_rc=True)
                 else:
-                    result = util.run_command(command, param=None, detailed_output=True)
+                    result, rc = util.run_command(command, param=None, detailed_output=True, return_rc=True)
+                self.current_item.return_code = rc
                 self.log_message(result)
 
             elif isinstance(self.current_item, SimulatorRule):

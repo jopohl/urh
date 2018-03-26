@@ -92,6 +92,8 @@ class SimulatorConfiguration(QObject):
                 self.item_dict[name + ".counter_value"] = item
             else:
                 self.item_dict[name] = item
+                if isinstance(item, SimulatorTriggerCommandAction):
+                    self.item_dict[name + ".rc"] = item
 
         self.item_dict_updated.emit()
 

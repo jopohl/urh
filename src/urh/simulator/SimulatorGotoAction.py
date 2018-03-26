@@ -4,6 +4,7 @@ from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 
 
 class SimulatorGotoAction(SimulatorItem):
@@ -23,13 +24,13 @@ class SimulatorGotoAction(SimulatorItem):
 
     def validate(self):
         target = self.simulator_config.item_dict.get(self.goto_target, None)
-        return self.is_valid_goto_target(target)
+        return self.is_valid_goto_target(self.goto_target, target)
 
     def get_valid_goto_targets(self):
         valid_targets = []
 
         for key, value in self.simulator_config.item_dict.items():
-            if value != self and SimulatorGotoAction.is_valid_goto_target(value):
+            if value != self and SimulatorGotoAction.is_valid_goto_target(key, value):
                 valid_targets.append(key)
 
         return valid_targets
@@ -48,7 +49,7 @@ class SimulatorGotoAction(SimulatorItem):
         return result
 
     @staticmethod
-    def is_valid_goto_target(item: SimulatorItem):
+    def is_valid_goto_target(caption: str, item: SimulatorItem):
         if item is None:
             return False
         if isinstance(item, SimulatorProtocolLabel) or isinstance(item, SimulatorRule):
@@ -56,6 +57,8 @@ class SimulatorGotoAction(SimulatorItem):
         if isinstance(item, SimulatorRuleCondition) and item.type != ConditionType.IF:
             return False
         if isinstance(item, SimulatorCounterAction):
+            return False
+        if isinstance(item, SimulatorTriggerCommandAction) and caption.endswith("rc"):
             return False
 
         return True

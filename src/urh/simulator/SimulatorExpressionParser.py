@@ -7,6 +7,7 @@ from PyQt5.QtCore import QObject
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.util.Logger import logger
 
 
@@ -97,6 +98,8 @@ class SimulatorExpressionParser(QObject):
             return message.plain_ascii_str[start:end] if to_string else int(message.plain_bits_str[start:end], 2)
         elif isinstance(self.simulator_config.item_dict[identifier], SimulatorCounterAction):
             return self.simulator_config.item_dict[identifier].value
+        elif isinstance(self.simulator_config.item_dict[identifier], SimulatorTriggerCommandAction):
+            return self.simulator_config.item_dict[identifier].return_code
 
     def validate_formula_node(self, node):
         if isinstance(node, ast.Num):
@@ -165,7 +168,9 @@ class SimulatorExpressionParser(QObject):
     def is_valid_identifier(self, identifier):
         try:
             item = self.simulator_config.item_dict[identifier]
-            return isinstance(item, SimulatorProtocolLabel) or isinstance(item, SimulatorCounterAction)
+            return isinstance(item, SimulatorProtocolLabel) or\
+                   isinstance(item, SimulatorCounterAction) or \
+                   (isinstance(item, SimulatorTriggerCommandAction) and identifier.endswith("rc"))
         except KeyError:
             return False
 

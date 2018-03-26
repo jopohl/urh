@@ -11,6 +11,8 @@ class SimulatorTriggerCommandAction(SimulatorItem):
         self.command = None
         self.pass_transcript = False
 
+        self.return_code = 0
+
     def validate(self):
         return util.validate_command(self.command)
 

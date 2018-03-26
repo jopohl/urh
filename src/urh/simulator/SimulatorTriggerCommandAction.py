@@ -9,6 +9,7 @@ class SimulatorTriggerCommandAction(SimulatorItem):
     def __init__(self):
         super().__init__()
         self.command = None
+        self.pass_transcript = False
 
     def validate(self):
         return util.validate_command(self.command)
@@ -23,10 +24,17 @@ class SimulatorTriggerCommandAction(SimulatorItem):
         attrib = dict()
         if self.command:
             attrib["command"] = self.command
+        attrib["pass_transcript"] = str(int(self.pass_transcript))
         return ET.Element("simulator_trigger_command_action", attrib=attrib)
 
     @classmethod
     def from_xml(cls, tag):
         result = SimulatorTriggerCommandAction()
         result.command = tag.get("command", None)
+        pass_transcript = tag.get("pass_transcript", None)
+        if pass_transcript is not None:
+            try:
+                result.pass_transcript = bool(int(pass_transcript))
+            except ValueError:
+                pass
         return result

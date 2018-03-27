@@ -2,6 +2,8 @@ from tests.awre.AWRETestCase import AWRETestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
+from urh.awre.Preprocessor import Preprocessor
+from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
@@ -56,6 +58,17 @@ class TestAWRERealProtocols(AWRETestCase):
 
         ff = FormatFinder(protocol=protocol, participants=self.participants)
         ff.perform_iteration()
+
+        sync1, sync2 = "0x9a7d9a7d", "0x67686768"
+
+        preprocessor = Preprocessor(protocol.messages)
+        preamble_starts = preprocessor.get_raw_preamble_positions()[:, 0]
+        possible_syncs = preprocessor.find_possible_syncs()
+        #self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
+        #self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
+
+        preamble_positions = preprocessor.get_preamble_lengths_from_sync_words(possible_syncs, preamble_starts)
+        print(preamble_positions)
 
         # TODO: Make algorithm deal with multiple message types
         # self.assertEqual(len(ff.message_types), 2)

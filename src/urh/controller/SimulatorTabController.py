@@ -148,6 +148,7 @@ class SimulatorTabController(QWidget):
     def create_connects(self):
         self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
         self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
+        self.ui.checkBoxPassTranscriptSTDIN.clicked.connect(self.on_check_box_pass_transcript_STDIN_clicked)
         self.ui.doubleSpinBoxSleep.editingFinished.connect(self.on_spinbox_sleep_editing_finished)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_btn_simulate_clicked)
@@ -392,6 +393,7 @@ class SimulatorTabController(QWidget):
             self.ui.detail_view_widget.setCurrentIndex(3)
         elif isinstance(self.active_item, SimulatorTriggerCommandAction):
             self.ui.lineEditTriggerCommand.setText(self.active_item.command)
+            self.ui.checkBoxPassTranscriptSTDIN.setChecked(self.active_item.pass_transcript)
             self.ui.detail_view_widget.setCurrentIndex(4)
         elif isinstance(self.active_item, SimulatorSleepAction):
             self.ui.doubleSpinBoxSleep.setValue(self.active_item.sleep_time)
@@ -461,6 +463,11 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_line_edit_trigger_command_text_changed(self):
         self.active_item.command = self.ui.lineEditTriggerCommand.text()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_check_box_pass_transcript_STDIN_clicked(self):
+        self.active_item.pass_transcript = self.ui.checkBoxPassTranscriptSTDIN.isChecked()
         self.item_updated(self.active_item)
 
     @pyqtSlot()

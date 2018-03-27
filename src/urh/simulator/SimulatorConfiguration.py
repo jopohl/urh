@@ -21,6 +21,7 @@ from urh.util.ProjectManager import ProjectManager
 from PyQt5.QtCore import pyqtSignal, QObject
 import xml.etree.ElementTree as ET
 
+
 class SimulatorConfiguration(QObject):
     participants_changed = pyqtSignal()
     item_dict_updated = pyqtSignal()
@@ -55,6 +56,25 @@ class SimulatorConfiguration(QObject):
         self.items_updated.connect(self.update_active_participants)
         self.items_deleted.connect(self.update_active_participants)
 
+    @property
+    def participants(self):
+        return self.project_manager.participants + [self.broadcast_part]
+
+    @property
+    def active_participants(self):
+        if self.__active_participants is None:
+            self.update_active_participants()
+
+        return self.__active_participants
+
+    @property
+    def rx_needed(self) -> bool:
+        return any(hasattr(msg.destination, "simulate") and msg.destination.simulate for msg in self.get_all_messages())
+
+    @property
+    def tx_needed(self) -> bool:
+        return any(hasattr(msg.source, "simulate") and msg.source.simulate for msg in self.get_all_messages())
+
     def update_item_dict(self):
         self.item_dict.clear()
 
@@ -69,9 +89,11 @@ class SimulatorConfiguration(QObject):
             name = "item" + index.replace(".", "_") + suffix
 
             if isinstance(item, SimulatorCounterAction):
-                self.item_dict[name+".counter_value"] = item
+                self.item_dict[name + ".counter_value"] = item
             else:
                 self.item_dict[name] = item
+                if isinstance(item, SimulatorTriggerCommandAction):
+                    self.item_dict[name + ".rc"] = item
 
         self.item_dict_updated.emit()
 
@@ -94,23 +116,13 @@ class SimulatorConfiguration(QObject):
         self.broadcast_part.address_hex = self.project_manager.broadcast_address_hex
         participants = self.participants
 
-        messages = [msg for msg in self.get_all_messages() if ((msg.participant and msg.participant not in participants) or
-                    (msg.destination and msg.destination not in participants))]
+        messages = [msg for msg in self.get_all_messages() if
+                    ((msg.participant and msg.participant not in participants) or
+                     (msg.destination and msg.destination not in participants))]
 
         self.delete_items(messages)
 
         self.participants_changed.emit()
-
-    @property
-    def participants(self):
-        return self.project_manager.participants + [self.broadcast_part]
-
-    @property
-    def active_participants(self):
-        if self.__active_participants is None:
-            self.update_active_participants()
-
-        return self.__active_participants
 
     def add_items(self, items, pos: int, parent_item):
         if parent_item is None:
@@ -148,7 +160,7 @@ class SimulatorConfiguration(QObject):
         self.items_moved.emit(items)
 
     def add_label(self, start: int, end: int, name: str = None, color_index: int = None,
-                    type: FieldType=None, parent_item: SimulatorMessage=None):
+                  type: FieldType = None, parent_item: SimulatorMessage = None):
         assert isinstance(parent_item, SimulatorMessage)
 
         name = "" if not name else name
@@ -192,7 +204,7 @@ class SimulatorConfiguration(QObject):
                 repeat_counter = 0
 
                 while (isinstance(current_msg.next_sibling(), SimulatorMessage) and
-                        current_item.plain_bits == current_msg.next_sibling().plain_bits):
+                       current_item.plain_bits == current_msg.next_sibling().plain_bits):
                     repeat_counter += 1
                     current_msg = current_msg.next_sibling()
                     redundant_messages.append(current_msg)

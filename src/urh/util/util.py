@@ -270,7 +270,7 @@ def parse_command(command: str):
     return " ".join(cmd), splitted
 
 
-def run_command(command, param: str = None, use_stdin=False, detailed_output=False):
+def run_command(command, param: str=None, use_stdin=False, detailed_output=False, return_rc=False):
     cmd, arg = parse_command(command)
     if shutil.which(cmd) is None:
         logger.error("Could not find {}".format(cmd))
@@ -299,16 +299,26 @@ def run_command(command, param: str = None, use_stdin=False, detailed_output=Fal
                 result += " stdout: {}".format(out.decode())
             if err.decode():
                 result += " stderr: {}".format(err.decode())
-            return result
+
+            if return_rc:
+                return result, p.returncode
+            else:
+                return result
         elif use_stdin:
             p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
                                  startupinfo=startupinfo)
             param = param.encode() if param is not None else None
             out, _ = p.communicate(param)
-            return out.decode()
+            if return_rc:
+                return out.decode(), p.returncode
+            else:
+                return out.decode()
         else:
             if param is not None:
                 call_list.append(param)
+
+            if return_rc:
+                raise ValueError("Return Code not supported for this configuration")
 
             return subprocess.check_output(call_list, stderr=subprocess.PIPE, startupinfo=startupinfo).decode()
     except Exception as e:

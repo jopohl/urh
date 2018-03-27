@@ -12,17 +12,21 @@ class TestSimulatorDialog(QtTestCase):
         super().setUp()
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
+        alice.simulate = True
+        bob.simulate = True
         self.form.project_manager.participants.append(alice)
         self.form.project_manager.participants.append(bob)
         self.form.project_manager.project_updated.emit()
 
         mt = self.form.compare_frame_controller.proto_analyzer.default_message_type
-        msg1 = SimulatorMessage(destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-        msg2 = SimulatorMessage(destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg1 = SimulatorMessage(source=bob, destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg2 = SimulatorMessage(source=alice, destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
 
         simulator_manager = self.form.simulator_tab_controller.simulator_config
         simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
         simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
+
+        print(self.form.simulator_tab_controller.simulator_config.tx_needed)
 
         self.dialog = SimulatorDialog(self.form.simulator_tab_controller.simulator_config,
                                       self.form.generator_tab_controller.modulators,

@@ -301,16 +301,7 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog = stc.get_simulator_dialog()
 
         network_sdr_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
-
-        send_port = self.get_free_port()
-        dialog.simulator.sender.device.set_client_port(send_port)
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        s.bind(("", send_port))
-        s.listen(1)
 
         rcv_port = self.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
@@ -334,7 +325,6 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()
-        s.close()
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)

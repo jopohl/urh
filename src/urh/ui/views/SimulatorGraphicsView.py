@@ -374,5 +374,6 @@ class SimulatorGraphicsView(QGraphicsView):
         for item in self.copied_items:
             assert isinstance(item, GraphicsItem)
             parent = item.model_item.parent()
-            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], parent.child_count(), parent)
+            pos = parent.child_count() if parent is not None else 0
+            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], pos, parent)
 

@@ -30,6 +30,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class Simulator(QObject):
+    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
+
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
 
@@ -77,13 +79,19 @@ class Simulator(QObject):
         self.__initialize_counters()
 
         # start devices
-        self.sniffer.rcv_device.fatal_error_occurred.connect(self.stop_on_error)
-        self.sniffer.rcv_device.ready_for_action.connect(self.on_sniffer_ready)
-        self.sender.device.fatal_error_occurred.connect(self.stop_on_error)
-        self.sender.device.ready_for_action.connect(self.on_sender_ready)
+        if self.sniffer:
+            self.sniffer.rcv_device.fatal_error_occurred.connect(self.stop_on_error)
+            self.sniffer.rcv_device.ready_for_action.connect(self.on_sniffer_ready)
 
-        self.sniffer.sniff()
-        self.sender.start()
+        if self.sender:
+            self.sender.device.fatal_error_occurred.connect(self.stop_on_error)
+            self.sender.device.ready_for_action.connect(self.on_sender_ready)
+
+        if self.sniffer:
+            self.sniffer.sniff()
+
+        if self.sender:
+            self.sender.start()
 
         self._start_simulation_thread()
 
@@ -117,8 +125,11 @@ class Simulator(QObject):
             time.sleep(0.5)
 
         # stop devices
-        self.sniffer.stop()
-        self.sender.stop()
+        if self.sniffer:
+            self.sniffer.stop()
+
+        if self.sender:
+            self.sender.stop()
 
         self.simulation_stopped.emit()
 
@@ -131,7 +142,9 @@ class Simulator(QObject):
         self.sniffer_ready = False
         self.sender_ready = False
         self.fatal_device_error_occurred = False
-        self.sniffer.clear()
+
+        if self.sniffer:
+            self.sniffer.clear()
 
         self.current_item = self.simulator_config.rootItem
 
@@ -146,7 +159,11 @@ class Simulator(QObject):
 
     @property
     def devices(self):
-        result = [self.sniffer.rcv_device, self.sender.device]
+        result = []
+        if self.sniffer is not None:
+            result.append(self.sniffer.rcv_device)
+        if self.sender is not None:
+            result.append(self.sender.device)
         return result
 
     def device_messages(self) -> list:
@@ -184,7 +201,7 @@ class Simulator(QObject):
 
     def __wait_for_devices(self):
         for i in range(10):
-            if self.sniffer_ready and self.sender_ready:
+            if (self.sniffer is None or self.sniffer_ready) and (self.sender is None or self.sender_ready):
                 return True
             if self.fatal_device_error_occurred:
                 return False
@@ -237,7 +254,12 @@ class Simulator(QObject):
                 next_item = self.current_item.next()
                 command = self.__fill_counter_values(self.current_item.command)
                 self.log_message("Calling {}".format(command))
-                result = util.run_command(command, param=None, detailed_output=True)
+                if self.current_item.pass_transcript:
+                    transcript = "\n".join(self.get_full_transcript())
+                    result, rc = util.run_command(command, transcript, use_stdin=True, return_rc=True)
+                else:
+                    result, rc = util.run_command(command, param=None, detailed_output=True, return_rc=True)
+                self.current_item.return_code = rc
                 self.log_message(result)
 
             elif isinstance(self.current_item, SimulatorRule):
@@ -294,6 +316,9 @@ class Simulator(QObject):
         if msg.source.simulate:
             # we have to send a message
             sender = self.sender
+            if sender is None:
+                self.log_message("Fatal: No sender configured")
+                return
 
             for lbl in new_message.message_type:
                 if isinstance(lbl.label, ChecksumLabel):
@@ -313,6 +338,10 @@ class Simulator(QObject):
             # we have to receive a message
             self.log_message("<i>Waiting for message {}</i>".format(msg.index()))
             sniffer = self.sniffer
+            if sniffer is None:
+                self.log_message("Fatal: No sniffer configured")
+                return
+
             retry = 0
 
             max_retries = self.project_manager.simulator_retries
@@ -371,8 +400,8 @@ class Simulator(QObject):
             return False, "Failed to decode message {}".format(msg_index)
 
         for lbl in received_msg.message_type:
-            if lbl.value_type_index in [1, 3, 4]:
-                # get live, external program, random
+            if lbl.value_type_index in (1, 4):
+                # get live, random
                 continue
 
             start_recv, end_recv = received_msg.get_label_range(lbl.label, 0, True)
@@ -463,6 +492,16 @@ class Simulator(QObject):
                 result.append("<-" + msg.plain_bits_str)
 
         return "\n".join(result)
+
+    def get_full_transcript(self, start=0, use_bit=True):
+        result = []
+        for source, destination, msg, msg_index in self.transcript[start:]:
+            try:
+                data = msg.plain_bits_str if use_bit else msg.plain_hex_str
+                result.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+            except AttributeError:
+                result.append("")
+        return result
 
     def generate_message_from_template(self, template_msg: SimulatorMessage):
         new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,

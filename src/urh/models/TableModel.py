@@ -279,13 +279,13 @@ class TableModel(QAbstractTableModel):
             self.protocol.messages[i][j] = bool(int(value))
             self.display_data[i][j] = int(value)
         elif self.proto_view == 1 and value in hex_chars and self.__pad_until_index(i, (j+1)*4):
-            converted_j = self.protocol.convert_index(j, 1, 0, True, message_indx=i)[0]
+            converted_j = self.protocol.convert_index(j, 1, 0, self.decode, message_indx=i)[0]
             bits = "{0:04b}".format(int(value, 16))
             for k in range(4):
                 self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
             self.display_data[i][j] = int(value, 16)
         elif self.proto_view == 2 and len(value) == 1 and self.__pad_until_index(i, (j+1)*8):
-            converted_j = self.protocol.convert_index(j, 2, 0, True, message_indx=i)[0]
+            converted_j = self.protocol.convert_index(j, 2, 0, self.decode, message_indx=i)[0]
             bits = "{0:08b}".format(ord(value))
             for k in range(8):
                 self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))

@@ -131,7 +131,7 @@ class Preprocessor(object):
         # In doubt, it is better to underestimate the sync length
         # because overestimation will lead to serious errors when the other engines start operating.
         percentile = np.percentile(list(sync_lengths.values()), 75)
-        estimated_sync_length = min(sync_len for sync_len, frequency in sync_lengths.items() if frequency > percentile)
+        estimated_sync_length = min(sync_len for sync_len, frequency in sync_lengths.items() if frequency >= percentile)
 
         # Now we look at all possible sync words with this length
         sync_words = {word: frequency for word, frequency in possible_sync_words.items()

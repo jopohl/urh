@@ -64,8 +64,8 @@ class TestAWRERealProtocols(AWRETestCase):
         preprocessor = Preprocessor(protocol.messages)
         preamble_starts = preprocessor.get_raw_preamble_positions()[:, 0]
         possible_syncs = preprocessor.find_possible_syncs()
-        #self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
-        #self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
+        self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
+        self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
         preamble_positions = preprocessor.get_preamble_lengths_from_sync_words(possible_syncs, preamble_starts)
         print(preamble_positions)

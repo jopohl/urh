@@ -83,6 +83,7 @@ class Preprocessor(object):
 
         for i in range(difference_matrix.shape[0]):
             for j in range(i + 1, difference_matrix.shape[1]):
+                # position of first difference between message i and j
                 sync_end = difference_matrix[i, j]
 
                 if sync_end == 0:
@@ -107,11 +108,20 @@ class Preprocessor(object):
         self.__debug("Sync word lengths", sync_lengths)
         self.__debug("Possible sync words", possible_sync_words)
 
-        # TODO: In Error case we should also consider second frequent etc. -> for loop
-        most_common_sync_length = max(sync_lengths, key=sync_lengths.get)
+        # We may have sync lengths that are too long here.
+        # This happens, when there are constant fields behind sync such as length field for messages with same length.
+        # Therefore, we take the minimum sync length which surpasses the 75 percentile of frequencies.
+        # For example, for these values
+        #   {32: 174, 36: 302, 40: 64, 80: 52, 132: 16, 136: 16}
+        #   32 would get chosen over 36, because it's frequency surpasses the 75 percentile and is smaller than 36.
+        # In doubt, it is better to underestimate the sync length
+        # because overestimation will lead to serious errors when the other engines start operating.
+        percentile = np.percentile(list(sync_lengths.values()), 75)
+        estimated_sync_length = min(sync_len for sync_len, frequency in sync_lengths.items() if frequency > percentile)
+
         # Now we look at all possible sync words with this length
         sync_words = {word: frequency for word, frequency in possible_sync_words.items()
-                      if len(word) == most_common_sync_length}
+                      if len(word) == estimated_sync_length}
         self.__debug("Sync words", sync_words)
 
         return sorted(sync_words, key=sync_words.get, reverse=True)

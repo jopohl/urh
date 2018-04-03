@@ -39,12 +39,25 @@ class Preprocessor(object):
 
         for i, msg in enumerate(self.messages):
             bits = msg.decoded_bits_str
-            preamble_lengths[i] = min((bits.index(sync_word) - preamble_starts[i]
-                                       for sync_word in sync_words
-                                       if sync_word in bits
-                                       # There must be at least 2 bits preamble
-                                       and bits.index(sync_word) > 2 + preamble_starts[i]),
-                                      default=0)
+            indices = sorted(
+                bits.find(sync_word) - preamble_starts[i]
+                # There must be at least 2 bits preamble
+                for sync_word in sync_words if bits.find(sync_word) > 2 + preamble_starts[i]
+            )
+
+            if len(indices) == 0:
+                preamble_lengths[i] = 0
+            elif len(indices) == 1:
+                preamble_lengths[i] = indices[0]
+            else:
+                # take the smallest index, but prefer a greater one if it is divisible by 8 (or 4)
+                indices = list(filter(lambda x: x < indices[0] + 7, indices))
+                index = next((index for index in indices if index % 8 == 0), None)
+                if index is None:
+                    next((index for index in indices if index % 4 == 0), None)
+                if index is None:
+                    index = indices[0]
+                preamble_lengths[i] = index
 
         return preamble_lengths
 
@@ -90,7 +103,7 @@ class Preprocessor(object):
                     continue
 
                 for index, k in itertools.product([i, j], range(2)):
-                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k+1]
+                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
 
                     # We take the next lower multiple of n for the sync len
                     # In doubt, it is better to under estimate the sync len to prevent it from
@@ -210,10 +223,10 @@ class Preprocessor(object):
                 except ValueError:
                     break
 
-            lower = upper = start + Preprocessor.lower_multiple_of_n(i+1-start, n+m)
-            lower -= (n+m)
+            lower = upper = start + Preprocessor.lower_multiple_of_n(i + 1 - start, n + m)
+            lower -= (n + m)
 
-            k = (upper-start) / (n+m)
+            k = (upper - start) / (n + m)
 
         if k > 2:
             return start, lower, upper

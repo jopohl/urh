@@ -120,7 +120,8 @@ class LengthEngine(Engine):
     def score_bits(bits: str, target_length: int):
         value = int(bits, 2)
 
-        if value < target_length or value == 0:
-            return 0
+        return LengthEngine.gauss(value, target_length)
 
-        return max(0.0, 1 - (value - target_length) / 10)
+    @staticmethod
+    def gauss(x, mu, sigma=2):
+        return np.exp(-0.5 * np.power((x - mu) / sigma, 2))

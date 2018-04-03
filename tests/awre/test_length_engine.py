@@ -117,7 +117,7 @@ class TestLengthEngine(AWRETestCase):
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
                 pg.generate_message(data=pg.decimal_to_bits(10*i, data_length), message_type=mb1.message_type)
-                pg.generate_message(message_type=mb2.message_type)
+                pg.generate_message(message_type=mb2.message_type, data="0xaf")
 
         self.save_protocol("medium_length", pg)
 

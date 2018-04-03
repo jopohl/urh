@@ -29,7 +29,8 @@ class Preprocessor(object):
         sync_words = self.find_possible_syncs(raw_preamble_positions)
         preamble_starts = raw_preamble_positions[:, 0]
         preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
-        return preamble_starts, preamble_lengths, len(sync_words[0])
+        sync_len = len(sync_words[0]) if len(sync_words) > 0 else 0
+        return preamble_starts, preamble_lengths, sync_len
 
     def get_preamble_lengths_from_sync_words(self, sync_words: list, preamble_starts: np.ndarray):
         # If there should be varying sync word lengths we need to return an array of sync lengths per message
@@ -108,7 +109,7 @@ class Preprocessor(object):
                     # We take the next lower multiple of n for the sync len
                     # In doubt, it is better to under estimate the sync len to prevent it from
                     # taking needed values from other fields e.g. leading zeros for a length field
-                    sync_len = self.lower_multiple_of_n(sync_end - start, n_gram_length)
+                    sync_len = max(0, self.lower_multiple_of_n(sync_end - start, n_gram_length))
 
                     sync_word = self.messages[index].decoded_bits_str[start:start + sync_len]
 

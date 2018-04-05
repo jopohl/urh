@@ -56,7 +56,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
         elif text.endswith("K") or text.endswith("k"):
             return QLocale().toDouble(text[:-1])[0] * 10 ** 3
         else:
-            return QLocale().toDouble(text[:-1])[0]
+            return QLocale().toDouble(text)[0]
 
     def validate(self, inpt: str, pos: int):
         rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")

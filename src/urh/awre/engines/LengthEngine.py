@@ -17,7 +17,7 @@ class LengthEngine(Engine):
         """
         self.bitvectors = bitvectors
 
-    def find(self, n_gram_length=8, minimum_score=0.8):
+    def find(self, n_gram_length=8, minimum_score=0.1):
         # Consider the n_gram_length
         bitvectors_by_n_gram_length = defaultdict(list)
         for i, bitvector in enumerate(self.bitvectors):
@@ -68,7 +68,8 @@ class LengthEngine(Engine):
                     bits = common_range.value_str
                     max_score = max_start = -1
                     for start in range(0, len(bits)+1-window_length):
-                        score = self.score_bits(bits[start:start+window_length], length)
+                        # Length field should be at front, so we give lower scores for large starts
+                        score = (1 / (1+0.25*start)) * self.score_bits(bits[start:start+window_length], length)
                         if score > max_score:
                             max_score = score
                             max_start = start

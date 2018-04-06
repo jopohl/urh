@@ -40,6 +40,7 @@ from urh.util.ProjectManager import ProjectManager
 
 class SimulatorTabController(QWidget):
     open_in_analysis_requested = pyqtSignal(str)
+    rx_file_saved = pyqtSignal(str)
 
     def __init__(self, compare_frame_controller: CompareFrameController,
                  generator_tab_controller: GeneratorTabController,
@@ -450,6 +451,7 @@ class SimulatorTabController(QWidget):
         s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
         s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
         s.open_in_analysis_requested.connect(self.open_in_analysis_requested.emit)
+        s.rx_file_saved.connect(self.rx_file_saved.emit)
 
         return s
 

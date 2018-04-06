@@ -517,6 +517,11 @@ class Simulator(QObject):
                 transcript = self.get_transcript(template_msg.source
                                                  if template_msg.source.simulate
                                                  else template_msg.destination)
+
+                if template_msg.destination.simulate:
+                    direction = "->" if template_msg.source.simulate else "<-"
+                    transcript += "\n" + direction + new_message.plain_bits_str + "\n"
+
                 cmd = self.__fill_counter_values(lbl.external_program)
                 result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:

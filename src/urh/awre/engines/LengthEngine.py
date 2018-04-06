@@ -6,6 +6,7 @@ import numpy as np
 
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange
 from urh.awre.engines.Engine import Engine
+from urh.util import util
 
 
 class LengthEngine(Engine):
@@ -67,15 +68,14 @@ class LengthEngine(Engine):
                 for common_range in filter(lambda cr: cr.length >= window_length, common_ranges):
                     bits = common_range.value_str
                     max_score = max_start = -1
-                    for start in range(0, len(bits)+1-window_length):
-                        # Length field should be at front, so we give lower scores for large starts
-                        score = (1 / (1+0.25*start)) * self.score_bits(bits[start:start+window_length], length)
+                    for start in range(0, len(bits) + 1 - window_length):
+                        score = self.score_bits(bits[start:start + window_length], length, position=start)
                         if score > max_score:
                             max_score = score
                             max_start = start
 
                     rng = CommonRange(common_range.start + max_start, window_length,
-                                      common_range.value[max_start:max_start+window_length],
+                                      common_range.value[max_start:max_start + window_length],
                                       score=max_score, field_type="length",
                                       message_indices=common_range.message_indices,
                                       range_type=common_range.range_type)
@@ -96,32 +96,40 @@ class LengthEngine(Engine):
                 if length not in high_scores_by_length or high_scores_by_length[length].score < high_score_range.score:
                     high_scores_by_length[length] = high_score_range
 
-        self._debug("Highscore ranges", high_scores_by_length)
+        found_ranges = list(filter(lambda x: not isinstance(x, EmptyCommonRange), high_scores_by_length.values()))
 
+        # If there are length clusters with only one message see if we can assign a range from other clusters
+        for length, msg_indices in bitvectors_by_n_gram_length.items():
+            if len(msg_indices) != 1:
+                continue
+
+            msg_index = msg_indices[0]
+            bitvector = self.bitvectors[msg_index]
+            max_score, best_match = 0, None
+
+            for rng in found_ranges:
+                bits = util.convert_numbers_to_hex_string(bitvector[rng.start:rng.end + 1])
+                score = self.score_bits(bits, length, rng.start)
+                if score > max_score:
+                    best_match, max_score = rng, score
+
+            if best_match is not None:
+                high_scores_by_length[length] = CommonRange(best_match.start, best_match.length,
+                                                            value=bitvector[best_match.start:best_match.end + 1],
+                                                            score=max_score, field_type="length",
+                                                            message_indices={msg_index}, range_type="bit")
+
+        self._debug("Highscore ranges", high_scores_by_length)
         return high_scores_by_length
 
     @staticmethod
-    def score_range(common_range: CommonRange, target_length: int):
-        """
-        Score a common bit range based on the target length.
-        :param common_range:
-        :param target_length:
-        :return:
-        """
-        # TODO: Consider different endianess
-        # See if there is a correlation of the values in that range and the message length
-        #   - use 8 / 16 / 32 ... bit windows
-        #   - try both endianness
-        #   - hardcore mode: try any n bit window
-        # See if there are common equal ranges between the clusters -> try these first
-        assert len(common_range.values) == 1
-        return LengthEngine.score_bits(common_range.value_str, target_length)
-
-    @staticmethod
-    def score_bits(bits: str, target_length: int):
+    def score_bits(bits: str, target_length: int, position: int):
         value = int(bits, 2)
 
-        return LengthEngine.gauss(value, target_length)
+        # Length field should be at front, so we give lower scores for large starts
+        f = (1 / (1 + 0.25 * position))
+
+        return f * LengthEngine.gauss(value, target_length)
 
     @staticmethod
     def gauss(x, mu, sigma=2):

@@ -68,7 +68,7 @@ class LengthEngine(Engine):
                 for common_range in filter(lambda cr: cr.length >= window_length, common_ranges):
                     bits = common_range.value_str
                     max_score = max_start = -1
-                    for start in range(0, len(bits) + 1 - window_length):
+                    for start in range(0, len(bits) + 1 - window_length, n_gram_length):
                         score = self.score_bits(bits[start:start + window_length], length, position=start)
                         if score > max_score:
                             max_score = score

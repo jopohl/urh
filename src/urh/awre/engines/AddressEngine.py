@@ -6,6 +6,7 @@ import numpy as np
 from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
 from urh.cythonext import awre_util
+from urh.util.Logger import logger
 
 
 class AddressEngine(Engine):
@@ -23,7 +24,7 @@ class AddressEngine(Engine):
         self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
 
-        self.addresses_by_participant = dict()  # type: dict[int, np.ndarray]
+        self.known_addresses_by_participant = dict()  # type: dict[int, np.ndarray]
 
         self.range_type = range_type
 
@@ -37,13 +38,17 @@ class AddressEngine(Engine):
         return (rng1.start == rng2.start and rng1.length == rng2.length) and rng1.value_str != rng2.value_str
 
     def find(self):
-        self.addresses_by_participant.update(self.find_addresses())
-        self._debug("Addresses by participant", self.addresses_by_participant)
+        addresses_by_participant = {p: [addr] for p, addr in self.known_addresses_by_participant.items()}
+        addresses_by_participant.update(self.find_addresses())
+        self._debug("Addresses by participant", addresses_by_participant)
 
         # Find the address candidates by participant in messages
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
 
-        addresses = [a for address_list in self.addresses_by_participant.values() for a in address_list]
+        addresses = [np.array(np.frombuffer(a, dtype=np.uint8))
+                     for address_list in addresses_by_participant.values()
+                     for a in address_list]
+
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
             for address in addresses:
@@ -98,7 +103,7 @@ class AddressEngine(Engine):
         for i, participant_index in enumerate(self.participant_indices):
             message_indices_by_participant[participant_index].append(i)
 
-        already_assigned = self.addresses_by_participant.keys()
+        already_assigned = list(self.known_addresses_by_participant.keys())
         if len(already_assigned) == len(message_indices_by_participant):
             return dict()
 
@@ -111,11 +116,19 @@ class AddressEngine(Engine):
 
         self._debug("Common ranges by participant:", common_ranges_by_participant)
 
-        result = defaultdict(list)
+        result = defaultdict(set)
         participants = sorted(common_ranges_by_participant)  # type: list[int]
 
         if len(participants) < 2:
             return result
+
+        # If we already know the address length we do not need to bother with other candidates
+        if len(already_assigned) > 0:
+            addr_len = len(self.known_addresses_by_participant[already_assigned[0]])
+            if any(len(self.known_addresses_by_participant[i]) != addr_len for i in already_assigned):
+                logger.warning("Addresses do not have a common length. Assuming length of {}".format(addr_len))
+        else:
+            addr_len = None
 
         for p1, p2 in itertools.combinations(participants, 2):
             p1_already_assigned = p1 in already_assigned
@@ -132,11 +145,13 @@ class AddressEngine(Engine):
                 vals = lcs if len(lcs) > 0 else [seq1, seq2]
                 # Address candidate must be at least 2 values long
                 for val in filter(lambda v: len(v) >= 2, vals):
+                    if addr_len is not None and len(val) != addr_len:
+                        continue
                     if not p1_already_assigned and not p2_already_assigned:
-                        result[p1].append(val)
-                        result[p2].append(val)
-                    elif p1_already_assigned and val.tostring() != self.addresses_by_participant[p1][0].tostring():
-                        result[p2].append(val)
-                    elif p2_already_assigned and val.tostring() != self.addresses_by_participant[p2][0].tostring():
-                        result[p1].append(val)
+                        result[p1].add(val.tostring())
+                        result[p2].add(val.tostring())
+                    elif p1_already_assigned and val.tostring() != self.known_addresses_by_participant[p1].tostring():
+                        result[p2].add(val.tostring())
+                    elif p2_already_assigned and val.tostring() != self.known_addresses_by_participant[p2].tostring():
+                        result[p1].add(val.tostring())
         return result

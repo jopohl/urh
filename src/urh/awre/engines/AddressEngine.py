@@ -42,9 +42,11 @@ class AddressEngine(Engine):
 
         # Find the address candidates by participant in messages
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
+
+        addresses = [a for address_list in self.addresses_by_participant.values() for a in address_list]
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
-            for address in self.addresses_by_participant.get(participant, []):
+            for address in addresses:
                 for index in awre_util.find_occurrences(msg_vector, address):
                     common_ranges = ranges_by_participant[participant]
                     rng = next((cr for cr in common_ranges if cr.matches(index, address)), None)  # type: CommonRange
@@ -89,8 +91,6 @@ class AddressEngine(Engine):
                 rng.score = min(rng.score, 1.0)
                 high_scored_ranges_by_participant[participant].append(rng)
 
-        print(high_scored_ranges_by_participant)
-
         return high_scored_ranges_by_participant
 
     def find_addresses(self) -> dict:
@@ -132,9 +132,11 @@ class AddressEngine(Engine):
                 vals = lcs if len(lcs) > 0 else [seq1, seq2]
                 # Address candidate must be at least 2 values long
                 for val in filter(lambda v: len(v) >= 2, vals):
-                    if not p1_already_assigned:
+                    if not p1_already_assigned and not p2_already_assigned:
                         result[p1].append(val)
-                    if not p2_already_assigned:
                         result[p2].append(val)
-
+                    elif p1_already_assigned and val.tostring() != self.addresses_by_participant[p1][0].tostring():
+                        result[p2].append(val)
+                    elif p2_already_assigned and val.tostring() != self.addresses_by_participant[p2][0].tostring():
+                        result[p1].append(val)
         return result

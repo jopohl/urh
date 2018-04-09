@@ -1,9 +1,12 @@
+import numpy as np
+
 from tests.awre.AWRETestCase import AWRETestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
+from urh.awre.engines.AddressEngine import AddressEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
@@ -57,6 +60,8 @@ class TestAWRERealProtocols(AWRETestCase):
         src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=112, length=24)
 
         ff = FormatFinder(protocol=protocol, participants=self.participants)
+        #a = next(e for e in ff.engines if isinstance(e, AddressEngine))
+        #a.addresses_by_participant[0] = [np.array([ 1, 11,  6,  0,  3,  3], dtype=np.uint8)]
         ff.perform_iteration()
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"

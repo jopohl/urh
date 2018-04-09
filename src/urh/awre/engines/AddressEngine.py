@@ -23,6 +23,9 @@ class AddressEngine(Engine):
 
         self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
+        self.message_indices_by_participant = defaultdict(list)
+        for i, participant_index in enumerate(self.participant_indices):
+            self.message_indices_by_participant[participant_index].append(i)
 
         self.known_addresses_by_participant = dict()  # type: dict[int, np.ndarray]
 
@@ -38,7 +41,7 @@ class AddressEngine(Engine):
         return (rng1.start == rng2.start and rng1.length == rng2.length) and rng1.value_str != rng2.value_str
 
     def find(self):
-        addresses_by_participant = {p: [addr] for p, addr in self.known_addresses_by_participant.items()}
+        addresses_by_participant = {p: [addr.tostring()] for p, addr in self.known_addresses_by_participant.items()}
         addresses_by_participant.update(self.find_addresses())
         self._debug("Addresses by participant", addresses_by_participant)
 
@@ -84,31 +87,61 @@ class AddressEngine(Engine):
             sorted_ranges = sorted(filter(lambda cr: cr.score > 0.1, common_ranges), key=lambda cr: (-cr.score, cr))
 
             addr_len = sorted_ranges[0].length if len(sorted_ranges) > 0 else 0
+            addresses_by_participant[participant] = {a for a in addresses_by_participant[participant]
+                                                     if len(a) == addr_len}
 
-            i = -1
-            for rng in sorted_ranges:
-                if rng.length != addr_len:
-                    continue
-                i += 1
+            for rng in filter(lambda r: r.length == addr_len, sorted_ranges):
                 # Here we have ranges sorted by score. We assign destination address to first (highest scored) range
                 # because it is more likely for a message to only have a destination address than only a source address
-                rng.field_type = "destination address" if i % 2 == 0 else "source address"
+                rng.field_type = "address"
                 rng.score = min(rng.score, 1.0)
                 high_scored_ranges_by_participant[participant].append(rng)
 
+        # Now we find the most probable address for all participants
+        self.__assign_participant_addresses(addresses_by_participant, high_scored_ranges_by_participant)
+
+        # Now we can separate SRC and DST
+        for participant, ranges in high_scored_ranges_by_participant.items():
+            address = addresses_by_participant[participant]
+            for rng in ranges:
+                rng.field_type = "source address" if rng.value.tostring() == address else "destination address"
+
         return high_scored_ranges_by_participant
 
-    def find_addresses(self) -> dict:
-        message_indices_by_participant = defaultdict(list)
-        for i, participant_index in enumerate(self.participant_indices):
-            message_indices_by_participant[participant_index].append(i)
+    def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
+        scored_participants_addresses = dict()
+        for participant, addresses in addresses_by_participant.items():
+            scored_participants_addresses[participant] = defaultdict(int)
+            for i in self.message_indices_by_participant[participant]:
+                matching = [rng for rng in high_scored_ranges_by_participant[participant]
+                            if i in rng.message_indices]
 
+                if len(matching) == 1:
+                    # only one address, so probably a destination and not a source
+                    scored_participants_addresses[participant][matching[0].value.tostring()] -= 1
+                elif len(matching) > 1:
+                    # more than one address, so there must be a source address included
+                    for address in {rng.value.tostring() for rng in matching}:
+                        scored_participants_addresses[participant][address] += 1
+
+        for participant, addresses in scored_participants_addresses.items():
+            found_address = max(addresses, key=addresses.get)
+            if len(addresses_by_participant[participant]) == 1:
+                assigned = list(addresses_by_participant[participant])[0]
+                addresses_by_participant[participant] = assigned
+                if found_address != assigned:
+                    logger.warning("Found a different address ({}) for participant {} than the assigned one {}".format(
+                        found_address, participant, assigned))
+            else:
+                addresses_by_participant[participant] = found_address
+
+    def find_addresses(self) -> dict:
         already_assigned = list(self.known_addresses_by_participant.keys())
-        if len(already_assigned) == len(message_indices_by_participant):
+        if len(already_assigned) == len(self.message_indices_by_participant):
             return dict()
 
         common_ranges_by_participant = dict()
-        for participant, msg_indices in message_indices_by_participant.items():
+        for participant, msg_indices in self.message_indices_by_participant.items():
             common_ranges_by_participant[participant] = self.find_common_ranges_exhaustive(self.msg_vectors,
                                                                                            msg_indices,
                                                                                            range_type="hex"

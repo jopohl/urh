@@ -1,5 +1,6 @@
 import copy
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
@@ -25,6 +26,8 @@ from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, C
 
 
 class SimulatorScene(QGraphicsScene):
+    files_dropped = pyqtSignal(list)
+
     model_to_scene_class_mapping = {
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
@@ -370,6 +373,8 @@ class SimulatorScene(QGraphicsScene):
     def dropEvent(self, event: QDropEvent):
         items = [item for item in self.items(event.scenePos()) if isinstance(item, GraphicsItem) and item.acceptDrops()]
         item = None if len(items) == 0 else items[0]
+        if len(event.mimeData().urls()) > 0:
+            self.files_dropped.emit(event.mimeData().urls())
 
         indexes = list(event.mimeData().text().split("/")[:-1])
 

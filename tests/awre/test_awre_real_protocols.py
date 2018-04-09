@@ -61,7 +61,7 @@ class TestAWRERealProtocols(AWRETestCase):
 
         ff = FormatFinder(protocol=protocol, participants=self.participants)
         #a = next(e for e in ff.engines if isinstance(e, AddressEngine))
-        #a.addresses_by_participant[0] = [np.array([ 1, 11,  6,  0,  3,  3], dtype=np.uint8)]
+        #a.known_addresses_by_participant[0] = np.array([1, 11,  6,  0,  3,  3], dtype=np.uint8)
         ff.perform_iteration()
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"

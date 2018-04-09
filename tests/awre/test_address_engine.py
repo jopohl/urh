@@ -60,7 +60,7 @@ class TestAddressEngine(AWRETestCase):
 
         pg = ProtocolGenerator([mb.message_type],
                                syncs_by_mt={mb.message_type: "0x9a9d"},
-                               participants=[self.alice, self.bob])
+                               participants=[self.bob, self.alice])
 
         for i in range(num_messages):
             if i % 2 == 0:

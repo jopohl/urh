@@ -81,6 +81,7 @@ class AddressEngine(Engine):
                         rng2.score += len(rng2.message_indices) / num_messages_by_participant[p2]
 
         high_scored_ranges_by_participant = defaultdict(list)
+
         for participant, common_ranges in ranges_by_participant.items():
             # Sort by negative score so ranges with highest score appear first
             # Secondary sort by tuple to ensure order when ranges have same score
@@ -124,16 +125,19 @@ class AddressEngine(Engine):
                     for address in {rng.value.tostring() for rng in matching}:
                         scored_participants_addresses[participant][address] += 1
 
+        taken_addresses = set()
         for participant, addresses in scored_participants_addresses.items():
-            found_address = max(addresses, key=addresses.get)
+            found_address = max(filter(lambda a: a not in taken_addresses, addresses), key=addresses.get)
             if len(addresses_by_participant[participant]) == 1:
                 assigned = list(addresses_by_participant[participant])[0]
                 addresses_by_participant[participant] = assigned
                 if found_address != assigned:
                     logger.warning("Found a different address ({}) for participant {} than the assigned one {}".format(
                         found_address, participant, assigned))
+                taken_addresses.add(assigned)
             else:
                 addresses_by_participant[participant] = found_address
+                taken_addresses.add(found_address)
 
     def find_addresses(self) -> dict:
         already_assigned = list(self.known_addresses_by_participant.keys())

@@ -28,6 +28,7 @@ class SimulatorDialog(QDialog):
     tx_parameters_changed = pyqtSignal(dict)
     sniff_parameters_changed = pyqtSignal(dict)
     open_in_analysis_requested = pyqtSignal(str)
+    rx_file_saved = pyqtSignal(str)
 
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, signals: list = None,
@@ -405,6 +406,7 @@ class SimulatorDialog(QDialog):
             filename = FileOperator.get_save_file_name("simulation_capture.complex")
             if filename:
                 rx_device.data[:rx_device.current_index].tofile(filename)
+                self.rx_file_saved.emit(filename)
 
     @pyqtSlot()
     def on_btn_open_in_analysis_clicked(self):

@@ -99,6 +99,7 @@ class Ui_SimulatorTab(object):
         self.gridLayout.addWidget(self.label_8, 3, 0, 1, 1)
         self.spinBoxRetries = QtWidgets.QSpinBox(self.layoutWidget)
         self.spinBoxRetries.setMinimum(1)
+        self.spinBoxRetries.setMaximum(9999999)
         self.spinBoxRetries.setProperty("value", 10)
         self.spinBoxRetries.setObjectName("spinBoxRetries")
         self.gridLayout.addWidget(self.spinBoxRetries, 3, 1, 1, 1)

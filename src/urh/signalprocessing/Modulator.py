@@ -155,6 +155,9 @@ class Modulator(object):
         elif isinstance(data, list):
             data = array.array("B", data)
 
+        if len(data) == 0:
+            return np.array([], dtype=np.complex64)
+
         mod_type = self.MODULATION_TYPES[self.modulation_type]
 
         # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)

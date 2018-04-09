@@ -198,6 +198,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                <property name="minimum">
                 <number>1</number>
                </property>
+               <property name="maximum">
+                <number>9999999</number>
+               </property>
                <property name="value">
                 <number>10</number>
                </property>

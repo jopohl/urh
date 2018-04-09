@@ -76,6 +76,7 @@ class SniffSettingsWidget(QWidget):
         set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold if signal else 0.001)
         set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
         self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
+        self.ui.checkBoxAdaptiveNoise.setChecked(conf_dict.get("adaptive_noise", False))
 
         self.emit_editing_finished_signals()
 
@@ -98,6 +99,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.spinbox_sniff_BitLen.editingFinished.emit()
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
         self.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
+        self.ui.checkBoxAdaptiveNoise.clicked.emit()
 
     def emit_sniff_parameters_changed(self):
         self.sniff_parameters_changed.emit(dict(bit_len=self.sniffer.signal.bit_len,
@@ -105,7 +107,8 @@ class SniffSettingsWidget(QWidget):
                                                 noise=self.sniffer.signal.noise_threshold,
                                                 tolerance=self.sniffer.signal.tolerance,
                                                 modulation_index=self.sniffer.signal.modulation_type,
-                                                decoding_name=self.sniffer.decoder.name))
+                                                decoding_name=self.sniffer.decoder.name,
+                                                adaptive_noise=self.sniffer.adaptive_noise))
 
     @pyqtSlot()
     def on_noise_edited(self):

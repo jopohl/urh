@@ -1,12 +1,9 @@
-import numpy as np
-
 from tests.awre.AWRETestCase import AWRETestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
-from urh.awre.engines.AddressEngine import AddressEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
@@ -55,44 +52,39 @@ class TestAWRERealProtocols(AWRETestCase):
         preamble = CommonRange(field_type=FieldType.Function.PREAMBLE.value, start=0, length=32)
         sync = CommonRange(field_type=FieldType.Function.SYNC.value, start=32, length=32)
         length = CommonRange(field_type=FieldType.Function.LENGTH.value, start=64, length=8)
-        ack_address= CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=72, length=24)
+        ack_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=72, length=24)
         dst_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=88, length=24)
         src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=112, length=24)
 
         ff = FormatFinder(protocol=protocol, participants=self.participants)
-        #a = next(e for e in ff.engines if isinstance(e, AddressEngine))
-        #a.known_addresses_by_participant[0] = np.array([1, 11,  6,  0,  3,  3], dtype=np.uint8)
+        # a = next(e for e in ff.engines if isinstance(e, AddressEngine))
+        # a.known_addresses_by_participant[0] = np.array([1, 11,  6,  0,  3,  3], dtype=np.uint8)
         ff.perform_iteration()
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"
 
         preprocessor = Preprocessor(protocol.messages)
-        preamble_starts = preprocessor.get_raw_preamble_positions()[:, 0]
         possible_syncs = preprocessor.find_possible_syncs()
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
-        preamble_positions = preprocessor.get_preamble_lengths_from_sync_words(possible_syncs, preamble_starts)
-        print(preamble_positions)
+        self.assertEqual(len(ff.message_types), 2)
+        mt1 = ff.message_types[0]
+        mt2 = ff.message_types[1]
 
-        # TODO: Make algorithm deal with multiple message types
-        # self.assertEqual(len(ff.message_types), 2)
-        # mt1 = ff.message_types[0]
-        # mt2 = ff.message_types[1]
-        #
-        # self.assertIn(preamble, mt1)
-        # self.assertIn(sync, mt1)
-        # self.assertIn(length, mt1)
-        # self.assertIn(dst_address, mt1)
-        # self.assertIn(src_address, mt1)
+        self.assertIn(preamble, mt1)
+        self.assertIn(sync, mt1)
+        self.assertIn(length, mt1)
+        self.assertIn(dst_address, mt1)
+        self.assertIn(src_address, mt1)
 
-        # self.assertEqual(len(self.protocol.message_types), 2)
-        # self.assertEqual(self.protocol.message_types[1].name, "ack")
-        # self.assertIn(ack_address_label, self.protocol.message_types[1])
-        #
-        # ack_messages = (1, 3, 5, 7, 9, 11, 13, 15, 17, 20)
-        # for i, msg in enumerate(self.protocol.messages):
-        #     if i in ack_messages:
-        #         self.assertEqual(msg.message_type.name, "ack", msg=i)
-        #     else:
-        #         self.assertEqual(msg.message_type.name, "default", msg=i)
+        self.assertIn(ack_address, mt2)
+
+        ack_messages = (1, 3, 5, 7, 9, 11, 13, 15, 17, 20)
+        for i, msg in enumerate(protocol.messages):
+            if i in ack_messages:
+                self.assertNotIn(i, mt1.message_indices)
+                self.assertIn(i, mt2.message_indices)
+            else:
+                self.assertIn(i, mt1.message_indices)
+                self.assertNotIn(i, mt2.message_indices)

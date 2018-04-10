@@ -107,6 +107,8 @@ class AddressEngine(Engine):
             for rng in ranges:
                 rng.field_type = "source address" if rng.value.tostring() == address else "destination address"
 
+        self.__find_broadcast_fields(high_scored_ranges_by_participant, addresses_by_participant)
+
         return high_scored_ranges_by_participant
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
@@ -139,6 +141,57 @@ class AddressEngine(Engine):
             else:
                 addresses_by_participant[participant] = found_address
                 taken_addresses.add(found_address)
+
+    def __find_broadcast_fields(self, high_scored_ranges_by_participant, addresses_by_participant: dict):
+        """
+        Last we check for messages that were sent to broadcast
+          1. we search for messages that have a SRC address but no DST address
+          2. we look at other messages that have this SRC field and find the corresponding DST position
+          3. we evaluate the value of DST less message and compare these values with each other.
+             if they match, we found the broadcast address
+        :param high_scored_ranges_by_participant:
+        :return:
+        """
+        if -1 in addresses_by_participant:
+            # broadcast address is already known
+            return
+
+        broadcast_bag = defaultdict(list)  # type: dict[CommonRange, list[int]]
+        for common_ranges in high_scored_ranges_by_participant.values():
+            src_address_fields = sorted(filter(lambda r: r.field_type == "source address", common_ranges))
+            dst_address_fields = sorted(filter(lambda r: r.field_type == "destination address", common_ranges))
+            msg_with_dst = {i for dst_address_field in dst_address_fields for i in dst_address_field.message_indices}
+
+            for src_address_field in src_address_fields:  # type: CommonRange
+                msg_without_dst = {i for i in src_address_field.message_indices if i not in msg_with_dst}
+                if len(msg_without_dst) == 0:
+                    continue
+                try:
+                    matching_dst = next(dst for dst in dst_address_fields
+                                        if all(i in dst.message_indices
+                                               for i in src_address_field.message_indices-msg_without_dst))
+                except StopIteration:
+                    continue
+                for msg in msg_without_dst:
+                    broadcast_bag[matching_dst].append(msg)
+
+        if len(broadcast_bag) == 0:
+            return
+
+        broadcast_address = None
+        for dst, messages in broadcast_bag.items():
+            for msg_index in messages:
+                value = self.msg_vectors[msg_index][dst.start:dst.end+1]
+                if broadcast_address is None:
+                    broadcast_address = value
+                elif value.tobytes() != broadcast_address.tobytes():
+                    # Address is not common across messages so it can't be a broadcast address
+                    return
+
+        addresses_by_participant[-1] = broadcast_address.tobytes()
+        for dst, messages in broadcast_bag.items():
+            dst.values.append(broadcast_address)
+            dst.message_indices.update(messages)
 
     def find_addresses(self) -> dict:
         already_assigned = list(self.known_addresses_by_participant.keys())

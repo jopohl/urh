@@ -86,8 +86,7 @@ class CommonRange(object):
             return False
 
         return self.bit_start == other.bit_start and \
-               self.length == other.length and \
-               self.range_type == other.range_type and \
+               self.bit_end == other.bit_end and \
                self.field_type == other.field_type
 
     def __hash__(self):

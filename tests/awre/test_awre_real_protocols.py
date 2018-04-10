@@ -6,6 +6,7 @@ from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
@@ -88,3 +89,30 @@ class TestAWRERealProtocols(AWRETestCase):
             else:
                 self.assertIn(i, mt1.message_indices)
                 self.assertNotIn(i, mt2.message_indices)
+
+    def test_homematic(self):
+        proto_file = get_path_for_data_file("homematic.proto.xml")
+        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
+        protocol.message_types = []
+        protocol.from_xml_file(filename=proto_file, read_bits=True)
+        # prevent interfering with preassinged labels
+        protocol.message_types = [MessageType("default")]
+
+        preamble = CommonRange(field_type=FieldType.Function.PREAMBLE.value, start=0, length=32)
+        sync = CommonRange(field_type=FieldType.Function.SYNC.value, start=32, length=32)
+        length = CommonRange(field_type=FieldType.Function.LENGTH.value, start=64, length=8)
+        src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=96, length=24)
+        dst_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=120, length=24)
+
+        participants = sorted({msg.participant for msg in protocol.messages})
+        ff = FormatFinder(protocol, participants=participants)
+        ff.perform_iteration()
+
+        self.assertGreater(len(ff.message_types), 0)
+
+        for i, message_type in enumerate(ff.message_types):
+            self.assertIn(preamble, message_type, msg=str(i))
+            self.assertIn(sync, message_type, msg=str(i))
+            self.assertIn(length, message_type, msg=str(i))
+            self.assertIn(src_address, message_type, msg=str(i))
+            self.assertIn(dst_address, message_type, msg=str(i))

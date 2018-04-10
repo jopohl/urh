@@ -53,14 +53,14 @@ class TestAddressEngine(AWRETestCase):
         mb.add_label(FieldType.Function.PREAMBLE, 8)
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
-        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
 
         num_messages = 50
 
         pg = ProtocolGenerator([mb.message_type],
                                syncs_by_mt={mb.message_type: "0x9a9d"},
-                               participants=[self.bob, self.alice])
+                               participants=[self.alice, self.bob])
 
         for i in range(num_messages):
             if i % 2 == 0:

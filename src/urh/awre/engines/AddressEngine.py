@@ -130,7 +130,8 @@ class AddressEngine(Engine):
         taken_addresses = set()
         for participant, addresses in scored_participants_addresses.items():
             # sort filtered results to prevent randomness for equal scores
-            found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses)), key=addresses.get)
+            found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
+                                key=addresses.get)
             if len(addresses_by_participant[participant]) == 1:
                 assigned = list(addresses_by_participant[participant])[0]
                 addresses_by_participant[participant] = assigned

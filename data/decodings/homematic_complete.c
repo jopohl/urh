@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define SHORTEN_PREAMBLE_TO_32 0
+
 typedef unsigned char byte;
 typedef unsigned short uint16;
 
@@ -39,12 +41,19 @@ void print_binary(byte inpt)
         else putchar('0');
 }
 
+void print_preamble_nibbles(int count)
+{
+    int i;
+    for (i = 0; i < count; i++)
+        printf("1010");
+}
+
 int find_preamble_start_in_bit(char *string, int len)
 {
-    char homematic_sync[]="11101001110010101110100111001010";    
+    char homematic_sync[] = "11101001110010101110100111001010";    
     for(int i = 0, j = 0; i < len; i++)
     {
-        if(string[i]==homematic_sync[j])
+        if(string[i] == homematic_sync[j])
         {     
             j++;
             if(j == 32 && i>= 63) return i-63;            
@@ -103,18 +112,19 @@ void xor_lfsr(char *string)
 
 int main(int argc, char **argv)
 {
-    int i, j, max, offset, len;
-    byte dec[256]={0}, enc[256]={0}, crc_ok;
-    char string[2048]={0};
+    int i, j, max, offset, len, preamble_additional_length;
+    byte dec[1024]={0}, enc[1024]={0}, crc_ok;
+    char string[65536]={0};
     uint16 crcvalue;
     offset = 8; // Preamble + Sync
     
     // Copy data (argv[2]) to string if length is ok, shorten to multiple of 8 bit
-    if (strlen(argv[2]) > 256*8 || strlen(argv[2]) < 4) return -1;
+    if (strlen(argv[2]) > 8192*8 || strlen(argv[2]) < 4) return -1;
     len = strlen(argv[2]);    
     
     i = find_preamble_start_in_bit(argv[2], len);
     if(i < 0) return 0;    // preamble+sync not found or wrong length
+    preamble_additional_length = i;
     
     len = (len-i)-(len-i)%8;
     memcpy(string, argv[2]+i, len);
@@ -130,7 +140,7 @@ int main(int argc, char **argv)
             for (i = 0; i < strlen(string)-3; i+=8)
                 enc[i/8] = str2byte(&string[i]);                
             max = i/8;
-            memcpy(&dec, &enc, 256);
+            memcpy(&dec, &enc, 1024);
 
             // Check CRC
             crcvalue = crc(&dec[8], max-2-8);
@@ -167,6 +177,10 @@ int main(int argc, char **argv)
                 dec[max-2] = 0xD0;
             }
             
+            // Prepend preamble longer than 32 bits
+            if(0 == SHORTEN_PREAMBLE_TO_32 && preamble_additional_length > 0) 
+                print_preamble_nibbles(preamble_additional_length/4);
+                
             for(i = 0; i < max; i++)
                 print_binary(dec[i]);
         }
@@ -176,7 +190,7 @@ int main(int argc, char **argv)
             for (i = 0; i < strlen(string)-3; i+=8)
                 dec[i/8] = str2byte(&string[i]);
             max = i/8;
-            memcpy(&enc, &dec, 256);
+            memcpy(&enc, &dec, 1024);
             
             /*
              * byte[] Dec = new byte[Enc.Length];
@@ -201,7 +215,7 @@ int main(int argc, char **argv)
             enc[max-2] = (crcvalue >> 8) & 0xFF;            
             
             // Convert to string
-            memset(string, 0, 2048);
+            memset(string, 0, 65536);
             for(i = 0; i < max; i++)
             {
                 for(j = 0; j < 8; j++)
@@ -210,6 +224,10 @@ int main(int argc, char **argv)
             }
             // Apply datawhitening
             xor_lfsr(string+64);
+            
+            // Prepend preamble longer than 32 bits
+            if(0 == SHORTEN_PREAMBLE_TO_32 && preamble_additional_length > 0) // Add preamble longer than 32 bits
+                print_preamble_nibbles(preamble_additional_length/4);
             
             // Print bits and duplicate last bit
             printf("%s%c\n", string, string[strlen(string)-1]);

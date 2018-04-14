@@ -277,13 +277,16 @@ class AbstractBaseThread(QThread):
     def stop(self, msg: str):
         if msg and not msg.startswith("FIN"):
             self.requestInterruption()
+            time.sleep(0.1)
 
-        if self.tb_process:
+        try:
             logger.info("Kill grc process")
             self.tb_process.kill()
             logger.info("Term grc process")
             self.tb_process.terminate()
             self.tb_process = None
+        except AttributeError:
+            pass
 
         logger.info(msg)
         self.stopped.emit()

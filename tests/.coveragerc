@@ -26,3 +26,7 @@ exclude_lines =
     def on_new_project_action_triggered
     def on_label_non_project_mode_link_activated
     raise NotImplementedError
+    class SectionItemDelegate
+    class SectionComboBox
+    def createEditor
+    def updateEditorGeometry

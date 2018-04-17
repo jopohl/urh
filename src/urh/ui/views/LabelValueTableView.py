@@ -13,8 +13,8 @@ class LabelValueTableView(QTableView):
         super().__init__(parent)
         self.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
-        orders = OrderedDict([("Big Endian (BE)", [bo + " (BE)" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS]),
-                              ("Little Endian (LE)", [bo + " (LE)" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS])])
+        orders = OrderedDict([("Big Endian (BE)", [bo + "/BE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS]),
+                              ("Little Endian (LE)", [bo + "/LE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS])])
 
         self.setItemDelegateForColumn(2, SectionComboBoxDelegate(orders, parent=self))
         self.setEditTriggers(QTableView.AllEditTriggers)

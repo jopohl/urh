@@ -10,7 +10,7 @@ from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    header_labels = ["Name", 'Display format', 'Order', 'Value']
+    header_labels = ["Name", 'Display format', 'Order [Bit/Byte]', 'Value']
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)

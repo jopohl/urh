@@ -109,17 +109,17 @@ class ProtocolLabel(object):
     def display_order_str(self) -> str:
         try:
             bit_order = self.DISPLAY_BIT_ORDERS[self.display_bit_order_index]
-            return bit_order + " ({})".format("BE" if self.display_endianness == "big" else "LE")
+            return bit_order + "/{}".format("BE" if self.display_endianness == "big" else "LE")
         except IndexError:
             return ""
 
     @display_order_str.setter
     def display_order_str(self, value: str):
-        prefix = value.strip().split(" ")[0]
-        suffix = value.strip().split(" ")[-1]
-        if suffix == "(BE)":
+        prefix = value.strip().split("/")[0]
+        suffix = value.strip().split("/")[-1]
+        if suffix == "BE":
             endianness = "big"
-        elif suffix == "(LE)":
+        elif suffix == "LE":
             endianness = "little"
         else:
             return

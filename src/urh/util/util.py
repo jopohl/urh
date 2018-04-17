@@ -61,9 +61,10 @@ def get_windows_lib_path():
     return dll_dir
 
 
-def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False):
+def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):
     """
     Convert bit array to string
+    :param endianness: Endianness little or big
     :param bits: Bit array
     :param output_view_type: Output view type index
     0 = bit, 1=hex, 2=ascii, 3=decimal 4=binary coded decimal (bcd)
@@ -86,7 +87,11 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
         # Reverse bit string
         bits_str = bits_str[::-1]
 
-    if output_view_type == 0:  # bt
+    if endianness == "little":
+        # reverse byte wise
+        bits_str = "".join(bits_str[max(i-8, 0):i] for i in range(len(bits_str), 0, -8))
+
+    if output_view_type == 0:  # bit
         result = bits_str
 
     elif output_view_type == 1:  # hex

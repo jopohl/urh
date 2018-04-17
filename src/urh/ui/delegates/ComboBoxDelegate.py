@@ -1,6 +1,7 @@
 import sys
+
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
-from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap, QFontMetrics
+from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
 from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
 

@@ -328,6 +328,13 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertIn("display type", model.data(model.index(0, 1), Qt.ToolTipRole))
         self.assertIn("bit order", model.data(model.index(0, 2), Qt.ToolTipRole))
 
+        lbl = self.cfc.proto_analyzer.default_message_type[0]
+        self.assertEqual(lbl.display_endianness, "big")
+        model.setData(model.index(0, 2), "MSB/LE", role=Qt.EditRole)
+        self.assertEqual(lbl.display_endianness, "little")
+        model.setData(model.index(0, 2), "LSB/BE", role=Qt.EditRole)
+        self.assertEqual(lbl.display_endianness, "big")
+
     def test_label_list_view(self):
         menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
 

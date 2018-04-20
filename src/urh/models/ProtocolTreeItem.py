@@ -29,11 +29,16 @@ class ProtocolTreeItem(object):
             if self.copy_data:
                 if self.__data_copy is None:
                     self.__data_copy = copy.deepcopy(self.__itemData)  # type: ProtocolAnalyzer
+
+                    # keep message types
+                    self.__data_copy.message_types = self.__itemData.message_types
                     nrz = Encoding([""])
-                    for message in self.__data_copy.messages:  # type: Message
+                    for i, message in enumerate(self.__data_copy.messages):  # type: Message
                         decoded_bits = message.decoded_bits
                         message.decoder = nrz
                         message.plain_bits = decoded_bits
+                        message.message_type = self.__itemData.messages[i].message_type
+
                     self.__data_copy.qt_signals.show_state_changed.connect(self.__itemData.qt_signals.show_state_changed.emit)
 
                 return self.__data_copy

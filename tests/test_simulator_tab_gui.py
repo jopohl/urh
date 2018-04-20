@@ -108,6 +108,28 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.rowCount(), 1)
         self.assertEqual(model.data(model.index(0, 3)), "1" * 8)
 
+        # constant value
+        model.setData(model.index(0, 2), 0, role=Qt.EditRole)
+        model.setData(model.index(0, 1), 0, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "11110000", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "11110000")
+
+        model.setData(model.index(0, 1), 1, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "ab", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "ab")
+
+        model.setData(model.index(0, 1), 2, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "=", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "=")
+
+        model.setData(model.index(0, 1), 3, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "240", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "240")
+
+        model.setData(model.index(0, 1), 4, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "55", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "55")
+
         # get live during simulation
         model.setData(model.index(0, 2), 1, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "-")

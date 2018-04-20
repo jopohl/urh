@@ -25,6 +25,18 @@ class SimulatorMessageTableView(TableView):
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
+    def __insert_column(self, pos):
+        view_type = self.model().proto_view
+        index = self.model().protocol.convert_index(pos, from_view=view_type, to_view=0, decoded=False)[0]
+        nbits = 1 if view_type == 0 else 4 if view_type == 1 else 8
+        for row in self.selected_rows:
+            msg = self.model().protocol.messages[row]
+            for j in range(nbits):
+                msg.insert(index + j, 0)
+
+        self.model().update()
+        self.resize_columns()
+
     @property
     def selected_message(self) -> SimulatorMessage:
         try:
@@ -57,6 +69,10 @@ class SimulatorMessageTableView(TableView):
             edit_labels_action = menu.addAction("Edit labels...")
             edit_labels_action.setIcon(QIcon.fromTheme("configure"))
             edit_labels_action.triggered.connect(self.edit_labels_clicked.emit)
+
+        menu.addSeparator()
+        self._add_insert_column_menu(menu)
+        menu.addSeparator()
 
         selected_encoding = self.selected_message.decoder
 
@@ -126,3 +142,11 @@ class SimulatorMessageTableView(TableView):
     def on_create_label_action_triggered(self):
         min_row, _, start, end = self.selection_range()
         self.create_label_clicked.emit(min_row, start, end)
+
+    @pyqtSlot()
+    def on_insert_column_left_action_triggered(self):
+        self.__insert_column(self.selection_range()[2])
+
+    @pyqtSlot()
+    def on_insert_column_right_action_triggered(self):
+        self.__insert_column(self.selection_range()[3])

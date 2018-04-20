@@ -158,6 +158,24 @@ class TestSimulatorTabGUI(QtTestCase):
         model.setData(model.index(0, 3), (42, 1337), role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "Range (Decimal): 42 - 1337")
 
+    def test_insert_column(self):
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
+        stc.ui.cbViewType.setCurrentText("Hex")
+
+        lens = [len(msg) for msg in stc.simulator_message_table_model.protocol.messages]
+        stc.ui.tblViewMessage.selectAll()
+        stc.ui.tblViewMessage._insert_column(2)
+        for i, l in enumerate(lens):
+            self.assertEqual(lens[i]+4, len(stc.simulator_message_table_model.protocol.messages[i]))
+
+        stc.ui.cbViewType.setCurrentText("Bit")
+        stc.ui.tblViewMessage.selectAll()
+        stc.ui.tblViewMessage._insert_column(6)
+        for i, l in enumerate(lens):
+            self.assertEqual(lens[i]+5, len(stc.simulator_message_table_model.protocol.messages[i]))
+
     def test_simulator_graphics_view(self):
         self.__setup_project()
         self.add_all_signals_to_simulator()

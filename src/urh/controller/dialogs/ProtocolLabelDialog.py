@@ -32,7 +32,6 @@ class ProtocolLabelDialog(QDialog):
 
         field_types = FieldType.load_from_xml()
         self.model = PLabelTableModel(message, field_types)
-        self.preselected_index = preselected_index
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types],
                                                                                 is_editable=True,
@@ -45,7 +44,8 @@ class ProtocolLabelDialog(QDialog):
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
-        self.ui.tblViewProtoLabels.selectRow(preselected_index)
+        if preselected_index >= 0:
+            self.ui.tblViewProtoLabels.selectRow(preselected_index)
         self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

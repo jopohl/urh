@@ -34,7 +34,6 @@ install:
   - |
     if [[ $TRAVIS_OS_NAME == "osx" ]]
     then
-      brew update || brew update
       brew upgrade python
     fi
   - |
@@ -71,7 +70,7 @@ script:
       pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
     elif [[ $TRAVIS_OS_NAME == "osx" ]]
     then
-      pytest -s tests
+      pytest tests
     else
       pytest -s --boxed tests
     fi

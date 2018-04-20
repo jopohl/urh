@@ -13,6 +13,8 @@ matrix:
     - python: 3.4_with_system_site_packages
     - python: 3.5
     - python: 3.6
+    - os: osx
+      language: generic
 
   allow_failures:
     - python: 3.4_with_system_site_packages
@@ -29,6 +31,11 @@ git:
   depth: 5
 
 install:
+  - |
+    if [[ $TRAVIS_OS_NAME == "osx" ]]
+    then
+      brew update && brew install python3
+    fi
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]
     then

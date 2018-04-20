@@ -51,8 +51,12 @@ install:
     else
       pip3 install pytest pytest-xdist
     fi
-  - sh -e /etc/init.d/xvfb start
-  - sleep 5
+  - |
+    if [[ $TRAVIS_OS_NAME == "linux" ]]
+    then
+      sh -e /etc/init.d/xvfb start
+      sleep 5
+    fi
 
 before_script:
   - touch tests/show_gui

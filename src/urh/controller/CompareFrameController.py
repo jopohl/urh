@@ -254,6 +254,8 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.new_messagetype_clicked.connect(self.on_table_new_message_type_clicked)
         self.ui.tblViewProtocol.files_dropped.connect(self.on_files_dropped)
 
+        self.ui.tblLabelValues.edit_label_action_triggered.connect(self.on_edit_label_action_triggered)
+
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
         self.ui.btnNextSearch.clicked.connect(self.on_btn_next_search_clicked)
         self.ui.btnPrevSearch.clicked.connect(self.on_btn_prev_search_clicked)

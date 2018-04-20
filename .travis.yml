@@ -69,6 +69,9 @@ script:
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
       pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
+    elif [[ $TRAVIS_OS_NAME == "osx" ]]
+    then
+      pytest -s tests
     else
       pytest -s --boxed tests
     fi

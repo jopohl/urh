@@ -127,7 +127,16 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             elif j == 2:
                 label.value_type_index = value
             elif j == 3:
-                if label.value_type_index == 2:
+                if label.value_type_index == 0:
+                    message = label.parent()
+                    try:
+                        bits = util.convert_string_to_bits(value, label.display_format_index,
+                                                           target_num_bits=label.end-label.start)
+
+                        message.plain_bits[label.start:label.end] = bits
+                    except ValueError:
+                        pass
+                elif label.value_type_index == 2:
                     label.formula = value
                 elif label.value_type_index == 3:
                     label.external_program = value
@@ -149,7 +158,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
         flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
-        if not(col == 3 and label.value_type_index in [0, 1]):
+        if not(col == 3 and label.value_type_index == 1):
             flags |= Qt.ItemIsEditable
 
         return flags

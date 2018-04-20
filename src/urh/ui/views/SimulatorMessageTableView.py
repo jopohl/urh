@@ -25,7 +25,7 @@ class SimulatorMessageTableView(TableView):
         self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
-    def __insert_column(self, pos):
+    def _insert_column(self, pos):
         view_type = self.model().proto_view
         index = self.model().protocol.convert_index(pos, from_view=view_type, to_view=0, decoded=False)[0]
         nbits = 1 if view_type == 0 else 4 if view_type == 1 else 8
@@ -145,8 +145,8 @@ class SimulatorMessageTableView(TableView):
 
     @pyqtSlot()
     def on_insert_column_left_action_triggered(self):
-        self.__insert_column(self.selection_range()[2])
+        self._insert_column(self.selection_range()[2])
 
     @pyqtSlot()
     def on_insert_column_right_action_triggered(self):
-        self.__insert_column(self.selection_range()[3])
+        self._insert_column(self.selection_range()[3])

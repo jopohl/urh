@@ -19,6 +19,7 @@ exclude_lines =
     def mousePressEvent
     def mouseMoveEvent
     def mouseReleaseEvent
+    def contextMenuEvent
     def on_import_samples_from_csv_action_triggered
     def show_open_dialog
     def on_btn_choose_python2_interpreter_clicked

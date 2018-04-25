@@ -58,12 +58,13 @@ class SpectrumDialogController(SendRecvDialog):
         spectrogram.data_max = 10
         scene = self.ui.graphicsViewSpectrogram.scene()
         pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
-        scene.addPixmap(pixmap).moveBy(0, self.spectrogram_y_pos)
+        pixmap_item = scene.addPixmap(pixmap)
+        pixmap_item.moveBy(0, self.spectrogram_y_pos)
         self.spectrogram_y_pos += pixmap.height()
         if self.spectrogram_y_pos >= scene.sceneRect().height():
             scene.setSceneRect(0, 0, Spectrogram.DEFAULT_FFT_WINDOW_SIZE, self.spectrogram_y_pos)
-            self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue(
-                self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
+            self.ui.graphicsViewSpectrogram.ensureVisible(pixmap_item)
+
 
     def _eliminate_graphic_view(self):
         super()._eliminate_graphic_view()

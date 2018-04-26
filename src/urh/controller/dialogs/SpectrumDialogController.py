@@ -141,7 +141,16 @@ class SpectrumDialogController(SendRecvDialog):
         self.ui.btnClear.setEnabled(True)
         self.device_settings_widget.ui.spinBoxPort.setEnabled(False)
         self.device_settings_widget.ui.lineEditIP.setEnabled(False)
+        self.device_settings_widget.ui.cbDevice.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
+
+    @pyqtSlot()
+    def on_device_stopped(self):
+        self.device_settings_widget.ui.spinBoxPort.setEnabled(True)
+        self.device_settings_widget.ui.lineEditIP.setEnabled(True)
+        self.device_settings_widget.ui.cbDevice.setEnabled(True)
+
+        super().on_device_stopped()
 
     @pyqtSlot()
     def on_clear_clicked(self):

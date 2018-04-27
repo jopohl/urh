@@ -3,6 +3,19 @@ def test_sounddevice_lib():
 
     import numpy as np
     import sounddevice as sd
+    """ 
+    if no portaudio installed:
+    Traceback (most recent call last):
+  File "TestSoundCard.py", line 42, in <module>
+    test_sounddevice_lib()
+  File "TestSoundCard.py", line 5, in test_sounddevice_lib
+    import sounddevice as sd
+  File "/usr/lib/python3.6/site-packages/sounddevice.py", line 64, in <module>
+    raise OSError('PortAudio library not found')
+  OSError: PortAudio library not found
+
+    """
+
 
     duration = 2.5  # seconds
 

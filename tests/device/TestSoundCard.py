@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def test_sounddevice_lib():
     import time
 
@@ -15,7 +18,6 @@ def test_sounddevice_lib():
   OSError: PortAudio library not found
 
     """
-
 
     duration = 2.5  # seconds
 
@@ -41,7 +43,7 @@ def test_sounddevice_lib():
         current_tx += frames
 
     with InputStream(channels=2, callback=rx_callback):
-        sd_sleep(int(duration*1000))
+        sd_sleep(int(duration * 1000))
 
     print("Current rx", current_rx)
 
@@ -51,5 +53,53 @@ def test_sounddevice_lib():
     print("Current tx", current_tx)
 
 
+def test_pyaudio():
+    import pyaudio
+
+    CHUNK = 1024
+    p = pyaudio.PyAudio()
+
+    stream = p.open(format=pyaudio.paFloat32,
+                    channels=2,
+                    rate=48000,
+                    input=True,
+                    frames_per_buffer=CHUNK)
+
+    print("* recording")
+
+    frames = []
+
+    for i in range(0, 100):
+        data = stream.read(CHUNK)
+        frames.append(data)
+
+    print("* done recording")
+
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    data = b''.join(frames)
+
+    print("* playing")
+
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paFloat32,
+                    channels=2,
+                    rate=48000,
+                    output=True,
+                    )
+
+    for i in range(0, len(data), CHUNK):
+        stream.write(data[i:i+CHUNK])
+
+    stream.stop_stream()
+    stream.close()
+
+    p.terminate()
+
+    print("* done playing")
+
+
 if __name__ == '__main__':
-    test_sounddevice_lib()
+    # test_sounddevice_lib()
+    test_pyaudio()

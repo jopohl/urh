@@ -2,7 +2,7 @@ def test_sounddevice_lib():
     import time
 
     import numpy as np
-    import sounddevice as sd
+    from sounddevice import InputStream, OutputStream, sleep as sd_sleep
     """ 
     if no portaudio installed:
     Traceback (most recent call last):
@@ -40,13 +40,13 @@ def test_sounddevice_lib():
         outdata[:] = rx_buffer[current_tx:current_tx + frames]
         current_tx += frames
 
-    with sd.InputStream(channels=2, callback=rx_callback):
-        time.sleep(duration)
+    with InputStream(channels=2, callback=rx_callback):
+        sd_sleep(int(duration*1000))
 
     print("Current rx", current_rx)
 
-    with sd.OutputStream(channels=2, callback=tx_callback):
-        sd.sleep(int(duration * 1000))
+    with OutputStream(channels=2, callback=tx_callback):
+        sd_sleep(int(duration * 1000))
 
     print("Current tx", current_tx)
 

@@ -33,9 +33,8 @@ class ContinuousSendDialog(SendDialog):
         self.setWindowTitle("Send Signal (continuous mode)")
         self.ui.lSamplesSentText.setText("Progress:")
 
-        self.init_device()
-
         self.create_connects()
+        self.device_settings_widget.on_cb_device_current_index_changed()
 
     def create_connects(self):
         SendRecvDialog.create_connects(self)

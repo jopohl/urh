@@ -1,5 +1,4 @@
 cimport chackrf
-import cython
 from libc.stdlib cimport malloc
 import time
 
@@ -40,26 +39,30 @@ cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
 cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
-cpdef setup():
+cpdef has_multi_device_support():
+    return chackrf.HACKRF_HAS_MULTI_DEVICE != 0
+
+cpdef setup(str serial):
     """
     Convenience method for init + open. This one is used by HackRF class.
     :return: 
     """
     init()
-    return open()
+    return open(serial)
 
 cpdef init():
     return chackrf.hackrf_init()
 
-cpdef open():
-    return chackrf.hackrf_open(&_c_device)
+cpdef open(str serial_number=""):
+    if not chackrf.HACKRF_HAS_MULTI_DEVICE or not serial_number:
+        return chackrf.hackrf_open(&_c_device)
+
+    desired_serial = serial_number.encode('UTF-8')
+    c_desired_serial = <char *> desired_serial
+    return chackrf.hackrf_open_by_serial(c_desired_serial, &_c_device)
 
 cpdef exit():
     return chackrf.hackrf_exit()
-
-cpdef reopen():
-    close()
-    return open()
 
 cpdef close():
     return chackrf.hackrf_close(_c_device)

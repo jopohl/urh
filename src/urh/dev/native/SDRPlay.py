@@ -22,6 +22,7 @@ class SDRPlay(Device):
                          gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
         self.success = 0
+        self.device_identifier = 0
         self.error_codes = {
             0: "SUCCESS",
             1: "FAIL",
@@ -46,7 +47,8 @@ class SDRPlay(Device):
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
-                            (self.Command.SET_IF_GAIN.name, self.if_gain)])
+                            (self.Command.SET_IF_GAIN.name, self.if_gain),
+                            ("identifier", self.device_identifier)])
 
     @classmethod
     def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
@@ -61,10 +63,7 @@ class SDRPlay(Device):
 
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
-        if "identifier" in parameters:
-            identifier = parameters["identifier"]
-        else:
-            identifier = 0
+        identifier = parameters["identifier"]
 
         def device_dict_to_string(d):
             hw_ver = d["hw_version"]

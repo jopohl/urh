@@ -108,7 +108,7 @@ QGroupBox::indicator:checked {
            </item>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="labelDeviceArgs">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -124,55 +124,55 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QLineEdit" name="lineEditDeviceArgs">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QLabel" name="labelChannel">
            <property name="text">
             <string>Channel:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QComboBox" name="comboBoxChannel"/>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="labelAntenna">
            <property name="text">
             <string>Antenna:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QComboBox" name="comboBoxAntenna"/>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="labelIP">
            <property name="text">
             <string>IP address:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QLineEdit" name="lineEditIP">
            <property name="text">
             <string>127.0.0.1</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="labelPort">
            <property name="text">
             <string>Port number:</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="QSpinBox" name="spinBoxPort">
            <property name="minimum">
             <number>1</number>
@@ -185,14 +185,14 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="labelFreq">
            <property name="text">
             <string>Frequency (Hz):</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="7" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
            <property name="decimals">
             <number>3</number>
@@ -205,14 +205,14 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="labelSampleRate">
            <property name="text">
             <string>Sample rate (Sps):</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="8" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
            <property name="decimals">
             <number>3</number>
@@ -225,7 +225,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="7" column="2" rowspan="2">
+         <item row="8" column="2" rowspan="2">
           <widget class="QToolButton" name="btnLockBWSR">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -254,14 +254,24 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="labelBandwidth">
            <property name="text">
             <string>Bandwidth (Hz):</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="10" column="0">
+          <widget class="QLabel" name="labelGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Gain:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
            <property name="decimals">
             <number>3</number>
@@ -274,17 +284,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="labelGain">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Gain:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
+         <item row="10" column="1">
           <layout class="QGridLayout" name="gridLayout_5">
            <property name="sizeConstraint">
             <enum>QLayout::SetDefaultConstraint</enum>
@@ -329,7 +329,7 @@ QGroupBox::indicator:checked {
            </item>
           </layout>
          </item>
-         <item row="10" column="0">
+         <item row="11" column="0">
           <widget class="QLabel" name="labelIFGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -339,7 +339,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="11" column="1">
           <layout class="QGridLayout" name="gridLayout_7">
            <item row="0" column="0">
             <widget class="QSlider" name="sliderIFGain">
@@ -366,7 +366,7 @@ QGroupBox::indicator:checked {
            </item>
           </layout>
          </item>
-         <item row="11" column="0">
+         <item row="12" column="0">
           <widget class="QLabel" name="labelBasebandGain">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by &lt;span style=&quot; font-weight:600;&quot;&gt;complex downsampling&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -376,7 +376,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="11" column="1">
+         <item row="12" column="1">
           <layout class="QGridLayout" name="gridLayout_8">
            <item row="0" column="0">
             <widget class="QSlider" name="sliderBasebandGain">
@@ -418,7 +418,7 @@ QGroupBox::indicator:checked {
            </item>
           </layout>
          </item>
-         <item row="12" column="0">
+         <item row="13" column="0">
           <widget class="QLabel" name="labelFreqCorrection">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -428,7 +428,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="12" column="1">
+         <item row="13" column="1">
           <widget class="QSpinBox" name="spinBoxFreqCorrection">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the frequency correction in &lt;span style=&quot; font-weight:600;&quot;&gt;ppm&lt;/span&gt;. If you do not know what to enter here, just leave it to one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -444,7 +444,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="13" column="0">
+         <item row="14" column="0">
           <widget class="QLabel" name="labelDirectSampling">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -454,27 +454,54 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="13" column="1">
+         <item row="14" column="1">
           <widget class="QComboBox" name="comboBoxDirectSampling">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The&lt;span style=&quot; font-weight:600;&quot;&gt; native backend&lt;/span&gt; is recommended, when using this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
-         <item row="14" column="0">
+         <item row="15" column="0">
           <widget class="QLabel" name="labelNRepeat">
            <property name="text">
             <string>Repeat:</string>
            </property>
           </widget>
          </item>
-         <item row="14" column="1">
+         <item row="15" column="1">
           <widget class="QSpinBox" name="spinBoxNRepeat">
            <property name="specialValueText">
             <string>Infinite</string>
            </property>
            <property name="maximum">
             <number>999999999</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelDeviceIdentifier">
+           <property name="text">
+            <string>Device Identifier:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBoxDeviceIdentifier">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::NoInsert</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QToolButton" name="btnRefreshDeviceIdentifier">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="view-refresh"/>
            </property>
           </widget>
          </item>

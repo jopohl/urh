@@ -50,7 +50,7 @@ class LimeSDR(Device):
 
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict):
-        if not cls.setup_device(ctrl_connection, device_identifier=None):
+        if not cls.setup_device(ctrl_connection, device_identifier=parameters["identifier"]):
             return False
 
         limesdr.enable_channel(True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name])
@@ -119,7 +119,8 @@ class LimeSDR(Device):
                             (self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain * 0.01)])
+                            (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
+                            ("identifier", self.device_identifier)])
 
     @staticmethod
     def unpack_complex(buffer):

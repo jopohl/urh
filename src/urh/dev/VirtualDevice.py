@@ -148,6 +148,22 @@ class VirtualDevice(QObject):
             self.__dev.is_in_spectrum_mode = True
 
     @property
+    def has_multi_device_support(self):
+        return hasattr(self.__dev, "has_multi_device_support") and self.__dev.has_multi_device_support
+
+    @property
+    def device_identifier(self):
+        if hasattr(self.__dev, "device_identifier"):
+            return self.__dev.device_identifier
+        else:
+            return None
+
+    @device_identifier.setter
+    def device_identifier(self, value):
+        if hasattr(self.__dev, "device_identifier"):
+            self.__dev.device_identifier = value
+
+    @property
     def bandwidth(self):
         return self.__dev.bandwidth
 
@@ -652,6 +668,12 @@ class VirtualDevice(QObject):
             self.__dev.client_port = port
         else:
             raise ValueError("Setting port only supported for NetworkSDR Plugin")
+
+    def get_device_list(self):
+        if hasattr(self.__dev, "get_device_list"):
+            return self.__dev.get_device_list()
+        else:
+            return []
 
     def increase_gr_port(self):
         if self.backend == Backends.grc:

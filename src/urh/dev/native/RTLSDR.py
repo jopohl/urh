@@ -5,10 +5,7 @@ import numpy as np
 from multiprocessing.connection import Connection
 from urh.dev.native.Device import Device
 
-try:
-    from urh.dev.native.lib import rtlsdr
-except ImportError:
-    import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
+from urh.dev.native.lib import rtlsdr
 from urh.util.Logger import logger
 
 
@@ -59,7 +56,7 @@ class RTLSDR(Device):
 
     @staticmethod
     def get_bandwidth_is_adjustable():
-        return hasattr(rtlsdr, "set_tuner_bandwidth")
+        return rtlsdr.bandwidth_is_adjustable()
 
     @property
     def device_parameters(self):

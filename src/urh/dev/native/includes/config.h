@@ -1,0 +1,5 @@
+#ifdef RTLSDR_BANDWIDTH
+#define RTLSDR_HAS_BANDWIDTH 1
+#else
+#define RTLSDR_HAS_BANDWIDTH 0
+#endif

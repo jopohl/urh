@@ -9,10 +9,7 @@ from urh.util import util
 util.set_windows_lib_path()
 
 from urh.dev.native.RTLSDR import RTLSDR
-try:
-    from urh.dev.native.lib import rtlsdr
-except ImportError:
-    import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
+from urh.dev.native.lib import rtlsdr
 
 class TestRTLSDR(unittest.TestCase):
     def test_cython_wrapper(self):

@@ -134,7 +134,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
         self.ui.lineEditIP.editingFinished.connect(self.on_line_edit_ip_editing_finished)
-        self.ui.lineEditDeviceArgs.editingFinished.connect(self.on_line_edit_device_args_editing_finished)
 
         self.ui.comboBoxAntenna.currentIndexChanged.connect(self.on_combobox_antenna_current_index_changed)
         self.ui.comboBoxChannel.currentIndexChanged.connect(self.on_combobox_channel_current_index_changed)
@@ -277,8 +276,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.labelDeviceIdentifier.setVisible(multi_dev_support)
         self.ui.btnRefreshDeviceIdentifier.setVisible(multi_dev_support)
         self.ui.comboBoxDeviceIdentifier.setVisible(multi_dev_support)
-        self.ui.lineEditDeviceArgs.setVisible("device_args" in conf)
-        self.ui.labelDeviceArgs.setVisible("device_args" in conf)
         self.ui.lineEditIP.setVisible("ip" in conf)
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
@@ -326,7 +323,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxFreqCorrection.editingFinished.emit()
         self.ui.lineEditIP.editingFinished.emit()
         self.ui.spinBoxPort.editingFinished.emit()
-        self.ui.lineEditDeviceArgs.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
 
@@ -377,10 +373,6 @@ class DeviceSettingsWidget(QWidget):
     @pyqtSlot()
     def on_line_edit_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
-
-    @pyqtSlot()
-    def on_line_edit_device_args_editing_finished(self):
-        self.device.device_args = self.ui.lineEditDeviceArgs.text()
 
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):

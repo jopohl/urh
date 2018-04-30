@@ -68,10 +68,6 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxFreqCorrection, 22)
         self.assertEqual(simulator.sniffer.rcv_device.freq_correction, 22)
 
-        rx_settings_widget.ui.lineEditDeviceArgs.setText("cool args")
-        rx_settings_widget.ui.lineEditDeviceArgs.editingFinished.emit()
-        self.assertEqual(simulator.sniffer.rcv_device.device_args, "cool args")
-
         rx_settings_widget.ui.lineEditIP.setText("4.4.4.4")
         rx_settings_widget.ui.lineEditIP.editingFinished.emit()
         self.assertEqual(simulator.sniffer.rcv_device.ip, "4.4.4.4")
@@ -131,10 +127,6 @@ class TestSimulatorDialog(QtTestCase):
 
         self.__edit_spinbox_value(tx_settings_widget.ui.spinBoxFreqCorrection, 33)
         self.assertEqual(simulator.sender.device.freq_correction, 33)
-
-        tx_settings_widget.ui.lineEditDeviceArgs.setText("cool send args")
-        tx_settings_widget.ui.lineEditDeviceArgs.editingFinished.emit()
-        self.assertEqual(simulator.sender.device.device_args, "cool send args")
 
         tx_settings_widget.ui.lineEditIP.setText("1.2.6.2")
         tx_settings_widget.ui.lineEditIP.editingFinished.emit()

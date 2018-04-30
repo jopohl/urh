@@ -1,12 +1,12 @@
 from collections import OrderedDict
+from multiprocessing import Array
+from multiprocessing.connection import Connection
 
 import numpy as np
-from multiprocessing import Array
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import limesdr
-from multiprocessing.connection import Connection
-from array import array
+
 
 class LimeSDR(Device):
     SYNC_RX_CHUNK_SIZE = 32768
@@ -31,14 +31,21 @@ class LimeSDR(Device):
     })
 
     @classmethod
+    def get_device_list(cls):
+        return limesdr.get_device_list()
+
+    @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
         cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
         cls.RECV_FIFO_SIZE = 16 * cls.SYNC_RX_CHUNK_SIZE
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
-        ret = limesdr.open()
-        ctrl_connection.send("OPEN:" + str(ret))
+        ret = limesdr.open(device_identifier)
+        if not device_identifier:
+            ctrl_connection.send("OPEN:" + str(ret))
+        else:
+            ctrl_connection.send("OPEN ({}):{}".format(device_identifier, ret))
         limesdr.disable_all_channels()
         if ret != 0:
             return False
@@ -63,8 +70,6 @@ class LimeSDR(Device):
         ctrl_connection.send("Current normalized gain is {0:.2f}".format(limesdr.get_normalized_gain()))
         ctrl_connection.send("Current antenna is {0}".format(antennas[limesdr.get_antenna()]))
         ctrl_connection.send("Current chip temperature is {0:.2f}°C".format(limesdr.get_chip_temperature()))
-
-
 
         return True
 
@@ -112,6 +117,10 @@ class LimeSDR(Device):
         super().set_device_gain(gain * 0.01)
 
     @property
+    def has_multi_device_support(self):
+        return True
+
+    @property
     def device_parameters(self):
         return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
                             # Set Antenna needs to be called before other stuff!!!
@@ -129,7 +138,7 @@ class LimeSDR(Device):
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the LimeSDR Send API
-        arr = Array("f", 2*len(complex_samples), lock=False)
+        arr = Array("f", 2 * len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.float32)
         numpy_view[:] = complex_samples.view(np.float32)
         return arr

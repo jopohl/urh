@@ -229,7 +229,7 @@ class Ui_FormDeviceSettings(object):
         self.labelDeviceIdentifier.setObjectName("labelDeviceIdentifier")
         self.gridLayout.addWidget(self.labelDeviceIdentifier, 1, 0, 1, 1)
         self.comboBoxDeviceIdentifier = QtWidgets.QComboBox(self.frame_2)
-        self.comboBoxDeviceIdentifier.setEditable(True)
+        self.comboBoxDeviceIdentifier.setEditable(False)
         self.comboBoxDeviceIdentifier.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
         self.comboBoxDeviceIdentifier.setObjectName("comboBoxDeviceIdentifier")
         self.gridLayout.addWidget(self.comboBoxDeviceIdentifier, 1, 1, 1, 1)

@@ -623,7 +623,9 @@ class Device(QObject):
             try:
                 message = self.parent_ctrl_conn.recv()
                 try:
-                    action, return_code = message.split(":")
+                    splitted = message.split(":")
+                    action = ":".join(splitted[:-1])
+                    return_code = splitted[-1]
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))

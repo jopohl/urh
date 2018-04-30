@@ -68,7 +68,7 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
         for dev_name, params in DEVICES.items():
             # Since windows drivers are bundled we can enforce the macros
             macros = [(extra, None) for extra in params.get("extras", dict())]
-            result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], macros, include_dirs))
+            result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs, macros))
 
         return result
 

@@ -38,10 +38,15 @@ cpdef tuple get_device_usb_strings(uint32_t index):
     cdef char *product = <char *> malloc(256 * sizeof(char))
     cdef char *serial = <char *> malloc(256 * sizeof(char))
     result = crtlsdr.rtlsdr_get_device_usb_strings(index, manufacturer, product, serial)
-    if result == 0:
-        return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
-    else:
-        return None, None, None
+    try:
+        if result == 0:
+            return manufacturer.decode('UTF-8'), product.decode('UTF-8'), serial.decode('UTF-8')
+        else:
+            return None, None, None
+    finally:
+        free(manufacturer)
+        free(product)
+        free(serial)
 
 cpdef int get_index_by_serial(str serial):
     """
@@ -55,6 +60,14 @@ cpdef int get_index_by_serial(str serial):
     """
     serial_byte_string = serial.encode('UTF-8')
     return crtlsdr.rtlsdr_get_index_by_serial(<char *> serial_byte_string)
+
+cpdef list get_device_list():
+    result = []
+    cdef uint32_t i, n = get_device_count()
+    for i in range(n):
+        manufacturer, product, serial = get_device_usb_strings(i)
+        result.append("{} {} (SN: {})".format(manufacturer, product, serial))
+    return result
 
 cpdef int open(uint32_t index):
     return crtlsdr.rtlsdr_open(&_c_device, index)

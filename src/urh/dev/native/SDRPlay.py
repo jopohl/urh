@@ -22,7 +22,6 @@ class SDRPlay(Device):
                          gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
         self.success = 0
-        self.device_identifier = 0
         self.error_codes = {
             0: "SUCCESS",
             1: "FAIL",
@@ -48,7 +47,7 @@ class SDRPlay(Device):
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
                             (self.Command.SET_IF_GAIN.name, self.if_gain),
-                            ("identifier", self.device_identifier)])
+                            ("identifier", self.device_number)])
 
     @classmethod
     def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):

@@ -152,16 +152,28 @@ class VirtualDevice(QObject):
         return hasattr(self.__dev, "has_multi_device_support") and self.__dev.has_multi_device_support
 
     @property
-    def device_identifier(self):
-        if hasattr(self.__dev, "device_identifier"):
-            return self.__dev.device_identifier
+    def device_serial(self):
+        if hasattr(self.__dev, "device_serial"):
+            return self.__dev.device_serial
         else:
             return None
 
-    @device_identifier.setter
-    def device_identifier(self, value):
-        if hasattr(self.__dev, "device_identifier"):
-            self.__dev.device_identifier = value
+    @device_serial.setter
+    def device_serial(self, value):
+        if hasattr(self.__dev, "device_serial"):
+            self.__dev.device_serial = value
+
+    @property
+    def device_number(self):
+        if hasattr(self.__dev, "device_number"):
+            return self.__dev.device_number
+        else:
+            return None
+
+    @device_number.setter
+    def device_number(self, value):
+        if hasattr(self.__dev, "device_number"):
+            self.__dev.device_number = value
 
     @property
     def bandwidth(self):

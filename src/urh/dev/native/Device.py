@@ -247,7 +247,8 @@ class Device(QObject):
         self.send_buffer = None
         self.send_buffer_reader = None
 
-        self.device_identifier = None
+        self.device_serial = None
+        self.device_number = 0
 
         self.emit_data_received_signal = False  # used for protocol sniffer
 
@@ -304,7 +305,7 @@ class Device(QObject):
                             (self.Command.SET_RF_GAIN.name, self.gain),
                             (self.Command.SET_IF_GAIN.name, self.if_gain),
                             (self.Command.SET_BB_GAIN.name, self.baseband_gain),
-                            ("identifier", self.device_identifier)])
+                            ("identifier", self.device_serial)])
 
     @property
     def send_config(self) -> SendConfig:

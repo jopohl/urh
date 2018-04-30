@@ -21,11 +21,15 @@ class RTLSDR(Device):
     })
 
     @classmethod
+    def get_device_list(cls):
+        return rtlsdr.get_device_list()
+
+    @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         # identifier gets set in self.receive_process_arguments
         device_number = int(device_identifier)
         ret = rtlsdr.open(device_number)
-        ctrl_connection.send("OPEN:" + str(ret))
+        ctrl_connection.send("OPEN (#{}):{}".format(device_number, ret))
         return ret == 0
 
     @classmethod
@@ -52,7 +56,7 @@ class RTLSDR(Device):
         self.success = 0
         self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable()  # e.g. not in Manjaro Linux / Ubuntu 14.04
 
-        self.device_identifier = device_number
+        self.device_number = device_number
 
         self.error_codes = {
             -100: "Method not available in installed driver."
@@ -70,7 +74,11 @@ class RTLSDR(Device):
                             (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
                             (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
                             (self.Command.SET_RF_GAIN.name, 10 * self.gain),
-                            ("identifier", self.device_identifier)])
+                            ("identifier", self.device_number)])
+
+    @property
+    def has_multi_device_support(self):
+        return True
 
     def set_device_bandwidth(self, bandwidth):
         if self.bandwidth_is_adjustable:

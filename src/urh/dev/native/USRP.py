@@ -85,7 +85,7 @@ class USRP(Device):
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
-                            ("identifier", self.device_identifier)])
+                            ("identifier", self.device_serial)])
 
     @staticmethod
     def unpack_complex(buffer):

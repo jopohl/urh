@@ -488,7 +488,7 @@ QGroupBox::indicator:checked {
          <item row="1" column="1">
           <widget class="QComboBox" name="comboBoxDeviceIdentifier">
            <property name="editable">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="insertPolicy">
             <enum>QComboBox::NoInsert</enum>

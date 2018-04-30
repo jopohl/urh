@@ -148,7 +148,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.ui.btnRefreshDeviceIdentifier.clicked.connect(self.on_btn_refresh_device_identifier_clicked)
-        self.ui.comboBoxDeviceIdentifier.currentTextChanged.connect(self.on_combo_box_device_identifier_current_text_changed)
+        self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(self.on_combo_box_device_identifier_current_index_changed)
 
 
     def set_gain_defaults(self):
@@ -471,6 +471,8 @@ class DeviceSettingsWidget(QWidget):
         self.sync_gain_sliders()
         self.set_bandwidth_status()
 
+        self.ui.comboBoxDeviceIdentifier.clear()
+
     @pyqtSlot()
     def on_btn_refresh_device_identifier_clicked(self):
         if self.device is None:
@@ -479,9 +481,10 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
 
     @pyqtSlot()
-    def on_combo_box_device_identifier_current_text_changed(self):
+    def on_combo_box_device_identifier_current_index_changed(self):
         if self.device is not None:
-            self.device.device_identifier = self.ui.comboBoxDeviceIdentifier.currentText()
+            self.device.device_serial = self.ui.comboBoxDeviceIdentifier.currentText()
+            self.device.device_number = self.ui.comboBoxDeviceIdentifier.currentIndex()
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication

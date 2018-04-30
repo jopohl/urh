@@ -13,7 +13,8 @@ USE_RELATIVE_PATHS = False
 
 DEVICES = {
     "airspy": {"lib": "airspy", "test_function": "open"},
-    "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+    "hackrf": {"lib": "hackrf", "test_function": "hackrf_init",
+               "extras": {"HACKRF_MULTI_DEVICE": "hackrf_open_by_serial"}},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name",
                "extras": {"RTLSDR_BANDWIDTH": "rtlsdr_set_tuner_bandwidth"}},

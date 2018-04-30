@@ -19,9 +19,6 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
         logger.error("Cython-HackRF:" + str(e))
         return -1
 
-@cython.boundscheck(False)
-@cython.initializedcheck(False)
-@cython.wraparound(False)
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
@@ -152,3 +149,20 @@ cpdef set_amp_enable(value):
 cpdef set_baseband_filter_bandwidth(bandwidth_hz):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
+
+cpdef get_device_list():
+    if not chackrf.HACKRF_HAS_MULTI_DEVICE:
+        return None
+
+    init()
+    cdef chackrf.hackrf_device_list_t* device_list = chackrf.hackrf_device_list()
+
+    result = []
+    cdef int i
+    for i in range(device_list.devicecount):
+        serial_number = device_list.serial_numbers[i].decode("UTF-8")
+        result.append(serial_number)
+
+    chackrf.hackrf_device_list_free(device_list)
+    exit()
+    return result

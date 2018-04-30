@@ -209,10 +209,10 @@ cpdef int set_tuner_bandwidth(uint32_t bw):
     :param bw: bandwidth in Hz. Zero means automatic BW selection.
     :return 0 on success
     """
-    if crtlsdr.RTLSDR_HAS_BANDWIDTH:
-        return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
-    else:
-        pass
+    if not crtlsdr.RTLSDR_HAS_BANDWIDTH:
+        return -100
+
+    return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
 
 cpdef int set_sample_rate(uint32_t sample_rate):
     """

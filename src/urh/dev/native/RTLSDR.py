@@ -54,6 +54,10 @@ class RTLSDR(Device):
 
         self.device_number = device_number
 
+        self.error_codes = {
+            -100: "Method not available in installed driver."
+        }
+
     @staticmethod
     def get_bandwidth_is_adjustable():
         return rtlsdr.bandwidth_is_adjustable()

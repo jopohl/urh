@@ -1,3 +1,6 @@
+cdef extern from "config.h":
+    cdef bint HACKRF_HAS_MULTI_DEVICE
+
 cdef extern from "libhackrf/hackrf.h":
     enum hackrf_error:
         HACKRF_SUCCESS = 0
@@ -74,7 +77,7 @@ cdef extern from "libhackrf/hackrf.h":
     int hackrf_init()
     int hackrf_exit()
     
-    hackrf_device_list_t*  hackrf_device_list()
+    hackrf_device_list_t* hackrf_device_list()
     int hackrf_device_list_open(hackrf_device_list_t *list, int idx, hackrf_device** device)
     void hackrf_device_list_free(hackrf_device_list_t *list)
      

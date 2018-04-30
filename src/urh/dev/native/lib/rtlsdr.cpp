@@ -3533,41 +3533,41 @@ static int __pyx_f_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_bandwidth(__pyx_t_3u
   /* "urh/dev/native/lib/rtlsdr.pyx":212
  *     :return 0 on success
  *     """
- *     if crtlsdr.RTLSDR_HAS_BANDWIDTH:             # <<<<<<<<<<<<<<
- *         return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
- *     else:
+ *     if not crtlsdr.RTLSDR_HAS_BANDWIDTH:             # <<<<<<<<<<<<<<
+ *         return -100
+ * 
  */
-  __pyx_t_1 = (RTLSDR_HAS_BANDWIDTH != 0);
+  __pyx_t_1 = ((!(RTLSDR_HAS_BANDWIDTH != 0)) != 0);
   if (__pyx_t_1) {
 
     /* "urh/dev/native/lib/rtlsdr.pyx":213
  *     """
- *     if crtlsdr.RTLSDR_HAS_BANDWIDTH:
- *         return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)             # <<<<<<<<<<<<<<
- *     else:
- *         pass
+ *     if not crtlsdr.RTLSDR_HAS_BANDWIDTH:
+ *         return -100             # <<<<<<<<<<<<<<
+ * 
+ *     return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
  */
-    __pyx_r = rtlsdr_set_tuner_bandwidth(__pyx_v_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_bw);
+    __pyx_r = -100;
     goto __pyx_L0;
 
     /* "urh/dev/native/lib/rtlsdr.pyx":212
  *     :return 0 on success
  *     """
- *     if crtlsdr.RTLSDR_HAS_BANDWIDTH:             # <<<<<<<<<<<<<<
- *         return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
- *     else:
+ *     if not crtlsdr.RTLSDR_HAS_BANDWIDTH:             # <<<<<<<<<<<<<<
+ *         return -100
+ * 
  */
   }
 
   /* "urh/dev/native/lib/rtlsdr.pyx":215
- *         return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
- *     else:
- *         pass             # <<<<<<<<<<<<<<
+ *         return -100
+ * 
+ *     return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)             # <<<<<<<<<<<<<<
  * 
  * cpdef int set_sample_rate(uint32_t sample_rate):
  */
-  /*else*/ {
-  }
+  __pyx_r = rtlsdr_set_tuner_bandwidth(__pyx_v_3urh_3dev_6native_3lib_6rtlsdr__c_device, __pyx_v_bw);
+  goto __pyx_L0;
 
   /* "urh/dev/native/lib/rtlsdr.pyx":205
  *     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
@@ -3578,7 +3578,6 @@ static int __pyx_f_3urh_3dev_6native_3lib_6rtlsdr_set_tuner_bandwidth(__pyx_t_3u
  */
 
   /* function exit code */
-  __pyx_r = 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -3632,7 +3631,7 @@ static PyObject *__pyx_pf_3urh_3dev_6native_3lib_6rtlsdr_40set_tuner_bandwidth(C
 }
 
 /* "urh/dev/native/lib/rtlsdr.pyx":217
- *         pass
+ *     return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
  * 
  * cpdef int set_sample_rate(uint32_t sample_rate):             # <<<<<<<<<<<<<<
  *     """
@@ -3656,7 +3655,7 @@ static int __pyx_f_3urh_3dev_6native_3lib_6rtlsdr_set_sample_rate(__pyx_t_3urh_3
   goto __pyx_L0;
 
   /* "urh/dev/native/lib/rtlsdr.pyx":217
- *         pass
+ *     return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
  * 
  * cpdef int set_sample_rate(uint32_t sample_rate):             # <<<<<<<<<<<<<<
  *     """

@@ -39,6 +39,12 @@ class SDRPlay(Device):
             13: "OUT OF MEMORY ERROR"
         }
 
+    @staticmethod
+    def device_dict_to_string(d):
+        hw_ver = d["hw_version"]
+        serial = d["serial"]
+        return "RSP {} ({})".format(hw_ver, serial)
+
     @property
     def device_parameters(self):
         return OrderedDict([(self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
@@ -48,6 +54,14 @@ class SDRPlay(Device):
                             (self.Command.SET_RF_GAIN.name, self.gain),
                             (self.Command.SET_IF_GAIN.name, self.if_gain),
                             ("identifier", self.device_number)])
+
+    @property
+    def has_multi_device_support(self):
+        return True
+
+    @classmethod
+    def get_device_list(cls):
+        return [cls.device_dict_to_string(d) for d in sdrplay.get_devices()]
 
     @classmethod
     def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
@@ -64,18 +78,14 @@ class SDRPlay(Device):
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
         identifier = parameters["identifier"]
 
-        def device_dict_to_string(d):
-            hw_ver = d["hw_version"]
-            serial = d["serial"]
-            return "RSP {} ({})".format(hw_ver, serial)
-
         try:
             device_list = sdrplay.get_devices()
             device_number = int(identifier)
-            ctrl_connection.send("\nCONNECTED DEVICES: {}".format(", ".join(map(device_dict_to_string, device_list))))
+            ctrl_connection.send("CONNECTED DEVICES: {}".format(", ".join(map(cls.device_dict_to_string, device_list))))
             ret = sdrplay.set_device_index(device_number)
             ctrl_connection.send("SET DEVICE NUMBER to {}:{}".format(device_number, ret))
-        except (TypeError, ValueError):
+        except (TypeError, ValueError) as e:
+            logger.exception(e)
             return False
 
         device_model = device_list[device_number]["hw_version"]

@@ -198,6 +198,8 @@ class DeviceSettingsWidget(QWidget):
                     spinbox.setMaximum(max(conf[key]))
                     spinbox.setSingleStep(conf[key][1] - conf[key][0])
                     spinbox.auto_update_step_size = False
+                    if "default_" + key in conf:
+                        spinbox.setValue(conf["default_"+key])
                 else:
                     spinbox.setMinimum(conf[key].start)
                     spinbox.setMaximum(conf[key].stop)

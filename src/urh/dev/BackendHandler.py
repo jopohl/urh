@@ -135,7 +135,7 @@ class BackendHandler(object):
         try:
             import pyaudio
             return True
-        except (ImportError, ModuleNotFoundError):
+        except ImportError:
             return False
 
     @property

@@ -106,6 +106,11 @@ DEVICE_CONFIG["SDRPlay"] = {
     "rx_antenna_default_index": 0,
 }
 
+DEVICE_CONFIG["SoundCard"] = {
+    "sample_rate": [16e3, 22.05e3, 24e3, 32e3, 44.1e3, 48e3, 96e3, 192e3],
+    "default_sample_rate": 48e3,
+}
+
 DEVICE_CONFIG["Fallback"] = {
     "center_freq": dev_range(start=1*M, stop=6 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=20 * M, step=1),

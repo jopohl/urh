@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from multiprocessing import Array
 from multiprocessing.connection import Connection
 
@@ -20,6 +21,14 @@ class SoundCard(Device):
 
     pyaudio_handle = None
     pyaudio_stream = None
+
+    @classmethod
+    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+        try:
+            cls.SAMPLE_RATE = int(parameters[cls.Command.SET_SAMPLE_RATE.name])
+        except (KeyError, ValueError):
+            pass
+        return super().init_device(ctrl_connection, is_tx, parameters)
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
@@ -89,6 +98,10 @@ class SoundCard(Device):
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
 
         self.success = 0
+
+    @property
+    def device_parameters(self) -> OrderedDict:
+        return OrderedDict([(self.Command.SET_SAMPLE_RATE.name, self.sample_rate)])
 
     @staticmethod
     def unpack_complex(buffer):

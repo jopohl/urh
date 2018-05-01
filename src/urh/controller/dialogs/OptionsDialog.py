@@ -447,6 +447,7 @@ class OptionsDialog(QDialog):
     @pyqtSlot()
     def on_btn_health_check_clicked(self):
         info = ExtensionHelper.perform_health_check()
+        info += "\n" + BackendHandler.perform_soundcard_health_check()
 
         if util.get_windows_lib_path():
             info += "\n\n[INFO] Used DLLs from " + util.get_windows_lib_path()

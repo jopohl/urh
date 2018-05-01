@@ -1,5 +1,7 @@
-from multiprocessing import Connection
+from multiprocessing import Array
+from multiprocessing.connection import Connection
 
+import numpy as np
 import pyaudio
 
 from urh.dev.native.Device import Device
@@ -60,3 +62,22 @@ class SoundCard(Device):
         except Exception as e:
             logger.exception(e)
             ctrl_connection.send("Failed to shut down pyaudio")
+
+    def __init__(self, sample_rate, resume_on_full_receive_buffer=False):
+        super().__init__(center_freq=0, sample_rate=sample_rate, bandwidth=0,
+                         gain=1, if_gain=1, baseband_gain=1,
+                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+
+        self.success = 0
+
+    @staticmethod
+    def unpack_complex(buffer):
+        return np.frombuffer(buffer, dtype=np.complex64)
+
+    @staticmethod
+    def pack_complex(complex_samples: np.ndarray):
+        # todo: check format when sending
+        arr = Array("f", 2*len(complex_samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.float32)
+        numpy_view[:] = complex_samples.view(np.float32)
+        return arr

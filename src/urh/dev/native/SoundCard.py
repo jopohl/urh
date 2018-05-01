@@ -14,6 +14,8 @@ class SoundCard(Device):
     DEVICE_METHODS = dict()
 
     CHUNK_SIZE = 1024
+    SYNC_TX_CHUNK_SIZE = 2 * CHUNK_SIZE
+
     SAMPLE_RATE = 48000
 
     pyaudio_handle = None
@@ -45,9 +47,27 @@ class SoundCard(Device):
             ctrl_connection.send("Failed to start pyaudio stream")
 
     @classmethod
+    def prepare_sync_send(cls, ctrl_connection: Connection):
+        try:
+            cls.pyaudio_stream = cls.pyaudio_handle.open(format=pyaudio.paFloat32,
+                                                         channels=2,
+                                                         rate=cls.SAMPLE_RATE,
+                                                         output=True)
+            ctrl_connection.send("Successfully started pyaudio stream")
+            return 0
+        except Exception as e:
+            logger.exception(e)
+            ctrl_connection.send("Failed to start pyaudio stream")
+
+    @classmethod
     def receive_sync(cls, data_conn: Connection):
         if cls.pyaudio_stream:
             data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE))
+
+    @classmethod
+    def send_sync(cls, data):
+        if cls.pyaudio_stream:
+            cls.pyaudio_stream.write(data.tostring())
 
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):
@@ -76,7 +96,6 @@ class SoundCard(Device):
 
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
-        # todo: check format when sending
         arr = Array("f", 2*len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.float32)
         numpy_view[:] = complex_samples.view(np.float32)

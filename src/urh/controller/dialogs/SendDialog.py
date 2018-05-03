@@ -48,12 +48,8 @@ class SendDialog(SendRecvDialog):
             self.graphics_view.set_signal(signal)
             self.graphics_view.sample_rate = samp_rate
 
-            self.init_device()
-
-            self.graphics_view.setScene(self.scene_manager.scene)
-            self.graphics_view.scene_manager = self.scene_manager
-
             self.create_connects()
+            self.device_settings_widget.on_cb_device_current_index_changed()
 
     def create_connects(self):
         super().create_connects()

@@ -10,7 +10,7 @@ from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    header_labels = ["Name", 'Display format', 'Bit order', 'Value']
+    header_labels = ["Name", 'Display format', 'Order [Bit/Byte]', 'Value']
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
@@ -28,7 +28,8 @@ class LabelValueTableModel(QAbstractTableModel):
         lsb = lbl.display_bit_order_index == 1
         lsd = lbl.display_bit_order_index == 2
 
-        data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd)
+        data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd,
+                                           endianness=lbl.display_endianness)
         if data is None:
             return None
 
@@ -98,7 +99,7 @@ class LabelValueTableModel(QAbstractTableModel):
             elif j == 1:
                 return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 2:
-                return lbl.DISPLAY_BIT_ORDERS[lbl.display_bit_order_index]
+                return lbl.display_order_str
             elif j == 3:
                 return self.__display_data(lbl, calculated_crc)
 
@@ -139,7 +140,7 @@ class LabelValueTableModel(QAbstractTableModel):
                 if index.column() == 1:
                     lbl.display_format_index = value
                 elif index.column() == 2:
-                    lbl.display_bit_order_index = value
+                    lbl.display_order_str = value
                 self.dataChanged.emit(self.index(row, 0),
                                       self.index(row, self.columnCount()))
 

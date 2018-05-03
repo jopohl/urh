@@ -5,10 +5,7 @@ import numpy as np
 from multiprocessing.connection import Connection
 from urh.dev.native.Device import Device
 
-try:
-    from urh.dev.native.lib import rtlsdr
-except ImportError:
-    import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
+from urh.dev.native.lib import rtlsdr
 from urh.util.Logger import logger
 
 
@@ -24,11 +21,15 @@ class RTLSDR(Device):
     })
 
     @classmethod
+    def get_device_list(cls):
+        return rtlsdr.get_device_list()
+
+    @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         # identifier gets set in self.receive_process_arguments
         device_number = int(device_identifier)
         ret = rtlsdr.open(device_number)
-        ctrl_connection.send("OPEN:" + str(ret))
+        ctrl_connection.send("OPEN (#{}):{}".format(device_number, ret))
         return ret == 0
 
     @classmethod
@@ -57,9 +58,13 @@ class RTLSDR(Device):
 
         self.device_number = device_number
 
+        self.error_codes = {
+            -100: "Method not available in installed driver."
+        }
+
     @staticmethod
     def get_bandwidth_is_adjustable():
-        return hasattr(rtlsdr, "set_tuner_bandwidth")
+        return rtlsdr.bandwidth_is_adjustable()
 
     @property
     def device_parameters(self):
@@ -70,6 +75,10 @@ class RTLSDR(Device):
                             (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
                             (self.Command.SET_RF_GAIN.name, 10 * self.gain),
                             ("identifier", self.device_number)])
+
+    @property
+    def has_multi_device_support(self):
+        return True
 
     def set_device_bandwidth(self, bandwidth):
         if self.bandwidth_is_adjustable:

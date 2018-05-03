@@ -25,19 +25,13 @@ class ReceiveDialog(SendRecvDialog):
         self.already_saved = True
         self.recorded_files = []
 
-        # set really in on_device_started
-        self.scene_manager = None  # type: LiveSceneManager
-
-        self.init_device()
-        self.device_settings_widget.set_bandwidth_status()
-
         self.setWindowTitle("Record Signal")
         self.setWindowIcon(QIcon.fromTheme("media-record"))
 
-        self.graphics_view.setScene(self.scene_manager.scene)
-        self.graphics_view.scene_manager = self.scene_manager
-
+        # set really in on_device_started
+        self.scene_manager = None  # type: LiveSceneManager
         self.create_connects()
+        self.device_settings_widget.on_cb_device_current_index_changed()
 
     def create_connects(self):
         super().create_connects()

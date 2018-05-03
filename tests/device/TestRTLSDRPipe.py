@@ -4,11 +4,7 @@ from multiprocessing import Pipe
 from multiprocessing import Process
 from threading import Thread
 
-try:
-    from urh.dev.native.lib import rtlsdr
-except ImportError:
-    import urh.dev.native.lib.rtlsdr_fallback as rtlsdr
-
+from urh.dev.native.lib import rtlsdr
 import time
 
 from urh.util.Logger import logger

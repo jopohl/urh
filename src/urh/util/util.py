@@ -19,6 +19,11 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetIt
 from urh import constants
 from urh.util.Logger import logger
 
+BCD_ERROR_SYMBOL = "?"
+BCD_LUT = {"{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)}
+BCD_REVERSE_LUT = {str(i): "{0:04b}".format(i) for i in range(10)}
+BCD_REVERSE_LUT[BCD_ERROR_SYMBOL] = "0000"
+
 DEFAULT_PROGRAMS_WINDOWS = {}
 
 
@@ -64,9 +69,10 @@ def get_windows_lib_path():
     return dll_dir
 
 
-def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False):
+def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):
     """
     Convert bit array to string
+    :param endianness: Endianness little or big
     :param bits: Bit array
     :param output_view_type: Output view type index
     0 = bit, 1=hex, 2=ascii, 3=decimal 4=binary coded decimal (bcd)
@@ -89,7 +95,11 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
         # Reverse bit string
         bits_str = bits_str[::-1]
 
-    if output_view_type == 0:  # bt
+    if endianness == "little":
+        # reverse byte wise
+        bits_str = "".join(bits_str[max(i - 8, 0):i] for i in range(len(bits_str), 0, -8))
+
+    if output_view_type == 0:  # bit
         result = bits_str
 
     elif output_view_type == 1:  # hex
@@ -105,9 +115,7 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
         except ValueError:
             return None
     elif output_view_type == 4:  # bcd
-        error_symbol = "?"
-        lut = {"{0:04b}".format(i): str(i) if i < 10 else error_symbol for i in range(16)}
-        result = "".join([lut[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4)])
+        result = "".join([BCD_LUT[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4)])
     else:
         raise ValueError("Unknown view type")
 
@@ -129,10 +137,67 @@ def hex2bit(hex_str: str) -> array.array:
         bitstring = "".join("{0:04b}".format(int(h, 16)) for h in hex_str)
         return array.array("B", [True if x == "1" else False for x in bitstring])
     except (TypeError, ValueError) as e:
-        logger.error(str(e))
+        logger.error(e)
         result = array.array("B", [])
 
     return result
+
+
+def ascii2bit(ascii_str: str) -> array.array:
+    if not isinstance(ascii_str, str):
+        return array.array("B", [])
+
+    try:
+        bitstring = "".join("{0:08b}".format(ord(c)) for c in ascii_str)
+        return array.array("B", [True if x == "1" else False for x in bitstring])
+    except (TypeError, ValueError) as e:
+        logger.error(e)
+        result = array.array("B", [])
+
+    return result
+
+
+def decimal2bit(number: str, num_bits: int) -> array.array:
+    try:
+        number = int(number)
+    except ValueError as e:
+        logger.error(e)
+        return array.array("B", [])
+
+    fmt_str = "{0:0" + str(num_bits) + "b}"
+    return array.array("B", map(int, fmt_str.format(number)))
+
+
+def bcd2bit(value: str) -> array.array:
+    try:
+        return array.array("B", map(int, "".join(BCD_REVERSE_LUT[c] for c in value)))
+    except Exception as e:
+        logger.error(e)
+        return array.array("B", [])
+
+
+def convert_string_to_bits(value: str, display_format: int, target_num_bits: int) -> array.array:
+    if display_format == 0:
+        result = string2bits(value)
+    elif display_format == 1:
+        result = hex2bit(value)
+    elif display_format == 2:
+        result = ascii2bit(value)
+    elif display_format == 3:
+        result = decimal2bit(value, target_num_bits)
+    elif display_format == 4:
+        result = bcd2bit(value)
+    else:
+        raise ValueError("Unknown display format {}".format(display_format))
+
+    if len(result) == 0:
+        raise ValueError("Error during conversion.")
+
+    if len(result) < target_num_bits:
+        # pad with zeros
+        return result + array.array("B", [0] * (target_num_bits-len(result)))
+    else:
+        return result[:target_num_bits]
 
 
 def create_textbox_dialog(content: str, title: str, parent) -> QDialog:
@@ -159,10 +224,8 @@ def number_to_bits(n: int, length: int) -> array.array:
     fmt = "{0:0" + str(length) + "b}"
     return array.array("B", map(int, fmt.format(n)))
 
-
 def bits_to_number(bits: array.array) -> int:
     return int("".join(map(str, bits)), 2)
-
 
 def aggregate_bits(bits: array.array, size=4) -> array.array:
     result = array.array("B", [])

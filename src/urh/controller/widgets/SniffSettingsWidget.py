@@ -76,7 +76,7 @@ class SniffSettingsWidget(QWidget):
         set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold if signal else 0.001)
         set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
         self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
-        self.ui.checkBoxAdaptiveNoise.setChecked(conf_dict.get("adaptive_noise", False))
+        self.ui.checkBoxAdaptiveNoise.setChecked(bool(conf_dict.get("adaptive_noise", False)))
 
         self.emit_editing_finished_signals()
 

@@ -173,6 +173,10 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogAll.setEnabled(not all_items_selected)
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
+    def __get_full_transcript(self) -> list:
+        return self.simulator.transcript.get_for_all_participants(all_rounds=True,
+                                                                  use_bit=self.ui.radioButtonTranscriptBit.isChecked())
+
     def update_view(self):
         for device_message in filter(None, map(str.rstrip, self.simulator.device_messages())):
             self.ui.textEditDevices.append(device_message)
@@ -180,11 +184,11 @@ class SimulatorDialog(QDialog):
         for log_msg in filter(None, map(str.rstrip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
-        for line in self.simulator.get_full_transcript(start=self.current_transcript_index,
-                                                       use_bit=self.ui.radioButtonTranscriptBit.isChecked()):
+        transcript = self.__get_full_transcript()
+        for line in transcript[self.current_transcript_index:]:
             self.ui.textEditTranscript.append(line)
 
-        self.current_transcript_index = len(self.simulator.transcript)
+        self.current_transcript_index = len(transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
         self.ui.lblCurrentRepeatValue.setText(current_repeat)
 
@@ -219,8 +223,7 @@ class SimulatorDialog(QDialog):
             self.sniff_settings_widget.emit_editing_finished_signals()
 
     def update_transcript_view(self):
-        transcript = self.simulator.get_full_transcript(start=0, use_bit=self.ui.radioButtonTranscriptBit.isChecked())
-        self.ui.textEditTranscript.setText("\n".join(transcript))
+        self.ui.textEditTranscript.setText("\n".join(self.__get_full_transcript()))
 
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()

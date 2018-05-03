@@ -170,14 +170,7 @@ class GeneratorTableView(TableView):
             duplicate_action.setIcon(QIcon.fromTheme("edit-table-insert-row-under"))
             duplicate_action.triggered.connect(self.on_duplicate_action_triggered)
 
-            column_menu = menu.addMenu("Insert column")
-
-            insert_column_left_action = column_menu.addAction("on the left")
-            insert_column_left_action.triggered.connect(self.on_insert_column_left_action_triggered)
-            insert_column_left_action.setIcon(QIcon.fromTheme("edit-table-insert-column-left"))
-            insert_column_right_action = column_menu.addAction("on the right")
-            insert_column_right_action.setIcon(QIcon.fromTheme("edit-table-insert-column-right"))
-            insert_column_right_action.triggered.connect(self.on_insert_column_right_action_triggered)
+            self._add_insert_column_menu(menu)
 
             menu.addSeparator()
             clear_action = menu.addAction("Clear table")
@@ -223,14 +216,6 @@ class GeneratorTableView(TableView):
             self.create_fuzzing_label_clicked.emit(min_row, start, end)
         else:
             self.edit_fuzzing_label_clicked.emit(selected_label_index)
-
-    @pyqtSlot()
-    def on_insert_column_left_action_triggered(self):
-        self.model().insert_column(self.selection_range()[2], self.selected_rows)
-
-    @pyqtSlot()
-    def on_insert_column_right_action_triggered(self):
-        self.model().insert_column(self.selection_range()[3], self.selected_rows)
 
     @pyqtSlot()
     def on_duplicate_action_triggered(self):

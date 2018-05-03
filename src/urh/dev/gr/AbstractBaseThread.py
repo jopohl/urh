@@ -37,7 +37,6 @@ class AbstractBaseThread(QThread):
         self._antenna_index = 0
         self._channel_index = 0
         self._receiving = receiving  # False for Sender-Thread
-        self.device_args = ""  # e.g. addr=192.168.10.2
         self.device = "USRP"
         self.current_index = 0
 
@@ -215,10 +214,6 @@ class AbstractBaseThread(QThread):
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
                    "--port", str(self.gr_port)]
 
-        if self.device.upper() == "USRP":
-            if self.device_args:
-                options.extend(["--device-args", self.device_args])
-
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
 
@@ -277,13 +272,16 @@ class AbstractBaseThread(QThread):
     def stop(self, msg: str):
         if msg and not msg.startswith("FIN"):
             self.requestInterruption()
+            time.sleep(0.1)
 
-        if self.tb_process:
+        try:
             logger.info("Kill grc process")
             self.tb_process.kill()
             logger.info("Term grc process")
             self.tb_process.terminate()
             self.tb_process = None
+        except AttributeError:
+            pass
 
         logger.info(msg)
         self.stopped.emit()

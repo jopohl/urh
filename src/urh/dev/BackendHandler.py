@@ -84,7 +84,8 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube", "HackRF", "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "USRP")
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube", "HackRF",
+                    "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
 
     def __init__(self):
 
@@ -130,6 +131,14 @@ class BackendHandler(object):
             return False
 
     @property
+    def __soundcard_enabled(self) -> bool:
+        try:
+            import pyaudio
+            return True
+        except ImportError:
+            return False
+
+    @property
     def __airspy_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import airspy
@@ -148,10 +157,7 @@ class BackendHandler(object):
     @property
     def __rtlsdr_native_enabled(self) -> bool:
         try:
-            try:
-                from urh.dev.native.lib import rtlsdr
-            except ImportError:
-                from urh.dev.native.lib import rtlsdr_fallback
+            from urh.dev.native.lib import rtlsdr
             return True
         except ImportError:
             return False
@@ -234,6 +240,10 @@ class BackendHandler(object):
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
+        if devname.lower() == "soundcard" and self.__soundcard_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
         return backends, supports_rx, supports_tx
 
     def get_backends(self):
@@ -242,6 +252,15 @@ class BackendHandler(object):
             ab, rx_suprt, tx_suprt = self.__avail_backends_for_device(device_name)
             container = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
             self.device_backends[device_name.lower()] = container
+
+    @staticmethod
+    def perform_soundcard_health_check():
+        result = "SoundCard -- "
+        try:
+            import pyaudio
+            return result + "OK"
+        except Exception as e:
+            return result + str(e)
 
     def __get_python2_interpreter(self):
         paths = os.get_exec_path()

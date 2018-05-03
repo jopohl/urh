@@ -1,5 +1,4 @@
 cimport chackrf
-import cython
 from libc.stdlib cimport malloc
 import time
 
@@ -19,9 +18,6 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
         logger.error("Cython-HackRF:" + str(e))
         return -1
 
-@cython.boundscheck(False)
-@cython.initializedcheck(False)
-@cython.wraparound(False)
 cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
@@ -43,26 +39,30 @@ cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
 cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
-cpdef setup():
+cpdef has_multi_device_support():
+    return chackrf.HACKRF_HAS_MULTI_DEVICE != 0
+
+cpdef setup(str serial):
     """
     Convenience method for init + open. This one is used by HackRF class.
     :return: 
     """
     init()
-    return open()
+    return open(serial)
 
 cpdef init():
     return chackrf.hackrf_init()
 
-cpdef open():
-    return chackrf.hackrf_open(&_c_device)
+cpdef open(str serial_number=""):
+    if not chackrf.HACKRF_HAS_MULTI_DEVICE or not serial_number:
+        return chackrf.hackrf_open(&_c_device)
+
+    desired_serial = serial_number.encode('UTF-8')
+    c_desired_serial = <char *> desired_serial
+    return chackrf.hackrf_open_by_serial(c_desired_serial, &_c_device)
 
 cpdef exit():
     return chackrf.hackrf_exit()
-
-cpdef reopen():
-    close()
-    return open()
 
 cpdef close():
     return chackrf.hackrf_close(_c_device)
@@ -152,3 +152,20 @@ cpdef set_amp_enable(value):
 cpdef set_baseband_filter_bandwidth(bandwidth_hz):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)
+
+cpdef get_device_list():
+    if not chackrf.HACKRF_HAS_MULTI_DEVICE:
+        return None
+
+    init()
+    cdef chackrf.hackrf_device_list_t* device_list = chackrf.hackrf_device_list()
+
+    result = []
+    cdef int i
+    for i in range(device_list.devicecount):
+        serial_number = device_list.serial_numbers[i].decode("UTF-8")
+        result.append(serial_number)
+
+    chackrf.hackrf_device_list_free(device_list)
+    exit()
+    return result

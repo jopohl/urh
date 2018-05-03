@@ -13,6 +13,8 @@ import unittest
 
 class TestUSRP(unittest.TestCase):
     def test_cython_wrapper(self):
+        print(usrp.find_devices(""))
+
         usrp.set_tx(False)
 
         return_code = usrp.open("addr=192.168.10.2")

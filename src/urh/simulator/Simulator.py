@@ -24,14 +24,13 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
+from urh.simulator.Transcript import Transcript
 from urh.util import util, HTMLFormatter
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
 class Simulator(QObject):
-    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
-
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
 
@@ -45,7 +44,7 @@ class Simulator(QObject):
         self.modulators = modulators  # type: list[Modulator]
         self.backend_handler = BackendHandler()
 
-        self.transcript = []  # type: list[tuple[Participant, Participant, Message, int]]
+        self.transcript = Transcript()
 
         self.current_item = None
         self.last_sent_message = None
@@ -67,10 +66,6 @@ class Simulator(QObject):
         for item in self.simulator_config.get_all_items():
             if isinstance(item, SimulatorCounterAction):
                 item.reset_value()
-
-    def __add_newline_to_transcript(self):
-        if len(self.transcript) > 0 and self.transcript[-1] != ("", "", "", ""):
-            self.transcript.append(("", "", "", ""))
 
     def start(self):
         self.reset()
@@ -134,7 +129,7 @@ class Simulator(QObject):
         self.simulation_stopped.emit()
 
     def restart(self):
-        self.__add_newline_to_transcript()
+        self.transcript.start_new_round()
         self.reset()
         self.log_message("<b>Restarting simulation</b>")
 
@@ -255,7 +250,7 @@ class Simulator(QObject):
                 command = self.__fill_counter_values(self.current_item.command)
                 self.log_message("Calling {}".format(command))
                 if self.current_item.pass_transcript:
-                    transcript = "\n".join(self.get_full_transcript())
+                    transcript = "\n".join(self.transcript.get_for_all_participants(all_rounds=False))
                     result, rc = util.run_command(command, transcript, use_stdin=True, return_rc=True)
                 else:
                     result, rc = util.run_command(command, param=None, detailed_output=True, return_rc=True)
@@ -292,7 +287,7 @@ class Simulator(QObject):
             elif self.current_item is None:
                 self.current_repeat += 1
                 next_item = self.simulator_config.rootItem
-                self.__add_newline_to_transcript()
+                self.transcript.start_new_round()
 
             else:
                 raise ValueError("Unknown action {}".format(type(self.current_item)))
@@ -328,7 +323,7 @@ class Simulator(QObject):
                     new_message.plain_bits[start:end] = checksum + array.array("B", [0] * (
                             (end - start) - len(checksum)))
 
-            self.transcript.append((msg.source, msg.destination, new_message, msg.index()))
+            self.transcript.append(msg.source, msg.destination, new_message, msg.index())
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
@@ -373,7 +368,7 @@ class Simulator(QObject):
                     decoded_msg = Message(received_msg.decoded_bits, 0,
                                           received_msg.message_type, decoder=received_msg.decoder)
                     msg.send_recv_messages.append(decoded_msg)
-                    self.transcript.append((msg.source, msg.destination, decoded_msg, msg.index()))
+                    self.transcript.append(msg.source, msg.destination, decoded_msg, msg.index())
                     self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
@@ -483,16 +478,6 @@ class Simulator(QObject):
             self.log_message("Receive timeout")
             return None
 
-    def get_transcript(self, participant: Participant):
-        result = []
-        for source, destination, msg, _ in self.transcript:
-            if participant == destination:
-                result.append("->" + msg.plain_bits_str)
-            elif participant == source:
-                result.append("<-" + msg.plain_bits_str)
-
-        return "\n".join(result)
-
     def get_full_transcript(self, start=0, use_bit=True):
         result = []
         for source, destination, msg, msg_index in self.transcript[start:]:
@@ -514,9 +499,9 @@ class Simulator(QObject):
                 assert valid
                 result = self.expression_parser.evaluate_node(node)
             elif lbl.value_type_index == 3:
-                transcript = self.get_transcript(template_msg.source
-                                                 if template_msg.source.simulate
-                                                 else template_msg.destination)
+                transcript = self.transcript.get_for_participant(template_msg.source
+                                                                 if template_msg.source.simulate
+                                                                 else template_msg.destination)
 
                 if template_msg.destination.simulate:
                     direction = "->" if template_msg.source.simulate else "<-"

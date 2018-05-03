@@ -31,9 +31,6 @@ class SpectrumDialogController(SendRecvDialog):
         self.ui.graphicsViewSpectrogram.setScene(QGraphicsScene())
         self.__clear_spectrogram()
 
-        self.init_device()
-        self.device_settings_widget.set_bandwidth_status()
-
         self.gain_timer = QTimer(self)
         self.gain_timer.setSingleShot(True)
 
@@ -44,6 +41,7 @@ class SpectrumDialogController(SendRecvDialog):
         self.bb_gain_timer.setSingleShot(True)
 
         self.create_connects()
+        self.device_settings_widget.on_cb_device_current_index_changed()
 
     def __clear_spectrogram(self):
         self.ui.graphicsViewSpectrogram.scene().clear()
@@ -58,12 +56,12 @@ class SpectrumDialogController(SendRecvDialog):
         spectrogram.data_max = 10
         scene = self.ui.graphicsViewSpectrogram.scene()
         pixmap = QPixmap.fromImage(spectrogram.create_spectrogram_image(transpose=True))
-        scene.addPixmap(pixmap).moveBy(0, self.spectrogram_y_pos)
+        pixmap_item = scene.addPixmap(pixmap)
+        pixmap_item.moveBy(0, self.spectrogram_y_pos)
         self.spectrogram_y_pos += pixmap.height()
         if self.spectrogram_y_pos >= scene.sceneRect().height():
             scene.setSceneRect(0, 0, Spectrogram.DEFAULT_FFT_WINDOW_SIZE, self.spectrogram_y_pos)
-            self.ui.graphicsViewSpectrogram.verticalScrollBar().setValue(
-                self.ui.graphicsViewSpectrogram.verticalScrollBar().maximum())
+            self.ui.graphicsViewSpectrogram.ensureVisible(pixmap_item)
 
     def _eliminate_graphic_view(self):
         super()._eliminate_graphic_view()
@@ -80,7 +78,8 @@ class SpectrumDialogController(SendRecvDialog):
         self.graphics_view.wheel_event_triggered.connect(self.on_graphics_view_wheel_event_triggered)
 
         self.device_settings_widget.ui.sliderGain.valueChanged.connect(self.on_slider_gain_value_changed)
-        self.device_settings_widget.ui.sliderBasebandGain.valueChanged.connect(self.on_slider_baseband_gain_value_changed)
+        self.device_settings_widget.ui.sliderBasebandGain.valueChanged.connect(
+            self.on_slider_baseband_gain_value_changed)
         self.device_settings_widget.ui.sliderIFGain.valueChanged.connect(self.on_slider_if_gain_value_changed)
         self.device_settings_widget.ui.spinBoxFreq.editingFinished.connect(self.on_spinbox_frequency_editing_finished)
 
@@ -140,7 +139,16 @@ class SpectrumDialogController(SendRecvDialog):
         self.ui.btnClear.setEnabled(True)
         self.device_settings_widget.ui.spinBoxPort.setEnabled(False)
         self.device_settings_widget.ui.lineEditIP.setEnabled(False)
+        self.device_settings_widget.ui.cbDevice.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
+
+    @pyqtSlot()
+    def on_device_stopped(self):
+        self.device_settings_widget.ui.spinBoxPort.setEnabled(True)
+        self.device_settings_widget.ui.lineEditIP.setEnabled(True)
+        self.device_settings_widget.ui.cbDevice.setEnabled(True)
+
+        super().on_device_stopped()
 
     @pyqtSlot()
     def on_clear_clicked(self):

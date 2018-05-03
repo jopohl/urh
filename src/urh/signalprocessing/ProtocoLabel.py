@@ -23,7 +23,7 @@ class ProtocolLabel(object):
 
     __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "__fuzz_me", "fuzz_values",
                  "fuzz_created", "__field_type", "display_format_index", "display_bit_order_index",
-                 "auto_created", "copied")
+                 "display_endianness", "auto_created", "copied")
 
     def __init__(self, name: str, start: int, end: int, color_index: int, fuzz_created=False,
                  auto_created=False, field_type: FieldType = None):
@@ -47,6 +47,7 @@ class ProtocolLabel(object):
 
         self.display_format_index = 0 if field_type is None else field_type.display_format_index
         self.display_bit_order_index = 0
+        self.display_endianness = "big"
 
         self.auto_created = auto_created
 
@@ -107,6 +108,31 @@ class ProtocolLabel(object):
         upper_limit = 2 ** (self.end - self.start)
         return len(self.fuzz_values) == upper_limit
 
+    @property
+    def display_order_str(self) -> str:
+        try:
+            bit_order = self.DISPLAY_BIT_ORDERS[self.display_bit_order_index]
+            return bit_order + "/{}".format("BE" if self.display_endianness == "big" else "LE")
+        except IndexError:
+            return ""
+
+    @display_order_str.setter
+    def display_order_str(self, value: str):
+        prefix = value.strip().split("/")[0]
+        suffix = value.strip().split("/")[-1]
+        if suffix == "BE":
+            endianness = "big"
+        elif suffix == "LE":
+            endianness = "little"
+        else:
+            return
+
+        try:
+            self.display_bit_order_index = self.DISPLAY_BIT_ORDERS.index(prefix)
+            self.display_endianness = endianness
+        except ValueError:
+            return
+
     def get_copy(self):
         if self.copied:
             return self
@@ -156,6 +182,7 @@ class ProtocolLabel(object):
                                            "apply_decoding": str(self.apply_decoding), "show": str(self.show),
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
+                                           "display_endianness": str(self.display_endianness),
                                            "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
                                            "auto_created": str(self.auto_created)})
 
@@ -188,5 +215,6 @@ class ProtocolLabel(object):
         # set this after result.field_type because this would change display_format_index to field_types default
         result.display_format_index = int(tag.get("display_format_index", 0))
         result.display_bit_order_index = int(tag.get("display_bit_order_index", 0))
+        result.display_endianness = tag.get("display_endianness", "big")
 
         return result

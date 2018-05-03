@@ -25,6 +25,8 @@ class DeviceSettingsWidget(QWidget):
         self.ui = Ui_FormDeviceSettings()
         self.ui.setupUi(self)
 
+        self.__device = None  # type: VirtualDevice
+
         self.is_tx = is_tx
         self.is_rx = not is_tx
         if backend_handler is None:
@@ -41,8 +43,6 @@ class DeviceSettingsWidget(QWidget):
         items = self.get_devices_for_combobox(continuous_send_mode)
         self.ui.cbDevice.addItems(items)
         self.bootstrap(project_manager.device_conf, enforce_default=True)
-
-        self.__device = None  # type: VirtualDevice
 
         self.ui.btnLockBWSR.setChecked(self.bw_sr_are_locked)
         self.on_btn_lock_bw_sr_clicked()
@@ -134,7 +134,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
         self.ui.lineEditIP.editingFinished.connect(self.on_line_edit_ip_editing_finished)
-        self.ui.lineEditDeviceArgs.editingFinished.connect(self.on_line_edit_device_args_editing_finished)
 
         self.ui.comboBoxAntenna.currentIndexChanged.connect(self.on_combobox_antenna_current_index_changed)
         self.ui.comboBoxChannel.currentIndexChanged.connect(self.on_combobox_channel_current_index_changed)
@@ -142,10 +141,14 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxFreqCorrection.editingFinished.connect(self.on_spinbox_freq_correction_editing_finished)
         self.ui.comboBoxDirectSampling.currentIndexChanged.connect(self.on_combobox_direct_sampling_index_changed)
 
-        self.ui.cbDevice.currentIndexChanged.connect(self.cb_device_current_index_changed)
+        self.ui.cbDevice.currentIndexChanged.connect(self.on_cb_device_current_index_changed)
 
         self.ui.spinBoxNRepeat.editingFinished.connect(self.on_num_repeats_changed)
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
+
+        self.ui.btnRefreshDeviceIdentifier.clicked.connect(self.on_btn_refresh_device_identifier_clicked)
+        self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(self.on_combo_box_device_identifier_current_index_changed)
+
 
     def set_gain_defaults(self):
         self.set_default_rf_gain()
@@ -198,6 +201,8 @@ class DeviceSettingsWidget(QWidget):
                     spinbox.setMaximum(max(conf[key]))
                     spinbox.setSingleStep(conf[key][1] - conf[key][0])
                     spinbox.auto_update_step_size = False
+                    if "default_" + key in conf:
+                        spinbox.setValue(conf["default_"+key])
                 else:
                     spinbox.setMinimum(conf[key].start)
                     spinbox.setMaximum(conf[key].stop)
@@ -269,8 +274,10 @@ class DeviceSettingsWidget(QWidget):
             else:
                 combobox.setVisible(False)
 
-        self.ui.lineEditDeviceArgs.setVisible("device_args" in conf)
-        self.ui.labelDeviceArgs.setVisible("device_args" in conf)
+        multi_dev_support = hasattr(self.device, "has_multi_device_support") and self.device.has_multi_device_support
+        self.ui.labelDeviceIdentifier.setVisible(multi_dev_support)
+        self.ui.btnRefreshDeviceIdentifier.setVisible(multi_dev_support)
+        self.ui.comboBoxDeviceIdentifier.setVisible(multi_dev_support)
         self.ui.lineEditIP.setVisible("ip" in conf)
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
@@ -318,7 +325,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxFreqCorrection.editingFinished.emit()
         self.ui.lineEditIP.editingFinished.emit()
         self.ui.spinBoxPort.editingFinished.emit()
-        self.ui.lineEditDeviceArgs.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
 
@@ -369,10 +375,6 @@ class DeviceSettingsWidget(QWidget):
     @pyqtSlot()
     def on_line_edit_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
-
-    @pyqtSlot()
-    def on_line_edit_device_args_editing_finished(self):
-        self.device.device_args = self.ui.lineEditDeviceArgs.text()
 
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):
@@ -450,9 +452,11 @@ class DeviceSettingsWidget(QWidget):
             pass
 
     @pyqtSlot()
-    def cb_device_current_index_changed(self):
+    def on_cb_device_current_index_changed(self):
         if self.device is not None:
             self.device.free_data()
+
+        # Here init_device of dialogs gets called
         self.selected_device_changed.emit()
 
         dev_name = self.ui.cbDevice.currentText()
@@ -461,6 +465,20 @@ class DeviceSettingsWidget(QWidget):
         self.sync_gain_sliders()
         self.set_bandwidth_status()
 
+        self.ui.comboBoxDeviceIdentifier.clear()
+
+    @pyqtSlot()
+    def on_btn_refresh_device_identifier_clicked(self):
+        if self.device is None:
+            return
+        self.ui.comboBoxDeviceIdentifier.clear()
+        self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
+
+    @pyqtSlot()
+    def on_combo_box_device_identifier_current_index_changed(self):
+        if self.device is not None:
+            self.device.device_serial = self.ui.comboBoxDeviceIdentifier.currentText()
+            self.device.device_number = self.ui.comboBoxDeviceIdentifier.currentIndex()
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication

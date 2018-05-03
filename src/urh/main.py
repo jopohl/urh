@@ -88,7 +88,7 @@ def main():
             print("C++ Extensions not found. Exiting...")
             sys.exit(1)
         print("Could not find C++ extensions, trying to build them.")
-        old_dir = os.curdir
+        old_dir = os.path.realpath(os.curdir)
         os.chdir(os.path.join(src_dir, "urh", "cythonext"))
 
         from urh.cythonext import build

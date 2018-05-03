@@ -108,29 +108,6 @@ QGroupBox::indicator:checked {
            </item>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelDeviceArgs">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="toolTipDuration">
-            <number>-1</number>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
-           <property name="text">
-            <string>Device arguments:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditDeviceArgs">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you only have one USRP connected you may leave this field empty, so your USRP gets detected automatically.&lt;/p&gt;&lt;p&gt;If you have multiple USRPs connected or need better control, enter a device identifier of your USRP here.&lt;/p&gt;&lt;p&gt;You may also enter other device arguments here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="labelChannel">
            <property name="text">
@@ -225,6 +202,13 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="labelBandwidth">
+           <property name="text">
+            <string>Bandwidth (Hz):</string>
+           </property>
+          </widget>
+         </item>
          <item row="7" column="2" rowspan="2">
           <widget class="QToolButton" name="btnLockBWSR">
            <property name="sizePolicy">
@@ -254,10 +238,13 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="labelBandwidth">
+         <item row="9" column="0">
+          <widget class="QLabel" name="labelGain">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
-            <string>Bandwidth (Hz):</string>
+            <string>Gain:</string>
            </property>
           </widget>
          </item>
@@ -271,16 +258,6 @@ QGroupBox::indicator:checked {
            </property>
            <property name="maximum">
             <double>1000000000000.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="labelGain">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Gain:</string>
            </property>
           </widget>
          </item>
@@ -478,6 +455,34 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelDeviceIdentifier">
+           <property name="text">
+            <string>Device Identifier:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBoxDeviceIdentifier">
+           <property name="editable">
+            <bool>false</bool>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::NoInsert</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QToolButton" name="btnRefreshDeviceIdentifier">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="view-refresh">
+             <normaloff>.</normaloff>.</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -496,7 +501,6 @@ QGroupBox::indicator:checked {
  <tabstops>
   <tabstop>groupBoxDeviceSettings</tabstop>
   <tabstop>cbDevice</tabstop>
-  <tabstop>lineEditDeviceArgs</tabstop>
   <tabstop>comboBoxChannel</tabstop>
   <tabstop>comboBoxAntenna</tabstop>
   <tabstop>lineEditIP</tabstop>

@@ -102,7 +102,8 @@ class SoundCard(Device):
 
     @property
     def device_parameters(self) -> OrderedDict:
-        return OrderedDict([(self.Command.SET_SAMPLE_RATE.name, self.sample_rate)])
+        return OrderedDict([(self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                            ("identifier", None)])
 
     @staticmethod
     def unpack_complex(buffer):

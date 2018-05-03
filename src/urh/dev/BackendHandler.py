@@ -157,10 +157,7 @@ class BackendHandler(object):
     @property
     def __rtlsdr_native_enabled(self) -> bool:
         try:
-            try:
-                from urh.dev.native.lib import rtlsdr
-            except ImportError:
-                from urh.dev.native.lib import rtlsdr_fallback
+            from urh.dev.native.lib import rtlsdr
             return True
         except ImportError:
             return False

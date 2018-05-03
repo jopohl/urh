@@ -1,3 +1,6 @@
+cdef extern from "config.h":
+    cdef bint RTLSDR_HAS_BANDWIDTH
+
 cdef extern from "rtl-sdr.h":
     ctypedef struct rtlsdr_dev_t:
         pass

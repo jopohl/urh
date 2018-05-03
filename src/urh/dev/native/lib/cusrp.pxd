@@ -106,6 +106,8 @@ cdef extern from "uhd/types/string_vector.h":
     ctypedef uhd_string_vector_t* uhd_string_vector_handle;
     uhd_error uhd_string_vector_make(uhd_string_vector_handle *h)
     uhd_error uhd_string_vector_free(uhd_string_vector_handle *h)
+    uhd_error uhd_string_vector_size(uhd_string_vector_handle h, size_t *size_out)
+    uhd_error uhd_string_vector_at(uhd_string_vector_handle h, size_t index, char* value_out, size_t strbuffer_len)
 
 cdef extern from "uhd/usrp/usrp.h":
     struct uhd_rx_streamer

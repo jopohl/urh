@@ -48,6 +48,10 @@ class Device(QObject):
     }
 
     @classmethod
+    def get_device_list(cls):
+        return []
+
+    @classmethod
     def process_command(cls, command, ctrl_connection, is_tx: bool):
         is_rx = not is_tx
         if command == cls.Command.STOP.name:
@@ -78,11 +82,7 @@ class Device(QObject):
 
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
-        if "identifier" in parameters:
-            identifier = parameters["identifier"]
-        else:
-            identifier = None
-        if cls.setup_device(ctrl_connection, device_identifier=identifier):
+        if cls.setup_device(ctrl_connection, device_identifier=parameters["identifier"]):
             for parameter, value in parameters.items():
                 cls.process_command((parameter, value), ctrl_connection, is_tx)
             return True
@@ -247,6 +247,9 @@ class Device(QObject):
         self.send_buffer = None
         self.send_buffer_reader = None
 
+        self.device_serial = None
+        self.device_number = 0
+
         self.emit_data_received_signal = False  # used for protocol sniffer
 
         self.samples_to_send = np.array([], dtype=np.complex64)
@@ -275,6 +278,10 @@ class Device(QObject):
         self.read_dev_msg_thread.start()
 
     @property
+    def has_multi_device_support(self):
+        return False
+
+    @property
     def current_sent_sample(self):
         return self._current_sent_sample.value // 2
 
@@ -297,7 +304,8 @@ class Device(QObject):
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
                             (self.Command.SET_IF_GAIN.name, self.if_gain),
-                            (self.Command.SET_BB_GAIN.name, self.baseband_gain)])
+                            (self.Command.SET_BB_GAIN.name, self.baseband_gain),
+                            ("identifier", self.device_serial)])
 
     @property
     def send_config(self) -> SendConfig:
@@ -562,7 +570,6 @@ class Device(QObject):
             except OSError as e:
                 logger.exception(e)
 
-
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
@@ -616,7 +623,9 @@ class Device(QObject):
             try:
                 message = self.parent_ctrl_conn.recv()
                 try:
-                    action, return_code = message.split(":")
+                    splitted = message.split(":")
+                    action = ":".join(splitted[:-1])
+                    return_code = splitted[-1]
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))

@@ -122,6 +122,9 @@ class TestHackRF(unittest.TestCase):
         print("close", hackrf.close())
         print("exit", hackrf.exit())
 
+    def test_device_list(self):
+        print(hackrf.get_device_list())
+
 
 if __name__ == "__main__":
     unittest.main()

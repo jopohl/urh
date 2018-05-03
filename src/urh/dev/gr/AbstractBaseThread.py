@@ -37,7 +37,6 @@ class AbstractBaseThread(QThread):
         self._antenna_index = 0
         self._channel_index = 0
         self._receiving = receiving  # False for Sender-Thread
-        self.device_args = ""  # e.g. addr=192.168.10.2
         self.device = "USRP"
         self.current_index = 0
 
@@ -214,10 +213,6 @@ class AbstractBaseThread(QThread):
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
                    "--port", str(self.gr_port)]
-
-        if self.device.upper() == "USRP":
-            if self.device_args:
-                options.extend(["--device-args", self.device_args])
 
         if self.device.upper() == "HACKRF":
             options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])

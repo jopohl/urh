@@ -98,6 +98,7 @@ class SoundCard(Device):
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
 
         self.success = 0
+        self.bandwidth_is_adjustable = False
 
     @property
     def device_parameters(self) -> OrderedDict:

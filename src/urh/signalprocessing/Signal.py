@@ -1,6 +1,5 @@
-import csv
+import math
 import os
-import struct
 import tarfile
 import wave
 
@@ -13,7 +12,7 @@ from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.util import FileOperator
 from urh.util.Logger import logger
-import math
+
 
 class Signal(QObject):
     """
@@ -95,6 +94,8 @@ class Signal(QObject):
             params = {"min": 0, "max": 255, "fmt": np.uint8}  # Unsigned Byte
         elif sample_width == 2:
             params = {"min": -32768, "max": 32767, "fmt": np.int16}
+        elif sample_width == 3:
+            params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
         elif sample_width == 4:
             params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
         else:
@@ -102,7 +103,13 @@ class Signal(QObject):
 
         params["center"] = (params["min"] + params["max"]) / 2
 
-        data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
+        if sample_width == 3:
+            raw_bytes = wav.readframes(num_frames * num_channels)
+            data = np.empty(len(raw_bytes) // 3, dtype=np.int32)
+            for i in range(0, len(raw_bytes), 3):
+                data[i // 3] = (raw_bytes[i] << 8 | raw_bytes[i + 1] << 16 | raw_bytes[i + 2] << 24)
+        else:
+            data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
         if num_channels == 1:
             self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
@@ -405,8 +412,8 @@ class Signal(QObject):
         :return:
         """
         # ensure power of 2 for faster fft
-        length = 2 ** int(math.log2(end-start))
-        data = self.data[start:start+length]
+        length = 2 ** int(math.log2(end - start))
+        data = self.data[start:start + length]
 
         try:
             w = np.fft.fft(data)

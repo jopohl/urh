@@ -103,16 +103,17 @@ class Signal(QObject):
 
         params["center"] = (params["min"] + params["max"]) / 2
 
+        byte_frames = wav.readframes(num_frames * num_channels)
         if sample_width == 3:
-            data = wav.readframes(num_frames * num_channels)
-            num_samples = len(data) // (sample_width * num_channels)
-            a = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
-            raw_bytes = np.fromstring(data, dtype=np.uint8)
-            a[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
-            a[:, :, sample_width:] = (a[:, :, sample_width - 1:sample_width] >> 7) * 255
-            data = a.view('<i4').reshape(-1)
+            num_samples = len(byte_frames) // (sample_width * num_channels)
+            arr = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
+            raw_bytes = np.fromstring(byte_frames, dtype=np.uint8)
+            arr[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
+            arr[:, :, sample_width:] = (arr[:, :, sample_width - 1:sample_width] >> 7) * 255
+            data = arr.view(np.int32).flatten()
         else:
-            data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
+            data = np.fromstring(byte_frames, dtype=params["fmt"])
+
         if num_channels == 1:
             self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
@@ -121,7 +122,7 @@ class Signal(QObject):
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
             self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
         else:
-            raise ValueError("Cam't handle {0} channels".format(num_channels))
+            raise ValueError("Can't handle {0} channels".format(num_channels))
 
         wav.close()
 

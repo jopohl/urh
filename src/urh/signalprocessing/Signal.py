@@ -95,7 +95,7 @@ class Signal(QObject):
         elif sample_width == 2:
             params = {"min": -32768, "max": 32767, "fmt": np.int16}
         elif sample_width == 3:
-            params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
+            params = {"min": -8388608, "max": 8388607, "fmt": np.int32}
         elif sample_width == 4:
             params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
         else:
@@ -104,10 +104,13 @@ class Signal(QObject):
         params["center"] = (params["min"] + params["max"]) / 2
 
         if sample_width == 3:
-            raw_bytes = wav.readframes(num_frames * num_channels)
-            data = np.empty(len(raw_bytes) // 3, dtype=np.int32)
-            for i in range(0, len(raw_bytes), 3):
-                data[i // 3] = (raw_bytes[i] << 8 | raw_bytes[i + 1] << 16 | raw_bytes[i + 2] << 24)
+            data = wav.readframes(num_frames * num_channels)
+            num_samples = len(data) // (sample_width * num_channels)
+            a = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
+            raw_bytes = np.fromstring(data, dtype=np.uint8)
+            a[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
+            a[:, :, sample_width:] = (a[:, :, sample_width - 1:sample_width] >> 7) * 255
+            data = a.view('<i4').reshape(-1)
         else:
             data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
         if num_channels == 1:

@@ -122,7 +122,7 @@ class Signal(QObject):
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
             self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
         else:
-            raise ValueError("Can't handle {0} channels".format(num_channels))
+            raise ValueError("Can't handle {0} channels. Only 1 and 2 are supported.".format(num_channels))
 
         wav.close()
 

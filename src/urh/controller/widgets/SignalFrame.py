@@ -159,6 +159,7 @@ class SignalFrame(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.gvSpectrogram.export_fta_wanted.connect(self.on_export_fta_wanted)
         self.ui.btnAdvancedModulationSettings.clicked.connect(self.on_btn_advanced_modulation_settings_clicked)
 
         if self.signal is not None:
@@ -1232,3 +1233,18 @@ class SignalFrame(QFrame):
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()
 
+    @pyqtSlot()
+    def on_export_fta_wanted(self):
+        filename = FileOperator.get_save_file_name("spectrogram.ft", caption="Export spectrogram")
+        if not filename:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.ui.gvSpectrogram.scene_manager.spectrogram.export_to_fta(sample_rate=self.signal.sample_rate,
+                                                                          filename=filename,
+                                                                          include_amplitude=filename.endswith(".fta"))
+        except Exception as e:
+            logger.exception(e)
+            Errors.generic_error("Failed to export spectrogram", str(e))
+        finally:
+            QApplication.restoreOverrideCursor()

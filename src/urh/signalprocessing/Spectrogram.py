@@ -97,6 +97,34 @@ class Spectrogram(object):
         result = np.fft.fft(frames * window, self.window_size) / np.atleast_1d(self.window_size)
         return result
 
+    def export_to_fta(self, sample_rate, filename: str, include_amplitude=False):
+        """
+        Export to Frequency, Time, Amplitude file.
+        Frequency is double, Time (nanosecond) is uint32, Amplitude is float32
+
+        :return:
+        """
+        spectrogram = self.__calculate_spectrogram(self.samples)
+        spectrogram = np.flipud(spectrogram.T)
+        if include_amplitude:
+            result = np.empty((spectrogram.shape[0], spectrogram.shape[1], 3),
+                              dtype=[('f', np.float64), ('t', np.uint32), ('a', np.float32)])
+        else:
+            result = np.empty((spectrogram.shape[0], spectrogram.shape[1], 2),
+                              dtype=[('f', np.float64), ('t', np.uint32)])
+
+        fft_freqs = np.fft.fftshift(np.fft.fftfreq(spectrogram.shape[0], 1/sample_rate))
+        time_width = 1e9 * ((len(self.samples) / sample_rate) / spectrogram.shape[1])
+
+        for i in range(spectrogram.shape[0]):
+            for j in range(spectrogram.shape[1]):
+                if include_amplitude:
+                    result[i, j] = (fft_freqs[i], int(j*time_width), spectrogram[i, j])
+                else:
+                    result[i, j] = (fft_freqs[i], int(j * time_width))
+
+        result.tofile(filename)
+
     def __calculate_spectrogram(self, samples: np.ndarray) -> np.ndarray:
         # Only shift axis 1 (frequency) and not time
         spectrogram = np.fft.fftshift(self.stft(samples), axes=(1,))

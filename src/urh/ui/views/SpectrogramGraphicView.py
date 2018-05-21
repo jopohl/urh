@@ -71,7 +71,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
         menu.addSeparator()
 
-        export_fta_action = menu.addAction("Export...")
+        export_fta_action = menu.addAction("Export spectrogram...")
         export_fta_action.triggered.connect(self.on_export_fta_action_triggered)
 
         return menu

@@ -399,16 +399,12 @@ class SignalFrame(QFrame):
         else:
             self.save_signal_as()
 
-    def __get_initial_file_name(self):
+    def save_signal_as(self):
         if self.signal.filename:
             initial_name = self.signal.filename
         else:
             initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".complex"
 
-        return initial_name
-
-    def save_signal_as(self):
-        initial_name = self.__get_initial_file_name()
         filename = FileOperator.get_save_file_name(initial_name, wav_only=self.signal.wav_mode)
         if filename:
             try:
@@ -417,7 +413,12 @@ class SignalFrame(QFrame):
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
 
     def export_demodulated(self):
-        initial_name = self.__get_initial_file_name()
+        try:
+            initial_name = self.signal.name + "-demodulated.complex"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "demodulated.complex"
+
         filename = FileOperator.get_save_file_name(initial_name)
         if filename:
             try:
@@ -1235,7 +1236,13 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_export_fta_wanted(self):
-        filename = FileOperator.get_save_file_name("spectrogram.ft", caption="Export spectrogram")
+        try:
+            initial_name = self.signal.name + "-spectrogram.ft"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "spectrogram.ft"
+
+        filename = FileOperator.get_save_file_name(initial_name, caption="Export spectrogram")
         if not filename:
             return
         QApplication.setOverrideCursor(Qt.WaitCursor)

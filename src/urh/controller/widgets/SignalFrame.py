@@ -191,6 +191,8 @@ class SignalFrame(QFrame):
 
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
+        self.ui.gvSignal.export_demodulated_clicked.connect(self.export_demodulated)
+
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
@@ -396,18 +398,38 @@ class SignalFrame(QFrame):
         else:
             self.save_signal_as()
 
-    def save_signal_as(self):
+    def __get_initial_file_name(self):
         if self.signal.filename:
             initial_name = self.signal.filename
         else:
             initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".complex"
 
+        return initial_name
+
+    def save_signal_as(self):
+        initial_name = self.__get_initial_file_name()
         filename = FileOperator.get_save_file_name(initial_name, wav_only=self.signal.wav_mode)
         if filename:
             try:
                 self.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+
+    def export_demodulated(self):
+        initial_name = self.__get_initial_file_name()
+        filename = FileOperator.get_save_file_name(initial_name)
+        if filename:
+            try:
+                self.setCursor(Qt.WaitCursor)
+                data = self.signal.qad
+                if filename.endswith(".wav"):
+                    data = self.signal.qad.astype(np.float32)
+                    data /= np.max(np.abs(data))
+                data = FileOperator.convert_data_to_format(data, filename)
+                FileOperator.save_data(data, filename, self.signal.sample_rate, num_channels=1)
+                self.unsetCursor()
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
 
     def draw_signal(self, full_signal=False):
         gv_legend = self.ui.gvLegend

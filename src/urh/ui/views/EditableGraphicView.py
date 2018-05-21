@@ -12,6 +12,7 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 class EditableGraphicView(ZoomableGraphicView):
     save_as_clicked = pyqtSignal()
+    export_demodulated_clicked = pyqtSignal()
     create_clicked = pyqtSignal(int, int)
     set_noise_clicked = pyqtSignal()
     participant_changed = pyqtSignal()
@@ -130,12 +131,6 @@ class EditableGraphicView(ZoomableGraphicView):
         self.paste_position = int(self.mapToScene(self.context_menu_position).x())
 
         menu = QMenu(self)
-        if self.save_enabled:
-            menu.addAction(self.save_action)
-
-        menu.addAction(self.save_as_action)
-        menu.addSeparator()
-
         menu.addAction(self.copy_action)
         self.copy_action.setEnabled(self.something_is_selected)
         menu.addAction(self.paste_action)
@@ -202,6 +197,17 @@ class EditableGraphicView(ZoomableGraphicView):
         menu.addSeparator()
         menu.addAction(self.undo_action)
         menu.addAction(self.redo_action)
+
+        if self.scene_type == 0:
+            menu.addSeparator()
+            if self.save_enabled:
+                menu.addAction(self.save_action)
+
+            menu.addAction(self.save_as_action)
+        elif self.scene_type == 1:
+            menu.addSeparator()
+            export_demod_action = menu.addAction("Export demodulated...")
+            export_demod_action.triggered.connect(self.export_demodulated_clicked.emit)
 
         return menu
 

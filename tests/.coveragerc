@@ -33,3 +33,4 @@ exclude_lines =
     def updateEditorGeometry
     def on_export_fta_wanted
     def export_to_fta
+    def export_demodulated

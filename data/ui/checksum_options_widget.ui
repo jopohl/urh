@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>489</height>
+    <width>775</width>
+    <height>836</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>521</width>
-        <height>707</height>
+        <width>751</width>
+        <height>812</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -91,7 +91,7 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="0" colspan="2">
+           <item row="7" column="0" colspan="2">
             <widget class="QGroupBox" name="groupBox">
              <property name="title">
               <string>Configure data ranges for CRC</string>
@@ -182,13 +182,27 @@
            <item row="0" column="1">
             <widget class="QComboBox" name="comboBoxCRCFunction"/>
            </item>
-           <item row="4" column="0" colspan="2">
+           <item row="6" column="0" colspan="2">
             <widget class="QLabel" name="label_crc_info">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Order=17&lt;/p&gt;&lt;p&gt;Length of checksum=16&lt;/p&gt;&lt;p&gt;start value length =16&lt;/p&gt;&lt;p&gt;final XOR length = 16&lt;/p&gt;&lt;p&gt;Polynomial = x&lt;span style=&quot; vertical-align:super;&quot;&gt;1&lt;/span&gt; + 4&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" colspan="2">
+            <widget class="QCheckBox" name="checkBoxRefIn">
+             <property name="text">
+              <string>RefIn (Reflect input)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QCheckBox" name="checkBoxRefOut">
+             <property name="text">
+              <string>RefOut (Reflect output)</string>
              </property>
             </widget>
            </item>

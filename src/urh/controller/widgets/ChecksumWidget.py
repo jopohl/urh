@@ -146,12 +146,16 @@ class ChecksumWidget(QWidget):
         self.ui.radioButtonWSPChecksum4.clicked.connect(self.on_radio_button_wsp_checksum4_clicked)
         self.ui.radioButtonWSPChecksum8.clicked.connect(self.on_radio_button_wsp_checksum8_clicked)
         self.ui.radioButtonWSPCRC8.clicked.connect(self.on_radio_button_wsp_crc8_clicked)
+        self.ui.checkBoxRefIn.clicked.connect(self.on_check_box_ref_in_clicked)
+        self.ui.checkBoxRefOut.clicked.connect(self.on_check_box_ref_out_clicked)
 
     def set_checksum_ui_elements(self):
         if self.checksum_label.is_generic_crc:
             self.ui.lineEditCRCPolynomial.setText(self.checksum_label.checksum.polynomial_as_hex_str)
             self.ui.lineEditStartValue.setText(util.bit2hex(self.checksum_label.checksum.start_value))
             self.ui.lineEditFinalXOR.setText(util.bit2hex(self.checksum_label.checksum.final_xor))
+            self.ui.checkBoxRefIn.setChecked(self.checksum_label.checksum.lsb_first)
+            self.ui.checkBoxRefOut.setChecked(self.checksum_label.checksum.reverse_all)
             self.__set_crc_function_index()
             self.__ensure_same_length()
             self.__set_crc_info_label()
@@ -265,6 +269,14 @@ class ChecksumWidget(QWidget):
         self.__ensure_same_length()
         self.__set_crc_info_label()
         self.__set_crc_function_index()
+
+    @pyqtSlot()
+    def on_check_box_ref_in_clicked(self):
+        self.checksum_label.checksum.lsb_first = self.ui.checkBoxRefIn.isChecked()
+
+    @pyqtSlot()
+    def on_check_box_ref_out_clicked(self):
+        self.checksum_label.checksum.reverse_all = self.ui.checkBoxRefOut.isChecked()
 
     @pyqtSlot()
     def on_line_edit_start_value_editing_finished(self):

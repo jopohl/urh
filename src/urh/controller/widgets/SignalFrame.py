@@ -159,6 +159,7 @@ class SignalFrame(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.gvSpectrogram.export_fta_wanted.connect(self.on_export_fta_wanted)
         self.ui.btnAdvancedModulationSettings.clicked.connect(self.on_btn_advanced_modulation_settings_clicked)
 
         if self.signal is not None:
@@ -191,6 +192,8 @@ class SignalFrame(QFrame):
 
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
+        self.ui.gvSignal.export_demodulated_clicked.connect(self.export_demodulated)
+
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
@@ -408,6 +411,27 @@ class SignalFrame(QFrame):
                 self.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+
+    def export_demodulated(self):
+        try:
+            initial_name = self.signal.name + "-demodulated.complex"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "demodulated.complex"
+
+        filename = FileOperator.get_save_file_name(initial_name)
+        if filename:
+            try:
+                self.setCursor(Qt.WaitCursor)
+                data = self.signal.qad
+                if filename.endswith(".wav"):
+                    data = self.signal.qad.astype(np.float32)
+                    data /= np.max(np.abs(data))
+                data = FileOperator.convert_data_to_format(data, filename)
+                FileOperator.save_data(data, filename, self.signal.sample_rate, num_channels=1)
+                self.unsetCursor()
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
 
     def draw_signal(self, full_signal=False):
         gv_legend = self.ui.gvLegend
@@ -1210,3 +1234,24 @@ class SignalFrame(QFrame):
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()
 
+    @pyqtSlot()
+    def on_export_fta_wanted(self):
+        try:
+            initial_name = self.signal.name + "-spectrogram.ft"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "spectrogram.ft"
+
+        filename = FileOperator.get_save_file_name(initial_name, caption="Export spectrogram")
+        if not filename:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.ui.gvSpectrogram.scene_manager.spectrogram.export_to_fta(sample_rate=self.signal.sample_rate,
+                                                                          filename=filename,
+                                                                          include_amplitude=filename.endswith(".fta"))
+        except Exception as e:
+            logger.exception(e)
+            Errors.generic_error("Failed to export spectrogram", str(e))
+        finally:
+            QApplication.restoreOverrideCursor()

@@ -15,6 +15,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
     y_scale_changed = pyqtSignal(float)
     bandpass_filter_triggered = pyqtSignal(float, float)
+    export_fta_wanted = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -68,6 +69,11 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
         configure_filter_bw.setIcon(QIcon.fromTheme("configure"))
 
+        menu.addSeparator()
+
+        export_fta_action = menu.addAction("Export spectrogram...")
+        export_fta_action.triggered.connect(self.on_export_fta_action_triggered)
+
         return menu
 
     def zoom_to_selection(self, start: int, end: int):
@@ -101,3 +107,10 @@ class SpectrogramGraphicView(ZoomableGraphicView):
     def on_configure_filter_bw_triggered(self):
         dialog = FilterBandwidthDialog(parent=self)
         dialog.show()
+
+    @pyqtSlot()
+    def on_export_fta_action_triggered(self):
+        if not(self.scene_manager and self.scene_manager.spectrogram):
+            return
+
+        self.export_fta_wanted.emit()

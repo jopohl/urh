@@ -18,7 +18,7 @@ class ProtocolGenerator(object):
     BROADCAST_ADDRESS = "0xffff"
 
     def __init__(self, message_types: list, participants: list = None, preambles_by_mt=None,
-                 syncs_by_mt=None, little_endian=True, length_in_bytes=True, sequence_numbers=None):
+                 syncs_by_mt=None, little_endian=False, length_in_bytes=True, sequence_numbers=None):
         """
 
         :param message_types:
@@ -129,7 +129,7 @@ class ProtocolGenerator(object):
             elif lbl.field_type.function == FieldType.Function.TYPE:
                 bits.append(self.decimal_to_bits(hash(mt) % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.SEQUENCE_NUMBER:
-                bits.append(self.decimal_to_bits(self.sequence_numbers[mt], len_field))
+                bits.append(self.decimal_to_bits(self.sequence_numbers[mt] % (2**len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.DST_ADDRESS:
                 dst_bits = self.__get_address_for_participant(destination)
 

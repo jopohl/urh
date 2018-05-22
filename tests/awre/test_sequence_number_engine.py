@@ -44,3 +44,23 @@ class TestSequenceNumberEngine(AWRETestCase):
         # self.assertEqual(label.field_type, "length")
         # self.assertEqual(label.bit_start, 24)
         # self.assertEqual(label.length, 8)
+
+    def test_16bit_seq_nr(self):
+        mb = MessageTypeBuilder("16bit_seq_test")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        num_messages = 1024
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x9a9d"})
+
+        for i in range(num_messages):
+            pg.generate_message(data="0xcafe")
+
+        self.save_protocol("16bit_seq", pg)
+
+        bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
+        seq_engine = SequenceNumberEngine(bitvectors)
+        highscored_ranges = seq_engine.find(n_gram_length=8)

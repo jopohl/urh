@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 
-
+import numpy as np
 
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
@@ -20,6 +20,14 @@ MODULATIONS = Modulator.MODULATION_TYPES
 PAUSE_SEP = "/"
 
 
+def cli_progress_bar(value, end_value, bar_length=20, title="Percent"):
+    percent = value / end_value
+    hashes = '#' * int(round(percent * bar_length))
+    spaces = ' ' * (bar_length - len(hashes))
+    sys.stdout.write("\r{0}: [{1}] {2}%".format(title, hashes + spaces, int(round(percent * 100))))
+    sys.stdout.flush()
+
+
 def build_modulator_from_args(arguments: argparse.Namespace):
     if arguments.raw:
         return None
@@ -31,18 +39,51 @@ def build_modulator_from_args(arguments: argparse.Namespace):
         raise ValueError("You need to give a modulation parameter for one (-p1, --parameter-one)")
 
     result = Modulator("CLI Modulator")
-    result.carrier_freq_hz = arguments.carrier_frequency
-    result.carrier_amplitude = arguments.carrier_amplitude
-    result.samples_per_bit = arguments.bit_length
-    result.param_for_zero = arguments.parameter_zero
-    result.param_for_one = arguments.parameter_one
+    result.carrier_freq_hz = float(arguments.carrier_frequency)
+    result.carrier_amplitude = float(arguments.carrier_amplitude)
+    result.samples_per_bit = int(arguments.bit_length)
+
+    if arguments.modulation_type == "ASK" and not arguments.parameter_zero.endswith("%"):
+        param_zero = float(arguments.parameter_zero) * 100
+    else:
+        param_zero = float(arguments.parameter_zero)
+
+    if arguments.modulation_type == "ASK" and not arguments.parameter_one.endswith("%"):
+        param_one = float(arguments.parameter_one) * 100
+    else:
+        param_one = float(arguments.parameter_one)
+
+    result.param_for_zero = param_zero
+    result.param_for_one = param_one
     result.modulation_type_str = arguments.modulation_type
     result.sample_rate = arguments.sample_rate
 
     return result
 
 
+def modulate_messages(messages, modulator):
+    if len(messages) == 0:
+        return None
+
+    cli_progress_bar(0, len(messages), title="Modulating")
+    nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_bit + msg.pause) for msg in messages)
+    buffer = np.zeros(nsamples, dtype=np.complex64)
+    pos = 0
+    for i, msg in enumerate(messages):
+        # We do not need to modulate the pause extra, as result is already initialized with zeros
+        modulated = modulator.modulate(start=0, data=msg.encoded_bits, pause=0)
+        buffer[pos:pos + len(modulated)] = modulated
+        pos += len(modulated) + msg.pause
+        cli_progress_bar(i + 1, len(messages), title="Modulating")
+    print("\nSuccessfully modulated {} messages".format(len(messages)))
+    return buffer
+
+
 def build_device_from_args(arguments: argparse.Namespace):
+    def on_fatal_device_error_occurred(error: str):
+        print(error)
+        sys.exit(1)
+
     from urh.dev.VirtualDevice import Mode
     from urh.dev.BackendHandler import Backends
     if arguments.receive and arguments.transmit:
@@ -64,6 +105,8 @@ def build_device_from_args(arguments: argparse.Namespace):
                            bandwidth=bandwidth,
                            gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
 
+    result.fatal_error_occurred.connect(on_fatal_device_error_occurred)
+
     return result
 
 
@@ -74,14 +117,14 @@ def read_messages_to_send(arguments: argparse.Namespace):
     result = []
     for msg_arg in arguments.messages:
         data, pause = msg_arg.split(PAUSE_SEP)
-        if pause.endswith("s"):
-            pause = float(pause[:-1]) * float(arguments.sample_rate)
-        elif pause.endswith("ms"):
+        if pause.endswith("ms"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
         elif pause.endswith("µs"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e6
         elif pause.endswith("ns"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e9
+        elif pause.endswith("s"):
+            pause = float(pause[:-1]) * float(arguments.sample_rate)
         else:
             pause = float(pause)
 
@@ -92,10 +135,12 @@ def read_messages_to_send(arguments: argparse.Namespace):
             bits = data
 
         msg = Message.from_plain_bits_str(bits)
-        msg.pause = pause
+        msg.pause = int(pause)
+        # todo set encoding when configurable
         result.append(msg)
 
     return result
+
 
 parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
                                  add_help=False)
@@ -109,7 +154,7 @@ group1.add_argument("-f", "--frequency", type=float, required=True, help="Center
 group1.add_argument("-s", "--sample-rate", type=float, required=True, help="Sample rate to use")
 group1.add_argument("-b", "--bandwidth", type=float, help="Bandwidth to use (defaults to sample rate)")
 group1.add_argument("-g", "--gain", type=int, help="RF gain the SDR shall use")
-group1.add_argument("-i", "--if-gain", type=int, help="IF gain to use (only supported for some SDRs)")
+group1.add_argument("-if", "--if-gain", type=int, help="IF gain to use (only supported for some SDRs)")
 group1.add_argument("-bb", "--baseband-gain", type=int, help="Baseband gain to use (only supported for some SDRs)")
 
 group2 = parser.add_argument_group('Modulation/Demodulation settings',
@@ -125,13 +170,13 @@ group2.add_argument("-mo", "--modulation-type", choices=MODULATIONS, metavar="MO
                     help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
 group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
 group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
+group2.add_argument("-bl", "--bit-length", type=float, default=100,
+                    help="Length of a bit in samples (default: %(default)s).")
 
 group2.add_argument("-n", "--noise", type=float, default=0.1,
                     help="Noise threshold (default: %(default)s). Used for RX only.")
 group2.add_argument("-c", "--center", type=float, default=0,
                     help="Center between 0 and 1 for demodulation (default: %(default)s). Used for RX only.")
-group2.add_argument("-bl", "--bit-length", type=float, default=100,
-                    help="Length of a bit in samples (default: %(default)s). Used for RX only.")
 group2.add_argument("-t", "--tolerance", type=float, default=5,
                     help="Tolerance for demodulation in samples (default: %(default)s). Used for RX only.")
 
@@ -163,7 +208,17 @@ args = parser.parse_args()
 try:
     modulator = build_modulator_from_args(args)
     device = build_device_from_args(args)
-    messages_to_send = read_messages_to_send(args)
+    if args.transmit:
+        messages_to_send = read_messages_to_send(args)
+        modulated = modulate_messages(messages_to_send, modulator)
+        device.samples_to_send = modulated
+        device.start()
+
+        # todo connect to device signals instead of sleeping around
+        import time
+        time.sleep(5)
+
+
 except Exception as e:
     print(e)
     sys.exit(1)

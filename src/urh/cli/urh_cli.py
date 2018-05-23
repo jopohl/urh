@@ -27,7 +27,7 @@ def cli_progress_bar(value, end_value, bar_length=20, title="Percent"):
     percent = value / end_value
     hashes = '#' * int(round(percent * bar_length))
     spaces = ' ' * (bar_length - len(hashes))
-    sys.stdout.write("\r{0}: [{1}] {2}%".format(title, hashes + spaces, int(round(percent * 100))))
+    sys.stdout.write("\r{0}:\t[{1}] {2}%".format(title, hashes + spaces, int(round(percent * 100))))
     sys.stdout.flush()
 
 

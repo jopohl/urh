@@ -14,6 +14,7 @@ from urh.dev.VirtualDevice import VirtualDevice
 
 DEVICES = BackendHandler.DEVICE_NAMES
 MODULATIONS = Modulator.MODULATION_TYPES
+PAUSE_SEP = "/"
 
 
 def build_modulator_from_args(arguments: argparse.Namespace):
@@ -103,11 +104,20 @@ group2.add_argument("-t", "--tolerance", type=float, default=5,
 
 group3 = parser.add_argument_group('Data configuration', "Configure which data to send or where to receive it.")
 group3.add_argument("--hex", action='store_true', help="Give messages as hex instead of bits")
-group3.add_argument("-m", "--messages", nargs='+', help="Messages to send. Separate with spaces e.g. 1001 1100 0001. "
+group3.add_argument("-m", "--messages", nargs='+', help="Messages to send. Give pauses after with a {0}. "
+                                                        "Separate with spaces e.g. "
+                                                        "1001{0}42ms 1100{0}3ns 0001 1111{0}200. "
+                                                        "If you give no time suffix "
+                                                        "after a pause it is assumed to be in samples. "
                                                         "You can also give a path to a file from where "
-                                                        "to read the messages from."
+                                                        "to read the messages from. "
                                                         "If you give a file here in RX mode received messages will "
-                                                        "be written to this file instead to STDOUT.")
+                                                        "be written to this file instead to STDOUT.".format(PAUSE_SEP))
+group3.add_argument("-p", "--pause", default="250ms",
+                    help="The default pause which is inserted after a every message "
+                         "which does not have a pause configured. (default: %(default)s) "
+                         "Supported time units: s (second), ms (millisecond), ns (nanosecond) "
+                         "If you do not give a time suffix the pause is assumed to be in samples.")
 group3.add_argument("-rx", "--receive", action="store_true", help="Enter RX mode")
 group3.add_argument("-tx", "--transmit", action="store_true", help="Enter TX mode")
 group3.add_argument("-r", "--raw", action="store_true", help="Use raw mode i.e. send/receive IQ data instead of bits.")

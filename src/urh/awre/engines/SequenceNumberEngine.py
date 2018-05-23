@@ -17,9 +17,13 @@ class SequenceNumberEngine(Engine):
 
     def find(self, n_gram_length=8, minimum_score=0.1):
         diff_matrix = self.create_difference_matrix(self.bitvectors, n_gram_length)
-        vec = diff_matrix[:, 1]
-        print(np.min(vec), np.max(vec), np.std(vec))
+        diff_frequencies_by_column = dict()
 
+        for j in range(diff_matrix.shape[1]):
+            unique, counts = np.unique(diff_matrix[:, j], return_counts=True)
+            diff_frequencies_by_column[j] = dict(zip(unique, counts))
+
+        print(diff_frequencies_by_column)
 
     @staticmethod
     def create_difference_matrix(bitvectors, n_gram_length: int):

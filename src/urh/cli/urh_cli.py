@@ -4,6 +4,8 @@ import os
 import sys
 import argparse
 
+
+
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
 sys.path.insert(0, os.path.realpath(os.path.join(cur_dir, "..", "..")))
@@ -11,6 +13,7 @@ sys.path.insert(0, os.path.realpath(os.path.join(cur_dir, "..", "..")))
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
+from urh.signalprocessing.Message import Message
 
 DEVICES = BackendHandler.DEVICE_NAMES
 MODULATIONS = Modulator.MODULATION_TYPES
@@ -64,6 +67,36 @@ def build_device_from_args(arguments: argparse.Namespace):
     return result
 
 
+def read_messages_to_send(arguments: argparse.Namespace):
+    if not arguments.transmit:
+        return None
+
+    result = []
+    for msg_arg in arguments.messages:
+        data, pause = msg_arg.split(PAUSE_SEP)
+        if pause.endswith("s"):
+            pause = float(pause[:-1]) * float(arguments.sample_rate)
+        elif pause.endswith("ms"):
+            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
+        elif pause.endswith("µs"):
+            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e6
+        elif pause.endswith("ns"):
+            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e9
+        else:
+            pause = float(pause)
+
+        if arguments.hex:
+            lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
+            bits = "".join(lookup[h] for h in data)
+        else:
+            bits = data
+
+        msg = Message.from_plain_bits_str(bits)
+        msg.pause = pause
+        result.append(msg)
+
+    return result
+
 parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
                                  add_help=False)
 
@@ -116,7 +149,7 @@ group3.add_argument("-m", "--messages", nargs='+', help="Messages to send. Give 
 group3.add_argument("-p", "--pause", default="250ms",
                     help="The default pause which is inserted after a every message "
                          "which does not have a pause configured. (default: %(default)s) "
-                         "Supported time units: s (second), ms (millisecond), ns (nanosecond) "
+                         "Supported time units: s (second), ms (millisecond), µs (microsecond), ns (nanosecond) "
                          "If you do not give a time suffix the pause is assumed to be in samples.")
 group3.add_argument("-rx", "--receive", action="store_true", help="Enter RX mode")
 group3.add_argument("-tx", "--transmit", action="store_true", help="Enter TX mode")
@@ -130,6 +163,7 @@ args = parser.parse_args()
 try:
     modulator = build_modulator_from_args(args)
     device = build_device_from_args(args)
+    messages_to_send = read_messages_to_send(args)
 except Exception as e:
     print(e)
     sys.exit(1)

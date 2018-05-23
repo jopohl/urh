@@ -124,11 +124,21 @@ class BackendHandler(object):
 
     @property
     def __usrp_native_enabled(self) -> bool:
+        old_stdout = devnull = None
         try:
+            # Redirect stderr to /dev/null to hide USRP messages
+            devnull = open(os.devnull, 'w')
+            old_stdout = os.dup(sys.stdout.fileno())
+            os.dup2(devnull.fileno(), sys.stdout.fileno())
             from urh.dev.native.lib import usrp
             return True
         except ImportError:
             return False
+        finally:
+            if old_stdout is not None:
+                os.dup2(old_stdout, sys.stdout.fileno())
+            if devnull is not None:
+                devnull.close()
 
     @property
     def __soundcard_enabled(self) -> bool:

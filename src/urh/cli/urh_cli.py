@@ -84,7 +84,7 @@ def modulate_messages(messages, modulator):
 
 def build_device_from_args(arguments: argparse.Namespace):
     def on_fatal_device_error_occurred(error: str):
-        print("[FATAL] "+error.strip())
+        logger.critical(error.strip())
         sys.exit(1)
 
     from urh.dev.VirtualDevice import Mode

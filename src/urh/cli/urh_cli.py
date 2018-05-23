@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-
+import logging
 import os
 import sys
 import argparse
 
 import numpy as np
+
+
 
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
@@ -14,6 +16,7 @@ from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.signalprocessing.Message import Message
+from urh.util.Logger import logger
 
 DEVICES = BackendHandler.DEVICE_NAMES
 MODULATIONS = Modulator.MODULATION_TYPES
@@ -81,7 +84,7 @@ def modulate_messages(messages, modulator):
 
 def build_device_from_args(arguments: argparse.Namespace):
     def on_fatal_device_error_occurred(error: str):
-        print(error)
+        print("[FATAL] "+error.strip())
         sys.exit(1)
 
     from urh.dev.VirtualDevice import Mode
@@ -202,9 +205,16 @@ group3.add_argument("-r", "--raw", action="store_true", help="Use raw mode i.e. 
 
 group4 = parser.add_argument_group("Miscellaneous options")
 group4.add_argument("-h", "--help", action="help", help="show this help message and exit")
-group4.add_argument("-v", "--verbose", action="store_true")
+group4.add_argument("-v", "--verbose", action="count")
 
 args = parser.parse_args()
+if args.verbose is None:
+    logger.setLevel(logging.ERROR)
+elif args.verbose == 1:
+    logger.setLevel(logging.INFO)
+else:
+    logger.setLevel(logging.DEBUG)
+
 try:
     modulator = build_modulator_from_args(args)
     device = build_device_from_args(args)
@@ -214,10 +224,15 @@ try:
         device.samples_to_send = modulated
         device.start()
 
-        # todo connect to device signals instead of sleeping around
         import time
-        time.sleep(5)
+        while not device.sending_finished:
+            time.sleep(0.1)
+            device.read_messages()
+            if device.current_index > 0:
+                cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
 
+        print()
+        device.stop("Sending finished")
 
 except Exception as e:
     print(e)

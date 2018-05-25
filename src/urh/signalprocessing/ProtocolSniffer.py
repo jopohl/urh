@@ -49,8 +49,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.reading_data = False
         self.adaptive_noise = False
 
-        self.old_index = 0
         self.pause_length = 0
+        self.is_running = False
 
         self.store_messages = True
 
@@ -95,21 +95,22 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.stopped.connect(self.__emit_stopped)
 
     def sniff(self):
-        self.old_index = 0
         self.is_running = True
         self.rcv_device.start()
+        self.sniff_thread = Thread(target=self.check_for_data, daemon=True)
         self.sniff_thread.start()
 
     def check_for_data(self):
+        old_index = 0
         while self.is_running:
             time.sleep(0.01)
             if self.rcv_device.is_raw_mode:
-                if self.old_index <= self.rcv_device.current_index:
-                    data = self.rcv_device.data[self.old_index:self.rcv_device.current_index]
+                if old_index <= self.rcv_device.current_index:
+                    data = self.rcv_device.data[old_index:self.rcv_device.current_index]
                 else:
-                    data = np.concatenate((self.rcv_device.data[self.old_index:],
+                    data = np.concatenate((self.rcv_device.data[old_index:],
                                            self.rcv_device.data[:self.rcv_device.current_index]))
-                self.old_index = self.rcv_device.current_index
+                old_index = self.rcv_device.current_index
                 self.__demodulate_data(data)
             elif self.rcv_device.backend == Backends.network:
                 # We receive the bits here

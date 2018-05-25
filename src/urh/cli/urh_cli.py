@@ -3,10 +3,9 @@ import logging
 import os
 import sys
 import argparse
+import time
 
 import numpy as np
-
-
 
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
@@ -15,6 +14,7 @@ sys.path.insert(0, os.path.realpath(os.path.join(cur_dir, "..", "..")))
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Message import Message
 from urh.util.Logger import logger
 
@@ -29,6 +29,11 @@ def cli_progress_bar(value, end_value, bar_length=20, title="Percent"):
     spaces = ' ' * (bar_length - len(hashes))
     sys.stdout.write("\r{0}:\t[{1}] {2}%".format(title, hashes + spaces, int(round(percent * 100))))
     sys.stdout.flush()
+
+
+def on_fatal_device_error_occurred(error: str):
+    logger.critical(error.strip())
+    sys.exit(1)
 
 
 def build_modulator_from_args(arguments: argparse.Namespace):
@@ -82,18 +87,8 @@ def modulate_messages(messages, modulator):
     return buffer
 
 
-def build_device_from_args(arguments: argparse.Namespace):
-    def on_fatal_device_error_occurred(error: str):
-        logger.critical(error.strip())
-        sys.exit(1)
-
-    from urh.dev.VirtualDevice import Mode
+def build_backend_handler_from_args(arguments: argparse.Namespace):
     from urh.dev.BackendHandler import Backends
-    if arguments.receive and arguments.transmit:
-        raise ValueError("You cannot use receive and transmit mode at the same time.")
-    if not arguments.receive and not arguments.transmit:
-        raise ValueError("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
-
     bh = BackendHandler()
     if arguments.device_backend == "native":
         bh.device_backends[arguments.device.lower()].selected_backend = Backends.native
@@ -101,6 +96,37 @@ def build_device_from_args(arguments: argparse.Namespace):
         bh.device_backends[arguments.device.lower()].selected_backend = Backends.grc
     else:
         raise ValueError("Unsupported device backend")
+    return bh
+
+
+def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
+    bh = build_backend_handler_from_args(arguments)
+
+    result = ProtocolSniffer(arguments.bit_length, arguments.center, arguments.noise, arguments.tolerance,
+                             Modulator.MODULATION_TYPES.index(arguments.modulation_type),
+                             arguments.device.lower(), bh)
+    result.rcv_device.frequency = arguments.frequency
+    result.rcv_device.sample_rate = arguments.sample_rate
+    result.rcv_device.bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
+    if arguments.gain is not None:
+        result.rcv_device.gain = arguments.gain
+    if arguments.if_gain is not None:
+        result.rcv_device.if_gain = arguments.if_gain
+    if arguments.baseband_gain is not None:
+        result.rcv_device.baseband_gain = arguments.baseband_gain
+
+    result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
+    return result
+
+
+def build_device_from_args(arguments: argparse.Namespace):
+    from urh.dev.VirtualDevice import Mode
+    if arguments.receive and arguments.transmit:
+        raise ValueError("You cannot use receive and transmit mode at the same time.")
+    if not arguments.receive and not arguments.transmit:
+        raise ValueError("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
+
+    bh = build_backend_handler_from_args(arguments)
 
     bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
     result = VirtualDevice(bh, name=arguments.device, mode=Mode.receive if arguments.receive else Mode.send,
@@ -201,6 +227,9 @@ group3.add_argument("-p", "--pause", default="250ms",
                          "If you do not give a time suffix the pause is assumed to be in samples.")
 group3.add_argument("-rx", "--receive", action="store_true", help="Enter RX mode")
 group3.add_argument("-tx", "--transmit", action="store_true", help="Enter TX mode")
+group3.add_argument("-rt", "--receive-time", default="3.0", type=float,
+                    help="How long to receive messages. (default: %(default)s) "
+                         "Any negative value means infinite.")
 group3.add_argument("-r", "--raw", action="store_true", help="Use raw mode i.e. send/receive IQ data instead of bits.")
 
 group4 = parser.add_argument_group("Miscellaneous options")
@@ -215,16 +244,17 @@ elif args.verbose == 1:
 else:
     logger.setLevel(logging.DEBUG)
 
+# todo support raw mode
 try:
-    modulator = build_modulator_from_args(args)
-    device = build_device_from_args(args)
-    if args.transmit:
+
+    if args.transmit and not args.raw:
+        modulator = build_modulator_from_args(args)
+        device = build_device_from_args(args)
         messages_to_send = read_messages_to_send(args)
         modulated = modulate_messages(messages_to_send, modulator)
         device.samples_to_send = modulated
         device.start()
 
-        import time
         while not device.sending_finished:
             time.sleep(0.1)
             device.read_messages()
@@ -233,6 +263,23 @@ try:
 
         print()
         device.stop("Sending finished")
+    elif args.receive and not args.raw:
+        def handler(data):
+            print(len(data))
+
+        sniffer = build_protocol_sniffer_from_args(args)
+        sniffer.rcv_device.data_received.connect(handler)
+        sniffer.sniff()
+        total_time = 0
+        while total_time < abs(args.receive_time):
+            sniffer.rcv_device.read_messages()
+            time.sleep(0.1)
+            if args.receive_time >= 0:
+                # smaller zero means infinity
+                total_time += 0.1
+            print(sniffer.messages)
+        sniffer.stop()
+
 
 except Exception as e:
     print(e)

@@ -17,8 +17,6 @@ class ReceiverThread(AbstractBaseThread):
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
         self.data = None
 
-        self.emit_data_received_signal = False
-
     def init_recv_buffer(self):
         n_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
         self.data = np.zeros(n_samples, dtype=np.complex64)
@@ -69,9 +67,6 @@ class ReceiverThread(AbstractBaseThread):
                             return
                     self.data[self.current_index:self.current_index + num_samples] = tmp
                     self.current_index += num_samples
-                    if self.emit_data_received_signal:
-                        self.data_received.emit(tmp)
-
                     rcvd = b""
                 except ValueError:
                     self.stop("Could not receive data. Is your Hardware ok?")

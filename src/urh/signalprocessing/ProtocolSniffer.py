@@ -1,8 +1,10 @@
 import os
+import time
 from datetime import datetime
+from threading import Thread
 
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject
 
 from urh.cythonext.signalFunctions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -10,7 +12,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-from urh.util.util import profile
+from urh.util.Logger import logger
 
 
 class ProtocolSniffer(ProtocolAnalyzer, QObject):
@@ -38,8 +40,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
-        self.rcv_device.emit_data_received_signal = True
-        self.rcv_device.data_received.connect(self.on_data_received)
+        self.sniff_thread = Thread(target=self.check_for_data, daemon=True)
+
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
@@ -47,6 +49,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.reading_data = False
         self.adaptive_noise = False
 
+        self.old_index = 0
         self.pause_length = 0
 
         self.store_messages = True
@@ -88,36 +91,44 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.rcv_device.free_data()
             self.rcv_device = VirtualDevice(self.backend_handler, value, Mode.receive, device_ip="192.168.10.2",
                                             resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
-            self.rcv_device.emit_data_received_signal = True
-            self.rcv_device.data_received.connect(self.on_data_received)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
 
     def sniff(self):
+        self.old_index = 0
+        self.is_running = True
         self.rcv_device.start()
+        self.sniff_thread.start()
 
-    @pyqtSlot(np.ndarray)
-    def on_data_received(self, data: np.ndarray):
-        if self.rcv_device.is_raw_mode:
-            self.__demodulate_data(data)
-        elif self.rcv_device.backend == Backends.network:
-            # We receive the bits here
-            for bit_str in self.rcv_device.data:
-                msg = Message.from_plain_bits_str(bit_str)
-                msg.decoder = self.decoder
-                self.messages.append(msg)
-                self.message_sniffed.emit()
+    def check_for_data(self):
+        while self.is_running:
+            time.sleep(0.01)
+            if self.rcv_device.is_raw_mode:
+                if self.old_index <= self.rcv_device.current_index:
+                    data = self.rcv_device.data[self.old_index:self.rcv_device.current_index]
+                else:
+                    data = np.concatenate((self.rcv_device.data[self.old_index:],
+                                           self.rcv_device.data[:self.rcv_device.current_index]))
+                self.old_index = self.rcv_device.current_index
+                self.__demodulate_data(data)
+            elif self.rcv_device.backend == Backends.network:
+                # We receive the bits here
+                for bit_str in self.rcv_device.data:
+                    msg = Message.from_plain_bits_str(bit_str)
+                    msg.decoder = self.decoder
+                    self.messages.append(msg)
+                    self.message_sniffed.emit()
 
-            self.rcv_device.free_data()  # do not store received bits twice
+                self.rcv_device.free_data()  # do not store received bits twice
 
-        if self.sniff_file and not os.path.isdir(self.sniff_file):
-            plain_bits_str = self.plain_bits_str
-            if plain_bits_str:
-                with open(self.sniff_file, "a") as f:
-                    f.write("\n".join(plain_bits_str) + "\n")
+            if self.sniff_file and not os.path.isdir(self.sniff_file):
+                plain_bits_str = self.plain_bits_str
+                if plain_bits_str:
+                    with open(self.sniff_file, "a") as f:
+                        f.write("\n".join(plain_bits_str) + "\n")
 
-        if not self.__store_data:
-            self.messages.clear()
+            if not self.__store_data:
+                self.messages.clear()
 
     def __demodulate_data(self, data):
         """
@@ -125,6 +136,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         :param data:
         :return:
         """
+        if len(data) == 0:
+            return
+
         rssi_squared = np.mean(data.real ** 2 + data.imag ** 2)
         is_above_noise = rssi_squared > self.signal.noise_threshold ** 2
         if self.adaptive_noise and not is_above_noise:
@@ -161,7 +175,11 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.message_sniffed.emit()
 
     def stop(self):
+        self.is_running = False
         self.rcv_device.stop("Stopping receiving due to user interaction")
+        self.sniff_thread.join(0.1)
+        if self.sniff_thread.is_alive():
+            logger.error("Sniff thread is still alive")
 
     def clear(self):
         self.data_cache.clear()

@@ -42,9 +42,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             if hasattr(self.server, "received_bits"):
                 for data in filter(None, self.data.split(b"\n")):
                     self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(data))
-                # when receiving bits, the protocol sniffer will read them for property
-                if self.server.emit_data_received_signal:
-                    self.server.signal.emit(np.ndarray([]))
             else:
                 while len(self.data) % 8 != 0:
                     self.data += self.request.recv(len(self.data) % 8)
@@ -57,8 +54,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 self.server.receive_buffer[
                 self.server.current_receive_index:self.server.current_receive_index + len(received)] = received
                 self.server.current_receive_index += len(received)
-                if self.server.emit_data_received_signal:
-                    self.server.signal.emit(received)
 
     def __init__(self, raw_mode=False, resume_on_full_receive_buffer=False, spectrum=False, sending=False):
         """
@@ -86,8 +81,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_is_continuous = False
         self.continuous_send_ring_buffer = None
         self.num_samples_to_send = None  # Only used for continuous send mode
-
-        self.emit_data_received_signal = False
 
         self.raw_mode = raw_mode
         if not sending:
@@ -173,7 +166,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.server.received_bits = self.received_bits
 
         self.server.signal = self.data_received
-        self.server.emit_data_received_signal = self.emit_data_received_signal
 
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True

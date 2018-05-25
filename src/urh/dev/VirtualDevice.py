@@ -354,14 +354,6 @@ class VirtualDevice(QObject):
         self.__dev.direct_sampling_mode = value
 
     @property
-    def emit_data_received_signal(self):
-        return self.__dev.emit_data_received_signal
-
-    @emit_data_received_signal.setter
-    def emit_data_received_signal(self, value):
-        self.__dev.emit_data_received_signal = value
-
-    @property
     def samples_to_send(self):
         if self.backend == Backends.grc:
             return self.__dev.data

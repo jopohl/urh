@@ -250,8 +250,6 @@ class Device(QObject):
         self.device_serial = None
         self.device_number = 0
 
-        self.emit_data_received_signal = False  # used for protocol sniffer
-
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
@@ -664,9 +662,6 @@ class Device(QObject):
 
             self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
             self.current_recv_index += n_samples
-
-            if self.emit_data_received_signal:
-                self.data_received.emit(samples)
 
         logger.debug("Exiting read_receive_queue thread.")
 

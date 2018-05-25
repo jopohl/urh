@@ -148,7 +148,10 @@ class Device(QObject):
 
         while not exit_requested:
             if cls.ASYNCHRONOUS:
-                time.sleep(0.25)
+                try:
+                    time.sleep(0.25)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():

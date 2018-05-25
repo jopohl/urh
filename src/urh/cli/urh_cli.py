@@ -245,42 +245,48 @@ else:
     logger.setLevel(logging.DEBUG)
 
 # todo support raw mode
-try:
+# todo support write to file / send from file
+if args.transmit and not args.raw:
+    modulator = build_modulator_from_args(args)
+    device = build_device_from_args(args)
+    messages_to_send = read_messages_to_send(args)
+    modulated = modulate_messages(messages_to_send, modulator)
+    device.samples_to_send = modulated
+    device.start()
 
-    if args.transmit and not args.raw:
-        modulator = build_modulator_from_args(args)
-        device = build_device_from_args(args)
-        messages_to_send = read_messages_to_send(args)
-        modulated = modulate_messages(messages_to_send, modulator)
-        device.samples_to_send = modulated
-        device.start()
+    while not device.sending_finished:
+        time.sleep(0.1)
+        device.read_messages()
+        if device.current_index > 0:
+            cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
 
-        while not device.sending_finished:
-            time.sleep(0.1)
-            device.read_messages()
-            if device.current_index > 0:
-                cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
+    print()
+    device.stop("Sending finished")
+elif args.receive and not args.raw:
+    sniffer = build_protocol_sniffer_from_args(args)
 
-        print()
-        device.stop("Sending finished")
-    elif args.receive and not args.raw:
-        def handler(data):
-            print(len(data))
+    sniffer.sniff()
+    total_time = 0
 
-        sniffer = build_protocol_sniffer_from_args(args)
-        sniffer.rcv_device.data_received.connect(handler)
-        sniffer.sniff()
-        total_time = 0
-        while total_time < abs(args.receive_time):
+    if args.receive_time >= 0:
+        print("Receiving for {} seconds...".format(args.receive_time))
+    else:
+        print("Receiving forever...")
+
+    while total_time < abs(args.receive_time):
+        try:
             sniffer.rcv_device.read_messages()
             time.sleep(0.1)
             if args.receive_time >= 0:
                 # smaller zero means infinity
                 total_time += 0.1
-            print(sniffer.messages)
-        sniffer.stop()
 
+            num_messages = len(sniffer.messages)
+            for msg in sniffer.messages[:num_messages]:
+                print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str)
+            del sniffer.messages[:num_messages]
+        except KeyboardInterrupt:
+            break
 
-except Exception as e:
-    print(e)
-    sys.exit(1)
+    print("\nStopping receiving...")
+    sniffer.stop()

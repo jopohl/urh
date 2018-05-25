@@ -126,10 +126,14 @@ class BackendHandler(object):
     def __usrp_native_enabled(self) -> bool:
         old_stdout = devnull = None
         try:
-            # Redirect stderr to /dev/null to hide USRP messages
-            devnull = open(os.devnull, 'w')
-            old_stdout = os.dup(sys.stdout.fileno())
-            os.dup2(devnull.fileno(), sys.stdout.fileno())
+            try:
+                # Redirect stderr to /dev/null to hide USRP messages
+                devnull = open(os.devnull, 'w')
+                old_stdout = os.dup(sys.stdout.fileno())
+                os.dup2(devnull.fileno(), sys.stdout.fileno())
+            except:
+                pass
+
             from urh.dev.native.lib import usrp
             return True
         except ImportError:

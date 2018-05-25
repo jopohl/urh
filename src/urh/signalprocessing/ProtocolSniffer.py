@@ -177,7 +177,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     def stop(self):
         self.is_running = False
         self.rcv_device.stop("Stopping receiving due to user interaction")
-        self.sniff_thread.join(0.1)
+        if self.sniff_thread.is_alive():
+            self.sniff_thread.join(0.1)
         if self.sniff_thread.is_alive():
             logger.error("Sniff thread is still alive")
 

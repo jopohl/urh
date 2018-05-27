@@ -186,7 +186,10 @@ class Device(QObject):
 
         while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:
-                time.sleep(0.5)
+                try:
+                    time.sleep(0.5)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.send_sync(send_config.get_data_to_send(buffer_size))
 

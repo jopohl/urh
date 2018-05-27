@@ -238,6 +238,7 @@ group2.add_argument("-t", "--tolerance", type=float, default=5,
 
 group3 = parser.add_argument_group('Data configuration', "Configure which data to send or where to receive it.")
 group3.add_argument("--hex", action='store_true', help="Give messages as hex instead of bits")
+group3.add_argument("-e", "--encoding", help="Specify encoding")
 group3.add_argument("-m", "--messages", nargs='+', help="Messages to send. Give pauses after with a {0}. "
                                                         "Separate with spaces e.g. "
                                                         "1001{0}42ms 1100{0}3ns 0001 1111{0}200. "
@@ -286,10 +287,13 @@ if args.transmit:
     device.start()
 
     while not device.sending_finished:
-        time.sleep(0.1)
-        device.read_messages()
-        if device.current_index > 0:
-            cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
+        try:
+            time.sleep(0.1)
+            device.read_messages()
+            if device.current_index > 0:
+                cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
+        except KeyboardInterrupt:
+            break
 
     print()
     device.stop("Sending finished")

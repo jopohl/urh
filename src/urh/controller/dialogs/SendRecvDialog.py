@@ -274,12 +274,6 @@ class SendRecvDialog(QDialog):
         if self.device.backend not in (Backends.none, Backends.network):
             # Backend none is selected, when no device is available
             logger.debug("Cleaning up device")
-            try:
-                # For Protocol Sniffer
-                self.device.data_received.disconnect()
-            except TypeError:
-                pass
-
             self.device.cleanup()
             logger.debug("Successfully cleaned up device")
             self.device_settings_widget.emit_device_parameters_changed()

@@ -25,8 +25,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     receive_server_started = pyqtSignal()
     error_occurred = pyqtSignal(str)
 
-    data_received = pyqtSignal(np.ndarray)
-
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             received = self.request.recv(65536 * 8)
@@ -164,8 +162,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             self.server.current_receive_index = 0
         else:
             self.server.received_bits = self.received_bits
-
-        self.server.signal = self.data_received
 
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True

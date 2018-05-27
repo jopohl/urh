@@ -29,8 +29,6 @@ class VirtualDevice(QObject):
     fatal_error_occurred = pyqtSignal(str)
     ready_for_action = pyqtSignal()
 
-    data_received = pyqtSignal(np.ndarray)  # for direct demodulation in sniffer
-
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."
 
@@ -143,9 +141,6 @@ class VirtualDevice(QObject):
             self.__dev = None
         else:
             raise ValueError("Unsupported Backend")
-
-        if hasattr(self.__dev, "data_received"):
-            self.__dev.data_received.connect(self.data_received.emit)
 
         if mode == Mode.spectrum:
             self.__dev.is_in_spectrum_mode = True

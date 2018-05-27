@@ -33,8 +33,6 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    data_received = pyqtSignal(np.ndarray)
-
     ASYNCHRONOUS = False
 
     DEVICE_LIB = None

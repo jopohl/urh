@@ -8,8 +8,6 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class ReceiverThread(AbstractBaseThread):
-    data_received = pyqtSignal(np.ndarray)
-
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
                  parent=None, resume_on_full_receive_buffer=False):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)

@@ -17,6 +17,7 @@ from urh.dev.VirtualDevice import VirtualDevice
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Message import Message
 from urh.util.Logger import logger
+from urh.signalprocessing.Encoding import Encoding
 
 DEVICES = BackendHandler.DEVICE_NAMES
 MODULATIONS = Modulator.MODULATION_TYPES
@@ -121,6 +122,9 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
         except ValueError:
             result.rcv_device.device_serial = arguments.device_identifier
 
+    if args.encoding:
+        result.decoder = build_encoding_from_args(args)
+
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
     return result
 
@@ -151,6 +155,14 @@ def build_device_from_args(arguments: argparse.Namespace):
     return result
 
 
+def build_encoding_from_args(arguments: argparse.Namespace):
+    if arguments.encoding is None:
+        return None
+
+    primitives = arguments.encoding.split(",")
+    return Encoding(list(filter(None, map(str.strip, primitives))))
+
+
 def read_messages_to_send(arguments: argparse.Namespace):
     if not arguments.transmit:
         return None
@@ -167,6 +179,8 @@ def read_messages_to_send(arguments: argparse.Namespace):
     else:
         print("You need to give messages to send either with (-m) or a file (-file) to read them from.")
         sys.exit(1)
+
+    encoding = build_encoding_from_args(arguments)
 
     for msg_arg in messages:
         try:
@@ -192,7 +206,8 @@ def read_messages_to_send(arguments: argparse.Namespace):
 
         msg = Message.from_plain_bits_str(bits)
         msg.pause = int(pause)
-        # todo set encoding when configurable
+        if encoding:
+            msg.decoder = encoding
         result.append(msg)
 
     return result

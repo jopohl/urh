@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+import argparse
 import logging
 import os
 import sys
-import argparse
 import time
 
 import numpy as np
@@ -144,7 +144,19 @@ def read_messages_to_send(arguments: argparse.Namespace):
         return None
 
     result = []
-    for msg_arg in arguments.messages:
+    if arguments.messages is not None and arguments.filename is not None:
+        print("Either give messages (-m) or a file to read from (-f) not both.")
+        sys.exit(1)
+    elif arguments.messages is not None:
+        messages = arguments.messages
+    elif arguments.filename is not None:
+        with open(arguments.filename) as f:
+            messages = list(map(str.strip, f.readlines()))
+    else:
+        print("You need to give messages to send either with (-m) or a file (-f) to read them from.")
+        sys.exit(1)
+
+    for msg_arg in messages:
         data, pause = msg_arg.split(PAUSE_SEP)
         if pause.endswith("ms"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
@@ -214,12 +226,12 @@ group3.add_argument("--hex", action='store_true', help="Give messages as hex ins
 group3.add_argument("-m", "--messages", nargs='+', help="Messages to send. Give pauses after with a {0}. "
                                                         "Separate with spaces e.g. "
                                                         "1001{0}42ms 1100{0}3ns 0001 1111{0}200. "
-                                                        "If you give no time suffix "
-                                                        "after a pause it is assumed to be in samples. "
-                                                        "You can also give a path to a file from where "
-                                                        "to read the messages from. "
-                                                        "If you give a file here in RX mode received messages will "
-                                                        "be written to this file instead to STDOUT.".format(PAUSE_SEP))
+                                                        "If you give no time suffix after a pause "
+                                                        "it is assumed to be in samples. ".format(PAUSE_SEP))
+
+group3.add_argument("-file", "--filename", help="Filename to read messages from in send mode. "
+                                                "In receive mode messages will be written to this file "
+                                                "instead to STDOUT.")
 group3.add_argument("-p", "--pause", default="250ms",
                     help="The default pause which is inserted after a every message "
                          "which does not have a pause configured. (default: %(default)s) "
@@ -246,12 +258,18 @@ else:
 
 # todo support raw mode
 # todo support write to file / send from file
-if args.transmit and not args.raw:
-    modulator = build_modulator_from_args(args)
+if args.transmit:
     device = build_device_from_args(args)
-    messages_to_send = read_messages_to_send(args)
-    modulated = modulate_messages(messages_to_send, modulator)
-    device.samples_to_send = modulated
+    if args.raw:
+        if args.filename is None:
+            print("You need to give a file (-f, --filename) where to read samples from.")
+            sys.exit(1)
+        samples_to_send = np.fromfile(args.filename, dtype=np.complex64)
+    else:
+        modulator = build_modulator_from_args(args)
+        messages_to_send = read_messages_to_send(args)
+        samples_to_send = modulate_messages(messages_to_send, modulator)
+    device.samples_to_send = samples_to_send
     device.start()
 
     while not device.sending_finished:

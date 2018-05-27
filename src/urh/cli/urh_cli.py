@@ -169,7 +169,10 @@ def read_messages_to_send(arguments: argparse.Namespace):
         sys.exit(1)
 
     for msg_arg in messages:
-        data, pause = msg_arg.split(PAUSE_SEP)
+        try:
+            data, pause = msg_arg.split(PAUSE_SEP)
+        except ValueError:
+            data, pause = msg_arg, args.pause
         if pause.endswith("ms"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
         elif pause.endswith("µs"):

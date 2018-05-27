@@ -9,13 +9,15 @@ import numpy as np
 
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
-sys.path.insert(0, os.path.realpath(os.path.join(cur_dir, "..", "..")))
+SRC_DIR = os.path.realpath(os.path.join(cur_dir, "..", ".."))
+sys.path.insert(0, SRC_DIR)
 
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Message import Message
+from urh.util import Logger
 from urh.util.Logger import logger
 from urh.signalprocessing.Encoding import Encoding
 
@@ -122,8 +124,8 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
         except ValueError:
             result.rcv_device.device_serial = arguments.device_identifier
 
-    if args.encoding:
-        result.decoder = build_encoding_from_args(args)
+    if arguments.encoding:
+        result.decoder = build_encoding_from_args(arguments)
 
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
     return result
@@ -186,7 +188,7 @@ def read_messages_to_send(arguments: argparse.Namespace):
         try:
             data, pause = msg_arg.split(PAUSE_SEP)
         except ValueError:
-            data, pause = msg_arg, args.pause
+            data, pause = msg_arg, arguments.pause
         if pause.endswith("ms"):
             pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
         elif pause.endswith("µs"):
@@ -279,86 +281,119 @@ group4 = parser.add_argument_group("Miscellaneous options")
 group4.add_argument("-h", "--help", action="help", help="show this help message and exit")
 group4.add_argument("-v", "--verbose", action="count")
 
-args = parser.parse_args()
-if args.verbose is None:
-    logger.setLevel(logging.ERROR)
-elif args.verbose == 1:
-    logger.setLevel(logging.INFO)
-else:
-    logger.setLevel(logging.DEBUG)
 
-if args.transmit:
-    device = build_device_from_args(args)
-    if args.raw:
-        if args.filename is None:
-            print("You need to give a file (-file, --filename) where to read samples from.")
+def main():
+    from urh.util import util
+    util.set_windows_lib_path()
+
+    try:
+        import urh.cythonext.signalFunctions
+        import urh.cythonext.path_creator
+        import urh.cythonext.util
+    except ImportError:
+        if hasattr(sys, "frozen"):
+            print("C++ Extensions not found. Exiting...")
             sys.exit(1)
-        samples_to_send = np.fromfile(args.filename, dtype=np.complex64)
+        print("Could not find C++ extensions, trying to build them.")
+        old_dir = os.path.realpath(os.curdir)
+        os.chdir(os.path.join(SRC_DIR, "urh", "cythonext"))
+
+        from urh.cythonext import build
+        build.main()
+
+        os.chdir(old_dir)
+
+    import multiprocessing as mp
+    # allow usage of prange (OpenMP) in Processes
+    mp.set_start_method("spawn")
+    if sys.platform == "win32":
+        mp.freeze_support()
+
+    args = parser.parse_args()
+    if args.verbose is None:
+        logger.setLevel(logging.ERROR)
+    elif args.verbose == 1:
+        logger.setLevel(logging.INFO)
     else:
-        modulator = build_modulator_from_args(args)
-        messages_to_send = read_messages_to_send(args)
-        samples_to_send = modulate_messages(messages_to_send, modulator)
-    device.samples_to_send = samples_to_send
-    device.start()
+        logger.setLevel(logging.DEBUG)
+    Logger.save_log_level()
 
-    while not device.sending_finished:
-        try:
-            time.sleep(0.1)
-            device.read_messages()
-            if device.current_index > 0:
-                cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
-        except KeyboardInterrupt:
-            break
+    if args.transmit:
+        device = build_device_from_args(args)
+        if args.raw:
+            if args.filename is None:
+                print("You need to give a file (-file, --filename) where to read samples from.")
+                sys.exit(1)
+            samples_to_send = np.fromfile(args.filename, dtype=np.complex64)
+        else:
+            modulator = build_modulator_from_args(args)
+            messages_to_send = read_messages_to_send(args)
+            samples_to_send = modulate_messages(messages_to_send, modulator)
+        device.samples_to_send = samples_to_send
+        device.start()
 
-    print()
-    device.stop("Sending finished")
-elif args.receive:
-    if args.raw:
-        if args.filename is None:
-            print("You need to give a file (-file, --filename) to receive into when using raw RX mode.")
-            sys.exit(1)
+        while not device.sending_finished:
+            try:
+                time.sleep(0.1)
+                device.read_messages()
+                if device.current_index > 0:
+                    cli_progress_bar(device.current_index, len(device.samples_to_send), title="Sending")
+            except KeyboardInterrupt:
+                break
 
-        receiver = build_device_from_args(args)
-        receiver.start()
-    else:
-        receiver = build_protocol_sniffer_from_args(args)
-        receiver.sniff()
+        print()
+        device.stop("Sending finished")
+    elif args.receive:
+        if args.raw:
+            if args.filename is None:
+                print("You need to give a file (-file, --filename) to receive into when using raw RX mode.")
+                sys.exit(1)
 
-    total_time = 0
+            receiver = build_device_from_args(args)
+            receiver.start()
+        else:
+            receiver = build_protocol_sniffer_from_args(args)
+            receiver.sniff()
 
-    if args.receive_time >= 0:
-        print("Receiving for {} seconds...".format(args.receive_time))
-    else:
-        print("Receiving forever...")
+        total_time = 0
 
-    f = None if args.filename is None else open(args.filename, "w")
-    kwargs = dict() if f is None else {"file": f}
+        if args.receive_time >= 0:
+            print("Receiving for {} seconds...".format(args.receive_time))
+        else:
+            print("Receiving forever...")
 
-    dev = receiver.rcv_device if hasattr(receiver, "rcv_device") else receiver
+        f = None if args.filename is None else open(args.filename, "w")
+        kwargs = dict() if f is None else {"file": f}
 
-    while total_time < abs(args.receive_time):
-        try:
-            dev.read_messages()
-            time.sleep(0.1)
-            if args.receive_time >= 0:
-                # smaller zero means infinity
-                total_time += 0.1
+        dev = receiver.rcv_device if hasattr(receiver, "rcv_device") else receiver
 
-            if not args.raw:
-                num_messages = len(receiver.messages)
-                for msg in receiver.messages[:num_messages]:
-                    print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str, **kwargs)
-                del receiver.messages[:num_messages]
-        except KeyboardInterrupt:
-            break
+        while total_time < abs(args.receive_time):
+            try:
+                dev.read_messages()
+                time.sleep(0.1)
+                if args.receive_time >= 0:
+                    # smaller zero means infinity
+                    total_time += 0.1
 
-    print("\nStopping receiving...")
-    if args.raw:
-        receiver.stop("Receiving finished")
-        receiver.data[:receiver.current_index].tofile(f)
-    else:
-        receiver.stop()
+                if not args.raw:
+                    num_messages = len(receiver.messages)
+                    for msg in receiver.messages[:num_messages]:
+                        print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str, **kwargs)
+                    del receiver.messages[:num_messages]
+            except KeyboardInterrupt:
+                break
 
-    if f is not None:
-        f.close()
-        print("Received data written to {}".format(args.filename))
+        print("\nStopping receiving...")
+        if args.raw:
+            receiver.stop("Receiving finished")
+            receiver.data[:receiver.current_index].tofile(f)
+        else:
+            receiver.stop()
+
+        if f is not None:
+            f.close()
+            print("Received data written to {}".format(args.filename))
+
+
+if __name__ == '__main__':
+    main()

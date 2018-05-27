@@ -41,7 +41,7 @@ class SpectrumDialogController(SendRecvDialog):
         self.bb_gain_timer.setSingleShot(True)
 
         self.create_connects()
-        self.device_settings_widget.on_cb_device_current_index_changed()
+        self.device_settings_widget.update_for_new_device(reset_gains=False)
 
     def __clear_spectrogram(self):
         self.ui.graphicsViewSpectrogram.scene().clear()

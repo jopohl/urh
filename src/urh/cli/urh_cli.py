@@ -291,6 +291,13 @@ elif args.receive and not args.raw:
     else:
         print("Receiving forever...")
 
+    kwargs = dict()
+    if args.filename is not None:
+        f = open(args.filename, "w")
+        kwargs = {"file": f}
+    else:
+        f = None
+
     while total_time < abs(args.receive_time):
         try:
             sniffer.rcv_device.read_messages()
@@ -301,10 +308,14 @@ elif args.receive and not args.raw:
 
             num_messages = len(sniffer.messages)
             for msg in sniffer.messages[:num_messages]:
-                print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str)
+                print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str, **kwargs)
             del sniffer.messages[:num_messages]
         except KeyboardInterrupt:
             break
 
     print("\nStopping receiving...")
     sniffer.stop()
+
+    if f is not None:
+        f.close()
+        print("Messages written to {}".format(args.filename))

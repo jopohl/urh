@@ -145,7 +145,7 @@ def read_messages_to_send(arguments: argparse.Namespace):
 
     result = []
     if arguments.messages is not None and arguments.filename is not None:
-        print("Either give messages (-m) or a file to read from (-f) not both.")
+        print("Either give messages (-m) or a file to read from (-file) not both.")
         sys.exit(1)
     elif arguments.messages is not None:
         messages = arguments.messages
@@ -153,7 +153,7 @@ def read_messages_to_send(arguments: argparse.Namespace):
         with open(arguments.filename) as f:
             messages = list(map(str.strip, f.readlines()))
     else:
-        print("You need to give messages to send either with (-m) or a file (-f) to read them from.")
+        print("You need to give messages to send either with (-m) or a file (-file) to read them from.")
         sys.exit(1)
 
     for msg_arg in messages:
@@ -256,13 +256,11 @@ elif args.verbose == 1:
 else:
     logger.setLevel(logging.DEBUG)
 
-# todo support raw mode
-# todo support write to file / send from file
 if args.transmit:
     device = build_device_from_args(args)
     if args.raw:
         if args.filename is None:
-            print("You need to give a file (-f, --filename) where to read samples from.")
+            print("You need to give a file (-file, --filename) where to read samples from.")
             sys.exit(1)
         samples_to_send = np.fromfile(args.filename, dtype=np.complex64)
     else:
@@ -280,10 +278,18 @@ if args.transmit:
 
     print()
     device.stop("Sending finished")
-elif args.receive and not args.raw:
-    sniffer = build_protocol_sniffer_from_args(args)
+elif args.receive:
+    if args.raw:
+        if args.filename is None:
+            print("You need to give a file (-file, --filename) to receive into when using raw RX mode.")
+            sys.exit(1)
 
-    sniffer.sniff()
+        receiver = build_device_from_args(args)
+        receiver.start()
+    else:
+        receiver = build_protocol_sniffer_from_args(args)
+        receiver.sniff()
+
     total_time = 0
 
     if args.receive_time >= 0:
@@ -291,31 +297,34 @@ elif args.receive and not args.raw:
     else:
         print("Receiving forever...")
 
-    kwargs = dict()
-    if args.filename is not None:
-        f = open(args.filename, "w")
-        kwargs = {"file": f}
-    else:
-        f = None
+    f = None if args.filename is None else open(args.filename, "w")
+    kwargs = dict() if f is None else {"file": f}
+
+    dev = receiver.rcv_device if hasattr(receiver, "rcv_device") else receiver
 
     while total_time < abs(args.receive_time):
         try:
-            sniffer.rcv_device.read_messages()
+            dev.read_messages()
             time.sleep(0.1)
             if args.receive_time >= 0:
                 # smaller zero means infinity
                 total_time += 0.1
 
-            num_messages = len(sniffer.messages)
-            for msg in sniffer.messages[:num_messages]:
-                print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str, **kwargs)
-            del sniffer.messages[:num_messages]
+            if not args.raw:
+                num_messages = len(receiver.messages)
+                for msg in receiver.messages[:num_messages]:
+                    print(msg.decoded_hex_str if args.hex else msg.decoded_bits_str, **kwargs)
+                del receiver.messages[:num_messages]
         except KeyboardInterrupt:
             break
 
     print("\nStopping receiving...")
-    sniffer.stop()
+    if args.raw:
+        receiver.stop("Receiving finished")
+        receiver.data[:receiver.current_index].tofile(f)
+    else:
+        receiver.stop()
 
     if f is not None:
         f.close()
-        print("Messages written to {}".format(args.filename))
+        print("Received data written to {}".format(args.filename))

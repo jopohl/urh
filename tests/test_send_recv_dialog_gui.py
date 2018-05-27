@@ -299,11 +299,13 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.device.set_server_port(port)
         generator_frame.network_sdr_plugin.client_port = port
         sniff_dialog.ui.btnStart.click()
-        QApplication.instance().processEvents()
-        generator_frame.ui.btnNetworkSDRSend.click()
-        QApplication.instance().processEvents()
 
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        for msg in generator_frame.table_model.protocol.messages:
+            msg.pause = 500e3
+
+        generator_frame.ui.btnNetworkSDRSend.click()
+
+        QTest.qWait(2000)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

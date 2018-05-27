@@ -12,6 +12,28 @@ cur_dir = os.path.realpath(os.path.dirname(cur_file))
 SRC_DIR = os.path.realpath(os.path.join(cur_dir, "..", ".."))
 sys.path.insert(0, SRC_DIR)
 
+from urh.util import util
+
+util.set_windows_lib_path()
+
+try:
+    import urh.cythonext.signalFunctions
+    import urh.cythonext.path_creator
+    import urh.cythonext.util
+except ImportError:
+    if hasattr(sys, "frozen"):
+        print("C++ Extensions not found. Exiting...")
+        sys.exit(1)
+    print("Could not find C++ extensions, trying to build them.")
+    old_dir = os.path.realpath(os.curdir)
+    os.chdir(os.path.join(SRC_DIR, "urh", "cythonext"))
+
+    from urh.cythonext import build
+
+    build.main()
+
+    os.chdir(old_dir)
+
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
@@ -283,26 +305,6 @@ group4.add_argument("-v", "--verbose", action="count")
 
 
 def main():
-    from urh.util import util
-    util.set_windows_lib_path()
-
-    try:
-        import urh.cythonext.signalFunctions
-        import urh.cythonext.path_creator
-        import urh.cythonext.util
-    except ImportError:
-        if hasattr(sys, "frozen"):
-            print("C++ Extensions not found. Exiting...")
-            sys.exit(1)
-        print("Could not find C++ extensions, trying to build them.")
-        old_dir = os.path.realpath(os.curdir)
-        os.chdir(os.path.join(SRC_DIR, "urh", "cythonext"))
-
-        from urh.cythonext import build
-        build.main()
-
-        os.chdir(old_dir)
-
     import multiprocessing as mp
     # allow usage of prange (OpenMP) in Processes
     mp.set_start_method("spawn")

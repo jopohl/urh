@@ -115,6 +115,12 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     if arguments.baseband_gain is not None:
         result.rcv_device.baseband_gain = arguments.baseband_gain
 
+    if arguments.device_identifier is not None:
+        try:
+            result.rcv_device.device_number = int(arguments.device_identifier)
+        except ValueError:
+            result.rcv_device.device_serial = arguments.device_identifier
+
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
     return result
 
@@ -133,6 +139,12 @@ def build_device_from_args(arguments: argparse.Namespace):
                            freq=arguments.frequency, sample_rate=arguments.sample_rate,
                            bandwidth=bandwidth,
                            gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
+
+    if arguments.device_identifier is not None:
+        try:
+            result.device_number = int(arguments.device_identifier)
+        except ValueError:
+            result.device_serial = arguments.device_identifier
 
     result.fatal_error_occurred.connect(on_fatal_device_error_occurred)
 

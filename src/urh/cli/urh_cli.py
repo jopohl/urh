@@ -98,24 +98,6 @@ def build_modulator_from_args(arguments: argparse.Namespace):
     return result
 
 
-def modulate_messages(messages, modulator):
-    if len(messages) == 0:
-        return None
-
-    cli_progress_bar(0, len(messages), title="Modulating")
-    nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_bit + msg.pause) for msg in messages)
-    buffer = np.zeros(nsamples, dtype=np.complex64)
-    pos = 0
-    for i, msg in enumerate(messages):
-        # We do not need to modulate the pause extra, as result is already initialized with zeros
-        modulated = modulator.modulate(start=0, data=msg.encoded_bits, pause=0)
-        buffer[pos:pos + len(modulated)] = modulated
-        pos += len(modulated) + msg.pause
-        cli_progress_bar(i + 1, len(messages), title="Modulating")
-    print("\nSuccessfully modulated {} messages".format(len(messages)))
-    return buffer
-
-
 def build_backend_handler_from_args(arguments: argparse.Namespace):
     from urh.dev.BackendHandler import Backends
     bh = BackendHandler()
@@ -127,6 +109,30 @@ def build_backend_handler_from_args(arguments: argparse.Namespace):
         raise ValueError("Unsupported device backend")
     return bh
 
+def build_device_from_args(arguments: argparse.Namespace):
+    from urh.dev.VirtualDevice import Mode
+    if arguments.receive and arguments.transmit:
+        raise ValueError("You cannot use receive and transmit mode at the same time.")
+    if not arguments.receive and not arguments.transmit:
+        raise ValueError("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
+
+    bh = build_backend_handler_from_args(arguments)
+
+    bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
+    result = VirtualDevice(bh, name=arguments.device, mode=Mode.receive if arguments.receive else Mode.send,
+                           freq=arguments.frequency, sample_rate=arguments.sample_rate,
+                           bandwidth=bandwidth,
+                           gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
+
+    if arguments.device_identifier is not None:
+        try:
+            result.device_number = int(arguments.device_identifier)
+        except ValueError:
+            result.device_serial = arguments.device_identifier
+
+    result.fatal_error_occurred.connect(on_fatal_device_error_occurred)
+
+    return result
 
 def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
@@ -156,40 +162,12 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
     return result
 
-
-def build_device_from_args(arguments: argparse.Namespace):
-    from urh.dev.VirtualDevice import Mode
-    if arguments.receive and arguments.transmit:
-        raise ValueError("You cannot use receive and transmit mode at the same time.")
-    if not arguments.receive and not arguments.transmit:
-        raise ValueError("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
-
-    bh = build_backend_handler_from_args(arguments)
-
-    bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
-    result = VirtualDevice(bh, name=arguments.device, mode=Mode.receive if arguments.receive else Mode.send,
-                           freq=arguments.frequency, sample_rate=arguments.sample_rate,
-                           bandwidth=bandwidth,
-                           gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
-
-    if arguments.device_identifier is not None:
-        try:
-            result.device_number = int(arguments.device_identifier)
-        except ValueError:
-            result.device_serial = arguments.device_identifier
-
-    result.fatal_error_occurred.connect(on_fatal_device_error_occurred)
-
-    return result
-
-
 def build_encoding_from_args(arguments: argparse.Namespace):
     if arguments.encoding is None:
         return None
 
     primitives = arguments.encoding.split(",")
     return Encoding(list(filter(None, map(str.strip, primitives))))
-
 
 def read_messages_to_send(arguments: argparse.Namespace):
     if not arguments.transmit:
@@ -240,6 +218,22 @@ def read_messages_to_send(arguments: argparse.Namespace):
 
     return result
 
+def modulate_messages(messages, modulator):
+    if len(messages) == 0:
+        return None
+
+    cli_progress_bar(0, len(messages), title="Modulating")
+    nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_bit + msg.pause) for msg in messages)
+    buffer = np.zeros(nsamples, dtype=np.complex64)
+    pos = 0
+    for i, msg in enumerate(messages):
+        # We do not need to modulate the pause extra, as result is already initialized with zeros
+        modulated = modulator.modulate(start=0, data=msg.encoded_bits, pause=0)
+        buffer[pos:pos + len(modulated)] = modulated
+        pos += len(modulated) + msg.pause
+        cli_progress_bar(i + 1, len(messages), title="Modulating")
+    print("\nSuccessfully modulated {} messages".format(len(messages)))
+    return buffer
 
 parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
                                  add_help=False)

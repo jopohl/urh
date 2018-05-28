@@ -74,17 +74,18 @@ def build_modulator_from_args(arguments: argparse.Namespace):
     result = Modulator("CLI Modulator")
     result.carrier_freq_hz = float(arguments.carrier_frequency)
     result.carrier_amplitude = float(arguments.carrier_amplitude)
+    result.carrier_phase_deg = float(arguments.carrier_phase)
     result.samples_per_bit = int(arguments.bit_length)
 
     if arguments.modulation_type == "ASK" and not arguments.parameter_zero.endswith("%"):
         param_zero = float(arguments.parameter_zero) * 100
     else:
-        param_zero = float(arguments.parameter_zero)
+        param_zero = float(arguments.parameter_zero[:-1])
 
     if arguments.modulation_type == "ASK" and not arguments.parameter_one.endswith("%"):
         param_one = float(arguments.parameter_one) * 100
     else:
-        param_one = float(arguments.parameter_one)
+        param_one = float(arguments.parameter_one[:-1])
 
     result.param_for_zero = param_zero
     result.param_for_one = param_one

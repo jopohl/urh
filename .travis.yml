@@ -35,7 +35,8 @@ install:
     if [[ $TRAVIS_OS_NAME == "osx" ]]
     then
       brew upgrade python
-      brew install --force hackrf librtlsdr
+      rm '/usr/local/include/c++'
+      brew install hackrf librtlsdr
     else
       sudo apt-get install libhackrf-dev librtlsdr-dev
     fi

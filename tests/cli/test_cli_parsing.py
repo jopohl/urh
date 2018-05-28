@@ -38,3 +38,10 @@ class TestCLIParsing(unittest.TestCase):
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.param_for_zero, 10)
         self.assertEqual(modulator.param_for_one, 20)
+
+        args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
+                                      " -p0 20e3 -p1=-20e3 -mo FSK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
+        modulator =  urh_cli.build_modulator_from_args(args)
+        self.assertEqual(modulator.modulation_type_str, "FSK")
+        self.assertEqual(modulator.param_for_zero, 20e3)
+        self.assertEqual(modulator.param_for_one, -20e3)

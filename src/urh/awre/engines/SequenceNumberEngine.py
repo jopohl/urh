@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 
+from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
 from urh.util import util
 
@@ -12,6 +13,7 @@ class SequenceNumberEngine(Engine):
     Therefore, this engine should run AFTER message type inferring.
 
     """
+
     def __init__(self, bitvectors):
         """
 
@@ -20,56 +22,38 @@ class SequenceNumberEngine(Engine):
         """
         self.bitvectors = bitvectors
 
-    def find(self, n_gram_length=8, minimum_score=0.1):
+    def find(self, n_gram_length=8, expand=True):
         diff_matrix = self.create_difference_matrix(self.bitvectors, n_gram_length)
         diff_frequencies_by_column = dict()
 
         for j in range(diff_matrix.shape[1]):
-            print(diff_matrix[:, j])
             unique, counts = np.unique(diff_matrix[:, j], return_counts=True)
             diff_frequencies_by_column[j] = dict(zip(unique, counts))
 
-        stage_1_scores_by_column = dict()
+        scores_by_column = dict()
         for column, frequencies in diff_frequencies_by_column.items():
-            stage_1_scores_by_column[column] = self.calc_stage_1_score(frequencies)
+            scores_by_column[column] = self.calc_score(frequencies)
 
-        print(diff_frequencies_by_column)
-        print(stage_1_scores_by_column)
+        candidate_column = max(scores_by_column, key=scores_by_column.get)
+        result = [candidate_column]
+        if expand:
+            for i in range(candidate_column - 1, -1, -1):
+                if set(diff_frequencies_by_column[i]) == {0, 1}:
+                    # Only 0 and 1 as diff in neighboured column, so it likely belongs to sequence number
+                    result.insert(0, i)
+                else:
+                    break
 
-        candidates = dict(filter(lambda d: d[1] > 0.9, stage_1_scores_by_column.items()))
-        self.calc_combined_score(candidates, diff_frequencies_by_column)
-
-        print(candidates)
-
-        # Find column with highest frequency of constant != zero
-        # If there are also negative values in this column, check for matching frequencies in neighbour columns
-        # {0: {0: 1020, 1: 3}, 1: {-255: 3, 1: 1020}, 2: {0: 1023}, 3: {0: 1023}}
-
-    @staticmethod
-    def calc_combined_score(candidates: dict, diff_frequencies_by_column: dict):
-        """
-        if negative number and frequency of this number equals frequency of constants of neighbour column
-
-        :param candidates:
-        :param diff_frequencies_by_column:
-        :return:
-        """
-        result = dict()
-        for column in candidates:
-            diff_freq = diff_frequencies_by_column[column]
-            negatives = dict(filter(lambda d: d[0] < 0, diff_freq.items()))
-            positives = dict(filter(lambda d: d[0] > 0, diff_freq.items()))
-
-            # Now we look to left and right and see if there is a correlation
-
-
-            print(negatives)
-            print(positives)
-
-        return result
+        return CommonRange(result[0] * n_gram_length, (result[-1] + 1 - result[0]) * n_gram_length,
+                           score=scores_by_column[candidate_column], field_type="sequence number",
+                           message_indices=list(range(len(self.bitvectors))))
 
     @staticmethod
-    def calc_stage_1_score(diff_frequencies: dict) -> float:
+    def get_most_frequent(diff_frequencies: dict):
+        return max(filter(lambda x: x != 0, diff_frequencies), key=diff_frequencies.get)
+
+    @staticmethod
+    def calc_score(diff_frequencies: dict) -> float:
         """
         Calculate the score based on the distribution of differences
           1. high if one constant (!= zero) dominates
@@ -82,12 +66,11 @@ class SequenceNumberEngine(Engine):
         total = sum(diff_frequencies.values())
 
         try:
-            most_frequent = max(filter(lambda x: x != 0, diff_frequencies), key=diff_frequencies.get)
+            most_frequent = SequenceNumberEngine.get_most_frequent(diff_frequencies)
         except ValueError:
             return 0
 
         return diff_frequencies[most_frequent] / total
-
 
     @staticmethod
     def create_difference_matrix(bitvectors, n_gram_length: int):
@@ -105,10 +88,11 @@ class SequenceNumberEngine(Engine):
         """
         max_len = len(max(bitvectors, key=len))
 
-        result = np.zeros((len(bitvectors)-1, int(math.ceil(max_len / n_gram_length))), dtype=np.long)
+        result = np.zeros((len(bitvectors) - 1, int(math.ceil(max_len / n_gram_length))), dtype=np.long)
         for i in range(1, len(bitvectors)):
-            bv1, bv2 = bitvectors[i-1], bitvectors[i]
+            bv1, bv2 = bitvectors[i - 1], bitvectors[i]
             for j in range(0, max(len(bv1), len(bv2)), n_gram_length):
-                result[i-1, j//n_gram_length] = util.bits_to_number(bv2[j:j+n_gram_length]) - util.bits_to_number(bv1[j:j+n_gram_length])
+                diff = util.bits_to_number(bv2[j:j + n_gram_length]) - util.bits_to_number(bv1[j:j + n_gram_length])
+                result[i - 1, j // n_gram_length] = diff % (2 ** n_gram_length)
 
         return result

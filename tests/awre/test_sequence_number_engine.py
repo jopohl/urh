@@ -51,10 +51,10 @@ class TestSequenceNumberEngine(AWRETestCase):
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
 
-        num_messages = 32
+        num_messages = 128
 
         pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"}, sequence_number_increment=32)
+                               syncs_by_mt={mb.message_type: "0x9a9d"}, sequence_number_increment=64)
 
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")

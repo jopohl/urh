@@ -1,3 +1,5 @@
+import platform
+import sys
 import unittest
 from urh.dev.VirtualDevice import Mode
 from urh.dev.BackendHandler import Backends
@@ -64,6 +66,10 @@ class TestCLIParsing(unittest.TestCase):
 
 
     def test_build_device_from_args(self):
+        if sys.platform == "win32" and platform.architecture()[0] == "32bit":
+            # no device extensions on 32 bit windows
+            return 
+
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6".split())
         with self.assertRaises(ValueError):
             urh_cli.build_device_from_args(args)
@@ -96,17 +102,21 @@ class TestCLIParsing(unittest.TestCase):
         self.assertEqual(device.mode, Mode.receive)
         self.assertEqual(device.device_number, 42)
 
-        args = self.parser.parse_args("--device USRP --frequency 133.7e6 --sample-rate 2.5e6 --bandwidth 5e6 "
+        args = self.parser.parse_args("--device HackRF --frequency 133.7e6 --sample-rate 2.5e6 --bandwidth 5e6 "
                                       "-tx -db gnuradio".split())
         device = urh_cli.build_device_from_args(args)
         self.assertEqual(device.sample_rate, 2.5e6)
         self.assertEqual(device.bandwidth, 5e6)
-        self.assertEqual(device.name, "USRP")
+        self.assertEqual(device.name, "HackRF")
         self.assertEqual(device.backend, Backends.grc)
         self.assertEqual(device.frequency, 133.7e6)
         self.assertEqual(device.mode, Mode.send)
 
     def test_build_protocol_sniffer_from_args(self):
+        if sys.platform == "win32" and platform.architecture()[0] == "32bit":
+            # no device extensions on 32 bit windows
+            return
+
         args = self.parser.parse_args("--device HackRF --frequency 50e3 --sample-rate 2.5e6 -rx "
                                       "-if 24 -bb 30 -g 0 --device-identifier abcde "
                                       "-bl 1337 --center 0.5 --noise 0.1234 --tolerance 42".split())

@@ -114,10 +114,10 @@ class TestSendRecvDialog(QtTestCase):
 
     def __close_dialog(self, dialog):
         dialog.close()
-        dialog.setParent(None)
-        dialog.deleteLater()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+        #dialog.setParent(None)
+        #dialog.deleteLater()
+        #QApplication.instance().processEvents()
+        #Test.qWait(self.CLOSE_TIMEOUT)
 
     def __add_first_signal_to_generator(self):
         generator_frame = self.form.generator_tab_controller

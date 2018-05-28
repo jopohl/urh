@@ -18,7 +18,8 @@ class ProtocolGenerator(object):
     BROADCAST_ADDRESS = "0xffff"
 
     def __init__(self, message_types: list, participants: list = None, preambles_by_mt=None,
-                 syncs_by_mt=None, little_endian=False, length_in_bytes=True, sequence_numbers=None):
+                 syncs_by_mt=None, little_endian=False, length_in_bytes=True, sequence_numbers=None,
+                 sequence_number_increment=1):
         """
 
         :param message_types:
@@ -50,6 +51,7 @@ class ProtocolGenerator(object):
 
         sequence_numbers = dict() if sequence_numbers is None else sequence_numbers
         self.sequence_numbers = defaultdict(lambda: 0)
+        self.sequence_number_increment = sequence_number_increment
 
         for mt, seq in sequence_numbers.items():
             self.sequence_numbers[mt] = seq
@@ -152,7 +154,7 @@ class ProtocolGenerator(object):
         msg = Message.from_plain_bits_str("".join(bits))
         msg.message_type = mt
         msg.participant = source
-        self.sequence_numbers[mt] += 1
+        self.sequence_numbers[mt] += self.sequence_number_increment
 
         self.protocol.messages.append(msg)
 

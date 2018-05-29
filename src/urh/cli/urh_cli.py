@@ -4,8 +4,18 @@ import logging
 import os
 import sys
 import time
+from collections import defaultdict
 
 import numpy as np
+
+DEFAULT_CARRIER_FREQUENCY = 1e3
+DEFAULT_CARRIER_AMPLITUDE = 1
+DEFAULT_CARRIER_PHASE = 0
+
+DEFAULT_BIT_LENGTH = 100
+DEFAULT_NOISE = 0.1
+DEFAULT_CENTER = 0
+DEFAULT_TOLERANCE = 5
 
 cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
 cur_dir = os.path.realpath(os.path.dirname(cur_file))
@@ -112,11 +122,6 @@ def build_backend_handler_from_args(arguments: argparse.Namespace):
 
 def build_device_from_args(arguments: argparse.Namespace):
     from urh.dev.VirtualDevice import Mode
-    if arguments.receive and arguments.transmit:
-        raise ValueError("You cannot use receive and transmit mode at the same time.")
-    if not arguments.receive and not arguments.transmit:
-        raise ValueError("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
-
     bh = build_backend_handler_from_args(arguments)
 
     bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
@@ -162,6 +167,7 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
         result.decoder = build_encoding_from_args(arguments)
 
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
+    result.adaptive_noise = arguments.adaptive_noise
     return result
 
 
@@ -218,46 +224,79 @@ def modulate_messages(messages, modulator):
     print("\nSuccessfully modulated {} messages".format(len(messages)))
     return buffer
 
+def parse_project_file(file_path: str):
+    import xml.etree.ElementTree as ET
+    from urh.util.ProjectManager import ProjectManager
+
+    result = defaultdict(lambda: None)
+    if not file_path or not os.path.isfile(file_path):
+        return result
+
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+    except Exception as e:
+        logger.error("Could not read project file {}: {}".format(file_path, e))
+        return result
+
+    ProjectManager.read_device_conf_dict(root.find("device_conf"), target_dict=result)
+    result["device"] = result["name"]
+
+    modulators = ProjectManager.read_modulators_from_file(file_path)
+    if len(modulators) > 0:
+        modulator = modulators[0]
+        result["carrier_frequency"] = modulator.carrier_freq_hz
+        result["carrier_amplitude"] = modulator.carrier_amplitude
+        result["carrier_phase"] = modulator.carrier_phase_deg
+        result["parameter_zero"] = modulator.param_for_zero
+        result["parameter_one"] = modulator.param_for_one
+        result["modulation_type"] = modulator.modulation_type_str
+
+    return result
 
 def create_parser():
     parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
                                      add_help=False)
+    parser.add_argument('project_file', nargs='?', default=None)
 
     group1 = parser.add_argument_group('Software Defined Radio Settings', "Configure Software Defined Radio options")
-    group1.add_argument("-d", "--device", required=True, choices=DEVICES, metavar="DEVICE",
+    group1.add_argument("-d", "--device", choices=DEVICES, metavar="DEVICE",
                         help="Choose a Software Defined Radio. Allowed values are " + ", ".join(DEVICES))
     group1.add_argument("-di", "--device-identifier")
     group1.add_argument("-db", "--device-backend", choices=["native", "gnuradio"], default="native")
-    group1.add_argument("-f", "--frequency", type=float, required=True,
+    group1.add_argument("-f", "--frequency", type=float,
                         help="Center frequency the SDR shall be tuned to")
-    group1.add_argument("-s", "--sample-rate", type=float, required=True, help="Sample rate to use")
+    group1.add_argument("-s", "--sample-rate", type=float, help="Sample rate to use")
     group1.add_argument("-b", "--bandwidth", type=float, help="Bandwidth to use (defaults to sample rate)")
     group1.add_argument("-g", "--gain", type=int, help="RF gain the SDR shall use")
     group1.add_argument("-if", "--if-gain", type=int, help="IF gain to use (only supported for some SDRs)")
     group1.add_argument("-bb", "--baseband-gain", type=int, help="Baseband gain to use (only supported for some SDRs)")
+    group1.add_argument("-a", "--adaptive-noise", action="store_true", help="Use adaptive noise when receiving.")
 
     group2 = parser.add_argument_group('Modulation/Demodulation settings',
                                        "Configure the Modulator/Demodulator. Not required in raw mode."
                                        "In case of RX there are additional demodulation options.")
-    group2.add_argument("-cf", "--carrier-frequency", type=float, default=1e3,
-                        help="Carrier frequency in Hertz (default: %(default)s)")
-    group2.add_argument("-ca", "--carrier-amplitude", type=float, default=1,
-                        help="Carrier amplitude (default: %(default)s)")
-    group2.add_argument("-cp", "--carrier-phase", type=float, default=0,
-                        help="Carrier phase in degree (default: %(default)s)")
+    group2.add_argument("-cf", "--carrier-frequency", type=float,
+                        help="Carrier frequency in Hertz (default: {})".format(DEFAULT_CARRIER_FREQUENCY))
+    group2.add_argument("-ca", "--carrier-amplitude", type=float,
+                        help="Carrier amplitude (default: {})".format(DEFAULT_CARRIER_AMPLITUDE))
+    group2.add_argument("-cp", "--carrier-phase", type=float,
+                        help="Carrier phase in degree (default: {})".format(DEFAULT_CARRIER_PHASE))
     group2.add_argument("-mo", "--modulation-type", choices=MODULATIONS, metavar="MOD_TYPE", default="FSK",
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
     group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
     group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
-    group2.add_argument("-bl", "--bit-length", type=float, default=100,
-                        help="Length of a bit in samples (default: %(default)s).")
+    group2.add_argument("-bl", "--bit-length", type=float,
+                        help="Length of a bit in samples (default: {}).".format(DEFAULT_BIT_LENGTH))
 
-    group2.add_argument("-n", "--noise", type=float, default=0.1,
-                        help="Noise threshold (default: %(default)s). Used for RX only.")
-    group2.add_argument("-c", "--center", type=float, default=0,
-                        help="Center between 0 and 1 for demodulation (default: %(default)s). Used for RX only.")
-    group2.add_argument("-t", "--tolerance", type=float, default=5,
-                        help="Tolerance for demodulation in samples (default: %(default)s). Used for RX only.")
+    group2.add_argument("-n", "--noise", type=float,
+                        help="Noise threshold (default: {}). Used for RX only.".format(DEFAULT_NOISE))
+    group2.add_argument("-c", "--center", type=float,
+                        help="Center between 0 and 1 for demodulation (default: {}). "
+                             "Used for RX only.".format(DEFAULT_CENTER))
+    group2.add_argument("-t", "--tolerance", type=float,
+                        help="Tolerance for demodulation in samples (default: {}). "
+                             "Used for RX only.".format(DEFAULT_TOLERANCE))
 
     group3 = parser.add_argument_group('Data configuration', "Configure which data to send or where to receive it.")
     group3.add_argument("--hex", action='store_true', help="Give messages as hex instead of bits")
@@ -292,7 +331,59 @@ def create_parser():
 
 
 def main():
+    def get_val(value, project_params: dict, project_param_key: str, default):
+        if value is not None:
+            return value
+        elif project_param_key in project_params:
+            return project_params[project_param_key]
+        else:
+            return default
+
     parser = create_parser()
+    args = parser.parse_args()
+    project_params = parse_project_file(args.project_file)
+    for argument in ("device", "frequency", "sample_rate"):
+        if getattr(args, argument):
+            continue
+
+        if project_params[argument] is not None:
+            setattr(args, argument, project_params[argument])
+        else:
+            print("You must specify a {}.".format(argument))
+            sys.exit(1)
+
+    if args.receive and args.transmit:
+        print("You cannot use receive and transmit mode at the same time.")
+        sys.exit(1)
+    if not args.receive and not args.transmit:
+        print("You must choose a mode either RX (-rx, --receive) or TX (-tx, --transmit)")
+        sys.exit(1)
+
+    args.bandwidth = get_val(args.bandwidth, project_params, "bandwidth", None)
+    rx_tx_prefix = "rx_" if args.receive else "tx_"
+    args.gain = get_val(args.gain, project_params, rx_tx_prefix+"gain", None)
+    args.if_gain = get_val(args.if_gain, project_params, rx_tx_prefix+"if_gain", None)
+    args.baseband_gain = get_val(args.baseband_gain, project_params, rx_tx_prefix + "baseband_gain", None)
+
+    if args.modulation_type is None:
+        try:
+            if project_params["modulation_type"] is None:
+                args.modulation_type = MODULATIONS[int(project_params["modulation_index"])]
+            else:
+                args.modulation_type = project_params["modulation_type"]
+        except:
+            pass
+
+    args.bit_length = get_val(args.bit_length, project_params, "bit_len", DEFAULT_BIT_LENGTH)
+    args.center = get_val(args.center, project_params, "center", DEFAULT_CENTER)
+    args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
+    args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)
+
+    args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency", DEFAULT_CARRIER_FREQUENCY)
+    args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude", DEFAULT_CARRIER_AMPLITUDE)
+    args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
+    args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
+    args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
 
     import multiprocessing as mp
     # allow usage of prange (OpenMP) in Processes
@@ -300,7 +391,6 @@ def main():
     if sys.platform == "win32":
         mp.freeze_support()
 
-    args = parser.parse_args()
     if args.verbose is None:
         logger.setLevel(logging.ERROR)
     elif args.verbose == 1:
@@ -308,6 +398,9 @@ def main():
     else:
         logger.setLevel(logging.DEBUG)
     Logger.save_log_level()
+
+    argument_string = "\n".join("{} {}".format(arg, getattr(args, arg)) for arg in vars(args))
+    logger.debug("Using these parameters\n"+argument_string)
 
     if args.transmit:
         device = build_device_from_args(args)

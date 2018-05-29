@@ -350,7 +350,8 @@ class ProjectManager(QObject):
         """
         return self.read_modulators_from_file(self.project_file)
 
-    def read_modulators_from_file(self, filename: str):
+    @staticmethod
+    def read_modulators_from_file(filename: str):
         if not filename:
             return []
 

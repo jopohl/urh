@@ -163,6 +163,7 @@ setup(
     entry_points={
         'console_scripts': [
             'urh = urh.main:main',
+            'urh_cli = urh.cli.urh_cli:main',
         ]}
 )
 

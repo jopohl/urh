@@ -1,5 +1,8 @@
 import faulthandler
 import os
+import sip
+import sys
+import time
 import unittest
 
 from PyQt5.QtCore import Qt
@@ -35,6 +38,11 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
+        if sys.platform == "win32":
+            sip.delete(cls.app)
+            cls.app = None
+            QTest.qWait(10)
+            time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()
@@ -44,9 +52,18 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
+
+            if sys.platform == "win32":
+                sip.delete(self.dialog)
+                self.dialog = None
+
         if hasattr(self, "form"):
             self.form.close_all()
             self.form.close()
+
+            if sys.platform == "win32":
+                sip.delete(self.form)
+                self.form = None
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

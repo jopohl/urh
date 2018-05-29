@@ -1,6 +1,7 @@
 import faulthandler
 import os
 import sip
+import sys
 import time
 import unittest
 
@@ -58,7 +59,9 @@ class QtTestCase(unittest.TestCase):
             self.form.close()
             sip.delete(self.form)
             self.form = None
-        #gc.collect()
+
+        if sys.version_info > (3, 4):
+            gc.collect()
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

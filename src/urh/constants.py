@@ -132,3 +132,6 @@ SHORTEST_CONSTANT_IN_BITS = 8
 
 # used for displaying indented logs e.g. in simulation dialog
 INDENT = 8
+
+# Pause separator in message files
+PAUSE_SEP = "/"

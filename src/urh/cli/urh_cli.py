@@ -38,14 +38,14 @@ from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.signalprocessing.Message import Message
 from urh.util import Logger
+from urh.constants import PAUSE_SEP
 from urh.util.Logger import logger
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 DEVICES = BackendHandler.DEVICE_NAMES
 MODULATIONS = Modulator.MODULATION_TYPES
-PAUSE_SEP = "/"
 
 
 def cli_progress_bar(value, end_value, bar_length=20, title="Percent"):
@@ -109,6 +109,7 @@ def build_backend_handler_from_args(arguments: argparse.Namespace):
         raise ValueError("Unsupported device backend")
     return bh
 
+
 def build_device_from_args(arguments: argparse.Namespace):
     from urh.dev.VirtualDevice import Mode
     if arguments.receive and arguments.transmit:
@@ -133,6 +134,7 @@ def build_device_from_args(arguments: argparse.Namespace):
     result.fatal_error_occurred.connect(on_fatal_device_error_occurred)
 
     return result
+
 
 def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
@@ -162,6 +164,7 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     result.rcv_device.fatal_error_occurred.connect(on_fatal_device_error_occurred)
     return result
 
+
 def build_encoding_from_args(arguments: argparse.Namespace):
     if arguments.encoding is None:
         return None
@@ -169,54 +172,34 @@ def build_encoding_from_args(arguments: argparse.Namespace):
     primitives = arguments.encoding.split(",")
     return Encoding(list(filter(None, map(str.strip, primitives))))
 
+
 def read_messages_to_send(arguments: argparse.Namespace):
     if not arguments.transmit:
         return None
 
-    result = []
     if arguments.messages is not None and arguments.filename is not None:
         print("Either give messages (-m) or a file to read from (-file) not both.")
         sys.exit(1)
     elif arguments.messages is not None:
-        messages = arguments.messages
+        message_strings = arguments.messages
     elif arguments.filename is not None:
         with open(arguments.filename) as f:
-            messages = list(map(str.strip, f.readlines()))
+            message_strings = list(map(str.strip, f.readlines()))
     else:
         print("You need to give messages to send either with (-m) or a file (-file) to read them from.")
         sys.exit(1)
 
     encoding = build_encoding_from_args(arguments)
 
-    for msg_arg in messages:
-        try:
-            data, pause = msg_arg.split(PAUSE_SEP)
-        except ValueError:
-            data, pause = msg_arg, arguments.pause
-        if pause.endswith("ms"):
-            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e3
-        elif pause.endswith("µs"):
-            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e6
-        elif pause.endswith("ns"):
-            pause = float(pause[:-2]) * float(arguments.sample_rate) / 1e9
-        elif pause.endswith("s"):
-            pause = float(pause[:-1]) * float(arguments.sample_rate)
-        else:
-            pause = float(pause)
-
-        if arguments.hex:
-            lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
-            bits = "".join(lookup[h] for h in data)
-        else:
-            bits = data
-
-        msg = Message.from_plain_bits_str(bits)
-        msg.pause = int(pause)
-        if encoding:
+    result = ProtocolAnalyzer.get_protocol_from_string(message_strings, is_hex=arguments.hex,
+                                                       default_pause=arguments.pause,
+                                                       sample_rate=arguments.sample_rate).messages
+    if encoding:
+        for msg in result:
             msg.decoder = encoding
-        result.append(msg)
 
     return result
+
 
 def modulate_messages(messages, modulator):
     if len(messages) == 0:
@@ -234,6 +217,7 @@ def modulate_messages(messages, modulator):
         cli_progress_bar(i + 1, len(messages), title="Modulating")
     print("\nSuccessfully modulated {} messages".format(len(messages)))
     return buffer
+
 
 def create_parser():
     parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
@@ -305,6 +289,7 @@ def create_parser():
     group4.add_argument("-v", "--verbose", action="count")
 
     return parser
+
 
 def main():
     parser = create_parser()

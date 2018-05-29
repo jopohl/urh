@@ -58,7 +58,7 @@ class QtTestCase(unittest.TestCase):
             self.form.close()
             sip.delete(self.form)
             self.form = None
-        gc.collect()
+        #gc.collect()
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

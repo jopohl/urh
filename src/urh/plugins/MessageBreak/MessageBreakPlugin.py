@@ -24,8 +24,6 @@ class MessageBreakPlugin(ProtocolPlugin):
             return None
 
         if max_row != min_row:
-            QMessageBox.critical(parent, self.tr("Error in MessageBreak"),
-                                 self.tr("You can only break one line per action."))
             return None
 
         end = protocol.convert_index(end, view, 0, True, message_indx=min_row)[0]

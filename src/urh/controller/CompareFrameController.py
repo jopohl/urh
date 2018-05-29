@@ -115,6 +115,8 @@ class CompareFrameController(QWidget):
         self.min_height = self.minimumHeight()
         self.max_height = self.maximumHeight()
 
+        self.old_reference_index = 0
+
         self.__set_decoding_error_label(None)
 
         self.__set_default_message_type_ui_status()
@@ -815,8 +817,11 @@ class CompareFrameController(QWidget):
     def show_differences(self, show_differences: bool):
         if show_differences:
             if self.protocol_model.refindex == -1:
-                self.protocol_model.refindex = 0
+                self.protocol_model.refindex = self.old_reference_index
         else:
+            if self.protocol_model.refindex != -1:
+                self.old_reference_index = self.protocol_model.refindex
+
             self.ui.chkBoxShowOnlyDiffs.setChecked(False)
             self.protocol_model.refindex = -1
 
@@ -1391,12 +1396,15 @@ class CompareFrameController(QWidget):
     @pyqtSlot(int)
     def on_ref_index_changed(self, new_ref_index: int):
         if new_ref_index != -1:
-            i = 0
-            visible_protos = [proto for proto in self.protocol_list if proto.show]
-            for proto in visible_protos:
-                i += proto.num_messages
-                if i > new_ref_index:
-                    return
+            hide_correction = 0
+            for i in range(0, self.protocol_model.row_count):
+                if self.ui.tblViewProtocol.isRowHidden((new_ref_index+i) % self.protocol_model.row_count):
+                    hide_correction = 0
+                else:
+                    hide_correction = i
+                    break
+
+            self.protocol_model.refindex = (new_ref_index + hide_correction) % self.protocol_model.row_count
 
         self.set_show_only_status()
 

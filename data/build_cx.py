@@ -56,7 +56,7 @@ def build_exe(build_cmd='build'):
             "include_files": include_files,
             "include_msvcr": True,
             "excludes": ["tkinter"],
-            "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs',
+            "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs', 'pyaudio',
                          'packaging', 'packaging.version', 'packaging.specifiers', 'packaging.requirements',
                          'setuptools.msvc'] + plugins
         },

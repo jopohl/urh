@@ -1,2 +1,6 @@
 This plugin enables you to break a protocol message on an arbitrary position.
 This is helpful when you have redundancy in your messages.
+
+After enabling this plugin you will see a new action in the context menu of the message table in Analysis.
+Note, this action is only available if you select a SINGLE message.
+If you select multiple messages, the action will not appear in the context menu.

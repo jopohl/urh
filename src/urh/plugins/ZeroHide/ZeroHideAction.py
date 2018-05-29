@@ -4,13 +4,15 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class ZeroHideAction(QUndoCommand):
-    def __init__(self, protocol: ProtocolAnalyzer, following_zeros: int, view: int):
+    def __init__(self, protocol: ProtocolAnalyzer, following_zeros: int, view: int, zero_hide_offsets: dict):
         super().__init__()
         self.protocol = protocol
         self.following_zeros = following_zeros
         self.viewtype = view
 
         self.setText("Hide zero sequences >= " + str(self.following_zeros))
+
+        self.zero_hide_offsets = zero_hide_offsets
 
     def redo(self):
         factor = 1
@@ -20,6 +22,7 @@ class ZeroHideAction(QUndoCommand):
             factor = 8
 
         pa = self.protocol
+        self.zero_hide_offsets.clear()
         for i in range(pa.num_messages):
             message = pa.messages[i]
             if self.viewtype == 0:
@@ -31,6 +34,7 @@ class ZeroHideAction(QUndoCommand):
 
             zero_sequences = self.__get_zero_seq_indexes(data, self.following_zeros)
 
+            self.zero_hide_offsets[i] = {start: end-start for start, end in zero_sequences}
             for seq in reversed(zero_sequences):
                 full_bits = pa.messages[i].decoded_bits
                 start = seq[0] * factor
@@ -38,6 +42,7 @@ class ZeroHideAction(QUndoCommand):
                 pa.messages[i].decoded_bits = full_bits[:start] + full_bits[end:]
 
     def undo(self):
+        self.zero_hide_offsets.clear()
         self.protocol.clear_decoded_bits()
 
     def __get_zero_seq_indexes(self, message: str, following_zeros: int):

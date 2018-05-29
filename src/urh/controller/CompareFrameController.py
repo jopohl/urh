@@ -335,6 +335,7 @@ class CompareFrameController(QWidget):
             for msg in messages:
                 msg.decoder = decoding
 
+            self.ui.tblViewProtocol.zero_hide_offsets.clear()
             self.clear_search()
 
             selected = self.ui.tblViewProtocol.selectionModel().selection()
@@ -409,7 +410,7 @@ class CompareFrameController(QWidget):
     def add_protocol(self, protocol: ProtocolAnalyzer, group_id: int = 0) -> ProtocolAnalyzer:
         self.__protocols = None
         self.proto_tree_model.add_protocol(protocol, group_id)
-        protocol.qt_signals.protocol_updated.connect(self.set_shown_protocols)
+        protocol.qt_signals.protocol_updated.connect(self.on_protocol_updated)
         if protocol.signal:
             protocol.signal.sample_rate_changed.connect(self.set_shown_protocols)  # Refresh times
         protocol.qt_signals.show_state_changed.connect(self.set_shown_protocols)
@@ -1438,3 +1439,8 @@ class CompareFrameController(QWidget):
         if link == "reset_filter":
             self.ui.lineEditSearch.clear()
             self.show_all_rows()
+
+    @pyqtSlot()
+    def on_protocol_updated(self):
+        self.set_shown_protocols()
+        self.ui.tblViewProtocol.zero_hide_offsets.clear()

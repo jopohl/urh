@@ -231,8 +231,8 @@ class ProtocolTableView(TableView):
                 refindex += 1
             self.hideRow(row)
             self.model().hidden_rows.add(row)
-        if refindex < self.model().row_count:
-            self.model().refindex = refindex
+
+        self.model().refindex = refindex
         self.model().update()
         self.row_visibility_changed.emit()
 

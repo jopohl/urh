@@ -1,5 +1,6 @@
 import platform
 import sys
+import tempfile
 import unittest
 from urh.dev.VirtualDevice import Mode
 from urh.dev.BackendHandler import Backends
@@ -9,7 +10,7 @@ from urh.cli import urh_cli
 
 class TestCLIParsing(unittest.TestCase):
     def setUp(self):
-        self.parser = urh_cli.parser
+        self.parser = urh_cli.create_parser()
 
     def test_build_modulator_from_args(self):
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6 --raw".split())
@@ -141,3 +142,52 @@ class TestCLIParsing(unittest.TestCase):
         args = self.parser.parse_args('--device HackRF --frequency 50e3 --sample-rate 2.5e6 -e "Test,Invert"'.split())
         encoding = urh_cli.build_encoding_from_args(args)
         self.assertEqual(len(encoding.chain), 2)
+
+    def test_read_messages_to_send(self):
+        args = self.parser.parse_args('--device HackRF --frequency 50e3 --sample-rate 2e6 -rx'.split())
+        self.assertIsNone(urh_cli.read_messages_to_send(args))
+
+        args = self.parser.parse_args('--device HackRF --frequency 50e3 --sample-rate 2e6 -tx'.split())
+        with self.assertRaises(SystemExit):
+            urh_cli.read_messages_to_send(args)
+
+
+        args = self.parser.parse_args('--device HackRF --frequency 50e3 --sample-rate 2e6 -tx '
+                                      '-file /tmp/test -m 1111'.split())
+        with self.assertRaises(SystemExit):
+            urh_cli.read_messages_to_send(args)
+
+        test_messages = ["101010/1s", "10000/50ms", "00001111/100.5µs", "111010101/500ns", "1111001", "111110000/2000"]
+        args = self.parser.parse_args(('--device HackRF --frequency 50e3 --sample-rate 2e6 -tx --pause 1337 '
+                                      '-m '+" ".join(test_messages)).split())
+        messages = urh_cli.read_messages_to_send(args)
+        self.assertEqual(len(messages), len(test_messages))
+        self.assertEqual(messages[0].decoded_bits_str, "101010")
+        self.assertEqual(messages[0].pause, 2e6)
+
+        self.assertEqual(messages[1].decoded_bits_str, "10000")
+        self.assertEqual(messages[1].pause, 100e3)
+
+        self.assertEqual(messages[2].decoded_bits_str, "00001111")
+        self.assertEqual(messages[2].pause, 201)
+
+        self.assertEqual(messages[3].decoded_bits_str, "111010101")
+        self.assertEqual(messages[3].pause, 1)
+
+        self.assertEqual(messages[4].decoded_bits_str, "1111001")
+        self.assertEqual(messages[4].pause, 1337)
+
+        self.assertEqual(messages[5].decoded_bits_str, "111110000")
+        self.assertEqual(messages[5].pause, 2000)
+
+        test_messages = ["aabb/2s"]
+        filepath = tempfile.mktemp()
+        with open(filepath, "w") as f:
+            f.write("\n".join(test_messages))
+
+        args = self.parser.parse_args(('--device HackRF --frequency 50e3 --sample-rate 2e6 -tx --pause 1337 --hex '
+                                      '-file '+filepath).split())
+        messages = urh_cli.read_messages_to_send(args)
+        self.assertEqual(len(messages), len(test_messages))
+        self.assertEqual(messages[0].decoded_bits_str, "1010101010111011")
+        self.assertEqual(messages[0].pause, 4e6)

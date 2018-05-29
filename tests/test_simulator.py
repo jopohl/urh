@@ -143,7 +143,7 @@ class TestSimulator(QtTestCase):
         QTest.qWait(10)
         # send some zeros to simulate the end of a message
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(100)
+        QTest.qWait(250)
         receive_process.join(10)
 
         logger.info("PROCESS TIME: {0:.2f}ms".format(elapsed.value))

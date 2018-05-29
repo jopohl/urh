@@ -348,7 +348,7 @@ class ProjectManager(QObject):
         """
         :rtype: list of Modulator
         """
-        return self.read_modulators_from_file(self.project_file)
+        return ProjectManager.read_modulators_from_file(self.project_file)
 
     @staticmethod
     def read_modulators_from_file(filename: str):

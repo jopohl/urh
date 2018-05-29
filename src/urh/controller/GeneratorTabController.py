@@ -618,7 +618,7 @@ class GeneratorTabController(QWidget):
 
     def load_from_file(self, filename: str):
         try:
-            self.modulators = self.project_manager.read_modulators_from_file(filename)
+            self.modulators = ProjectManager.read_modulators_from_file(filename)
             self.table_model.protocol.from_xml_file(filename)
             self.refresh_pause_list()
             self.refresh_estimated_time()

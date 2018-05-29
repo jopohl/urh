@@ -60,7 +60,7 @@ class QtTestCase(unittest.TestCase):
             sip.delete(self.form)
             self.form = None
 
-        if sys.version_info > (3, 4):
+        if sys.platform == "darwin":
             gc.collect()
 
     def wait_before_new_file(self):

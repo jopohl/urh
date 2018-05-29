@@ -52,13 +52,13 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-            sip.delete(self.dialog)
-            self.dialog = None
+            #sip.delete(self.dialog)
+            #self.dialog = None
         if hasattr(self, "form"):
             self.form.close_all()
             self.form.close()
-            sip.delete(self.form)
-            self.form = None
+            #sip.delete(self.form)
+            #self.form = None
 
         if sys.platform == "darwin":
             gc.collect()

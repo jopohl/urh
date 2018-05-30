@@ -37,6 +37,7 @@ if hasattr(sys, "frozen"):
         # STDIN is not useable, so we are running in GUI mode
         logfile_name = os.path.join(tempfile.gettempdir(), "urh.log")
         # Add the log message handler to the logger
+        import logging.handlers
         log_file_handler = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=2e6, backupCount=5)
 
 logging.basicConfig(**logger_conf)

@@ -30,9 +30,13 @@ logger_conf = {
 }
 
 if hasattr(sys, "frozen"):
-    logger_conf["filename"] = os.path.join(tempfile.gettempdir(), "urh.log")
-    if sys.version_info >= (3, 5):
-        logger_conf["filemode"] = "w"
+    try:
+        sys.stdin.isatty()
+    except:
+        # STDIN is not useable, so we are running in GUI mode
+        logger_conf["filename"] = os.path.join(tempfile.gettempdir(), "urh.log")
+        if sys.version_info >= (3, 5):
+            logger_conf["filemode"] = "w"
 
 logging.basicConfig(**logger_conf)
 

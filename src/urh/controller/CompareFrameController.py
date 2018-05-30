@@ -850,17 +850,12 @@ class CompareFrameController(QWidget):
     def show_only_labels(self):
         visible_columns = set()
         for msg in self.proto_analyzer.messages:
-            for lbl in msg.message_type:
-                if lbl.show:
-                    start, end = msg.get_label_range(lbl=lbl, view=self.ui.cbProtoView.currentIndex(),
-                                                     decode=True)
-                    visible_columns |= (set(range(start, end)))
+            for lbl in filter(lambda lbl: lbl.show, msg.message_type):
+                start, end = msg.get_label_range(lbl=lbl, view=self.ui.cbProtoView.currentIndex(), decode=True)
+                visible_columns |= set(range(start, end))
 
         for i in range(self.protocol_model.col_count):
-            if i in visible_columns:
-                self.ui.tblViewProtocol.showColumn(i)
-            else:
-                self.ui.tblViewProtocol.hideColumn(i)
+            self.ui.tblViewProtocol.setColumnHidden(i, i not in visible_columns)
 
     def show_only_diffs(self):
         visible_rows = [i for i in range(self.protocol_model.row_count) if not self.ui.tblViewProtocol.isRowHidden(i)
@@ -895,13 +890,12 @@ class CompareFrameController(QWidget):
                 self.ui.tblViewProtocol.hideColumn(j)
 
     def restore_visibility(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection()
-        """:type: QtWidgets.QItemSelection """
+        selected = self.ui.tblViewProtocol.selectionModel().selection() # type: QItemSelection
 
         for i in range(self.protocol_model.col_count):
             self.ui.tblViewProtocol.showColumn(i)
 
-        for lbl in self.proto_analyzer.protocol_labels:
+        for lbl in filter(lambda lbl: not lbl.show, self.proto_analyzer.protocol_labels):
             self.set_protocol_label_visibility(lbl)
 
         if not selected.isEmpty():

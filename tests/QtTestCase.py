@@ -38,7 +38,7 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-        if sys.platform == "win32":
+        if sys.platform == "win32" or sys.platform == "darwin":
             sip.delete(cls.app)
             cls.app = None
             QTest.qWait(10)
@@ -53,7 +53,7 @@ class QtTestCase(unittest.TestCase):
         if hasattr(self, "dialog"):
             self.dialog.close()
 
-            if sys.platform == "win32":
+            if sys.platform == "win32" or sys.platform == "darwin":
                 sip.delete(self.dialog)
                 self.dialog = None
 
@@ -61,7 +61,7 @@ class QtTestCase(unittest.TestCase):
             self.form.close_all()
             self.form.close()
 
-            if sys.platform == "win32":
+            if sys.platform == "win32" or sys.platform == "darwin":
                 sip.delete(self.form)
                 self.form = None
 

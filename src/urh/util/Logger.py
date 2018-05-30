@@ -29,14 +29,15 @@ logger_conf = {
     "format": '[%(levelname)s::%(filename)s::%(funcName)s] %(message)s'
 }
 
+log_file_handler = None
 if hasattr(sys, "frozen"):
     try:
         sys.stdin.isatty()
     except:
         # STDIN is not useable, so we are running in GUI mode
-        logger_conf["filename"] = os.path.join(tempfile.gettempdir(), "urh.log")
-        if sys.version_info >= (3, 5):
-            logger_conf["filemode"] = "w"
+        logfile_name = os.path.join(tempfile.gettempdir(), "urh.log")
+        # Add the log message handler to the logger
+        log_file_handler = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=2e6, backupCount=5)
 
 logging.basicConfig(**logger_conf)
 
@@ -51,3 +52,6 @@ for level, level_color in logging_colors_per_level.items():
         logging.addLevelName(level, "{0}{1}{2}".format(level_color, logging.getLevelName(level), color.END))
 
 logger = logging.getLogger("urh")
+
+if log_file_handler is not None:
+    logger.addHandler(log_file_handler)

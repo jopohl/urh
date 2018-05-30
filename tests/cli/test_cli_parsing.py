@@ -1,3 +1,4 @@
+import os
 import platform
 import sys
 import tempfile
@@ -183,3 +184,10 @@ class TestCLIParsing(unittest.TestCase):
         self.assertEqual(len(messages), len(test_messages))
         self.assertEqual(messages[0].decoded_bits_str, "1010101010111011")
         self.assertEqual(messages[0].pause, 4e6)
+
+    def test_parse_project_file(self):
+        f = os.readlink(__file__) if os.path.islink(__file__) else __file__
+        path = os.path.realpath(os.path.join(f, ".."))
+        project_file = os.path.join(path, "..", "data", "URHProject.xml")
+        project_params = urh_cli.parse_project_file(project_file)
+        self.assertGreater(len(project_params), 0)

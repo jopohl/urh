@@ -17,10 +17,12 @@ DEFAULT_NOISE = 0.1
 DEFAULT_CENTER = 0
 DEFAULT_TOLERANCE = 5
 
-cur_file = os.readlink(__file__) if os.path.islink(__file__) else __file__
-cur_dir = os.path.realpath(os.path.dirname(cur_file))
+cli_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
+cur_dir = os.path.realpath(os.path.dirname(os.path.realpath(cli_exe)))
 SRC_DIR = os.path.realpath(os.path.join(cur_dir, "..", ".."))
-sys.path.insert(0, SRC_DIR)
+
+if os.path.isdir(SRC_DIR):
+    sys.path.insert(0, SRC_DIR)
 
 from urh.util import util
 

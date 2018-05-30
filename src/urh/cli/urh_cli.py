@@ -341,6 +341,12 @@ def main():
         else:
             return default
 
+    import multiprocessing as mp
+    # allow usage of prange (OpenMP) in Processes
+    mp.set_start_method("spawn")
+    if sys.platform == "win32":
+        mp.freeze_support()
+
     parser = create_parser()
     args = parser.parse_args()
     project_params = parse_project_file(args.project_file)
@@ -386,12 +392,6 @@ def main():
     args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
     args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
     args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
-
-    import multiprocessing as mp
-    # allow usage of prange (OpenMP) in Processes
-    mp.set_start_method("spawn")
-    if sys.platform == "win32":
-        mp.freeze_support()
 
     if args.verbose is None:
         logger.setLevel(logging.ERROR)

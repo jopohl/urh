@@ -1,10 +1,11 @@
 import faulthandler
 import os
 import sip
+import sys
 import time
 import unittest
-
 import gc
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
@@ -38,10 +39,11 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-        sip.delete(cls.app)
-        cls.app = None
-        QTest.qWait(10)
-        time.sleep(0.1)
+        if sys.platform == "win32" or sys.platform == "darwin":
+            sip.delete(cls.app)
+            cls.app = None
+            QTest.qWait(10)
+            time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()
@@ -51,15 +53,20 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-            sip.delete(self.dialog)
-            self.dialog = None
+
+            if sys.platform == "win32" or sys.platform == "darwin":
+                sip.delete(self.dialog)
+                self.dialog = None
+
         if hasattr(self, "form"):
             self.form.close_all()
             self.form.close()
-            sip.delete(self.form)
-            self.form = None
-        gc.collect()
 
+            if sys.platform == "win32" or sys.platform == "darwin":
+                sip.delete(self.form)
+                self.form = None
+        if sys.platform == "darwin":
+            gc.collect()
     def wait_before_new_file(self):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)

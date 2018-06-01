@@ -748,3 +748,56 @@ class ProtocolAnalyzer(object):
 
         # OPEN: Perform multiple iterations with varying priorities later
         format_finder.perform_iteration()
+
+    @staticmethod
+    def get_protocol_from_string(message_strings: list, is_hex=None, default_pause=0, sample_rate=1e6):
+        """
+
+        :param message_strings:
+        :param is_hex: None means auto detects
+        :return:
+        """
+        protocol = ProtocolAnalyzer(None)
+
+        def parse_line(line: str):
+            # support transcript files e.g 1 (A->B): 10101111
+            index = line.rfind(" ")
+            line = line[index + 1:]
+
+            # support pauses given like 100101/10s
+            try:
+                data, pause = line.split(constants.PAUSE_SEP)
+            except ValueError:
+                data, pause = line, str(default_pause)
+            if pause.endswith("ms"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e3
+            elif pause.endswith("µs"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e6
+            elif pause.endswith("ns"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e9
+            elif pause.endswith("s"):
+                pause = float(pause[:-1]) * float(sample_rate)
+            else:
+                pause = float(pause)
+
+            return data, int(pause)
+
+        if not is_hex:
+            for line in filter(None, map(str.strip, message_strings)):
+                bits, pause = parse_line(line)
+                try:
+                    protocol.messages.append(Message.from_plain_bits_str(bits, pause=pause))
+                except ValueError:
+                    is_hex = True if is_hex is None else is_hex
+                    break
+
+        if is_hex:
+            protocol.messages.clear()
+            lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
+
+            for line in filter(None, map(str.strip, message_strings)):
+                bits, pause = parse_line(line)
+                bit_str = [lookup[bits[i].lower()] for i in range(0, len(bits))]
+                protocol.messages.append(Message.from_plain_bits_str("".join(bit_str), pause=pause))
+
+        return protocol

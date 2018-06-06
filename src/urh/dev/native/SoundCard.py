@@ -16,6 +16,7 @@ class SoundCard(Device):
 
     CHUNK_SIZE = 1024
     SYNC_TX_CHUNK_SIZE = 2 * CHUNK_SIZE
+    CONTINUOUS_TX_CHUNK_SIZE = SYNC_TX_CHUNK_SIZE
 
     SAMPLE_RATE = 48000
 
@@ -76,7 +77,10 @@ class SoundCard(Device):
     @classmethod
     def send_sync(cls, data):
         if cls.pyaudio_stream:
-            cls.pyaudio_stream.write(data.tostring())
+            if isinstance(data, np.ndarray):
+                cls.pyaudio_stream.write(data.tostring())
+            else:
+                cls.pyaudio_stream.write(bytes(data))
 
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):

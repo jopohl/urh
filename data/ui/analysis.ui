@@ -645,7 +645,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  <bool>false</bool>
                 </property>
                 <property name="placeholderText">
-                 <string>Search Pattern</string>
+                 <string>Enter pattern here</string>
                 </property>
                 <property name="clearButtonEnabled">
                  <bool>true</bool>

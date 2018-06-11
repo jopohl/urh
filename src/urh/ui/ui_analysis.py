@@ -603,7 +603,7 @@ class Ui_TabAnalysis(object):
         self.lSearchCurrent.setText(_translate("TabAnalysis", "-"))
         self.lblRSSI.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Received Signal Strength Indicator</span> indicates the average signal power of the current message.</p></body></html>"))
         self.lblRSSI.setText(_translate("TabAnalysis", "1.04"))
-        self.lineEditSearch.setPlaceholderText(_translate("TabAnalysis", "Search Pattern"))
+        self.lineEditSearch.setPlaceholderText(_translate("TabAnalysis", "Enter pattern here"))
         self.btnNextSearch.setText(_translate("TabAnalysis", ">"))
         self.btnPrevSearch.setText(_translate("TabAnalysis", "<"))
         self.lSearchTotal.setText(_translate("TabAnalysis", "-"))

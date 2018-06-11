@@ -77,3 +77,38 @@ class TestSequenceNumberEngine(AWRETestCase):
         self.assertEqual(label.field_type, "sequence number")
         self.assertEqual(label.bit_start, 24)
         self.assertEqual(label.length, 16)
+
+    def test_multiple_sequence_numbers(self):
+        """
+        Two message types with sequence number on different positions
+
+        :return:
+        """
+        mb1 = MessageTypeBuilder("longer")
+        mb1.add_label(FieldType.Function.PREAMBLE, 8)
+        mb1.add_label(FieldType.Function.SYNC, 16)
+        mb1.add_label(FieldType.Function.LENGTH, 16)
+        mb1.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+
+        mb2 = MessageTypeBuilder("shorter")
+        mb2.add_label(FieldType.Function.PREAMBLE, 8)
+        mb2.add_label(FieldType.Function.SYNC, 16)
+        mb2.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+
+        pg = ProtocolGenerator([mb1.message_type, mb2.message_type],
+                               syncs_by_mt={mb1.message_type: "0x9a9d", mb2.message_type: "0x9a9d"},
+                               sequence_number_increment=1)
+
+        num_messages = 32
+
+        for i in range(num_messages):
+            pg.generate_message(data="0x00", message_type=i % 2)
+
+        self.save_protocol("two_sequence_numbers", pg)
+
+        ff = FormatFinder(pg.protocol)
+
+        seq_engine = SequenceNumberEngine(ff.bitvectors, n_gram_length=8)
+        highscored_ranges = seq_engine.find()
+        # TODO: Implement message type consideration in format finder and call format finder here
+        #self.assertEqual(len(highscored_ranges), 2)

@@ -25,6 +25,7 @@ class SequenceNumberEngine(Engine):
         self.expand = expand
         self.minimum_score = minimum_score
 
+
     def find(self):
         diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)
         diff_frequencies_by_column = dict()
@@ -72,7 +73,7 @@ class SequenceNumberEngine(Engine):
 
     @staticmethod
     def get_most_frequent(diff_frequencies: dict):
-        return max(filter(lambda x: x != 0, diff_frequencies), key=diff_frequencies.get)
+        return max(filter(lambda x: x not in (0, -1), diff_frequencies), key=diff_frequencies.get)
 
     @staticmethod
     def calc_score(diff_frequencies: dict) -> float:

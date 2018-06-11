@@ -14,7 +14,7 @@ class SequenceNumberEngine(Engine):
 
     """
 
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, expand=True):
+    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9):
         """
 
         :type bitvectors: list of np.ndarray
@@ -22,7 +22,6 @@ class SequenceNumberEngine(Engine):
         """
         self.bitvectors = bitvectors
         self.n_gram_length = n_gram_length
-        self.expand = expand
         self.minimum_score = minimum_score
 
 
@@ -44,30 +43,31 @@ class SequenceNumberEngine(Engine):
             if score < self.minimum_score:
                 continue
 
-            start = end = candidate_column
-            if self.expand:
-                # TODO: Consider big endian (go in other direction)
-                for i in range(candidate_column - 1, -1, -1):
-                    if set(diff_frequencies_by_column[i]) == {0, 1}:
-                        # Only 0 and 1 as diff in neighboured column, so it likely belongs to sequence number
-                        start = i
-                    else:
-                        break
-
             most_common_diff = self.get_most_frequent(diff_frequencies_by_column[candidate_column])
             message_indices = np.flatnonzero(
                 # get all rows that have the most common difference or zero
-                (diff_matrix[:, candidate_column]) == most_common_diff | (diff_matrix[:, candidate_column] == 0)
+                (diff_matrix[:, candidate_column] == most_common_diff) | (diff_matrix[:, candidate_column] == 0)
             )
 
-            result.append(CommonRange(start=start * self.n_gram_length,
-                                      length=(end + 1 - start) * self.n_gram_length,
-                                      score=score,
-                                      field_type="sequence number",
-                                      # e.g. index 1 in diff matrix corresponds to index 1 and 2 of messages
-                                      message_indices=set(message_indices) | set(message_indices+1)
-                                      )
-                          )
+            # For example, index 1 in diff matrix corresponds to index 1 and 2 of messages
+            message_indices = set(message_indices) | set(message_indices + 1)
+
+            if len(result) > 0 \
+                    and result[-1].start == (candidate_column-1) * self.n_gram_length \
+                    and result[-1].message_indices == message_indices:
+                # Since the scoring neglects zeros, the score for leading sequence number parts will also be high
+                # and match the same indices as the lower parts, therefore we implicitly consider big AND little endian
+                # by starting with the lowest index and increase the length of the sequence number as long as
+                # message indices match
+                result[-1].length += self.n_gram_length
+            else:
+                result.append(CommonRange(start=candidate_column * self.n_gram_length,
+                                          length=self.n_gram_length,
+                                          score=score,
+                                          field_type="sequence number",
+                                          message_indices=message_indices
+                                          )
+                              )
 
         return result
 
@@ -87,13 +87,16 @@ class SequenceNumberEngine(Engine):
         :return: a score between 0 and 1
         """
         total = sum(diff_frequencies.values())
+        num_zeros = sum(v for k, v in diff_frequencies.items() if k == 0)
+        if num_zeros == total:
+            return 0
 
         try:
             most_frequent = SequenceNumberEngine.get_most_frequent(diff_frequencies)
         except ValueError:
             return 0
 
-        return diff_frequencies[most_frequent] / total
+        return diff_frequencies[most_frequent] / (total - num_zeros)
 
     @staticmethod
     def create_difference_matrix(bitvectors, n_gram_length: int):

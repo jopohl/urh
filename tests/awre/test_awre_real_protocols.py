@@ -101,8 +101,10 @@ class TestAWRERealProtocols(AWRETestCase):
         preamble = CommonRange(field_type=FieldType.Function.PREAMBLE.value, start=0, length=32)
         sync = CommonRange(field_type=FieldType.Function.SYNC.value, start=32, length=32)
         length = CommonRange(field_type=FieldType.Function.LENGTH.value, start=64, length=8)
+        sequence_number = CommonRange(field_type=FieldType.Function.SEQUENCE_NUMBER.value, start=72, length=8)
         src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=96, length=24)
         dst_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=120, length=24)
+
 
         participants = sorted({msg.participant for msg in protocol.messages})
         ff = FormatFinder(protocol, participants=participants)
@@ -116,3 +118,4 @@ class TestAWRERealProtocols(AWRETestCase):
             self.assertIn(length, message_type, msg=str(i))
             self.assertIn(src_address, message_type, msg=str(i))
             self.assertIn(dst_address, message_type, msg=str(i))
+            self.assertIn(sequence_number, message_type, msg=str(i))

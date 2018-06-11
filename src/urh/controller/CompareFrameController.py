@@ -70,6 +70,7 @@ class CompareFrameController(QWidget):
         self.search_action = self.search_select_search_menu.addAction(self.tr("Search"))
         self.select_action = self.search_select_search_menu.addAction(self.tr("Select all"))
         self.filter_action = self.search_select_search_menu.addAction(self.tr("Filter"))
+        self.align_action = self.search_select_search_menu.addAction(self.tr("Align"))
         self.ui.btnSearchSelectFilter.setMenu(self.search_select_search_menu)
 
         self.analyze_menu = QMenu()
@@ -265,6 +266,7 @@ class CompareFrameController(QWidget):
         self.search_action.triggered.connect(self.on_search_action_triggered)
         self.select_action.triggered.connect(self.on_select_action_triggered)
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
+        self.align_action.triggered.connect(self.on_align_action_triggered)
         self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
@@ -715,6 +717,9 @@ class CompareFrameController(QWidget):
         else:
             self.ui.lblShownRows.hide()
 
+    def align_messages(self):
+        print("Todo")
+
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
         self.ui.lSearchTotal.setText((str(len(self.protocol_model.search_results))))
@@ -1145,6 +1150,14 @@ class CompareFrameController(QWidget):
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
+
+    @pyqtSlot()
+    def on_align_action_triggered(self):
+        self.ui.btnSearchSelectFilter.setText("Align")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("align-horizontal-left"))
+        self.set_search_ui_visibility(False)
+        self.ui.btnSearchSelectFilter.clicked.disconnect()
+        self.ui.btnSearchSelectFilter.clicked.connect(self.align_messages)
 
     @pyqtSlot(bool)
     def on_writeable_changed(self, writeable_status: bool):

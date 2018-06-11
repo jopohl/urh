@@ -66,12 +66,12 @@ class CompareFrameController(QWidget):
         self.__active_group_ids = [0]
         self.selected_protocols = set()
 
-        self.search_select_search_menu = QMenu()
-        self.search_action = self.search_select_search_menu.addAction(self.tr("Search"))
-        self.select_action = self.search_select_search_menu.addAction(self.tr("Select all"))
-        self.filter_action = self.search_select_search_menu.addAction(self.tr("Filter"))
-        self.align_action = self.search_select_search_menu.addAction(self.tr("Align"))
-        self.ui.btnSearchSelectFilter.setMenu(self.search_select_search_menu)
+        self.search_select_filter_align_menu = QMenu()
+        self.search_action = self.search_select_filter_align_menu.addAction(self.tr("Search"))
+        self.select_action = self.search_select_filter_align_menu.addAction(self.tr("Select all"))
+        self.filter_action = self.search_select_filter_align_menu.addAction(self.tr("Filter"))
+        self.align_action = self.search_select_filter_align_menu.addAction(self.tr("Align"))
+        self.ui.btnSearchSelectFilter.setMenu(self.search_select_filter_align_menu)
 
         self.analyze_menu = QMenu()
         self.assign_participants_action = self.analyze_menu.addAction(self.tr("Assign participants"))
@@ -86,6 +86,7 @@ class CompareFrameController(QWidget):
         self.ui.btnAnalyze.setMenu(self.analyze_menu)
 
         self.ui.lblShownRows.hide()
+        self.ui.lblClearAlignment.hide()
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants,
                                                  self)  # type: ProtocolTableModel
@@ -268,6 +269,7 @@ class CompareFrameController(QWidget):
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
         self.align_action.triggered.connect(self.on_align_action_triggered)
         self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
+        self.ui.lblClearAlignment.linkActivated.connect(self.on_label_clear_alignment_link_activated)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
         self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
@@ -717,8 +719,10 @@ class CompareFrameController(QWidget):
         else:
             self.ui.lblShownRows.hide()
 
-    def align_messages(self):
-        self.proto_analyzer.align_messages(self.ui.lineEditSearch.text(), view_type=self.ui.cbProtoView.currentIndex())
+    def align_messages(self, pattern=None):
+        pattern = self.ui.lineEditSearch.text() if pattern is None else pattern
+        self.proto_analyzer.align_messages(pattern, view_type=self.ui.cbProtoView.currentIndex())
+        self.ui.lblClearAlignment.setVisible(any(msg.alignment_offset != 0 for msg in self.proto_analyzer.messages))
         self.protocol_model.update()
 
     def next_search_result(self):
@@ -1154,11 +1158,14 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_align_action_triggered(self):
+        def on_btn_search_select_filter_clicked():
+            self.align_messages()
+
         self.ui.btnSearchSelectFilter.setText("Align")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("align-horizontal-left"))
         self.set_search_ui_visibility(False)
         self.ui.btnSearchSelectFilter.clicked.disconnect()
-        self.ui.btnSearchSelectFilter.clicked.connect(self.align_messages)
+        self.ui.btnSearchSelectFilter.clicked.connect(on_btn_search_select_filter_clicked)
 
     @pyqtSlot(bool)
     def on_writeable_changed(self, writeable_status: bool):
@@ -1447,6 +1454,11 @@ class CompareFrameController(QWidget):
         if link == "reset_filter":
             self.ui.lineEditSearch.clear()
             self.show_all_rows()
+
+    @pyqtSlot(str)
+    def on_label_clear_alignment_link_activated(self, link: str):
+        if link == "reset_alignment":
+            self.align_messages(pattern="")
 
     @pyqtSlot()
     def on_protocol_updated(self):

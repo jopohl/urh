@@ -282,6 +282,8 @@ class TableModel(QAbstractTableModel):
 
         i = index.row()
         j = index.column()
+        a = self._get_alignment_offset(i)
+        j -= a
         hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
 
         if i >= len(self.protocol.messages):

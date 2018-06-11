@@ -12,6 +12,10 @@ def build_exe(build_cmd='build'):
 
     app_path = os.path.join("src", "urh", "main.py")
     assert os.path.isfile(app_path)
+
+    cli_path = os.path.join("src", "urh", "cli", "urh_cli.py")
+    assert os.path.isfile(cli_path)
+
     src_dir = os.path.join(os.curdir, "src")
     assert os.path.isdir(src_dir)
     sys.path.insert(0, src_dir)
@@ -25,19 +29,23 @@ def build_exe(build_cmd='build'):
         for f in os.listdir(lib_path):
             include_files.append(os.path.join(lib_path, f))
 
-        executables = [cx_Freeze.Executable(
+        executables = [
+            cx_Freeze.Executable(
             app_path,
             targetName="urh.exe",
             icon=os.path.join("data", 'icons', 'appicon.ico'),
             shortcutName="Universal Radio Hacker",
             shortcutDir="DesktopFolder",
-            base="Win32GUI")]
+            base="Win32GUI"),
+
+            cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")
+        ]
     else:
         include_files = [os.path.join("data", 'icons', 'appicon.png')]
-        executables = [cx_Freeze.Executable(
-            app_path,
-            targetName="urh",
-            icon=os.path.join("data", 'icons', 'appicon.png'))]
+        executables = [
+            cx_Freeze.Executable(app_path, targetName="urh", icon=os.path.join("data", 'icons', 'appicon.png')),
+            cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")
+        ]
 
     for f in os.listdir(os.path.join("src", "urh", "dev", "gr", "scripts")):
         if f.endswith(".py"):

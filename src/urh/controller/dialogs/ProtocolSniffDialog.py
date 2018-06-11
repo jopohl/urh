@@ -40,7 +40,7 @@ class ProtocolSniffDialog(SendRecvDialog):
         # set really in on_device_started
         self.scene_manager = None  # type: LiveSceneManager
         self.create_connects()
-        self.device_settings_widget.on_cb_device_current_index_changed()
+        self.device_settings_widget.update_for_new_device(reset_gains=False)
 
 
 
@@ -117,10 +117,10 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.device.current_index = 0
         self.sniffer.clear()
 
-    @pyqtSlot()
-    def on_message_sniffed(self):
+    @pyqtSlot(int)
+    def on_message_sniffed(self, index: int):
         try:
-            msg = self.sniffer.messages[-1]
+            msg = self.sniffer.messages[index]
         except IndexError:
             return
         new_data = self.sniffer.message_to_string(msg, self.view_type, include_timestamps=self.show_timestamp)

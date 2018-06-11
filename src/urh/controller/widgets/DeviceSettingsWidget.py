@@ -149,7 +149,6 @@ class DeviceSettingsWidget(QWidget):
         self.ui.btnRefreshDeviceIdentifier.clicked.connect(self.on_btn_refresh_device_identifier_clicked)
         self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(self.on_combo_box_device_identifier_current_index_changed)
 
-
     def set_gain_defaults(self):
         self.set_default_rf_gain()
         self.set_default_if_gain()
@@ -451,8 +450,7 @@ class DeviceSettingsWidget(QWidget):
         except (ValueError, KeyError):
             pass
 
-    @pyqtSlot()
-    def on_cb_device_current_index_changed(self):
+    def update_for_new_device(self, reset_gains=True):
         if self.device is not None:
             self.device.free_data()
 
@@ -460,12 +458,19 @@ class DeviceSettingsWidget(QWidget):
         self.selected_device_changed.emit()
 
         dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name)
-        self.set_gain_defaults()
+        self.set_device_ui_items_visibility(dev_name, adjust_gains=reset_gains)
+
+        if reset_gains:
+            self.set_gain_defaults()
+
         self.sync_gain_sliders()
         self.set_bandwidth_status()
 
         self.ui.comboBoxDeviceIdentifier.clear()
+
+    @pyqtSlot()
+    def on_cb_device_current_index_changed(self):
+        self.update_for_new_device(reset_gains=True)
 
     @pyqtSlot()
     def on_btn_refresh_device_identifier_clicked(self):

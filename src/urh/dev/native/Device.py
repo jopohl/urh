@@ -33,8 +33,6 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    data_received = pyqtSignal(np.ndarray)
-
     ASYNCHRONOUS = False
 
     DEVICE_LIB = None
@@ -148,7 +146,10 @@ class Device(QObject):
 
         while not exit_requested:
             if cls.ASYNCHRONOUS:
-                time.sleep(0.25)
+                try:
+                    time.sleep(0.25)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():
@@ -185,7 +186,10 @@ class Device(QObject):
 
         while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:
-                time.sleep(0.5)
+                try:
+                    time.sleep(0.5)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.send_sync(send_config.get_data_to_send(buffer_size))
 
@@ -249,8 +253,6 @@ class Device(QObject):
 
         self.device_serial = None
         self.device_number = 0
-
-        self.emit_data_received_signal = False  # used for protocol sniffer
 
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
@@ -664,9 +666,6 @@ class Device(QObject):
 
             self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
             self.current_recv_index += n_samples
-
-            if self.emit_data_received_signal:
-                self.data_received.emit(samples)
 
         logger.debug("Exiting read_receive_queue thread.")
 

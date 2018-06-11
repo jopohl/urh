@@ -172,12 +172,6 @@ class Simulator(QObject):
     def cleanup(self):
         for device in self.devices:
             if device.backend not in (Backends.none, Backends.network):
-                try:
-                    # For Protocol Sniffer
-                    device.data_received.disconnect()
-                except TypeError:
-                    pass
-
                 device.cleanup()
 
             if device is not None:

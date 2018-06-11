@@ -31,7 +31,7 @@ class ReceiveDialog(SendRecvDialog):
         # set really in on_device_started
         self.scene_manager = None  # type: LiveSceneManager
         self.create_connects()
-        self.device_settings_widget.on_cb_device_current_index_changed()
+        self.device_settings_widget.update_for_new_device(reset_gains=False)
 
     def create_connects(self):
         super().create_connects()
@@ -101,7 +101,8 @@ class ReceiveDialog(SendRecvDialog):
 
         initial_name = initial_name.replace(Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
-        filename = FileOperator.save_data_dialog(initial_name + ".complex", data, parent=self)
+        filename = FileOperator.save_data_dialog(initial_name + ".complex", data,
+                                                 sample_rate=dev.sample_rate, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)

@@ -133,12 +133,13 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     return filename
 
 
-def save_data_dialog(signal_name: str, data, wav_only=False, parent=None) -> str:
+def save_data_dialog(signal_name: str, data, sample_rate=1e6, wav_only=False, parent=None) -> str:
     filename = get_save_file_name(signal_name, wav_only)
 
     if filename:
         try:
-            save_data(data, filename)
+            data = convert_data_to_format(data, filename)
+            save_data(data, filename, sample_rate=sample_rate)
         except Exception as e:
             QMessageBox.critical(parent, "Error saving signal", e.args[0])
             filename = None

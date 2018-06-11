@@ -119,13 +119,12 @@ def get_extensions():
 
 def read_long_description():
     try:
-        import pypandoc
         with open("README.md") as f:
             text = f.read()
 
         # Remove screenshots as they get rendered poorly on PyPi
-        stripped_text = text[:text.index("# Screenshots")].rstrip()
-        return pypandoc.convert_text(stripped_text, 'rst', format='md')
+        # stripped_text = text[:text.index("# Screenshots")].rstrip()
+        return text
     except:
         return ""
 
@@ -147,6 +146,7 @@ setup(
     version=version.VERSION,
     description="Universal Radio Hacker: investigate wireless protocols like a boss",
     long_description=read_long_description(),
+    long_description_content_type="text/markdown",
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},
@@ -163,6 +163,7 @@ setup(
     entry_points={
         'console_scripts': [
             'urh = urh.main:main',
+            'urh_cli = urh.cli.urh_cli:main',
         ]}
 )
 

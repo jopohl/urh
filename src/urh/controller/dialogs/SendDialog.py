@@ -8,6 +8,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
+from urh.util.Logger import logger
 
 
 class SendDialog(SendRecvDialog):
@@ -49,7 +50,7 @@ class SendDialog(SendRecvDialog):
             self.graphics_view.sample_rate = samp_rate
 
             self.create_connects()
-            self.device_settings_widget.on_cb_device_current_index_changed()
+            self.device_settings_widget.update_for_new_device(reset_gains=False)
 
     def create_connects(self):
         super().create_connects()
@@ -93,6 +94,11 @@ class SendDialog(SendRecvDialog):
         filename = FileOperator.get_save_file_name("signal.complex")
         if filename:
             try:
+                try:
+                    self.scene_manager.signal.sample_rate = self.device.sample_rate
+                except Exception as e:
+                    logger.exception(e)
+
                 self.scene_manager.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])

@@ -437,9 +437,9 @@ class Message(object):
         self.__encoded_bits = None
 
     @staticmethod
-    def from_plain_bits_str(bits):
+    def from_plain_bits_str(bits, pause=0):
         plain_bits = list(map(int, bits))
-        return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
+        return Message(plain_bits=plain_bits, pause=pause, message_type=MessageType("none"))
 
     def to_xml(self, decoders=None, include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element("message")

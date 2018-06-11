@@ -45,6 +45,8 @@ class ProtocolTableView(TableView):
         self.addAction(self.ref_message_action)
         self.addAction(self.hide_row_action)
 
+        self.zero_hide_offsets = dict()
+
     def model(self) -> ProtocolTableModel:
         return super().model()
 
@@ -197,6 +199,9 @@ class ProtocolTableView(TableView):
                 if act is not None:
                     menu.addAction(act)
 
+                if hasattr(plugin, "zero_hide_offsets"):
+                    self.zero_hide_offsets = plugin.command.zero_hide_offsets
+
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
@@ -280,6 +285,11 @@ class ProtocolTableView(TableView):
     @pyqtSlot()
     def on_show_in_interpretation_action_triggered(self):
         min_row, max_row, start, end = self.selection_range()
+
+        offsets = self.zero_hide_offsets.get(min_row, dict())
+        start += sum(offsets[i] for i in offsets if i <= start)
+        end += sum(offsets[i] for i in offsets if i <= end)
+
         self.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
 
     @pyqtSlot()

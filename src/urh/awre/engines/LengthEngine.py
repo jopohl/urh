@@ -120,7 +120,7 @@ class LengthEngine(Engine):
                                                             message_indices={msg_index}, range_type="bit")
 
         self._debug("Highscore ranges", high_scores_by_length)
-        return high_scores_by_length
+        return high_scores_by_length.values()
 
     @staticmethod
     def score_bits(bits: str, target_length: int, position: int):

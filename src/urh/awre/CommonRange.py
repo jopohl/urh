@@ -26,7 +26,7 @@ class CommonRange(object):
 
         self.range_type = range_type.lower()  # one of bit/hex/byte
 
-        self.message_indices = set() if message_indices is None else message_indices
+        self.message_indices = set() if message_indices is None else set(message_indices)
         """
         Set of message indices, this range applies to
         """

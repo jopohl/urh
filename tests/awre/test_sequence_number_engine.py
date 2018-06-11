@@ -1,4 +1,5 @@
 from tests.awre.AWRETestCase import AWRETestCase
+from urh.awre.CommonRange import CommonRange
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
@@ -31,19 +32,19 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         ff = FormatFinder(pg.protocol)
 
-        seq_engine = SequenceNumberEngine(ff.bitvectors)
-        highscored_ranges = seq_engine.find(n_gram_length=8)
-        # self.assertEqual(len(highscored_ranges), 3)
-        #
-        # ff.perform_iteration()
-        # self.assertEqual(len(ff.message_types), 1)
-        # self.assertGreater(len(ff.message_types[0]), 0)
-        # label = next(lbl for lbl in ff.message_types[0]
-        #              if lbl.field_type == "length")
-        # self.assertIsInstance(label, CommonRange)
-        # self.assertEqual(label.field_type, "length")
-        # self.assertEqual(label.bit_start, 24)
-        # self.assertEqual(label.length, 8)
+        seq_engine = SequenceNumberEngine(ff.bitvectors, n_gram_length=8)
+        highscored_ranges = seq_engine.find()
+        self.assertEqual(len(highscored_ranges), 1)
+
+        ff.perform_iteration()
+        self.assertEqual(len(ff.message_types), 1)
+        self.assertGreater(len(ff.message_types[0]), 0)
+        label = next(lbl for lbl in ff.message_types[0]
+                     if lbl.field_type == "sequence number")
+        self.assertIsInstance(label, CommonRange)
+        self.assertEqual(label.field_type, "sequence number")
+        self.assertEqual(label.bit_start, 24)
+        self.assertEqual(label.length, 8)
 
     def test_16bit_seq_nr(self):
         mb = MessageTypeBuilder("16bit_seq_test")
@@ -62,5 +63,17 @@ class TestSequenceNumberEngine(AWRETestCase):
         self.save_protocol("16bit_seq", pg)
 
         bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
-        seq_engine = SequenceNumberEngine(bitvectors)
-        highscored_ranges = seq_engine.find(n_gram_length=8)
+        seq_engine = SequenceNumberEngine(bitvectors, n_gram_length=8)
+        highscored_ranges = seq_engine.find()
+        self.assertEqual(len(highscored_ranges), 1)
+
+        ff = FormatFinder(pg.protocol)
+        ff.perform_iteration()
+        self.assertEqual(len(ff.message_types), 1)
+        self.assertGreater(len(ff.message_types[0]), 0)
+        label = next(lbl for lbl in ff.message_types[0]
+                     if lbl.field_type == "sequence number")
+        self.assertIsInstance(label, CommonRange)
+        self.assertEqual(label.field_type, "sequence number")
+        self.assertEqual(label.bit_start, 24)
+        self.assertEqual(label.length, 16)

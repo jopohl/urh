@@ -14,16 +14,19 @@ class SequenceNumberEngine(Engine):
 
     """
 
-    def __init__(self, bitvectors):
+    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, expand=True):
         """
 
         :type bitvectors: list of np.ndarray
         :param bitvectors: bitvectors behind the synchronization
         """
         self.bitvectors = bitvectors
+        self.n_gram_length = n_gram_length
+        self.expand = expand
+        self.minimum_score = minimum_score
 
-    def find(self, n_gram_length=8, expand=True):
-        diff_matrix = self.create_difference_matrix(self.bitvectors, n_gram_length)
+    def find(self):
+        diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)
         diff_frequencies_by_column = dict()
 
         for j in range(diff_matrix.shape[1]):
@@ -34,19 +37,38 @@ class SequenceNumberEngine(Engine):
         for column, frequencies in diff_frequencies_by_column.items():
             scores_by_column[column] = self.calc_score(frequencies)
 
-        candidate_column = max(scores_by_column, key=scores_by_column.get)
-        result = [candidate_column]
-        if expand:
-            for i in range(candidate_column - 1, -1, -1):
-                if set(diff_frequencies_by_column[i]) == {0, 1}:
-                    # Only 0 and 1 as diff in neighboured column, so it likely belongs to sequence number
-                    result.insert(0, i)
-                else:
-                    break
+        result = []
+        for candidate_column in sorted(scores_by_column, key=scores_by_column.get, reverse=True):
+            score = scores_by_column[candidate_column]
+            if score < self.minimum_score:
+                continue
 
-        return CommonRange(result[0] * n_gram_length, (result[-1] + 1 - result[0]) * n_gram_length,
-                           score=scores_by_column[candidate_column], field_type="sequence number",
-                           message_indices=list(range(len(self.bitvectors))))
+            start = end = candidate_column
+            if self.expand:
+                # TODO: Consider big endian (go in other direction)
+                for i in range(candidate_column - 1, -1, -1):
+                    if set(diff_frequencies_by_column[i]) == {0, 1}:
+                        # Only 0 and 1 as diff in neighboured column, so it likely belongs to sequence number
+                        start = i
+                    else:
+                        break
+
+            most_common_diff = self.get_most_frequent(diff_frequencies_by_column[candidate_column])
+            message_indices = np.flatnonzero(
+                # get all rows that have the most common difference or zero
+                (diff_matrix[:, candidate_column]) == most_common_diff | (diff_matrix[:, candidate_column] == 0)
+            )
+
+            result.append(CommonRange(start=start * self.n_gram_length,
+                                      length=(end + 1 - start) * self.n_gram_length,
+                                      score=score,
+                                      field_type="sequence number",
+                                      # e.g. index 1 in diff matrix corresponds to index 1 and 2 of messages
+                                      message_indices=set(message_indices) | set(message_indices+1)
+                                      )
+                          )
+
+        return result
 
     @staticmethod
     def get_most_frequent(diff_frequencies: dict):
@@ -88,10 +110,10 @@ class SequenceNumberEngine(Engine):
         """
         max_len = len(max(bitvectors, key=len))
 
-        result = np.zeros((len(bitvectors) - 1, int(math.ceil(max_len / n_gram_length))), dtype=np.long)
+        result = np.full((len(bitvectors) - 1, int(math.ceil(max_len / n_gram_length))), -1, dtype=np.long)
         for i in range(1, len(bitvectors)):
             bv1, bv2 = bitvectors[i - 1], bitvectors[i]
-            for j in range(0, max(len(bv1), len(bv2)), n_gram_length):
+            for j in range(0, min(len(bv1), len(bv2)), n_gram_length):
                 diff = util.bits_to_number(bv2[j:j + n_gram_length]) - util.bits_to_number(bv1[j:j + n_gram_length])
                 result[i - 1, j // n_gram_length] = diff % (2 ** n_gram_length)
 

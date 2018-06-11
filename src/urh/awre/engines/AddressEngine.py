@@ -109,7 +109,7 @@ class AddressEngine(Engine):
 
         self.__find_broadcast_fields(high_scored_ranges_by_participant, addresses_by_participant)
 
-        return high_scored_ranges_by_participant
+        return [rng for ranges in high_scored_ranges_by_participant.values() for rng in ranges]
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
         scored_participants_addresses = dict()

@@ -8,6 +8,7 @@ from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeConta
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.awre.engines.LengthEngine import LengthEngine
+from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.cythonext import awre_util
 
 
@@ -45,7 +46,8 @@ class FormatFinder(object):
 
         self.engines = [
             LengthEngine(self.bitvectors),
-            AddressEngine(self.hexvectors, self.participant_indices)
+            AddressEngine(self.hexvectors, self.participant_indices),
+            SequenceNumberEngine(self.bitvectors)
         ]
 
         self.label_set = set()
@@ -78,11 +80,7 @@ class FormatFinder(object):
     def perform_iteration(self):
         for engine in self.engines:
             high_scored_ranges = []  # type: list[CommonRange]
-            for val in engine.find().values():
-                if isinstance(val, list):
-                    high_scored_ranges.extend(val)
-                else:
-                    high_scored_ranges.append(val)
+            high_scored_ranges.extend(engine.find())
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
         self.message_types = self.create_message_types(self.label_set)

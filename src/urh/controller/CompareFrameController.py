@@ -718,7 +718,8 @@ class CompareFrameController(QWidget):
             self.ui.lblShownRows.hide()
 
     def align_messages(self):
-        print("Todo")
+        self.proto_analyzer.align_messages(self.ui.lineEditSearch.text(), view_type=self.ui.cbProtoView.currentIndex())
+        self.protocol_model.update()
 
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())

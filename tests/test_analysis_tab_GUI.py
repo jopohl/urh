@@ -390,3 +390,33 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.on_edit_label_action_triggered(0)
         QTest.qSleep(1)
         QTest.qWait(10)
+
+    def test_alignment(self):
+        assert isinstance(self.cfc, CompareFrameController)
+        self.form.close_all()
+        self.form.add_files([self.get_path_for_filename("misaligned.txt")])
+        self.assertEqual(self.cfc.protocol_model.row_count, 16)
+
+        aligned = True
+        pattern = "6768676"
+        for i in range(self.cfc.protocol_model.row_count):
+            for j in range(len(pattern)):
+                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j+11)) != pattern[j]:
+                    aligned = False
+                    break
+
+        self.assertFalse(aligned)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        self.cfc.align_action.trigger()
+        self.cfc.ui.lineEditSearch.setText(pattern)
+        self.cfc.ui.btnSearchSelectFilter.click()
+
+        aligned = True
+        for i in range(self.cfc.protocol_model.row_count):
+            for j in range(len(pattern)):
+                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j + 11)) != pattern[j]:
+                    aligned = False
+                    break
+
+        self.assertTrue(aligned)

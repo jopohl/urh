@@ -535,6 +535,23 @@ class ProtocolAnalyzer(object):
         """
         return self.__estimate_frequency_for_bit(True, sample_rate, nbits)
 
+    def align_messages(self, pattern: str, view_type: int, use_decoded=True):
+        if view_type == 0:
+            bit_pattern = pattern
+        elif view_type == 1:
+            bit_pattern = "".join(map(str, urh_util.hex2bit(pattern)))
+        elif view_type == 2:
+            bit_pattern = "".join(map(str, urh_util.ascii2bit(pattern)))
+        else:
+            raise ValueError("Unknown view type {}".format(view_type))
+
+        indices = [msg.decoded_bits_str.find(bit_pattern) if use_decoded else msg.plain_bits_str.find(bit_pattern)
+                   for msg in self.messages]
+
+        max_index = max(indices)
+        for i, msg in enumerate(self.messages):
+            msg.alignment_offset = 0 if indices[i] == -1 else max_index - indices[i]
+
     def estimate_frequency_for_zero(self, sample_rate: float, nbits=42) -> float:
         """
         Calculates the frequency of at most nbits logical zeros and returns the mean of these frequencies

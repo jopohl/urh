@@ -1,3 +1,4 @@
+import math
 from collections import defaultdict
 
 import numpy
@@ -13,6 +14,8 @@ from urh.util import util
 import array
 
 class TableModel(QAbstractTableModel):
+    ALIGNMENT_CHAR = " "
+
     data_edited = pyqtSignal(int, int)
     vertical_header_color_status_changed = pyqtSignal(bool)
 
@@ -72,6 +75,11 @@ class TableModel(QAbstractTableModel):
         if self._refindex >= 0:
             self._diffs = self.protocol.find_differences(self._refindex, self._proto_view)
         self.update()
+
+    def _get_alignment_offset(self, index: int):
+        f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
+        alignment_offset = int(math.ceil(self.protocol.messages[index].alignment_offset / f))
+        return alignment_offset
 
     def __pad_until_index(self, row: int, bit_pos: int):
         """
@@ -213,12 +221,16 @@ class TableModel(QAbstractTableModel):
         j = index.column()
         if role == Qt.DisplayRole and self.display_data:
             try:
+                alignment_offset = self._get_alignment_offset(i)
+                if j < alignment_offset:
+                    return self.ALIGNMENT_CHAR
+
                 if self.proto_view == 0:
-                    return self.display_data[i][j]
+                    return self.display_data[i][j-alignment_offset]
                 elif self.proto_view == 1:
-                    return "{0:x}".format(self.display_data[i][j])
+                    return "{0:x}".format(self.display_data[i][j-alignment_offset])
                 elif self.proto_view == 2:
-                    return chr(self.display_data[i][j])
+                    return chr(self.display_data[i][j-alignment_offset])
             except IndexError:
                 return None
 

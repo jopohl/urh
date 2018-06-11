@@ -20,7 +20,8 @@ class Message(object):
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state", "timestamp",
-                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos",
+                 "alignment_offset"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
@@ -50,6 +51,8 @@ class Message(object):
 
         self.align_labels = True
         self.fuzz_created = fuzz_created
+
+        self.alignment_offset = 0
 
         self.__decoded_bits = None
         self.__encoded_bits = None

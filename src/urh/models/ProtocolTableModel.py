@@ -61,6 +61,10 @@ class ProtocolTableModel(TableModel):
 
     def flags(self, index: QModelIndex):
         if index.isValid():
+            alignment_offset = self._get_alignment_offset(index.row())
+            if index.column() < alignment_offset:
+                return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
             if self.is_writeable:
                 return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
             else:

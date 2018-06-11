@@ -73,7 +73,7 @@ class TableModel(QAbstractTableModel):
     def proto_view(self, value):
         self._proto_view = value
         if self._refindex >= 0:
-            self._diffs = self.protocol.find_differences(self._refindex, self._proto_view)
+            self._diffs = self.find_differences(self._refindex)
         self.update()
 
     def _get_alignment_offset(self, index: int):
@@ -143,7 +143,7 @@ class TableModel(QAbstractTableModel):
                 self.col_count = numpy.max([len(msg) for msg in visible_messages])
 
             if self._refindex >= 0:
-                self._diffs = self.protocol.find_differences(self._refindex, self.proto_view)
+                self._diffs = self.find_differences(self._refindex)
             else:
                 self._diffs.clear()
 
@@ -323,7 +323,45 @@ class TableModel(QAbstractTableModel):
             data = message.view_to_string(self.proto_view, self.decode)
             j = data.find(value)
             while j != -1:
-                self.search_results.append((i, j))
+                self.search_results.append((i, j + self._get_alignment_offset(i)))
                 j = data.find(value, j + 1)
 
         return len(self.search_results)
+
+    def find_differences(self, refindex: int):
+        """
+        Search all differences between protocol messages regarding a reference message
+
+        :param refindex: index of reference message
+        :rtype: dict[int, set[int]]
+        """
+        differences = defaultdict(set)
+
+        if refindex >= len(self.protocol.messages):
+            return differences
+
+        if self.proto_view == 0:
+            proto = self.protocol.decoded_proto_bits_str
+        elif self.proto_view == 1:
+            proto = self.protocol.decoded_hex_str
+        elif self.proto_view == 2:
+            proto = self.protocol.decoded_ascii_str
+        else:
+            return differences
+
+        ref_message = proto[refindex]
+        ref_offset = self._get_alignment_offset(refindex)
+
+        for i, message in enumerate(proto):
+            if i == refindex:
+                continue
+
+            msg_offset = self._get_alignment_offset(i)
+            short, long = sorted([len(ref_message) + ref_offset, len(message) + msg_offset])
+
+            differences[i] = {
+                j for j in range(max(msg_offset, ref_offset), long)
+                if j >= short or message[j-msg_offset] != ref_message[j-ref_offset]
+            }
+
+        return differences

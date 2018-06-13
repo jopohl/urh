@@ -593,23 +593,20 @@ class CompareFrameController(QWidget):
         if len(sel_cols) == 0 or len(sel_rows) == 0:
             return
 
-        startCol, endCol = numpy.min(sel_cols), numpy.max(sel_cols)
-        startRow, endRow = numpy.min(sel_rows), numpy.max(sel_rows)
+        start_col, end_col = numpy.min(sel_cols), numpy.max(sel_cols)
+        start_row, end_row = numpy.min(sel_rows), numpy.max(sel_rows)
         new_view = self.ui.cbProtoView.currentIndex()
 
-        message = self.proto_analyzer.messages[endRow]
-        startCol = message.convert_index(startCol, old_view, new_view, True)[0]
-        endCol = message.convert_index(endCol, old_view, new_view, True)[1]
+        message = self.proto_analyzer.messages[end_row]
+        start_col = message.convert_index(start_col, old_view, new_view, True)[0]
+        end_col = message.convert_index(end_col, old_view, new_view, True)[1]
 
-        endCol = endCol if endCol < len(self.protocol_model.display_data[endRow]) else len(
-            self.protocol_model.display_data[endRow]) - 1
-
-        startindex = self.protocol_model.index(startRow, startCol)
-        endindex = self.protocol_model.index(endRow, endCol)
-        mid_index = self.protocol_model.index(int((startRow + endRow) / 2), int((startCol + endCol) / 2))
+        start_index = self.protocol_model.index(start_row, start_col)
+        end_index = self.protocol_model.index(end_row, end_col)
+        mid_index = self.protocol_model.index(int((start_row + end_row) / 2), int((start_col + end_col) / 2))
 
         sel = QItemSelection()
-        sel.select(startindex, endindex)
+        sel.select(start_index, end_index)
 
         self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
         self.ui.tblViewProtocol.scrollTo(mid_index)

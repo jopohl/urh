@@ -302,7 +302,7 @@ class Message(object):
             if self.__get_hex_ascii_index_from_bit_index(i, to_hex=is_hex)[0] == from_index:
                 return i, i + factor - 1
 
-        return len(bits), len(bits)
+        return factor * from_index, factor * (from_index+1) - 1
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, to_hex: bool) -> tuple:
         factor = 4 if to_hex else 8

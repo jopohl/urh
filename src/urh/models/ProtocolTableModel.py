@@ -14,8 +14,7 @@ class ProtocolTableModel(TableModel):
     def __init__(self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None):
         super().__init__(participants=participants, parent=parent)
 
-        self.controller = controller
-        """:type: urh.controller.CompareFrameController.CompareFrameController"""
+        self.controller = controller # type: urh.controller.CompareFrameController.CompareFrameController
 
         self.protocol = proto_analyzer
         self.active_group_ids = [0]

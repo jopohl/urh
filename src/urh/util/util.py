@@ -46,8 +46,10 @@ def set_icon_theme():
 
 def set_shared_library_path():
     shared_lib_dir = get_shared_library_path()
+    var = "PATH" if sys.platform == "win32" else "LD_LIBRARY_PATH" if sys.platform == "linux" else "DYLD_LIBRARY_PATH"
+
     if shared_lib_dir:
-        os.environ['PATH'] = shared_lib_dir + os.pathsep + os.environ['PATH']
+        os.environ[var] = shared_lib_dir + os.pathsep + os.environ[var]
 
 
 def get_shared_library_path():

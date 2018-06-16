@@ -38,7 +38,9 @@ install:
       rm '/usr/local/include/c++'
       brew install hackrf librtlsdr
     else
-      sudo apt-get install libhackrf-dev librtlsdr-dev
+      wget https://www.dropbox.com/s/lp5cks82rp4pqhr/linux-64.tar.bz2
+      mkdir src/urh/dev/native/lib/shared
+      tar xf linux-64.tar.bz2 -C src/urh/dev/native/lib/shared
     fi
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]

@@ -48,7 +48,7 @@ def set_shared_library_path():
     shared_lib_dir = get_shared_library_path()
 
     if shared_lib_dir:
-        if sys.platform == "win32":
+        if sys.platform == "win32" and shared_lib_dir not in os.environ.get("PATH", ''):
             os.environ["PATH"] = shared_lib_dir + os.pathsep + os.environ.get("PATH", '')
         else:
             # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need

@@ -78,6 +78,7 @@ def get_package_data():
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
+    package_data["urh.dev.native.include"] = ["*.h"]
 
     if IS_RELEASE:
         if sys.platform == "win32":

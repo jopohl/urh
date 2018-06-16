@@ -26,6 +26,7 @@ branches:
   only:
     - master
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
+    - devprebuild
 
 git:
   depth: 5

@@ -32,11 +32,11 @@ class TestUtil(QtTestCase):
         else:
             self.assertEqual(QIcon.themeName(), "oxy")
 
-    def test_set_windows_lib_path(self):
+    def test_set_shared_lib_path(self):
         before = os.environ["PATH"]
         util.set_shared_library_path()
 
-        if sys.platform == "win32":
+        if os.path.exists(os.path.join(os.curdir, "..", "src/urh/dev/native/lib/shared")):
             self.assertNotEqual(before, os.environ["PATH"])
         else:
             self.assertEqual(before, os.environ["PATH"])

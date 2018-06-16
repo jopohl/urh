@@ -26,7 +26,7 @@ branches:
   only:
     - master
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
-    - devprebuild
+    - devprebuild   # todo: remove after test
 
 git:
   depth: 5
@@ -107,4 +107,5 @@ deploy:
   distributions: "bdist_wheel" # Your distributions here
   on:
     condition: $TRAVIS_OS_NAME != "osx"
+    branch: devprebuild   # todo: remove after test
   #  tags: true

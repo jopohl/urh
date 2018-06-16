@@ -24,7 +24,7 @@ def build_exe(build_cmd='build'):
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]
-        lib_path = os.path.join("src", "urh", "dev", "native", "shared")
+        lib_path = os.path.join("src", "urh", "dev", "native", "lib", "shared")
         for f in os.listdir(lib_path):
             if f.endswith(".dll") or f.endswith(".txt"):
                 include_files.append(os.path.join(lib_path, f))

@@ -36,11 +36,6 @@ class TestUtil(QtTestCase):
         before = os.environ["PATH"]
         util.set_shared_library_path()
 
-        if os.path.exists(os.path.join(os.curdir, "..", "src/urh/dev/native/lib/shared")):
-            self.assertNotEqual(before, os.environ["PATH"])
-        else:
-            self.assertEqual(before, os.environ["PATH"])
-
     def test_create_textbox_dialog(self):
         dialog = util.create_textbox_dialog("Test content", "Test title", parent=self.form)
         self.assertEqual(dialog.windowTitle(), "Test title")

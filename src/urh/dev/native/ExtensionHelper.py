@@ -59,14 +59,12 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     include_dirs = [os.path.realpath(os.path.join(cur_dir, "includes"))]
 
-    if sys.platform == "win32":
-        if platform.architecture()[0] != "64bit":
-            return []  # only 64 bit python supported for native device backends
-
+    if os.path.isdir(os.path.join(cur_dir, "lib/shared")):
+        # Device libs are packaged, so we are in release mode
         result = []
-        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win/x64"))
+        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/shared"))
         for dev_name, params in DEVICES.items():
-            # Since windows drivers are bundled we can enforce the macros
+            # Since drivers are bundled we can enforce the macros
             macros = [(extra, None) for extra in params.get("extras", dict())]
             result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs, macros))
 

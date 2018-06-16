@@ -87,11 +87,13 @@ def get_package_data():
             rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
             package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
 
-    if sys.platform == "win32" or IS_RELEASE:
-        # we use precompiled device backends on windows
-        # only deploy DLLs on Windows or in release mode to prevent deploying by linux package managers
-        package_data["urh.dev.native.lib.win.x64"] = ["*"]
-        package_data["urh.dev.native.lib.win.x86"] = ["*"]
+    if IS_RELEASE:
+        if sys.platform == "win32":
+            package_data["urh.dev.native.lib.shared"] = ["*.dll"]
+        elif sys.platform == "linux":
+            package_data["urh.dev.native.lib.shared"] = ["*.so"]
+        elif sys.platform == "darwin":
+            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.dylib"]
 
     return package_data
 

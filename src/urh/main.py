@@ -77,7 +77,7 @@ def main():
             print("Will not regenerate UI, because script can't be found. This is okay in release.")
 
     from urh.util import util
-    util.set_windows_lib_path()
+    util.set_shared_library_path()
 
     try:
         import urh.cythonext.signalFunctions

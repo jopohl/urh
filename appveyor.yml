@@ -17,6 +17,11 @@ environment:
 max_jobs: 4
 clone_depth: 5
 
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
+
 install:
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
         https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `

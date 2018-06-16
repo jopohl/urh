@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>727</width>
+    <width>773</width>
     <height>749</height>
    </rect>
   </property>
@@ -217,8 +217,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>647</width>
-               <height>380</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -412,16 +412,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelWindowsError">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Detected a 32 bit installation of python 3.&lt;/span&gt; Install &lt;span style=&quot; font-weight:600;&quot;&gt;64 bit version&lt;/span&gt; to use native backends.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="Line" name="line">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -491,7 +481,8 @@
              <string>View log</string>
             </property>
             <property name="icon">
-             <iconset theme="utilities-log-viewer"/>
+             <iconset theme="utilities-log-viewer">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>

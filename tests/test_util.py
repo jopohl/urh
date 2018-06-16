@@ -91,4 +91,7 @@ class TestUtil(QtTestCase):
 
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import limesdr
+
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import sdrplay
         self.assertTrue(True)

@@ -62,9 +62,7 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
     if os.path.isdir(os.path.join(cur_dir, "lib/shared")):
         # Device libs are packaged, so we are in release mode
         result = []
-        include_dirs = [os.path.realpath(os.path.join(cur_dir, "lib/shared/includes"))]
-        print(include_dirs)
-        print(os.listdir(include_dirs[0]))
+        include_dirs = [os.path.realpath(os.path.join(cur_dir, "lib/shared/include"))]
         lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/shared"))
         for dev_name, params in DEVICES.items():
             # Since drivers are bundled we can enforce the macros

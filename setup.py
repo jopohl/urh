@@ -89,11 +89,11 @@ def get_package_data():
 
     if IS_RELEASE:
         if sys.platform == "win32":
-            package_data["urh.dev.native.lib.shared"] = ["*.dll"]
+            package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
         elif sys.platform == "linux":
-            package_data["urh.dev.native.lib.shared"] = ["*.so"]
+            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.txt"]
         elif sys.platform == "darwin":
-            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.dylib"]
+            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.dylib", "*.txt"]
 
     return package_data
 

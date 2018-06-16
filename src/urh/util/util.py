@@ -55,7 +55,7 @@ def set_shared_library_path():
             exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
             import ctypes
             libraries = sorted(os.listdir(shared_lib_dir))
-            required_libs = ["libstdc++.so.6"]
+            required_libs = ["libstdc++.so"]
             for required_lib in required_libs:
                 if required_lib in libraries:
                     libraries.insert(0, libraries.pop(libraries.index(required_lib)))

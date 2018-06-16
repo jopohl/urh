@@ -79,14 +79,6 @@ def get_package_data():
 
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
 
-    # Bundle headers
-    package_data["urh.dev.native.includes"] = ["*.h"]
-    include_dir = "src/urh/dev/native/includes"
-    for dirpath, dirnames, filenames in os.walk(include_dir):
-        for dir_name in dirnames:
-            rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
-            package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
-
     if IS_RELEASE:
         if sys.platform == "win32":
             package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]

@@ -16,10 +16,11 @@ class FieldType(object):
         SRC_ADDRESS = "source address"
         DST_ADDRESS = "destination address"
         SEQUENCE_NUMBER = "sequence number"
+        TYPE = "type"
         CHECKSUM = "checksum"
         CUSTOM = "custom"
 
-    def __init__(self, caption: str, function: Function, display_format_index:int = None):
+    def __init__(self, caption: str, function: Function, display_format_index: int = None):
         self.caption = caption
         self.function = function
 
@@ -40,6 +41,14 @@ class FieldType(object):
 
     def __repr__(self):
         return "FieldType: {0} - {1} ({2})".format(self.function.name, self.caption, self.display_format_index)
+
+    @staticmethod
+    def from_caption(caption: str):
+        try:
+            ft_function = FieldType.Function(caption)
+        except ValueError:
+            return None
+        return FieldType(caption, ft_function)
 
     @staticmethod
     def default_field_types():

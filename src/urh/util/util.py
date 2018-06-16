@@ -8,6 +8,8 @@ from xml.etree import ElementTree as ET
 
 import shutil
 import subprocess
+
+import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
@@ -44,27 +46,26 @@ def set_icon_theme():
         QIcon.setThemeName("")
 
 
-def set_windows_lib_path():
-    dll_dir = get_windows_lib_path()
-    if dll_dir:
-        os.environ['PATH'] = dll_dir + ";" + os.environ['PATH']
+def set_shared_library_path():
+    shared_lib_dir = get_shared_library_path()
+    if shared_lib_dir:
+        os.environ['PATH'] = shared_lib_dir + os.pathsep + os.environ['PATH']
 
 
-def get_windows_lib_path():
-    dll_dir = ""
-    if sys.platform == "win32":
-        if not hasattr(sys, "frozen"):
-            util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
-                else os.path.dirname(os.path.realpath(os.readlink(__file__)))
-            urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
-            assert os.path.isdir(urh_dir)
+def get_shared_library_path():
+    if hasattr(sys, "frozen"):
+        return os.path.dirname(sys.executable)
 
-            arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
-            dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win", arch))
-        else:
-            dll_dir = os.path.dirname(sys.executable)
+    util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+        else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+    urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
+    assert os.path.isdir(urh_dir)
 
-    return dll_dir
+    shared_lib_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "shared"))
+    if os.path.isdir(shared_lib_dir):
+        return shared_lib_dir
+    else:
+        return ""
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):
@@ -222,6 +223,8 @@ def number_to_bits(n: int, length: int) -> array.array:
     fmt = "{0:0" + str(length) + "b}"
     return array.array("B", map(int, fmt.format(n)))
 
+def bits_to_number(bits: array.array) -> int:
+    return int("".join(map(str, bits)), 2)
 
 def aggregate_bits(bits: array.array, size=4) -> array.array:
     result = array.array("B", [])
@@ -237,6 +240,17 @@ def aggregate_bits(bits: array.array, size=4) -> array.array:
         result.append(h)
 
     return result
+
+
+def convert_numbers_to_hex_string(arr: np.ndarray):
+    """
+    Convert an array like [0, 1, 10, 2] to string 012a2
+
+    :param arr:
+    :return:
+    """
+    lut = {i: "{0:x}".format(i) for i in range(16)}
+    return "".join(lut[x] if x in lut else " {} ".format(x) for x in arr)
 
 
 def clip(value, minimum, maximum):

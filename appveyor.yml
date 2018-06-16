@@ -4,32 +4,18 @@ environment:
   TWINE_PASSWORD:
     secure: y8XwCStmwBEwWyXQ108iC7I+WFje6C7rbc0ypp56Q2g=
   TWINE_REPOSITORY_URL:
-    'https://upload.pypi.org/legacy/'
+    'https://test.pypi.org/legacy/'
   matrix:
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
 
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "32"
 
-    - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "32"
-
-
 max_jobs: 4
 clone_depth: 5
-
-branches:
-  only:
-    - master
-    - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
 
 install:
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
@@ -42,40 +28,26 @@ install:
   - python --version
   - python -c "import struct; print(struct.calcsize('P') * 8)"
 
+  - IF "%PYTHON_ARCH%" == "64" (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip" -FileName "C:\windlls.zip") ELSE (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip" -FileName "C:\windlls.zip")
+  - 7z x -y "C:\windlls.zip" -o%APPVEYOR_BUILD_FOLDER%\src\urh\dev\native\lib\shared
+
   - pip install -r data\requirements.txt
-  - pip install pytest
 
 build_script:
   # Build the compiled extension
-  - python setup.py build_ext --inplace > build_log.txt
+  - python setup.py build_ext --inplace
 
 test_script:
   - python src\urh\main.py --version
-  - python -m pytest
+  - python -m unittest tests/test_util.py
 
 after_test:
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py))
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
+  - pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio
+  - python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+  - python setup.py sdist
+  - python setup.py bdist_wheel
+  - IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py)
 
 artifacts:
   # Archive the generated packages in the ci.appveyor.com build report.
   - path: dist\*
-  - path: build_log.txt
-
-on_success:
-  -  IF "%APPVEYOR_REPO_TAG%" == "true" (twine upload --skip-existing dist/*.whl)
-
-deploy:
-  release: $(APPVEYOR_REPO_TAG_NAME)
-  description: "This is a new URH release."
-  provider: GitHub
-  auth_token:
-    secure: 7TPX876BQbnkqNGJYoKi9hnbnsH6vQFkF0fzSe7keguq4g6FAf3W5uPc/s2Ya0vH
-  artifact: /.*\.msi/           # upload msi installers
-  draft: false
-  prerelease: false
-  on:
-    appveyor_repo_tag: true        # deploy on tag push only

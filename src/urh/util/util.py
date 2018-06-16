@@ -54,7 +54,13 @@ def set_shared_library_path():
             # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
             exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
             import ctypes
-            for lib in sorted(os.listdir(shared_lib_dir)):
+            libraries = sorted(os.listdir(shared_lib_dir))
+            required_libs = ["libstdc++.so.6"]
+            for required_lib in required_libs:
+                if required_lib in libraries:
+                    libraries.insert(0, libraries.pop(libraries.index(required_lib)))
+
+            for lib in libraries:
                 if any(lib.endswith(ext) for ext in exts):
                     lib_path = os.path.join(shared_lib_dir, lib)
                     if os.path.isfile(lib_path):

@@ -24,10 +24,10 @@ def build_exe(build_cmd='build'):
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]
-        arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
-        lib_path = os.path.join("src", "urh", "dev", "native", "lib", "win", arch)
+        lib_path = os.path.join("src", "urh", "dev", "native", "shared")
         for f in os.listdir(lib_path):
-            include_files.append(os.path.join(lib_path, f))
+            if f.endswith(".dll") or f.endswith(".txt"):
+                include_files.append(os.path.join(lib_path, f))
 
         executables = [
             cx_Freeze.Executable(

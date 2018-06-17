@@ -74,7 +74,6 @@ sudo pip3 install urh
 #### MSI Installer
 The easiest way to install URH on Windows is to use the ```.msi``` installer available [here](https://github.com/jopohl/urh/releases).
  
-It is recommended to use the __64 bit version__ of URH because native device support is not available on 32 bit windows.
 If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
 #### Pip

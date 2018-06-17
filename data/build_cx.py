@@ -66,7 +66,7 @@ def build_exe(build_cmd='build'):
             app_path,
             targetName="urh.exe",
             icon=os.path.join("data", 'icons', 'appicon.ico'),
-            copyright="Copyright (C) 2018 Johannes Pohl / Andreas Noack",
+            copyright="Copyright (C) 2018 Johannes Pohl, Andreas Noack",
             base="Win32GUI"),
 
             cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")

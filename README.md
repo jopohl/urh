@@ -15,6 +15,7 @@ The Universal Radio Hacker (URH) is a software for investigating unknown wireles
 * __assign labels__ to reveal the logic of the protocol
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
+* __simulation environment__ to perform stateful attacks
 
 To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/raw/master/data/userguide.pdf), watch the [demonstration videos (YouTube)](https://www.youtube.com/watch?v=kuubkTDAxwA)
 or check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices. Scroll down this page to learn how to install URH on your system.
@@ -23,23 +24,27 @@ Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-bl
 
 If you find URH useful, please consider giving this repository a :star: or even [donate via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2). We appreciate your support!
 
-## Installation
-Universal Radio Hacker can be installed via _pip_ or using the _package manager_ of your distribution (if included).
+# Installation
+Universal Radio Hacker can be installed via __pip__ or using the __package manager__ of your distribution (if included).
 Below you find more specific installation instructions for:
+- [Windows](#windows)
 - [Linux](#linux)
   - [Via Package Manager](#via-package-manager)
   - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-ubuntudebian)
-- [Windows](#windows)
-  - [MSI Installer](#msi-installer)
-  - [Pip](#pip)
 - [Mac OS X](#mac-os-x)
 - [Updating your installation](#update-your-installation)
   - [Updating with Pip](#updating-with-pip)
   - [Updating with MSI](#updating-with-msi)
 - [Running from source](#running-from-source)
 
-### Linux
-#### Via Package Manager
+
+## Windows
+On Windows, URH can be installed with it's [MSI Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
+ 
+If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
+
+## Linux
+### Via Package Manager
 For the following linux distributions you can install URH using your package manager.
 
 | Distribution  | Install with |
@@ -50,7 +55,7 @@ For the following linux distributions you can install URH using your package man
 | openSUSE  | ``` zypper install urh ```  |
 
 
-#### Generic way with pip (Ubuntu/Debian)
+### Generic way with pip (Ubuntu/Debian)
 URH you can also be installed with __pip__ using ```pip3 install urh```. 
 In case you are running Ubuntu or Debian read on for more specific instructions.
 
@@ -69,23 +74,7 @@ sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ 
 sudo pip3 install urh
 ```
 
-
-### Windows
-#### MSI Installer
-The easiest way to install URH on Windows is to use the ```.msi``` installer available [here](https://github.com/jopohl/urh/releases).
- 
-If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
-
-#### Pip
-If you run Python 3.4 on Windows you need to install  [Visual C++ Build Tools 2015](http://landinghub.visualstudio.com/visual-cpp-build-tools) first. 
-
-__It is recommended to use Python 3.5 or later on Windows, so no C++ compiler needs to be installed.__
-
-1. Install [Python 3 for Windows](https://www.python.org/downloads/windows/). Choose a __64 Bit__ Python version for native device support.
-2. In a terminal, type: ``` pip install urh ```.
-3. Type ``` urh ``` in a terminal or search for ``` urh ``` in search bar to start the application.
-
-### Mac OS X
+## Mac OS X
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 
    _If you experience issues with preinstalled Python, make sure you update to a recent version using the given link._
 2. (Optional) Install desired native libs e.g. ``` brew install librtlsdr ``` for 
@@ -93,17 +82,17 @@ corresponding native device support.
 3. In a terminal, type: ``` pip3 install urh ```.
 4. Type ``` urh ``` in a terminal to get it started.
 
-### Update your installation
-#### Updating with Pip
+## Update your installation
+### Updating with Pip
 If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
 
-#### Updating with MSI
+### Updating with MSI
 If you experience issues after updating URH using the ``` .msi ``` installer on Windows, please perform a __full uninstallation__. That is, uninstall URH via Windows and after that remove the installation folder (something like ``` C:\Program Files\Universal Radio Hacker ```). Now, install the new version using the recent ```.msi ```.
 
-### Running from source
+## Running from source
 If you like to live on bleeding edge, you can run URH from source.
 
-#### Without installation
+### Without installation
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
@@ -113,7 +102,7 @@ cd urh/src/urh
 
 Note, before first usage the C++ extensions will be built.
 
-#### Installing from source
+### Installing from source
 To install from source you need to have ``` python-setuptools ``` installed. You can get it e.g. with ``` pip install setuptools ```. 
 Once the setuptools are installed use: 
 ```bash
@@ -124,15 +113,15 @@ python setup.py install
 
 And start the application by typing ``` urh ``` in a terminal.
 
-### External decodings
+## External decodings
 See [wiki](https://github.com/jopohl/urh/wiki/External-decodings) for a list of external decodings provided by our community! Thanks for that!
 
-### Screenshots
-#### Get the data out of raw signals
+## Screenshots
+### Get the data out of raw signals
 ![Interpretation phase](http://i.imgur.com/Wy17Zv3.png)
 
-#### Keep an overview even on complex protocols
+### Keep an overview even on complex protocols
  ![Analysis phase](http://i.imgur.com/ubAL3pE.png)
 
-#### Record and send signals
+### Record and send signals
  ![Record](http://i.imgur.com/BfQpg23.png)

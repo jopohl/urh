@@ -103,7 +103,7 @@ script:
 #  - cat /tmp/build_log.txt
 
 before_deploy:
-  - docker pull   - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
+  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
     && mkdir -p /wheelhouse
     && tar xf /wheelhouse/linux-64.tar.bz2 -C /lib64
     && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared

@@ -112,16 +112,17 @@ before_deploy:
     && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
     && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
     && for wheel in /wheelhouse/urh*x86_64.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
-  - wget https://www.dropbox.com/s/2wnu04kcih9rmza/linux-32.tar.bz2 -O /tmp/wheelhouse/linux-32.tar.bz2
-  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_i686 /bin/bash -c "yum update -y
-    && mkdir -p /wheelhouse
-    && tar xf /wheelhouse/linux-32.tar.bz2 -C /lib
-    && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
-    && tar xf /wheelhouse/linux-32.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
-    && cd /repo
-    && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
-    && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
-    && for wheel in /wheelhouse/urh*i686.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
+    # disabled 32 bit linux builds, as there is no 32 bit version of PyQt5 on PyPi
+#  - wget https://www.dropbox.com/s/2wnu04kcih9rmza/linux-32.tar.bz2 -O /tmp/wheelhouse/linux-32.tar.bz2
+#  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_i686 /bin/bash -c "yum update -y
+#    && mkdir -p /wheelhouse
+#    && tar xf /wheelhouse/linux-32.tar.bz2 -C /lib
+#    && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
+#    && tar xf /wheelhouse/linux-32.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
+#    && cd /repo
+#    && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
+#    && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
+#    && for wheel in /wheelhouse/urh*i686.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
   - ls /tmp/wheelhouse
   - pip install twine
 

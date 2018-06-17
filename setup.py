@@ -80,13 +80,8 @@ def get_package_data():
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
     package_data["urh.dev.native.include"] = ["*.h"]
 
-    if IS_RELEASE:
-        if sys.platform == "win32":
-            package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
-        elif sys.platform == "linux":
-            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.txt"]
-        elif sys.platform == "darwin":
-            package_data["urh.dev.native.lib.shared"] = ["*.so", "*.dylib", "*.txt"]
+    if IS_RELEASE and sys.platform == "win32":
+        package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
 
     return package_data
 

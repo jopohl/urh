@@ -112,7 +112,7 @@ before_deploy:
     && cd /repo
     && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
     && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
-    && auditwheel repair /wheelhouse/urh*.whl -w /wheelhouse"
+    && for wheel in /wheelhouse/urh*x86_64.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
   - ls /tmp/wheelhouse
 
 

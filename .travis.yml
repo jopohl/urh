@@ -12,7 +12,6 @@ matrix:
   include:
     - python: 3.4_with_system_site_packages
     - python: 3.5
-      services: [docker]
     - python: 3.6
     - os: osx
       language: generic
@@ -27,7 +26,6 @@ branches:
   only:
     - master
     - /^v\d+\.\d+(\.\d+)*(-\S*)?$/
-    - devprebuild   # todo: remove after test
 
 git:
   depth: 5
@@ -40,10 +38,7 @@ install:
       rm '/usr/local/include/c++'
       brew install hackrf librtlsdr
     else
-      mkdir /tmp/wheelhouse
-      wget https://www.dropbox.com/s/lp5cks82rp4pqhr/linux-64.tar.bz2 -O /tmp/wheelhouse/linux-64.tar.bz2
-      mkdir src/urh/dev/native/lib/shared
-      tar xf /tmp/wheelhouse/linux-64.tar.bz2 -C src/urh/dev/native/lib/shared
+      sudo apt-get install libhackrf-dev librtlsdr-dev
     fi
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]
@@ -72,66 +67,30 @@ before_script:
   - python3 -c "from PyQt5.QtCore import QT_VERSION_STR; from PyQt5.Qt import PYQT_VERSION_STR; from sip import SIP_VERSION_STR; print('QT Version:', QT_VERSION_STR); print('PyQt Version:', PYQT_VERSION_STR); print('SIP version:', SIP_VERSION_STR)"
 
 script:
-  - echo "skip tests"
+  - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
+  - |
+    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
+    then
+      pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
+    elif [[ $TRAVIS_OS_NAME == "osx" ]]
+    then
+      pytest tests
+    else
+      pytest -s --boxed tests
+    fi
+  - pip3 install .
+  - urh --version
+  - urh autoclose
 
-#  - python3 src/urh/cythonext/build.py &> /tmp/build_log.txt
-#  - |
-#    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
-#    then
-#      pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
-#    elif [[ $TRAVIS_OS_NAME == "osx" ]]
-#    then
-#      pytest tests
-#    else
-#      pytest -s --boxed tests
-#    fi
-#  - pip3 install .
-#  - urh --version
-#  - urh autoclose
+after_success:
+  - |
+    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
+    then
+      coverage combine
+      coveralls --rcfile=tests/.coveragerc
+    else
+      echo "coverage upload only for python 3.6"
+    fi
 
-#after_success:
-#  - |
-#    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
-#    then
-#      coverage combine
-#      coveralls --rcfile=tests/.coveragerc
-#    else
-#      echo "coverage upload only for python 3.6"
-#    fi
-#
-#after_script:
-#  - cat /tmp/build_log.txt
-
-before_deploy:
-  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
-    && mkdir -p /wheelhouse
-    && tar xf /wheelhouse/linux-64.tar.bz2 -C /lib64
-    && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
-    && tar xf /wheelhouse/linux-64.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
-    && cd /repo
-    && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
-    && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
-    && for wheel in /wheelhouse/urh*x86_64.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
-    # disabled 32 bit linux builds, as there is no 32 bit version of PyQt5 on PyPi
-#  - wget https://www.dropbox.com/s/2wnu04kcih9rmza/linux-32.tar.bz2 -O /tmp/wheelhouse/linux-32.tar.bz2
-#  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_i686 /bin/bash -c "yum update -y
-#    && mkdir -p /wheelhouse
-#    && tar xf /wheelhouse/linux-32.tar.bz2 -C /lib
-#    && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
-#    && tar xf /wheelhouse/linux-32.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
-#    && cd /repo
-#    && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
-#    && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
-#    && for wheel in /wheelhouse/urh*i686.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
-  - ls /tmp/wheelhouse
-  - pip install twine
-
-
-deploy:
-  provider: script
-  script: twine upload --skip-existing /tmp/wheelhouse/urh*manylinux*.whl
-  skip_cleanup: true
-  on:
-    branch: devprebuild   # todo: remove after test
-    python: 3.5
-  #  tags: true
+after_script:
+  - cat /tmp/build_log.txt

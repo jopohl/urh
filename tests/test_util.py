@@ -73,7 +73,7 @@ class TestUtil(QtTestCase):
         pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
 
     def test_windows_native_backends_installed(self):
-        if sys.platform == "darwin":
+        if sys.platform == "darwin" or sys.platform == "linux":
             return
 
         from urh.util import util

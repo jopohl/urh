@@ -7,11 +7,14 @@ env:
   global:
     - DISPLAY=:99.0
     - LIBOVERLAY_SCROLLBAR=0
+    - PY35="cp35-cp35m"
+    - PY36="cp36-cp36m"
 
 matrix:
   include:
     - python: 3.4_with_system_site_packages
     - python: 3.5
+      services: [docker]
     - python: 3.6
     - os: osx
       language: generic
@@ -98,15 +101,31 @@ after_success:
 after_script:
   - cat /tmp/build_log.txt
 
+before_deploy:
+  - docker pull quay.io/pypa/manylinux1_x86_64
+  - mkdir /tmp/wheelhouse
+  - wget https://www.dropbox.com/s/lp5cks82rp4pqhr/linux-64.tar.bz2 -O /tmp/wheelhouse/linux-64.tar.bz2
+  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse --name "urh64" quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
+    && mkdir -p /wheelhouse
+    && tar xf /tmp/wheelhouse/linux-64.tar.bz2 -C /lib64
+    && mkdir /repo/src/urh/dev/native/lib/shared
+    && tar xf /tmp/wheelhouse/linux-64.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
+    && /opt/python/${PY35}/bin/pip wheel . -w /wheelhouse
+    && /opt/python/${PY36}/bin/pip wheel . -w /wheelhouse
+    && auditwheel repair /wheelhouse/*.whl -w /wheelhouse
+  - ls /tmp/wheelhouse
+
+
 deploy:
   provider: pypi
   server: https://test.pypi.org/legacy/
   user: jopohlTest
   password:
     secure: yBPqKZ/dX31aVe8+oA0YZJTQzmmuOhom03dBbDkfQoq/04D9CoaPuMahc8yKzwsMn9lFLoK7oljhLkXRm77LMrFd64ntDWMfB73gw7b2msVRDIw/kr5u26//HELAsxHd8C3tqlYaPPO+OPlGG+Xq/gb4FLTelTQFn4W+0G45Wxf6LjT7nH3e2/sXFISolkBm18iOCpcLy2Y3oHb2hVQGEaf4hiWnhqPRP6qKFefICvHChLJixSHJE4Rc5etkzZPHxRdx6+VcT/KIXQuthlLHvj+eblWRCgspGSqG3/hAo9iZAtO2AGkjJrdy/fFwaEblv1aDxgvhNocIXzR2arsz9n8RRs2BXPIHgedIwqeUEDRovjQ0faC11J8tQ/Cd2EsXXTJaUlvy063KrG2ue5RrNTExSHwYi8myU2EC6bYRIFadRdl+81sbYExuixylFnK40mhUO+v7ccyBy4K5MD5x7G9zUzSiDW+gEX9v9O56W282KIEDl1KH2n/evTAadKC3SVgKZGy19TvsBNbJSAlUDKnvD9jzmkqUkI7lwF3yuY7B3lX9w5dwSiXlGL8mL+g+NYry8LgoNocFnIf5ocRTSMQlkoCYIU7MWE7ooBqZ+ABbztKkEob3vJQLGa2jK48cX52Dq9JYKhB4pHALmA8iwLr7KTXeX7ozge2LK9XH2EY=
-  distributions: "bdist_wheel"
-  skip_cleanup: true
+  files:
+   - /tmp/wheelhouse/*.whl
   on:
     condition: $TRAVIS_OS_NAME != "osx"
     branch: devprebuild   # todo: remove after test
+    python: 3.5
   #  tags: true

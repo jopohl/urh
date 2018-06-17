@@ -109,9 +109,10 @@ before_deploy:
     && tar xf /wheelhouse/linux-64.tar.bz2 -C /lib64
     && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
     && tar xf /wheelhouse/linux-64.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
+    && cd /repo
     && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
     && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
-    && auditwheel repair /wheelhouse/*.whl -w /wheelhouse"
+    && for wheel in /wheelhouse/*.whl; do auditwheel repair $wheel -w /wheelhouse; done"
   - ls /tmp/wheelhouse
 
 

@@ -32,14 +32,9 @@ class TestUtil(QtTestCase):
         else:
             self.assertEqual(QIcon.themeName(), "oxy")
 
-    def test_set_windows_lib_path(self):
+    def test_set_shared_lib_path(self):
         before = os.environ["PATH"]
-        util.set_windows_lib_path()
-
-        if sys.platform == "win32":
-            self.assertNotEqual(before, os.environ["PATH"])
-        else:
-            self.assertEqual(before, os.environ["PATH"])
+        util.set_shared_library_path()
 
     def test_create_textbox_dialog(self):
         dialog = util.create_textbox_dialog("Test content", "Test title", parent=self.form)
@@ -78,25 +73,28 @@ class TestUtil(QtTestCase):
         pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
 
     def test_windows_native_backends_installed(self):
-        if sys.platform == "win32":
-            if platform.architecture()[0] == "64bit":
-                from urh.util import util
+        if sys.platform == "darwin" or sys.platform == "linux":
+            return
 
-                util.set_windows_lib_path()
+        from urh.util import util
 
-                # noinspection PyUnresolvedReferences
-                from urh.dev.native.lib import hackrf
+        util.set_shared_library_path()
 
-                # noinspection PyUnresolvedReferences
-                from urh.dev.native.lib import rtlsdr
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import hackrf
 
-                # noinspection PyUnresolvedReferences
-                from urh.dev.native.lib import airspy
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import rtlsdr
 
-                # noinspection PyUnresolvedReferences
-                from urh.dev.native.lib import limesdr
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import airspy
 
-            else:
-                print("Native Windows device extensions are currently only supported on 64 Bit.")
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import limesdr
 
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import usrp
+
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import sdrplay
         self.assertTrue(True)

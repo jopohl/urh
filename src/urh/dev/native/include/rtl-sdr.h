@@ -24,13 +24,7 @@
 extern "C" {
 #endif
 
-#ifndef WIN32
-#define _ENABLE_RPC
-#endif
-
-
 #include <stdint.h>
-#include <stddef.h>
 #include <rtl-sdr_export.h>
 
 typedef struct rtlsdr_dev rtlsdr_dev_t;
@@ -148,13 +142,6 @@ RTLSDR_API int rtlsdr_write_eeprom(rtlsdr_dev_t *dev, uint8_t *data,
 RTLSDR_API int rtlsdr_read_eeprom(rtlsdr_dev_t *dev, uint8_t *data,
 				  uint8_t offset, uint16_t len);
 
-/*!
- * Set the frequency the device is tuned to.
- *
- * \param dev the device handle given by rtlsdr_open()
- * \param frequency in Hz
- * \return 0 on error, frequency in Hz otherwise
- */
 RTLSDR_API int rtlsdr_set_center_freq(rtlsdr_dev_t *dev, uint32_t freq);
 
 /*!
@@ -233,14 +220,9 @@ RTLSDR_API int rtlsdr_set_tuner_gain(rtlsdr_dev_t *dev, int gain);
  *
  * \param dev the device handle given by rtlsdr_open()
  * \param bw bandwidth in Hz. Zero means automatic BW selection.
- * \param applied_bw is applied bandwidth in Hz, or 0 if unknown
- * \param apply_bw: 1 to really apply configure the tuner chip; 0 for just returning applied_bw
  * \return 0 on success
  */
-RTLSDR_API int rtlsdr_set_and_get_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw, uint32_t *applied_bw, int apply_bw );
-
-RTLSDR_API int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw );
-
+RTLSDR_API int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw);
 
 /*!
  * Get actual gain the device is configured to.
@@ -249,17 +231,6 @@ RTLSDR_API int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw );
  * \return 0 on error, gain in tenths of a dB, 115 means 11.5 dB.
  */
 RTLSDR_API int rtlsdr_get_tuner_gain(rtlsdr_dev_t *dev);
-
-/*!
- * Set LNA / Mixer / VGA Device Gain for R820T device is configured to.
- *
- * \param dev the device handle given by rtlsdr_open()
- * \param lna_gain in tenths of a dB, -30 means -3.0 dB.
- * \param mixer_gain in tenths of a dB, -30 means -3.0 dB.
- * \param vga_gain in tenths of a dB, -30 means -3.0 dB.
- * \return 0 on success
- */
-RTLSDR_API int rtlsdr_set_tuner_gain_ext(rtlsdr_dev_t *dev, int lna_gain, int mixer_gain, int vga_gain);
 
 /*!
  * Set the intermediate frequency gain for the device.
@@ -342,25 +313,6 @@ RTLSDR_API int rtlsdr_set_direct_sampling(rtlsdr_dev_t *dev, int on);
  */
 RTLSDR_API int rtlsdr_get_direct_sampling(rtlsdr_dev_t *dev);
 
-enum rtlsdr_ds_mode {
-	RTLSDR_DS_IQ = 0,	/* I/Q quadrature sampling of tuner output */
-	RTLSDR_DS_I,		/* 1: direct sampling on I branch: usually not connected */
-	RTLSDR_DS_Q,		/* 2: direct sampling on Q branch: HF on rtl-sdr v3 dongle */
-	RTLSDR_DS_I_BELOW,	/* 3: direct sampling on I branch when frequency below 'DS threshold frequency' */
-	RTLSDR_DS_Q_BELOW	/* 4: direct sampling on Q branch when frequency below 'DS threshold frequency' */
-};
-
-/*!
- * Set direct sampling mode with threshold
- *
- * \param dev the device handle given by rtlsdr_open()
- * \param mode static modes 0 .. 2 as in rtlsdr_set_direct_sampling(). other modes do automatic switching
- * \param freq_threshold direct sampling is used below this frequency, else quadrature mode through tuner
- *   set 0 for using default setting per tuner - not fully implemented yet!
- * \return negative on error, 0 on success
- */
-RTLSDR_API int rtlsdr_set_ds_mode(rtlsdr_dev_t *dev, enum rtlsdr_ds_mode mode, uint32_t freq_threshold);
-
 /*!
  * Enable or disable offset tuning for zero-IF tuners, which allows to avoid
  * problems caused by the DC offset of the ADCs and 1/f noise.
@@ -429,23 +381,11 @@ RTLSDR_API int rtlsdr_read_async(rtlsdr_dev_t *dev,
 RTLSDR_API int rtlsdr_cancel_async(rtlsdr_dev_t *dev);
 
 /*!
- * Read from the remote control (RC) infrared (IR) sensor
- *
- * \param dev the device handle given by rtlsdr_open()
- * \param buf buffer to write IR signal (MSB=pulse/space, 7LSB=duration*20usec), recommended 128-bytes
- * \param buf_len size of buf
- * \return 0 if no signal, >0 number of bytes written into buf, <0 for error
- */
-RTLSDR_API int rtlsdr_ir_query(rtlsdr_dev_t *dev, uint8_t *buf, size_t buf_len);
-
-
-/*!
- * Enable or disable the bias tee on GPIO PIN 0. (Works for rtl-sdr.com v3 dongles)
- * See: http://www.rtl-sdr.com/rtl-sdr-blog-v-3-dongles-user-guide/
+ * Enable or disable the bias tee on GPIO PIN 0.
  *
  * \param dev the device handle given by rtlsdr_open()
  * \param on  1 for Bias T on. 0 for Bias T off.
- * \return -1 if device is not initialized. 1 otherwise.
+ * \return -1 if device is not initialized. 0 otherwise.
  */
 RTLSDR_API int rtlsdr_set_bias_tee(rtlsdr_dev_t *dev, int on);
 

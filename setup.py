@@ -78,20 +78,10 @@ def get_package_data():
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
     package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
+    package_data["urh.dev.native.include"] = ["*.h"]
 
-    # Bundle headers
-    package_data["urh.dev.native.includes"] = ["*.h"]
-    include_dir = "src/urh/dev/native/includes"
-    for dirpath, dirnames, filenames in os.walk(include_dir):
-        for dir_name in dirnames:
-            rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
-            package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
-
-    if sys.platform == "win32" or IS_RELEASE:
-        # we use precompiled device backends on windows
-        # only deploy DLLs on Windows or in release mode to prevent deploying by linux package managers
-        package_data["urh.dev.native.lib.win.x64"] = ["*"]
-        package_data["urh.dev.native.lib.win.x86"] = ["*"]
+    if IS_RELEASE and sys.platform == "win32":
+        package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
 
     return package_data
 

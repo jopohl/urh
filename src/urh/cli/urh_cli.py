@@ -26,7 +26,7 @@ if os.path.isdir(SRC_DIR):
 
 from urh.util import util
 
-util.set_windows_lib_path()
+util.set_shared_library_path()
 
 try:
     import urh.cythonext.signalFunctions

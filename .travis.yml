@@ -119,7 +119,8 @@ before_deploy:
 
 deploy:
   provider: script
-  script: twine upload --skip-existing /tmp/wheelhouse/urh*.whl
+  script: twine upload --skip-existing /tmp/wheelhouse/urh*manylinux*.whl
+  skip_cleanup: true
   on:
     branch: devprebuild   # todo: remove after test
     python: 3.5

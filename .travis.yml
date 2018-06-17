@@ -106,9 +106,9 @@ before_deploy:
   - docker pull quay.io/pypa/manylinux1_x86_64
   - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse --name "urh64" quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
     && mkdir -p /wheelhouse
-    && tar xf /tmp/wheelhouse/linux-64.tar.bz2 -C /lib64
+    && tar xf /wheelhouse/linux-64.tar.bz2 -C /lib64
     && mkdir /repo/src/urh/dev/native/lib/shared
-    && tar xf /tmp/wheelhouse/linux-64.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
+    && tar xf /wheelhouse/linux-64.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
     && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
     && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
     && auditwheel repair /wheelhouse/*.whl -w /wheelhouse"

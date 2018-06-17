@@ -103,8 +103,7 @@ script:
 #  - cat /tmp/build_log.txt
 
 before_deploy:
-  - docker pull quay.io/pypa/manylinux1_x86_64
-  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
+  - docker pull   - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_x86_64 /bin/bash -c "yum update -y
     && mkdir -p /wheelhouse
     && tar xf /wheelhouse/linux-64.tar.bz2 -C /lib64
     && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
@@ -113,6 +112,16 @@ before_deploy:
     && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
     && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
     && for wheel in /wheelhouse/urh*x86_64.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
+  - wget https://www.dropbox.com/s/2wnu04kcih9rmza/linux-32.tar.bz2 -O /tmp/wheelhouse/linux-32.tar.bz2
+  - docker run -v `pwd`:/repo -v /tmp/wheelhouse:/wheelhouse quay.io/pypa/manylinux1_i686 /bin/bash -c "yum update -y
+    && mkdir -p /wheelhouse
+    && tar xf /wheelhouse/linux-32.tar.bz2 -C /lib
+    && rm -rf /repo/src/urh/dev/native/lib/shared && mkdir /repo/src/urh/dev/native/lib/shared
+    && tar xf /wheelhouse/linux-32.tar.bz2 -C /repo/src/urh/dev/native/lib/shared
+    && cd /repo
+    && /opt/python/cp35-cp35m/bin/pip wheel . -w /wheelhouse
+    && /opt/python/cp36-cp36m/bin/pip wheel . -w /wheelhouse
+    && for wheel in /wheelhouse/urh*i686.whl; do auditwheel repair \"\$wheel\" -w /wheelhouse; done"
   - ls /tmp/wheelhouse
   - pip install twine
 

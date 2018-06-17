@@ -360,6 +360,7 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        time.sleep(0.1)
         QTest.qWait(500)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

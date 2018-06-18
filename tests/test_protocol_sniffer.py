@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from PyQt5.QtTest import QTest
 
@@ -65,18 +67,12 @@ class TestProtocolSniffer(QtTestCase):
 
         # send data
         send_data = np.concatenate(packages)
-        chunk_size = 128
-        for i in range(0, len(send_data), chunk_size):
-            self.network_sdr_plugin_sender.send_raw_data(send_data[i:i + chunk_size], 1)
-            QTest.qWait(10)
+        self.network_sdr_plugin_sender.send_raw_data(send_data, 1)
+        time.sleep(0.1)
 
         # Send enough pauses to end sniffing
-        for i in range(10):
-            self.network_sdr_plugin_sender.send_raw_data(np.zeros(bit_len, dtype=np.complex64), 1)
-            QTest.qWait(10)
+        self.network_sdr_plugin_sender.send_raw_data(np.zeros(10 * bit_len, dtype=np.complex64), 1)
+        time.sleep(0.1)
 
         sniffer.stop()
         self.assertEqual(sniffer.plain_bits_str, data)
-
-        # needed to prevent crash on windows
-        QTest.qWait(10)

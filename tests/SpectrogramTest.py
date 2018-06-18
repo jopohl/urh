@@ -36,7 +36,7 @@ class SpectrogramTest(unittest.TestCase):
         return np.fft.fft(frames)
 
     def setUp(self):
-        self.signal = Signal(get_path_for_data_file("two_participants.complex"), "test")
+        self.signal = Signal(get_path_for_data_file("two_participants.coco"), "test")
 
     def test_numpy_impl(self):
         sample_rate = 1e6

@@ -14,7 +14,7 @@ from urh.util.Formatter import Formatter
 class TestPlugins(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)

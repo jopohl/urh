@@ -176,7 +176,10 @@ cpdef tuple get_crc_datarange(unsigned char[:] inpt, unsigned char[:] polynomial
     if data_end <= 0:  # Could not find crc position
         return 0, 0
 
-    step = [1] + [0] * (len_inpt - 1)
+    # leads to https://github.com/jopohl/urh/issues/463
+    #step = [1] + [0] * (len_inpt - 1)
+    step = [0] * len_inpt
+    step[0] = 1
 
     # crcvalue is initialized with start_value
     for i in range(0, data_end+7, 8):

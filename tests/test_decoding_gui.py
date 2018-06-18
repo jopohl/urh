@@ -13,7 +13,7 @@ from urh.signalprocessing.Encoding import Encoding
 class TestDecodingGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
 
         # add empty signal
         path = os.path.join(tempfile.gettempdir(), "empty.complex")

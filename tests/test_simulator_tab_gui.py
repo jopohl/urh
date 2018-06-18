@@ -392,7 +392,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
         self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
 

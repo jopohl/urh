@@ -11,7 +11,7 @@ class TestFilter(QtTestCase):
     def setUp(self):
         super().setUp()
 
-        self.add_signal_to_form("unaveraged.complex")
+        self.add_signal_to_form("unaveraged.coco")
         self.sig_frame = self.form.signal_tab_controller.signal_frames[0]
 
     def test_fir_filter(self):

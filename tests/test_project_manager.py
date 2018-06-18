@@ -80,9 +80,9 @@ class TestProjectManager(QtTestCase):
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
         self.form.project_manager.participants = [Participant("Alice", "A"), Participant("Bob", "B")]
 
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.messages), 3)
-        self.add_signal_to_form("two_participants.complex")
+        self.add_signal_to_form("two_participants.coco")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[1].proto_analyzer.messages), 18)
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[2].proto_analyzer.messages), 1)
@@ -125,7 +125,7 @@ class TestProjectManager(QtTestCase):
             os.remove(os.path.join(target_dir, constants.PROJECT_FILE))
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
 
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.messages), 3)
 
         preamble_field_type = next(ft for ft in self.form.compare_frame_controller.field_types

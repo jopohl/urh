@@ -6,7 +6,7 @@ from urh.signalprocessing.Signal import Signal
 
 class TestAutodetections(unittest.TestCase):
     def test_auto_detect_esaver(self):
-        signal = Signal(get_path_for_data_file("esaver.complex"), "ESaver")
+        signal = Signal(get_path_for_data_file("esaver.coco"), "ESaver")
         signal.modulation_type = 1
         signal.qad_center = signal.estimate_qad_center()
         self.assertTrue(0.24 < signal.qad_center < 0.5)
@@ -38,7 +38,7 @@ class TestAutodetections(unittest.TestCase):
         self.assertTrue(270 <= signal.bit_len <= 330)
 
     def test_qad_stays_the_same(self):
-        signal = Signal(get_path_for_data_file("esaver.complex"), "ESaver")
+        signal = Signal(get_path_for_data_file("esaver.coco"), "ESaver")
         signal.modulation_type = 1
         signal.qad_center = signal.estimate_qad_center()
         qad_center = signal.qad_center

@@ -298,7 +298,8 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        QTest.qWait(2000)
+        time.sleep(2)
+        QTest.qWait(100)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

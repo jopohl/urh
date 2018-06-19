@@ -25,7 +25,9 @@ These bugs were fixed:
 ---
 
 ## v2.0.4 (06/05/2018)
+
 This version fixes a bug when importing 24 bit wav files on windows.
+
 ---
 
 ## v2.0.3 (06/05/2018)
@@ -81,7 +83,9 @@ Moreover, the overall performance and stability of URH increases with 2.0. The m
 ---
 
 ## v1.9.1 (17/12/2017)
+
 This is a hotfix release that fixes an error with HackRF receiving (#379).
+
 ---
 
 ## v1.9.0 (15/12/2017)
@@ -100,13 +104,17 @@ Changes:
 ---
 
 ## v1.8.16 (30/11/2017)
+
 This release fixes an issue on Windows where processes ended with an error (#370).
 
 Furthermore, the NetworkSDR can now be used in continuous send mode (#369).
+
 ---
 
 ## v1.8.15 (27/11/2017)
+
 This release fixes a problem with GNU Radio backend on Windows mentioned in #366 and #368.
+
 ---
 
 ## v1.8.14 (26/11/2017)
@@ -119,32 +127,40 @@ The highlight of this release is an enhanced spectrum analyzer (#365) with __inc
 ---
 
 ## v1.8.13 (18/11/2017)
+
 This release enhances the stability for sending and receiving with all SDRs. Especially, it fixes nasty bug #360 which affected HackRF users under Windows.
 
 Furthermore, the WAV file support was greatly enhanced. Now, you can use WAV files from SDR# (fix #359).
+
 ---
 
 ## v1.8.12 (16/11/2017)
+
 This release fixes the following issues:
 
-- #355 - added a CSV import wizard for generic support of USB oscilloscopes
-- #358 - MSI version of URH did not start on Windows
+- fix #355 - added a CSV import wizard for generic support of USB oscilloscopes
+- fix #358 - MSI version of URH did not start on Windows
 
 __So if you had trouble to install the previous version on Windows make sure you use this one.__
+
 ---
 
 ## v1.8.11 (13/11/2017)
+
 The following issues were fixed in this release:
 
-- #343 - crash when entering bits on empty position in Analysis / Generation
-- #344 - bandpass filter can now also work with negative frequencies
-- #346 - bandpass filter operations now run in a separate process and can be canceled with the ESC button
-- #349 - added a csv import to work with USB oscilloscopes
-- #352 - added a advanced modulation menu in Interpretation where a minimum message length for ASK can be configured
+- fix #343 - crash when entering bits on empty position in Analysis / Generation
+- fix #344 - bandpass filter can now also work with negative frequencies
+- fix #346 - bandpass filter operations now run in a separate process and can be canceled with the ESC button
+- fix #349 - added a csv import to work with USB oscilloscopes
+- fix #352 - added a advanced modulation menu in Interpretation where a minimum message length for ASK can be configured
+
 ---
 
 ## v1.8.10 (21/10/2017)
+
 This release fixes a crash when pressing the replay button in interpretation tab.
+
 ---
 
 ##  (21/10/2017)
@@ -152,11 +168,13 @@ This release fixes a crash when pressing the replay button in interpretation tab
 ---
 
 ## v1.8.8 (16/10/2017)
+
 These issues were fixed in this release: 
 
-- #339 - keep tree in analysis collapsed if check box toggled
-- #338 - make pause threshold configurable in interpretation
-- #333 - keep search string if search fails in analysis
+- fix #339 - keep tree in analysis collapsed if check box toggled
+- fix #338 - make pause threshold configurable in interpretation
+- fix #333 - keep search string if search fails in analysis
+
 ---
 
 ## v1.8.7 (18/09/2017)
@@ -169,25 +187,34 @@ This release fixes the following issues:
 ---
 
 ## v1.8.6 (06/09/2017)
+
 This release fixes two crashes as described in #327.
+
 ---
 
 ## v1.8.5 (30/08/2017)
+
 This release fixes #323 .
+
 ---
 
 ## v1.8.4 (28/08/2017)
+
 This is a hotfix release that fixes native device extensions on Windows when conflicting SDR software is installed.
 Furthermore, a health check button for native device extensions was added to options.
 
 Details can be found in this PR: #321
+
 ---
 
 ## Version 1.8.0 (24/08/2017)
+
 This release adds two highly demanded features to URH: __Spectrogram View__ and __Channel Separation__. Learn more about them in the [wiki](https://github.com/jopohl/urh/wiki/Spectrogram) and keep hacking like a boss!
+
 ---
 
 ## Version 1.7.1 (19/07/2017)
+
 This release adds installers for Windows. If you use the new installer and should get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 __It is recommended to use the 64 bit version (amd64) of URH on Windows__, because 32 bit version has no native device support.
 
@@ -216,23 +243,26 @@ Other fixes/features include:
 - fix #308
 - fix #310
 - fix #311
+
 ---
 
 ## Hotfix for Windows wheels (11/06/2017)
+
 This is a hotfix release that fixes dependencies in the precompiled wheels for Windows which were introduced in the previous release.
+
 ---
 
 ## Version 1.6.5 (11/06/2017)
 This release brings the following changes:
 
-- #278: added a __repeat button__ to fuzzing dialog, next to the table with fuzzing values
-- #284: fixed behaviour: "Your selection is empty!" sometimes pops up when creating a new signal from signal
-- #285: fixed a rare crash when undoing a crop action
-- #281: Optimized performance of protocol synchronization in Interpretation
-- #286: improved context menu in Analysis
-- #288: UI improvements: remove unneeded borders and increase visibility of splitter handle
-- #290: fixed a crash occurring when pressing Analysis button in certain circumstances
-- #291: created precompiled wheels for windows on PyPI, so no C++ compiler needed anymore.
+- fix #278: added a __repeat button__ to fuzzing dialog, next to the table with fuzzing values
+- fix #284: fixed behaviour: "Your selection is empty!" sometimes pops up when creating a new signal from signal
+- fix #285: fixed a rare crash when undoing a crop action
+- fix #281: Optimized performance of protocol synchronization in Interpretation
+- fix #286: improved context menu in Analysis
+- fix #288: UI improvements: remove unneeded borders and increase visibility of splitter handle
+- fix #290: fixed a crash occurring when pressing Analysis button in certain circumstances
+- fix #291: created precompiled wheels for windows on PyPI, so no C++ compiler needed anymore.
 - improved visual appearance of comboboxes in protocol label list view
 ---
 

@@ -45,7 +45,6 @@ class OptionsDialog(QDialog):
 
         # We use bundled native device backends on windows, so no need to reconfigure them
         self.ui.groupBoxNativeOptions.setVisible(sys.platform != "win32")
-        self.ui.labelWindowsError.setVisible(sys.platform == "win32" and platform.architecture()[0] != "64bit")
         self.ui.labelIconTheme.setVisible(sys.platform == "linux")
         self.ui.comboBoxIconTheme.setVisible(sys.platform == "linux")
 
@@ -449,8 +448,8 @@ class OptionsDialog(QDialog):
         info = ExtensionHelper.perform_health_check()
         info += "\n" + BackendHandler.perform_soundcard_health_check()
 
-        if util.get_windows_lib_path():
-            info += "\n\n[INFO] Used DLLs from " + util.get_windows_lib_path()
+        if util.get_shared_library_path():
+            info += "\n\n[INFO] Used DLLs from " + util.get_shared_library_path()
 
         d = util.create_textbox_dialog(info, "Health check for native extensions", self)
         d.show()

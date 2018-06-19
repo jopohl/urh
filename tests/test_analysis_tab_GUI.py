@@ -19,7 +19,7 @@ from urh.ui.views.LabelValueTableView import LabelValueTableView
 class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("two_participants.complex")
+        self.add_signal_to_form("two_participants.coco")
         assert isinstance(self.form, MainController)
         self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
@@ -35,7 +35,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertTrue(True)
 
     def test_analyze_button_enocean(self):
-        self.add_signal_to_form("enocean.complex")
+        self.add_signal_to_form("enocean.coco")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
         QTest.keyClick(w, Qt.Key_Enter)

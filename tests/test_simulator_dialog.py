@@ -59,8 +59,8 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxGain, 15)
         self.assertEqual(simulator.sniffer.rcv_device.gain, 15)
 
-        self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxIFGain, 24)
-        self.assertEqual(simulator.sniffer.rcv_device.if_gain, 24)
+        self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxIFGain, 10)
+        self.assertEqual(simulator.sniffer.rcv_device.if_gain, 10)
 
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxBasebandGain, 11)
         self.assertEqual(simulator.sniffer.rcv_device.baseband_gain, 11)

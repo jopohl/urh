@@ -37,7 +37,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         self.assertEqual(3, int(freq / 10000))  # Freq for 0 is 30K
 
     def test_get_rssi_of_message(self):
-        signal = Signal(get_path_for_data_file("two_participants.complex"), "RSSI-Test")
+        signal = Signal(get_path_for_data_file("two_participants.coco"), "RSSI-Test")
         signal.modulation_type = 1
         signal.bit_len = 100
         signal.qad_center = -0.0507

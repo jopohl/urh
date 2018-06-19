@@ -58,7 +58,7 @@ class TestSendRecvDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
-        self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
+        self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
@@ -224,7 +224,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.close()
 
     def test_continuous_send_dialog(self):
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.__add_first_signal_to_generator()
 
         port = self.get_free_port()
@@ -266,7 +266,7 @@ class TestSendRecvDialog(QtTestCase):
     def test_sniff(self):
         assert isinstance(self.form, MainController)
         # add a signal so we can use it
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 
@@ -298,7 +298,8 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        QTest.qWait(2000)
+        time.sleep(2)
+        QTest.qWait(100)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

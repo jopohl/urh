@@ -1063,6 +1063,13 @@ class SignalFrame(QFrame):
 
             self.undo_stack.push(modulation_action)
 
+            if self.ui.cbSignalView.currentIndex() == 1:
+                self.scene_manager.init_scene()
+                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
+                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
+                self.ui.gvLegend.refresh()
+                self.on_slider_y_scale_value_changed()
+
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
     @pyqtSlot()

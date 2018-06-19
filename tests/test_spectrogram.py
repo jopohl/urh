@@ -8,7 +8,7 @@ from urh.signalprocessing.Spectrogram import Spectrogram
 
 class TestSpectrogram(QtTestCase):
     def setUp(self):
-        self.signal = Signal(self.get_path_for_filename("two_participants.complex"), "test")
+        self.signal = Signal(self.get_path_for_filename("two_participants.coco"), "test")
         self.spectrogram = Spectrogram(self.signal.data)
 
     def test_create_spectrogram_image(self):
@@ -35,7 +35,7 @@ class TestSpectrogram(QtTestCase):
 
     def test_cancel_filtering(self):
         super().setUp()
-        self.add_signal_to_form("two_participants.complex")
+        self.add_signal_to_form("two_participants.coco")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbSignalView.setCurrentIndex(2)
         signal_frame.ui.spinBoxSelectionStart.setValue(100)

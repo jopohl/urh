@@ -7,7 +7,7 @@ from urh.util.Formatter import Formatter
 
 class TestSignalDetailsGUI(QtTestCase):
     def setUp(self):
-        self.signal = Signal(get_path_for_data_file("esaver.complex"), "test")
+        self.signal = Signal(get_path_for_data_file("esaver.coco"), "test")
         self.signal.sample_rate = 2e6
         self.dialog = SignalDetailsDialog(self.signal)
 

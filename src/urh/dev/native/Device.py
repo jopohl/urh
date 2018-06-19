@@ -7,14 +7,17 @@ from multiprocessing.connection import Connection
 from pickle import UnpicklingError
 
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
+from urh.util import util
+# set shared library path when processes spawn so they can also find the .so's in bundled case
+util.set_shared_library_path()
 
-class Device(QObject):
+
+class Device(object):
     JOIN_TIMEOUT = 1.0
 
     SYNC_TX_CHUNK_SIZE = 0

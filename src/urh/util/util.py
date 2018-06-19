@@ -44,27 +44,44 @@ def set_icon_theme():
         QIcon.setThemeName("")
 
 
-def set_windows_lib_path():
-    dll_dir = get_windows_lib_path()
-    if dll_dir:
-        os.environ['PATH'] = dll_dir + ";" + os.environ['PATH']
+def set_shared_library_path():
+    shared_lib_dir = get_shared_library_path()
 
+    if shared_lib_dir:
 
-def get_windows_lib_path():
-    dll_dir = ""
-    if sys.platform == "win32":
-        if not hasattr(sys, "frozen"):
-            util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
-                else os.path.dirname(os.path.realpath(os.readlink(__file__)))
-            urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
-            assert os.path.isdir(urh_dir)
-
-            arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
-            dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win", arch))
+        if sys.platform == "win32":
+            current_path =  os.environ.get("PATH", '')
+            if not current_path.startswith(shared_lib_dir):
+                os.environ["PATH"] = shared_lib_dir + os.pathsep + current_path
         else:
-            dll_dir = os.path.dirname(sys.executable)
+            # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
+            exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
+            import ctypes
 
-    return dll_dir
+            for lib in sorted(os.listdir(shared_lib_dir)):
+                if any(lib.endswith(ext) for ext in exts):
+                    lib_path = os.path.join(shared_lib_dir, lib)
+                    if os.path.isfile(lib_path):
+                        try:
+                            ctypes.cdll.LoadLibrary(lib_path)
+                        except Exception as e:
+                            logger.exception(e)
+
+
+def get_shared_library_path():
+    if hasattr(sys, "frozen"):
+        return os.path.dirname(sys.executable)
+
+    util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+        else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+    urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
+    assert os.path.isdir(urh_dir)
+
+    shared_lib_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "shared"))
+    if os.path.isdir(shared_lib_dir):
+        return shared_lib_dir
+    else:
+        return ""
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):

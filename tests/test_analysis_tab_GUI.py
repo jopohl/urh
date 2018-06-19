@@ -121,6 +121,8 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="after search")
 
     def test_show_diff(self):
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
+
         hidden_columns_before = [i for i in range(self.cfc.protocol_model.col_count)
                                  if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
         self.assertEqual(len(hidden_columns_before), 0)
@@ -139,6 +141,16 @@ class TestAnalysisTabGUI(QtTestCase):
                               if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
 
         self.assertEqual(len(hidden_columns_now), self.cfc.protocol_model.col_count)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+
+        self.assertEqual(self.cfc.protocol_model.refindex, 0)
+        self.assertEqual(self.cfc.protocol_model.proto_view, 1)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(2)
+
+        self.assertEqual(self.cfc.protocol_model.refindex, 0)
+        self.assertEqual(self.cfc.protocol_model.proto_view, 2)
 
     def test_add_message_type(self):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)

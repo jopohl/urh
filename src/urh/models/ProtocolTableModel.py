@@ -35,7 +35,8 @@ class ProtocolTableModel(TableModel):
             self.ref_index_changed.emit(self._refindex)
 
     def addProtoLabel(self, start, end, messagenr):
-        self.controller.add_protocol_label(start=start, end=end, messagenr=messagenr, proto_view=self.proto_view)
+        a = self._get_alignment_offset(messagenr)
+        self.controller.add_protocol_label(start=start-a, end=end-a, messagenr=messagenr, proto_view=self.proto_view)
 
     def refresh_fonts(self):
         self.bold_fonts.clear()

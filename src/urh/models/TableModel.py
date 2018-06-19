@@ -183,9 +183,10 @@ class TableModel(QAbstractTableModel):
         for i, message in enumerate(self.protocol.messages):
             for lbl in message.message_type:
                 bg_color = label_colors[lbl.color_index]
+                a = self._get_alignment_offset(i)
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):
-                    self.background_colors[i, j] = bg_color
+                    self.background_colors[i, j+a] = bg_color
 
     def refresh_fonts(self):
         """

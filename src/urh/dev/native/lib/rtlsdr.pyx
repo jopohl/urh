@@ -17,7 +17,7 @@ cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
     (<object>f)(buffer[0:length])
 
 
-IF RTLSDR_HAS_BANDWIDTH == 1:
+IF RTLSDR_BANDWIDTH_SUPPORT == 1:
     cpdef bandwidth_is_adjustable():
         return True
     cpdef int set_tuner_bandwidth(uint32_t bw):

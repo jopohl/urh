@@ -45,10 +45,8 @@ IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing")
 try:
     import Cython.Build
 except ImportError:
-    USE_CYTHON = False
-else:
-    USE_CYTHON = True
-EXT = '.pyx' if USE_CYTHON else '.cpp'
+    print("You need Cython to build URH's extensions. You can get it e.g. with python3 -m pip install cython.",
+          file=sys.stderr)
 
 
 class build_ext(_build_ext):
@@ -87,22 +85,23 @@ def get_package_data():
 
 
 def get_extensions():
-    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(EXT)]
-    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
+    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(".pyx")]
+    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + ".pyx"],
                             extra_compile_args=[OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]
 
     ExtensionHelper.USE_RELATIVE_PATHS = True
-    extensions += ExtensionHelper.get_device_extensions(USE_CYTHON)
+    extensions += ExtensionHelper.get_device_extensions()
 
     if NO_NUMPY_WARNINGS_FLAG:
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    if USE_CYTHON:
-        from Cython.Build import cythonize
-        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
+    from Cython.Build import cythonize
+    import multiprocessing
+    n = multiprocessing.cpu_count()
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True, nthreads=n)
 
     return extensions
 

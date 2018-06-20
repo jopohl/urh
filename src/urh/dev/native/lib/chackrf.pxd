@@ -82,7 +82,7 @@ cdef extern from "libhackrf/hackrf.h":
      
     int hackrf_open(hackrf_device** device);
 
-    IF HACKRF_HAS_MULTI_DEVICE == 1:
+    IF HACKRF_MULTI_DEVICE_SUPPORT == 1:
         int hackrf_open_by_serial(const char* const desired_serial_number, hackrf_device** device)
         hackrf_device_list_t* hackrf_device_list()
         int hackrf_close(hackrf_device* device)

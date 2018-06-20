@@ -41,7 +41,7 @@ cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
 cdef chackrf.hackrf_device*_c_device
 cdef int hackrf_success = chackrf.HACKRF_SUCCESS
 
-IF HACKRF_HAS_MULTI_DEVICE == 1:
+IF HACKRF_MULTI_DEVICE_SUPPORT == 1:
     cpdef has_multi_device_support():
         return True
     cpdef open(str serial_number=""):

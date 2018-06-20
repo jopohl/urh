@@ -207,7 +207,8 @@ class AbstractBaseThread(QThread):
         filename = self.device.lower().split(" ")[0] + suffix
 
         if not self.python2_interpreter:
-            raise Exception("Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
+            self.stop("FATAL: Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
+            return
 
         options = [self.python2_interpreter, os.path.join(rp, filename),
                    "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
@@ -250,8 +251,8 @@ class AbstractBaseThread(QThread):
     def run(self):
         pass
 
-    def read_errors(self):
-        result = []
+    def read_errors(self, initial_errors=None):
+        result = [] if initial_errors is None else initial_errors
         while True:
             try:
                 result.append(self.queue.get_nowait())

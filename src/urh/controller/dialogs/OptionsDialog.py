@@ -1,9 +1,8 @@
 import os
-import platform
+import subprocess
 import sys
 import tempfile
 import time
-import subprocess
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
@@ -269,7 +268,6 @@ class OptionsDialog(QDialog):
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
-        constants.SETTINGS.setValue("python2_exe", self.ui.lineEditPython2Interpreter.text())
 
         self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
         constants.SETTINGS.setValue("gnuradio_install_dir", self.ui.lineEditGnuradioDirectory.text())

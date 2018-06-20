@@ -1,4 +1,9 @@
 # Changelog
+## v2.1.2 (upcoming)
+
+- fix [#468](https://github.com/jopohl/urh/pull/468) - improve python2 interpreter settings for GNU Radio backend with empty ``` urh.ini ```
+
+---
 
 ## v2.1.1 (17/06/2018)
 This release updates the bundled SDR drivers on Windows.

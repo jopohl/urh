@@ -1,5 +1,3 @@
-from PyQt5.QtTest import QTest
-
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
 from urh.dev.BackendHandler import BackendHandler
@@ -44,8 +42,6 @@ class TestOptionsGUI(QtTestCase):
 
     def test_device_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(4)
-        # ensure device table model gets populated during tests
-        QTest.qWait(300)
         self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
         self.assertEqual(self.dialog.ui.tblDevices.model().rowCount(), len(BackendHandler.DEVICE_NAMES))

@@ -284,6 +284,14 @@ class BackendHandler(object):
             container = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
             self.device_backends[device_name.lower()] = container
 
+    def get_key_from_device_display_text(self, displayed_device_name):
+        displayed_device_name = displayed_device_name.lower()
+        for key in self.DEVICE_NAMES:
+            key = key.lower()
+            if displayed_device_name.startswith(key):
+                return key
+        return None
+
     @staticmethod
     def perform_soundcard_health_check():
         result = "SoundCard -- "

@@ -1,10 +1,9 @@
-from subprocess import call, DEVNULL
-
-from urh import constants
 import os
 import sys
 from enum import Enum
+from subprocess import call, DEVNULL
 
+from urh import constants
 from urh.util.Logger import logger
 
 
@@ -89,7 +88,7 @@ class BackendHandler(object):
 
     def __init__(self):
 
-        self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
+        self.__python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
         self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
 
@@ -108,6 +107,16 @@ class BackendHandler(object):
         """:type: dict[str, BackendContainer] """
 
         self.get_backends()
+
+    @property
+    def python2_exe(self):
+        return self.__python2_exe
+
+    @python2_exe.setter
+    def python2_exe(self, value):
+        if value != self.__python2_exe:
+            self.__python2_exe = value
+            constants.SETTINGS.setValue("python2_exe", value)
 
     @property
     def num_native_backends(self):
@@ -200,7 +209,7 @@ class BackendHandler(object):
                     self.gnuradio_is_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
                                                       shell=True, stderr=DEVNULL) == 0
                 except OSError as e:
-                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: "+str(e))
+                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: " + str(e))
                     self.gnuradio_is_installed = True
             else:
                 self.gnuradio_is_installed = False

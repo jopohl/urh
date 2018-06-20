@@ -144,6 +144,7 @@ class OptionsDialog(QDialog):
         super().__init__(parent)
 
         self.backend_handler = BackendHandler()
+        self.backend_handler.set_gnuradio_installed_status()
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)

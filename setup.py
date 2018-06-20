@@ -43,7 +43,7 @@ URH_DIR = "urh"
 IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
 try:
-    import Cython.Build
+    from Cython.Build import cythonize
 except ImportError:
     print("You need Cython to build URH's extensions!\n"
           "You can get it e.g. with python3 -m pip install cython.",
@@ -100,10 +100,7 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    from Cython.Build import cythonize
-    import multiprocessing
-    n = multiprocessing.cpu_count()
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True, nthreads=n)
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
 
     return extensions
 

@@ -201,10 +201,7 @@ if __name__ == "__main__":
               file=sys.stderr)
         sys.exit(1)
 
-    import multiprocessing
-
     setup(
         name="urh",
-        ext_modules=cythonize(get_device_extensions(library_dirs=library_dirs), force=True,
-                              nthreads=multiprocessing.cpu_count()),
+        ext_modules=cythonize(get_device_extensions(library_dirs=library_dirs), force=True),
     )

@@ -88,7 +88,15 @@ class BackendHandler(object):
 
     def __init__(self):
 
-        self.__python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
+        python2_exe = constants.SETTINGS.value('python2_exe', '')
+        if not python2_exe:
+            self.__python2_exe = self.__get_python2_interpreter()
+            constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
+        else:
+            self.__python2_exe = python2_exe
+
+        constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
+
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
         self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
 

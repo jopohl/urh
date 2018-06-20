@@ -119,7 +119,7 @@ def read_long_description():
     except:
         return ""
 
-install_requires = ["numpy", "psutil", "pyzmq"]
+install_requires = ["numpy", "psutil", "pyzmq", "cython"]
 if IS_RELEASE:
     install_requires.append("pyqt5")
 else:

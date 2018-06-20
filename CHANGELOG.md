@@ -1,8 +1,8 @@
 # Changelog
 ## v2.1.2 (upcoming)
 
-- fix [#469](https://github.com/jopohl/urh/pull/469) - improve device selection in options, use a table instead of a list view
-- fix [#468](https://github.com/jopohl/urh/pull/468) - improve python2 interpreter settings for GNU Radio backend with empty ``` urh.ini ```
+- [#469](https://github.com/jopohl/urh/pull/469) - improve device selection in options, use a table instead of a list view
+- [#468](https://github.com/jopohl/urh/pull/468) - improve python2 interpreter settings for GNU Radio backend with empty ``` urh.ini ```
 
 ---
 

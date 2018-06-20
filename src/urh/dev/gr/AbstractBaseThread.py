@@ -234,6 +234,7 @@ class AbstractBaseThread(QThread):
         logger.info("Initalizing receive socket")
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
+        self.socket.setsockopt(zmq.RCVTIMEO, 90)
         logger.info("Initalized receive socket")
 
         while not self.isInterruptionRequested():

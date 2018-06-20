@@ -35,3 +35,4 @@ exclude_lines =
     def export_to_fta
     def export_demodulated
     def main
+    class DeviceOptionsTableModel

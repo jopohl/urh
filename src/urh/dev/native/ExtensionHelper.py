@@ -64,7 +64,7 @@ def get_device_extensions(library_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    include_dirs = [os.path.realpath(os.path.join(cur_dir, "include"))]
+    include_dirs = []
 
     device_extras = []
 

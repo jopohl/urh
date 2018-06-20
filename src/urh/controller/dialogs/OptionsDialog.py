@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplic
 
 from urh import constants, colormaps
 from urh.controller.widgets.PluginFrame import PluginFrame
-from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
+from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
@@ -23,7 +23,7 @@ from urh.util import util
 
 
 class DeviceOptionsTableModel(QAbstractTableModel):
-    header_labels = ["Software Defined Radio", "Info", "Native backend", "GNU Radio backend", "State"]
+    header_labels = ["Software Defined Radio", "Info", "Native backend (recommended)", "GNU Radio backend", "State"]
 
     def __init__(self, backend_handler: BackendHandler, parent=None):
         self.backend_handler = backend_handler
@@ -123,19 +123,22 @@ class DeviceOptionsTableModel(QAbstractTableModel):
 
         j = index.column()
         device = self.get_device_at(index.row())
+        if j in [0, 1, 2, 3] and not device.is_enabled:
+            return Qt.NoItemFlags
         if j == 2 and not device.has_native_backend:
-            return Qt.ItemIsSelectable
+            return Qt.NoItemFlags
         elif j == 3 and not device.has_gnuradio_backend:
-            return Qt.ItemIsSelectable
+            return Qt.NoItemFlags
         elif j == 4 and not device.has_native_backend and not device.has_gnuradio_backend:
-            return Qt.ItemIsSelectable
+            return Qt.NoItemFlags
 
-        flags = Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        flags = Qt.ItemIsEnabled
 
         if j in [2, 3, 4]:
-            flags |= Qt.ItemIsEditable | Qt.ItemIsUserCheckable
+            flags |= Qt.ItemIsUserCheckable
 
         return flags
+
 
 class OptionsDialog(QDialog):
     values_changed = pyqtSignal(dict)
@@ -242,10 +245,10 @@ class OptionsDialog(QDialog):
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
-        self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
         self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
         self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
         self.ui.btnViewBuildLog.clicked.connect(self.on_btn_view_build_log_clicked)
+        self.ui.labelDeviceMissingInfo.linkActivated.connect(self.on_label_device_missing_info_link_activated)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -476,17 +479,6 @@ class OptionsDialog(QDialog):
         self.ui.btnViewBuildLog.show()
 
     @pyqtSlot()
-    def on_btn_health_check_clicked(self):
-        info = ExtensionHelper.perform_health_check()
-        info += "\n" + BackendHandler.perform_soundcard_health_check()
-
-        if util.get_shared_library_path():
-            info += "\n\n[INFO] Used DLLs from " + util.get_shared_library_path()
-
-        d = util.create_textbox_dialog(info, "Health check for native extensions", self)
-        d.show()
-
-    @pyqtSlot()
     def on_checkbox_multiple_modulations_clicked(self):
         constants.SETTINGS.setValue("multiple_modulations", self.ui.checkBoxMultipleModulations.isChecked())
 
@@ -497,6 +489,21 @@ class OptionsDialog(QDialog):
 
         dialog = util.create_textbox_dialog(self.build_log, "Build log", parent=self)
         dialog.show()
+
+    @pyqtSlot(str)
+    def on_label_device_missing_info_link_activated(self, link: str):
+        if link == "health_check":
+            info = ExtensionHelper.perform_health_check()
+            info += "\n" + BackendHandler.perform_soundcard_health_check()
+
+            if util.get_shared_library_path():
+                if sys.platform == "win32":
+                    info += "\n\n[INFO] Used DLLs from " + util.get_shared_library_path()
+                else:
+                    info += "\n\n[INFO] Used shared libraries from " + util.get_shared_library_path()
+
+            d = util.create_textbox_dialog(info, "Health check for native extensions", self)
+            d.show()
 
     @staticmethod
     def write_default_options():

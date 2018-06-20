@@ -195,6 +195,7 @@ if __name__ == "__main__":
         print("You need Cython to rebuild URH's device extensions. "
               "You can get it e.g. with python3 -m pip install cython.",
               file=sys.stderr)
+        sys.exit(1)
 
     import multiprocessing
 

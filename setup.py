@@ -45,8 +45,10 @@ IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing")
 try:
     import Cython.Build
 except ImportError:
-    print("You need Cython to build URH's extensions. You can get it e.g. with python3 -m pip install cython.",
+    print("You need Cython to build URH's extensions!\n"
+          "You can get it e.g. with python3 -m pip install cython.",
           file=sys.stderr)
+    sys.exit(1)
 
 
 class build_ext(_build_ext):

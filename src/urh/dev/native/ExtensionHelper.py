@@ -1,12 +1,11 @@
 import os
-import platform
+import shutil
 import sys
 import tempfile
 from collections import defaultdict
 from distutils import ccompiler
 from importlib import import_module
 
-import shutil
 from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
@@ -41,7 +40,8 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             old_stderr = os.dup(sys.stderr.fileno())
             os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
-            compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs, libraries=libraries)
+            compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs,
+                                     libraries=libraries)
         except Exception as e:
             return False
         return True
@@ -52,11 +52,13 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             devnull.close()
         shutil.rmtree(tmp_dir)
 
+
 def generate_config_pxi(device_extras: list):
     dirname = os.path.dirname(__file__)
     with open(os.path.join(dirname, "lib", "config.pxi"), "w") as f:
         for extra, enabled in sorted(device_extras):
             f.write("DEF {} = {}\n".format(extra, int(enabled)))
+
 
 def get_device_extensions(library_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
@@ -74,7 +76,7 @@ def get_device_extensions(library_dirs=None):
         for dev_name, params in DEVICES.items():
             # Since drivers are bundled we can enforce the extras
             device_extras.extend([(extra, 1) for extra in params.get("extras", dict())])
-            result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs, macros))
+            result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 
         generate_config_pxi(device_extras)
         return result
@@ -148,6 +150,7 @@ def __get_device_extras(compiler, dev_name, libraries, library_dirs, include_dir
 
     return result
 
+
 def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list):
     try:
         language = DEVICES[dev_name]["language"]
@@ -181,8 +184,9 @@ def perform_health_check() -> str:
 
 if __name__ == "__main__":
     from setuptools import setup
+
     if "-L" in sys.argv:
-        library_dirs = sys.argv[sys.argv.index("-L")+1].split(":")
+        library_dirs = sys.argv[sys.argv.index("-L") + 1].split(":")
     else:
         library_dirs = None
 

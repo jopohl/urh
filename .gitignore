@@ -37,4 +37,15 @@ tests/data/URHProject.xml
 src/urh/cythonext/*.html
 /tests/show_gui
 
+hackrf.cpp
+airspy.cpp
+limesdr.cpp
+rtlsdr.cpp
+sdrplay.cpp
+usrp.c
+
+path_creator.cpp
+signalFunctions.cpp
+util.cpp
+
 misc/*

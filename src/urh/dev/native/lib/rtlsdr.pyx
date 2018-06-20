@@ -1,7 +1,7 @@
 # cython wrapper for RTL-SDR (https://github.com/pinkavaj/rtl-sdr)
 include "config.pxi"
 
-cimport crtlsdr
+cimport urh.dev.native.lib.crtlsdr as crtlsdr
 from libc.stdlib cimport malloc, free
 
 ctypedef unsigned char uint8_t

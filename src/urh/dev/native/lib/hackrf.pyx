@@ -1,6 +1,6 @@
 include "config.pxi"
 
-cimport chackrf
+cimport urh.dev.native.lib.chackrf as chackrf
 from libc.stdlib cimport malloc
 import time
 

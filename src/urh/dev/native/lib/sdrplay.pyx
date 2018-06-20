@@ -1,4 +1,4 @@
-cimport csdrplay
+cimport urh.dev.native.lib.csdrplay as csdrplay
 import time
 from libc.stdlib cimport malloc, free
 

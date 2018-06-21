@@ -44,7 +44,6 @@ install:
 
   - IF "%PYTHON_ARCH%" == "64" (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip" -FileName "C:\windlls.zip") ELSE (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip" -FileName "C:\windlls.zip")
   - 7z x -y "C:\windlls.zip" -o%APPVEYOR_BUILD_FOLDER%\src\urh\dev\native\lib\shared
-  - dir %APPVEYOR_BUILD_FOLDER%\src\urh\dev\native\lib\shared\include\libairspy
 
   - pip install -r data\requirements.txt
   - pip install pytest

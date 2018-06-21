@@ -58,16 +58,11 @@ test_script:
   - python -m pytest
 
 after_test:
-  - pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio
-  - python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
-  - python setup.py bdist_wheel
-  - IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py)
-  - dir dist
-#  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio)
-#  - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
-#  - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-#  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py))
-#  - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py))
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
 
 artifacts:
   # Archive the generated packages in the ci.appveyor.com build report.

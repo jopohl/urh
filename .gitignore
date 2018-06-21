@@ -37,6 +37,8 @@ tests/data/URHProject.xml
 src/urh/cythonext/*.html
 /tests/show_gui
 
+src/urh/dev/native/lib/config.pxi
+
 hackrf.cpp
 airspy.cpp
 limesdr.cpp

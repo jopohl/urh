@@ -1,6 +1,8 @@
 # Changelog
 ## v2.1.2 (upcoming)
+__Import announcement if you build URH manually__: Cython is now a __required__ dependency to build URH. If you install URH from PyPi (with ``` pip ```) or use the ``` .msi ``` installer you will not notice any difference. However, if you run URH from source you need to install cython which is as easy as ``` python3 -m pip install cython ```.
 
+- [#470](https://github.com/jopohl/urh/pull/470) - improve conditional compiling of native device extensions
 - [#469](https://github.com/jopohl/urh/pull/469) - improve device selection in options, use a table instead of a list view
 - [#468](https://github.com/jopohl/urh/pull/468) - improve python2 interpreter settings for GNU Radio backend with empty ``` urh.ini ```
 

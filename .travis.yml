@@ -40,6 +40,7 @@ install:
     else
       sudo apt-get install libhackrf-dev librtlsdr-dev
     fi
+  - pip3 install cython
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]
     then

@@ -1,4 +1,4 @@
-from cusrp cimport *
+from urh.dev.native.lib.cusrp cimport *
 import numpy as np
 # noinspection PyUnresolvedReferences
 cimport numpy as np

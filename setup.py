@@ -73,12 +73,11 @@ def get_packages():
 
 
 def get_package_data():
-    package_data = {"urh.cythonext": ["*.cpp", "*.pyx"]}
+    package_data = {"urh.cythonext": ["*.pyx"]}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
-    package_data["urh.dev.native.include"] = ["*.h"]
+    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
 
     if IS_RELEASE and sys.platform == "win32":
         package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]

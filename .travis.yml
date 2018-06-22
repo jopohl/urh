@@ -75,7 +75,7 @@ script:
       pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
     elif [[ $TRAVIS_OS_NAME == "osx" ]]
     then
-      pytest tests
+      pytest -x tests
     else
       pytest -s --boxed tests
     fi

@@ -291,9 +291,9 @@ class TestSimulator(QtTestCase):
         lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
 
         lbl1.value_type_index = 3
-        lbl1.external_program = os.path.realpath(get_path_for_data_file("external_program_simulator.py")) + " " + counter_item_str
+        lbl1.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
         lbl2.value_type_index = 3
-        lbl2.external_program = os.path.realpath(get_path_for_data_file("external_program_simulator.py")) + " " + counter_item_str
+        lbl2.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
 
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
         action.model_item.sleep_time = 0.001

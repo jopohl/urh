@@ -722,6 +722,21 @@ class CompareFrameController(QWidget):
         self.ui.lblClearAlignment.setVisible(any(msg.alignment_offset != 0 for msg in self.proto_analyzer.messages))
         self.protocol_model.update()
 
+        row = column = 0
+        for i, message in enumerate(self.proto_analyzer.messages):
+            if self.ui.tblViewProtocol.isRowHidden(i):
+                continue
+
+            data = message.view_to_string(self.ui.cbProtoView.currentIndex(), decoded=True)
+            try:
+                row = i
+                column = data.index(pattern) + len(pattern) + self.protocol_model.get_alignment_offset_at(i) - 1
+                break
+            except ValueError:
+                pass
+
+        self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(row, column))
+
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
         self.ui.lSearchTotal.setText((str(len(self.protocol_model.search_results))))

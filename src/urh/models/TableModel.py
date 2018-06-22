@@ -75,7 +75,7 @@ class TableModel(QAbstractTableModel):
             self._diffs = self.find_differences(self._refindex)
         self.update()
 
-    def _get_alignment_offset(self, index: int):
+    def get_alignment_offset_at(self, index: int):
         f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
         alignment_offset = int(math.ceil(self.protocol.messages[index].alignment_offset / f))
         return alignment_offset
@@ -139,7 +139,7 @@ class TableModel(QAbstractTableModel):
             if len(visible_messages) == 0:
                 self.col_count = 0
             else:
-                self.col_count = max(len(msg) + self._get_alignment_offset(i)
+                self.col_count = max(len(msg) + self.get_alignment_offset_at(i)
                                      for i, msg in enumerate(self.display_data) if i not in self.hidden_rows)
 
             if self._refindex >= 0:
@@ -183,7 +183,7 @@ class TableModel(QAbstractTableModel):
         for i, message in enumerate(self.protocol.messages):
             for lbl in message.message_type:
                 bg_color = label_colors[lbl.color_index]
-                a = self._get_alignment_offset(i)
+                a = self.get_alignment_offset_at(i)
                 start, end = message.get_label_range(lbl, self.proto_view, self.decode)
                 for j in range(start, end):
                     self.background_colors[i, j + a] = bg_color
@@ -222,7 +222,7 @@ class TableModel(QAbstractTableModel):
         j = index.column()
         if role == Qt.DisplayRole and self.display_data:
             try:
-                alignment_offset = self._get_alignment_offset(i)
+                alignment_offset = self.get_alignment_offset_at(i)
                 if j < alignment_offset:
                     return self.ALIGNMENT_CHAR
 
@@ -283,7 +283,7 @@ class TableModel(QAbstractTableModel):
 
         i = index.row()
         j = index.column()
-        a = self._get_alignment_offset(i)
+        a = self.get_alignment_offset_at(i)
         j -= a
         hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
 
@@ -325,7 +325,7 @@ class TableModel(QAbstractTableModel):
             data = message.view_to_string(self.proto_view, self.decode)
             j = data.find(value)
             while j != -1:
-                self.search_results.append((i, j + self._get_alignment_offset(i)))
+                self.search_results.append((i, j + self.get_alignment_offset_at(i)))
                 j = data.find(value, j + 1)
 
         return len(self.search_results)
@@ -352,13 +352,13 @@ class TableModel(QAbstractTableModel):
             return differences
 
         ref_message = proto[refindex]
-        ref_offset = self._get_alignment_offset(refindex)
+        ref_offset = self.get_alignment_offset_at(refindex)
 
         for i, message in enumerate(proto):
             if i == refindex:
                 continue
 
-            msg_offset = self._get_alignment_offset(i)
+            msg_offset = self.get_alignment_offset_at(i)
             short, long = sorted([len(ref_message) + ref_offset, len(message) + msg_offset])
 
             differences[i] = {

@@ -35,7 +35,7 @@ class ProtocolTableModel(TableModel):
             self.ref_index_changed.emit(self._refindex)
 
     def addProtoLabel(self, start, end, messagenr):
-        a = self._get_alignment_offset(messagenr)
+        a = self.get_alignment_offset_at(messagenr)
         self.controller.add_protocol_label(start=start-a, end=end-a, messagenr=messagenr, proto_view=self.proto_view)
 
     def refresh_fonts(self):
@@ -61,7 +61,7 @@ class ProtocolTableModel(TableModel):
 
     def flags(self, index: QModelIndex):
         if index.isValid():
-            alignment_offset = self._get_alignment_offset(index.row())
+            alignment_offset = self.get_alignment_offset_at(index.row())
             if index.column() < alignment_offset:
                 return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 

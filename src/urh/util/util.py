@@ -335,7 +335,7 @@ def parse_command(command: str):
         return "", []
 
     cmd = splitted.pop(0)
-    if PROJECT_PATH is not None and not os.path.isabs(cmd):
+    if PROJECT_PATH is not None and not os.path.isabs(cmd) and shutil.which(cmd) is None:
         # Path relative to project path
         cmd = os.path.normpath(os.path.join(PROJECT_PATH, cmd))
     cmd = [cmd]

@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetIt
 from urh import constants
 from urh.util.Logger import logger
 
+PROJECT_PATH = None   # for referencing in external program calls
+
 BCD_ERROR_SYMBOL = "?"
 BCD_LUT = {"{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)}
 BCD_REVERSE_LUT = {str(i): "{0:04b}".format(i) for i in range(10)}
@@ -332,7 +334,11 @@ def parse_command(command: str):
     if len(splitted) == 0:
         return "", []
 
-    cmd = [splitted.pop(0)]
+    cmd = splitted.pop(0)
+    if PROJECT_PATH is not None and not os.path.isabs(cmd):
+        # Path relative to project path
+        cmd = os.path.normpath(os.path.join(PROJECT_PATH, cmd))
+    cmd = [cmd]
 
     # This is for legacy support, if you have filenames with spaces and did not quote them
     while shutil.which(" ".join(cmd)) is None and len(splitted) > 0:

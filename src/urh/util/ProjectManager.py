@@ -90,6 +90,7 @@ class ProjectManager(QObject):
     @project_file.setter
     def project_file(self, value):
         self.__project_file = value
+
         self.project_loaded_status_changed.emit(self.project_loaded)
 
     def reload_field_types(self):
@@ -213,6 +214,7 @@ class ProjectManager(QObject):
             # Close existing project (if any) or existing files if requested
             self.main_controller.close_all()
         FileOperator.RECENT_PATH = path
+        util.PROJECT_PATH = path
         self.project_path = path
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         collapse_project_tabs = False

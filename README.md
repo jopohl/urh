@@ -31,6 +31,7 @@ Below you find more specific installation instructions for:
 - [Linux](#linux)
   - [Via Package Manager](#via-package-manager)
   - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-ubuntudebian)
+  - [Docker Image](#docker-image)
 - [Mac OS X](#mac-os-x)
 - [Updating your installation](#update-your-installation)
   - [Updating with Pip](#updating-with-pip)
@@ -73,6 +74,9 @@ sudo apt-get update
 sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip
 sudo pip3 install urh
 ```
+
+### Docker Image
+If you use docker you can also run the official URH docker image available [here](https://hub.docker.com/r/jopohl/urh/).
 
 ## Mac OS X
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 

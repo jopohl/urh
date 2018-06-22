@@ -51,7 +51,7 @@ class InsertSinePlugin(SignalEditorPlugin):
             scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
             self.__dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
             self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
-                                                                QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                QPen(QColor(Qt.transparent), 0),
                                                                 QBrush(self.INSERT_INDICATOR_COLOR))
             self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
 

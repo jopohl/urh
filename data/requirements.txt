@@ -2,3 +2,4 @@ numpy
 psutil
 pyqt5
 pyzmq
+cython

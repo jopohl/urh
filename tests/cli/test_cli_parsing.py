@@ -68,10 +68,6 @@ class TestCLIParsing(unittest.TestCase):
 
 
     def test_build_device_from_args(self):
-        if sys.platform == "win32" and platform.architecture()[0] == "32bit":
-            # no device extensions on 32 bit windows
-            return
-
         args = self.parser.parse_args("--device HackRF --frequency 133.7e6 --sample-rate 2.5e6 -rx "
                                       "-if 24 -bb 30 -g 0 --device-identifier abcde".split())
         device = urh_cli.build_device_from_args(args)

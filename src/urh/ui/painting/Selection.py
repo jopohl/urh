@@ -18,7 +18,7 @@ class Selection(QGraphicsRectItem):
         self.resizing = False
 
         self.setBrush(fillcolor)
-        self.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+        self.setPen(QPen(QColor(Qt.transparent), 0))
         self.setOpacity(opacity)
 
     @property

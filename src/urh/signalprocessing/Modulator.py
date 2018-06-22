@@ -1,8 +1,8 @@
+import array
 import locale
 import xml.etree.ElementTree as ET
 
 import numpy as np
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene
 
@@ -10,7 +10,6 @@ from urh import constants
 from urh.cythonext import path_creator, signalFunctions
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
-import array
 
 
 class Modulator(object):
@@ -137,10 +136,10 @@ class Modulator(object):
         scene = ZoomableScene()
         scene.setSceneRect(0, -1, n, 2)
         scene.setBackgroundBrush(constants.BGCOLOR)
-        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
+        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
         y = np.array(y) if len(y) > 0 else np.array(y).astype(np.float32)
         path = path_creator.array_to_QPath(x, y)
-        scene.addPath(path, QPen(constants.LINECOLOR, Qt.FlatCap))
+        scene.addPath(path, QPen(constants.LINECOLOR, 0))
         return scene
 
     def modulate(self, data=None, pause=0, start=0):

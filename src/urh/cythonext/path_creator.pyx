@@ -93,18 +93,15 @@ cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
      All values are big endian--pack using struct.pack('>d') or struct.pack('>i')
     """
     cdef long long n = x.shape[0]
-    # create empty array, pad with extra space on either end
     arr = np.zeros(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
-    #arr = arr.byteswap().newbyteorder() # force native byteorder
 
-    # write first two integers
     byte_view = arr.view(dtype=np.uint8)
     byte_view[:12] = 0
     byte_view.data[12:20] = struct.pack('>ii', n, 0)
 
-    arr[1:-1]['x'] = x
-    arr[1:-1]['y'] = np.negative(y)  # y negieren, da Koordinatensystem umgedreht
-    arr[1:-1]['c'] = 1
+    arr[1:n+1]['x'] = x
+    arr[1:n+1]['y'] = np.negative(y)  # negate y since coordinate system is inverted
+    arr[1:n+1]['c'] = 1
 
     cdef long long last_index = 20 * (n + 1)
     byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)

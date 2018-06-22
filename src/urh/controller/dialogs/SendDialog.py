@@ -42,7 +42,7 @@ class SendDialog(SendRecvDialog):
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
-                                                                   QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                   QPen(QColor(Qt.transparent), 0),
                                                                    QBrush(constants.SEND_INDICATOR_COLOR))
             self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
             self.scene_manager.init_scene()

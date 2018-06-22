@@ -55,21 +55,22 @@ def release():
     call(["git", "commit", "-m", "version" + cur_version])
     call(["git", "push"])
 
-    # Publish to PyPi
     os.chdir(script_dir)
 
     # Remove local tags
     call("git tag -l | xargs git tag -d", shell=True)
     call(["git", "fetch", "--tags"])
 
+    # Push new tag
     call(["git", "tag", "v" + cur_version, "-m", "version " + cur_version])
     call(["git", "push", "origin", "--tags"])  # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
+
+    # region Publish to PyPi
     call(["python", "setup.py", "sdist"])
     call("twine upload dist/*", shell=True)
+    #endregion
 
-    # Publish to AUR
-    # Adapt pkgver
-    # Regenerate md5sum and sha256sum
+    # region Publish to AUR
     os.chdir(tempfile.gettempdir())
     call(["wget", "https://github.com/jopohl/urh/tarball/v" + cur_version])
     md5sum = check_output(["md5sum", "v" + cur_version]).decode("ascii").split(" ")[0]
@@ -84,7 +85,8 @@ def release():
     try:
         os.chdir("urh")
     except FileNotFoundError:
-        input("Could not clone AUR package. Please clone manually in {}".format(os.path.realpath(os.curdir)))
+        input("Could not clone AUR package. Please clone manually in {} "
+              "and press enter afterwards".format(os.path.realpath(os.curdir)))
         os.chdir("urh")
 
     for line in fileinput.input("PKGBUILD", inplace=True):
@@ -101,8 +103,19 @@ def release():
     call(["git", "commit", "-am", "version " + cur_version])
     call(["git", "push"])
 
+    #endregion
+
     os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
+    #region Build docker image and push to DockerHub
+    os.chdir(os.path.dirname(__file__))
+    call(["docker", "login"])
+    call(["docker", "build", "--no-cache",
+          "--tag", "jopohl/urh:latest",
+          "--tag", "jopohl/urh:{}".format(cur_version), "."])
+    call(["docker", "push", "jopohl/urh:latest"])
+    call(["docker", "push", "jopohl/urh:{}".format(cur_version)])
+    #endregion
 
 if __name__ == "__main__":
     cleanup()

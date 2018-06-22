@@ -1,4 +1,4 @@
-cimport cairspy
+cimport urh.dev.native.lib.cairspy as cairspy
 import time
 from cpython cimport array
 import array

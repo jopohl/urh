@@ -1,18 +1,17 @@
 import os
-import platform
+import subprocess
 import sys
 import tempfile
 import time
-import subprocess
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory, \
     QRadioButton, QFileDialog
 
 from urh import constants, colormaps
 from urh.controller.widgets.PluginFrame import PluginFrame
-from urh.dev.BackendHandler import BackendHandler, Backends, BackendContainer
+from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
@@ -23,6 +22,124 @@ from urh.ui.ui_options import Ui_DialogOptions
 from urh.util import util
 
 
+class DeviceOptionsTableModel(QAbstractTableModel):
+    header_labels = ["Software Defined Radio", "Info", "Native backend (recommended)", "GNU Radio backend", "State"]
+
+    def __init__(self, backend_handler: BackendHandler, parent=None):
+        self.backend_handler = backend_handler
+
+        super().__init__(parent)
+
+    def update(self):
+        self.beginResetModel()
+        self.endResetModel()
+
+    def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
+        return len(self.header_labels)
+
+    def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
+        return len(self.backend_handler.DEVICE_NAMES)
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+            return self.header_labels[section]
+        return super().headerData(section, orientation, role)
+
+    def get_device_at(self, index: int):
+        dev_key = self.backend_handler.get_key_from_device_display_text(self.backend_handler.DEVICE_NAMES[index])
+        return self.backend_handler.device_backends[dev_key]
+
+    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+        if not index.isValid():
+            return None
+
+        i = index.row()
+        j = index.column()
+        device = self.get_device_at(i)
+        if role == Qt.DisplayRole:
+            if j == 0:
+                return self.backend_handler.DEVICE_NAMES[i]
+            elif j == 1:
+                if device.supports_rx and device.supports_tx:
+                    device_info = "supports RX and TX"
+                elif device.supports_rx and not device.supports_tx:
+                    device_info = "supports RX only"
+                elif not device.supports_rx and device.supports_tx:
+                    device_info = "supports TX only"
+                else:
+                    device_info = ""
+                return device_info
+            elif j == 2:
+                if device.has_native_backend:
+                    return ""
+                else:
+                    return "not available"
+            elif j == 3:
+                if device.has_gnuradio_backend:
+                    return ""
+                else:
+                    return "not available"
+            elif j == 4:
+                if device.has_native_backend or device.has_gnuradio_backend:
+                    return "enabled" if device.is_enabled else "disabled"
+                else:
+                    return "no backend available"
+        elif role == Qt.CheckStateRole:
+            if j == 2 and device.has_native_backend:
+                return Qt.Checked if device.selected_backend == Backends.native else Qt.Unchecked
+            elif j == 3 and device.has_gnuradio_backend:
+                return Qt.Checked if device.selected_backend == Backends.grc else Qt.Unchecked
+            elif j == 4 and (device.has_native_backend or device.has_gnuradio_backend):
+                return Qt.Checked if device.is_enabled else Qt.Unchecked
+
+    def setData(self, index: QModelIndex, value, role=None):
+        if not index.isValid():
+            return False
+
+        i, j = index.row(), index.column()
+        device = self.get_device_at(i)
+        if role == Qt.CheckStateRole:
+            enabled = bool(value)
+            if j == 2:
+                if enabled and device.has_native_backend:
+                    device.selected_backend = Backends.native
+                elif not enabled and device.has_gnuradio_backend:
+                    device.selected_backend = Backends.grc
+            elif j == 3:
+                if enabled and device.has_gnuradio_backend:
+                    device.selected_backend = Backends.grc
+                elif not enabled and device.has_native_backend:
+                    device.selected_backend = Backends.native
+            elif j == 4:
+                device.is_enabled = enabled
+
+            self.update()
+            device.write_settings()
+            return True
+
+    def flags(self, index: QModelIndex):
+        if not index.isValid():
+            return None
+
+        j = index.column()
+        device = self.get_device_at(index.row())
+        if j in [0, 1, 2, 3] and not device.is_enabled:
+            return Qt.NoItemFlags
+        if j == 2 and not device.has_native_backend:
+            return Qt.NoItemFlags
+        elif j == 3 and not device.has_gnuradio_backend:
+            return Qt.NoItemFlags
+        elif j == 4 and not device.has_native_backend and not device.has_gnuradio_backend:
+            return Qt.NoItemFlags
+
+        flags = Qt.ItemIsEnabled
+
+        if j in [2, 3, 4]:
+            flags |= Qt.ItemIsUserCheckable
+
+        return flags
+
+
 class OptionsDialog(QDialog):
     values_changed = pyqtSignal(dict)
 
@@ -30,9 +147,17 @@ class OptionsDialog(QDialog):
         super().__init__(parent)
 
         self.backend_handler = BackendHandler()
+        self.backend_handler.set_gnuradio_installed_status()
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
+
+        self.device_options_model = DeviceOptionsTableModel(self.backend_handler, self)
+        self.device_options_model.update()
+        self.ui.tblDevices.setModel(self.device_options_model)
+        self.ui.tblDevices.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        self.ui.tblDevices.setItemDelegateForColumn(1, ComboBoxDelegate(["native", "GNU Radio"]))
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         layout = QHBoxLayout(self.ui.tab_plugins)
@@ -77,12 +202,6 @@ class OptionsDialog(QDialog):
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
         self.ui.lineEditGnuradioDirectory.setCompleter(completer)
 
-        for dev_name in self.backend_handler.DEVICE_NAMES:
-            self.ui.listWidgetDevices.addItem(dev_name)
-
-        self.set_device_status()
-
-        self.ui.listWidgetDevices.setCurrentRow(0)
         self.refresh_device_tab()
 
         self.create_connects()
@@ -109,33 +228,12 @@ class OptionsDialog(QDialog):
         except TypeError:
             pass
 
-    @property
-    def selected_device(self) -> BackendContainer:
-        try:
-            devname = self.ui.listWidgetDevices.currentItem().text().lower()
-            dev_key = self.__get_key_from_device_display_text(devname)
-            return self.backend_handler.device_backends[dev_key]
-        except:
-            return ""
-
-    def __get_key_from_device_display_text(self, displayed_device_name):
-        displayed_device_name = displayed_device_name.lower()
-        for key in self.backend_handler.DEVICE_NAMES:
-            key = key.lower()
-            if displayed_device_name.startswith(key):
-                return key
-        return None
-
     def create_connects(self):
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
         self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
         self.ui.btnChoosePython2Interpreter.clicked.connect(self.on_btn_choose_python2_interpreter_clicked)
         self.ui.btnChooseGnuRadioDirectory.clicked.connect(self.on_btn_choose_gnuradio_directory_clicked)
         self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
-        self.ui.listWidgetDevices.currentRowChanged.connect(self.on_list_widget_devices_current_row_changed)
-        self.ui.chkBoxDeviceEnabled.clicked.connect(self.on_chk_box_device_enabled_clicked)
-        self.ui.rbGnuradioBackend.clicked.connect(self.on_rb_gnuradio_backend_clicked)
-        self.ui.rbNativeBackend.clicked.connect(self.on_rb_native_backend_clicked)
         self.ui.comboBoxTheme.currentIndexChanged.connect(self.on_combo_box_theme_index_changed)
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
@@ -147,10 +245,10 @@ class OptionsDialog(QDialog):
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
-        self.ui.btnHealthCheck.clicked.connect(self.on_btn_health_check_clicked)
         self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
         self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
         self.ui.btnViewBuildLog.clicked.connect(self.on_btn_view_build_log_clicked)
+        self.ui.labelDeviceMissingInfo.linkActivated.connect(self.on_label_device_missing_info_link_activated)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -163,41 +261,6 @@ class OptionsDialog(QDialog):
             self.ui.lGnuradioInstalled.setStyleSheet("color: red")
             self.ui.lGnuradioInstalled.setText(
                 self.tr("Gnuradio is not installed or incompatible with python2 interpreter."))
-
-    def show_selected_device_params(self):
-        if self.ui.listWidgetDevices.currentRow() >= 0:
-            dev = self.selected_device
-
-            self.ui.chkBoxDeviceEnabled.setEnabled(len(dev.avail_backends) > 0)
-            self.ui.rbGnuradioBackend.setEnabled(dev.has_gnuradio_backend)
-            self.ui.rbNativeBackend.setEnabled(dev.has_native_backend)
-
-            self.ui.chkBoxDeviceEnabled.setChecked(dev.is_enabled)
-            self.ui.rbGnuradioBackend.setChecked(dev.selected_backend == Backends.grc)
-            self.ui.rbNativeBackend.setChecked(dev.selected_backend == Backends.native)
-
-            if dev.supports_tx and dev.supports_rx:
-                self.ui.lSupport.setText(self.tr("device supports sending and receiving"))
-                self.ui.lSupport.setStyleSheet("color: green")
-            elif dev.supports_rx and not dev.supports_tx:
-                self.ui.lSupport.setText(self.tr("device supports receiving only"))
-                self.ui.lSupport.setStyleSheet("color: blue")
-            elif not dev.supports_rx and dev.supports_tx:
-                self.ui.lSupport.setText(self.tr("device supports sending only"))
-                self.ui.lSupport.setStyleSheet("color: blue")
-            else:
-                self.ui.lSupport.setText(self.tr("device supports neither sending nor receiving"))
-                self.ui.lSupport.setStyleSheet("color: red")
-
-    def set_device_status(self):
-        for i in range(self.ui.listWidgetDevices.count()):
-            w = self.ui.listWidgetDevices.item(i)
-            dev_key = self.__get_key_from_device_display_text(w.text())
-            is_enabled = self.backend_handler.device_backends[dev_key].is_enabled
-            selected_backend = self.backend_handler.device_backends[dev_key].selected_backend.value
-            suffix = self.tr("enabled") if is_enabled else self.tr("disabled")
-            dev_name = next(dn for dn in BackendHandler.DEVICE_NAMES if dn.lower() == dev_key)
-            w.setText("{0}\t ({2})\t {1}".format(dev_name, suffix, selected_backend))
 
     def read_options(self):
         settings = constants.SETTINGS
@@ -214,8 +277,7 @@ class OptionsDialog(QDialog):
     def refresh_device_tab(self):
         self.backend_handler.get_backends()
         self.show_gnuradio_infos()
-        self.show_selected_device_params()
-        self.set_device_status()
+        self.device_options_model.update()
 
         self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
         self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
@@ -269,7 +331,6 @@ class OptionsDialog(QDialog):
 
     def set_gnuradio_status(self):
         self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
-        constants.SETTINGS.setValue("python2_exe", self.ui.lineEditPython2Interpreter.text())
 
         self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
         constants.SETTINGS.setValue("gnuradio_install_dir", self.ui.lineEditGnuradioDirectory.text())
@@ -361,35 +422,9 @@ class OptionsDialog(QDialog):
             self.ui.lineEditGnuradioDirectory.setText(directory)
             self.set_gnuradio_status()
 
-    @pyqtSlot()
-    def on_chk_box_device_enabled_clicked(self):
-        self.selected_device.is_enabled = bool(self.ui.chkBoxDeviceEnabled.isChecked())
-        self.selected_device.write_settings()
-        self.set_device_status()
-
-    @pyqtSlot()
-    def on_rb_gnuradio_backend_clicked(self):
-        if Backends.grc in self.selected_device.avail_backends:
-            self.ui.rbGnuradioBackend.setChecked(True)
-            self.selected_device.selected_backend = Backends.grc
-            self.selected_device.write_settings()
-            self.set_device_status()
-
-    @pyqtSlot()
-    def on_rb_native_backend_clicked(self):
-        if Backends.native in self.selected_device.avail_backends:
-            self.ui.rbNativeBackend.setChecked(True)
-            self.selected_device.selected_backend = Backends.native
-            self.selected_device.write_settings()
-            self.set_device_status()
-
     @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
         constants.SETTINGS.setValue("align_labels", checked)
-
-    @pyqtSlot(int)
-    def on_list_widget_devices_current_row_changed(self, current_row: int):
-        self.show_selected_device_params()
 
     @pyqtSlot(bool)
     def on_radio_button_gnuradio_directory_clicked(self, checked: bool):
@@ -407,7 +442,7 @@ class OptionsDialog(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
-        extensions = ExtensionHelper.get_device_extensions(use_cython=False, library_dirs=library_dirs)
+        extensions = ExtensionHelper.get_device_extensions(library_dirs=library_dirs)
 
         self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
         QApplication.instance().processEvents()
@@ -444,17 +479,6 @@ class OptionsDialog(QDialog):
         self.ui.btnViewBuildLog.show()
 
     @pyqtSlot()
-    def on_btn_health_check_clicked(self):
-        info = ExtensionHelper.perform_health_check()
-        info += "\n" + BackendHandler.perform_soundcard_health_check()
-
-        if util.get_shared_library_path():
-            info += "\n\n[INFO] Used DLLs from " + util.get_shared_library_path()
-
-        d = util.create_textbox_dialog(info, "Health check for native extensions", self)
-        d.show()
-
-    @pyqtSlot()
     def on_checkbox_multiple_modulations_clicked(self):
         constants.SETTINGS.setValue("multiple_modulations", self.ui.checkBoxMultipleModulations.isChecked())
 
@@ -465,6 +489,21 @@ class OptionsDialog(QDialog):
 
         dialog = util.create_textbox_dialog(self.build_log, "Build log", parent=self)
         dialog.show()
+
+    @pyqtSlot(str)
+    def on_label_device_missing_info_link_activated(self, link: str):
+        if link == "health_check":
+            info = ExtensionHelper.perform_health_check()
+            info += "\n" + BackendHandler.perform_soundcard_health_check()
+
+            if util.get_shared_library_path():
+                if sys.platform == "win32":
+                    info += "\n\n[INFO] Used DLLs from " + util.get_shared_library_path()
+                else:
+                    info += "\n\n[INFO] Used shared libraries from " + util.get_shared_library_path()
+
+            d = util.create_textbox_dialog(info, "Health check for native extensions", self)
+            d.show()
 
     @staticmethod
     def write_default_options():

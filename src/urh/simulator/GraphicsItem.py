@@ -125,12 +125,12 @@ class GraphicsItem(QGraphicsObject):
         if self.hover_active or self.isSelected():
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(constants.SELECTION_COLOR)
-            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.setPen(QPen(QColor(Qt.transparent), 0))
             painter.drawRect(self.boundingRect())
         elif not self.is_valid():
             painter.setOpacity(constants.SELECTION_OPACITY)
             painter.setBrush(QColor(255, 0, 0, 150))
-            painter.setPen(QPen(QColor(Qt.transparent), Qt.FlatCap))
+            painter.setPen(QPen(QColor(Qt.transparent), 0))
             painter.drawRect(self.boundingRect())
 
         if self.drag_over:

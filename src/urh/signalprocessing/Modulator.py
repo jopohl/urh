@@ -123,23 +123,23 @@ class Modulator(object):
 
     @property
     def data_scene(self) -> QGraphicsScene:
-        ones = np.ones(self.samples_per_bit, dtype=np.float32) * 1
-        zeros = np.ones(self.samples_per_bit, dtype=np.float32) * -1
         n = self.samples_per_bit * len(self.display_bits)
-        y = []
-        for bit in self.display_bits:
+        y = np.ones(n, dtype=np.float32)
+
+        for i, bit in enumerate(self.display_bits):
             if bit == "0":
-                y.extend(zeros)
-            elif bit == "1":
-                y.extend(ones)
+                y[i*self.samples_per_bit:(i+1)*self.samples_per_bit] = -1.0
+
         x = np.arange(0, n).astype(np.int64)
+
         scene = ZoomableScene()
-        scene.setSceneRect(0, -1, n, 2)
+        scene.setSceneRect(0, -1.25, n, 2.5)
         scene.setBackgroundBrush(constants.BGCOLOR)
         scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
-        y = np.array(y) if len(y) > 0 else np.array(y).astype(np.float32)
+
         path = path_creator.array_to_QPath(x, y)
         scene.addPath(path, QPen(constants.LINECOLOR, 0))
+
         return scene
 
     def modulate(self, data=None, pause=0, start=0):

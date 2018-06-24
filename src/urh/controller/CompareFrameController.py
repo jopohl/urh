@@ -737,6 +737,10 @@ class CompareFrameController(QWidget):
 
         self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(row, column))
 
+        self.show_all_cols()
+        for lbl in filter(lambda l: not l.show, self.proto_analyzer.protocol_labels):
+            self.set_protocol_label_visibility(lbl)
+
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
         self.ui.lSearchTotal.setText((str(len(self.protocol_model.search_results))))
@@ -797,9 +801,8 @@ class CompareFrameController(QWidget):
 
     def set_protocol_label_visibility(self, lbl: ProtocolLabel, message: Message = None):
         try:
-            message = message if message else next(
-                msg for msg in self.proto_analyzer.messages if lbl in msg.message_type)
-            start, end = message.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
+            message = message if message else next(m for m in self.proto_analyzer.messages if lbl in m.message_type)
+            start, end = message.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True, consider_alignment=True)
 
             for i in range(start, end):
                 self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)

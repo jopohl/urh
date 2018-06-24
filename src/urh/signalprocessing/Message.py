@@ -505,7 +505,8 @@ class Message(object):
         result.from_xml(tag, participants, decoders=decoders, message_types=message_types)
         return result
 
-    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
-        start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
-        end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]
+    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool, consider_alignment=False):
+        a = self.alignment_offset if consider_alignment else 0
+        start = self.convert_index(index=lbl.start+a, from_view=0, to_view=view, decoded=decode)[0]
+        end = self.convert_index(index=lbl.end+a, from_view=0, to_view=view, decoded=decode)[1]
         return int(start), int(end)

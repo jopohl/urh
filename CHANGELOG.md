@@ -7,6 +7,8 @@ __Import announcement if you build URH manually__: Cython is now a __required__ 
 - [#470](https://github.com/jopohl/urh/pull/470) - improve conditional compiling of native device extensions
 - [#469](https://github.com/jopohl/urh/pull/469) - improve device selection in options, use a table instead of a list view
 - [#468](https://github.com/jopohl/urh/pull/468) - improve python2 interpreter settings for GNU Radio backend with empty ``` urh.ini ```
+- [#458](https://github.com/jopohl/urh/pull/458) - add alignment action to analysis
+![alignment image](https://i.imgur.com/xQt7H7Y.png)
 
 ---
 

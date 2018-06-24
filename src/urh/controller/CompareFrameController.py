@@ -66,11 +66,12 @@ class CompareFrameController(QWidget):
         self.__active_group_ids = [0]
         self.selected_protocols = set()
 
-        self.search_select_search_menu = QMenu()
-        self.search_action = self.search_select_search_menu.addAction(self.tr("Search"))
-        self.select_action = self.search_select_search_menu.addAction(self.tr("Select all"))
-        self.filter_action = self.search_select_search_menu.addAction(self.tr("Filter"))
-        self.ui.btnSearchSelectFilter.setMenu(self.search_select_search_menu)
+        self.search_select_filter_align_menu = QMenu()
+        self.search_action = self.search_select_filter_align_menu.addAction(self.tr("Search"))
+        self.select_action = self.search_select_filter_align_menu.addAction(self.tr("Select all"))
+        self.filter_action = self.search_select_filter_align_menu.addAction(self.tr("Filter"))
+        self.align_action = self.search_select_filter_align_menu.addAction(self.tr("Align"))
+        self.ui.btnSearchSelectFilter.setMenu(self.search_select_filter_align_menu)
 
         self.analyze_menu = QMenu()
         self.assign_participants_action = self.analyze_menu.addAction(self.tr("Assign participants"))
@@ -85,6 +86,7 @@ class CompareFrameController(QWidget):
         self.ui.btnAnalyze.setMenu(self.analyze_menu)
 
         self.ui.lblShownRows.hide()
+        self.ui.lblClearAlignment.hide()
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants,
                                                  self)  # type: ProtocolTableModel
@@ -265,7 +267,9 @@ class CompareFrameController(QWidget):
         self.search_action.triggered.connect(self.on_search_action_triggered)
         self.select_action.triggered.connect(self.on_select_action_triggered)
         self.filter_action.triggered.connect(self.on_filter_action_triggered)
+        self.align_action.triggered.connect(self.on_align_action_triggered)
         self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
+        self.ui.lblClearAlignment.linkActivated.connect(self.on_label_clear_alignment_link_activated)
 
         self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
         self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
@@ -589,23 +593,20 @@ class CompareFrameController(QWidget):
         if len(sel_cols) == 0 or len(sel_rows) == 0:
             return
 
-        startCol, endCol = numpy.min(sel_cols), numpy.max(sel_cols)
-        startRow, endRow = numpy.min(sel_rows), numpy.max(sel_rows)
+        start_col, end_col = numpy.min(sel_cols), numpy.max(sel_cols)
+        start_row, end_row = numpy.min(sel_rows), numpy.max(sel_rows)
         new_view = self.ui.cbProtoView.currentIndex()
 
-        message = self.proto_analyzer.messages[endRow]
-        startCol = message.convert_index(startCol, old_view, new_view, True)[0]
-        endCol = message.convert_index(endCol, old_view, new_view, True)[1]
+        message = self.proto_analyzer.messages[end_row]
+        start_col = message.convert_index(start_col, old_view, new_view, True)[0]
+        end_col = message.convert_index(end_col, old_view, new_view, True)[1]
 
-        endCol = endCol if endCol < len(self.protocol_model.display_data[endRow]) else len(
-            self.protocol_model.display_data[endRow]) - 1
-
-        startindex = self.protocol_model.index(startRow, startCol)
-        endindex = self.protocol_model.index(endRow, endCol)
-        mid_index = self.protocol_model.index(int((startRow + endRow) / 2), int((startCol + endCol) / 2))
+        start_index = self.protocol_model.index(start_row, start_col)
+        end_index = self.protocol_model.index(end_row, end_col)
+        mid_index = self.protocol_model.index(int((start_row + end_row) / 2), int((start_col + end_col) / 2))
 
         sel = QItemSelection()
-        sel.select(startindex, endindex)
+        sel.select(start_index, end_index)
 
         self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
         self.ui.tblViewProtocol.scrollTo(mid_index)
@@ -715,6 +716,31 @@ class CompareFrameController(QWidget):
         else:
             self.ui.lblShownRows.hide()
 
+    def align_messages(self, pattern=None):
+        pattern = self.ui.lineEditSearch.text() if pattern is None else pattern
+        self.proto_analyzer.align_messages(pattern, view_type=self.ui.cbProtoView.currentIndex())
+        self.ui.lblClearAlignment.setVisible(any(msg.alignment_offset != 0 for msg in self.proto_analyzer.messages))
+        self.protocol_model.update()
+
+        row = column = 0
+        for i, message in enumerate(self.proto_analyzer.messages):
+            if self.ui.tblViewProtocol.isRowHidden(i):
+                continue
+
+            data = message.view_to_string(self.ui.cbProtoView.currentIndex(), decoded=True)
+            try:
+                row = i
+                column = data.index(pattern) + len(pattern) + self.protocol_model.get_alignment_offset_at(i) - 1
+                break
+            except ValueError:
+                pass
+
+        self.ui.tblViewProtocol.scrollTo(self.protocol_model.index(row, column))
+
+        self.show_all_cols()
+        for lbl in filter(lambda l: not l.show, self.proto_analyzer.protocol_labels):
+            self.set_protocol_label_visibility(lbl)
+
     def next_search_result(self):
         index = int(self.ui.lSearchCurrent.text())
         self.ui.lSearchTotal.setText((str(len(self.protocol_model.search_results))))
@@ -775,9 +801,8 @@ class CompareFrameController(QWidget):
 
     def set_protocol_label_visibility(self, lbl: ProtocolLabel, message: Message = None):
         try:
-            message = message if message else next(
-                msg for msg in self.proto_analyzer.messages if lbl in msg.message_type)
-            start, end = message.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True)
+            message = message if message else next(m for m in self.proto_analyzer.messages if lbl in m.message_type)
+            start, end = message.get_label_range(lbl, self.ui.cbProtoView.currentIndex(), True, consider_alignment=True)
 
             for i in range(start, end):
                 self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
@@ -1146,6 +1171,17 @@ class CompareFrameController(QWidget):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
 
+    @pyqtSlot()
+    def on_align_action_triggered(self):
+        def on_btn_search_select_filter_clicked():
+            self.align_messages()
+
+        self.ui.btnSearchSelectFilter.setText("Align")
+        self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("align-horizontal-left"))
+        self.set_search_ui_visibility(False)
+        self.ui.btnSearchSelectFilter.clicked.disconnect()
+        self.ui.btnSearchSelectFilter.clicked.connect(on_btn_search_select_filter_clicked)
+
     @pyqtSlot(bool)
     def on_writeable_changed(self, writeable_status: bool):
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
@@ -1433,6 +1469,11 @@ class CompareFrameController(QWidget):
         if link == "reset_filter":
             self.ui.lineEditSearch.clear()
             self.show_all_rows()
+
+    @pyqtSlot(str)
+    def on_label_clear_alignment_link_activated(self, link: str):
+        if link == "reset_alignment":
+            self.align_messages(pattern="")
 
     @pyqtSlot()
     def on_protocol_updated(self):

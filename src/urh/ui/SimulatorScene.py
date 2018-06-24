@@ -117,11 +117,13 @@ class SimulatorScene(QGraphicsScene):
             self.on_item_added(child)
 
     def model_to_scene(self, model_item: SimulatorItem):
-        if (model_item is None or
-                model_item is self.simulator_config.rootItem):
+        if (model_item is None or model_item is self.simulator_config.rootItem):
             return None
 
-        return self.items_dict[model_item]
+        try:
+            return self.items_dict[model_item]
+        except KeyError:
+            return None
 
     def insert_participant(self, participant: Participant):
         participant_item = ParticipantItem(participant)

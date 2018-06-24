@@ -15,7 +15,6 @@ class EndlessSender(object):
         self.ringbuffer = RingBuffer(int(constants.CONTINUOUS_BUFFER_SIZE_MB * 10 ** 6) // 8)
         self.__device.continuous_send_ring_buffer = self.ringbuffer
         self.__device.is_send_continuous = True
-        self.__device.num_sending_repeats = 0
 
     @property
     def device(self) -> VirtualDevice:
@@ -25,7 +24,6 @@ class EndlessSender(object):
     def device(self, value: VirtualDevice):
         self.__device = value
         self.__device.is_send_continuous = True
-        self.__device.num_sending_repeats = 0
         self.__device.continuous_send_ring_buffer = self.ringbuffer
 
     @property
@@ -38,6 +36,7 @@ class EndlessSender(object):
             self.device = VirtualDevice(backend_handler=self.device.backend_handler, name=value, mode=Mode.send)
 
     def start(self):
+        self.device.num_sending_repeats = 0
         self.device.start()
 
     def stop(self):

@@ -150,7 +150,7 @@ class ModulatorDialog(QDialog):
 
         self.ui.chkBoxLockSIV.stateChanged.connect(self.on_lock_siv_changed)
         self.ui.btnRestoreBits.clicked.connect(self.on_btn_restore_bits_clicked)
-        self.ui.btnSaveAndClose.clicked.connect(self.close)
+
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
 

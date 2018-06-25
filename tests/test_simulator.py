@@ -97,7 +97,7 @@ class TestSimulator(QtTestCase):
         simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
                               self.form.project_manager, sniffer=sniffer, sender=sender)
 
-        pause = 100000
+        pause = 100
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
                                  pause=pause, message_type=MessageType("empty_message_type"), source=part_a)
@@ -122,7 +122,7 @@ class TestSimulator(QtTestCase):
 
         current_index = Value("L")
         elapsed = Value("f")
-        target_num_samples = 113600 - pause
+        target_num_samples = 13600 + pause
         receive_process = Process(target=receive, args=(port, current_index, target_num_samples, elapsed))
         receive_process.daemon = True
         receive_process.start()

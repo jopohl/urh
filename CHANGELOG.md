@@ -2,6 +2,7 @@
 ## v2.1.2 (upcoming)
 __Import announcement if you build URH manually__: Cython is now a __required__ dependency to build URH. If you install URH from PyPi (with ``` pip ```) or use the ``` .msi ``` installer you will not notice any difference. However, if you run URH from source you need to install cython which is as easy as ``` python3 -m pip install cython ```.
 
+- [#478](https://github.com/jopohl/urh/pull/478) - make message pause configurable in simulator
 - [#476](https://github.com/jopohl/urh/pull/476) - add padding when sending very short messages with soundcard
 - [#473](https://github.com/jopohl/urh/pull/473) - move ``` .desktop ``` file to ``` data ``` folder. __Important if you build a package of URH__
 - [#471](https://github.com/jopohl/urh/pull/471) - make relative external programs paths relative to project path

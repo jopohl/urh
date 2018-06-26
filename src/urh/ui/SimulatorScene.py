@@ -484,8 +484,12 @@ class SimulatorScene(QGraphicsScene):
             for msg in protocol.messages:
                 source, destination = self.detect_source_destination(msg)
 
-                messages.append(self.create_message(destination, copy.copy(msg.decoded_bits),
-                                                    msg.pause, msg.message_type, msg.decoder, source))
+                messages.append(self.create_message(destination=destination,
+                                                    plain_bits=copy.copy(msg.decoded_bits),
+                                                    pause=0,
+                                                    message_type=msg.message_type,
+                                                    decoder=msg.decoder,
+                                                    source=source))
 
         self.simulator_config.add_items(messages, pos, parent)
 

@@ -1,19 +1,18 @@
 import array
 import os
 import shlex
+import shutil
+import subprocess
 import sys
 import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
-import shutil
-import subprocess
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QSplitter
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
-
 from urh import constants
 from urh.util.Logger import logger
 
@@ -416,18 +415,18 @@ def validate_command(command: str):
 
 
 def set_splitter_stylesheet(splitter: QSplitter):
-    splitter.setHandleWidth(6)
-    bgcolor = constants.BGCOLOR.lighter(120)
-    r, g, b = bgcolor.red(), bgcolor.green(), bgcolor.blue()
+    splitter.setHandleWidth(4)
+    bgcolor = constants.BGCOLOR.lighter(150)
+    r, g, b, a = bgcolor.red(), bgcolor.green(), bgcolor.blue(), bgcolor.alpha()
     splitter.setStyleSheet("QSplitter::handle:vertical {{margin: 4px 0px; "
                            "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-                           "stop:0 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                           "stop:1 rgba(255, 255, 255, 0));"
+                           "stop:0.2 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+                           "stop:0.8 rgba(255, 255, 255, 0));"
                            "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
                            "QSplitter::handle:horizontal {{margin: 4px 0px; "
                            "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-                           "stop:0 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                           "stop:1 rgba(255, 255, 255, 0));"
-                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b))
+                           "stop:0.2 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+                           "stop:0.8 rgba(255, 255, 255, 0));"
+                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b, a))

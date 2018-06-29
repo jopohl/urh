@@ -1,5 +1,5 @@
 # Changelog
-## v2.1.2 (upcoming)
+## v2.2.0 (29/06/2018)
 __Import announcement if you build URH manually__: Cython is now a __required__ dependency to build URH. If you install URH from PyPi (with ``` pip ```) or use the ``` .msi ``` installer you will not notice any difference. However, if you run URH from source you need to install cython which is as easy as ``` python3 -m pip install cython ```.
 
 - [#478](https://github.com/jopohl/urh/pull/478) - make message pause configurable in simulator

@@ -23,7 +23,7 @@ from urh.util import util
 
 
 class DeviceOptionsTableModel(QAbstractTableModel):
-    header_labels = ["Software Defined Radio", "Info", "Native backend (recommended)", "GNU Radio backend", "State"]
+    header_labels = ["Software Defined Radio", "Info", "Native backend (recommended)", "GNU Radio backend"]
 
     def __init__(self, backend_handler: BackendHandler, parent=None):
         self.backend_handler = backend_handler
@@ -60,37 +60,30 @@ class DeviceOptionsTableModel(QAbstractTableModel):
             if j == 0:
                 return self.backend_handler.DEVICE_NAMES[i]
             elif j == 1:
-                if device.supports_rx and device.supports_tx:
-                    device_info = "supports RX and TX"
-                elif device.supports_rx and not device.supports_tx:
-                    device_info = "supports RX only"
-                elif not device.supports_rx and device.supports_tx:
-                    device_info = "supports TX only"
+                if device.is_enabled:
+                    if device.supports_rx and device.supports_tx:
+                        device_info = "supports RX and TX"
+                    elif device.supports_rx and not device.supports_tx:
+                        device_info = "supports RX only"
+                    elif not device.supports_rx and device.supports_tx:
+                        device_info = "supports TX only"
+                    else:
+                        device_info = ""
                 else:
-                    device_info = ""
+                    device_info = "disabled"
+
                 return device_info
             elif j == 2:
-                if device.has_native_backend:
-                    return ""
-                else:
-                    return "not available"
+                return "" if device.has_native_backend else "not available"
             elif j == 3:
-                if device.has_gnuradio_backend:
-                    return ""
-                else:
-                    return "not available"
-            elif j == 4:
-                if device.has_native_backend or device.has_gnuradio_backend:
-                    return "enabled" if device.is_enabled else "disabled"
-                else:
-                    return "no backend available"
+                return "" if device.has_gnuradio_backend else "not available"
         elif role == Qt.CheckStateRole:
-            if j == 2 and device.has_native_backend:
+            if j == 0 and (device.has_native_backend or device.has_gnuradio_backend):
+                return Qt.Checked if device.is_enabled else Qt.Unchecked
+            elif j == 2 and device.has_native_backend:
                 return Qt.Checked if device.selected_backend == Backends.native else Qt.Unchecked
             elif j == 3 and device.has_gnuradio_backend:
                 return Qt.Checked if device.selected_backend == Backends.grc else Qt.Unchecked
-            elif j == 4 and (device.has_native_backend or device.has_gnuradio_backend):
-                return Qt.Checked if device.is_enabled else Qt.Unchecked
 
     def setData(self, index: QModelIndex, value, role=None):
         if not index.isValid():
@@ -100,6 +93,8 @@ class DeviceOptionsTableModel(QAbstractTableModel):
         device = self.get_device_at(i)
         if role == Qt.CheckStateRole:
             enabled = bool(value)
+            if j == 0:
+                device.is_enabled = enabled
             if j == 2:
                 if enabled and device.has_native_backend:
                     device.selected_backend = Backends.native
@@ -110,8 +105,6 @@ class DeviceOptionsTableModel(QAbstractTableModel):
                     device.selected_backend = Backends.grc
                 elif not enabled and device.has_native_backend:
                     device.selected_backend = Backends.native
-            elif j == 4:
-                device.is_enabled = enabled
 
             self.update()
             device.write_settings()
@@ -123,18 +116,21 @@ class DeviceOptionsTableModel(QAbstractTableModel):
 
         j = index.column()
         device = self.get_device_at(index.row())
-        if j in [0, 1, 2, 3] and not device.is_enabled:
+        if j == 0 and not device.has_native_backend and not device.has_gnuradio_backend:
             return Qt.NoItemFlags
+
+        if j in [1, 2, 3] and not device.is_enabled:
+            return Qt.NoItemFlags
+
         if j == 2 and not device.has_native_backend:
             return Qt.NoItemFlags
-        elif j == 3 and not device.has_gnuradio_backend:
-            return Qt.NoItemFlags
-        elif j == 4 and not device.has_native_backend and not device.has_gnuradio_backend:
+
+        if j == 3 and not device.has_gnuradio_backend:
             return Qt.NoItemFlags
 
         flags = Qt.ItemIsEnabled
 
-        if j in [2, 3, 4]:
+        if j in [0, 2, 3]:
             flags |= Qt.ItemIsUserCheckable
 
         return flags

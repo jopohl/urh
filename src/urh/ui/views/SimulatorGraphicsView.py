@@ -285,7 +285,7 @@ class SimulatorGraphicsView(QGraphicsView):
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
                 swap_part_action.setIcon(QIcon.fromTheme("object-flip-horizontal"))
 
-            pause_action = menu.addAction("Set pause ({} samples)".format(self.context_menu_item.model_item.pause))
+            pause_action = menu.addAction("Set subsequent pause ({} samples)".format(self.context_menu_item.model_item.pause))
             pause_action.triggered.connect(self.on_pause_action_triggered)
 
         menu.addSeparator()
@@ -350,7 +350,8 @@ class SimulatorGraphicsView(QGraphicsView):
     @pyqtSlot()
     def on_pause_action_triggered(self):
         p = self.context_menu_item.model_item.pause if isinstance(self.context_menu_item, MessageItem) else 0
-        pause, ok = QInputDialog.getInt(self, self.tr("Enter new Pause Length"), self.tr("Pause Length:"), p, 0)
+        pause, ok = QInputDialog.getInt(self, self.tr("Enter new pause"),
+                                        self.tr("Pause in samples:"), p, 0)
         if ok:
             for msg in self.scene().get_selected_messages():
                 msg.pause = pause

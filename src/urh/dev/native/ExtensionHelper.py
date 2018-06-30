@@ -165,7 +165,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.pyx".format(dev_name))
 
     return Extension("urh.dev.native.lib." + dev_name,
-                     [cpp_file_path, os.path.join(cur_dir, "lib", "config.pxi")],
+                     [cpp_file_path],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language=language)
 

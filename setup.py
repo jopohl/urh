@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import tempfile
 
@@ -77,7 +78,7 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
+    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd", "*.pxi"]
 
     if IS_RELEASE and sys.platform == "win32":
         package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
@@ -99,7 +100,14 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
+    try:
+        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
+    except:
+        # Copy config.pxi in current directory so cython distutils can find it
+        # error occurs only sometimes, see https://github.com/jopohl/urh/issues/481
+        shutil.copy(ExtensionHelper.CONFIG_PXI_PATH, os.path.realpath(os.path.dirname(__file__)))
+        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
+        os.remove(os.path.realpath(os.path.join(os.path.dirname(__file__), "config.pxi")))
 
     return extensions
 
@@ -108,9 +116,6 @@ def read_long_description():
     try:
         with open("README.md") as f:
             text = f.read()
-
-        # Remove screenshots as they get rendered poorly on PyPi
-        # stripped_text = text[:text.index("# Screenshots")].rstrip()
         return text
     except:
         return ""
@@ -153,6 +158,3 @@ setup(
             'urh_cli = urh.cli.urh_cli:main',
         ]}
 )
-
-# python setup.py sdist --> Source distribution
-# python setup.py bdist --> Vorkompiliertes Package https://docs.python.org/3/distutils/builtdist.html

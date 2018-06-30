@@ -74,6 +74,7 @@ def main():
             from data import generate_ui
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
+            # The generate UI script cannot be found so we are most likely in release mode, no problem here.
             pass
 
     from urh.util import util

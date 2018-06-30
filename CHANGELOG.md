@@ -1,4 +1,9 @@
 # Changelog
+## v2.2.1 (30/06/2018)
+This is a hotfix release which targets issue [#481](https://github.com/jopohl/urh/issues/481), so if you had problems with a missing ``` config.pxi ``` make sure to use this version.
+
+---
+
 ## v2.2.0 (29/06/2018)
 __Import announcement if you build URH manually__: Cython is now a __required__ dependency to build URH. If you install URH from PyPi (with ``` pip ```) or use the ``` .msi ``` installer you will not notice any difference. However, if you run URH from source you need to install cython which is as easy as ``` python3 -m pip install cython ```.
 

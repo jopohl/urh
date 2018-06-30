@@ -74,7 +74,7 @@ def main():
             from data import generate_ui
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script can't be found. This is okay in release.")
+            pass
 
     from urh.util import util
     util.set_shared_library_path()

@@ -8,6 +8,7 @@ from importlib import import_module
 
 from setuptools import Extension
 
+CONFIG_PXI_PATH = os.path.join(os.path.dirname(__file__), "lib", "config.pxi")
 USE_RELATIVE_PATHS = False
 
 DEVICES = {
@@ -54,8 +55,7 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
 
 
 def generate_config_pxi(device_extras: list):
-    dirname = os.path.dirname(__file__)
-    with open(os.path.join(dirname, "lib", "config.pxi"), "w") as f:
+    with open(CONFIG_PXI_PATH, "w") as f:
         for extra, enabled in sorted(device_extras):
             f.write("DEF {} = {}\n".format(extra, int(enabled)))
 
@@ -165,7 +165,7 @@ def get_device_extension(dev_name: str, libraries: list, library_dirs: list, inc
         cpp_file_path = os.path.join(cur_dir, "lib", "{0}.pyx".format(dev_name))
 
     return Extension("urh.dev.native.lib." + dev_name,
-                     [cpp_file_path],
+                     [cpp_file_path, os.path.join(cur_dir, "lib", "config.pxi")],
                      libraries=libraries, library_dirs=library_dirs,
                      include_dirs=include_dirs, language=language)
 

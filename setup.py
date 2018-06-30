@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import tempfile
 
@@ -77,7 +78,7 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
+    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd", "*.pxi"]
 
     if IS_RELEASE and sys.platform == "win32":
         package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
@@ -99,7 +100,18 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
+    # Copy config.pxi in current dir so cython distutils can find it
+    try:
+        shutil.copy(ExtensionHelper.CONFIG_PXI_PATH, os.path.realpath(os.path.dirname(__file__)))
+    except FileNotFoundError:
+        print("Could not find config.pxi, try to cythonize anyway")
+
     extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
+
+    try:
+        os.remove(os.path.realpath(os.path.join(os.path.dirname(__file__), "config.pxi")))
+    except FileNotFoundError:
+        pass
 
     return extensions
 

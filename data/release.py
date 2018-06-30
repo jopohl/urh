@@ -119,5 +119,6 @@ def release():
 
 if __name__ == "__main__":
     cleanup()
+    input("Starting release. Hit a key to continue.")
     release()
     cleanup()

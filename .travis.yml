@@ -13,6 +13,7 @@ matrix:
     - python: 3.4_with_system_site_packages
     - python: 3.5
     - python: 3.6
+    - python: 3.7
     - os: osx
       language: generic
 
@@ -81,7 +82,7 @@ script:
     fi
   - pip3 install .
   - urh --version
-  #- urh autoclose
+  - urh autoclose
 
 after_success:
   - |

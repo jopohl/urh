@@ -1,5 +1,3 @@
-include "config.pxi"
-
 cdef extern from "libhackrf/hackrf.h":
     enum hackrf_error:
         HACKRF_SUCCESS = 0

@@ -1,5 +1,3 @@
-include "config.pxi"
-
 cdef extern from "rtl-sdr.h":
     ctypedef struct rtlsdr_dev_t:
         pass

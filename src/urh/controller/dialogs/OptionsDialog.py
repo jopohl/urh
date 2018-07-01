@@ -438,7 +438,7 @@ class OptionsDialog(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
-        extensions = ExtensionHelper.get_device_extensions(library_dirs=library_dirs)
+        extensions, _ = ExtensionHelper.get_device_extensions_and_extras(library_dirs=library_dirs)
 
         self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
         QApplication.instance().processEvents()

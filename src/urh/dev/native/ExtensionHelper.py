@@ -8,7 +8,6 @@ from importlib import import_module
 
 from setuptools import Extension
 
-CONFIG_PXI_PATH = os.path.join(os.path.dirname(__file__), "lib", "config.pxi")
 USE_RELATIVE_PATHS = False
 
 DEVICES = {
@@ -53,20 +52,13 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             devnull.close()
         shutil.rmtree(tmp_dir)
 
-
-def generate_config_pxi(device_extras: list):
-    with open(CONFIG_PXI_PATH, "w") as f:
-        for extra, enabled in sorted(device_extras):
-            f.write("DEF {} = {}\n".format(extra, int(enabled)))
-
-
-def get_device_extensions(library_dirs=None):
+def get_device_extensions_and_extras(library_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     include_dirs = []
 
-    device_extras = []
+    device_extras = dict()
 
     if os.path.isdir(os.path.join(cur_dir, "lib/shared")):
         # Device libs are packaged, so we are in release mode
@@ -75,11 +67,10 @@ def get_device_extensions(library_dirs=None):
         lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/shared"))
         for dev_name, params in DEVICES.items():
             # Since drivers are bundled we can enforce the extras
-            device_extras.extend([(extra, 1) for extra in params.get("extras", dict())])
+            device_extras.update({extra: 1 for extra in params.get("extras", dict())})
             result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 
-        generate_config_pxi(device_extras)
-        return result
+        return result, device_extras
 
     if sys.platform == "darwin":
         # On Mac OS X clang is by default not smart enough to search in the lib dir
@@ -116,37 +107,36 @@ def get_device_extensions(library_dirs=None):
             continue
         if build_device_extensions[dev_name] == 1:
             print("Enforcing native {0} support".format(dev_name))
-            device_extras.extend(__get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
+            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
             extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
             result.append(extension)
             continue
 
         if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
             print("Found {0} lib. Will compile with native {1} support".format(params["lib"], dev_name))
-            device_extras.extend(__get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
+            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
             extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
             result.append(extension)
         else:
             print("Skipping native support for {1}".format(params["lib"], dev_name))
 
-    generate_config_pxi(device_extras)
-    return result
+    return result, device_extras
 
 
-def __get_device_extras(compiler, dev_name, libraries, library_dirs, include_dirs):
+def get_device_extras(compiler, dev_name, libraries, library_dirs, include_dirs):
     try:
         extras = DEVICES[dev_name]["extras"]
     except KeyError:
         extras = dict()
 
-    result = []
+    result = dict()
 
     for extra, func_name in extras.items():
         if compiler_has_function(compiler, func_name, libraries, library_dirs, include_dirs):
-            result.append((extra, 1))
+            result[extra] = 1
         else:
             print("Skipping {} as installed driver does not support it".format(extra))
-            result.append((extra, 0))
+            result[extra] = 0
 
     return result
 
@@ -186,12 +176,12 @@ if __name__ == "__main__":
     from setuptools import setup
 
     if "-L" in sys.argv:
-        library_dirs = sys.argv[sys.argv.index("-L") + 1].split(":")
+        library_directories = sys.argv[sys.argv.index("-L") + 1].split(":")
     else:
-        library_dirs = None
+        library_directories = None
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    os.chdir("..")
+    os.chdir(os.path.join(cur_dir, "..", "..", ".."))
 
     try:
         from Cython.Build import cythonize
@@ -201,7 +191,8 @@ if __name__ == "__main__":
               file=sys.stderr)
         sys.exit(1)
 
+    dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories)
     setup(
         name="urh",
-        ext_modules=cythonize(get_device_extensions(library_dirs=library_dirs), force=True),
+        ext_modules=cythonize(dev_extensions, force=True, compile_time_env=dev_extras),
     )

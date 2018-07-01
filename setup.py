@@ -78,7 +78,7 @@ def get_package_data():
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd", "*.pxi"]
+    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
 
     if IS_RELEASE and sys.platform == "win32":
         package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
@@ -94,21 +94,14 @@ def get_extensions():
                             language="c++") for f in filenames]
 
     ExtensionHelper.USE_RELATIVE_PATHS = True
-    extensions += ExtensionHelper.get_device_extensions()
+    device_extensions, device_extras = ExtensionHelper.get_device_extensions_and_extras()
+    extensions += device_extensions
 
     if NO_NUMPY_WARNINGS_FLAG:
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    try:
-        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
-    except:
-        # Copy config.pxi in current directory so cython distutils can find it
-        # error occurs only sometimes, see https://github.com/jopohl/urh/issues/481
-        shutil.copy(ExtensionHelper.CONFIG_PXI_PATH, os.path.realpath(os.path.dirname(__file__)))
-        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
-        os.remove(os.path.realpath(os.path.join(os.path.dirname(__file__), "config.pxi")))
-
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True, compile_time_env=device_extras)
     return extensions
 
 

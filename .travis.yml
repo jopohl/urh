@@ -13,7 +13,7 @@ matrix:
     - python: 3.4_with_system_site_packages
     - python: 3.5
     - python: 3.6
-    - python: 3.7
+    # - python: 3.7  not available yet https://github.com/travis-ci/travis-ci/issues/9815
     - os: osx
       language: generic
 

@@ -111,7 +111,6 @@ class Ui_DialogCSVImport(object):
         self.retranslateUi(DialogCSVImport)
         self.buttonBox.accepted.connect(DialogCSVImport.accept)
         self.buttonBox.rejected.connect(DialogCSVImport.reject)
-        QtCore.QMetaObject.connectSlotsByName(DialogCSVImport)
         DialogCSVImport.setTabOrder(self.lineEditFilename, self.btnChooseFile)
         DialogCSVImport.setTabOrder(self.btnChooseFile, self.plainTextEditFilePreview)
         DialogCSVImport.setTabOrder(self.plainTextEditFilePreview, self.comboBoxCSVSeparator)

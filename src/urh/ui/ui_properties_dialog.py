@@ -66,7 +66,6 @@ class Ui_DialogLabels(object):
         self.verticalLayout_3.addWidget(self.btnConfirm)
 
         self.retranslateUi(DialogLabels)
-        QtCore.QMetaObject.connectSlotsByName(DialogLabels)
 
     def retranslateUi(self, DialogLabels):
         _translate = QtCore.QCoreApplication.translate

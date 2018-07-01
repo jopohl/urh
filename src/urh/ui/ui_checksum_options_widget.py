@@ -129,7 +129,6 @@ class Ui_ChecksumOptions(object):
 
         self.retranslateUi(ChecksumOptions)
         self.stackedWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(ChecksumOptions)
         ChecksumOptions.setTabOrder(self.comboBoxCRCFunction, self.lineEditCRCPolynomial)
         ChecksumOptions.setTabOrder(self.lineEditCRCPolynomial, self.lineEditStartValue)
         ChecksumOptions.setTabOrder(self.lineEditStartValue, self.lineEditFinalXOR)

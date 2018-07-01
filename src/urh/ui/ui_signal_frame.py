@@ -505,7 +505,6 @@ class Ui_SignalFrame(object):
 
         self.retranslateUi(SignalFrame)
         self.stackedWidget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(SignalFrame)
         SignalFrame.setTabOrder(self.btnSaveSignal, self.btnInfo)
         SignalFrame.setTabOrder(self.btnInfo, self.btnCloseSignal)
         SignalFrame.setTabOrder(self.btnCloseSignal, self.lineEditSignalName)

@@ -284,7 +284,6 @@ class Ui_SendRecvDialog(object):
 
         self.retranslateUi(SendRecvDialog)
         self.stackedWidget.setCurrentIndex(4)
-        QtCore.QMetaObject.connectSlotsByName(SendRecvDialog)
         SendRecvDialog.setTabOrder(self.btnStart, self.btnStop)
         SendRecvDialog.setTabOrder(self.btnStop, self.btnSave)
         SendRecvDialog.setTabOrder(self.btnSave, self.btnClear)

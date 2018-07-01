@@ -176,7 +176,6 @@ class Ui_ProjectDialog(object):
 
         self.retranslateUi(ProjectDialog)
         self.btnCancel.clicked.connect(ProjectDialog.close)
-        QtCore.QMetaObject.connectSlotsByName(ProjectDialog)
         ProjectDialog.setTabOrder(self.lineEdit_Path, self.btnSelectPath)
         ProjectDialog.setTabOrder(self.btnSelectPath, self.spinBoxSampleRate)
         ProjectDialog.setTabOrder(self.spinBoxSampleRate, self.spinBoxFreq)

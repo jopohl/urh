@@ -160,7 +160,6 @@ class Ui_SniffSettings(object):
 
         self.retranslateUi(SniffSettings)
         self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
-        QtCore.QMetaObject.connectSlotsByName(SniffSettings)
         SniffSettings.setTabOrder(self.groupBoxSniffSettings, self.spinbox_sniff_Noise)
         SniffSettings.setTabOrder(self.spinbox_sniff_Noise, self.spinbox_sniff_Center)
         SniffSettings.setTabOrder(self.spinbox_sniff_Center, self.spinbox_sniff_BitLen)

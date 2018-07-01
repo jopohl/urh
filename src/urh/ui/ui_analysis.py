@@ -569,7 +569,6 @@ class Ui_TabAnalysis(object):
         self.retranslateUi(TabAnalysis)
         self.tabWidget.setCurrentIndex(0)
         self.stackedWidgetLogicAnalysis.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(TabAnalysis)
 
     def retranslateUi(self, TabAnalysis):
         _translate = QtCore.QCoreApplication.translate

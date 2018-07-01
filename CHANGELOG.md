@@ -1,4 +1,9 @@
 # Changelog
+## v2.2.2 (01/07/2018)
+This release removes the ``` config.pxi ``` requirement which caused problems on Arch Linux and Gentoo during installation. More details in PR [#484](https://github.com/jopohl/urh/pull/484).
+
+---
+
 ## v2.2.1 (30/06/2018)
 This is a hotfix release which targets issue [#481](https://github.com/jopohl/urh/issues/481), so if you had problems with a missing ``` config.pxi ``` make sure to use this version.
 

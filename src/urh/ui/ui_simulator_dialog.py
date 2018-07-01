@@ -261,7 +261,6 @@ class Ui_DialogSimulator(object):
         self.tabWidget.setCurrentIndex(0)
         self.groupBoxSimulationStatus.toggled['bool'].connect(self.frame.setVisible)
         self.groupBoxRXStatus.toggled['bool'].connect(self.frame_2.setVisible)
-        QtCore.QMetaObject.connectSlotsByName(DialogSimulator)
 
     def retranslateUi(self, DialogSimulator):
         _translate = QtCore.QCoreApplication.translate

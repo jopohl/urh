@@ -537,7 +537,6 @@ class Ui_DialogModulation(object):
         self.verticalLayout.addWidget(self.scrollArea)
 
         self.retranslateUi(DialogModulation)
-        QtCore.QMetaObject.connectSlotsByName(DialogModulation)
         DialogModulation.setTabOrder(self.comboBoxCustomModulations, self.btnAddModulation)
         DialogModulation.setTabOrder(self.btnAddModulation, self.btnRemoveModulation)
         DialogModulation.setTabOrder(self.btnRemoveModulation, self.scrollArea)

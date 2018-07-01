@@ -235,7 +235,6 @@ class Ui_FormDeviceSettings(object):
 
         self.retranslateUi(FormDeviceSettings)
         self.groupBoxDeviceSettings.toggled['bool'].connect(self.frame_2.setVisible)
-        QtCore.QMetaObject.connectSlotsByName(FormDeviceSettings)
         FormDeviceSettings.setTabOrder(self.groupBoxDeviceSettings, self.cbDevice)
         FormDeviceSettings.setTabOrder(self.cbDevice, self.comboBoxChannel)
         FormDeviceSettings.setTabOrder(self.comboBoxChannel, self.comboBoxAntenna)

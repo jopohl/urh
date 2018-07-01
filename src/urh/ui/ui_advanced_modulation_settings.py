@@ -51,7 +51,6 @@ class Ui_DialogAdvancedModSettings(object):
         self.retranslateUi(DialogAdvancedModSettings)
         self.buttonBox.accepted.connect(DialogAdvancedModSettings.accept)
         self.buttonBox.rejected.connect(DialogAdvancedModSettings.reject)
-        QtCore.QMetaObject.connectSlotsByName(DialogAdvancedModSettings)
 
     def retranslateUi(self, DialogAdvancedModSettings):
         _translate = QtCore.QCoreApplication.translate

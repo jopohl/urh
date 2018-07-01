@@ -57,7 +57,6 @@ class Ui_FilterDialog(object):
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 2)
 
         self.retranslateUi(FilterDialog)
-        QtCore.QMetaObject.connectSlotsByName(FilterDialog)
 
     def retranslateUi(self, FilterDialog):
         _translate = QtCore.QCoreApplication.translate

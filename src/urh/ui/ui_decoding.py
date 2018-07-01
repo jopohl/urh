@@ -328,7 +328,6 @@ class Ui_Decoder(object):
 
         self.retranslateUi(Decoder)
         self.optionWidget.setCurrentIndex(5)
-        QtCore.QMetaObject.connectSlotsByName(Decoder)
 
     def retranslateUi(self, Decoder):
         _translate = QtCore.QCoreApplication.translate

@@ -273,7 +273,6 @@ class Ui_DialogOptions(object):
 
         self.retranslateUi(DialogOptions)
         self.tabWidget.setCurrentIndex(4)
-        QtCore.QMetaObject.connectSlotsByName(DialogOptions)
 
     def retranslateUi(self, DialogOptions):
         _translate = QtCore.QCoreApplication.translate

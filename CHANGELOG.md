@@ -1,4 +1,10 @@
 # Changelog
+## v2.2.3 (upcoming)
+New features:
+- allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)
+
+---
+
 ## v2.2.2 (01/07/2018)
 This release removes the ``` config.pxi ``` requirement which caused problems on Arch Linux and Gentoo during installation. More details in PR [#484](https://github.com/jopohl/urh/pull/484).
 

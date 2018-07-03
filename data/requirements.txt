@@ -1,5 +1,6 @@
 numpy
 psutil
-pyqt5!=5.11
+pyqt5; sys_platform != 'win32'
+pyqt5!=5.11.1,!=5.11.2; sys_platform == 'win32'
 pyzmq
 cython

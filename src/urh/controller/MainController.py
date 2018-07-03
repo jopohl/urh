@@ -367,7 +367,7 @@ class MainController(QMainWindow):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
             elif filename.endswith(".coco"):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
-            elif filename.endswith(".proto") or filename.endswith(".proto.xml"):
+            elif filename.endswith(".proto") or filename.endswith(".proto.xml") or filename.endswith(".bin"):
                 self.add_protocol_file(filename)
             elif filename.endswith(".wav"):
                 try:

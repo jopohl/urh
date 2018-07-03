@@ -46,7 +46,7 @@ install:
     then
       sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil
     else
-      pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt
+      pip3 install -r data/requirements.txt
     fi
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]

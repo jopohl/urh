@@ -1,3 +1,5 @@
+image: Visual Studio 2017
+
 environment:
   TWINE_USERNAME:
     secure: qqioSb3Yu/QTOdDKx10sDQ==

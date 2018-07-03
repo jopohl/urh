@@ -1,5 +1,5 @@
 numpy
 psutil
-pyqt5!=5.11
+pyqt5
 pyzmq
 cython

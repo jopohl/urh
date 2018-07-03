@@ -1,5 +1,3 @@
-image: Visual Studio 2017
-
 environment:
   TWINE_USERNAME:
     secure: qqioSb3Yu/QTOdDKx10sDQ==
@@ -48,7 +46,7 @@ install:
   - 7z x -y "C:\windlls.zip" -o%APPVEYOR_BUILD_FOLDER%\src\urh\dev\native\lib\shared
 
   - pip install -r data\requirements.txt
-  - pip install pytest
+  - pip install pytest pytest-faulthandler
 
 build_script:
   # Build the compiled extension

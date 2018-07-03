@@ -2,7 +2,6 @@ import array
 import copy
 import sys
 import xml.etree.ElementTree as ET
-from collections import defaultdict
 from xml.dom import minidom
 
 import numpy as np
@@ -41,7 +40,7 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal, filename=None):
+    def __init__(self, signal: Signal or None, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
         if filename is None:
@@ -545,6 +544,18 @@ class ProtocolAnalyzer(object):
                 self.message_types.append(
                     MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
+
+    def to_binary(self, filename: str, use_decoded: bool):
+        with open(filename, "wb") as f:
+            for msg in self.messages:
+                bits = msg.decoded_bits if use_decoded else msg.plain_bits
+                aggregated = urh_util.aggregate_bits(bits, size=8)
+                f.write(bytes(aggregated))
+
+    def from_binary(self, filename: str):
+        aggregated = np.fromfile(filename, dtype=np.uint8)
+        unaggregated = [int(b) for n in aggregated for b in "{0:08b}".format(n)]
+        self.messages.append(Message(unaggregated, 0, self.default_message_type))
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol",
                    include_message_type=False, write_bits=False, messages=None, modulators=None) -> ET.Element:

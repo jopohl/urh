@@ -1,6 +1,9 @@
+import os
+import tempfile
 import unittest
 
 from tests.utils_testing import get_path_for_data_file
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
@@ -50,3 +53,15 @@ class TestProtocolAnalyzer(unittest.TestCase):
         self.assertGreater(messages[1].rssi, messages[2].rssi)
         self.assertLess(messages[2].rssi, messages[3].rssi)
         self.assertLess(messages[-2].rssi, messages[-1].rssi)
+
+    def test_binary_format(self):
+        pa = ProtocolAnalyzer(None)
+        pa.messages.append(Message([1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1], 0, pa.default_message_type))
+        pa.messages.append(Message([1, 1, 1, 0, 1], 0, pa.default_message_type))
+
+        filename = os.path.join(tempfile.gettempdir(), "test_proto.bin")
+        pa.to_binary(filename, use_decoded=True)
+
+        pa.from_binary(filename)
+        self.assertEqual(len(pa.messages), 3)
+        self.assertEqual(pa.plain_bits_str[2], "111000111001101111101000")

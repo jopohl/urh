@@ -386,22 +386,10 @@ class TestAnalysisTabGUI(QtTestCase):
         QTest.qSleep(1)
         QTest.qWait(10)
 
-    def test_open_label_dialog(self):
-        def test_dialog():
-            timer.stop()
-            dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, ProtocolLabelDialog)), None)
-            self.assertIsNotNone(dialog)
-            self.assertEqual(dialog.model.rowCount(), 1)
-            dialog.close()
-            sip.delete(dialog)
-
+    def test_create_label_dialog(self):
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
-        timer = QTimer(self.cfc)
-        timer.timeout.connect(test_dialog)
-        timer.start(20)
-        self.cfc.on_edit_label_action_triggered(0)
-        QTest.qSleep(1)
-        QTest.qWait(10)
+        dialog = self.cfc.create_protocol_label_dialog(0)
+        self.assertIsNotNone(dialog)
 
     def test_alignment(self):
         assert isinstance(self.cfc, CompareFrameController)

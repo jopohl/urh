@@ -34,7 +34,7 @@ class ContinuousSendDialog(SendDialog):
         self.ui.lSamplesSentText.setText("Progress:")
 
         self.create_connects()
-        self.device_settings_widget.update_for_new_device(reset_gains=False)
+        self.device_settings_widget.update_for_new_device(overwrite_settings=False)
 
     def create_connects(self):
         SendRecvDialog.create_connects(self)

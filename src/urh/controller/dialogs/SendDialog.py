@@ -50,7 +50,7 @@ class SendDialog(SendRecvDialog):
             self.graphics_view.sample_rate = samp_rate
 
             self.create_connects()
-            self.device_settings_widget.update_for_new_device(reset_gains=False)
+            self.device_settings_widget.update_for_new_device(overwrite_settings=False)
 
     def create_connects(self):
         super().create_connects()

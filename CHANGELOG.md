@@ -1,19 +1,17 @@
 # Changelog
 ## v2.2.3 (upcoming)
-New features:
+### New features
 - allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)
 
----
+### Bugfixes
+- antenna selection is not saved when reopening dialog [#494](https://github.com/jopohl/urh/pull/494)
+
 
 ## v2.2.2 (01/07/2018)
 This release removes the ``` config.pxi ``` requirement which caused problems on Arch Linux and Gentoo during installation. More details in PR [#484](https://github.com/jopohl/urh/pull/484).
 
----
-
 ## v2.2.1 (30/06/2018)
 This is a hotfix release which targets issue [#481](https://github.com/jopohl/urh/issues/481), so if you had problems with a missing ``` config.pxi ``` make sure to use this version.
-
----
 
 ## v2.2.0 (29/06/2018)
 __Import announcement if you build URH manually__: Cython is now a __required__ dependency to build URH. If you install URH from PyPi (with ``` pip ```) or use the ``` .msi ``` installer you will not notice any difference. However, if you run URH from source you need to install cython which is as easy as ``` python3 -m pip install cython ```.
@@ -28,7 +26,7 @@ __Import announcement if you build URH manually__: Cython is now a __required__ 
 - [#458](https://github.com/jopohl/urh/pull/458) - add alignment action to analysis
 ![alignment image](https://i.imgur.com/xQt7H7Y.png)
 
----
+
 
 ## v2.1.1 (17/06/2018)
 This release updates the bundled SDR drivers on Windows.
@@ -36,7 +34,7 @@ __Furthermore, this release adds native device support for 32 bit windows__.
 
 Bugfix:
 - a bug was fixed where sample rate of a signal was not written correctly to wav file when exporting as wav
----
+
 
 ## v2.1.0 (01/06/2018)
 The highlight of this release is a __Command Line Interface__ (CLI) for the Universal Radio Hacker.
@@ -52,13 +50,13 @@ These bugs were fixed:
 - fix #444 (Message Break error box popping up too early)
 - fix #448 (Include pyaudio in windows package for soundcard support)
 
----
+
 
 ## v2.0.4 (06/05/2018)
 
 This version fixes a bug when importing 24 bit wav files on windows.
 
----
+
 
 ## v2.0.3 (06/05/2018)
 - Improve external program behaviour in Simulator #417
@@ -70,7 +68,7 @@ This version fixes a bug when importing 24 bit wav files on windows.
 - add support for soundcards as new SDR device #433
 - Multi device support #432
 - add support for 24bit wav #434
----
+
 
 ## v2.0.2 (22/04/2018)
 - Improve external program behaviour in Simulator #417
@@ -79,7 +77,7 @@ This version fixes a bug when importing 24 bit wav files on windows.
 - Improve transcript for external programs #425
 - make endianness selectable in order column #428
 - UI improvements #430
----
+
 
 ## v2.0.1 (23/03/2018)
 Changes:
@@ -88,7 +86,7 @@ Changes:
 - improve native device rebuild button in options + added a new button to view the build log there (only visible after hitting the rebuild button)  (#402)
 - improve performance of CRC calculation (#412)
 - save number of sending repeats when changed in send dialog (#415)
----
+
 
 ## v2.0.0 (28/02/2018)
 URH 2.0 is here! This release adds a new tab to the main interface. This __Simulator__ tab enables you to simulate certain devices and crack even sophisticated security mechanisms like challenge response procedures. Learn more about this new feature [on this wiki page](https://github.com/jopohl/urh/wiki/Simulator).
@@ -104,26 +102,26 @@ Moreover, the overall performance and stability of URH increases with 2.0. The m
 - improve performance when starting sending
 - improve send accuracy of HackRF
 - improve performance when filtering messages in Analysis
----
+
 
 ## v1.9.2 (19/01/2018)
 - Add BCD (Binary Coded Decimal) as new display format #386
 - Make bit order configurable in analysis view table #390
 - Improved loading of protocol files
----
+
 
 ## v1.9.1 (17/12/2017)
 
 This is a hotfix release that fixes an error with HackRF receiving (#379).
 
----
+
 
 ## v1.9.0 (15/12/2017)
 - added native support for SDRplay (#378)
 - improved performance for continuous send mode
 - added collapsable comboboxes to device dialog
 
----
+
 
 ## v1.8.17 (04/12/2017)
 Changes:
@@ -131,7 +129,7 @@ Changes:
 - if no project is opened an new project is created, add currently opnened files to new project (#374)
 - add --version flag to command line script #375 (thanks to @Funcan for the initial work)
 - Enable specifying a custom python 2 interpreter on Windows (#372)
----
+
 
 ## v1.8.16 (30/11/2017)
 
@@ -139,13 +137,13 @@ This release fixes an issue on Windows where processes ended with an error (#370
 
 Furthermore, the NetworkSDR can now be used in continuous send mode (#369).
 
----
+
 
 ## v1.8.15 (27/11/2017)
 
 This release fixes a problem with GNU Radio backend on Windows mentioned in #366 and #368.
 
----
+
 
 ## v1.8.14 (26/11/2017)
 This release fixes an overflow error (#364) when modulating very long messages in Generator.
@@ -154,7 +152,7 @@ The highlight of this release is an enhanced spectrum analyzer (#365) with __inc
 ![spectrum](https://user-images.githubusercontent.com/18219846/33239754-03bb62f6-d2a9-11e7-80aa-059df7b0b133.png)
 
 
----
+
 
 ## v1.8.13 (18/11/2017)
 
@@ -162,7 +160,7 @@ This release enhances the stability for sending and receiving with all SDRs. Esp
 
 Furthermore, the WAV file support was greatly enhanced. Now, you can use WAV files from SDR# (fix #359).
 
----
+
 
 ## v1.8.12 (16/11/2017)
 
@@ -173,7 +171,7 @@ This release fixes the following issues:
 
 __So if you had trouble to install the previous version on Windows make sure you use this one.__
 
----
+
 
 ## v1.8.11 (13/11/2017)
 
@@ -185,17 +183,17 @@ The following issues were fixed in this release:
 - fix #349 - added a csv import to work with USB oscilloscopes
 - fix #352 - added a advanced modulation menu in Interpretation where a minimum message length for ASK can be configured
 
----
+
 
 ## v1.8.10 (21/10/2017)
 
 This release fixes a crash when pressing the replay button in interpretation tab.
 
----
+
 
 ##  (21/10/2017)
 
----
+
 
 ## v1.8.8 (16/10/2017)
 
@@ -205,7 +203,7 @@ These issues were fixed in this release:
 - fix #338 - make pause threshold configurable in interpretation
 - fix #333 - keep search string if search fails in analysis
 
----
+
 
 ## v1.8.7 (18/09/2017)
 This release fixes the following issues:
@@ -214,19 +212,19 @@ This release fixes the following issues:
  - [#329](https://github.com/jopohl/urh/pull/329) - Improve handling of protocol files
  - [#324](https://github.com/jopohl/urh/issues/324) - LimeSDR: Failed to receive stream
  - [#297](https://github.com/jopohl/urh/issues/297) - LimeSDR RX antenna always LNA_L
----
+
 
 ## v1.8.6 (06/09/2017)
 
 This release fixes two crashes as described in #327.
 
----
+
 
 ## v1.8.5 (30/08/2017)
 
 This release fixes #323 .
 
----
+
 
 ## v1.8.4 (28/08/2017)
 
@@ -235,13 +233,13 @@ Furthermore, a health check button for native device extensions was added to opt
 
 Details can be found in this PR: #321
 
----
+
 
 ## Version 1.8.0 (24/08/2017)
 
 This release adds two highly demanded features to URH: __Spectrogram View__ and __Channel Separation__. Learn more about them in the [wiki](https://github.com/jopohl/urh/wiki/Spectrogram) and keep hacking like a boss!
 
----
+
 
 ## Version 1.7.1 (19/07/2017)
 
@@ -254,7 +252,7 @@ This release also fixes some bugs:
 - Fix a rare crash in Generator tab when performing undo
 - fix checksum assignment to fuzzed messages when sending/generating data
 - refresh estimated time in generator if pause was edited
----
+
 
 ## Version 1.7.0 (14/07/2017)
 The highlight of this release is support for __generic checksums__. You can define custom CRC polynomials or use predefined ones.
@@ -274,13 +272,13 @@ Other fixes/features include:
 - fix #310
 - fix #311
 
----
+
 
 ## Hotfix for Windows wheels (11/06/2017)
 
 This is a hotfix release that fixes dependencies in the precompiled wheels for Windows which were introduced in the previous release.
 
----
+
 
 ## Version 1.6.5 (11/06/2017)
 This release brings the following changes:
@@ -294,7 +292,7 @@ This release brings the following changes:
 - fix #290: fixed a crash occurring when pressing Analysis button in certain circumstances
 - fix #291: created precompiled wheels for windows on PyPI, so no C++ compiler needed anymore.
 - improved visual appearance of comboboxes in protocol label list view
----
+
 
 ## Add filter to Interpretation (28/05/2017)
 This release brings a filter button to the Interpretation phase:

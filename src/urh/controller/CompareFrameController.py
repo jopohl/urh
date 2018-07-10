@@ -424,19 +424,18 @@ class CompareFrameController(QWidget):
         return protocol
 
     def add_protocol_from_file(self, filename: str) -> ProtocolAnalyzer:
-        """
-
-        :rtype: list of ProtocolAnalyzer
-        """
         pa = ProtocolAnalyzer(signal=None, filename=filename)
         pa.message_types = []
 
-        pa.from_xml_file(filename=filename, read_bits=True)
-        for messsage_type in pa.message_types:
-            if messsage_type not in self.proto_analyzer.message_types:
-                if messsage_type.name in (mt.name for mt in self.proto_analyzer.message_types):
-                    messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
-                self.proto_analyzer.message_types.append(messsage_type)
+        if filename.endswith(".bin"):
+            pa.from_binary(filename)
+        else:
+            pa.from_xml_file(filename=filename, read_bits=True)
+            for messsage_type in pa.message_types:
+                if messsage_type not in self.proto_analyzer.message_types:
+                    if messsage_type.name in (mt.name for mt in self.proto_analyzer.message_types):
+                        messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
+                    self.proto_analyzer.message_types.append(messsage_type)
 
         self.fill_message_type_combobox()
         self.add_protocol(protocol=pa)
@@ -837,8 +836,11 @@ class CompareFrameController(QWidget):
         if not filename:
             return
 
-        self.proto_analyzer.to_xml_file(filename=filename, decoders=self.decodings,
-                                        participants=self.project_manager.participants, write_bits=True)
+        if filename.endswith(".bin"):
+            self.proto_analyzer.to_binary(filename, use_decoded=True)
+        else:
+            self.proto_analyzer.to_xml_file(filename=filename, decoders=self.decodings,
+                                            participants=self.project_manager.participants, write_bits=True)
 
     def show_differences(self, show_differences: bool):
         if show_differences:

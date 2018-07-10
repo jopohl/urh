@@ -39,15 +39,16 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
                           "Complex16 signed (*.complex16s);;" \
                           "Wave (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
+                          "Binary Protocols (*.bin);;" \
                           "Fuzzprofiles (*.fuzz.xml *.fuzz);;" \
                           "Simulator (*.sim.xml *.sim)" \
                           "Plain bits (*.txt);;" \
                           "Tar Archives (*.tar *.tar.gz *.tar.bz2);;" \
                           "Zip Archives (*.zip)"
         elif name_filter == "proto":
-            name_filter = "Protocols (*.proto.xml *.proto);;"
+            name_filter = "Protocols (*.proto.xml *.proto);; Binary Protocols (*.bin)"
         elif name_filter == "fuzz":
-            name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz);;"
+            name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz)"
         elif name_filter == "simulator":
             name_filter = "Simulator (*.sim.xml *.sim)"
 
@@ -111,7 +112,7 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     elif caption == "Export spectrogram":
         name_filter = "Frequency Time (*.ft);;Frequency Time Amplitude (*.fta)"
     else:
-        name_filter = "Protocols (*.proto.xml *.proto);;All files (*)"
+        name_filter = "Protocols (*.proto.xml *.proto);;Binary Protocol (*.bin);;All files (*)"
 
     filename = None
     dialog = QFileDialog()

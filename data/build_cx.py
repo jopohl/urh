@@ -99,7 +99,7 @@ def build_exe(build_cmd='build'):
             "excludes": ["tkinter"],
             "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs', 'pyaudio',
                          'packaging', 'packaging.version', 'packaging.specifiers', 'packaging.requirements',
-                         'setuptools.msvc'] + plugins
+                         'setuptools.msvc', 'html.parser'] + plugins
         },
         'bdist_msi': {
             "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}",

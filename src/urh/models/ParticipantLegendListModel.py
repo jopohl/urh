@@ -24,7 +24,11 @@ class ParticipantLegendListModel(QAbstractListModel):
                 return "not assigned"
             else:
                 try:
-                    return self.participants[row-1].name + " ("+ self.participants[row-1].shortname + ")"
+                    p = self.participants[row-1]
+                    result = "{} ({})".format(p.name, p.shortname)
+                    if p.address_hex:
+                        result += " [{}]".format(p.address_hex)
+                    return result
                 except IndexError:
                     return None
         elif role == Qt.BackgroundColorRole:

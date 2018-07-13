@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 import unittest
 
 from urh.cli import urh_cli
@@ -176,7 +177,11 @@ class TestCLIParsing(unittest.TestCase):
         f = os.readlink(__file__) if os.path.islink(__file__) else __file__
         path = os.path.realpath(os.path.join(f, ".."))
         project_file = os.path.join(path, "..", "data", "URHProject.xml")
-        logger.debug("Reading Project file {}".format(project_file))
+
+        # set project file read only
+        from stat import S_IREAD, S_IRGRP, S_IROTH
+        os.chmod(project_file, S_IREAD | S_IRGRP | S_IROTH)
+        time.sleep(0.1)
+
         project_params = urh_cli.parse_project_file(project_file)
-        logger.debug("Read parameters {}".format(len(project_params)))
         self.assertGreater(len(project_params), 0)

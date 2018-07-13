@@ -10,8 +10,6 @@
     <name>USRP</name>
     <sample_rate>1000000.0</sample_rate>
   </device_conf>
-  <simulator_rx_conf/>
-  <simulator_tx_conf/>
   <group id="0" name="New Group"/>
   <protocol>
     <decodings>
@@ -20,11 +18,6 @@
       <decoding>'Manchester I', 'Edge Trigger', </decoding>
       <decoding>'Manchester II', 'Edge Trigger', 'Invert', </decoding>
       <decoding>'Differential Manchester', 'Edge Trigger', 'Differential Encoding', </decoding>
-      <decoding>'RWE', 'Remove Data Whitening (CC1101)', '0x67686768;0x21', </decoding>
-      <decoding>'enOcean', 'Wireless Short Packet (WSP)', </decoding>
-      <decoding>'Homematic', 'Remove Data Whitening (CC1101)', '0xe9cae9ca;0x21;1', 'Cut before/after', '0;10101010101010101010101010101010111', 'External Program', '/home/ryu/util/Eigene Dateien/Subversion/urh/data/decodings/homematic d;/home/ryu/util/Eigene Dateien/Subversion/urh/data/decodings/homematic e', </decoding>
-      <decoding>'Homematic (without decryption)', 'Remove Data Whitening (CC1101)', 'e9cae9ca;21', 'Cut before/after', '0;10101010101010101010101010101010111', </decoding>
-      <decoding>'MyDecoding', 'Invert', 'Change Bitorder', 'Invert', </decoding>
     </decodings>
     <participants>
       <participant address_hex="" color_index="0" id="4ace88f5-1680-4ff6-ae2c-aebbfca912cb" name="Alice" relative_rssi="0" shortname="A" simulate="0"/>
@@ -37,7 +30,4 @@
       </message_type>
     </message_types>
   </protocol>
-  <simulator_config>
-    <items/>
-  </simulator_config>
 </UniversalRadioHackerProject>

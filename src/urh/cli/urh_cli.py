@@ -245,7 +245,7 @@ def parse_project_file(file_path: str):
     ProjectManager.read_device_conf_dict(root.find("device_conf"), target_dict=result)
     result["device"] = result["name"]
 
-    modulators = ProjectManager.read_modulators_from_file(file_path)
+    modulators = Modulator.modulators_from_xml_tag(root)
     if len(modulators) > 0:
         modulator = modulators[0]
         result["carrier_frequency"] = modulator.carrier_freq_hz

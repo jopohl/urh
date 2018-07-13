@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
@@ -19,10 +20,10 @@ from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
-from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 
 
 class SimulatorScene(QGraphicsScene):
@@ -508,20 +509,20 @@ class SimulatorScene(QGraphicsScene):
             self.__get_drag_nodes(child, drag_nodes)
 
     def detect_source_destination(self, message: Message):
-        # TODO: use SRC_ADDRESS and DST_ADDRESS labels
         participants = self.simulator_config.participants
 
-        source = None
+        source = None if len(participants) < 2 else participants[0]
         destination = self.simulator_config.broadcast_part
 
-        if len(participants) == 2:
-            source = participants[0]
-        elif len(participants) > 2:
-            if message.participant:
-                source = message.participant
-                # destination = participants[0] if message.participant == participants[1] else participants[1]
-            else:
-                source = participants[0]
-                # destination = participants[1]
+        if message.participant:
+            source = message.participant
+            dst_address_label = next((lbl for lbl in message.message_type if lbl.field_type and
+                                      lbl.field_type.function == FieldType.Function.DST_ADDRESS), None)
+            if dst_address_label:
+                start, end = message.get_label_range(dst_address_label, view=1, decode=True)
+                dst_address = message.decoded_hex_str[start:end]
+                dst = next((p for p in participants if p.address_hex == dst_address), None)
+                if dst is not None and dst != source:
+                    destination = dst
 
-        return (source, destination)
+        return source, destination

@@ -226,6 +226,7 @@ def modulate_messages(messages, modulator):
     print("\nSuccessfully modulated {} messages".format(len(messages)))
     return buffer
 
+
 def parse_project_file(file_path: str):
     import xml.etree.ElementTree as ET
     from urh.util.ProjectManager import ProjectManager
@@ -255,6 +256,7 @@ def parse_project_file(file_path: str):
         result["modulation_type"] = modulator.modulation_type_str
 
     return result
+
 
 def create_parser():
     parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
@@ -369,8 +371,8 @@ def main():
 
     args.bandwidth = get_val(args.bandwidth, project_params, "bandwidth", None)
     rx_tx_prefix = "rx_" if args.receive else "tx_"
-    args.gain = get_val(args.gain, project_params, rx_tx_prefix+"gain", None)
-    args.if_gain = get_val(args.if_gain, project_params, rx_tx_prefix+"if_gain", None)
+    args.gain = get_val(args.gain, project_params, rx_tx_prefix + "gain", None)
+    args.if_gain = get_val(args.if_gain, project_params, rx_tx_prefix + "if_gain", None)
     args.baseband_gain = get_val(args.baseband_gain, project_params, rx_tx_prefix + "baseband_gain", None)
 
     if args.modulation_type is None:
@@ -387,8 +389,10 @@ def main():
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)
 
-    args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency", DEFAULT_CARRIER_FREQUENCY)
-    args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude", DEFAULT_CARRIER_AMPLITUDE)
+    args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency",
+                                     DEFAULT_CARRIER_FREQUENCY)
+    args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude",
+                                     DEFAULT_CARRIER_AMPLITUDE)
     args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
     args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
     args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
@@ -402,7 +406,7 @@ def main():
     Logger.save_log_level()
 
     argument_string = "\n".join("{} {}".format(arg, getattr(args, arg)) for arg in vars(args))
-    logger.debug("Using these parameters\n"+argument_string)
+    logger.debug("Using these parameters\n" + argument_string)
 
     if args.transmit:
         device = build_device_from_args(args)

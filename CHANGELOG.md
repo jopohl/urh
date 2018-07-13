@@ -9,6 +9,7 @@
 
 ### Bugfixes
 - antenna selection is not saved when reopening dialog [#494](https://github.com/jopohl/urh/pull/494)
+- hiding multiple rows at once in analysis not working properly [#499](https://github.com/jopohl/urh/pull/499)
 
 
 ## v2.2.2 (01/07/2018)

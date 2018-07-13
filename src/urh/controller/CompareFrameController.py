@@ -1,6 +1,5 @@
 import locale
 import os
-import time
 from datetime import datetime
 
 import numpy
@@ -538,7 +537,7 @@ class CompareFrameController(QWidget):
                             # No signal, loaded from protocol file
                             abs_time = datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%d %H:%M:%S.%f")
                             if i > 0:
-                                rel_time = message.timestamp - proto.messages[i-1].timestamp
+                                rel_time = message.timestamp - proto.messages[i - 1].timestamp
                     except IndexError:
                         pass
 
@@ -920,7 +919,7 @@ class CompareFrameController(QWidget):
                 self.ui.tblViewProtocol.hideColumn(j)
 
     def restore_visibility(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection() # type: QItemSelection
+        selected = self.ui.tblViewProtocol.selectionModel().selection()  # type: QItemSelection
 
         for i in range(self.protocol_model.col_count):
             self.ui.tblViewProtocol.showColumn(i)
@@ -1433,7 +1432,7 @@ class CompareFrameController(QWidget):
         if new_ref_index != -1:
             hide_correction = 0
             for i in range(0, self.protocol_model.row_count):
-                if self.ui.tblViewProtocol.isRowHidden((new_ref_index+i) % self.protocol_model.row_count):
+                if self.ui.tblViewProtocol.isRowHidden((new_ref_index + i) % self.protocol_model.row_count):
                     hide_correction = 0
                 else:
                     hide_correction = i

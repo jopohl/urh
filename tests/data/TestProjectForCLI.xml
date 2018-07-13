@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<UniversalRadioHackerProject broadcast_address_hex="ffff" collapse_project_tabs="0" description="" modulation_was_edited="0">
+  <modulators>
+    <modulator carrier_amplitude="1" carrier_freq_hz="40000" carrier_phase_deg="0" gauss_bt="0.5" gauss_filter_width="1" index="0" modulation_type="0" name="Modulator" param_for_one="100" param_for_zero="0" sample_rate="None" samples_per_bit="100"/>
+  </modulators>
+  <device_conf>
+    <bandwidth>1000000.0</bandwidth>
+    <frequency>433920000.0</frequency>
+    <gain>20</gain>
+    <name>USRP</name>
+    <sample_rate>1000000.0</sample_rate>
+  </device_conf>
+  <simulator_rx_conf/>
+  <simulator_tx_conf/>
+  <group id="0" name="New Group"/>
+  <protocol>
+    <decodings>
+      <decoding>'Non Return To Zero (NRZ)', </decoding>
+      <decoding>'Non Return To Zero Inverted (NRZ-I)', 'Invert', </decoding>
+      <decoding>'Manchester I', 'Edge Trigger', </decoding>
+      <decoding>'Manchester II', 'Edge Trigger', 'Invert', </decoding>
+      <decoding>'Differential Manchester', 'Edge Trigger', 'Differential Encoding', </decoding>
+      <decoding>'RWE', 'Remove Data Whitening (CC1101)', '0x67686768;0x21', </decoding>
+      <decoding>'enOcean', 'Wireless Short Packet (WSP)', </decoding>
+      <decoding>'Homematic', 'Remove Data Whitening (CC1101)', '0xe9cae9ca;0x21;1', 'Cut before/after', '0;10101010101010101010101010101010111', 'External Program', '/home/ryu/util/Eigene Dateien/Subversion/urh/data/decodings/homematic d;/home/ryu/util/Eigene Dateien/Subversion/urh/data/decodings/homematic e', </decoding>
+      <decoding>'Homematic (without decryption)', 'Remove Data Whitening (CC1101)', 'e9cae9ca;21', 'Cut before/after', '0;10101010101010101010101010101010111', </decoding>
+      <decoding>'MyDecoding', 'Invert', 'Change Bitorder', 'Invert', </decoding>
+    </decodings>
+    <participants>
+      <participant address_hex="" color_index="0" id="4ace88f5-1680-4ff6-ae2c-aebbfca912cb" name="Alice" relative_rssi="0" shortname="A" simulate="0"/>
+      <participant address_hex="" color_index="1" id="b615a02a-39e0-49af-a34b-00642b314da3" name="Bob" relative_rssi="1" shortname="B" simulate="0"/>
+    </participants>
+    <messages/>
+    <message_types>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="22fd0cf0-99f9-41a6-9385-f2c2f8bf6aa5" name="default">
+        <ruleset mode="0"/>
+      </message_type>
+    </message_types>
+  </protocol>
+  <simulator_config>
+    <items/>
+  </simulator_config>
+</UniversalRadioHackerProject>

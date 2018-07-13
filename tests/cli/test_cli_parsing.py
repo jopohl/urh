@@ -1,12 +1,10 @@
 import os
 import tempfile
-import time
 import unittest
 
 from urh.cli import urh_cli
 from urh.dev.BackendHandler import Backends
 from urh.dev.VirtualDevice import Mode
-from urh.util.Logger import logger
 
 
 class TestCLIParsing(unittest.TestCase):
@@ -176,12 +174,8 @@ class TestCLIParsing(unittest.TestCase):
     def test_parse_project_file(self):
         f = os.readlink(__file__) if os.path.islink(__file__) else __file__
         path = os.path.realpath(os.path.join(f, ".."))
-        project_file = os.path.join(path, "..", "data", "URHProject.xml")
 
-        # set project file read only
-        from stat import S_IREAD, S_IRGRP, S_IROTH
-        os.chmod(project_file, S_IREAD | S_IRGRP | S_IROTH)
-        time.sleep(0.1)
+        project_file = os.path.join(path, "..", "data", "TestProjectForCLI.xml")
 
         project_params = urh_cli.parse_project_file(project_file)
         self.assertGreater(len(project_params), 0)

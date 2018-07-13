@@ -5,6 +5,7 @@ import unittest
 from urh.cli import urh_cli
 from urh.dev.BackendHandler import Backends
 from urh.dev.VirtualDevice import Mode
+from urh.util.Logger import logger
 
 
 class TestCLIParsing(unittest.TestCase):
@@ -175,5 +176,7 @@ class TestCLIParsing(unittest.TestCase):
         f = os.readlink(__file__) if os.path.islink(__file__) else __file__
         path = os.path.realpath(os.path.join(f, ".."))
         project_file = os.path.join(path, "..", "data", "URHProject.xml")
+        logger.debug("Reading Project file {}".format(project_file))
         project_params = urh_cli.parse_project_file(project_file)
+        logger.debug("Read parameters {}".format(len(project_params)))
         self.assertGreater(len(project_params), 0)

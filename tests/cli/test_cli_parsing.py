@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 import unittest
 
@@ -175,7 +176,9 @@ class TestCLIParsing(unittest.TestCase):
         f = os.readlink(__file__) if os.path.islink(__file__) else __file__
         path = os.path.realpath(os.path.join(f, ".."))
 
-        project_file = os.path.join(path, "..", "data", "TestProjectForCLI.xml")
+        project_file = os.path.realpath(os.path.join(path, "..", "data", "TestProjectForCLI.xml"))
+        tmp_project_file = os.path.join(tempfile.mkdtemp(), "URHProject.xml")
+        shutil.copy(project_file, tmp_project_file)
 
-        project_params = urh_cli.parse_project_file(project_file)
+        project_params = urh_cli.parse_project_file(tmp_project_file)
         self.assertGreater(len(project_params), 0)

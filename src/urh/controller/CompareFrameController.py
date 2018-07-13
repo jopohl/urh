@@ -1,6 +1,5 @@
 import locale
 import os
-import time
 from datetime import datetime
 
 import numpy
@@ -83,6 +82,9 @@ class CompareFrameController(QWidget):
         self.assign_labels_action = self.analyze_menu.addAction(self.tr("Assign labels"))
         self.assign_labels_action.setCheckable(True)
         self.assign_labels_action.setChecked(False)
+        self.assign_participant_address_action = self.analyze_menu.addAction(self.tr("Assign participant addresses"))
+        self.assign_participant_address_action.setCheckable(True)
+        self.assign_participant_address_action.setChecked(True)
         self.ui.btnAnalyze.setMenu(self.analyze_menu)
 
         self.ui.lblShownRows.hide()
@@ -535,7 +537,7 @@ class CompareFrameController(QWidget):
                             # No signal, loaded from protocol file
                             abs_time = datetime.fromtimestamp(message.timestamp).strftime("%Y-%m-%d %H:%M:%S.%f")
                             if i > 0:
-                                rel_time = message.timestamp - proto.messages[i-1].timestamp
+                                rel_time = message.timestamp - proto.messages[i - 1].timestamp
                     except IndexError:
                         pass
 
@@ -917,7 +919,7 @@ class CompareFrameController(QWidget):
                 self.ui.tblViewProtocol.hideColumn(j)
 
     def restore_visibility(self):
-        selected = self.ui.tblViewProtocol.selectionModel().selection() # type: QItemSelection
+        selected = self.ui.tblViewProtocol.selectionModel().selection()  # type: QItemSelection
 
         for i in range(self.protocol_model.col_count):
             self.ui.tblViewProtocol.showColumn(i)
@@ -1009,31 +1011,30 @@ class CompareFrameController(QWidget):
         self.ui.progressBarLogicAnalyzer.setValue(0)
 
         if self.assign_participants_action.isChecked():
-            t = time.time()
             for protocol in self.protocol_list:
                 protocol.auto_assign_participants(self.protocol_model.participants)
             self.refresh_assigned_participants_ui()
-            logger.debug("Time for auto assigning participants: " + str(time.time() - t))
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
         self.ui.progressBarLogicAnalyzer.setValue(50)
 
         if self.assign_message_type_action.isChecked():
-            t = time.time()
             self.update_automatic_assigned_message_types()
-            logger.debug("Time for auto assigning message types: " + str(time.time() - t))
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Find new labels/message types)")
         self.ui.progressBarLogicAnalyzer.setValue(75)
 
         if self.assign_labels_action.isChecked():
-            t = time.time()
             self.proto_analyzer.auto_assign_labels()
             self.protocol_model.update()
             self.label_value_model.update()
             self.protocol_label_list_model.update()
             self.ui.listViewLabelNames.clearSelection()
-            logger.debug("Time for auto assigning labels: " + str(time.time() - t))
+
+        self.ui.progressBarLogicAnalyzer.setValue(90)
+
+        if self.assign_participant_address_action.isChecked():
+            self.proto_analyzer.auto_assign_participant_addresses(self.protocol_model.participants)
 
         self.ui.progressBarLogicAnalyzer.setValue(100)
         self.unsetCursor()
@@ -1431,7 +1432,7 @@ class CompareFrameController(QWidget):
         if new_ref_index != -1:
             hide_correction = 0
             for i in range(0, self.protocol_model.row_count):
-                if self.ui.tblViewProtocol.isRowHidden((new_ref_index+i) % self.protocol_model.row_count):
+                if self.ui.tblViewProtocol.isRowHidden((new_ref_index + i) % self.protocol_model.row_count):
                     hide_correction = 0
                 else:
                     hide_correction = i

@@ -11,6 +11,7 @@ from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions, util
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -698,6 +699,27 @@ class ProtocolAnalyzer(object):
         for message, center_index in zip(self.messages, rssi_assigned_centers):
             if message.participant is None:
                 message.participant = participants[center_index]
+
+    def auto_assign_participant_addresses(self, participants):
+        """
+
+        :type participants: list of Participant
+        :return:
+        """
+        participants_without_address = [p for p in participants if not p.address_hex]
+
+        if len(participants_without_address) == 0:
+            return
+
+        for msg in self.messages:
+            if msg.participant in participants_without_address:
+                src_address_label = next((lbl for lbl in msg.message_type if lbl.field_type
+                                          and lbl.field_type.function == FieldType.Function.SRC_ADDRESS), None)
+                if src_address_label:
+                    start, end = msg.get_label_range(src_address_label, view=1, decode=True)
+                    src_address = msg.decoded_hex_str[start:end]
+                    participants_without_address.remove(msg.participant)
+                    msg.participant.address_hex = src_address
 
     def auto_assign_decodings(self, decodings):
         """

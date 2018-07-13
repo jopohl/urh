@@ -37,13 +37,11 @@ class TableView(QTableView):
 
     @property
     def selected_rows(self):
-        min_row, max_row, _, _ = self.selection_range()
-        if not self.selection_is_empty:
-            selected_rows = list(range(min_row, max_row + 1))
-        else:
-            selected_rows = []
+        rows = set()
+        for index in self.selectionModel().selectedIndexes():
+            rows.add(index.row())
 
-        return selected_rows
+        return sorted(rows)
 
     def selection_range(self):
         """

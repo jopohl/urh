@@ -2,9 +2,14 @@
 ## v2.2.3 (upcoming)
 ### New features
 - allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)
+- improve bootstrap of simulator messages [#500](https://github.com/jopohl/urh/pull/500)
+  - auto assign destination when dropping messages to simulator
+  - show participant address in participant legend if present
+  - auto assign participant address when clicking analyze button in analysis based on SRC address label
 
 ### Bugfixes
 - antenna selection is not saved when reopening dialog [#494](https://github.com/jopohl/urh/pull/494)
+- hiding multiple rows at once in analysis not working properly [#499](https://github.com/jopohl/urh/pull/499)
 
 
 ## v2.2.2 (01/07/2018)

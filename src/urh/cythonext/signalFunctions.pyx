@@ -276,7 +276,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
                 continue
 
             if mod_type == 0:  # ASK
-                result[i] = magnitude
+                result[i] = sqrt(magnitude)
             elif mod_type == 1:  # FSK
                 tmp = samples[i - 1].conjugate() * c
                 result[i] = atan2(tmp.imag, tmp.real)  # Freq

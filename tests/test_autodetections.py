@@ -17,7 +17,7 @@ class TestAutodetections(unittest.TestCase):
         signal = Signal(get_path_for_data_file("elektromaten.complex"), "Elektromaten")
         signal.modulation_type = 0
         signal.qad_center = signal.estimate_qad_center()
-        self.assertTrue(0.0015 < signal.qad_center < 0.0140)
+        self.assertTrue(0.0387 < signal.qad_center < 0.1183)
         signal.bit_len = signal.estimate_bitlen()
         self.assertTrue(270 <= signal.bit_len <= 330)
 
@@ -33,7 +33,7 @@ class TestAutodetections(unittest.TestCase):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK")
         signal.modulation_type = 0
         signal.qad_center = signal.estimate_qad_center()
-        self.assertTrue(0 <= signal.qad_center <= 0.0036)
+        self.assertTrue(0 <= signal.qad_center <= 0.06)
         signal.bit_len = signal.estimate_bitlen()
         self.assertTrue(270 <= signal.bit_len <= 330)
 

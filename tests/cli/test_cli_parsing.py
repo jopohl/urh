@@ -1,14 +1,14 @@
 import os
 import shutil
 import tempfile
-import unittest
 
+from tests.QtTestCase import QtTestCase
 from urh.cli import urh_cli
 from urh.dev.BackendHandler import Backends
 from urh.dev.VirtualDevice import Mode
 
 
-class TestCLIParsing(unittest.TestCase):
+class TestCLIParsing(QtTestCase):
     def setUp(self):
         self.parser = urh_cli.create_parser()
 

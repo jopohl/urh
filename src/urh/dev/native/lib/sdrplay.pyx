@@ -20,7 +20,7 @@ global reset_rx, reset_rx_request_received
 reset_rx = False
 reset_rx_request_received = False
 
-cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
+cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext):
     cdef float* data = <float *>malloc(2*numSamples * sizeof(float))
 
     cdef unsigned int i = 0
@@ -93,8 +93,8 @@ cpdef get_devices():
 cdef int calculate_gain_reduction(int gain):
     """
     Calculate gain reduction for API. Highest possible gain leads to lowest possible gain reduction
-    :param gain: 
-    :return: 
+    :param gain:
+    :return:
     """
     gain = max(20, min(gain, 59))
     return 79 - gain

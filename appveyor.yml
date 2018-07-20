@@ -50,7 +50,7 @@ install:
 
 build_script:
   # Build the compiled extension
-  - python setup.py build_ext --inplace > build_log.txt
+  - python setup.py build_ext --inplace
 
 test_script:
   - python src\urh\main.py --version

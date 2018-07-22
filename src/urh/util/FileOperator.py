@@ -183,9 +183,9 @@ def save_data(data, filename: str, sample_rate=1e6, num_channels=2):
 def convert_data_to_format(data: np.ndarray, filename: str):
     if filename.endswith(".wav"):
         return (data.view(np.float32) * 32767).astype(np.int16)
-    elif filename.endswith(".complex16u") or filename.endswith(".cu8):
+    elif filename.endswith(".complex16u") or filename.endswith(".cu8"):
         return (127.5 * (data.view(np.float32) + 1.0)).astype(np.uint8)
-    elif filename.endswith(".complex16s") or filename.endswith(".cs8):
+    elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
         return (127.5 * ((data.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
     else:
         return data

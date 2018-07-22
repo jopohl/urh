@@ -50,7 +50,6 @@ class Ui_DialogMessageType(object):
         self.gridLayout.addLayout(self.horizontalLayout, 5, 0, 1, 2)
 
         self.retranslateUi(DialogMessageType)
-        QtCore.QMetaObject.connectSlotsByName(DialogMessageType)
 
     def retranslateUi(self, DialogMessageType):
         _translate = QtCore.QCoreApplication.translate

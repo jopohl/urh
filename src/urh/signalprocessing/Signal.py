@@ -1,6 +1,5 @@
-import csv
+import math
 import os
-import struct
 import tarfile
 import wave
 
@@ -13,7 +12,7 @@ from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.util import FileOperator
 from urh.util.Logger import logger
-import math
+
 
 class Signal(QObject):
     """
@@ -95,6 +94,8 @@ class Signal(QObject):
             params = {"min": 0, "max": 255, "fmt": np.uint8}  # Unsigned Byte
         elif sample_width == 2:
             params = {"min": -32768, "max": 32767, "fmt": np.int16}
+        elif sample_width == 3:
+            params = {"min": -8388608, "max": 8388607, "fmt": np.int32}
         elif sample_width == 4:
             params = {"min": -2147483648, "max": 2147483647, "fmt": np.int32}
         else:
@@ -102,7 +103,17 @@ class Signal(QObject):
 
         params["center"] = (params["min"] + params["max"]) / 2
 
-        data = np.fromstring(wav.readframes(num_frames * num_channels), dtype=params["fmt"])
+        byte_frames = wav.readframes(num_frames * num_channels)
+        if sample_width == 3:
+            num_samples = len(byte_frames) // (sample_width * num_channels)
+            arr = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
+            raw_bytes = np.fromstring(byte_frames, dtype=np.uint8)
+            arr[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
+            arr[:, :, sample_width:] = (arr[:, :, sample_width - 1:sample_width] >> 7) * 255
+            data = arr.view(np.int32).flatten()
+        else:
+            data = np.fromstring(byte_frames, dtype=params["fmt"])
+
         if num_channels == 1:
             self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
@@ -111,7 +122,7 @@ class Signal(QObject):
             self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
             self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
         else:
-            raise ValueError("Cam't handle {0} channels".format(num_channels))
+            raise ValueError("Can't handle {0} channels. Only 1 and 2 are supported.".format(num_channels))
 
         wav.close()
 
@@ -405,8 +416,8 @@ class Signal(QObject):
         :return:
         """
         # ensure power of 2 for faster fft
-        length = 2 ** int(math.log2(end-start))
-        data = self.data[start:start+length]
+        length = 2 ** int(math.log2(end - start))
+        data = self.data[start:start + length]
 
         try:
             w = np.fft.fft(data)

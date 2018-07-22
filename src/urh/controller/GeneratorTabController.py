@@ -386,7 +386,12 @@ class GeneratorTabController(QWidget):
                 self.unsetCursor()
                 return
             modulated_samples = self.modulate_data(buffer)
-            FileOperator.save_data_dialog("", modulated_samples, parent=self)
+            try:
+                sample_rate = self.modulators[0].sample_rate
+            except Exception as e:
+                logger.exception(e)
+                sample_rate = 1e6
+            FileOperator.save_data_dialog("generated.complex", modulated_samples, sample_rate=sample_rate, parent=self)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
@@ -618,7 +623,7 @@ class GeneratorTabController(QWidget):
 
     def load_from_file(self, filename: str):
         try:
-            self.modulators = self.project_manager.read_modulators_from_file(filename)
+            self.modulators = ProjectManager.read_modulators_from_file(filename)
             self.table_model.protocol.from_xml_file(filename)
             self.refresh_pause_list()
             self.refresh_estimated_time()

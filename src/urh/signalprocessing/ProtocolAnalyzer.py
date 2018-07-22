@@ -2,7 +2,6 @@ import array
 import copy
 import sys
 import xml.etree.ElementTree as ET
-from collections import defaultdict
 from xml.dom import minidom
 
 import numpy as np
@@ -12,6 +11,7 @@ from urh import constants
 from urh.awre.FormatFinder import FormatFinder
 from urh.cythonext import signalFunctions, util
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -41,7 +41,7 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal, filename=None):
+    def __init__(self, signal: Signal or None, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
         if filename is None:
@@ -475,57 +475,6 @@ class ProtocolAnalyzer(object):
 
         return self.messages[message_indx].convert_range(index1, index2, from_view, to_view, decoded)
 
-    def find_differences(self, refindex: int, view: int):
-        """
-        Search all differences between protocol messages regarding a reference message
-
-        :param refindex: index of reference message
-        :rtype: dict[int, set[int]]
-        """
-        differences = defaultdict(set)
-
-        if refindex >= len(self.messages):
-            return differences
-
-        if view == 0:
-            proto = self.decoded_proto_bits_str
-        elif view == 1:
-            proto = self.decoded_hex_str
-        elif view == 2:
-            proto = self.decoded_ascii_str
-        else:
-            return differences
-
-        refmessage = proto[refindex]
-        len_refmessage = len(refmessage)
-
-        for i, message in enumerate(proto):
-            if i == refindex:
-                continue
-
-            diff_cols = set()
-
-            for j, value in enumerate(message):
-                if j >= len_refmessage:
-                    break
-
-                if value != refmessage[j]:
-                    diff_cols.add(j)
-
-            len_message = len(message)
-            if len_message != len_refmessage:
-                len_diff = abs(len_refmessage - len_message)
-                start = len_refmessage
-                if len_refmessage > len_message:
-                    start = len_message
-                end = start + len_diff
-                for k in range(start, end):
-                    diff_cols.add(k)
-
-            differences[i] = diff_cols
-
-        return differences
-
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:
         """
         Calculates the frequency of at most nbits logical ones and returns the mean of these frequencies
@@ -534,6 +483,23 @@ class ProtocolAnalyzer(object):
         :return:
         """
         return self.__estimate_frequency_for_bit(True, sample_rate, nbits)
+
+    def align_messages(self, pattern: str, view_type: int, use_decoded=True):
+        if view_type == 0:
+            bit_pattern = pattern
+        elif view_type == 1:
+            bit_pattern = "".join(map(str, urh_util.hex2bit(pattern)))
+        elif view_type == 2:
+            bit_pattern = "".join(map(str, urh_util.ascii2bit(pattern)))
+        else:
+            raise ValueError("Unknown view type {}".format(view_type))
+
+        indices = [msg.decoded_bits_str.find(bit_pattern) if use_decoded else msg.plain_bits_str.find(bit_pattern)
+                   for msg in self.messages]
+
+        max_index = max(indices)
+        for i, msg in enumerate(self.messages):
+            msg.alignment_offset = 0 if indices[i] == -1 else max_index - indices[i]
 
     def estimate_frequency_for_zero(self, sample_rate: float, nbits=42) -> float:
         """
@@ -579,6 +545,18 @@ class ProtocolAnalyzer(object):
                 self.message_types.append(
                     MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
+
+    def to_binary(self, filename: str, use_decoded: bool):
+        with open(filename, "wb") as f:
+            for msg in self.messages:
+                bits = msg.decoded_bits if use_decoded else msg.plain_bits
+                aggregated = urh_util.aggregate_bits(bits, size=8)
+                f.write(bytes(aggregated))
+
+    def from_binary(self, filename: str):
+        aggregated = np.fromfile(filename, dtype=np.uint8)
+        unaggregated = [int(b) for n in aggregated for b in "{0:08b}".format(n)]
+        self.messages.append(Message(unaggregated, 0, self.default_message_type))
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol",
                    include_message_type=False, write_bits=False, messages=None, modulators=None) -> ET.Element:
@@ -722,6 +700,27 @@ class ProtocolAnalyzer(object):
             if message.participant is None:
                 message.participant = participants[center_index]
 
+    def auto_assign_participant_addresses(self, participants):
+        """
+
+        :type participants: list of Participant
+        :return:
+        """
+        participants_without_address = [p for p in participants if not p.address_hex]
+
+        if len(participants_without_address) == 0:
+            return
+
+        for msg in self.messages:
+            if msg.participant in participants_without_address:
+                src_address_label = next((lbl for lbl in msg.message_type if lbl.field_type
+                                          and lbl.field_type.function == FieldType.Function.SRC_ADDRESS), None)
+                if src_address_label:
+                    start, end = msg.get_label_range(src_address_label, view=1, decode=True)
+                    src_address = msg.decoded_hex_str[start:end]
+                    participants_without_address.remove(msg.participant)
+                    msg.participant.address_hex = src_address
+
     def auto_assign_decodings(self, decodings):
         """
         :type decodings: list of Encoding
@@ -748,3 +747,56 @@ class ProtocolAnalyzer(object):
 
         # OPEN: Perform multiple iterations with varying priorities later
         format_finder.perform_iteration()
+
+    @staticmethod
+    def get_protocol_from_string(message_strings: list, is_hex=None, default_pause=0, sample_rate=1e6):
+        """
+
+        :param message_strings:
+        :param is_hex: None means auto detects
+        :return:
+        """
+        protocol = ProtocolAnalyzer(None)
+
+        def parse_line(line: str):
+            # support transcript files e.g 1 (A->B): 10101111
+            index = line.rfind(" ")
+            line = line[index + 1:]
+
+            # support pauses given like 100101/10s
+            try:
+                data, pause = line.split(constants.PAUSE_SEP)
+            except ValueError:
+                data, pause = line, str(default_pause)
+            if pause.endswith("ms"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e3
+            elif pause.endswith("µs"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e6
+            elif pause.endswith("ns"):
+                pause = float(pause[:-2]) * float(sample_rate) / 1e9
+            elif pause.endswith("s"):
+                pause = float(pause[:-1]) * float(sample_rate)
+            else:
+                pause = float(pause)
+
+            return data, int(pause)
+
+        if not is_hex:
+            for line in filter(None, map(str.strip, message_strings)):
+                bits, pause = parse_line(line)
+                try:
+                    protocol.messages.append(Message.from_plain_bits_str(bits, pause=pause))
+                except ValueError:
+                    is_hex = True if is_hex is None else is_hex
+                    break
+
+        if is_hex:
+            protocol.messages.clear()
+            lookup = {"{0:0x}".format(i): "{0:04b}".format(i) for i in range(16)}
+
+            for line in filter(None, map(str.strip, message_strings)):
+                bits, pause = parse_line(line)
+                bit_str = [lookup[bits[i].lower()] for i in range(0, len(bits))]
+                protocol.messages.append(Message.from_plain_bits_str("".join(bit_str), pause=pause))
+
+        return protocol

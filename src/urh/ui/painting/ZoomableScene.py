@@ -1,4 +1,3 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
 
@@ -48,7 +47,7 @@ class ZoomableScene(QGraphicsScene):
             self.ones_area = QGraphicsRectItem(x, y, w, h / 2 + y_mid)
             self.ones_area.setBrush(constants.ONES_AREA_COLOR)
             self.ones_area.setOpacity(constants.SEPARATION_OPACITY)
-            self.ones_area.setPen(QPen(constants.TRANSPARENT_COLOR, Qt.FlatCap))
+            self.ones_area.setPen(QPen(constants.TRANSPARENT_COLOR, 0))
             self.addItem(self.ones_area)
 
         else:
@@ -60,7 +59,7 @@ class ZoomableScene(QGraphicsScene):
             self.zeros_area = QGraphicsRectItem(x, start, w, (y + h) - start)
             self.zeros_area.setBrush(constants.ZEROS_AREA_COLOR)
             self.zeros_area.setOpacity(constants.SEPARATION_OPACITY)
-            self.zeros_area.setPen(QPen(constants.TRANSPARENT_COLOR, Qt.FlatCap))
+            self.zeros_area.setPen(QPen(constants.TRANSPARENT_COLOR, 0))
             self.addItem(self.zeros_area)
         else:
             self.zeros_area.show()

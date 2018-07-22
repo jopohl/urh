@@ -12,17 +12,21 @@ class TestSimulatorDialog(QtTestCase):
         super().setUp()
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")
+        alice.simulate = True
+        bob.simulate = True
         self.form.project_manager.participants.append(alice)
         self.form.project_manager.participants.append(bob)
         self.form.project_manager.project_updated.emit()
 
         mt = self.form.compare_frame_controller.proto_analyzer.default_message_type
-        msg1 = SimulatorMessage(destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-        msg2 = SimulatorMessage(destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg1 = SimulatorMessage(source=bob, destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg2 = SimulatorMessage(source=alice, destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
 
         simulator_manager = self.form.simulator_tab_controller.simulator_config
         simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
         simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
+
+        print(self.form.simulator_tab_controller.simulator_config.tx_needed)
 
         self.dialog = SimulatorDialog(self.form.simulator_tab_controller.simulator_config,
                                       self.form.generator_tab_controller.modulators,
@@ -55,18 +59,14 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxGain, 15)
         self.assertEqual(simulator.sniffer.rcv_device.gain, 15)
 
-        self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxIFGain, 24)
-        self.assertEqual(simulator.sniffer.rcv_device.if_gain, 24)
+        self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxIFGain, 10)
+        self.assertEqual(simulator.sniffer.rcv_device.if_gain, 10)
 
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxBasebandGain, 11)
         self.assertEqual(simulator.sniffer.rcv_device.baseband_gain, 11)
 
         self.__edit_spinbox_value(rx_settings_widget.ui.spinBoxFreqCorrection, 22)
         self.assertEqual(simulator.sniffer.rcv_device.freq_correction, 22)
-
-        rx_settings_widget.ui.lineEditDeviceArgs.setText("cool args")
-        rx_settings_widget.ui.lineEditDeviceArgs.editingFinished.emit()
-        self.assertEqual(simulator.sniffer.rcv_device.device_args, "cool args")
 
         rx_settings_widget.ui.lineEditIP.setText("4.4.4.4")
         rx_settings_widget.ui.lineEditIP.editingFinished.emit()
@@ -127,10 +127,6 @@ class TestSimulatorDialog(QtTestCase):
 
         self.__edit_spinbox_value(tx_settings_widget.ui.spinBoxFreqCorrection, 33)
         self.assertEqual(simulator.sender.device.freq_correction, 33)
-
-        tx_settings_widget.ui.lineEditDeviceArgs.setText("cool send args")
-        tx_settings_widget.ui.lineEditDeviceArgs.editingFinished.emit()
-        self.assertEqual(simulator.sender.device.device_args, "cool send args")
 
         tx_settings_widget.ui.lineEditIP.setText("1.2.6.2")
         tx_settings_widget.ui.lineEditIP.editingFinished.emit()

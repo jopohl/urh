@@ -1,4 +1,4 @@
-from cusrp cimport *
+from urh.dev.native.lib.cusrp cimport *
 import numpy as np
 # noinspection PyUnresolvedReferences
 cimport numpy as np
@@ -29,6 +29,8 @@ cpdef set_channel(size_t channel):
     CHANNEL = channel
 
 cpdef uhd_error open(str device_args):
+    if not device_args:
+        device_args = ""
     py_byte_string = device_args.encode('UTF-8')
     cdef char* dev_args = py_byte_string
 
@@ -204,3 +206,27 @@ cpdef str get_last_error():
         uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
     error_msg_py = error_msg.decode("UTF-8")
     return error_msg_py
+
+cpdef list find_devices(str args):
+    py_byte_string = args.encode('UTF-8')
+    cdef char* dev_args = py_byte_string
+    cdef uhd_string_vector_handle h
+    uhd_string_vector_make(&h)
+    uhd_usrp_find(dev_args, &h)
+    cdef size_t i, num_devices = 0
+    uhd_string_vector_size(h, &num_devices)
+    cdef char* vector_str_item = <char *> malloc(512 * sizeof(char))
+
+    result = []
+
+    print(num_devices)
+    for i in range(num_devices):
+        uhd_string_vector_at(h, i, vector_str_item, 512)
+        device_str = vector_str_item.decode("UTF-8")
+        if device_str not in result:
+            result.append(device_str)
+
+    free(vector_str_item)
+    uhd_string_vector_free(&h)
+
+    return result

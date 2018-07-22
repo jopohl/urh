@@ -7,14 +7,17 @@ from multiprocessing.connection import Connection
 from pickle import UnpicklingError
 
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
+from urh.util import util
+# set shared library path when processes spawn so they can also find the .so's in bundled case
+util.set_shared_library_path()
 
-class Device(QObject):
+
+class Device(object):
     JOIN_TIMEOUT = 1.0
 
     SYNC_TX_CHUNK_SIZE = 0
@@ -33,8 +36,6 @@ class Device(QObject):
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
 
-    data_received = pyqtSignal(np.ndarray)
-
     ASYNCHRONOUS = False
 
     DEVICE_LIB = None
@@ -46,6 +47,10 @@ class Device(QObject):
         Command.SET_IF_GAIN.name: {"rx": "set_if_rx_gain", "tx": "set_if_tx_gain"},
         Command.SET_BB_GAIN.name: {"rx": "set_baseband_gain"}
     }
+
+    @classmethod
+    def get_device_list(cls):
+        return []
 
     @classmethod
     def process_command(cls, command, ctrl_connection, is_tx: bool):
@@ -78,11 +83,7 @@ class Device(QObject):
 
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
-        if "identifier" in parameters:
-            identifier = parameters["identifier"]
-        else:
-            identifier = None
-        if cls.setup_device(ctrl_connection, device_identifier=identifier):
+        if cls.setup_device(ctrl_connection, device_identifier=parameters["identifier"]):
             for parameter, value in parameters.items():
                 cls.process_command((parameter, value), ctrl_connection, is_tx)
             return True
@@ -148,7 +149,10 @@ class Device(QObject):
 
         while not exit_requested:
             if cls.ASYNCHRONOUS:
-                time.sleep(0.25)
+                try:
+                    time.sleep(0.25)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():
@@ -185,7 +189,10 @@ class Device(QObject):
 
         while not exit_requested and not send_config.sending_is_finished():
             if cls.ASYNCHRONOUS:
-                time.sleep(0.5)
+                try:
+                    time.sleep(0.5)
+                except KeyboardInterrupt:
+                    pass
             else:
                 cls.send_sync(send_config.get_data_to_send(buffer_size))
 
@@ -247,7 +254,8 @@ class Device(QObject):
         self.send_buffer = None
         self.send_buffer_reader = None
 
-        self.emit_data_received_signal = False  # used for protocol sniffer
+        self.device_serial = None
+        self.device_number = 0
 
         self.samples_to_send = np.array([], dtype=np.complex64)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
@@ -275,6 +283,10 @@ class Device(QObject):
         self.read_dev_msg_thread.start()
 
     @property
+    def has_multi_device_support(self):
+        return False
+
+    @property
     def current_sent_sample(self):
         return self._current_sent_sample.value // 2
 
@@ -297,7 +309,8 @@ class Device(QObject):
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
                             (self.Command.SET_IF_GAIN.name, self.if_gain),
-                            (self.Command.SET_BB_GAIN.name, self.baseband_gain)])
+                            (self.Command.SET_BB_GAIN.name, self.baseband_gain),
+                            ("identifier", self.device_serial)])
 
     @property
     def send_config(self) -> SendConfig:
@@ -562,7 +575,6 @@ class Device(QObject):
             except OSError as e:
                 logger.exception(e)
 
-
     def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
@@ -616,7 +628,9 @@ class Device(QObject):
             try:
                 message = self.parent_ctrl_conn.recv()
                 try:
-                    action, return_code = message.split(":")
+                    splitted = message.split(":")
+                    action = ":".join(splitted[:-1])
+                    return_code = splitted[-1]
                     self.log_retcode(int(return_code), action)
                 except ValueError:
                     self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
@@ -655,9 +669,6 @@ class Device(QObject):
 
             self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
             self.current_recv_index += n_samples
-
-            if self.emit_data_received_signal:
-                self.data_received.emit(samples)
 
         logger.debug("Exiting read_receive_queue thread.")
 

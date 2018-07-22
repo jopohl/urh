@@ -74,7 +74,7 @@ class TestSimulator(QtTestCase):
         self.stc = self.form.simulator_tab_controller
         self.gtc = self.form.generator_tab_controller
 
-        self.form.add_signalfile(get_path_for_data_file("esaver.complex"))
+        self.form.add_signalfile(get_path_for_data_file("esaver.coco"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.sim_frame = self.form.simulator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(3)
@@ -97,7 +97,7 @@ class TestSimulator(QtTestCase):
         simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
                               self.form.project_manager, sniffer=sniffer, sender=sender)
 
-        pause = 100000
+        pause = 100
         msg_a = SimulatorMessage(part_b,
                                  [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
                                  pause=pause, message_type=MessageType("empty_message_type"), source=part_a)
@@ -122,7 +122,7 @@ class TestSimulator(QtTestCase):
 
         current_index = Value("L")
         elapsed = Value("f")
-        target_num_samples = 113600 - pause
+        target_num_samples = 13600 + pause
         receive_process = Process(target=receive, args=(port, current_index, target_num_samples, elapsed))
         receive_process.daemon = True
         receive_process.start()
@@ -140,11 +140,11 @@ class TestSimulator(QtTestCase):
         # yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
-        QTest.qWait(10)
+        time.sleep(0.1)
         # send some zeros to simulate the end of a message
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QTest.qWait(100)
-        receive_process.join(10)
+        time.sleep(0.1)
+        receive_process.join(20)
 
         logger.info("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
 
@@ -209,6 +209,7 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -223,6 +224,7 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -237,6 +239,7 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -332,13 +335,15 @@ class TestSimulator(QtTestCase):
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
-        self.alice.send_raw_data(modulator.modulate("10" * 42), 1)
+        self.alice.send_raw_data(modulator.modulate("100"+"10101010"*42), 1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0], "101010101")
+        time.sleep(0.1)
 
-        QTest.qWait(250)
+        QTest.qWait(500)
         self.assertTrue(simulator.simulation_is_finished())
 
         conn.close()

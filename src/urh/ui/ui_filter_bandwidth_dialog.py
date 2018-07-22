@@ -122,7 +122,6 @@ class Ui_DialogFilterBandwidth(object):
         self.retranslateUi(DialogFilterBandwidth)
         self.buttonBox.accepted.connect(DialogFilterBandwidth.accept)
         self.buttonBox.rejected.connect(DialogFilterBandwidth.reject)
-        QtCore.QMetaObject.connectSlotsByName(DialogFilterBandwidth)
 
     def retranslateUi(self, DialogFilterBandwidth):
         _translate = QtCore.QCoreApplication.translate

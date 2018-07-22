@@ -17,9 +17,21 @@ class HackRF(Device):
     })
 
     @classmethod
+    def get_device_list(cls):
+        result = hackrf.get_device_list()
+        if result is None:
+            return []
+        return result
+
+    @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
-        ret = hackrf.setup()
-        ctrl_connection.send("SETUP:" + str(ret))
+        ret = hackrf.setup(device_identifier)
+        msg = "SETUP"
+        if device_identifier:
+            msg += " ({})".format(device_identifier)
+        msg += ": "+str(ret)
+        ctrl_connection.send(msg)
+
         return ret == 0
 
     @classmethod
@@ -72,6 +84,10 @@ class HackRF(Device):
             -4242: "HACKRF NOT OPEN",
             -9999: "HACKRF_ERROR_OTHER"
         }
+
+    @property
+    def has_multi_device_support(self):
+        return hackrf.has_multi_device_support()
 
     @staticmethod
     def unpack_complex(buffer):

@@ -112,8 +112,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>178</width>
-            <height>62</height>
+            <width>1066</width>
+            <height>767</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -180,8 +180,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>1066</width>
+            <height>767</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -237,7 +237,7 @@
          </property>
          <widget class="QWidget" name="tab_simulation">
           <attribute name="title">
-           <string>Messages</string>
+           <string>Status</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
@@ -445,7 +445,7 @@ QGroupBox::indicator:checked {
          </widget>
          <widget class="QWidget" name="tab">
           <attribute name="title">
-           <string>Transcript</string>
+           <string>Messages</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -454,7 +454,7 @@ QGroupBox::indicator:checked {
               <bool>true</bool>
              </property>
              <property name="placeholderText">
-              <string>You will find the transcript of the simulation here.</string>
+              <string>Here you will find all messages that were sent and received during simulation.</string>
              </property>
             </widget>
            </item>
@@ -514,7 +514,7 @@ QGroupBox::indicator:checked {
          </widget>
          <widget class="QWidget" name="tab_device">
           <attribute name="title">
-           <string>SDR Status</string>
+           <string>Devices</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>

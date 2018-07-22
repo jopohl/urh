@@ -8,6 +8,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
+from urh.util.Logger import logger
 
 
 class SendDialog(SendRecvDialog):
@@ -41,19 +42,15 @@ class SendDialog(SendRecvDialog):
             signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
-                                                                   QPen(QColor(Qt.transparent), Qt.FlatCap),
+                                                                   QPen(QColor(Qt.transparent), 0),
                                                                    QBrush(constants.SEND_INDICATOR_COLOR))
             self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
             self.scene_manager.init_scene()
             self.graphics_view.set_signal(signal)
             self.graphics_view.sample_rate = samp_rate
 
-            self.init_device()
-
-            self.graphics_view.setScene(self.scene_manager.scene)
-            self.graphics_view.scene_manager = self.scene_manager
-
             self.create_connects()
+            self.device_settings_widget.update_for_new_device(overwrite_settings=False)
 
     def create_connects(self):
         super().create_connects()
@@ -97,6 +94,11 @@ class SendDialog(SendRecvDialog):
         filename = FileOperator.get_save_file_name("signal.complex")
         if filename:
             try:
+                try:
+                    self.scene_manager.signal.sample_rate = self.device.sample_rate
+                except Exception as e:
+                    logger.exception(e)
+
                 self.scene_manager.signal.save_as(filename)
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])

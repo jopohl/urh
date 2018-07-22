@@ -17,13 +17,20 @@ class USRP(Device):
     ASYNCHRONOUS = False
 
     @classmethod
+    def get_device_list(cls):
+        return usrp.find_devices("")
+
+    @classmethod
     def adapt_num_read_samples_to_sample_rate(cls, sample_rate):
         cls.SYNC_RX_CHUNK_SIZE = 16384 * int(sample_rate / 1e6)
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = usrp.open(device_identifier)
-        ctrl_connection.send("OPEN:" + str(ret))
+        if device_identifier:
+            ctrl_connection.send("OPEN ({}):{}".format(device_identifier, ret))
+        else:
+            ctrl_connection.send("OPEN:" + str(ret))
         success = ret == 0
         if success:
             device_repr = usrp.get_device_representation()
@@ -70,11 +77,14 @@ class USRP(Device):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
                          gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
-        self.device_args = ""
         self.success = 0
 
     def set_device_gain(self, gain):
         super().set_device_gain(gain * 0.01)
+
+    @property
+    def has_multi_device_support(self):
+        return True
 
     @property
     def device_parameters(self):
@@ -85,7 +95,7 @@ class USRP(Device):
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
-                            ("identifier", self.device_args)])
+                            ("identifier", self.device_serial)])
 
     @staticmethod
     def unpack_complex(buffer):

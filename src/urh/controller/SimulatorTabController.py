@@ -35,11 +35,13 @@ from urh.ui.delegates.ProtocolValueDelegate import ProtocolValueDelegate
 from urh.ui.ui_simulator import Ui_SimulatorTab
 from urh.util import util, FileOperator
 from urh.util.Errors import Errors
+from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorTabController(QWidget):
     open_in_analysis_requested = pyqtSignal(str)
+    rx_file_saved = pyqtSignal(str)
 
     def __init__(self, compare_frame_controller: CompareFrameController,
                  generator_tab_controller: GeneratorTabController,
@@ -148,6 +150,7 @@ class SimulatorTabController(QWidget):
     def create_connects(self):
         self.ui.btnChooseCommand.clicked.connect(self.on_btn_choose_command_clicked)
         self.ui.lineEditTriggerCommand.textChanged.connect(self.on_line_edit_trigger_command_text_changed)
+        self.ui.checkBoxPassTranscriptSTDIN.clicked.connect(self.on_check_box_pass_transcript_STDIN_clicked)
         self.ui.doubleSpinBoxSleep.editingFinished.connect(self.on_spinbox_sleep_editing_finished)
         self.ui.ruleCondLineEdit.textChanged.connect(self.on_rule_cond_line_edit_text_changed)
         self.ui.btnStartSim.clicked.connect(self.on_btn_simulate_clicked)
@@ -172,6 +175,7 @@ class SimulatorTabController(QWidget):
         self.tree_model.modelReset.connect(self.refresh_tree)
 
         self.simulator_scene.selectionChanged.connect(self.on_simulator_scene_selection_changed)
+        self.simulator_scene.files_dropped.connect(self.on_files_dropped)
 
         self.simulator_message_field_model.protocol_label_updated.connect(self.item_updated)
         self.ui.gvSimulator.message_updated.connect(self.item_updated)
@@ -239,8 +243,11 @@ class SimulatorTabController(QWidget):
         self.project_manager.project_updated.emit()
 
     def load_simulator_file(self, filename: str):
-        tree = ET.parse(filename)
-        self.load_config_from_xml_tag(tree.getroot(), update_before=False)
+        try:
+            tree = ET.parse(filename)
+            self.load_config_from_xml_tag(tree.getroot(), update_before=False)
+        except Exception as e:
+            logger.exception(e)
 
     def save_simulator_file(self, filename: str):
         tag = self.simulator_config.save_to_xml(standalone=True)
@@ -392,6 +399,7 @@ class SimulatorTabController(QWidget):
             self.ui.detail_view_widget.setCurrentIndex(3)
         elif isinstance(self.active_item, SimulatorTriggerCommandAction):
             self.ui.lineEditTriggerCommand.setText(self.active_item.command)
+            self.ui.checkBoxPassTranscriptSTDIN.setChecked(self.active_item.pass_transcript)
             self.ui.detail_view_widget.setCurrentIndex(4)
         elif isinstance(self.active_item, SimulatorSleepAction):
             self.ui.doubleSpinBoxSleep.setValue(self.active_item.sleep_time)
@@ -448,6 +456,7 @@ class SimulatorTabController(QWidget):
         s.sniff_parameters_changed.connect(self.project_manager.on_simulator_sniff_parameters_changed)
         s.tx_parameters_changed.connect(self.project_manager.on_simulator_tx_parameters_changed)
         s.open_in_analysis_requested.connect(self.open_in_analysis_requested.emit)
+        s.rx_file_saved.connect(self.rx_file_saved.emit)
 
         return s
 
@@ -461,6 +470,11 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_line_edit_trigger_command_text_changed(self):
         self.active_item.command = self.ui.lineEditTriggerCommand.text()
+        self.item_updated(self.active_item)
+
+    @pyqtSlot()
+    def on_check_box_pass_transcript_STDIN_clicked(self):
+        self.active_item.pass_transcript = self.ui.checkBoxPassTranscriptSTDIN.isChecked()
         self.item_updated(self.active_item)
 
     @pyqtSlot()
@@ -565,3 +579,8 @@ class SimulatorTabController(QWidget):
         self.simulator_message_field_model.update()
         self.simulator_message_table_model.update()
         self.update_ui()
+
+    @pyqtSlot(list)
+    def on_files_dropped(self, file_urls: list):
+        for filename in (file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()):
+            self.load_simulator_file(filename)

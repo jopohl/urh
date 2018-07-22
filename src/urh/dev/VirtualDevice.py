@@ -29,8 +29,6 @@ class VirtualDevice(QObject):
     fatal_error_occurred = pyqtSignal(str)
     ready_for_action = pyqtSignal()
 
-    data_received = pyqtSignal(np.ndarray)  # for direct demodulation in sniffer
-
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."
 
@@ -115,6 +113,9 @@ class VirtualDevice(QObject):
                     from urh.dev.native.SDRPlay import SDRPlay
                     self.__dev = SDRPlay(freq, gain, bandwidth, gain, if_gain=if_gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                elif name == "soundcard":
+                    from urh.dev.native.SoundCard import SoundCard
+                    self.__dev = SoundCard(sample_rate, resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 
@@ -141,11 +142,36 @@ class VirtualDevice(QObject):
         else:
             raise ValueError("Unsupported Backend")
 
-        if hasattr(self.__dev, "data_received"):
-            self.__dev.data_received.connect(self.data_received.emit)
-
         if mode == Mode.spectrum:
             self.__dev.is_in_spectrum_mode = True
+
+    @property
+    def has_multi_device_support(self):
+        return hasattr(self.__dev, "has_multi_device_support") and self.__dev.has_multi_device_support
+
+    @property
+    def device_serial(self):
+        if hasattr(self.__dev, "device_serial"):
+            return self.__dev.device_serial
+        else:
+            return None
+
+    @device_serial.setter
+    def device_serial(self, value):
+        if hasattr(self.__dev, "device_serial"):
+            self.__dev.device_serial = value
+
+    @property
+    def device_number(self):
+        if hasattr(self.__dev, "device_number"):
+            return self.__dev.device_number
+        else:
+            return None
+
+    @device_number.setter
+    def device_number(self, value):
+        if hasattr(self.__dev, "device_number"):
+            self.__dev.device_number = value
 
     @property
     def bandwidth(self):
@@ -323,14 +349,6 @@ class VirtualDevice(QObject):
         self.__dev.direct_sampling_mode = value
 
     @property
-    def emit_data_received_signal(self):
-        return self.__dev.emit_data_received_signal
-
-    @emit_data_received_signal.setter
-    def emit_data_received_signal(self, value):
-        self.__dev.emit_data_received_signal = value
-
-    @property
     def samples_to_send(self):
         if self.backend == Backends.grc:
             return self.__dev.data
@@ -349,14 +367,6 @@ class VirtualDevice(QObject):
             self.__dev.samples_to_send = value
         else:
             raise ValueError("Unsupported Backend")
-
-    @property
-    def device_args(self):
-        return self.__dev.device_args
-
-    @device_args.setter
-    def device_args(self, value):
-        self.__dev.device_args = value
 
     @property
     def ip(self):
@@ -652,6 +662,12 @@ class VirtualDevice(QObject):
             self.__dev.client_port = port
         else:
             raise ValueError("Setting port only supported for NetworkSDR Plugin")
+
+    def get_device_list(self):
+        if hasattr(self.__dev, "get_device_list"):
+            return self.__dev.get_device_list()
+        else:
+            return []
 
     def increase_gr_port(self):
         if self.backend == Backends.grc:

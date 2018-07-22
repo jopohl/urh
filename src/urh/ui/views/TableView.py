@@ -18,6 +18,16 @@ class TableView(QTableView):
 
         self.use_header_colors = False
 
+    def _add_insert_column_menu(self, menu):
+        column_menu = menu.addMenu("Insert column")
+
+        insert_column_left_action = column_menu.addAction("on the left")
+        insert_column_left_action.triggered.connect(self.on_insert_column_left_action_triggered)
+        insert_column_left_action.setIcon(QIcon.fromTheme("edit-table-insert-column-left"))
+        insert_column_right_action = column_menu.addAction("on the right")
+        insert_column_right_action.setIcon(QIcon.fromTheme("edit-table-insert-column-right"))
+        insert_column_right_action.triggered.connect(self.on_insert_column_right_action_triggered)
+
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
@@ -27,13 +37,11 @@ class TableView(QTableView):
 
     @property
     def selected_rows(self):
-        min_row, max_row, _, _ = self.selection_range()
-        if not self.selection_is_empty:
-            selected_rows = list(range(min_row, max_row + 1))
-        else:
-            selected_rows = []
+        rows = set()
+        for index in self.selectionModel().selectedIndexes():
+            rows.add(index.row())
 
-        return selected_rows
+        return sorted(rows)
 
     def selection_range(self):
         """
@@ -201,3 +209,11 @@ class TableView(QTableView):
             header.setStyle(QStyleFactory.create(""))
 
         self.setVerticalHeader(header)
+
+    @pyqtSlot()
+    def on_insert_column_left_action_triggered(self):
+        self.model().insert_column(self.selection_range()[2], self.selected_rows)
+
+    @pyqtSlot()
+    def on_insert_column_right_action_triggered(self):
+        self.model().insert_column(self.selection_range()[3], self.selected_rows)

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QRectF, QSizeF, QPointF, Qt
+from PyQt5.QtCore import QRectF, QSizeF, QPointF
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtWidgets import QGraphicsLineItem
 
@@ -12,7 +12,7 @@ class LabeledArrow(QGraphicsLineItem):
         self.ItemIsSelectable = False
         self.ItemIsFocusable = False
         self.label = str(label)
-        self.setPen(QPen(constants.ARROWCOLOR, Qt.FlatCap))
+        self.setPen(QPen(constants.ARROWCOLOR, 0))
 
     def boundingRect(self):
         extra = (self.pen().width() + 20) / 2.0

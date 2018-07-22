@@ -61,7 +61,6 @@ class Ui_FramePlugins(object):
         self.verticalLayout_3.addWidget(self.groupBoxSettings)
 
         self.retranslateUi(FramePlugins)
-        QtCore.QMetaObject.connectSlotsByName(FramePlugins)
 
     def retranslateUi(self, FramePlugins):
         _translate = QtCore.QCoreApplication.translate

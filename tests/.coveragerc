@@ -19,6 +19,7 @@ exclude_lines =
     def mousePressEvent
     def mouseMoveEvent
     def mouseReleaseEvent
+    def contextMenuEvent
     def on_import_samples_from_csv_action_triggered
     def show_open_dialog
     def on_btn_choose_python2_interpreter_clicked
@@ -26,3 +27,12 @@ exclude_lines =
     def on_new_project_action_triggered
     def on_label_non_project_mode_link_activated
     raise NotImplementedError
+    class SectionItemDelegate
+    class SectionComboBox
+    def createEditor
+    def updateEditorGeometry
+    def on_export_fta_wanted
+    def export_to_fta
+    def export_demodulated
+    def main
+    class DeviceOptionsTableModel

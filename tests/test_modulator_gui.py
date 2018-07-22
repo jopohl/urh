@@ -112,7 +112,7 @@ class TestModulatorGUI(QtTestCase):
                          int(self.dialog.ui.gVModulated.view_rect().width()))
 
     def test_signal_view(self):
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         signal = self.form.signal_tab_controller.signal_frames[0].signal
 
         tree_view = self.dialog.ui.treeViewSignals

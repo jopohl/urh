@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>727</width>
-    <height>749</height>
+    <width>788</width>
+    <height>822</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -217,8 +217,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>647</width>
-               <height>380</height>
+               <width>708</width>
+               <height>447</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -311,110 +311,48 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QListWidget" name="listWidgetDevices">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="viewMode">
-            <enum>QListView::ListMode</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QCheckBox" name="chkBoxDeviceEnabled">
-             <property name="text">
-              <string>Enabled</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="rbNativeBackend">
-             <property name="text">
-              <string>&amp;Native backend (recommended)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="rbGnuradioBackend">
-             <property name="text">
-              <string>&amp;Gnuradio backend</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnHealthCheck">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Perform a health check for native device extensions.</string>
-             </property>
-             <property name="text">
-              <string>Health Check</string>
-             </property>
-             <property name="icon">
-              <iconset theme="heart">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="lSupport">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QLabel" name="labelInfoDeviceTable">
          <property name="font">
           <font>
-           <weight>75</weight>
-           <italic>false</italic>
-           <bold>true</bold>
+           <italic>true</italic>
           </font>
          </property>
-         <property name="styleSheet">
-          <string notr="true">color: green</string>
+         <property name="toolTip">
+          <string/>
          </property>
          <property name="text">
-          <string>device supports sending and receiving</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use the checkboxes in the table below to choose device backends and enable or disable devices. Disabled devices will not show up in device related dialogs such as send or receive.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelWindowsError">
+        <widget class="QTableView" name="tblDevices">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelDeviceMissingInfo">
+         <property name="font">
+          <font>
+           <italic>false</italic>
+          </font>
+         </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Detected a 32 bit installation of python 3.&lt;/span&gt; Install &lt;span style=&quot; font-weight:600;&quot;&gt;64 bit version&lt;/span&gt; to use native backends.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Missing a native backend? Perform a &lt;a href=&quot;health_check&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;health check&lt;/span&gt;&lt;/a&gt;! If GNU Radio backend is not available double check the GNU Radio settings below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -491,7 +429,8 @@
              <string>View log</string>
             </property>
             <property name="icon">
-             <iconset theme="utilities-log-viewer"/>
+             <iconset theme="utilities-log-viewer">
+              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>

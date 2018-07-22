@@ -10,7 +10,7 @@ from urh.dev.native.SDRPlay import SDRPlay
 from urh.util import util
 import ctypes
 
-util.set_windows_lib_path()
+util.set_shared_library_path()
 
 from urh.dev.native.lib import sdrplay
 

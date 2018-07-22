@@ -39,15 +39,16 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
                           "Complex16 signed (*.complex16s *.cs8);;" \
                           "Wave (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
+                          "Binary Protocols (*.bin);;" \
                           "Fuzzprofiles (*.fuzz.xml *.fuzz);;" \
                           "Simulator (*.sim.xml *.sim)" \
                           "Plain bits (*.txt);;" \
                           "Tar Archives (*.tar *.tar.gz *.tar.bz2);;" \
                           "Zip Archives (*.zip)"
         elif name_filter == "proto":
-            name_filter = "Protocols (*.proto.xml *.proto);;"
+            name_filter = "Protocols (*.proto.xml *.proto);; Binary Protocols (*.bin)"
         elif name_filter == "fuzz":
-            name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz);;"
+            name_filter = "Fuzzprofiles (*.fuzz.xml *.fuzz)"
         elif name_filter == "simulator":
             name_filter = "Simulator (*.sim.xml *.sim)"
 
@@ -98,7 +99,7 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     global RECENT_PATH
     if caption == "Save signal":
         name_filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) " \
-                      "(*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;" \
+                      "(*.complex16u *.cu8);;Complex16 files (2 signed int8) (*.complex16s *.cs8);;" \
                       "Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         if wav_only:
             name_filter = "wav files (*.wav);;all files (*)"
@@ -110,8 +111,10 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
         name_filter = "Simulator (*.sim.xml *.sim);;All files (*)"
     elif caption == "Export signal as png":
         name_filter = "PNG (*.png);;All files (*)"
+    elif caption == "Export spectrogram":
+        name_filter = "Frequency Time (*.ft);;Frequency Time Amplitude (*.fta)"
     else:
-        name_filter = "Protocols (*.proto.xml *.proto);;All files (*)"
+        name_filter = "Protocols (*.proto.xml *.proto);;Binary Protocol (*.bin);;All files (*)"
 
     filename = None
     dialog = QFileDialog()
@@ -133,12 +136,13 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     return filename
 
 
-def save_data_dialog(signal_name: str, data, wav_only=False, parent=None) -> str:
+def save_data_dialog(signal_name: str, data, sample_rate=1e6, wav_only=False, parent=None) -> str:
     filename = get_save_file_name(signal_name, wav_only)
 
     if filename:
         try:
-            save_data(data, filename)
+            data = convert_data_to_format(data, filename)
+            save_data(data, filename, sample_rate=sample_rate)
         except Exception as e:
             QMessageBox.critical(parent, "Error saving signal", e.args[0])
             filename = None
@@ -148,10 +152,10 @@ def save_data_dialog(signal_name: str, data, wav_only=False, parent=None) -> str
     return filename
 
 
-def save_data(data, filename: str, sample_rate=1e6):
+def save_data(data, filename: str, sample_rate=1e6, num_channels=2):
     if filename.endswith(".wav"):
         f = wave.open(filename, "w")
-        f.setnchannels(2)
+        f.setnchannels(num_channels)
         f.setsampwidth(2)
         f.setframerate(sample_rate)
         f.writeframes(data)
@@ -176,18 +180,20 @@ def save_data(data, filename: str, sample_rate=1e6):
             rewrite_tar(archive)
 
 
-def save_signal(signal):
-    filename = signal.filename
+def convert_data_to_format(data: np.ndarray, filename: str):
     if filename.endswith(".wav"):
-        data = signal.wave_data
-    elif filename.endswith(".complex16u"):
-        data = (127.5 * (signal.data.view(np.float32) + 1.0)).astype(np.uint8)
-    elif filename.endswith(".complex16s"):
-        data = (127.5 * ((signal.data.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
+        return (data.view(np.float32) * 32767).astype(np.int16)
+    elif filename.endswith(".complex16u") or filename.endswith(".cu8):
+        return (127.5 * (data.view(np.float32) + 1.0)).astype(np.uint8)
+    elif filename.endswith(".complex16s") or filename.endswith(".cs8):
+        return (127.5 * ((data.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
     else:
-        data = signal.data
+        return data
 
-    save_data(data, filename, sample_rate=signal.sample_rate)
+
+def save_signal(signal):
+    data = convert_data_to_format(signal.data, signal.filename)
+    save_data(data, signal.filename, sample_rate=signal.sample_rate)
 
 
 def rewrite_zip(zip_name):

@@ -16,24 +16,13 @@ class SignalSceneManager(SceneManager):
         super().show_scene_section(x1, x2, subpath_ranges=subpath_ranges, colors=colors)
 
     def init_scene(self):
-        stored_minimum, stored_maximum = self.minimum, self.maximum
-
         if self.scene_type == 0:
-            # Ensure Real plot have same y Axis
+            # Ensure real plot has same y Axis
             self.plot_data = self.signal.real_plot_data
         else:
-            noise_val = signalFunctions.get_noise_for_mod_type(self.scene_type - 1)
-            # Bypass Min/Max calculation
-            if noise_val == 0:
-                # ASK
-                self.minimum, self.maximum = 0, self.padding * np.max(self.signal.qad)
-            else:
-                self.minimum, self.maximum = 0, self.padding * noise_val
-
             self.plot_data = self.signal.qad
 
         super().init_scene(apply_padding=self.scene_type == 0)
-        self.minimum, self.maximum = stored_minimum, stored_maximum
 
         self.line_item.setLine(0, 0, 0, 0)  # Hide Axis
 

@@ -1,8 +1,10 @@
 import copy
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
@@ -18,13 +20,15 @@ from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
-from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
+from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 
 
 class SimulatorScene(QGraphicsScene):
+    files_dropped = pyqtSignal(list)
+
     model_to_scene_class_mapping = {
         SimulatorRule: RuleItem,
         SimulatorRuleCondition: RuleConditionItem,
@@ -114,11 +118,13 @@ class SimulatorScene(QGraphicsScene):
             self.on_item_added(child)
 
     def model_to_scene(self, model_item: SimulatorItem):
-        if (model_item is None or
-                model_item is self.simulator_config.rootItem):
+        if (model_item is None or model_item is self.simulator_config.rootItem):
             return None
 
-        return self.items_dict[model_item]
+        try:
+            return self.items_dict[model_item]
+        except KeyError:
+            return None
 
     def insert_participant(self, participant: Participant):
         participant_item = ParticipantItem(participant)
@@ -370,6 +376,8 @@ class SimulatorScene(QGraphicsScene):
     def dropEvent(self, event: QDropEvent):
         items = [item for item in self.items(event.scenePos()) if isinstance(item, GraphicsItem) and item.acceptDrops()]
         item = None if len(items) == 0 else items[0]
+        if len(event.mimeData().urls()) > 0:
+            self.files_dropped.emit(event.mimeData().urls())
 
         indexes = list(event.mimeData().text().split("/")[:-1])
 
@@ -477,8 +485,12 @@ class SimulatorScene(QGraphicsScene):
             for msg in protocol.messages:
                 source, destination = self.detect_source_destination(msg)
 
-                messages.append(self.create_message(destination, copy.copy(msg.decoded_bits),
-                                                    msg.pause, msg.message_type, msg.decoder, source))
+                messages.append(self.create_message(destination=destination,
+                                                    plain_bits=copy.copy(msg.decoded_bits),
+                                                    pause=0,
+                                                    message_type=msg.message_type,
+                                                    decoder=msg.decoder,
+                                                    source=source))
 
         self.simulator_config.add_items(messages, pos, parent)
 
@@ -497,20 +509,20 @@ class SimulatorScene(QGraphicsScene):
             self.__get_drag_nodes(child, drag_nodes)
 
     def detect_source_destination(self, message: Message):
-        # TODO: use SRC_ADDRESS and DST_ADDRESS labels
         participants = self.simulator_config.participants
 
-        source = None
+        source = None if len(participants) < 2 else participants[0]
         destination = self.simulator_config.broadcast_part
 
-        if len(participants) == 2:
-            source = participants[0]
-        elif len(participants) > 2:
-            if message.participant:
-                source = message.participant
-                # destination = participants[0] if message.participant == participants[1] else participants[1]
-            else:
-                source = participants[0]
-                # destination = participants[1]
+        if message.participant:
+            source = message.participant
+            dst_address_label = next((lbl for lbl in message.message_type if lbl.field_type and
+                                      lbl.field_type.function == FieldType.Function.DST_ADDRESS), None)
+            if dst_address_label:
+                start, end = message.get_label_range(dst_address_label, view=1, decode=True)
+                dst_address = message.decoded_hex_str[start:end]
+                dst = next((p for p in participants if p.address_hex == dst_address), None)
+                if dst is not None and dst != source:
+                    destination = dst
 
-        return (source, destination)
+        return source, destination

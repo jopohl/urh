@@ -14,8 +14,7 @@ class ProtocolTableModel(TableModel):
     def __init__(self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None):
         super().__init__(participants=participants, parent=parent)
 
-        self.controller = controller
-        """:type: urh.controller.CompareFrameController.CompareFrameController"""
+        self.controller = controller # type: urh.controller.CompareFrameController.CompareFrameController
 
         self.protocol = proto_analyzer
         self.active_group_ids = [0]
@@ -36,7 +35,8 @@ class ProtocolTableModel(TableModel):
             self.ref_index_changed.emit(self._refindex)
 
     def addProtoLabel(self, start, end, messagenr):
-        self.controller.add_protocol_label(start=start, end=end, messagenr=messagenr, proto_view=self.proto_view)
+        a = self.get_alignment_offset_at(messagenr)
+        self.controller.add_protocol_label(start=start-a, end=end-a, messagenr=messagenr, proto_view=self.proto_view)
 
     def refresh_fonts(self):
         self.bold_fonts.clear()
@@ -61,6 +61,10 @@ class ProtocolTableModel(TableModel):
 
     def flags(self, index: QModelIndex):
         if index.isValid():
+            alignment_offset = self.get_alignment_offset_at(index.row())
+            if index.column() < alignment_offset:
+                return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
             if self.is_writeable:
                 return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
             else:

@@ -24,12 +24,11 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorDialog(QDialog):
-    TRANSCRIPT_FORMAT = "{0} ({1}->{2}): {3}"
-
     rx_parameters_changed = pyqtSignal(dict)
     tx_parameters_changed = pyqtSignal(dict)
     sniff_parameters_changed = pyqtSignal(dict)
     open_in_analysis_requested = pyqtSignal(str)
+    rx_file_saved = pyqtSignal(str)
 
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, signals: list = None,
@@ -42,6 +41,9 @@ class SimulatorDialog(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.simulator_config = simulator_config  # type: SimulatorConfiguration
+        self.rx_needed = self.simulator_config.rx_needed
+        self.tx_needed = self.simulator_config.tx_needed
+
         self.current_transcript_index = 0
 
         self.simulator_scene = SimulatorScene(mode=1,
@@ -54,54 +56,75 @@ class SimulatorDialog(QDialog):
         self.timer = QTimer(self)
 
         self.backend_handler = BackendHandler()
-        self.device_settings_rx_widget = DeviceSettingsWidget(project_manager,
-                                                              is_tx=False,
-                                                              backend_handler=self.backend_handler)
+        if self.rx_needed:
+            self.device_settings_rx_widget = DeviceSettingsWidget(project_manager,
+                                                                  is_tx=False,
+                                                                  backend_handler=self.backend_handler)
 
-        self.sniff_settings_widget = SniffSettingsWidget(self.device_settings_rx_widget.ui.cbDevice.currentText(),
-                                                         project_manager,
-                                                         signal=None,
-                                                         backend_handler=self.backend_handler,
-                                                         network_raw_mode=True, signals=signals)
+            self.sniff_settings_widget = SniffSettingsWidget(self.device_settings_rx_widget.ui.cbDevice.currentText(),
+                                                             project_manager,
+                                                             signal=None,
+                                                             backend_handler=self.backend_handler,
+                                                             network_raw_mode=True, signals=signals)
 
-        self.device_settings_rx_widget.device = self.sniff_settings_widget.sniffer.rcv_device
+            self.device_settings_rx_widget.device = self.sniff_settings_widget.sniffer.rcv_device
 
-        self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
-        self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
-        self.sniff_settings_widget.ui.label_sniff_viewtype.hide()
-        self.sniff_settings_widget.ui.checkBox_sniff_Timestamp.hide()
-        self.sniff_settings_widget.ui.comboBox_sniff_viewtype.hide()
+            self.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.hide()
+            self.sniff_settings_widget.ui.label_sniff_OutputFile.hide()
+            self.sniff_settings_widget.ui.label_sniff_viewtype.hide()
+            self.sniff_settings_widget.ui.checkBox_sniff_Timestamp.hide()
+            self.sniff_settings_widget.ui.comboBox_sniff_viewtype.hide()
 
-        self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
-        self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
+            self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(0, self.device_settings_rx_widget)
+            self.ui.scrollAreaWidgetContentsRX.layout().insertWidget(1, self.sniff_settings_widget)
 
-        self.device_settings_tx_widget = DeviceSettingsWidget(project_manager, is_tx=True,
-                                                              backend_handler=self.backend_handler,
-                                                              continuous_send_mode=True)
-        self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
-        self.device_settings_tx_widget.ui.labelNRepeat.hide()
+            sniffer = self.sniff_settings_widget.sniffer
 
-        self.modulation_settings_widget = ModulationSettingsWidget(modulators, signal_tree_model=signal_tree_model,
-                                                                   parent=None)
+            self.scene_manager = SniffSceneManager(np.array([]), parent=self)
+            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+        else:
+            self.device_settings_rx_widget = self.sniff_settings_widget = self.scene_manager = None
+            self.ui.tabWidgetSimulatorSettings.setTabEnabled(1, False)
+            self.ui.graphicsViewPreview.hide()
+            self.ui.btnSaveRX.hide()
+            self.ui.checkBoxCaptureFullRX.hide()
 
-        self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
-        self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(1, self.modulation_settings_widget)
+            sniffer = None
 
-        send_device = self.device_settings_tx_widget.ui.cbDevice.currentText()
+        if self.tx_needed:
+            self.device_settings_tx_widget = DeviceSettingsWidget(project_manager, is_tx=True,
+                                                                  backend_handler=self.backend_handler,
+                                                                  continuous_send_mode=True)
+            self.device_settings_tx_widget.ui.spinBoxNRepeat.hide()
+            self.device_settings_tx_widget.ui.labelNRepeat.hide()
+
+            self.modulation_settings_widget = ModulationSettingsWidget(modulators, signal_tree_model=signal_tree_model,
+                                                                       parent=None)
+
+            self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(0, self.device_settings_tx_widget)
+            self.ui.scrollAreaWidgetContentsTX.layout().insertWidget(1, self.modulation_settings_widget)
+            send_device = self.device_settings_tx_widget.ui.cbDevice.currentText()
+            sender = EndlessSender(self.backend_handler, send_device)
+        else:
+            self.device_settings_tx_widget = self.modulation_settings_widget = None
+            self.ui.tabWidgetSimulatorSettings.setTabEnabled(2, False)
+
+            sender = None
+
         self.simulator = Simulator(self.simulator_config, modulators, expression_parser, project_manager,
-                                   sniffer=self.sniff_settings_widget.sniffer,
-                                   sender=EndlessSender(self.backend_handler, send_device))
+                                   sniffer=sniffer, sender=sender)
 
-        self.device_settings_tx_widget.device = self.simulator.sender.device
-
-        self.scene_manager = SniffSceneManager(np.array([]), parent=self)
-        self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+        if self.device_settings_tx_widget:
+            self.device_settings_tx_widget.device = self.simulator.sender.device
 
         self.update_buttons()
         self.create_connects()
 
-        self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
-        self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
+        if self.device_settings_rx_widget:
+            self.device_settings_rx_widget.bootstrap(project_manager.simulator_rx_conf)
+
+        if self.device_settings_tx_widget:
+            self.device_settings_tx_widget.bootstrap(project_manager.simulator_tx_conf)
 
         self.ui.textEditTranscript.setFont(util.get_monospace_font())
 
@@ -109,13 +132,21 @@ class SimulatorDialog(QDialog):
             self.ui.radioButtonTranscriptHex.setChecked(True)
 
     def create_connects(self):
-        self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
-        self.device_settings_rx_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
+        if self.rx_needed:
+            self.device_settings_rx_widget.selected_device_changed.connect(self.on_selected_rx_device_changed)
+            self.device_settings_rx_widget.device_parameters_changed.connect(self.rx_parameters_changed.emit)
 
-        self.device_settings_tx_widget.selected_device_changed.connect(self.on_selected_tx_device_changed)
-        self.device_settings_tx_widget.device_parameters_changed.connect(self.tx_parameters_changed.emit)
+            self.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
 
-        self.sniff_settings_widget.sniff_parameters_changed.connect(self.sniff_parameters_changed.emit)
+            self.ui.btnSaveRX.clicked.connect(self.on_btn_save_rx_clicked)
+            self.ui.checkBoxCaptureFullRX.clicked.connect(self.on_checkbox_capture_full_rx_clicked)
+
+            self.ui.btnTestSniffSettings.clicked.connect(self.on_btn_test_sniff_settings_clicked)
+            self.ui.btnOpenInAnalysis.clicked.connect(self.on_btn_open_in_analysis_clicked)
+
+        if self.tx_needed:
+            self.device_settings_tx_widget.selected_device_changed.connect(self.on_selected_tx_device_changed)
+            self.device_settings_tx_widget.device_parameters_changed.connect(self.tx_parameters_changed.emit)
 
         self.ui.radioButtonTranscriptBit.clicked.connect(self.on_radio_button_transcript_bit_clicked)
         self.ui.radioButtonTranscriptHex.clicked.connect(self.on_radio_button_transcript_hex_clicked)
@@ -134,13 +165,6 @@ class SimulatorDialog(QDialog):
         self.simulator.simulation_started.connect(self.on_simulation_started)
         self.simulator.simulation_stopped.connect(self.on_simulation_stopped)
 
-        self.ui.btnSaveRX.clicked.connect(self.on_btn_save_rx_clicked)
-
-        self.ui.checkBoxCaptureFullRX.clicked.connect(self.on_checkbox_capture_full_rx_clicked)
-
-        self.ui.btnTestSniffSettings.clicked.connect(self.on_btn_test_sniff_settings_clicked)
-        self.ui.btnOpenInAnalysis.clicked.connect(self.on_btn_open_in_analysis_clicked)
-
     def update_buttons(self):
         selectable_items = self.simulator_scene.selectable_items()
         all_items_selected = all(item.model_item.logging_active for item in selectable_items)
@@ -149,6 +173,10 @@ class SimulatorDialog(QDialog):
         self.ui.btnLogAll.setEnabled(not all_items_selected)
         self.ui.btnLogNone.setEnabled(any_item_selected)
 
+    def __get_full_transcript(self) -> list:
+        return self.simulator.transcript.get_for_all_participants(all_rounds=True,
+                                                                  use_bit=self.ui.radioButtonTranscriptBit.isChecked())
+
     def update_view(self):
         for device_message in filter(None, map(str.rstrip, self.simulator.device_messages())):
             self.ui.textEditDevices.append(device_message)
@@ -156,14 +184,11 @@ class SimulatorDialog(QDialog):
         for log_msg in filter(None, map(str.rstrip, self.simulator.read_log_messages())):
             self.ui.textEditSimulation.append(log_msg)
 
-        for source, destination, msg, msg_index in self.simulator.transcript[self.current_transcript_index:]:
-            try:
-                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-                self.ui.textEditTranscript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
-            except AttributeError:
-                self.ui.textEditTranscript.append("")
+        transcript = self.__get_full_transcript()
+        for line in transcript[self.current_transcript_index:]:
+            self.ui.textEditTranscript.append(line)
 
-        self.current_transcript_index = len(self.simulator.transcript)
+        self.current_transcript_index = len(transcript)
         current_repeat = str(self.simulator.current_repeat + 1) if self.simulator.is_simulating else "-"
         self.ui.lblCurrentRepeatValue.setText(current_repeat)
 
@@ -171,7 +196,7 @@ class SimulatorDialog(QDialog):
         self.ui.lblCurrentItemValue.setText(current_item)
 
     def update_rx_graphics_view(self):
-        if not self.ui.graphicsViewPreview.isEnabled():
+        if self.scene_manager is None or not self.ui.graphicsViewPreview.isEnabled():
             return
 
         self.scene_manager.end = self.simulator.sniffer.rcv_device.current_index
@@ -188,19 +213,17 @@ class SimulatorDialog(QDialog):
         self.ui.lblCurrentItemValue.setText("-")
 
     def emit_editing_finished_signals(self):
-        self.device_settings_rx_widget.emit_editing_finished_signals()
-        self.device_settings_tx_widget.emit_editing_finished_signals()
-        self.sniff_settings_widget.emit_editing_finished_signals()
+        if self.device_settings_rx_widget:
+            self.device_settings_rx_widget.emit_editing_finished_signals()
+
+        if self.device_settings_tx_widget:
+            self.device_settings_tx_widget.emit_editing_finished_signals()
+
+        if self.sniff_settings_widget:
+            self.sniff_settings_widget.emit_editing_finished_signals()
 
     def update_transcript_view(self):
-        transcript = []
-        for source, destination, msg, msg_index in self.simulator.transcript:
-            try:
-                data = msg.plain_bits_str if self.ui.radioButtonTranscriptBit.isChecked() else msg.plain_hex_str
-                transcript.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
-            except AttributeError:
-                transcript.append("")
-        self.ui.textEditTranscript.setText("\n".join(transcript))
+        self.ui.textEditTranscript.setText("\n".join(self.__get_full_transcript()))
 
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()
@@ -209,9 +232,12 @@ class SimulatorDialog(QDialog):
         self.simulator.cleanup()
 
         self.emit_editing_finished_signals()
-        self.device_settings_rx_widget.emit_device_parameters_changed()
-        self.device_settings_tx_widget.emit_device_parameters_changed()
-        self.sniff_settings_widget.emit_sniff_parameters_changed()
+        if self.device_settings_rx_widget:
+            self.device_settings_rx_widget.emit_device_parameters_changed()
+        if self.device_settings_tx_widget:
+            self.device_settings_tx_widget.emit_device_parameters_changed()
+        if self.sniff_settings_widget:
+            self.sniff_settings_widget.emit_sniff_parameters_changed()
 
         super().closeEvent(event)
 
@@ -224,6 +250,9 @@ class SimulatorDialog(QDialog):
         self.timer.start(self.update_interval)
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-stop"))
         self.ui.btnStartStop.setText("Stop")
+
+        if not self.rx_needed:
+            return
 
         rx_device = self.simulator.sniffer.rcv_device
         for item in self.scene_manager.scene.items():
@@ -246,8 +275,10 @@ class SimulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_simulation_stopped(self):
-        for i in range(3):
-            self.ui.tabWidgetSimulatorSettings.setTabEnabled(i, True)
+        self.ui.tabWidgetSimulatorSettings.setTabEnabled(0, True)
+        self.ui.tabWidgetSimulatorSettings.setTabEnabled(1, self.rx_needed)
+        self.ui.tabWidgetSimulatorSettings.setTabEnabled(2, self.tx_needed)
+
         self.timer.stop()
         self.update_view()
         self.ui.btnStartStop.setIcon(QIcon.fromTheme("media-playback-start"))
@@ -301,12 +332,15 @@ class SimulatorDialog(QDialog):
         if self.simulator.is_simulating:
             self.simulator.stop()
         else:
-            self.device_settings_rx_widget.emit_editing_finished_signals()
-            self.device_settings_tx_widget.emit_editing_finished_signals()
-            self.sniff_settings_widget.emit_editing_finished_signals()
+            if self.rx_needed:
+                self.device_settings_rx_widget.emit_editing_finished_signals()
+                self.sniff_settings_widget.emit_editing_finished_signals()
 
-            self.simulator.sniffer.rcv_device.current_index = 0
-            self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
+                self.simulator.sniffer.rcv_device.current_index = 0
+                self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
+
+            if self.tx_needed:
+                self.device_settings_tx_widget.emit_editing_finished_signals()
 
             self.simulator.start()
 
@@ -375,6 +409,7 @@ class SimulatorDialog(QDialog):
             filename = FileOperator.get_save_file_name("simulation_capture.complex")
             if filename:
                 rx_device.data[:rx_device.current_index].tofile(filename)
+                self.rx_file_saved.emit(filename)
 
     @pyqtSlot()
     def on_btn_open_in_analysis_clicked(self):

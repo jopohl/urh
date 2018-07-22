@@ -13,6 +13,8 @@ matrix:
     - python: 3.4_with_system_site_packages
     - python: 3.5
     - python: 3.6
+    - os: osx
+      language: generic
 
   allow_failures:
     - python: 3.4_with_system_site_packages
@@ -30,11 +32,21 @@ git:
 
 install:
   - |
+    if [[ $TRAVIS_OS_NAME == "osx" ]]
+    then
+      brew upgrade python
+      rm '/usr/local/include/c++'
+      brew install hackrf librtlsdr
+    else
+      sudo apt-get install libhackrf-dev librtlsdr-dev
+    fi
+  - pip3 install cython
+  - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.4"* ]]
     then
       sudo apt-get update && sudo apt-get -y install python3-zmq python3-pyqt5 python3-numpy python3-psutil
     else
-      pip3 install pyqt5!=5.10 && pip3 install -r data/requirements.txt
+      pip3 install -r data/requirements.txt
     fi
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
@@ -44,8 +56,12 @@ install:
     else
       pip3 install pytest pytest-xdist
     fi
-  - sh -e /etc/init.d/xvfb start
-  - sleep 5
+  - |
+    if [[ $TRAVIS_OS_NAME == "linux" ]]
+    then
+      sh -e /etc/init.d/xvfb start
+      sleep 5
+    fi
 
 before_script:
   - touch tests/show_gui
@@ -57,14 +73,17 @@ script:
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
       pytest -s --boxed --cov-report= --cov=src/urh --cov-config tests/.coveragerc tests
+    elif [[ $TRAVIS_OS_NAME == "osx" ]]
+    then
+      pytest tests
     else
       pytest -s --boxed tests
     fi
   - pip3 install .
   - urh --version
-  - urh autoclose
+  #- urh autoclose
 
-after_success: 
+after_success:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then

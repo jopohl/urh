@@ -159,6 +159,7 @@ class SignalFrame(QFrame):
         self.ui.sliderSpectrogramMax.valueChanged.connect(self.on_slider_spectrogram_max_value_changed)
         self.ui.gvSpectrogram.y_scale_changed.connect(self.on_gv_spectrogram_y_scale_changed)
         self.ui.gvSpectrogram.bandpass_filter_triggered.connect(self.on_bandpass_filter_triggered)
+        self.ui.gvSpectrogram.export_fta_wanted.connect(self.on_export_fta_wanted)
         self.ui.btnAdvancedModulationSettings.clicked.connect(self.on_btn_advanced_modulation_settings_clicked)
 
         if self.signal is not None:
@@ -192,6 +193,8 @@ class SignalFrame(QFrame):
         self.ui.gvSignal.set_noise_clicked.connect(self.on_set_noise_in_graphic_view_clicked)
         self.ui.gvSignal.save_as_clicked.connect(self.save_signal_as)
         self.ui.gvSignal.export_as_png_clicked.connect(self.export_signal_as_png)
+        self.ui.gvSignal.export_demodulated_clicked.connect(self.export_demodulated)
+
         self.ui.gvSignal.create_clicked.connect(self.create_new_signal)
         self.ui.gvSignal.zoomed.connect(self.on_signal_zoomed)
         self.ui.gvSpectrogram.zoomed.connect(self.on_spectrum_zoomed)
@@ -429,6 +432,28 @@ class SignalFrame(QFrame):
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
 
             QApplication.instance().restoreOverrideCursor()
+
+
+    def export_demodulated(self):
+        try:
+            initial_name = self.signal.name + "-demodulated.complex"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "demodulated.complex"
+
+        filename = FileOperator.get_save_file_name(initial_name)
+        if filename:
+            try:
+                self.setCursor(Qt.WaitCursor)
+                data = self.signal.qad
+                if filename.endswith(".wav"):
+                    data = self.signal.qad.astype(np.float32)
+                    data /= np.max(np.abs(data))
+                data = FileOperator.convert_data_to_format(data, filename)
+                FileOperator.save_data(data, filename, self.signal.sample_rate, num_channels=1)
+                self.unsetCursor()
+            except Exception as e:
+                QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
 
 
     def draw_signal(self, full_signal=False):
@@ -1066,6 +1091,13 @@ class SignalFrame(QFrame):
                                                       parameter_value=index)
 
             self.undo_stack.push(modulation_action)
+
+            if self.ui.cbSignalView.currentIndex() == 1:
+                self.scene_manager.init_scene()
+                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
+                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
+                self.ui.gvLegend.refresh()
+                self.on_slider_y_scale_value_changed()
 
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 

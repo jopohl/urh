@@ -78,7 +78,7 @@ class SimulatorGraphicsView(QGraphicsView):
             position = QAbstractItemView.BelowItem
 
         message = self.scene().add_message(plain_bits=[0] * num_bits,
-                                           pause=1000000,
+                                           pause=0,
                                            message_type=message_type,
                                            ref_item=ref_item,
                                            position=position)
@@ -285,6 +285,9 @@ class SimulatorGraphicsView(QGraphicsView):
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
                 swap_part_action.setIcon(QIcon.fromTheme("object-flip-horizontal"))
 
+            pause_action = menu.addAction("Set subsequent pause ({} samples)".format(self.context_menu_item.model_item.pause))
+            pause_action.triggered.connect(self.on_pause_action_triggered)
+
         menu.addSeparator()
 
         if len(self.scene().get_all_message_items()) > 1:
@@ -344,6 +347,15 @@ class SimulatorGraphicsView(QGraphicsView):
         else:
             super().keyPressEvent(event)
 
+    @pyqtSlot()
+    def on_pause_action_triggered(self):
+        p = self.context_menu_item.model_item.pause if isinstance(self.context_menu_item, MessageItem) else 0
+        pause, ok = QInputDialog.getInt(self, self.tr("Enter new pause"),
+                                        self.tr("Pause in samples:"), p, 0)
+        if ok:
+            for msg in self.scene().get_selected_messages():
+                msg.pause = pause
+
     @classmethod
     def add_select_actions_to_menu(cls, menu, scene: SimulatorScene, select_to_trigger, select_from_trigger):
         if len(scene.visible_participants) == 0:
@@ -374,5 +386,6 @@ class SimulatorGraphicsView(QGraphicsView):
         for item in self.copied_items:
             assert isinstance(item, GraphicsItem)
             parent = item.model_item.parent()
-            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], parent.child_count(), parent)
+            pos = parent.child_count() if parent is not None else 0
+            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], pos, parent)
 

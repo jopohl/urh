@@ -41,24 +41,26 @@ install:
   - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
   - python --version
   - python -c "import struct; print(struct.calcsize('P') * 8)"
-  - pip install --disable-pip-version-check --user --upgrade pip
+
+  - IF "%PYTHON_ARCH%" == "64" (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip" -FileName "C:\windlls.zip") ELSE (appveyor DownloadFile "https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip" -FileName "C:\windlls.zip")
+  - 7z x -y "C:\windlls.zip" -o%APPVEYOR_BUILD_FOLDER%\src\urh\dev\native\lib\shared
 
   - pip install -r data\requirements.txt
-  - pip install pytest
+  - pip install pytest pytest-faulthandler
 
 build_script:
   # Build the compiled extension
-  - python setup.py build_ext --inplace > build_log.txt
+  - python setup.py build_ext --inplace
 
 test_script:
   - python src\urh\main.py --version
-  - python -m pytest
+  - IF "%APPVEYOR_REPO_TAG%" == "false" (python -m pytest -v -s)
 
 after_test:
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.5.x" (python data\build_cx.py))
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.6.x" (python data\build_cx.py))
   - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
 
 artifacts:

@@ -32,21 +32,19 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.sniff_settings_widget.ui.btn_sniff_use_signal.setAutoDefault(False)
 
         self.sniffer = self.sniff_settings_widget.sniffer
-
-        # set really in on_device_started
-        self.scene_manager = None  # type: LiveSceneManager
-        self.init_device()
-        self.device_settings_widget.set_bandwidth_status()
-
-        self.graphics_view.setScene(self.scene_manager.scene)
-        self.graphics_view.scene_manager = self.scene_manager
-
         self.setWindowTitle(self.tr("Sniff Protocol"))
         self.setWindowIcon(QIcon.fromTheme(":/icons/icons/sniffer.svg"))
 
         self.ui.txtEd_sniff_Preview.setFont(util.get_monospace_font())
 
+        # set really in on_device_started
+        self.scene_manager = None  # type: LiveSceneManager
         self.create_connects()
+        self.device_settings_widget.update_for_new_device(overwrite_settings=False)
+
+
+
+
 
     @property
     def view_type(self) -> int:
@@ -119,10 +117,10 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.device.current_index = 0
         self.sniffer.clear()
 
-    @pyqtSlot()
-    def on_message_sniffed(self):
+    @pyqtSlot(int)
+    def on_message_sniffed(self, index: int):
         try:
-            msg = self.sniffer.messages[-1]
+            msg = self.sniffer.messages[index]
         except IndexError:
             return
         new_data = self.sniffer.message_to_string(msg, self.view_type, include_timestamps=self.show_timestamp)

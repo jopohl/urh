@@ -19,7 +19,7 @@ from urh.ui.views.LabelValueTableView import LabelValueTableView
 class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("two_participants.complex")
+        self.add_signal_to_form("two_participants.coco")
         assert isinstance(self.form, MainController)
         self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
@@ -35,7 +35,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertTrue(True)
 
     def test_analyze_button_enocean(self):
-        self.add_signal_to_form("enocean.complex")
+        self.add_signal_to_form("enocean.coco")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
         QTest.keyClick(w, Qt.Key_Enter)
@@ -121,6 +121,8 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="after search")
 
     def test_show_diff(self):
+        self.cfc.ui.cbProtoView.setCurrentIndex(0)
+
         hidden_columns_before = [i for i in range(self.cfc.protocol_model.col_count)
                                  if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
         self.assertEqual(len(hidden_columns_before), 0)
@@ -139,6 +141,16 @@ class TestAnalysisTabGUI(QtTestCase):
                               if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
 
         self.assertEqual(len(hidden_columns_now), self.cfc.protocol_model.col_count)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+
+        self.assertEqual(self.cfc.protocol_model.refindex, 0)
+        self.assertEqual(self.cfc.protocol_model.proto_view, 1)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(2)
+
+        self.assertEqual(self.cfc.protocol_model.refindex, 0)
+        self.assertEqual(self.cfc.protocol_model.proto_view, 2)
 
     def test_add_message_type(self):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
@@ -328,6 +340,13 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertIn("display type", model.data(model.index(0, 1), Qt.ToolTipRole))
         self.assertIn("bit order", model.data(model.index(0, 2), Qt.ToolTipRole))
 
+        lbl = self.cfc.proto_analyzer.default_message_type[0]
+        self.assertEqual(lbl.display_endianness, "big")
+        model.setData(model.index(0, 2), "MSB/LE", role=Qt.EditRole)
+        self.assertEqual(lbl.display_endianness, "little")
+        model.setData(model.index(0, 2), "LSB/BE", role=Qt.EditRole)
+        self.assertEqual(lbl.display_endianness, "big")
+
     def test_label_list_view(self):
         menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
 
@@ -367,19 +386,37 @@ class TestAnalysisTabGUI(QtTestCase):
         QTest.qSleep(1)
         QTest.qWait(10)
 
-    def test_open_label_dialog(self):
-        def test_dialog():
-            timer.stop()
-            dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, ProtocolLabelDialog)), None)
-            self.assertIsNotNone(dialog)
-            self.assertEqual(dialog.model.rowCount(), 1)
-            dialog.close()
-            sip.delete(dialog)
-
+    def test_create_label_dialog(self):
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
-        timer = QTimer(self.cfc)
-        timer.timeout.connect(test_dialog)
-        timer.start(20)
-        self.cfc.on_edit_label_action_triggered(0)
-        QTest.qSleep(1)
-        QTest.qWait(10)
+        dialog = self.cfc.create_protocol_label_dialog(0)
+        self.assertIsNotNone(dialog)
+
+    def test_alignment(self):
+        assert isinstance(self.cfc, CompareFrameController)
+        self.form.close_all()
+        self.form.add_files([self.get_path_for_filename("misaligned.txt")])
+        self.assertEqual(self.cfc.protocol_model.row_count, 16)
+
+        aligned = True
+        pattern = "6768676"
+        for i in range(self.cfc.protocol_model.row_count):
+            for j in range(len(pattern)):
+                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j+11)) != pattern[j]:
+                    aligned = False
+                    break
+
+        self.assertFalse(aligned)
+
+        self.cfc.ui.cbProtoView.setCurrentIndex(1)
+        self.cfc.align_action.trigger()
+        self.cfc.ui.lineEditSearch.setText(pattern)
+        self.cfc.ui.btnSearchSelectFilter.click()
+
+        aligned = True
+        for i in range(self.cfc.protocol_model.row_count):
+            for j in range(len(pattern)):
+                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j + 11)) != pattern[j]:
+                    aligned = False
+                    break
+
+        self.assertTrue(aligned)

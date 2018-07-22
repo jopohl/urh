@@ -80,7 +80,6 @@ class Ui_SignalDetails(object):
         self.verticalLayout.addItem(spacerItem1)
 
         self.retranslateUi(SignalDetails)
-        QtCore.QMetaObject.connectSlotsByName(SignalDetails)
 
     def retranslateUi(self, SignalDetails):
         _translate = QtCore.QCoreApplication.translate

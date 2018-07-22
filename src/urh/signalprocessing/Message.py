@@ -20,7 +20,8 @@ class Message(object):
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state", "timestamp",
-                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos",
+                 "alignment_offset"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
@@ -50,6 +51,8 @@ class Message(object):
 
         self.align_labels = True
         self.fuzz_created = fuzz_created
+
+        self.alignment_offset = 0
 
         self.__decoded_bits = None
         self.__encoded_bits = None
@@ -299,7 +302,7 @@ class Message(object):
             if self.__get_hex_ascii_index_from_bit_index(i, to_hex=is_hex)[0] == from_index:
                 return i, i + factor - 1
 
-        return len(bits), len(bits)
+        return factor * from_index, factor * (from_index+1) - 1
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, to_hex: bool) -> tuple:
         factor = 4 if to_hex else 8
@@ -437,9 +440,9 @@ class Message(object):
         self.__encoded_bits = None
 
     @staticmethod
-    def from_plain_bits_str(bits):
+    def from_plain_bits_str(bits, pause=0):
         plain_bits = list(map(int, bits))
-        return Message(plain_bits=plain_bits, pause=0, message_type=MessageType("none"))
+        return Message(plain_bits=plain_bits, pause=pause, message_type=MessageType("none"))
 
     def to_xml(self, decoders=None, include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element("message")
@@ -502,7 +505,8 @@ class Message(object):
         result.from_xml(tag, participants, decoders=decoders, message_types=message_types)
         return result
 
-    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
-        start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
-        end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]
+    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool, consider_alignment=False):
+        a = self.alignment_offset if consider_alignment else 0
+        start = self.convert_index(index=lbl.start+a, from_view=0, to_view=view, decoded=decode)[0]
+        end = self.convert_index(index=lbl.end+a, from_view=0, to_view=view, decoded=decode)[1]
         return int(start), int(end)

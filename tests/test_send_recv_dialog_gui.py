@@ -58,7 +58,7 @@ class TestSendRecvDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
-        self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
+        self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
@@ -112,13 +112,6 @@ class TestSendRecvDialog(QtTestCase):
         yield self.__get_spectrum_dialog()
         yield self.__get_sniff_dialog()
 
-    def __close_dialog(self, dialog):
-        dialog.close()
-        dialog.setParent(None)
-        dialog.deleteLater()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
-
     def __add_first_signal_to_generator(self):
         generator_frame = self.form.generator_tab_controller
         generator_frame.ui.cbViewType.setCurrentIndex(0)
@@ -134,7 +127,7 @@ class TestSendRecvDialog(QtTestCase):
                      range(dialog.device_settings_widget.ui.cbDevice.count())]
             self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
-            self.__close_dialog(dialog)
+            dialog.close()
 
     def test_receive(self):
         port = self.get_free_port()
@@ -163,7 +156,7 @@ class TestSendRecvDialog(QtTestCase):
 
         self.assertEqual(receive_dialog.device.current_index, 0)
 
-        self.__close_dialog(receive_dialog)
+        receive_dialog.close()
 
     def test_spectrum(self):
         port = self.get_free_port()
@@ -203,7 +196,7 @@ class TestSendRecvDialog(QtTestCase):
         spectrum_dialog.ui.btnClear.click()
         self.assertEqual(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)
 
-        self.__close_dialog(spectrum_dialog)
+        spectrum_dialog.close()
 
     def test_send(self):
         port = self.get_free_port()
@@ -227,11 +220,11 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
 
-        self.__close_dialog(receive_dialog)
-        self.__close_dialog(send_dialog)
+        receive_dialog.close()
+        send_dialog.close()
 
     def test_continuous_send_dialog(self):
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.__add_first_signal_to_generator()
 
         port = self.get_free_port()
@@ -268,12 +261,12 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.ui.btnClear.click()
         QTest.qWait(1)
 
-        self.__close_dialog(continuous_send_dialog)
+        continuous_send_dialog.close()
 
     def test_sniff(self):
         assert isinstance(self.form, MainController)
         # add a signal so we can use it
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 
@@ -299,11 +292,14 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.device.set_server_port(port)
         generator_frame.network_sdr_plugin.client_port = port
         sniff_dialog.ui.btnStart.click()
-        QApplication.instance().processEvents()
-        generator_frame.ui.btnNetworkSDRSend.click()
-        QApplication.instance().processEvents()
 
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        for msg in generator_frame.table_model.protocol.messages:
+            msg.pause = 500e3
+
+        generator_frame.ui.btnNetworkSDRSend.click()
+
+        time.sleep(2)
+        QTest.qWait(100)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 
@@ -347,7 +343,7 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.ui.btnStop.click()
         self.assertFalse(sniff_dialog.ui.btnStop.isEnabled())
 
-        self.__close_dialog(sniff_dialog)
+        sniff_dialog.close()
 
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
@@ -363,7 +359,7 @@ class TestSendRecvDialog(QtTestCase):
         QTest.qWait(50)
         self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
 
-        self.__close_dialog(send_dialog)
+        send_dialog.close()
 
     def test_send_dialog_delete(self):
         num_samples = self.signal.num_samples
@@ -375,7 +371,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
         self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)
 
-        self.__close_dialog(send_dialog)
+        send_dialog.close()
 
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
@@ -387,7 +383,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
 
-        self.__close_dialog(send_dialog)
+        send_dialog.close()
 
     def test_change_device_parameters(self):
         for dialog in self.__get_all_dialogs():
@@ -445,4 +441,4 @@ class TestSendRecvDialog(QtTestCase):
             dialog.device_settings_widget.ui.spinBoxNRepeat.editingFinished.emit()
             self.assertEqual(dialog.device.num_sending_repeats, 10)
 
-            self.__close_dialog(dialog)
+            dialog.close()

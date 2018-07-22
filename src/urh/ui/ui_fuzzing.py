@@ -287,7 +287,6 @@ class Ui_FuzzingDialog(object):
         self.gridLayout_5.addWidget(self.btnSaveAndClose, 7, 0, 1, 2)
 
         self.retranslateUi(FuzzingDialog)
-        QtCore.QMetaObject.connectSlotsByName(FuzzingDialog)
 
     def retranslateUi(self, FuzzingDialog):
         _translate = QtCore.QCoreApplication.translate

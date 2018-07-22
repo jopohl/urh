@@ -38,7 +38,6 @@ DEVICE_CONFIG["USRP"] = {
     "center_freq": dev_range(start=0, stop=6 * G, step=1),
     "sample_rate": dev_range(start=1, stop=200 * M, step=1),
     "bandwidth": dev_range(start=1, stop=120 * M, step=1),
-    "device_args": "",
     "rx_rf_gain": list(range(0, 101)),
     "tx_rf_gain": list(range(0, 101)),
     "antenna": [0, 1]
@@ -104,6 +103,11 @@ DEVICE_CONFIG["SDRPlay"] = {
     "rx_if_gain": [0, 450, 1620, 2048],
     "rx_antenna": ["Antenna A", "Antenna B", "Hi-Z"],
     "rx_antenna_default_index": 0,
+}
+
+DEVICE_CONFIG["SoundCard"] = {
+    "sample_rate": [16e3, 22.05e3, 24e3, 32e3, 44.1e3, 48e3, 96e3, 192e3],
+    "default_sample_rate": 48e3,
 }
 
 DEVICE_CONFIG["Fallback"] = {

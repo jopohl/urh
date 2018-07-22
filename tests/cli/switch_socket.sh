@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+../../src/urh/cli/urh_cli.py -d HackRF -f 868.3e6 -s 2e6 -g 0 -if 30 -cf 3.906e3 -mo ASK -bl 16 -p0 0 -p1 1 -m aad3d5ddddcc5d45ddbba000000/500ms aad3c5ddddcc5d45ddbaa00000000 --pause 10s -tx --hex -e "'WSP', 'Wireless Short Packet (WSP)'"

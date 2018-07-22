@@ -7,7 +7,7 @@ import numpy as np
 
 from urh.util import util
 
-util.set_windows_lib_path()
+util.set_shared_library_path()
 
 from urh.dev.native.lib import hackrf
 from urh.dev.native.HackRF import HackRF
@@ -121,6 +121,9 @@ class TestHackRF(unittest.TestCase):
 
         print("close", hackrf.close())
         print("exit", hackrf.exit())
+
+    def test_device_list(self):
+        print(hackrf.get_device_list())
 
 
 if __name__ == "__main__":

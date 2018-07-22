@@ -1,29 +1,26 @@
 import os
-import platform
+import shutil
 import sys
 import tempfile
 from collections import defaultdict
 from distutils import ccompiler
 from importlib import import_module
 
-import shutil
 from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
 
 DEVICES = {
     "airspy": {"lib": "airspy", "test_function": "open"},
-    "hackrf": {"lib": "hackrf", "test_function": "hackrf_init"},
+    "hackrf": {"lib": "hackrf", "test_function": "hackrf_init",
+               "extras": {"HACKRF_MULTI_DEVICE_SUPPORT": "hackrf_open_by_serial"}},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
-    "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_set_tuner_bandwidth"},
+    "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name",
+               "extras": {"RTLSDR_BANDWIDTH_SUPPORT": "rtlsdr_set_tuner_bandwidth"}},
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
                 "test_function": "mir_sdr_ApiVersion"}
-}
-
-FALLBACKS = {
-    "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name"}
 }
 
 
@@ -43,7 +40,8 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             old_stderr = os.dup(sys.stderr.fileno())
             os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
-            compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs, libraries=libraries)
+            compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs,
+                                     libraries=libraries)
         except Exception as e:
             return False
         return True
@@ -54,23 +52,25 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             devnull.close()
         shutil.rmtree(tmp_dir)
 
-
-def get_device_extensions(use_cython: bool, library_dirs=None):
+def get_device_extensions_and_extras(library_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    include_dirs = [os.path.realpath(os.path.join(cur_dir, "includes"))]
+    include_dirs = []
 
-    if sys.platform == "win32":
-        if platform.architecture()[0] != "64bit":
-            return []  # only 64 bit python supported for native device backends
+    device_extras = dict()
 
+    if os.path.isdir(os.path.join(cur_dir, "lib/shared")):
+        # Device libs are packaged, so we are in release mode
         result = []
-        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/win/x64"))
+        include_dirs.append(os.path.realpath(os.path.join(cur_dir, "lib/shared/include")))
+        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/shared"))
         for dev_name, params in DEVICES.items():
+            # Since drivers are bundled we can enforce the extras
+            device_extras.update({extra: 1 for extra in params.get("extras", dict())})
             result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
 
-        return result
+        return result, device_extras
 
     if sys.platform == "darwin":
         # On Mac OS X clang is by default not smart enough to search in the lib dir
@@ -107,56 +107,52 @@ def get_device_extensions(use_cython: bool, library_dirs=None):
             continue
         if build_device_extensions[dev_name] == 1:
             print("Enforcing native {0} support".format(dev_name))
-            result.append(
-                get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
+            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
+            extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
+            result.append(extension)
             continue
 
         if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
             print("Found {0} lib. Will compile with native {1} support".format(params["lib"], dev_name))
-            result.append(
-                get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
-        elif dev_name in FALLBACKS:
-            print("Trying fallback for {0}".format(dev_name))
-            params = FALLBACKS[dev_name]
-            dev_name += "_fallback"
-            if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
-                print("Found fallback. Will compile with native {0} support".format(dev_name))
-                result.append(
-                    get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs, use_cython))
+            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
+            extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
+            result.append(extension)
         else:
             print("Skipping native support for {1}".format(params["lib"], dev_name))
 
-        # remove Temp file for checking
-        try:
-            os.remove("a.out")
-        except OSError:
-            pass
+    return result, device_extras
 
-        for filename in os.listdir(tempfile.gettempdir()):
-            dev_name = dev_name.replace("_fallback", "")
-            func_names = [DEVICES[dev_name]["test_function"]]
-            if dev_name in FALLBACKS:
-                func_names.append(FALLBACKS[dev_name]["test_function"])
 
-            if any(filename.startswith(func_name) for func_name in func_names) and filename.endswith(".c"):
-                os.remove(os.path.join(tempfile.gettempdir(), filename))
+def get_device_extras(compiler, dev_name, libraries, library_dirs, include_dirs):
+    try:
+        extras = DEVICES[dev_name]["extras"]
+    except KeyError:
+        extras = dict()
+
+    result = dict()
+
+    for extra, func_name in extras.items():
+        if compiler_has_function(compiler, func_name, libraries, library_dirs, include_dirs):
+            result[extra] = 1
+        else:
+            print("Skipping {} as installed driver does not support it".format(extra))
+            result[extra] = 0
 
     return result
 
 
-def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list, use_cython=False):
+def get_device_extension(dev_name: str, libraries: list, library_dirs: list, include_dirs: list):
     try:
         language = DEVICES[dev_name]["language"]
     except KeyError:
         language = "c++"
 
-    file_ext = "pyx" if use_cython else "cpp" if language == "c++" else "c"
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     if USE_RELATIVE_PATHS:
         # We need relative paths on windows
-        cpp_file_path = "src/urh/dev/native/lib/{0}.{1}".format(dev_name, file_ext)
+        cpp_file_path = "src/urh/dev/native/lib/{0}.pyx".format(dev_name)
     else:
-        cpp_file_path = os.path.join(cur_dir, "lib", "{0}.{1}".format(dev_name, file_ext))
+        cpp_file_path = os.path.join(cur_dir, "lib", "{0}.pyx".format(dev_name))
 
     return Extension("urh.dev.native.lib." + dev_name,
                      [cpp_file_path],
@@ -171,14 +167,6 @@ def perform_health_check() -> str:
             _ = import_module("urh.dev.native.lib." + device)
             result.append(device + " -- OK")
         except ImportError as e:
-            if device in FALLBACKS:
-                try:
-                    _ = import_module("urh.dev.native.lib." + device + "_fallback")
-                    result.append(device + " -- OK (using fallback)")
-                    continue
-                except ImportError:
-                    pass
-
             result.append(device + " -- ERROR: " + str(e))
 
     return "\n".join(result)
@@ -186,15 +174,25 @@ def perform_health_check() -> str:
 
 if __name__ == "__main__":
     from setuptools import setup
+
     if "-L" in sys.argv:
-        library_dirs = sys.argv[sys.argv.index("-L")+1].split(":")
+        library_directories = sys.argv[sys.argv.index("-L") + 1].split(":")
     else:
-        library_dirs = None
+        library_directories = None
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    os.chdir("..")
+    os.chdir(os.path.join(cur_dir, "..", "..", ".."))
 
+    try:
+        from Cython.Build import cythonize
+    except ImportError:
+        print("You need Cython to rebuild URH's device extensions. "
+              "You can get it e.g. with python3 -m pip install cython.",
+              file=sys.stderr)
+        sys.exit(1)
+
+    dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories)
     setup(
         name="urh",
-        ext_modules=get_device_extensions(use_cython=False, library_dirs=library_dirs),
+        ext_modules=cythonize(dev_extensions, force=True, compile_time_env=dev_extras),
     )

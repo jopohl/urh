@@ -1,6 +1,5 @@
 import numpy as np
 import zmq
-from PyQt5.QtCore import pyqtSignal
 
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
@@ -8,16 +7,12 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class ReceiverThread(AbstractBaseThread):
-    data_received = pyqtSignal(np.ndarray)
-
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
                  parent=None, resume_on_full_receive_buffer=False):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
 
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
         self.data = None
-
-        self.emit_data_received_signal = False
 
     def init_recv_buffer(self):
         n_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
@@ -38,6 +33,9 @@ class ReceiverThread(AbstractBaseThread):
             while not self.isInterruptionRequested():
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
+                except zmq.error.Again:
+                    # timeout
+                    continue
                 except (zmq.error.ContextTerminated, ConnectionResetError):
                     self.stop("Stopped receiving, because connection was reset.")
                     return
@@ -69,9 +67,6 @@ class ReceiverThread(AbstractBaseThread):
                             return
                     self.data[self.current_index:self.current_index + num_samples] = tmp
                     self.current_index += num_samples
-                    if self.emit_data_received_signal:
-                        self.data_received.emit(tmp)
-
                     rcvd = b""
                 except ValueError:
                     self.stop("Could not receive data. Is your Hardware ok?")

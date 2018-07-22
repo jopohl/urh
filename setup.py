@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import tempfile
 
@@ -43,12 +44,12 @@ URH_DIR = "urh"
 IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
 try:
-    import Cython.Build
+    from Cython.Build import cythonize
 except ImportError:
-    USE_CYTHON = False
-else:
-    USE_CYTHON = True
-EXT = '.pyx' if USE_CYTHON else '.cpp'
+    print("You need Cython to build URH's extensions!\n"
+          "You can get it e.g. with python3 -m pip install cython.",
+          file=sys.stderr)
+    sys.exit(1)
 
 
 class build_ext(_build_ext):
@@ -73,63 +74,46 @@ def get_packages():
 
 
 def get_package_data():
-    package_data = {"urh.cythonext": ["*.cpp", "*.pyx"]}
+    package_data = {"urh.cythonext": ["*.pyx"]}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 
-    package_data["urh.dev.native.lib"] = ["*.cpp", "*.c", "*.pyx", "*.pxd"]
+    package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
 
-    # Bundle headers
-    package_data["urh.dev.native.includes"] = ["*.h"]
-    include_dir = "src/urh/dev/native/includes"
-    for dirpath, dirnames, filenames in os.walk(include_dir):
-        for dir_name in dirnames:
-            rel_dir_path = os.path.relpath(os.path.join(dirpath, dir_name), include_dir)
-            package_data["urh.dev.native.includes."+rel_dir_path.replace(os.sep, ".")] = ["*.h"]
-
-    if sys.platform == "win32" or IS_RELEASE:
-        # we use precompiled device backends on windows
-        # only deploy DLLs on Windows or in release mode to prevent deploying by linux package managers
-        package_data["urh.dev.native.lib.win.x64"] = ["*"]
-        package_data["urh.dev.native.lib.win.x86"] = ["*"]
+    if IS_RELEASE and sys.platform == "win32":
+        package_data["urh.dev.native.lib.shared"] = ["*.dll", "*.txt"]
 
     return package_data
 
 
 def get_extensions():
-    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(EXT)]
-    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + EXT],
+    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(".pyx")]
+    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + ".pyx"],
                             extra_compile_args=[OPEN_MP_FLAG],
                             extra_link_args=[OPEN_MP_FLAG],
                             language="c++") for f in filenames]
 
     ExtensionHelper.USE_RELATIVE_PATHS = True
-    extensions += ExtensionHelper.get_device_extensions(USE_CYTHON)
+    device_extensions, device_extras = ExtensionHelper.get_device_extensions_and_extras()
+    extensions += device_extensions
 
     if NO_NUMPY_WARNINGS_FLAG:
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    if USE_CYTHON:
-        from Cython.Build import cythonize
-        extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True)
-
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True, compile_time_env=device_extras)
     return extensions
 
 
 def read_long_description():
     try:
-        import pypandoc
         with open("README.md") as f:
             text = f.read()
-
-        # Remove screenshots as they get rendered poorly on PyPi
-        stripped_text = text[:text.index("# Screenshots")].rstrip()
-        return pypandoc.convert_text(stripped_text, 'rst', format='md')
+        return text
     except:
         return ""
 
-install_requires = ["numpy", "psutil", "pyzmq"]
+install_requires = ["numpy", "psutil", "pyzmq", "cython"]
 if IS_RELEASE:
     install_requires.append("pyqt5")
 else:
@@ -147,6 +131,7 @@ setup(
     version=version.VERSION,
     description="Universal Radio Hacker: investigate wireless protocols like a boss",
     long_description=read_long_description(),
+    long_description_content_type="text/markdown",
     author="Johannes Pohl",
     author_email="Johannes.Pohl90@gmail.com",
     package_dir={"": "src"},
@@ -163,8 +148,6 @@ setup(
     entry_points={
         'console_scripts': [
             'urh = urh.main:main',
+            'urh_cli = urh.cli.urh_cli:main',
         ]}
 )
-
-# python setup.py sdist --> Source distribution
-# python setup.py bdist --> Vorkompiliertes Package https://docs.python.org/3/distutils/builtdist.html

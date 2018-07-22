@@ -19,7 +19,7 @@ class TestMaincontrollerGUI(QtTestCase):
         constants.SETTINGS.setValue("recentFiles", [])
 
         # Ensure we have at least one recent action
-        self.form.add_files([get_path_for_data_file("esaver.complex")])
+        self.form.add_files([get_path_for_data_file("esaver.coco")])
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 1)
 
         self.form.recentFileActionList[0].trigger()
@@ -41,7 +41,7 @@ class TestMaincontrollerGUI(QtTestCase):
         self.assertTrue(True)
 
     def test_options_changed(self):
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.form.on_options_changed({"show_pause_as_time": True, "default_view": 2})
         QApplication.instance().processEvents()
         self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 2)
@@ -78,6 +78,7 @@ class TestMaincontrollerGUI(QtTestCase):
             timer.stop()
 
         timer = QTimer(self.form)
+        timer.setSingleShot(True)
         timer.setInterval(10)
         timer.timeout.connect(accept_csv_dialog)
 

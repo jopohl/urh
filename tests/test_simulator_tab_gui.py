@@ -1,6 +1,7 @@
 import os
 import socket
 import tempfile
+import time
 from array import array
 
 import numpy as np
@@ -108,6 +109,28 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.rowCount(), 1)
         self.assertEqual(model.data(model.index(0, 3)), "1" * 8)
 
+        # constant value
+        model.setData(model.index(0, 2), 0, role=Qt.EditRole)
+        model.setData(model.index(0, 1), 0, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "11110000", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "11110000")
+
+        model.setData(model.index(0, 1), 1, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "ab", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "ab")
+
+        model.setData(model.index(0, 1), 2, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "=", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "=")
+
+        model.setData(model.index(0, 1), 3, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "240", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "240")
+
+        model.setData(model.index(0, 1), 4, role=Qt.EditRole)
+        model.setData(model.index(0, 3), "55", role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 3)), "55")
+
         # get live during simulation
         model.setData(model.index(0, 2), 1, role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "-")
@@ -135,6 +158,24 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertTrue(model.data(model.index(0, 3)).startswith("Range (Decimal):"))
         model.setData(model.index(0, 3), (42, 1337), role=Qt.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "Range (Decimal): 42 - 1337")
+
+    def test_insert_column(self):
+        self.__setup_project()
+        self.add_all_signals_to_simulator()
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
+        stc.ui.cbViewType.setCurrentText("Hex")
+
+        lens = [len(msg) for msg in stc.simulator_message_table_model.protocol.messages]
+        stc.ui.tblViewMessage.selectAll()
+        stc.ui.tblViewMessage._insert_column(2)
+        for i, l in enumerate(lens):
+            self.assertEqual(lens[i]+4, len(stc.simulator_message_table_model.protocol.messages[i]))
+
+        stc.ui.cbViewType.setCurrentText("Bit")
+        stc.ui.tblViewMessage.selectAll()
+        stc.ui.tblViewMessage._insert_column(6)
+        for i, l in enumerate(lens):
+            self.assertEqual(lens[i]+5, len(stc.simulator_message_table_model.protocol.messages[i]))
 
     def test_simulator_graphics_view(self):
         self.__setup_project()
@@ -301,16 +342,7 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog = stc.get_simulator_dialog()
 
         network_sdr_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
-
-        send_port = self.get_free_port()
-        dialog.simulator.sender.device.set_client_port(send_port)
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        s.bind(("", send_port))
-        s.listen(1)
 
         rcv_port = self.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
@@ -322,10 +354,14 @@ class TestSimulatorTabGUI(QtTestCase):
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        time.sleep(0.5)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QTest.qWait(1000)
+        time.sleep(0.5)
+        QTest.qWait(500)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
@@ -334,7 +370,6 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()
-        s.close()
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
         menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
@@ -357,7 +392,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
         self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
 

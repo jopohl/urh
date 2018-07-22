@@ -1270,3 +1270,24 @@ class SignalFrame(QFrame):
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()
 
+    @pyqtSlot()
+    def on_export_fta_wanted(self):
+        try:
+            initial_name = self.signal.name + "-spectrogram.ft"
+        except Exception as e:
+            logger.exception(e)
+            initial_name = "spectrogram.ft"
+
+        filename = FileOperator.get_save_file_name(initial_name, caption="Export spectrogram")
+        if not filename:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.ui.gvSpectrogram.scene_manager.spectrogram.export_to_fta(sample_rate=self.signal.sample_rate,
+                                                                          filename=filename,
+                                                                          include_amplitude=filename.endswith(".fta"))
+        except Exception as e:
+            logger.exception(e)
+            Errors.generic_error("Failed to export spectrogram", str(e))
+        finally:
+            QApplication.restoreOverrideCursor()

@@ -52,7 +52,7 @@ class Signal(QObject):
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
         if modulation is None:
-            modulation = "FSK"
+            modulation = "ASK"
         self.__modulation_type = self.MODULATION_TYPES.index(modulation)
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
@@ -70,13 +70,13 @@ class Signal(QObject):
             self.filename = ""
 
     def __load_complex_file(self, filename: str):
-        if filename.endswith(".complex16u"):
+        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
             raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
             self._fulldata.real = (raw['r'] / 127.5) - 1.0
             self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-        elif filename.endswith(".complex16s"):
+        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
             raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)

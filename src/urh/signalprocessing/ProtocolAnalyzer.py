@@ -680,6 +680,16 @@ class ProtocolAnalyzer(object):
                 message.participant = participants[0]
             return
 
+        # Try to assign participants based on SRC_ADDRESS label and participant address
+        for msg in filter(lambda m: m.participant is None, self.messages):
+            src_address = msg.get_src_address_from_data()
+            if src_address:
+                try:
+                    msg.participant = next(p for p in participants if p.address_hex == src_address)
+                except StopIteration:
+                    pass
+
+        # Assign remaining participants based on RSSI of messages
         rssis = np.array([msg.rssi for msg in self.messages], dtype=np.float32)
         min_rssi, max_rssi = util.minmax(rssis)
         center_spacing = (max_rssi - min_rssi) / (len(participants) - 1)
@@ -687,13 +697,8 @@ class ProtocolAnalyzer(object):
         rssi_assigned_centers = []
 
         for rssi in rssis:
-            center_index = 0
-            diff = 999
-            for i, center in enumerate(centers):
-                if abs(center - rssi) < diff:
-                    center_index = i
-                    diff = abs(center - rssi)
-            rssi_assigned_centers.append(center_index)
+            center_index = np.argmin(np.abs(rssi - centers))
+            rssi_assigned_centers.append(int(center_index))
 
         participants.sort(key=lambda participant: participant.relative_rssi)
         for message, center_index in zip(self.messages, rssi_assigned_centers):
@@ -713,11 +718,8 @@ class ProtocolAnalyzer(object):
 
         for msg in self.messages:
             if msg.participant in participants_without_address:
-                src_address_label = next((lbl for lbl in msg.message_type if lbl.field_type
-                                          and lbl.field_type.function == FieldType.Function.SRC_ADDRESS), None)
-                if src_address_label:
-                    start, end = msg.get_label_range(src_address_label, view=1, decode=True)
-                    src_address = msg.decoded_hex_str[start:end]
+                src_address = msg.get_src_address_from_data()
+                if src_address:
                     participants_without_address.remove(msg.participant)
                     msg.participant.address_hex = src_address
 

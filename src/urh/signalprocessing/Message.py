@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 import time
 
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -355,6 +356,27 @@ class Message(object):
             raise ValueError("Not enough bit samples for calculating duration")
 
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
+
+    def get_src_address_from_data(self, decoded=True):
+        """
+        Return the SRC address of a message if SRC_ADDRESS label is present in message type of the message
+        Return None otherwise
+
+        :param decoded:
+        :return:
+        """
+        src_address_label = next((lbl for lbl in self.message_type if lbl.field_type
+                                  and lbl.field_type.function == FieldType.Function.SRC_ADDRESS), None)
+        if src_address_label:
+            start, end = self.get_label_range(src_address_label, view=1, decode=decoded)
+            if decoded:
+                src_address = self.decoded_hex_str[start:end]
+            else:
+                src_address = self.plain_hex_str[start:end]
+        else:
+            src_address = None
+
+        return src_address
 
     @staticmethod
     def __bit_chains_to_hex(bit_chains) -> array.array:

@@ -6,6 +6,7 @@
   - auto assign destination when dropping messages to simulator
   - show participant address in participant legend if present
   - auto assign participant address when clicking analyze button in analysis based on SRC address label
+- also consider participant address (next to RSSI) when auto assigning participants in analysis [#512](https://github.com/jopohl/urh/pull/512)
 
 ### Bugfixes
 - antenna selection is not saved when reopening dialog [#494](https://github.com/jopohl/urh/pull/494)

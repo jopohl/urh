@@ -29,7 +29,13 @@ class Participant(object):
         return self.__id
 
     def __repr__(self):
-        return "Participant: {0} ({1})".format(self.name, self.shortname)
+        if self.address_hex:
+            return "{0} ({1}) [{2}]".format(self.name, self.shortname, self.address_hex)
+        else:
+            return "{0} ({1})".format(self.name, self.shortname)
+
+    def __str__(self):
+        return repr(self)
 
     def id_match(self, id):
         return self.__id == id

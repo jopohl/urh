@@ -40,7 +40,6 @@ class SendRecvDialog(QDialog):
         self.backend_handler = BackendHandler()
 
         self.ui.btnStop.setEnabled(False)
-        self.ui.btnClear.setEnabled(False)
         self.ui.btnSave.setEnabled(False)
 
         self.start = 0
@@ -126,7 +125,6 @@ class SendRecvDialog(QDialog):
         self.ui.lblCurrentRepeatValue.setText("-")
         self.ui.progressBarSample.setValue(0)
         self.ui.progressBarMessage.setValue(0)
-        self.ui.btnClear.setEnabled(False)
         self.ui.btnSave.setEnabled(False)
 
     def init_device(self):
@@ -163,7 +161,6 @@ class SendRecvDialog(QDialog):
         self.set_device_ui_items_enabled(True)
         self.ui.btnStart.setEnabled(True)
         self.ui.btnStop.setEnabled(False)
-        self.ui.btnClear.setEnabled(True)
         self.ui.btnSave.setEnabled(self.device.current_index > 0)
         self.device_settings_widget.ui.comboBoxDeviceIdentifier.setEnabled(True)
         self.device_settings_widget.ui.btnRefreshDeviceIdentifier.setEnabled(True)
@@ -179,8 +176,6 @@ class SendRecvDialog(QDialog):
             self.graphics_view.capturing_data = True
         self.ui.btnSave.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
-
-        self.ui.btnClear.setEnabled(False)
         self.ui.btnStop.setEnabled(True)
         self.device_settings_widget.ui.comboBoxDeviceIdentifier.setEnabled(False)
         self.device_settings_widget.ui.btnRefreshDeviceIdentifier.setEnabled(False)

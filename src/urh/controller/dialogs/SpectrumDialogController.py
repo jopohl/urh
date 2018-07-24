@@ -136,7 +136,6 @@ class SpectrumDialogController(SendRecvDialog):
     def on_device_started(self):
         self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.scene().sceneRect())
         super().on_device_started()
-        self.ui.btnClear.setEnabled(True)
         self.device_settings_widget.ui.spinBoxPort.setEnabled(False)
         self.device_settings_widget.ui.lineEditIP.setEnabled(False)
         self.device_settings_widget.ui.cbDevice.setEnabled(False)

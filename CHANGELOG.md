@@ -1,5 +1,5 @@
 # Changelog
-## v2.2.3 (upcoming)
+## v2.2.3 (28/07/2018)
 ### New features
 - allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)
 - improve bootstrap of simulator messages [#500](https://github.com/jopohl/urh/pull/500)

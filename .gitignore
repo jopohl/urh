@@ -45,7 +45,7 @@ sdrplay.cpp
 usrp.c
 
 path_creator.cpp
-signalFunctions.cpp
+signal_functions.cpp
 util.cpp
 
 misc/*

@@ -4,34 +4,18 @@ import cython
 import numpy as np
 from libcpp cimport bool
 
+from urh.cythonext import util
+
+from cython.parallel import prange
+from libc.math cimport atan2, sqrt, M_PI, sin, cos
+
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
 # np.import_array()
 
-from urh.cythonext import util
-
-from cython.parallel import prange
-# noinspection PyUnresolvedReferences
-from libc.math cimport atan2, sqrt, M_PI, sin, cos
-
-cdef:
-    float complex imag_unit = 1j
-
+cdef float complex imag_unit = 1j
 cdef float NOISE_FSK_PSK = -4.0
 cdef float NOISE_ASK = 0.0
-
-
-cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)
-
-    return alpha
-
-cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
-    return beta
-
 
 cpdef float get_noise_for_mod_type(int mod_type):
     if mod_type == 0:
@@ -197,6 +181,17 @@ cpdef np.ndarray[np.complex64_t, ndim=1] modulate_gfsk(unsigned char[:] bit_arra
 
     return result
 
+cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
+    # BW in range((2pi/200), (2pi/100))
+    cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)
+
+    return alpha
+
+cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
+    # BW in range((2pi/200), (2pi/100))
+    cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
+    return beta
+
 cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):
     cdef float phase_error = 0
@@ -349,6 +344,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
                                                  unsigned int tolerance, int modulation_type, unsigned int bit_length):
     """
     Holt sich die Pulslängen aus den quadraturdemodulierten Samples
+    
     @param samples: Samples nach der QAD
     @param center: Alles über der Treshold ist ein Einserpuls, alles darunter 0er Puls
     @return: Ein 2D Array arr.

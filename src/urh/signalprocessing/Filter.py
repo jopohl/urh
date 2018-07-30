@@ -4,7 +4,7 @@ from enum import Enum
 import numpy as np
 
 from urh import constants
-from urh.cythonext import signalFunctions
+from urh.cythonext import signal_functions
 from urh.util import util
 from urh.util.Logger import logger
 
@@ -31,7 +31,7 @@ class Filter(object):
         if input_signal.dtype != np.complex64:
             input_signal = np.array(input_signal, dtype=np.complex64)
 
-        return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
+        return signal_functions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 
     @staticmethod
     def read_configured_filter_bw() -> float:

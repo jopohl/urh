@@ -7,7 +7,7 @@ from urh.signalprocessing.Signal import Signal
 import array
 
 from matplotlib import pyplot as plt
-from urh.cythonext import signalFunctions
+from urh.cythonext import signal_functions
 from urh.signalprocessing.Spectrogram import Spectrogram
 
 
@@ -124,7 +124,7 @@ class SpectrogramTest(unittest.TestCase):
         #b /= s
         print(a,  b)
 
-        filtered_data = signalFunctions.iir_filter(a, b, data)
+        filtered_data = signal_functions.iir_filter(a, b, data)
 
         #plt.plot(data, label='Noisy signal')
         plt.plot(np.fft.fft(filtered_data), label='Filtered signal (%g Hz)' % f0)

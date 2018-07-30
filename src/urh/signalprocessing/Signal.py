@@ -7,7 +7,7 @@ import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject, QDir, Qt
 from PyQt5.QtWidgets import QApplication
 
-import urh.cythonext.signalFunctions as signal_functions
+import urh.cythonext.signal_functions as signal_functions
 from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.util import FileOperator

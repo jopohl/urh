@@ -81,7 +81,7 @@ def main():
     util.set_shared_library_path()
 
     try:
-        import urh.cythonext.signalFunctions
+        import urh.cythonext.signal_functions
         import urh.cythonext.path_creator
         import urh.cythonext.util
     except ImportError:

@@ -7,7 +7,7 @@ from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
-from urh.cythonext import path_creator, signalFunctions
+from urh.cythonext import path_creator, signal_functions
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
@@ -163,26 +163,26 @@ class Modulator(object):
         result = np.zeros(0, dtype=np.complex64)
 
         if mod_type == "FSK":
-            result = signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_fsk(data, pause, start, self.carrier_amplitude,
                                                   self.param_for_zero, self.param_for_one,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "ASK":
             a0 = self.carrier_amplitude * (self.param_for_zero / 100)
             a1 = self.carrier_amplitude * (self.param_for_one / 100)
-            result = signalFunctions.modulate_ask(data, pause, start, a0, a1,
+            result = signal_functions.modulate_ask(data, pause, start, a0, a1,
                                                   self.carrier_freq_hz,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "PSK":
             phi0 = self.param_for_zero * (np.pi / 180)
             phi1 = self.param_for_one * (np.pi / 180)
-            result = signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_psk(data, pause, start, self.carrier_amplitude,
                                                   self.carrier_freq_hz,
                                                   phi0, phi1, self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "GFSK":
-            result = signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
                                                    self.param_for_zero, self.param_for_one,
                                                    self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                    self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)

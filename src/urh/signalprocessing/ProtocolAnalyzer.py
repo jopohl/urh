@@ -9,7 +9,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.awre.FormatFinder import FormatFinder
-from urh.cythonext import signalFunctions, util
+from urh.cythonext import signal_functions, util
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -223,7 +223,7 @@ class ProtocolAnalyzer(object):
         bit_len = signal.bit_len
 
         try:
-            ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+            ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
                                                     signal.modulation_type, signal.bit_len)
         except TypeError:
             # Remove this check in version 1.7

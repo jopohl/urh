@@ -2,43 +2,12 @@ import fractions
 import itertools
 import math
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 
 import numpy as np
 
-
-def k_means(data: np.ndarray, k=2) -> tuple:
-    # todo: cythonize for performance
-    centers = np.empty(k, dtype=np.float32)
-    clusters = []
-    unique = set(data)
-    if len(unique) < k:
-        print("Warning: less different values than k")
-        k = len(unique)
-
-    for i in range(k):
-        centers[i] = unique.pop()
-        clusters.append([])
-
-    old_centers = np.array(centers)
-    old_centers[0] += 1
-
-    while (old_centers ** 2 - centers ** 2).sum() != 0:
-        for i in range(k):
-            clusters[i].clear()
-
-        for i, sample in enumerate(data):
-            distances = np.empty(k, dtype=np.float32)
-            for j in range(k):
-                distances[j] = (centers[j] - sample) ** 2
-            index = int(np.argmin(distances))
-            clusters[index].append(sample)
-
-        old_centers = np.array(centers)
-        for i in range(k):
-            centers[i] = np.mean(clusters[i])
-
-    return centers, clusters
+from urh.cythonext import auto_interpretation as cy_auto_interpretation
+from urh.cythonext import signal_functions
 
 
 def max_without_outliers(data: np.ndarray, z=3):
@@ -46,7 +15,7 @@ def max_without_outliers(data: np.ndarray, z=3):
 
 
 def detect_noise_level(magnitudes, k=2):
-    centers, clusters = k_means(magnitudes, k)
+    centers, clusters = cy_auto_interpretation.k_means(magnitudes, k)
 
     if np.max(centers) / np.min(centers) < 1.1:
         # Centers differ less than 10%. Since they are so close, there is probably no noise in the signal.
@@ -133,8 +102,32 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
 def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
     rect = rect[abs(rect - np.mean(rect)) < z * np.std(rect)]  # remove outliers
-    centers, clusters = k_means(rect, k=k)
+    centers, clusters = cy_auto_interpretation.k_means(rect, k=k)
     return (centers[0] + centers[1]) / 2
+
+
+def get_plateau_lengths(rect_data, center, num_flanks=32):
+    if len(rect_data) == 0:
+        return []
+
+    state = -1 if rect_data[0] <= center else 1
+    plateau_length = 0
+
+    result = []
+
+    for sample in rect_data:
+        if len(result) >= num_flanks:
+            break
+
+        new_state = -1 if sample <= center else 1
+        if state == new_state:
+            plateau_length += 1
+        else:
+            result.append(plateau_length)
+            state = new_state
+            plateau_length = 1
+
+    return result
 
 
 def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) -> int:
@@ -239,10 +232,26 @@ def estimate(signal: np.ndarray) -> dict:
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise, q=2)
 
     # get instantaneous frequency, magnitude, phase of messages
-    # foreach of them:
-    # estimate centers of messages
-    # estimate bitlength of messages
+    insta_magnitudes = signal_functions.afp_demod(signal, noise, 0)
+    insta_frequencies = signal_functions.afp_demod(signal, noise, 1)
+    insta_phases = signal_functions.afp_demod(signal, noise, 2)
+
+    centers_by_modulation_type = defaultdict(list)
+    bit_lengths_by_modulation_type = defaultdict(list)
+    for i, insta_data in enumerate((insta_magnitudes, insta_frequencies, insta_phases)):
+        for start, end in message_indices:
+            msg_rect_data = insta_data[start:end]
+            center = detect_center(msg_rect_data, k=2, z=3)
+            centers_by_modulation_type[i].append(center)
+
+            plateau_lengths = get_plateau_lengths(msg_rect_data, center, num_flanks=32)
+            bit_length = get_bit_length_from_plateau_lengths(plateau_lengths)
+            bit_lengths_by_modulation_type[i].append(bit_length)
+
     # score these results to find modulation type
+    from pprint import pprint
+    pprint(centers_by_modulation_type)
+    pprint(bit_lengths_by_modulation_type)
 
     result = dict()
     result["bit_length"] = 42

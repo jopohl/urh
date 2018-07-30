@@ -10,7 +10,7 @@ from urh.ainterpretation.AutoInterpretation import detect_center
 class TestCenterDetection(unittest.TestCase):
     def test_noiseless_rect(self):
         def generate_rectangular_signal(bits: str, bit_len: int):
-            result = np.zeros(len(bits) * bit_len, dtype=np.int8)
+            result = np.zeros(len(bits) * bit_len, dtype=np.float32)
             for i, bit in enumerate(bits):
                 if int(bit) != 0:
                     result[i * bit_len:(i + 1) * bit_len] = np.ones(bit_len, dtype=np.int8)

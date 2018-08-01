@@ -14,6 +14,28 @@ def max_without_outliers(data: np.ndarray, z=3):
     return np.max(data[abs(data - np.mean(data)) < z * np.std(data)])
 
 
+def get_most_frequent_value(values: list):
+    """
+    Return the most frequent value in list.
+    If there is no unique one, return the maximum of the most frequent values
+
+    :param values:
+    :return:
+    """
+    if len(values) == 0:
+        return None
+
+    most_common = Counter(values).most_common()
+    result, max_count = most_common[0]
+    for value, count in most_common:
+        if count < max_count:
+            return result
+        else:
+            result = value
+
+    return result
+
+
 def detect_noise_level(magnitudes, k=2):
     centers, clusters = cy_auto_interpretation.k_means(magnitudes, k)
 
@@ -106,7 +128,7 @@ def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
     return (centers[0] + centers[1]) / 2
 
 
-def get_plateau_lengths(rect_data, center, num_flanks=32):
+def get_plateau_lengths(rect_data, center, num_flanks=-1):
     if len(rect_data) == 0:
         return []
 
@@ -116,7 +138,7 @@ def get_plateau_lengths(rect_data, center, num_flanks=32):
     result = []
 
     for sample in rect_data:
-        if len(result) >= num_flanks:
+        if num_flanks >= 0 and len(result) >= num_flanks:
             break
 
         new_state = -1 if sample <= center else 1
@@ -211,14 +233,14 @@ def get_tolerant_greatest_common_divisor(numbers):
     return np.max(values[most_frequent_indices])
 
 
-def get_bit_length_from_plateau_lengths(plateau_lengths):
+def get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=None):
     if len(plateau_lengths) == 0:
         return 0
 
     if len(plateau_lengths) == 1:
         return plateau_lengths[0]
 
-    merged_lengths = merge_plateau_lengths(plateau_lengths)
+    merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
     round_plateau_lengths(merged_lengths)
     return get_tolerant_greatest_common_divisor(merged_lengths)
 
@@ -238,25 +260,36 @@ def estimate(signal: np.ndarray) -> dict:
 
     centers_by_modulation_type = defaultdict(list)
     bit_lengths_by_modulation_type = defaultdict(list)
-    for i, insta_data in enumerate((insta_magnitudes, insta_frequencies, insta_phases)):
+    tolerances_by_modulation_type = defaultdict(list)
+
+    data = {"ASK": insta_magnitudes, "FSK": insta_frequencies, "PSK": insta_phases}
+    plateau_scores = defaultdict(float)
+
+    for mod_type in ("ASK", "FSK", "PSK"):
         for start, end in message_indices:
-            msg_rect_data = insta_data[start:end]
+            msg_rect_data = data[mod_type][start:end]
             center = detect_center(msg_rect_data, k=2, z=3)
-            centers_by_modulation_type[i].append(center)
+            centers_by_modulation_type[mod_type].append(center)
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, num_flanks=32)
-            bit_length = get_bit_length_from_plateau_lengths(plateau_lengths)
-            bit_lengths_by_modulation_type[i].append(bit_length)
+            tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
+            tolerances_by_modulation_type[mod_type].append(tolerance)
 
-    # score these results to find modulation type
-    from pprint import pprint
-    pprint(centers_by_modulation_type)
-    pprint(bit_lengths_by_modulation_type)
+            bit_length = get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=tolerance)
+            bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
-    result = dict()
-    result["bit_length"] = 42
-    result["modulation_type"] = "ASK"
-    result["center"] = 0.02
-    result["noise"] = 0.001
+            plateau_scores[mod_type] += bit_length / (1 + sum((p % bit_length) / bit_length for p in plateau_lengths))
+            # TODO: If bit length gets very big, this can go wrong. We could e.g. check if bit_length >= 0.8 * (end-start)
+            # However, then we could not work with num flanks
+
+
+    result_mod_type = max(plateau_scores, key=plateau_scores.get)
+    result = {
+        "modulation_type": result_mod_type,
+        "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
+        "center": get_most_frequent_value(centers_by_modulation_type[result_mod_type]),
+        "tolerance": get_most_frequent_value(tolerances_by_modulation_type[result_mod_type]),
+        "noise": noise
+    }
 
     return result

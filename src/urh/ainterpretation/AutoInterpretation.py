@@ -278,10 +278,10 @@ def estimate(signal: np.ndarray) -> dict:
             bit_length = get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
-            plateau_scores[mod_type] += bit_length / (1 + sum((p % bit_length) / bit_length for p in plateau_lengths))
+            # use abs(p-bit_length) % bit_length so e.g. 290 gets diff of 10 for bit length 300 instad of 290
+            plateau_scores[mod_type] += bit_length / (1 + sum((abs(p-bit_length) % bit_length) / bit_length for p in plateau_lengths))
             # TODO: If bit length gets very big, this can go wrong. We could e.g. check if bit_length >= 0.8 * (end-start)
             # However, then we could not work with num flanks
-
 
     result_mod_type = max(plateau_scores, key=plateau_scores.get)
     result = {

@@ -222,16 +222,8 @@ class ProtocolAnalyzer(object):
 
         bit_len = signal.bit_len
 
-        try:
-            ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                    signal.modulation_type, signal.bit_len)
-        except TypeError:
-            # Remove this check in version 1.7
-            print("Extension method has changed! To fix this, first move to URHs base directory "
-                  "then recompile the extensions using the following command:")
-            print("python3 src/urh/cythonext/build.py")
-            print("and finally restart the application")
-            sys.exit(1)
+        ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+                                                signal.modulation_type, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":

@@ -46,6 +46,7 @@ usrp.c
 
 path_creator.cpp
 signal_functions.cpp
+auto_interpretation.cpp
 util.cpp
 
 misc/*

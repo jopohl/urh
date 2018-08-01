@@ -65,3 +65,12 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(len(demod), 3)
         self.assertEqual(demod[0], demod[2])
         self.assertEqual(demod[0], "aa9610002c1c024b")
+
+    def test_auto_interpretation_xavax(self):
+        signal = Signal(get_path_for_data_file("xavax.coco"), "")
+        result = AutoInterpretation.estimate(signal.data)
+        mod_type, bit_length = result["modulation_type"], result["bit_length"]
+        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+
+        #self.assertEqual(mod_type, "FSK")
+        #self.assertEqual(bit_length, 100)

@@ -2,6 +2,7 @@ import fractions
 import itertools
 import math
 import sys
+import time
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -61,64 +62,7 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
     :param q: Factor which controls how many samples of previous above noise plateau must be under noise to be counted as noise
     :return:
     """
-    result = []
-
-    if len(magnitudes) == 0:
-        return []
-
-    N = len(magnitudes)
-
-    # tolerance / robustness against outliers
-    outlier_tolerance = 3
-    conseq_above = conseq_below = 0
-
-    # total length of the current plateau i.e. length of current message and pause in samples
-    above_total = below_total = 0
-
-    # Three states: 1 = above noise, 0 = in noise, but not yet above k threshold (k * above_total), -1 = in noise
-    state = 1 if magnitudes[0] > noise_threshold else -1
-    start = 0
-    for i in range(N):
-        # Process current sample, increase local and total counters depending on current state and sample
-        is_above_noise = magnitudes[i] > noise_threshold
-        if state == 1:
-            above_total += 1
-            if is_above_noise:
-                conseq_below = 0
-            else:
-                conseq_below += 1
-        elif state == 0 or state == -1:
-            below_total += 1
-            if is_above_noise:
-                conseq_above += 1
-            else:
-                conseq_above = 0
-
-        # Perform state change if necessary
-        if state == 1 and conseq_below >= outlier_tolerance:
-            # 1 -> 0
-            state = 0
-        elif state == 0 and conseq_above >= outlier_tolerance:
-            # 0 -> 1
-            state = 1
-            above_total += below_total
-            below_total = 0
-        elif state == 0 and below_total >= q * above_total:
-            # 0 -> -1
-            state = -1
-            result.append((start, start + above_total))
-            above_total = 0
-        elif state == -1 and conseq_above >= outlier_tolerance:
-            # -1 -> 1
-            state = 1
-            start = i - conseq_above
-            below_total = 0
-
-    # append last message
-    if state in (0, 1) and above_total >= 0:
-        result.append((start, start + above_total))
-
-    return result
+    return cy_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold, q=q)
 
 
 def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
@@ -246,12 +190,17 @@ def get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=None):
 
 
 def estimate(signal: np.ndarray) -> dict:
+    t = time.time()
     magnitudes = np.abs(signal)
+    print("Time magnitudes", time.time()-t)
     # find noise threshold
+    t = time.time()
     noise = detect_noise_level(magnitudes, k=2)
+    print("time noise", time.time()-t)
 
     # segment messages
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise, q=2)
+    print(message_indices)
 
     # get instantaneous frequency, magnitude, phase of messages
     insta_magnitudes = signal_functions.afp_demod(signal, noise, 0)

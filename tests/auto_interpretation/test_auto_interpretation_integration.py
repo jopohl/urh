@@ -65,6 +65,3 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(len(demod), 3)
         self.assertEqual(demod[0], demod[2])
         self.assertEqual(demod[0], "aa9610002c1c024b")
-
-
-        # noise ~= 0.025 // center ~= 0.0837 // bit len = 8

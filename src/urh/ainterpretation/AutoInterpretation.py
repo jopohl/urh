@@ -223,6 +223,13 @@ def get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=None):
     return get_tolerant_greatest_common_divisor(merged_lengths)
 
 
+def can_be_psk(rect_data: np.ndarray, z=3):
+    rect_data = rect_data[rect_data > -4]  # do not consider noise
+    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) < z * np.std(rect_data)]
+    minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
+    return np.abs(maximum - minimum) >= np.pi / 2
+
+
 def estimate(signal: np.ndarray) -> dict:
     t = time.time()
     magnitudes = np.abs(signal)
@@ -251,6 +258,9 @@ def estimate(signal: np.ndarray) -> dict:
         msg_indices = message_indices if mod_type != "OOK" else merge_message_segments_for_ook(message_indices)
         for start, end in msg_indices:
             msg_rect_data = data[mod_type][start:end]
+            if mod_type == "PSK" and not can_be_psk(msg_rect_data, z=3):
+                continue
+
             center = detect_center(msg_rect_data, k=2, z=3)
             centers_by_modulation_type[mod_type].append(center)
 
@@ -268,10 +278,9 @@ def estimate(signal: np.ndarray) -> dict:
             # However, then we could not work with num flanks
 
     result_mod_type = max(plateau_scores, key=plateau_scores.get)
-    result_mod_type = "ASK" if result_mod_type == "OOK" else result_mod_type
 
     result = {
-        "modulation_type": result_mod_type,
+        "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
         "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
         "center": get_most_frequent_value(centers_by_modulation_type[result_mod_type]),
         "tolerance": get_most_frequent_value(tolerances_by_modulation_type[result_mod_type]),

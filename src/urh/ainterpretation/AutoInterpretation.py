@@ -66,6 +66,9 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
 
 
 def merge_message_segments_for_ook(segments: list):
+    if len(segments) <= 1:
+        return segments
+
     result = []
     # Get a array of pauses for comparision
     pauses = np.fromiter(
@@ -230,8 +233,7 @@ def estimate(signal: np.ndarray) -> dict:
     print("time noise", time.time() - t)
 
     # segment messages
-    message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise, q=2)
-    print(message_indices)
+    message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
     # get instantaneous frequency, magnitude, phase of messages
     insta_magnitudes = signal_functions.afp_demod(signal, noise, 0)
@@ -242,11 +244,12 @@ def estimate(signal: np.ndarray) -> dict:
     bit_lengths_by_modulation_type = defaultdict(list)
     tolerances_by_modulation_type = defaultdict(list)
 
-    data = {"ASK": insta_magnitudes, "FSK": insta_frequencies, "PSK": insta_phases}
+    data = {"OOK": insta_magnitudes, "ASK": insta_magnitudes, "FSK": insta_frequencies, "PSK": insta_phases}
     plateau_scores = defaultdict(float)
 
-    for mod_type in ("ASK", "FSK", "PSK"):
-        for start, end in message_indices:
+    for mod_type in ("OOK", "ASK", "FSK", "PSK"):
+        msg_indices = message_indices if mod_type != "OOK" else merge_message_segments_for_ook(message_indices)
+        for start, end in msg_indices:
             msg_rect_data = data[mod_type][start:end]
             center = detect_center(msg_rect_data, k=2, z=3)
             centers_by_modulation_type[mod_type].append(center)
@@ -265,6 +268,8 @@ def estimate(signal: np.ndarray) -> dict:
             # However, then we could not work with num flanks
 
     result_mod_type = max(plateau_scores, key=plateau_scores.get)
+    result_mod_type = "ASK" if result_mod_type == "OOK" else result_mod_type
+
     result = {
         "modulation_type": result_mod_type,
         "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),

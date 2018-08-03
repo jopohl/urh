@@ -54,7 +54,7 @@ def detect_noise_level(magnitudes, k=2):
     return max_without_outliers(noise_cluster, z=3)
 
 
-def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float, q=2):
+def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
     """
     Get the list of start, end indices of messages
 
@@ -62,7 +62,38 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
     :param q: Factor which controls how many samples of previous above noise plateau must be under noise to be counted as noise
     :return:
     """
-    return cy_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold, q=q)
+    return cy_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold)
+
+
+def merge_message_segments_for_ook(segments: list):
+    result = []
+    # Get a array of pauses for comparision
+    pauses = np.fromiter(
+        (segments[i + 1][0] - segments[i][1] for i in range(len(segments) - 1)),
+        count=len(segments) - 1,
+        dtype=np.uint64
+    )
+
+    # Find relatively large pauses, these mark new messages
+    min_pause = np.min(pauses)
+    large_pause_indices = np.nonzero(pauses >= 8 * min_pause)[0]
+
+    # Merge Pulse Lengths between long pauses
+    for i in range(0, len(large_pause_indices) + 1):
+        if i == 0:
+            start, end = 0, large_pause_indices[i] + 1 if len(large_pause_indices) >= 1 else len(segments)
+        elif i == len(large_pause_indices):
+            start, end = large_pause_indices[i - 1] + 1, len(segments)
+        else:
+            start, end = large_pause_indices[i - 1] + 1, large_pause_indices[i] + 1
+
+        msg_begin = segments[start][0]
+        msg_length = sum(segments[j][1] - segments[j][0] for j in range(start, end))
+        msg_length += sum(segments[j][0] - segments[j - 1][1] for j in range(start + 1, end))
+
+        result.append((msg_begin, msg_begin + msg_length))
+
+    return result
 
 
 def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
@@ -192,11 +223,11 @@ def get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=None):
 def estimate(signal: np.ndarray) -> dict:
     t = time.time()
     magnitudes = np.abs(signal)
-    print("Time magnitudes", time.time()-t)
+    print("Time magnitudes", time.time() - t)
     # find noise threshold
     t = time.time()
     noise = detect_noise_level(magnitudes, k=2)
-    print("time noise", time.time()-t)
+    print("time noise", time.time() - t)
 
     # segment messages
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise, q=2)
@@ -228,7 +259,8 @@ def estimate(signal: np.ndarray) -> dict:
             bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
             # use abs(p-bit_length) % bit_length so e.g. 290 gets diff of 10 for bit length 300 instad of 290
-            plateau_scores[mod_type] += bit_length / (1 + sum((abs(p-bit_length) % bit_length) / bit_length for p in plateau_lengths))
+            plateau_scores[mod_type] += bit_length / (
+                    1 + sum((abs(p - bit_length) % bit_length) / bit_length for p in plateau_lengths))
             # TODO: If bit length gets very big, this can go wrong. We could e.g. check if bit_length >= 0.8 * (end-start)
             # However, then we could not work with num flanks
 

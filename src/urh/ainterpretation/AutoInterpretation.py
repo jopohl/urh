@@ -211,16 +211,15 @@ def get_tolerant_greatest_common_divisor(numbers):
     return np.max(values[most_frequent_indices])
 
 
-def get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=None):
-    if len(plateau_lengths) == 0:
+def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
+    if len(merged_plateau_lengths) == 0:
         return 0
 
-    if len(plateau_lengths) == 1:
-        return plateau_lengths[0]
+    if len(merged_plateau_lengths) == 1:
+        return merged_plateau_lengths[0]
 
-    merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
-    round_plateau_lengths(merged_lengths)
-    return get_tolerant_greatest_common_divisor(merged_lengths)
+    round_plateau_lengths(merged_plateau_lengths)
+    return get_tolerant_greatest_common_divisor(merged_plateau_lengths)
 
 
 def can_be_psk(rect_data: np.ndarray, z=3):
@@ -268,16 +267,18 @@ def estimate(signal: np.ndarray) -> dict:
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
             tolerances_by_modulation_type[mod_type].append(tolerance)
 
-            bit_length = get_bit_length_from_plateau_lengths(plateau_lengths, tolerance=tolerance)
+            merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
+            bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
             bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
-            # use abs(p-bit_length) % bit_length so e.g. 290 gets diff of 10 for bit length 300 instad of 290
-            plateau_scores[mod_type] += bit_length / (
-                    1 + sum((abs(p - bit_length) % bit_length) / bit_length for p in plateau_lengths))
-            # TODO: If bit length gets very big, this can go wrong. We could e.g. check if bit_length >= 0.8 * (end-start)
-            # However, then we could not work with num flanks
+            plateau_scores[mod_type] += sum([1 for p in merged_lengths if p % bit_length == 0])
 
-    result_mod_type = max(plateau_scores, key=plateau_scores.get)
+    scores = dict()
+    # If there is high variance in found bit lengths they are unlikey to be the correct ones
+    for mod_type, plateau_score in plateau_scores.items():
+        scores[mod_type] = plateau_score * 1 / (1 + np.std(bit_lengths_by_modulation_type[mod_type]))
+
+    result_mod_type = max(scores, key=scores.get)
 
     result = {
         "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,

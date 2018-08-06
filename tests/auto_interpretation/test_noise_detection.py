@@ -4,6 +4,7 @@ import numpy as np
 
 from urh.ainterpretation.AutoInterpretation import detect_noise_level
 from tests.test_util import get_path_for_data_file
+from urh.signalprocessing.Signal import Signal
 
 
 class TestNoiseDetection(unittest.TestCase):
@@ -29,3 +30,9 @@ class TestNoiseDetection(unittest.TestCase):
         data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)[0:17639]
         noise_level = detect_noise_level(np.abs(data), k=2)
         self.assertEqual(noise_level, 0)
+
+    def test_multi_messages_different_rssi(self):
+        data = Signal(get_path_for_data_file("multi_messages_different_rssi.coco"), "").data
+        noise_level = detect_noise_level(np.abs(data), k=2)
+        self.assertGreater(noise_level, 0.001)
+        self.assertLess(noise_level, 0.002)

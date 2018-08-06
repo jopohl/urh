@@ -12,7 +12,7 @@ from urh.cythonext import signal_functions
 
 
 def max_without_outliers(data: np.ndarray, z=3):
-    return np.max(data[abs(data - np.mean(data)) < z * np.std(data)])
+    return np.max(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
 
 def get_most_frequent_value(values: list):
@@ -51,7 +51,7 @@ def detect_noise_level(magnitudes, k=2):
         return 0
 
     noise_cluster = np.array(clusters[np.argmin(centers)])
-    return max_without_outliers(noise_cluster, z=3)
+    return np.max(noise_cluster)
 
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
@@ -101,7 +101,7 @@ def merge_message_segments_for_ook(segments: list):
 
 def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
-    rect = rect[abs(rect - np.mean(rect)) < z * np.std(rect)]  # remove outliers
+    rect = rect[abs(rect - np.mean(rect)) <= z * np.std(rect)]  # remove outliers
     centers, clusters = cy_auto_interpretation.k_means(rect, k=k)
     return (centers[0] + centers[1]) / 2
 
@@ -135,7 +135,7 @@ def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) 
         return 0
 
     unique, counts = np.unique(plateau_lengths, return_counts=True)
-    maximum = max(plateau_lengths)
+    maximum = max_without_outliers(unique)
     if unique[0] > 1 and unique[0] >= relative_max * maximum:
         return 0
 
@@ -224,7 +224,7 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
 
 def can_be_psk(rect_data: np.ndarray, z=3):
     rect_data = rect_data[rect_data > -4]  # do not consider noise
-    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) < z * np.std(rect_data)]
+    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
     minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
     return np.abs(maximum - minimum) >= np.pi / 2
 
@@ -263,20 +263,26 @@ def estimate(signal: np.ndarray) -> dict:
             center = detect_center(msg_rect_data, k=2, z=3)
             centers_by_modulation_type[mod_type].append(center)
 
-            plateau_lengths = get_plateau_lengths(msg_rect_data, center, num_flanks=32)
+            # todo: dont use flanks but percent of message length, flanks are affected by prenoise
+            plateau_lengths = get_plateau_lengths(msg_rect_data, center, num_flanks=64)
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
-            tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
-            bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
+            bit_lengths_by_modulation_type[mod_type].append(bit_length)
+            tolerances_by_modulation_type[mod_type].append(tolerance)
             plateau_scores[mod_type] += sum([1 for p in merged_lengths if p % bit_length == 0])
 
     scores = dict()
     # If there is high variance in found bit lengths they are unlikey to be the correct ones
     for mod_type, plateau_score in plateau_scores.items():
-        scores[mod_type] = plateau_score * 1 / (1 + np.std(bit_lengths_by_modulation_type[mod_type]))
+        bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
+        outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
+        scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
+
+        # penalty for very small bit lengths
+        scores[mod_type] /= (1 + len([bl for bl in outlier_free_bit_lengths if bl <= 5]))
 
     result_mod_type = max(scores, key=scores.get)
 

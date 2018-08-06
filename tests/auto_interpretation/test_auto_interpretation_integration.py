@@ -34,7 +34,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
         self.assertGreater(tolerance,  0)
-        self.assertLess(tolerance, 5)
+        self.assertLessEqual(tolerance, 5)
 
         self.assertEqual(self.demodulate(fsk_signal, mod_type, bit_length, center, noise, tolerance)[0],
                          "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18")

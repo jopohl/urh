@@ -10,29 +10,29 @@ from urh.signalprocessing.Signal import Signal
 class TestNoiseDetection(unittest.TestCase):
     def test_for_fsk_signal(self):
         data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)
-        noise_level = detect_noise_level(np.abs(data), k=2)
+        noise_level = detect_noise_level(np.abs(data))
         self.assertGreaterEqual(noise_level, 0.0005)
         self.assertLessEqual(noise_level, 0.009)
 
     def test_for_ask_signal(self):
         data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
-        noise_level = detect_noise_level(np.abs(data), k=2)
+        noise_level = detect_noise_level(np.abs(data))
         self.assertGreaterEqual(noise_level, 0.0111)
         self.assertLessEqual(noise_level, 0.043)
 
     def test_for_enocean_ask_signal(self):
         data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
-        noise_level = detect_noise_level(np.abs(data), k=2)
+        noise_level = detect_noise_level(np.abs(data))
         self.assertGreaterEqual(noise_level, 0.01)
         self.assertLessEqual(noise_level, 0.28)
 
     def test_for_noiseless_signal(self):
         data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)[0:17639]
-        noise_level = detect_noise_level(np.abs(data), k=2)
+        noise_level = detect_noise_level(np.abs(data))
         self.assertEqual(noise_level, 0)
 
     def test_multi_messages_different_rssi(self):
         data = Signal(get_path_for_data_file("multi_messages_different_rssi.coco"), "").data
-        noise_level = detect_noise_level(np.abs(data), k=2)
+        noise_level = detect_noise_level(np.abs(data))
         self.assertGreater(noise_level, 0.001)
         self.assertLess(noise_level, 0.002)

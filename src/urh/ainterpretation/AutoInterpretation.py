@@ -37,21 +37,20 @@ def get_most_frequent_value(values: list):
     return result
 
 
-def detect_noise_level(magnitudes, k=2):
-    centers, clusters = cy_auto_interpretation.k_means(magnitudes, k)
-
-    if np.max(centers) / np.min(centers) < 1.1:
-        # Centers differ less than 10%. Since they are so close, there is probably no noise in the signal.
+def detect_noise_level(magnitudes):
+    if len(magnitudes) <= 3:
         return 0
 
-    cluster_sizes = [len(c) for c in clusters]
+    chunksize_percent = 10
+    chunksize = max(1, int(len(magnitudes) * chunksize_percent / 100))
 
-    if min(cluster_sizes) / max(cluster_sizes) < 0.01:
-        # Smaller cluster is less than 1% of the size of the greater. These are presumably outliers and not noise.
+    chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
+    mean_values = [np.mean(chunk) for chunk in chunks]
+    if np.std(mean_values) <= 0.001:
+        # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 
-    noise_cluster = np.array(clusters[np.argmin(centers)])
-    return np.max(noise_cluster)
+    return np.max(chunks[int(np.argmin(mean_values))])
 
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
@@ -235,7 +234,7 @@ def estimate(signal: np.ndarray) -> dict:
     print("Time magnitudes", time.time() - t)
     # find noise threshold
     t = time.time()
-    noise = detect_noise_level(magnitudes, k=2)
+    noise = detect_noise_level(magnitudes)
     print("time noise", time.time() - t)
 
     # segment messages

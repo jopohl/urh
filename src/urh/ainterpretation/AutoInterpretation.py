@@ -275,19 +275,23 @@ def estimate(signal: np.ndarray) -> dict:
             plateau_scores[mod_type] += sum([1 for p in merged_lengths if p % bit_length == 0])
 
     scores = dict()
-    # If there is high variance in found bit lengths they are unlikey to be the correct ones
+
     for mod_type, plateau_score in plateau_scores.items():
-        if len(bit_lengths_by_modulation_type[mod_type]) == 1 and bit_lengths_by_modulation_type[mod_type][0] <= 5:
+        min_bit_length = get_most_frequent_value(tolerances_by_modulation_type[mod_type]) + 1
+        if len(bit_lengths_by_modulation_type[mod_type]) == 1 \
+                and bit_lengths_by_modulation_type[mod_type][0] <= min_bit_length:
             # Only one message with a very low bit length detected -> lowest possible score
             scores[mod_type] = 0
             continue
 
         bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
         outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
+
+        # If there is high variance in found bit lengths they are unlikey to be the correct ones
         scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
 
         # penalty for very small bit lengths
-        scores[mod_type] /= (1 + len([bl for bl in outlier_free_bit_lengths if bl <= 5]))
+        scores[mod_type] /= (1 + len([bl for bl in outlier_free_bit_lengths if bl <= min_bit_length]))
 
     result_mod_type = max(scores, key=scores.get)
 

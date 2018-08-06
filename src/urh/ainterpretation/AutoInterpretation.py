@@ -105,7 +105,7 @@ def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
     return (centers[0] + centers[1]) / 2
 
 
-def get_plateau_lengths(rect_data, center, num_flanks=-1):
+def get_plateau_lengths(rect_data, center, percentage=25):
     if len(rect_data) == 0:
         return []
 
@@ -113,9 +113,10 @@ def get_plateau_lengths(rect_data, center, num_flanks=-1):
     plateau_length = 0
 
     result = []
+    current_sum = 0
 
     for sample in rect_data:
-        if num_flanks >= 0 and len(result) >= num_flanks:
+        if current_sum >= int(percentage * len(rect_data) / 100):
             break
 
         new_state = -1 if sample <= center else 1
@@ -123,6 +124,7 @@ def get_plateau_lengths(rect_data, center, num_flanks=-1):
             plateau_length += 1
         else:
             result.append(plateau_length)
+            current_sum += plateau_length
             state = new_state
             plateau_length = 1
 
@@ -262,8 +264,7 @@ def estimate(signal: np.ndarray) -> dict:
             center = detect_center(msg_rect_data, k=2, z=3)
             centers_by_modulation_type[mod_type].append(center)
 
-            # todo: dont use flanks but percent of message length, flanks are affected by prenoise
-            plateau_lengths = get_plateau_lengths(msg_rect_data, center, num_flanks=64)
+            plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
@@ -276,6 +277,11 @@ def estimate(signal: np.ndarray) -> dict:
     scores = dict()
     # If there is high variance in found bit lengths they are unlikey to be the correct ones
     for mod_type, plateau_score in plateau_scores.items():
+        if len(bit_lengths_by_modulation_type[mod_type]) == 1 and bit_lengths_by_modulation_type[mod_type][0] <= 5:
+            # Only one message with a very low bit length detected -> lowest possible score
+            scores[mod_type] = 0
+            continue
+
         bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
         outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
         scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))

@@ -138,12 +138,15 @@ def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) 
 
     unique, counts = np.unique(plateau_lengths, return_counts=True)
     maximum = max_without_outliers(unique)
-    if unique[0] > 1 and unique[0] >= relative_max * maximum:
+
+    limit = relative_max * maximum
+    #limit = np.mean(plateau_lengths) - 1 * np.std(plateau_lengths)
+    if unique[0] > 1 and unique[0] >= limit:
         return 0
 
     result = 0
     for value in unique:
-        if value > 1 and value >= relative_max * maximum:
+        if value > 1 and value >= limit:
             break
         result = value
 

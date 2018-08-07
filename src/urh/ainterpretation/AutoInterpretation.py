@@ -289,10 +289,11 @@ def estimate(signal: np.ndarray) -> dict:
 
     for mod_type, plateau_score in plateau_scores.items():
         bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
-        outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
+        if len(bit_lengths) > 0:
+            outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
 
-        # If there is high variance in found bit lengths they are unlikey to be the correct ones
-        scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
+            # If there is high variance in found bit lengths they are unlikely to be the correct ones
+            scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
 
     result_mod_type = max(scores, key=scores.get)
 

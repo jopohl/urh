@@ -17,7 +17,7 @@ class TestNoiseDetection(unittest.TestCase):
     def test_for_ask_signal(self):
         data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
         noise_level = detect_noise_level(np.abs(data))
-        self.assertGreaterEqual(noise_level, 0.0111)
+        self.assertGreaterEqual(noise_level, 0.0110)
         self.assertLessEqual(noise_level, 0.043)
 
     def test_for_fsk_signal_with_little_noise_before_and_after(self):

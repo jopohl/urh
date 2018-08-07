@@ -2,6 +2,7 @@ import math
 import unittest
 
 import numpy as np
+from urh.cythonext.signal_functions import afp_demod
 
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import detect_center
@@ -20,24 +21,25 @@ class TestCenterDetection(unittest.TestCase):
         center = detect_center(rect)
         self.assertEqual(center, 0.5)
 
-    def test_noisy_rect_non_weak_only(self):
-        rect = np.fromfile(get_path_for_data_file("fsk-demodulated-non-weak-only.complex"), dtype=np.float32)
+    def test_noisy_rect(self):
+        data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)
+        rect = afp_demod(data, 0.008, 1)
+
         center = detect_center(rect)
         self.assertTrue(math.isclose(center, -0.03, abs_tol=1e-2))
 
-    def test_noisy_rect(self):
-        rect = np.fromfile(get_path_for_data_file("fsk-demodulated.complex"), dtype=np.float32)
-        center = detect_center(rect)
-        assert math.isclose(center, -0.03, abs_tol=1e-2)
-
     def test_ask_center_detection(self):
-        rect = np.fromfile(get_path_for_data_file("ask-demodulated.complex"), dtype=np.float32)
+        data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
+        rect = afp_demod(data, 0.01111, 0)
+
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0)
-        self.assertLessEqual(center, 0.0035)
+        self.assertLessEqual(center, 0.04)
 
     def test_enocean_center_detection(self):
-        rect = np.fromfile(get_path_for_data_file("enocean-demodulated.complex"), dtype=np.float32)
+        data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
+        rect = afp_demod(data, 0.01111, 0)
+
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0.07)
         self.assertLessEqual(center, 0.2246)

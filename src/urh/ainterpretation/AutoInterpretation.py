@@ -137,7 +137,7 @@ def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) 
         return 0
 
     unique, counts = np.unique(plateau_lengths, return_counts=True)
-    maximum = max_without_outliers(unique)
+    maximum = max_without_outliers(unique, z=2)
 
     limit = relative_max * maximum
     #limit = np.mean(plateau_lengths) - 1 * np.std(plateau_lengths)
@@ -283,6 +283,9 @@ def estimate(signal: np.ndarray) -> dict:
                 plateau_scores[mod_type] += sum([1 for p in merged_lengths if p % bit_length == 0])
 
     scores = dict()
+    if len(bit_lengths_by_modulation_type["PSK"]) < 0.6*len(bit_lengths_by_modulation_type["FSK"]):
+        # Skipped more than 60% of messages because they cannot be PSK modulated, so in total it cannot be a PSK
+        plateau_scores["PSK"] = 0
 
     for mod_type, plateau_score in plateau_scores.items():
         bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])

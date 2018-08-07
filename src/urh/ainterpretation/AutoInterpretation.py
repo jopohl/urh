@@ -41,7 +41,8 @@ def detect_noise_level(magnitudes):
     if len(magnitudes) <= 3:
         return 0
 
-    chunksize_percent = 10
+    # 1% for best accuracy and performance for large signals
+    chunksize_percent = 1
     chunksize = max(1, int(len(magnitudes) * chunksize_percent / 100))
 
     chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
@@ -50,8 +51,8 @@ def detect_noise_level(magnitudes):
         # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 
-    return np.max(chunks[int(np.argmin(mean_values))])
-
+    target_chunk = chunks[int(np.argmin(mean_values))]
+    return np.max(target_chunk)
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
     """

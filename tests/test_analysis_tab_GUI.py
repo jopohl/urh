@@ -35,7 +35,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertTrue(True)
 
     def test_analyze_button_enocean(self):
-        self.add_signal_to_form("enocean.coco")
+        self.add_signal_to_form("enocean.complex")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
         QTest.keyClick(w, Qt.Key_Enter)

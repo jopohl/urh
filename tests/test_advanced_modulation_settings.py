@@ -7,7 +7,7 @@ from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModul
 
 class TestAdvancedModulationSettings(QtTestCase):
     def test_pause_threshold(self):
-        self.add_signal_to_form("enocean.coco")
+        self.add_signal_to_form("enocean.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         self.assertGreater(signal_frame.proto_analyzer.num_messages, 1)

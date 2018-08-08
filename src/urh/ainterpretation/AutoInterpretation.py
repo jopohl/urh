@@ -82,9 +82,15 @@ def merge_message_segments_for_ook(segments: list):
         dtype=np.uint64
     )
 
+    pulses = np.fromiter(
+        (segments[i][1] - segments[i][0] for i in range(len(segments))),
+        count=len(segments),
+        dtype=np.uint64
+    )
+
     # Find relatively large pauses, these mark new messages
-    min_pause = np.min(pauses)
-    large_pause_indices = np.nonzero(pauses >= 8 * min_pause)[0]
+    min_pulse_length = min_without_outliers(pulses, z=2)
+    large_pause_indices = np.nonzero(pauses >= 8 * min_pulse_length)[0]
 
     # Merge Pulse Lengths between long pauses
     for i in range(0, len(large_pause_indices) + 1):
@@ -286,13 +292,13 @@ def estimate(signal: np.ndarray) -> dict:
 
             if bit_length > min_bit_length:
                 # only add to score if found bit length surpasses minimum bit length
-                plateau_scores[mod_type] += sum([1 if p % bit_length == 0 else -1 for p in merged_lengths]) / len(merged_lengths)
+                plateau_scores[mod_type] += sum([1 if p % bit_length == 0 else -1 for p in merged_lengths]) / len(
+                    merged_lengths)
                 centers_by_modulation_type[mod_type].append(center)
             else:
                 plateau_scores[mod_type] -= 1
 
             bit_lengths_by_modulation_type[mod_type].append(bit_length)
-
 
     scores = dict()
 

@@ -35,7 +35,7 @@ class TestMessageSegmentation(unittest.TestCase):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")
         segments = segment_messages_from_magnitudes(np.abs(signal.data), noise_threshold=0.002)
 
-        # Signal starts with overdrive, so one msessage more
+        # Signal starts with overdrive, so one message more
         self.assertTrue(len(segments) == 6 or len(segments) == 7)
         if len(segments) == 7:
             segments = segments[1:]
@@ -63,3 +63,10 @@ class TestMessageSegmentation(unittest.TestCase):
         self.assertEqual(segments, [(0, 999), (10999, 12599), (32599, 34199)])
 
         print(merge_message_segments_for_ook(segments))
+
+    def test_segmentation_elektromaten(self):
+        signal = Signal(get_path_for_data_file("elektromaten.coco"), "")
+        segments = segment_messages_from_magnitudes(np.abs(signal.data), noise_threshold=0.0167)
+        segments = merge_message_segments_for_ook(segments)
+
+        self.assertEqual(len(segments), 11)

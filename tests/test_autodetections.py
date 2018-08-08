@@ -13,14 +13,6 @@ class TestAutodetections(unittest.TestCase):
         signal.bit_len = signal.estimate_bitlen()
         self.assertTrue(80 <= signal.bit_len <= 120)
 
-    def test_auto_detect_elektromaten(self):
-        signal = Signal(get_path_for_data_file("elektromaten.complex"), "Elektromaten")
-        signal.modulation_type = 0
-        signal.qad_center = signal.estimate_qad_center()
-        self.assertTrue(0.0387 < signal.qad_center < 0.1183)
-        signal.bit_len = signal.estimate_bitlen()
-        self.assertTrue(270 <= signal.bit_len <= 330)
-
     def test_auto_detect_fsk(self):
         signal = Signal(get_path_for_data_file("fsk.complex"), "FSK")
         signal.modulation_type = 1

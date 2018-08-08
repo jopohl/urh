@@ -11,13 +11,14 @@ from urh.signalprocessing.Signal import Signal
 
 
 class TestAutoInterpretationIntegration(unittest.TestCase):
-    def demodulate(self, signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None):
+    def demodulate(self, signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None, pause_threshold=8):
         signal = Signal("", "")
         signal._fulldata = signal_data
         signal.modulation_type = signal.MODULATION_TYPES.index(mod_type)
         signal.bit_len = bit_length
         signal.qad_center = center
         signal.noise_threshold = noise
+        signal.pause_threshold=pause_threshold
         if tolerance is not None:
             signal.tolerance = tolerance
         pa = ProtocolAnalyzer(signal)
@@ -79,3 +80,18 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
         for i in range(1, len(demod)):
             self.assertTrue(demod[i].startswith("aaaaaaaa"))
+
+    def test_auto_intepreation_elektromaten(self):
+        data = Signal(get_path_for_data_file("elektromaten.coco"), "").data
+        result = AutoInterpretation.estimate(data)
+
+        mod_type, bit_length = result["modulation_type"], result["bit_length"]
+        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+
+        self.assertEqual(mod_type, "ASK")
+        self.assertEqual(bit_length, 200)
+
+        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=20)
+        self.assertEqual(len(demodulated), 11)
+        for i in range(11):
+            self.assertTrue(demodulated[i].startswith("e0000"))

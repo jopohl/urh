@@ -15,6 +15,10 @@ def max_without_outliers(data: np.ndarray, z=3):
     return np.max(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
 
+def min_without_outliers(data: np.ndarray, z=2):
+    return np.min(data[abs(data - np.mean(data)) <= z * np.std(data)])
+
+
 def get_most_frequent_value(values: list):
     """
     Return the most frequent value in list.
@@ -53,6 +57,7 @@ def detect_noise_level(magnitudes):
 
     target_chunk = chunks[int(np.argmin(mean_values))]
     return np.max(target_chunk)
+
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
     """
@@ -140,7 +145,7 @@ def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) 
     maximum = max_without_outliers(unique, z=2)
 
     limit = relative_max * maximum
-    #limit = np.mean(plateau_lengths) - 1 * np.std(plateau_lengths)
+    # limit = np.mean(plateau_lengths) - 1 * np.std(plateau_lengths)
     if unique[0] > 1 and unique[0] >= limit:
         return 0
 
@@ -192,7 +197,8 @@ def round_plateau_lengths(plateau_lengths: list):
     :return:
     """
     # round to n_digits of most common value
-    n_digits = len(str(Counter(plateau_lengths).most_common(1)[0][0]))
+    digit_counts = [len(str(p)) for p in plateau_lengths]
+    n_digits = get_most_frequent_value(digit_counts)
     f = 10 ** (n_digits - 1)
 
     for i, plateau_len in enumerate(plateau_lengths):
@@ -263,44 +269,50 @@ def estimate(signal: np.ndarray) -> dict:
         for start, end in msg_indices:
             msg_rect_data = data[mod_type][start:end]
             if mod_type == "PSK" and not can_be_psk(msg_rect_data, z=3):
+                plateau_scores[mod_type] -= 1
                 continue
 
             center = detect_center(msg_rect_data, k=2, z=3)
-            centers_by_modulation_type[mod_type].append(center)
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
+
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
+            tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
 
-            bit_lengths_by_modulation_type[mod_type].append(bit_length)
-            tolerances_by_modulation_type[mod_type].append(tolerance)
-
             min_bit_length = tolerance + 1
+
             if bit_length > min_bit_length:
                 # only add to score if found bit length surpasses minimum bit length
-                plateau_scores[mod_type] += sum([1 for p in merged_lengths if p % bit_length == 0])
+                plateau_scores[mod_type] += sum([1 if p % bit_length == 0 else -1 for p in merged_lengths]) / len(merged_lengths)
+                centers_by_modulation_type[mod_type].append(center)
+            else:
+                plateau_scores[mod_type] -= 1
+
+            bit_lengths_by_modulation_type[mod_type].append(bit_length)
+
 
     scores = dict()
-    if len(bit_lengths_by_modulation_type["PSK"]) < 0.6*len(bit_lengths_by_modulation_type["FSK"]):
-        # Skipped more than 60% of messages because they cannot be PSK modulated, so in total it cannot be a PSK
-        plateau_scores["PSK"] = 0
 
     for mod_type, plateau_score in plateau_scores.items():
         bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
+
         if len(bit_lengths) > 0:
             outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
 
             # If there is high variance in found bit lengths they are unlikely to be the correct ones
             scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
+        else:
+            scores[mod_type] = plateau_score
 
     result_mod_type = max(scores, key=scores.get)
 
     result = {
         "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
         "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
-        "center": get_most_frequent_value(centers_by_modulation_type[result_mod_type]),
+        "center": min_without_outliers(np.array(centers_by_modulation_type[result_mod_type]), z=2),
         "tolerance": get_most_frequent_value(tolerances_by_modulation_type[result_mod_type]),
         "noise": noise
     }

@@ -204,7 +204,7 @@ def round_plateau_lengths(plateau_lengths: list):
     """
     # round to n_digits of most common value
     digit_counts = [len(str(p)) for p in plateau_lengths]
-    n_digits = get_most_frequent_value(digit_counts)
+    n_digits = int(np.percentile(digit_counts, 50))
     f = 10 ** (n_digits - 1)
 
     for i, plateau_len in enumerate(plateau_lengths):

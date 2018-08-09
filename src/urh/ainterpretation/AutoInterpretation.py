@@ -342,10 +342,18 @@ def estimate(signal: np.ndarray) -> dict:
 
     result_mod_type = max(scores, key=scores.get)
 
+    # Since we cannot have different centers per message (yet) we need to combine them to return a common center
+    if result_mod_type == "OOK" or result_mod_type == "ASK":
+        # for ask modulations the center tends to be the minimum of all found centers
+        center = min_without_outliers(np.array(centers_by_modulation_type[result_mod_type]), z=2)
+    else:
+        # for other modulations it is a better strategy to take the mean of found centers
+        center = np.mean(centers_by_modulation_type[result_mod_type])
+
     result = {
         "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
         "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
-        "center": min_without_outliers(np.array(centers_by_modulation_type[result_mod_type]), z=2),
+        "center": center,
         "tolerance": get_most_frequent_value(tolerances_by_modulation_type[result_mod_type]),
         "noise": noise
     }

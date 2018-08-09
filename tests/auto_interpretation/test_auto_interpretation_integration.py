@@ -91,9 +91,9 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
 
         self.assertEqual(mod_type, "ASK")
-        self.assertEqual(bit_length, 200)
+        self.assertEqual(bit_length, 600)
 
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=20)
+        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
         self.assertEqual(len(demodulated), 11)
         for i in range(11):
-            self.assertTrue(demodulated[i].startswith("e0000"))
+            self.assertTrue(demodulated[i].startswith("8"))

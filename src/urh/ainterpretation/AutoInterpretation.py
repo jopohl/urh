@@ -13,10 +13,16 @@ from urh.cythonext import signal_functions
 
 
 def max_without_outliers(data: np.ndarray, z=3):
+    if len(data) == 0:
+        return None
+
     return np.max(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
 
 def min_without_outliers(data: np.ndarray, z=2):
+    if len(data) == 0:
+        return None
+
     return np.min(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
 
@@ -264,7 +270,15 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
         return merged_plateau_lengths[0]
 
     round_plateau_lengths(merged_plateau_lengths)
-    return get_tolerant_greatest_common_divisor(merged_plateau_lengths)
+    filtered = [
+        min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
+        if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
+    ]
+
+    if len(filtered) == 0:
+        return 0
+    else:
+        return np.percentile(filtered, 10, interpolation="lower")
 
 
 def can_be_psk(rect_data: np.ndarray, z=3):

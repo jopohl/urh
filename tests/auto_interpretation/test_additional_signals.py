@@ -150,3 +150,45 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(len(demodulated), 21)
         for i in range(8):
             self.assertTrue(demodulated[i].startswith("aaaaaaaa"))
+
+    def test_scislo(self):
+        path = self.get_path("scislo.complex")
+        if not path:
+            return
+
+        data = Signal(path, "").data
+
+        result = AutoInterpretation.estimate(data)
+        mod_type, bit_length = result["modulation_type"], result["bit_length"]
+        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+
+        self.assertEqual(mod_type, "FSK")
+        self.assertEqual(bit_length, 200)
+        self.assertGreaterEqual(noise, 0.0120)
+
+        print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
+        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        print(demodulated)
+        self.assertEqual(len(demodulated), 8)
+        for i in range(8):
+            self.assertTrue(demodulated[i].startswith("000000000000aaaaaa"))
+
+    def test_vw(self):
+        path = self.get_path("vw_auf.complex")
+        if not path:
+            return
+
+        data = Signal(path, "").data
+
+        result = AutoInterpretation.estimate(data)
+        mod_type, bit_length = result["modulation_type"], result["bit_length"]
+        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+
+        self.assertEqual(mod_type, "ASK")
+        self.assertGreaterEqual(bit_length, 2000)
+        self.assertLessEqual(bit_length, 3000)
+
+        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        print(demodulated)
+        self.assertEqual(len(demodulated), 1)
+        self.assertTrue(demodulated[0].startswith("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))

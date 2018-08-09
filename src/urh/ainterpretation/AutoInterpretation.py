@@ -138,8 +138,8 @@ def detect_center(rectangular_signal: np.ndarray, min_std_dev=0.01):
             general_heights.append(np.mean(chunk))
 
     def outlier_free_min_max_avg(minima_values, maxima_values):
-        s = 0.4 * max_without_outliers(np.array(minima_values), z=3)
-        s += 0.6 * min_without_outliers(np.array(maxima_values), z=3)
+        s = 0.5 * max_without_outliers(np.array(minima_values), z=3)
+        s += 0.5 * min_without_outliers(np.array(maxima_values), z=3)
         return s
 
     if len(minima) > 0 and len(maxima) > 0:
@@ -387,7 +387,7 @@ def estimate(signal: np.ndarray) -> dict:
         "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
         "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
         "center": center,
-        "tolerance": get_most_frequent_value(tolerances_by_modulation_type[result_mod_type]),
+        "tolerance": np.percentile(tolerances_by_modulation_type[result_mod_type], 50, interpolation="lower"),
         "noise": noise
     }
 

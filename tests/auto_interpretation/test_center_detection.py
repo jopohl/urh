@@ -34,12 +34,12 @@ class TestCenterDetection(unittest.TestCase):
 
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0)
-        self.assertLessEqual(center, 0.04)
+        self.assertLessEqual(center, 0.05)
 
     def test_enocean_center_detection(self):
         data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
-        rect = afp_demod(data, 0.01111, 0)
+        rect = afp_demod(data, 0.0111, 0)
 
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0.07)
-        self.assertLessEqual(center, 0.2246)
+        self.assertLessEqual(center, 0.5)

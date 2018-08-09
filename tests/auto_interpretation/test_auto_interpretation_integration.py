@@ -48,7 +48,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(mod_type, "ASK")
         self.assertEqual(bit_length, 300)
         self.assertGreater(tolerance, 0)
-        self.assertLess(tolerance, 5)
+        self.assertLessEqual(tolerance, 5)
 
         self.assertEqual(self.demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0], "b25b6db6c80")
 
@@ -60,6 +60,8 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(mod_type, "ASK")
         self.assertEqual(bit_length, 8)
         self.assertLessEqual(tolerance, 1)
+        self.assertGreaterEqual(center, 0.07)
+        self.assertLessEqual(center, 0.4690)
 
         demod = self.demodulate(enocean_signal, mod_type, bit_length, center, noise, tolerance,
                                 decoding=Encoding(["WSP", constants.DECODING_ENOCEAN]))

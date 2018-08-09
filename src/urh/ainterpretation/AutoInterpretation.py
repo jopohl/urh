@@ -6,6 +6,7 @@ import time
 from collections import Counter, defaultdict
 
 import numpy as np
+from urh.cythonext.util import minmax
 
 from urh.cythonext import auto_interpretation as cy_auto_interpretation
 from urh.cythonext import signal_functions
@@ -110,11 +111,37 @@ def merge_message_segments_for_ook(segments: list):
     return result
 
 
-def detect_center(rectangular_signal: np.ndarray, k=2, z=3):
+def detect_center(rectangular_signal: np.ndarray, min_std_dev=0.01):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
-    rect = rect[abs(rect - np.mean(rect)) <= z * np.std(rect)]  # remove outliers
-    centers, clusters = cy_auto_interpretation.k_means(rect, k=k)
-    return (centers[0] + centers[1]) / 2
+
+    chunk_size_percent = 10
+    chunksize = max(1, int(len(rect) * chunk_size_percent / 100))
+
+    chunks = [rect[i - chunksize:i] for i in range(len(rect), 0, -chunksize) if i - chunksize >= 0]
+
+    minima = []
+    maxima = []
+    general_heights = []
+    for chunk in chunks:
+        if np.std(chunk) > min_std_dev:
+            minimum, maximum = minmax(chunk)
+
+            minima.append(minimum)
+            maxima.append(maximum)
+        else:
+            general_heights.append(np.mean(chunk))
+
+    def outlier_free_min_max_avg(minima_values, maxima_values):
+        s = max_without_outliers(np.array(minima_values), z=1) + min_without_outliers(np.array(maxima_values), z=1)
+        return s/2
+
+    if len(minima) > 0 and len(maxima) > 0:
+        return outlier_free_min_max_avg(minima, maxima)
+
+    if len(general_heights) > 0 and np.std(general_heights) > min_std_dev:
+        return outlier_free_min_max_avg(general_heights, general_heights)
+
+    return 0
 
 
 def get_plateau_lengths(rect_data, center, percentage=25):
@@ -204,7 +231,7 @@ def round_plateau_lengths(plateau_lengths: list):
     """
     # round to n_digits of most common value
     digit_counts = [len(str(p)) for p in plateau_lengths]
-    n_digits = int(np.percentile(digit_counts, 50))
+    n_digits = min(3, int(np.percentile(digit_counts, 50)))
     f = 10 ** (n_digits - 1)
 
     for i, plateau_len in enumerate(plateau_lengths):
@@ -278,7 +305,7 @@ def estimate(signal: np.ndarray) -> dict:
                 plateau_scores[mod_type] -= 1
                 continue
 
-            center = detect_center(msg_rect_data, k=2, z=3)
+            center = detect_center(msg_rect_data)
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
 

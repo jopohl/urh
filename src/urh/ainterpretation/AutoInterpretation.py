@@ -273,6 +273,19 @@ def can_be_psk(rect_data: np.ndarray, z=3):
     return np.abs(maximum - minimum) >= np.pi / 2
 
 
+def can_be_fsk(rect_data: np.ndarray, z=3):
+    rect_data = rect_data[rect_data > -4]  # do not consider noise
+    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
+    minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
+    return np.abs(maximum - minimum) >= np.pi / 8
+
+
+def can_be_ask(rect_data: np.ndarray, z=3):
+    rect_data = rect_data[rect_data > -4]  # do not consider noise
+    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
+    return np.max(np.diff(outlier_free_data)) >= 0.1
+
+
 def estimate(signal: np.ndarray) -> dict:
     t = time.time()
     magnitudes = np.abs(signal)
@@ -304,6 +317,12 @@ def estimate(signal: np.ndarray) -> dict:
             if mod_type == "PSK" and not can_be_psk(msg_rect_data, z=3):
                 plateau_scores[mod_type] -= 1
                 continue
+            if mod_type == "FSK" and not can_be_fsk(msg_rect_data, z=3):
+                plateau_scores[mod_type] -= 1
+                continue
+            if mod_type == "ASK" and not can_be_ask(msg_rect_data, z=3):
+                plateau_scores[mod_type] -= 1
+                continue
 
             center = detect_center(msg_rect_data)
 
@@ -314,7 +333,6 @@ def estimate(signal: np.ndarray) -> dict:
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
-
             min_bit_length = tolerance + 1
 
             if bit_length > min_bit_length:

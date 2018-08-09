@@ -132,8 +132,9 @@ def detect_center(rectangular_signal: np.ndarray, min_std_dev=0.01):
             general_heights.append(np.mean(chunk))
 
     def outlier_free_min_max_avg(minima_values, maxima_values):
-        s = max_without_outliers(np.array(minima_values), z=1) + min_without_outliers(np.array(maxima_values), z=1)
-        return s/2
+        s = 0.4 * max_without_outliers(np.array(minima_values), z=3)
+        s += 0.6 * min_without_outliers(np.array(maxima_values), z=3)
+        return s
 
     if len(minima) > 0 and len(maxima) > 0:
         return outlier_free_min_max_avg(minima, maxima)

@@ -90,7 +90,7 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(device.device_number, 42)
 
         args = self.parser.parse_args("--device HackRF --frequency 133.7e6 --sample-rate 2.5e6 --bandwidth 5e6 "
-                                      "-tx -db gnuradio".split())
+                                      "-tx -db native".split())
         device = urh_cli.build_device_from_args(args)
         self.assertEqual(device.sample_rate, 2.5e6)
         self.assertEqual(device.bandwidth, 5e6)

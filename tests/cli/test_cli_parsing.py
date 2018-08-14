@@ -95,7 +95,7 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(device.sample_rate, 2.5e6)
         self.assertEqual(device.bandwidth, 5e6)
         self.assertEqual(device.name, "HackRF")
-        self.assertEqual(device.backend, Backends.grc)
+        self.assertEqual(device.backend, Backends.native)
         self.assertEqual(device.frequency, 133.7e6)
         self.assertEqual(device.mode, Mode.send)
 

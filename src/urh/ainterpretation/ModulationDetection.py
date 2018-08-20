@@ -35,20 +35,38 @@ def continuous_haar_wavelet_transform(x: np.ndarray, scale=10):
     return W
 
 
+def median_filter(data: np.ndarray, k=3):
+    n = len(data)
+
+    result = np.zeros(n, dtype=data.dtype)
+
+    for i in range(0, n):
+        start = max(0, i - k // 2)
+        end = min(n, i + k // 2 + 1)
+        result[i] = np.median(data[start:end])
+
+    return result
+
 
 if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
-    data = np.fromfile("/tmp/test.complex", dtype=np.complex64)[:2**15]
+    data = np.fromfile("/tmp/test.complex", dtype=np.complex64)[:2 ** 11]
     # Wavelet transform the data
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
 
-    #data = data / np.abs(data)
+    # data = data / np.abs(data)
 
     wvlt = continuous_haar_wavelet_transform(data, scale=10)
+    mag_wvlt = np.abs(wvlt)
+    print("Variance", np.var(mag_wvlt))
 
-    print(np.var(np.abs(wvlt)))
+    filtered_mag_wvlt = median_filter(mag_wvlt, k=3)
+    print("Filtered Variance", np.var(filtered_mag_wvlt))
 
-    plt.plot(np.abs(wvlt))
+    plt.subplot(211)
+    plt.plot(mag_wvlt)
+    plt.subplot(212)
+    plt.plot(filtered_mag_wvlt)
 
     plt.show()

@@ -1,5 +1,7 @@
 import numpy as np
 
+from urh.cythonext.signal_functions import afp_demod
+
 
 def normalized_haar_wavelet(s_times_omega):
     # https://gist.github.com/patoorio/a9f60ef16489639fbf20f23ac49ba24f
@@ -48,19 +50,51 @@ def median_filter(data: np.ndarray, k=3):
     return result
 
 
+def get_variances(data: np.ndarray, scale=10, k=3):
+    """
+    get variances of wavelet transform data without and with amplitude normalization
+
+    Ref: Identification of digital modulation types using the wavelet transform by Hong, Liang and Ho, K.C.
+
+    :param k: Filter order for median filter
+    :param scale: Scale for wavelet transform
+    :param data:
+    :return:
+    """
+
+    data = data[np.abs(data) != 0]
+
+    mag_cwt = np.abs(continuous_haar_wavelet_transform(data, scale=scale))
+    filtered_mag = median_filter(mag_cwt, k=k)
+
+    normalized_mag_cwt = np.abs(continuous_haar_wavelet_transform(data / np.abs(data), scale=scale))
+    normalized_mag_filtered = median_filter(normalized_mag_cwt, k=k)
+
+    return np.var(filtered_mag), np.var(normalized_mag_filtered)
+
+
 if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
-    data = np.fromfile("/tmp/test.complex", dtype=np.complex64)[:2 ** 11]
+    #data = np.fromfile("/home/joe/GIT/urh/tests/data/fsk.complex", dtype=np.complex64)[:2 ** 11]
+
     # Wavelet transform the data
-    # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
+    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
 
-    # data = data / np.abs(data)
+    #data = np.fromfile("/tmp/generated.complex", dtype=np.complex64)
 
-    wvlt = continuous_haar_wavelet_transform(data, scale=10)
+    data = np.fromfile("/tmp/psk.complex", dtype=np.complex64)
+
+    data = data[np.abs(data) != 0]
+    data = data / np.abs(data)
+
+    demod = afp_demod(data, 0, 1) * np.abs(data)
+
+    wvlt = continuous_haar_wavelet_transform(data, scale=7)
     mag_wvlt = np.abs(wvlt)
     print("Variance", np.var(mag_wvlt))
 
+    print(mag_wvlt[90:120])
     filtered_mag_wvlt = median_filter(mag_wvlt, k=3)
     print("Filtered Variance", np.var(filtered_mag_wvlt))
 

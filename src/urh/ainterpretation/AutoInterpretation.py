@@ -270,15 +270,19 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
         return merged_plateau_lengths[0]
 
     round_plateau_lengths(merged_plateau_lengths)
-    filtered = [
-        min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
-        if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
-    ]
+
+    # filtered = [
+    #     min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
+    #     if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
+    # ]
+
+    filtered = cy_auto_interpretation.filter_plateau_lengths(np.array(merged_plateau_lengths, dtype=np.uint64))
 
     if len(filtered) == 0:
         return 0
     else:
-        return np.percentile(filtered, 10, interpolation="lower")
+        # Ensure we return a Python Integer to be harmonic with demodulator API
+        return int(np.percentile(filtered, 10, interpolation="lower"))
 
 
 def can_be_psk(rect_data: np.ndarray, z=3):

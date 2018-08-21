@@ -1,7 +1,7 @@
 # noinspection PyUnresolvedReferences
+import itertools
 cimport numpy as np
 import numpy as np
-
 
 cpdef tuple k_means(float[:] data, unsigned int k=2):
     cdef float[:] centers = np.empty(k, dtype=np.float32)
@@ -100,3 +100,35 @@ def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold)
         result.append((start, N - conseq_below))
 
     return result
+
+cpdef unsigned long[:] filter_plateau_lengths(np.ndarray[np.uint64_t, ndim=1]  plateau_lengths):
+    # Cython version of this python code
+    # filtered = [
+    #     min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
+    #     if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
+    # ]
+
+    cdef unsigned long num_lengths = len(plateau_lengths)
+    cdef np.ndarray[np.npy_bool, ndim=1, cast=True] mask = np.zeros(num_lengths, dtype=np.bool)
+    cdef unsigned long i, j, x, y, minimum, maximum, min_index, k=0
+
+    for i in range(0, num_lengths):
+        for j in range(i+1, num_lengths):
+            x = plateau_lengths[i]
+            y = plateau_lengths[j]
+            if x == 0 or y == 0:
+                continue
+
+            if x < y:
+                min_index = i
+                minimum = x
+                maximum = y
+            else:
+                min_index = j
+                minimum = y
+                maximum = x
+
+            if maximum / <double>minimum - (maximum / minimum) < 0.2:
+                mask[min_index] = 1
+
+    return plateau_lengths[mask]

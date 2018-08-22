@@ -38,23 +38,25 @@ class LabTestsAutoInterpretation(unittest.TestCase):
 
         return result + noise.view(np.complex64)
 
-    def generate_message_bits(self, num_bits=80, preamble="", sync=""):
-        bits_to_generate = num_bits - (len(preamble) + len(sync))
+    def generate_message_bits(self, num_bits=80, preamble="", sync="", eof=""):
+        bits_to_generate = num_bits - (len(preamble) + len(sync) + len(eof))
 
         if bits_to_generate < 0:
-            raise ValueError("Preamble and Sync are together larger than requested num bits")
+            raise ValueError("Preamble and Sync and EOF are together larger than requested num bits")
 
         bytes_to_generate = bits_to_generate // 8
         leftover_bits = bits_to_generate % 8
         return "".join([preamble, sync]
                        + ["{0:08b}".format(random.choice(range(0, 256))) for _ in range(bytes_to_generate)]
                        + [random.choice(["0", "1"]) for _ in range(leftover_bits)]
+                       + [eof]
                        )
 
-    def generate_random_messages(self, target_file: str, num_messages: int, num_bits: int, preamble: str, sync: str):
+    def generate_random_messages(self, target_file: str, num_messages: int, num_bits: int,
+                                 preamble: str, sync: str, eof:str):
         with open(target_file, "w") as f:
             for _ in range(num_messages):
-                f.write(self.generate_message_bits(num_bits, preamble, sync) + "\n")
+                f.write(self.generate_message_bits(num_bits, preamble, sync, eof) + "\n")
 
     def read_messages_from_file(self, filename: str, message_pause: int) -> List[Message]:
         result = []
@@ -80,67 +82,81 @@ class LabTestsAutoInterpretation(unittest.TestCase):
                                           num_messages=num_messages,
                                           num_bits=num_bits,
                                           preamble="1010101010101010",
-                                          sync="11011001")
+                                          sync="11011001",
+                                          eof="1001")
             print("Bits written to {}".format(target_file))
 
-        messages = self.read_messages_from_file(target_file, message_pause=1000)
+        messages = self.read_messages_from_file(target_file, message_pause=10000)
 
         fsk_modulator = Modulator("FSK")
-        fsk_modulator.samples_per_bit = 100
         fsk_modulator.modulation_type_str = "FSK"
-        fsk_modulator.param_for_zero = -20e3
-        fsk_modulator.param_for_one = 20e3
-        fsk_modulator.sample_rate = 100e3
+        fsk_modulator.param_for_zero = -10e3
+        fsk_modulator.param_for_one = 10e3
 
         ook_modulator = Modulator("OOK")
-        ook_modulator.samples_per_bit = 100
         ook_modulator.modulation_type_str = "ASK"
         ook_modulator.param_for_zero = 0
         ook_modulator.param_for_one = 100
-        ook_modulator.sample_rate = 100e3
 
         ask_modulator = Modulator("ASK")
-        ask_modulator.samples_per_bit = 100
         ask_modulator.modulation_type_str = "ASK"
         ask_modulator.param_for_zero = 50
         ask_modulator.param_for_one = 100
-        ask_modulator.sample_rate = 100e3
 
         psk_modulator = Modulator("PSK")
-        psk_modulator.samples_per_bit = 100
         psk_modulator.modulation_type_str = "PSK"
-        psk_modulator.param_for_zero = 0
-        psk_modulator.param_for_one = 180
-        psk_modulator.sample_rate = 100e3
+        psk_modulator.param_for_zero = 90
+        psk_modulator.param_for_one = -90
 
         mean_errors = defaultdict(list)
-        for snr in snr_values:
-            print("SNR={}dB".format(snr))
-            fsk_estimations = []
-            fsk_errors = []
-            for i in range(0, len(messages), messages_per_signal):
-                messages_in_signal = messages[i:i + messages_per_signal]
-                signal = self.generate_signal(messages_in_signal, fsk_modulator, snr_db=snr)
 
-                estimated_params = AutoInterpretation.estimate(signal)
-                fsk_estimations.append(estimated_params)
-                # Demodulate
-                demodulated = demodulate_from_aint_dict(signal, estimated_params, pause_threshold=8)
-                demodulated = demodulated if demodulated is not None else []
-                if len(demodulated) < messages_per_signal:
-                    demodulated.extend([None] * (messages_per_signal - len(demodulated)))
+        modulators_by_name = {"FSK": fsk_modulator, "OOK": ook_modulator, "ASK": ask_modulator, "PSK": psk_modulator}
+        #modulators_by_name = {"PSK": psk_modulator}
 
-                # todo: bitvector diff currently does not align messages (necessary?)
-                error = sum([bitvector_diff(x.plain_bits_str, y) for x, y in zip(messages_in_signal, demodulated)])
-                fsk_errors.append(error)
+        for modulator in modulators_by_name.values():
+            modulator.samples_per_bit = 100
+            modulator.sample_rate = 250e3
+            modulator.carrier_freq_hz = 5e3
 
-            mean_errors["FSK"].append(np.mean(fsk_errors))
-            # print("Errors", fsk_errors)
-            # print("Estimations", fsk_estimations)
+        for modulation_name, modulator in modulators_by_name.items():
+            print("Running for {}".format(modulation_name))
+            for snr in snr_values:
+                print("  SNR={0:02d}dB".format(snr), end=" ")
+                estimations = []
+                errors = []
+                for i in range(0, len(messages), messages_per_signal):
+                    messages_in_signal = messages[i:i + messages_per_signal]
+                    signal = self.generate_signal(messages_in_signal, modulator, snr_db=snr)
+
+                    estimated_params = AutoInterpretation.estimate(signal)
+                    estimations.append(estimated_params)
+
+                    # Demodulate
+                    demodulated = demodulate_from_aint_dict(signal, estimated_params, pause_threshold=8)
+                    demodulated = demodulated if demodulated is not None else []
+                    if len(demodulated) < messages_per_signal:
+                        demodulated.extend([None] * (messages_per_signal - len(demodulated)))
+
+                    # todo: bitvector diff currently does not align messages (necessary?)
+                    error = sum([bitvector_diff(x.plain_bits_str, y) for x, y in zip(messages_in_signal, demodulated)])
+                    errors.append(error)
+
+                    # print("---")
+                    # print([m.plain_bits_str for m in messages_in_signal])
+                    # print(demodulated)
+                    # print(estimations)
+                    # print(error)
+
+                mean_error = np.mean(errors)
+                mean_errors[modulation_name].append(mean_error)
+                print("(Error: {})".format(mean_error))
+                # print("Errors", fsk_errors)
+                # print("Estimations", estimations)
 
         num_signals = len(messages) // messages_per_signal
 
-        plt.plot(snr_values, mean_errors["FSK"], label="FSK")
+        for modulation_name in modulators_by_name:
+            plt.plot(snr_values, mean_errors[modulation_name], label=modulation_name)
         plt.ylabel("Error (number differing bits)")
         plt.xlabel("SNR (dB)")
         title_str = "Accuracy for {} signals with {} messages per signal and {} bits per message"

@@ -1,11 +1,9 @@
 import os
 import unittest
 
-import numpy as np
-
 from urh.ainterpretation import AutoInterpretation
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
+from tests.auto_interpretation.auto_interpretation_test_util import demodulate
 
 
 class TestAutoInterpretationIntegration(unittest.TestCase):
@@ -17,25 +15,6 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             return path
         else:
             return None
-
-
-    def demodulate(self, signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None,
-                   pause_threshold=None):
-        signal = Signal("", "")
-        signal._fulldata = signal_data
-        signal.modulation_type = signal.MODULATION_TYPES.index(mod_type)
-        signal.bit_len = bit_length
-        signal.qad_center = center
-        signal.noise_threshold = noise
-        if pause_threshold is not None:
-            signal.pause_threshold = pause_threshold
-        if tolerance is not None:
-            signal.tolerance = tolerance
-        pa = ProtocolAnalyzer(signal)
-        if decoding is not None:
-            pa.decoder = decoding
-        pa.get_protocol_from_signal()
-        return pa.decoded_hex_str
 
     def test_action(self):
         path = self.get_path("action_FB_A_B_C_D.coco")
@@ -53,7 +32,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertLessEqual(bit_length, 500)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 19)
         for i in range(2):
@@ -77,7 +56,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertLessEqual(center, 0.1265)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 2)
         for i in range(2):
@@ -100,7 +79,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(bit_length, 300)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
         print(demodulated)
         self.assertEqual(len(demodulated), 64)
         for i in range(64):
@@ -123,7 +102,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
         print(center, noise, tolerance)
         print(center, noise, tolerance, bit_length)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 4)
         for i in range(4):
@@ -145,7 +124,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(bit_length, 100)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 21)
         for i in range(8):
@@ -167,7 +146,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertGreaterEqual(noise, 0.0120)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 8)
         for i in range(8):
@@ -188,7 +167,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertGreaterEqual(bit_length, 2000)
         self.assertLessEqual(bit_length, 3000)
 
-        demodulated = self.demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
         self.assertEqual(len(demodulated), 1)
         self.assertTrue(demodulated[0].startswith("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))

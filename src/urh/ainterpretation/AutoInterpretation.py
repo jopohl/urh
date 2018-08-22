@@ -287,32 +287,46 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
 
 def can_be_psk(rect_data: np.ndarray, z=3):
     rect_data = rect_data[rect_data > -4]  # do not consider noise
+    if len(rect_data) == 0:
+        return False
+
     outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
+    if len(outlier_free_data) == 0:
+        return False
+
     minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
     return np.abs(maximum - minimum) >= np.pi / 2
 
 
 def can_be_fsk(rect_data: np.ndarray, z=3):
     rect_data = rect_data[rect_data > -4]  # do not consider noise
+    if len(rect_data) == 0:
+        return False
+
     outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
+    if len(outlier_free_data) == 0:
+        return False
+
     minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
     return np.abs(maximum - minimum) >= np.pi / 8
 
 
 def can_be_ask(rect_data: np.ndarray, z=3):
     rect_data = rect_data[rect_data > -4]  # do not consider noise
+    if len(rect_data) == 0:
+        return False
+
     outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
+    if len(outlier_free_data) == 0:
+        return False
+
     return np.max(np.diff(outlier_free_data)) >= 0.1
 
 
 def estimate(signal: np.ndarray) -> dict:
-    t = time.time()
     magnitudes = np.abs(signal)
-    print("Time magnitudes", time.time() - t)
     # find noise threshold
-    t = time.time()
     noise = detect_noise_level(magnitudes)
-    print("time noise", time.time() - t)
 
     # segment messages
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
@@ -377,7 +391,11 @@ def estimate(signal: np.ndarray) -> dict:
         else:
             scores[mod_type] = plateau_score
 
-    result_mod_type = max(scores, key=scores.get)
+    try:
+        result_mod_type = max(scores, key=scores.get)
+    except ValueError:
+        # No scores found -> No messages found during segmentation
+        return None
 
     # Since we cannot have different centers per message (yet) we need to combine them to return a common center
     if result_mod_type == "OOK" or result_mod_type == "ASK":

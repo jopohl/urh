@@ -361,23 +361,22 @@ def estimate(signal: np.ndarray) -> dict:
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
 
-            tolerance = max(0, estimate_tolerance_from_plateau_lengths(plateau_lengths))
+            tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
             tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
 
-            min_bit_length = tolerance + 1
+            min_bit_length = max(1, tolerance + 1)
 
             if bit_length > min_bit_length:
                 # only add to score if found bit length surpasses minimum bit length
                 plateau_scores[mod_type] += sum([1 if p % bit_length == 0 else -1 for p in merged_lengths]) / len(
                     merged_lengths)
                 centers_by_modulation_type[mod_type].append(center)
+                bit_lengths_by_modulation_type[mod_type].append(bit_length)
             else:
                 plateau_scores[mod_type] -= 1
-
-            bit_lengths_by_modulation_type[mod_type].append(bit_length)
 
     scores = dict()
 

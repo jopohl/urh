@@ -361,11 +361,12 @@ def estimate(signal: np.ndarray) -> dict:
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
 
-            tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
+            tolerance = max(0, estimate_tolerance_from_plateau_lengths(plateau_lengths))
             tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
+
             min_bit_length = tolerance + 1
 
             if bit_length > min_bit_length:
@@ -401,6 +402,9 @@ def estimate(signal: np.ndarray) -> dict:
     if result_mod_type == "OOK" or result_mod_type == "ASK":
         # for ask modulations the center tends to be the minimum of all found centers
         center = min_without_outliers(np.array(centers_by_modulation_type[result_mod_type]), z=2)
+        if center is None:
+            # did not find any centers at all so we cannot return a valid estimation
+            return None
     else:
         # for other modulations it is a better strategy to take the mean of found centers
         center = np.mean(centers_by_modulation_type[result_mod_type])

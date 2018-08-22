@@ -57,12 +57,18 @@ def detect_noise_level(magnitudes):
     chunksize = max(1, int(len(magnitudes) * chunksize_percent / 100))
 
     chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
-    mean_values = [np.mean(chunk) for chunk in chunks]
+    mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
     if np.std(mean_values) <= 0.001:
         # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 
-    target_chunk = chunks[int(np.argmin(mean_values))]
+    # Get all indices for values which are in range of 10% of minimum mean value
+    indices = np.nonzero(mean_values <= 1.1 * np.min(mean_values))[0]
+
+    # Choose the index representing the largest mean of the filtered means
+    index = indices[np.argmax(mean_values[indices])]
+
+    target_chunk = chunks[index]
     return np.max(target_chunk)
 
 
@@ -317,7 +323,7 @@ def can_be_ask(rect_data: np.ndarray, z=3):
         return False
 
     outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
-    if len(outlier_free_data) == 0:
+    if len(outlier_free_data) <= 1:
         return False
 
     return np.max(np.diff(outlier_free_data)) >= 0.1

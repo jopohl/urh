@@ -5,13 +5,14 @@ import unittest
 from collections import defaultdict
 from typing import List
 
+import matplotlib.pyplot as plt
 import numpy as np
 
-import matplotlib.pyplot as plt
+from tests.auto_interpretation.auto_interpretation_test_util import demodulate_from_aint_dict, bitvector_diff
 from urh.ainterpretation import AutoInterpretation
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
-from tests.auto_interpretation.auto_interpretation_test_util import demodulate_from_aint_dict, bitvector_diff
+
 
 class LabTestsAutoInterpretation(unittest.TestCase):
     def rms(self, data):
@@ -118,7 +119,7 @@ class LabTestsAutoInterpretation(unittest.TestCase):
             fsk_estimations = []
             fsk_errors = []
             for i in range(0, len(messages), messages_per_signal):
-                messages_in_signal = messages[i:i+messages_per_signal]
+                messages_in_signal = messages[i:i + messages_per_signal]
                 signal = self.generate_signal(messages_in_signal, fsk_modulator, snr_db=snr)
 
                 estimated_params = AutoInterpretation.estimate(signal)
@@ -127,31 +128,28 @@ class LabTestsAutoInterpretation(unittest.TestCase):
                 demodulated = demodulate_from_aint_dict(signal, estimated_params, pause_threshold=8)
                 demodulated = demodulated if demodulated is not None else []
                 if len(demodulated) < messages_per_signal:
-                    demodulated.extend([None] * (messages_per_signal-len(demodulated)))
+                    demodulated.extend([None] * (messages_per_signal - len(demodulated)))
 
                 # todo: bitvector diff currently does not align messages (necessary?)
                 error = sum([bitvector_diff(x.plain_bits_str, y) for x, y in zip(messages_in_signal, demodulated)])
                 fsk_errors.append(error)
 
             mean_errors["FSK"].append(np.mean(fsk_errors))
-            #print("Errors", fsk_errors)
-            #print("Estimations", fsk_estimations)
-
+            # print("Errors", fsk_errors)
+            # print("Estimations", fsk_estimations)
 
         num_signals = len(messages) // messages_per_signal
 
         plt.plot(snr_values, mean_errors["FSK"], label="FSK")
         plt.ylabel("Error (number differing bits)")
         plt.xlabel("SNR (dB)")
-        plt.title("Accuracy for {} signals with {} messages per signal and {} bits per message".format(num_signals,
-                                                                                                       len(messages),
-                                                                                                      num_bits))
+        title_str = "Accuracy for {} signals with {} messages per signal and {} bits per message"
+        plt.title(title_str.format(num_signals, messages_per_signal, num_bits))
         plt.xlim(max(snr_values), min(snr_values))  # decreasing time
         plt.legend()
 
-        plt.show()
-        #print(mean_errors)
-
+        #plt.show()
+        # print(mean_errors)
 
     def test_fsk(self):
         modulator = Modulator("")

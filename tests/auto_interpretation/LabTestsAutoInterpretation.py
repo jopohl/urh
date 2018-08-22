@@ -112,6 +112,7 @@ class LabTestsAutoInterpretation(unittest.TestCase):
 
         modulators_by_name = {"FSK": fsk_modulator, "OOK": ook_modulator, "ASK": ask_modulator, "PSK": psk_modulator}
         #modulators_by_name = {"PSK": psk_modulator}
+        #modulators_by_name = {"OOK": ook_modulator}
 
         for modulator in modulators_by_name.values():
             modulator.samples_per_bit = 100
@@ -132,7 +133,7 @@ class LabTestsAutoInterpretation(unittest.TestCase):
                     estimations.append(estimated_params)
 
                     # Demodulate
-                    demodulated = demodulate_from_aint_dict(signal, estimated_params, pause_threshold=8)
+                    demodulated = demodulate_from_aint_dict(signal, estimated_params, pause_threshold=16)
                     demodulated = demodulated if demodulated is not None else []
                     if len(demodulated) < messages_per_signal:
                         demodulated.extend([None] * (messages_per_signal - len(demodulated)))

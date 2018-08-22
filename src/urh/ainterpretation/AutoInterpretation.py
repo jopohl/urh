@@ -185,7 +185,7 @@ def get_plateau_lengths(rect_data, center, percentage=25):
 
 def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) -> int:
     if len(plateau_lengths) <= 1:
-        return 0
+        return None
 
     unique, counts = np.unique(plateau_lengths, return_counts=True)
     maximum = max_without_outliers(unique, z=2)
@@ -208,7 +208,7 @@ def merge_plateau_lengths(plateau_lengths, tolerance=None) -> list:
     if tolerance is None:
         tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
 
-    if tolerance == 0:
+    if tolerance == 0 or tolerance is None:
         return plateau_lengths
 
     result = []
@@ -368,12 +368,13 @@ def estimate(signal: np.ndarray) -> dict:
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
 
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
-            tolerances_by_modulation_type[mod_type].append(tolerance)
+            if tolerance is not None:
+                tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
 
-            min_bit_length = max(1, tolerance + 1)
+            min_bit_length = tolerance + 1 if tolerance is not None else 1
 
             if bit_length > min_bit_length:
                 # only add to score if found bit length surpasses minimum bit length

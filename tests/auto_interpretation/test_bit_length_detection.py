@@ -15,8 +15,8 @@ class TestAutoInterpretation(unittest.TestCase):
                          [100, 100, 100, 100, 100])
 
     def test_estimate_tolerance_from_plateau_lengths(self):
-        self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([]), 0)
-        self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([10]), 0)
+        self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([]), None)
+        self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([10]), None)
         self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([100, 49, 1, 50, 100]), 1)
         self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([100, 49, 2, 50, 100]), 2)
         self.assertEqual(AutoInterpretation.estimate_tolerance_from_plateau_lengths([100, 49, 2, 50, 100, 1]), 2)

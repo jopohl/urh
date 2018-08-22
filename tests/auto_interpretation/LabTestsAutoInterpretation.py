@@ -112,7 +112,6 @@ class LabTestsAutoInterpretation(unittest.TestCase):
 
         modulators_by_name = {"FSK": fsk_modulator, "OOK": ook_modulator, "ASK": ask_modulator, "PSK": psk_modulator}
         #modulators_by_name = {"PSK": psk_modulator}
-        #modulators_by_name = {"OOK": ook_modulator}
 
         for modulator in modulators_by_name.values():
             modulator.samples_per_bit = 100
@@ -142,17 +141,9 @@ class LabTestsAutoInterpretation(unittest.TestCase):
                     error = sum([bitvector_diff(x.plain_bits_str, y) for x, y in zip(messages_in_signal, demodulated)])
                     errors.append(error)
 
-                    # print("---")
-                    # print([m.plain_bits_str for m in messages_in_signal])
-                    # print(demodulated)
-                    # print(estimations)
-                    # print(error)
-
                 mean_error = np.mean(errors)
                 mean_errors[modulation_name].append(mean_error)
                 print("(Error: {})".format(mean_error))
-                # print("Errors", fsk_errors)
-                # print("Estimations", estimations)
 
         num_signals = len(messages) // messages_per_signal
 
@@ -165,7 +156,8 @@ class LabTestsAutoInterpretation(unittest.TestCase):
         plt.xlim(max(snr_values), min(snr_values))  # decreasing time
         plt.legend()
 
-        #plt.show()
+        plt.savefig("/tmp/plot.png")
+        plt.show()
         # print(mean_errors)
 
     def test_fsk(self):

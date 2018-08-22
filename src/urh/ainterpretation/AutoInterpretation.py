@@ -57,6 +57,7 @@ def detect_noise_level(magnitudes):
     chunksize = max(1, int(len(magnitudes) * chunksize_percent / 100))
 
     chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
+
     mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
     if np.std(mean_values) <= 0.001:
         # Mean values are very close to each other, so there is probably no noise in the signal
@@ -65,11 +66,7 @@ def detect_noise_level(magnitudes):
     # Get all indices for values which are in range of 10% of minimum mean value
     indices = np.nonzero(mean_values <= 1.1 * np.min(mean_values))[0]
 
-    # Choose the index representing the largest mean of the filtered means
-    index = indices[np.argmax(mean_values[indices])]
-
-    target_chunk = chunks[index]
-    return np.max(target_chunk)
+    return np.max([np.max(chunks[i]) for i in indices])
 
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
@@ -415,11 +412,18 @@ def estimate(signal: np.ndarray) -> dict:
         # for other modulations it is a better strategy to take the mean of found centers
         center = np.mean(centers_by_modulation_type[result_mod_type])
 
+    bit_length = get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type])
+    try:
+        tolerance = np.percentile(tolerances_by_modulation_type[result_mod_type], 50, interpolation="lower")
+    except IndexError:
+        # no tolerances found, default to 5% of bit length
+        tolerance = max(1, int(0.05 * bit_length))
+
     result = {
         "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
-        "bit_length": get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type]),
+        "bit_length": bit_length,
         "center": center,
-        "tolerance": np.percentile(tolerances_by_modulation_type[result_mod_type], 50, interpolation="lower"),
+        "tolerance": tolerance,
         "noise": noise
     }
 

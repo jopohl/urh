@@ -2,7 +2,6 @@ import fractions
 import itertools
 import math
 import sys
-import time
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -154,9 +153,9 @@ def detect_center(rectangular_signal: np.ndarray, min_std_dev=0.01):
     return 0
 
 
-def get_plateau_lengths(rect_data, center, percentage=25):
+def get_plateau_lengths(rect_data, center, percentage=25) -> np.ndarray:
     if len(rect_data) == 0:
-        return []
+        return np.array([], dtype=np.uint64)
 
     state = -1 if rect_data[0] <= center else 1
     plateau_length = 0
@@ -177,7 +176,7 @@ def get_plateau_lengths(rect_data, center, percentage=25):
             state = new_state
             plateau_length = 1
 
-    return result
+    return np.array(result, dtype=np.uint64)
 
 
 def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) -> int:
@@ -265,12 +264,12 @@ def get_tolerant_greatest_common_divisor(numbers):
     return np.max(values[most_frequent_indices])
 
 
-def get_bit_length_from_plateau_lengths(merged_plateau_lengths):
+def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
     if len(merged_plateau_lengths) == 0:
         return 0
 
     if len(merged_plateau_lengths) == 1:
-        return merged_plateau_lengths[0]
+        return int(merged_plateau_lengths[0])
 
     round_plateau_lengths(merged_plateau_lengths)
 
@@ -365,18 +364,23 @@ def estimate(signal: np.ndarray) -> dict:
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
 
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
-            if tolerance is not None:
+            if tolerance is None:
+                tolerance = 0
+            else:
                 tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
 
-            min_bit_length = tolerance + 1 if tolerance is not None else 1
+            min_bit_length = tolerance + 1
 
             if bit_length > min_bit_length:
                 # only add to score if found bit length surpasses minimum bit length
-                plateau_scores[mod_type] += sum([1 if p % bit_length == 0 else -1 for p in merged_lengths]) / len(
-                    merged_lengths)
+                plateau_matches = sum(1 if p % bit_length == 0 else -1 for p in merged_lengths)
+                normalized_plateau_matches = plateau_matches / len(merged_lengths)
+                tolerance_penalty = 1 + len(plateau_lengths[plateau_lengths <= tolerance]) / len(plateau_lengths)
+                plateau_scores[mod_type] += normalized_plateau_matches / tolerance_penalty
+
                 centers_by_modulation_type[mod_type].append(center)
                 bit_lengths_by_modulation_type[mod_type].append(bit_length)
             else:
@@ -413,6 +417,7 @@ def estimate(signal: np.ndarray) -> dict:
         center = np.mean(centers_by_modulation_type[result_mod_type])
 
     bit_length = get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type])
+
     try:
         tolerance = np.percentile(tolerances_by_modulation_type[result_mod_type], 50, interpolation="lower")
     except IndexError:

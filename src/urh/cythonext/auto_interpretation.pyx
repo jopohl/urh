@@ -131,3 +131,41 @@ cpdef unsigned long[:] filter_plateau_lengths(np.ndarray[np.uint64_t, ndim=1]  p
                 mask[min_index] = 1
 
     return plateau_lengths[mask]
+
+
+from cython.parallel import prange
+from libc.stdlib cimport malloc, free
+
+cdef float median(double[:] data, unsigned int start, unsigned int k=3) nogil:
+    cdef unsigned int i, j
+    cdef float temp
+    cdef float* buffer = <float *>malloc(k * sizeof(float))
+    for i in range(0, k):
+        buffer[i] = data[start+i]
+
+    for i in range(0, k-1):
+        for j in range(i+1, k):
+            if buffer[j] < buffer[i]:
+                temp = buffer[i]
+                buffer[i] = buffer[j]
+                buffer[j] = temp
+
+    try:
+        return buffer[k/2]
+    finally:
+        free(buffer)
+
+cpdef np.ndarray[np.float32_t, ndim=1] median_filter(double[:] data, unsigned int k=3):
+    cdef unsigned long start, end, i, n = len(data)
+
+    cdef np.ndarray[np.float32_t, ndim=1] result = np.zeros(n, dtype=np.float32)
+
+    for i in prange(0, n, nogil=True, schedule='static'):
+        if i < k // 2:
+            start = 0
+        else:
+            start = i - k // 2
+        end = min(n, i + k // 2 + 1)
+        result[i] = median(data, start=i, k=k)
+
+    return result

@@ -6,7 +6,6 @@ from urh import constants
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation import AutoInterpretation
 from urh.signalprocessing.Encoding import Encoding
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from tests.auto_interpretation.auto_interpretation_test_util import demodulate
 
@@ -20,6 +19,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(bit_length, 100)
         self.assertGreater(tolerance,  0)
         self.assertLessEqual(tolerance, 5)
+
 
         self.assertEqual(demodulate(fsk_signal, mod_type, bit_length, center, noise, tolerance)[0],
                          "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18")

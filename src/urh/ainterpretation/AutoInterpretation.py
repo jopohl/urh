@@ -6,6 +6,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
+from urh.ainterpretation import Wavelet
 from urh.cythonext import auto_interpretation as cy_auto_interpretation
 from urh.cythonext import signal_functions
 
@@ -118,6 +119,33 @@ def merge_message_segments_for_ook(segments: list):
     return result
 
 
+def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=7) -> str:
+    n_data = len(data)
+    data = data[np.abs(data) > 0]
+    if n_data - len(data) > 3:
+        return "OOK"
+
+    mag_wavlt = np.abs(Wavelet.cwt_haar(data, scale=wavelet_scale))
+    norm_mag_wavlt = np.abs(Wavelet.cwt_haar(np.max(data) * data / np.abs(data), scale=wavelet_scale))
+
+    var_mag = np.var(mag_wavlt)
+    var_norm_mag = np.var(norm_mag_wavlt)
+
+    var_filtered_mag = np.var(cy_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
+    var_filtered_norm_mag = np.var(cy_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
+
+    if var_mag > 1.5 * var_norm_mag:
+        # ASK or QAM
+        # todo: consider qam, compare filtered mag and filtered norm mag
+        return "ASK"
+    else:
+        # FSK or PSK
+        if var_mag > 1.5 * var_filtered_mag:
+            return "PSK"
+        else:
+            return "FSK"
+
+
 def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
     y, x = np.histogram(rect, bins=16)
@@ -134,6 +162,7 @@ def detect_center(rectangular_signal: np.ndarray):
 
     # todo if num values greater two return more centers
     return np.mean(most_common_levels)
+
 
 def get_plateau_lengths(rect_data, center, percentage=25) -> np.ndarray:
     if len(rect_data) == 0 or center is None:

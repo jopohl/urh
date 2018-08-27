@@ -24,12 +24,11 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_noisy_rect(self):
         data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)
-        rect = afp_demod(data, 0.008, 1)
+        rect = afp_demod(data, 0.008, 1)[5:15000]
 
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.0587)
         self.assertLessEqual(center, 0.02)
-
 
     def test_ask_center_detection(self):
         data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
@@ -46,3 +45,14 @@ class TestCenterDetection(unittest.TestCase):
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0.07)
         self.assertLessEqual(center, 0.5)
+
+    def test_ask_50_center_detection(self):
+        message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
+
+        data = np.fromfile(get_path_for_data_file("ask50.complex"), dtype=np.complex64)
+        rect = afp_demod(data, 0.0509, 0)
+
+        for start, end in message_indices:
+            center = detect_center(rect[start:end])
+            self.assertGreaterEqual(center, 0.5326, msg="{}/{}".format(start, end))
+            self.assertLessEqual(center, 0.9482, msg="{}/{}".format(start, end))

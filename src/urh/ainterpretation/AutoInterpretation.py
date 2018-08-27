@@ -5,7 +5,6 @@ import sys
 from collections import Counter, defaultdict
 
 import numpy as np
-from urh.cythonext.util import minmax
 
 from urh.cythonext import auto_interpretation as cy_auto_interpretation
 from urh.cythonext import signal_functions
@@ -119,42 +118,25 @@ def merge_message_segments_for_ook(segments: list):
     return result
 
 
-def detect_center(rectangular_signal: np.ndarray, min_std_dev=0.01):
+def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
+    y, x = np.histogram(rect, bins=16)
 
-    chunk_size_percent = 10
-    chunksize = max(1, int(len(rect) * chunk_size_percent / 100))
+    num_values = 2
+    most_common_levels = []
+    used_indices = set()
+    for index in np.argsort(y)[::-1]:
+        if not any(i in range(index - 1, index + 2) for i in used_indices):
+            used_indices.add(index)
+            most_common_levels.append(x[index])
+        if len(most_common_levels) == num_values:
+            break
 
-    chunks = [rect[i - chunksize:i] for i in range(len(rect), 0, -chunksize) if i - chunksize >= 0]
-
-    minima = []
-    maxima = []
-    general_heights = []
-    for chunk in chunks:
-        if np.std(chunk) > min_std_dev:
-            minimum, maximum = minmax(chunk)
-
-            minima.append(minimum)
-            maxima.append(maximum)
-        else:
-            general_heights.append(np.mean(chunk))
-
-    def outlier_free_min_max_avg(minima_values, maxima_values):
-        s = 0.5 * max_without_outliers(np.array(minima_values), z=3)
-        s += 0.5 * min_without_outliers(np.array(maxima_values), z=3)
-        return s
-
-    if len(minima) > 0 and len(maxima) > 0:
-        return outlier_free_min_max_avg(minima, maxima)
-
-    if len(general_heights) > 0 and np.std(general_heights) > min_std_dev:
-        return outlier_free_min_max_avg(general_heights, general_heights)
-
-    return 0
-
+    # todo if num values greater two return more centers
+    return np.mean(most_common_levels)
 
 def get_plateau_lengths(rect_data, center, percentage=25) -> np.ndarray:
-    if len(rect_data) == 0:
+    if len(rect_data) == 0 or center is None:
         return np.array([], dtype=np.uint64)
 
     state = -1 if rect_data[0] <= center else 1
@@ -362,7 +344,6 @@ def estimate(signal: np.ndarray) -> dict:
             center = detect_center(msg_rect_data)
 
             plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
-
             tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
             if tolerance is None:
                 tolerance = 0
@@ -370,6 +351,10 @@ def estimate(signal: np.ndarray) -> dict:
                 tolerances_by_modulation_type[mod_type].append(tolerance)
 
             merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
+            if len(merged_lengths) < 2:
+                plateau_scores[mod_type] -= 1
+                continue
+
             bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
 
             min_bit_length = tolerance + 1

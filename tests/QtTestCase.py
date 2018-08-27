@@ -37,11 +37,11 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-        if sys.platform == "win32" or sys.platform == "darwin":
-            sip.delete(cls.app)
-            cls.app = None
-            QTest.qWait(10)
-            time.sleep(0.1)
+
+        sip.delete(cls.app)
+        cls.app = None
+        QTest.qWait(10)
+        time.sleep(0.1)
 
     def setUp(self):
         self.form = MainController()

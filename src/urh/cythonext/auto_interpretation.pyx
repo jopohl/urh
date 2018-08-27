@@ -136,9 +136,13 @@ cpdef unsigned long[:] filter_plateau_lengths(np.ndarray[np.uint64_t, ndim=1]  p
 from cython.parallel import prange
 from libc.stdlib cimport malloc, free
 
-cdef float median(double[:] data, unsigned int start, unsigned int k=3) nogil:
+cdef float median(double[:] data, unsigned long start, unsigned long data_len, unsigned int k=3) nogil:
     cdef unsigned int i, j
     cdef float temp
+
+    if start + k > data_len:
+        k = data_len - start
+
     cdef float* buffer = <float *>malloc(k * sizeof(float))
     for i in range(0, k):
         buffer[i] = data[start+i]
@@ -165,7 +169,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] median_filter(double[:] data, unsigned in
             start = 0
         else:
             start = i - k // 2
-        end = min(n, i + k // 2 + 1)
-        result[i] = median(data, start=i, k=k)
+
+        result[i] = median(data, start=i, data_len=n, k=k)
 
     return result

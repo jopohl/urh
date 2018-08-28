@@ -490,8 +490,8 @@ class ModulatorDialog(QDialog):
             self.ui.spinBoxParameter1.setDecimals(0)
             self.ui.spinBoxParameter1.setSuffix("°")
             if write_standard_parameters:
-                self.ui.spinBoxParameter0.setValue(90)
-                self.ui.spinBoxParameter1.setValue(270)
+                self.ui.spinBoxParameter0.setValue(0)
+                self.ui.spinBoxParameter1.setValue(180)
             else:
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)

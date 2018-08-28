@@ -344,6 +344,7 @@ class ModulatorDialog(QDialog):
         self.ui.linEdDataBits.setText(bits)
         self.draw_original_signal()
         self.ui.gVModulated.show_full_scene(reinitialize=True)
+        self.ui.gVModulated.auto_fit_view()
         self.ui.gVData.show_full_scene(reinitialize=True)
         self.ui.gVData.auto_fit_view()
         self.ui.gVCarrier.show_full_scene(reinitialize=True)

@@ -1,11 +1,10 @@
-import math
 import unittest
 
 import numpy as np
-from urh.cythonext.signal_functions import afp_demod
 
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import detect_center
+from urh.cythonext.signal_functions import afp_demod
 
 
 class TestCenterDetection(unittest.TestCase):

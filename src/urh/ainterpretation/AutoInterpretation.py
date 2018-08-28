@@ -118,21 +118,24 @@ def merge_message_segments_for_ook(segments: list):
 
     return result
 
-
-def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=7) -> str:
+def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11) -> str:
     n_data = len(data)
     data = data[np.abs(data) > 0]
     if n_data - len(data) > 3:
         return "OOK"
 
+    data = data / np.abs(np.max(data))
     mag_wavlt = np.abs(Wavelet.cwt_haar(data, scale=wavelet_scale))
-    norm_mag_wavlt = np.abs(Wavelet.cwt_haar(np.max(data) * data / np.abs(data), scale=wavelet_scale))
+    norm_mag_wavlt = np.abs(Wavelet.cwt_haar(data / np.abs(data), scale=wavelet_scale))
 
     var_mag = np.var(mag_wavlt)
     var_norm_mag = np.var(norm_mag_wavlt)
 
     var_filtered_mag = np.var(cy_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
     var_filtered_norm_mag = np.var(cy_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
+
+    if all(v < 0.1 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
+        return "OOK"
 
     if var_mag > 1.5 * var_norm_mag:
         # ASK or QAM
@@ -143,8 +146,20 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=7) 
         if var_mag > 1.5 * var_filtered_mag:
             return "PSK"
         else:
-            return "FSK"
+            # Now we either have a FSK signal or we a have OOK single pulse
+            # If we have an FSK, there should be at least two peaks in FFT
+            fft = np.fft.fft(data[0:2**int(np.log2(len(data)))])
+            fft = np.abs(np.fft.fftshift(fft))
+            ten_greatest_indices = np.argsort(fft)[::-1][0:10]
+            greatest_index = ten_greatest_indices[0]
+            greatest = fft[greatest_index]
+            min_distance = 10
+            min_freq = int(0.25 * greatest)
 
+            if any(abs(i - greatest_index) >= min_distance and fft[i] >= min_freq for i in ten_greatest_indices):
+                return "FSK"
+            else:
+                return "OOK"
 
 def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
@@ -344,102 +359,73 @@ def estimate(signal: np.ndarray) -> dict:
     # segment messages
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
-    # get instantaneous frequency, magnitude, phase of messages
-    insta_magnitudes = signal_functions.afp_demod(signal, noise, 0)
-    insta_frequencies = signal_functions.afp_demod(signal, noise, 1)
-    insta_phases = signal_functions.afp_demod(signal, noise, 2)
+    # detect modulation
+    modulations_for_messages = []
+    for start, end in message_indices:
+        modulations_for_messages.append(detect_modulation(signal[start:end]))
 
-    centers_by_modulation_type = defaultdict(list)
-    bit_lengths_by_modulation_type = defaultdict(list)
-    tolerances_by_modulation_type = defaultdict(list)
+    modulation = max(set(modulations_for_messages), key=modulations_for_messages.count)
+    if modulation == "OOK":
+        message_indices = merge_message_segments_for_ook(message_indices)
 
-    data = {"OOK": insta_magnitudes, "ASK": insta_magnitudes, "FSK": insta_frequencies, "PSK": insta_phases}
-    plateau_scores = defaultdict(float)
+    if modulation == "OOK" or modulation == "ASK":
+        data = signal_functions.afp_demod(signal, noise, 0)
+    elif modulation == "FSK":
+        data = signal_functions.afp_demod(signal, noise, 1)
+    elif modulation == "PSK":
+        data = signal_functions.afp_demod(signal, noise, 2)
+    else:
+        raise ValueError("Unsupported Modulation")
 
-    for mod_type in ("OOK", "ASK", "FSK", "PSK"):
-        msg_indices = message_indices if mod_type != "OOK" else merge_message_segments_for_ook(message_indices)
-        for start, end in msg_indices:
-            msg_rect_data = data[mod_type][start:end]
-            if mod_type == "PSK" and not can_be_psk(msg_rect_data, z=3):
-                plateau_scores[mod_type] -= 1
-                continue
-            if mod_type == "FSK" and not can_be_fsk(msg_rect_data, z=3):
-                plateau_scores[mod_type] -= 1
-                continue
-            if mod_type == "ASK" and not can_be_ask(msg_rect_data, z=3):
-                plateau_scores[mod_type] -= 1
-                continue
+    centers = []
+    bit_lengths = []
+    tolerances = []
+    for start, end in message_indices:
+        msg_rect_data = data[start:end]
 
-            center = detect_center(msg_rect_data)
+        center = detect_center(msg_rect_data)
 
-            plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
-            tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
-            if tolerance is None:
-                tolerance = 0
-            else:
-                tolerances_by_modulation_type[mod_type].append(tolerance)
-
-            merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
-            if len(merged_lengths) < 2:
-                plateau_scores[mod_type] -= 1
-                continue
-
-            bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
-
-            min_bit_length = tolerance + 1
-
-            if bit_length > min_bit_length:
-                # only add to score if found bit length surpasses minimum bit length
-                plateau_matches = sum(1 if p % bit_length == 0 else -1 for p in merged_lengths)
-                normalized_plateau_matches = plateau_matches / len(merged_lengths)
-                tolerance_penalty = 1 + len(plateau_lengths[plateau_lengths <= tolerance]) / len(plateau_lengths)
-                plateau_scores[mod_type] += normalized_plateau_matches / tolerance_penalty
-
-                centers_by_modulation_type[mod_type].append(center)
-                bit_lengths_by_modulation_type[mod_type].append(bit_length)
-            else:
-                plateau_scores[mod_type] -= 1
-
-    scores = dict()
-
-    for mod_type, plateau_score in plateau_scores.items():
-        bit_lengths = np.array(bit_lengths_by_modulation_type[mod_type])
-
-        if len(bit_lengths) > 0:
-            outlier_free_bit_lengths = bit_lengths[abs(bit_lengths - np.mean(bit_lengths)) <= 2 * np.std(bit_lengths)]
-
-            # If there is high variance in found bit lengths they are unlikely to be the correct ones
-            scores[mod_type] = plateau_score * 1 / (1 + np.std(outlier_free_bit_lengths))
+        plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
+        tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
+        if tolerance is None:
+            tolerance = 0
         else:
-            scores[mod_type] = plateau_score
+            tolerances.append(tolerance)
 
-    try:
-        result_mod_type = max(scores, key=scores.get)
-    except ValueError:
-        # No scores found -> No messages found during segmentation
-        return None
+        merged_lengths = merge_plateau_lengths(plateau_lengths, tolerance=tolerance)
+        if len(merged_lengths) < 2:
+            continue
+
+        bit_length = get_bit_length_from_plateau_lengths(merged_lengths)
+
+        min_bit_length = tolerance + 1
+
+        if bit_length > min_bit_length:
+            # only add to score if found bit length surpasses minimum bit length
+            centers.append(center)
+            bit_lengths.append(bit_length)
 
     # Since we cannot have different centers per message (yet) we need to combine them to return a common center
-    if result_mod_type == "OOK" or result_mod_type == "ASK":
+    if modulation == "OOK" or modulation == "ASK":
         # for ask modulations the center tends to be the minimum of all found centers
-        center = min_without_outliers(np.array(centers_by_modulation_type[result_mod_type]), z=2)
+        center = min_without_outliers(np.array(centers), z=2)
         if center is None:
             # did not find any centers at all so we cannot return a valid estimation
             return None
     else:
         # for other modulations it is a better strategy to take the mean of found centers
-        center = np.mean(centers_by_modulation_type[result_mod_type])
+        center = np.mean(centers)
 
-    bit_length = get_most_frequent_value(bit_lengths_by_modulation_type[result_mod_type])
+    bit_length = get_most_frequent_value(bit_lengths)
 
     try:
-        tolerance = np.percentile(tolerances_by_modulation_type[result_mod_type], 50, interpolation="lower")
+        tolerance = np.percentile(tolerances, 50, interpolation="lower")
     except IndexError:
         # no tolerances found, default to 5% of bit length
         tolerance = max(1, int(0.05 * bit_length))
 
     result = {
-        "modulation_type": "ASK" if result_mod_type == "OOK" else result_mod_type,
+        "modulation_type": "ASK" if modulation == "OOK" else modulation,
         "bit_length": bit_length,
         "center": center,
         "tolerance": tolerance,

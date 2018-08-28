@@ -121,6 +121,9 @@ def merge_message_segments_for_ook(segments: list):
 def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11) -> str:
     n_data = len(data)
     data = data[np.abs(data) > 0]
+    if len(data) == 0:
+        return None
+
     if n_data - len(data) > 3:
         return "OOK"
 
@@ -362,7 +365,12 @@ def estimate(signal: np.ndarray) -> dict:
     # detect modulation
     modulations_for_messages = []
     for start, end in message_indices:
-        modulations_for_messages.append(detect_modulation(signal[start:end]))
+        mod = detect_modulation(signal[start:end])
+        if mod is not None:
+            modulations_for_messages.append(mod)
+
+    if len(modulations_for_messages) == 0:
+        return None
 
     modulation = max(set(modulations_for_messages), key=modulations_for_messages.count)
     if modulation == "OOK":
@@ -416,7 +424,7 @@ def estimate(signal: np.ndarray) -> dict:
         # for other modulations it is a better strategy to take the mean of found centers
         center = np.mean(centers)
 
-    bit_length = get_most_frequent_value(bit_lengths)
+    bit_length = int(get_most_frequent_value(bit_lengths))
 
     try:
         tolerance = np.percentile(tolerances, 50, interpolation="lower")

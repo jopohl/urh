@@ -154,6 +154,7 @@ class LabTestsAutoInterpretation(unittest.TestCase):
         title_str = "Accuracy for {} signals with {} messages per signal and {} bits per message"
         plt.title(title_str.format(num_signals, messages_per_signal, num_bits))
         plt.xlim(max(snr_values), min(snr_values))  # decreasing time
+        plt.xticks(snr_values)
         plt.legend()
 
         plt.savefig("/tmp/plot.png")

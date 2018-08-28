@@ -2,7 +2,7 @@ import fractions
 import itertools
 import math
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 
 import numpy as np
 
@@ -118,6 +118,7 @@ def merge_message_segments_for_ook(segments: list):
 
     return result
 
+
 def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11) -> str:
     n_data = len(data)
     data = data[np.abs(data) > 0]
@@ -146,12 +147,12 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
         return "ASK"
     else:
         # FSK or PSK
-        if var_mag > 1.5 * var_filtered_mag:
+        if var_mag > 5 * var_filtered_mag:
             return "PSK"
         else:
             # Now we either have a FSK signal or we a have OOK single pulse
             # If we have an FSK, there should be at least two peaks in FFT
-            fft = np.fft.fft(data[0:2**int(np.log2(len(data)))])
+            fft = np.fft.fft(data[0:2 ** int(np.log2(len(data)))])
             fft = np.abs(np.fft.fftshift(fft))
             ten_greatest_indices = np.argsort(fft)[::-1][0:10]
             greatest_index = ten_greatest_indices[0]
@@ -163,6 +164,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "FSK"
             else:
                 return "OOK"
+
 
 def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise

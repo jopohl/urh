@@ -139,9 +139,14 @@ if __name__ == "__main__":
     plt.plot(np.fft.fftshift(fft))
 
     plt.subplot(428)
-    fft = np.fft.fft(data)
-    fft[np.abs(fft) < 0.25 * np.max(np.abs(fft))] = 0
+    fft = np.fft.fftshift(np.fft.fft(data))
+    fft[np.abs(fft) < 0.2 * np.max(np.abs(fft))] = 0
     fft_phase = np.angle(fft)
+    ten_greatest_indices = np.argsort(np.abs(fft_phase))[::-1][0:10]
+    print("FFT phases:")
+    print(ten_greatest_indices)
+    print(fft_phase[ten_greatest_indices])
+
     plt.title("FFT phase ({:.2f})".format(np.var(fft_phase)))
     plt.plot(fft_phase)
 

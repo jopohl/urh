@@ -105,8 +105,8 @@ class LabTestsAutoInterpretation(unittest.TestCase):
 
         psk_modulator = Modulator("PSK")
         psk_modulator.modulation_type_str = "PSK"
-        psk_modulator.param_for_zero = 90
-        psk_modulator.param_for_one = -90
+        psk_modulator.param_for_zero = 0
+        psk_modulator.param_for_one = 180
 
         mean_errors = defaultdict(list)
 

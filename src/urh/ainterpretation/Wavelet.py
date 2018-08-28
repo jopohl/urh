@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
 
     #data = np.fromfile("/home/joe/GIT/urh/tests/data/fsk.complex", dtype=np.complex64)[5:15000]
-    data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[462:754]
+    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[462:754]
     #data = np.fromfile("/home/joe/GIT/urh/tests/data/enocean.complex", dtype=np.complex64)[9724:10228]
 
     #data = np.fromfile("/home/joe/GIT/urh/tests/data/action_ook.complex", dtype=np.complex64)[3780:4300]
@@ -79,11 +79,11 @@ if __name__ == "__main__":
     #data = np.fromfile("/home/joe/GIT/urh/tests/data/psk_generated.complex", dtype=np.complex64)[0:8000]
     modulator = Modulator("")
     modulator.modulation_type_str = "PSK"
-    modulator.param_for_zero = 90
+    modulator.param_for_zero = 0
     modulator.param_for_one = 180
     modulator.carrier_freq_hz = 5e3
     modulator.sample_rate = 200e3
-    #data = modulator.modulate("1010", pause=0)
+    data = modulator.modulate("1010", pause=0)
 
     # data = np.fromfile("/tmp/ask25.complex", dtype=np.complex64)
     #data = np.fromfile("/tmp/ask1080.complex", dtype=np.complex64)

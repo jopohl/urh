@@ -426,7 +426,9 @@ def estimate(signal: np.ndarray) -> dict:
         # for other modulations it is a better strategy to take the mean of found centers
         center = np.mean(centers)
 
-    bit_length = int(get_most_frequent_value(bit_lengths))
+    bit_length = get_most_frequent_value(bit_lengths)
+    if bit_length is None:
+        return None
 
     try:
         tolerance = np.percentile(tolerances, 50, interpolation="lower")

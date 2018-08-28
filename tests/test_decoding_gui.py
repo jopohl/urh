@@ -126,6 +126,7 @@ class TestDecodingGUI(QtTestCase):
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)
 
         timer = QTimer(self.dialog)
+        timer.setSingleShot(True)
         timer.timeout.connect(set_save_name)
         timer.start(10)
         self.dialog.ui.saveas.click()

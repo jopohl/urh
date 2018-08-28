@@ -24,6 +24,19 @@ Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-bl
 
 If you find URH useful, please consider giving this repository a :star: or even [donate via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2). We appreciate your support!
 
+If you use URH in your research paper, please cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper, or directly use this BibTeX entry:
+```latex
+@inproceedings {220562,
+author = {Johannes Pohl and Andreas Noack},
+title = {Universal Radio Hacker: A Suite for Analyzing and Attacking Stateful Wireless Protocols},
+booktitle = {12th {USENIX} Workshop on Offensive Technologies ({WOOT} 18)},
+year = {2018},
+address = {Baltimore, MD},
+url = {https://www.usenix.org/conference/woot18/presentation/pohl},
+publisher = {{USENIX} Association},
+}
+```
+
 # Installation
 Universal Radio Hacker can be installed via __pip__ or using the __package manager__ of your distribution (if included).
 Below you find more specific installation instructions for:

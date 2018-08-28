@@ -1,11 +1,14 @@
 # Changelog
-## v2.2.3 (upcoming)
+## v2.2.3 (28/07/2018)
 ### New features
 - allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)
 - improve bootstrap of simulator messages [#500](https://github.com/jopohl/urh/pull/500)
   - auto assign destination when dropping messages to simulator
   - show participant address in participant legend if present
   - auto assign participant address when clicking analyze button in analysis based on SRC address label
+- consider API changes of SDRPlay 2.13 [#508](https://github.com/jopohl/urh/pull/508) thanks [@mehdideveloper](https://github.com/mehdideveloper) 
+- also consider participant address (next to RSSI) when auto assigning participants in analysis [#512](https://github.com/jopohl/urh/pull/512)
+- Clear button stays enabled during operation so e.g. recordings can be cleared live [#514](https://github.com/jopohl/urh/pull/514)
 
 ### Bugfixes
 - antenna selection is not saved when reopening dialog [#494](https://github.com/jopohl/urh/pull/494)

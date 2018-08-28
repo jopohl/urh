@@ -1,6 +1,3 @@
-import numpy as np
-
-from urh.cythonext import signalFunctions
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SceneManager import SceneManager
 

@@ -6,7 +6,7 @@ from threading import Thread
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
 
-from urh.cythonext.signalFunctions import grab_pulse_lens
+from urh.cythonext.signal_functions import grab_pulse_lens
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Message import Message

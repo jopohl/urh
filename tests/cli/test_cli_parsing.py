@@ -1,14 +1,14 @@
 import os
 import shutil
 import tempfile
-import unittest
 
+from tests.QtTestCase import QtTestCase
 from urh.cli import urh_cli
 from urh.dev.BackendHandler import Backends
 from urh.dev.VirtualDevice import Mode
 
 
-class TestCLIParsing(unittest.TestCase):
+class TestCLIParsing(QtTestCase):
     def setUp(self):
         self.parser = urh_cli.create_parser()
 
@@ -90,12 +90,12 @@ class TestCLIParsing(unittest.TestCase):
         self.assertEqual(device.device_number, 42)
 
         args = self.parser.parse_args("--device HackRF --frequency 133.7e6 --sample-rate 2.5e6 --bandwidth 5e6 "
-                                      "-tx -db gnuradio".split())
+                                      "-tx -db native".split())
         device = urh_cli.build_device_from_args(args)
         self.assertEqual(device.sample_rate, 2.5e6)
         self.assertEqual(device.bandwidth, 5e6)
         self.assertEqual(device.name, "HackRF")
-        self.assertEqual(device.backend, Backends.grc)
+        self.assertEqual(device.backend, Backends.native)
         self.assertEqual(device.frequency, 133.7e6)
         self.assertEqual(device.mode, Mode.send)
 

@@ -15,28 +15,26 @@ from urh.signalprocessing.Modulator import Modulator
 
 
 class LabTestsAutoInterpretation(unittest.TestCase):
-    def rms(self, data):
-        return np.sqrt(np.mean(np.square(data)))
-
     def generate_signal(self, messages: List[Message], modulator: Modulator, snr_db):
         result = []
+
+        message_powers = []
         for msg in messages:
-            result.append(modulator.modulate(msg.encoded_bits, msg.pause))
+            modulated = modulator.modulate(msg.encoded_bits, msg.pause)
+            message_powers.append(np.mean(np.abs(modulated[:-msg.pause])))
+            result.append(modulated)
 
         result = np.concatenate(result)
-        noise = np.random.normal(loc=0, scale=1, size=2 * len(result)).astype(np.float32)
+        noise = np.random.normal(loc=0, scale=1, size=2 * len(result)).astype(np.float32).view(np.complex64)
 
-        ratio = 10 ** (snr_db / 10)
-        # rms of data signal is carrier amplitude
-        rms_data = modulator.carrier_amplitude
-        if modulator.modulation_type_str == "ASK":
-            rms_data *= max(modulator.param_for_zero, modulator.param_for_one) / 100
-        target_noise_rms = rms_data / np.sqrt(ratio)
-        noise = target_noise_rms * (noise / self.rms(noise))
+        # https://stackoverflow.com/questions/23690766/proper-way-to-add-noise-to-signal
+        snr_ratio = np.power(10, snr_db/10)
 
-        # print("SNR", 10 * np.log10((rms_data / self.rms(noise))**2))
+        signal_power = np.mean(message_powers)
+        noise_power = signal_power / snr_ratio
+        noise = 1/np.sqrt(2) * noise_power * noise
 
-        return result + noise.view(np.complex64)
+        return result + noise
 
     def generate_message_bits(self, num_bits=80, preamble="", sync="", eof=""):
         bits_to_generate = num_bits - (len(preamble) + len(sync) + len(eof))
@@ -64,6 +62,38 @@ class LabTestsAutoInterpretation(unittest.TestCase):
             for line in f:
                 result.append(Message.from_plain_bits_str(line.strip(), pause=message_pause))
         return result
+
+    def test_segmentation_against_noise(self):
+        message_bits = "10101010110110010011101010110010110011001"
+        messages_per_signal = 5
+        num_signals = 20
+
+        snr_values = range(10, 0, -1)
+
+        messages = []
+        for i in range(messages_per_signal):
+            messages.append(Message.from_plain_bits_str(message_bits, pause=10000))
+
+        fsk_modulator = Modulator("FSK")
+        fsk_modulator.modulation_type_str = "FSK"
+        fsk_modulator.param_for_zero = -10e3
+        fsk_modulator.param_for_one = 10e3
+
+        errors_by_snr = []
+        for snr in snr_values:
+            errors = []
+            print("Testing for {}dB".format(snr), end=" ")
+            for i in range(num_signals):
+                signal = self.generate_signal(messages, fsk_modulator, snr)
+
+                noise = AutoInterpretation.detect_noise_level(np.abs(signal))
+                segments = AutoInterpretation.segment_messages_from_magnitudes(np.abs(signal), noise)
+
+                error = abs(len(segments) - messages_per_signal)
+                errors.append(error)
+
+            mean_error = np.mean(errors)
+            errors_by_snr.append(mean_error)
 
     def test_against_noise(self):
         # file is only created once, delete it for fresh testdata

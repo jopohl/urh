@@ -53,16 +53,14 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertGreaterEqual(bit_length, 2400)
         self.assertLessEqual(bit_length, 2500)
         self.assertGreaterEqual(center, 0.005)
-        self.assertLessEqual(center, 0.1265)
+        self.assertLessEqual(center, 0.32)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
         demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
-        self.assertEqual(len(demodulated), 2)
-        for i in range(2):
-            self.assertTrue(demodulated[i].startswith("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
-            self.assertTrue(demodulated[i].endswith("cad4c"))
-            self.assertEqual(len(demodulated[0]), len(demodulated[i]))
+        self.assertEqual(len(demodulated), 1)
+        self.assertTrue(demodulated[0].startswith("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+        self.assertTrue(demodulated[0].endswith("cad4c"))
 
     def test_brennenstuhl(self):
         path = self.get_path("brennenstuhl_signal_ABCD_onoff.coco")

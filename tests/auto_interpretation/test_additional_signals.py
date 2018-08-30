@@ -98,12 +98,11 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
 
-        print(center, noise, tolerance)
-        print(center, noise, tolerance, bit_length)
+        print(result)
         demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
-        self.assertEqual(len(demodulated), 4)
-        for i in range(4):
+        self.assertEqual(len(demodulated), 2)
+        for i in range(2):
             self.assertTrue(demodulated[i].startswith("aaaaaaaa"))
 
     def test_esaver(self):

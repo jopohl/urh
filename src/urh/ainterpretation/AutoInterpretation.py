@@ -422,9 +422,12 @@ def estimate(signal: np.ndarray) -> dict:
         if center is None:
             # did not find any centers at all so we cannot return a valid estimation
             return None
-    else:
+    elif len(centers) > 0:
         # for other modulations it is a better strategy to take the mean of found centers
         center = np.mean(centers)
+    else:
+        # did not find any centers at all so we cannot return a valid estimation
+        return None
 
     bit_length = get_most_frequent_value(bit_lengths)
     if bit_length is None:

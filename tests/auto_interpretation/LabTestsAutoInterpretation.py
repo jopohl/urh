@@ -93,6 +93,8 @@ class LabTestsAutoInterpretation(unittest.TestCase):
                 errors.append(error)
 
             mean_error = np.mean(errors)
+            print(mean_error)
+
             errors_by_snr.append(mean_error)
 
     def test_against_noise(self):

@@ -321,44 +321,6 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(np.percentile(filtered, 10, interpolation="lower"))
 
 
-def can_be_psk(rect_data: np.ndarray, z=3):
-    rect_data = rect_data[rect_data > -4]  # do not consider noise
-    if len(rect_data) == 0:
-        return False
-
-    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
-    if len(outlier_free_data) == 0:
-        return False
-
-    minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
-    return np.abs(maximum - minimum) >= np.pi / 2
-
-
-def can_be_fsk(rect_data: np.ndarray, z=3):
-    rect_data = rect_data[rect_data > -4]  # do not consider noise
-    if len(rect_data) == 0:
-        return False
-
-    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
-    if len(outlier_free_data) == 0:
-        return False
-
-    minimum, maximum = np.min(outlier_free_data), np.max(outlier_free_data)
-    return np.abs(maximum - minimum) >= np.pi / 8
-
-
-def can_be_ask(rect_data: np.ndarray, z=3):
-    rect_data = rect_data[rect_data > -4]  # do not consider noise
-    if len(rect_data) == 0:
-        return False
-
-    outlier_free_data = rect_data[abs(rect_data - np.mean(rect_data)) <= z * np.std(rect_data)]
-    if len(outlier_free_data) <= 1:
-        return False
-
-    return np.max(np.diff(outlier_free_data)) >= 0.1
-
-
 def estimate(signal: np.ndarray) -> dict:
     magnitudes = np.abs(signal)
     # find noise threshold

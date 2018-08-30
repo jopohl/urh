@@ -1,4 +1,9 @@
 # Changelog
+## v2.2.4 (30/08/2018)
+### Bugfixes
+- fix scaling of modulated preview in modulation dialog [#523](https://github.com/jopohl/urh/pull/523)
+- improve default parameters for PSK modulation in modulation dialog [#523](https://github.com/jopohl/urh/pull/523)
+
 ## v2.2.3 (28/07/2018)
 ### New features
 - allow save and load of binary protocols (``` .bin ``` files) [#488](https://github.com/jopohl/urh/pull/488)

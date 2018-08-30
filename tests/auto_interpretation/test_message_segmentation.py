@@ -24,12 +24,12 @@ class TestMessageSegmentation(unittest.TestCase):
 
     def test_segmentation_enocean_multiple_messages(self):
         signal = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
-        segments = segment_messages_from_magnitudes(np.abs(signal), 0.025)
+        segments = segment_messages_from_magnitudes(np.abs(signal), 0.0448)
         segments = merge_message_segments_for_ook(segments)
         self.assertEqual(len(segments), 3)
-        self.assertEqual(segments[0], (6086, 6753))
-        self.assertEqual(segments[1], (9751, 10417))
-        self.assertEqual(segments[2], (22208, 22876))
+        self.assertEqual(segments[0], (1091, 2424))
+        self.assertEqual(segments[1], (5232, 6565))
+        self.assertEqual(segments[2], (9439, 10785))
 
     def test_message_segmentation_fsk_xavax(self):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")

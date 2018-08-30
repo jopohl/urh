@@ -1,13 +1,14 @@
 import unittest
 
 import numpy as np
-from urh import constants
 
+from tests.auto_interpretation.auto_interpretation_test_util import demodulate
 from tests.test_util import get_path_for_data_file
+from urh import constants
 from urh.ainterpretation import AutoInterpretation
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Signal import Signal
-from tests.auto_interpretation.auto_interpretation_test_util import demodulate
+
 
 class TestAutoInterpretationIntegration(unittest.TestCase):
     def test_auto_interpretation_fsk(self):
@@ -17,9 +18,8 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
-        self.assertGreater(tolerance,  0)
+        self.assertGreater(tolerance, 0)
         self.assertLessEqual(tolerance, 5)
-
 
         self.assertEqual(demodulate(fsk_signal, mod_type, bit_length, center, noise, tolerance)[0],
                          "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18")
@@ -48,7 +48,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertLessEqual(center, 0.4690)
 
         demod = demodulate(enocean_signal, mod_type, bit_length, center, noise, tolerance,
-                                decoding=Encoding(["WSP", constants.DECODING_ENOCEAN]))
+                           decoding=Encoding(["WSP", constants.DECODING_ENOCEAN]))
         self.assertEqual(len(demod), 3)
         self.assertEqual(demod[0], demod[2])
         self.assertEqual(demod[0], "aa9610002c1c024b")

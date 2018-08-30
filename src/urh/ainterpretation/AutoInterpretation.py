@@ -130,6 +130,9 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
 
     data = data / np.abs(np.max(data))
     mag_wavlt = np.abs(Wavelet.cwt_haar(data, scale=wavelet_scale))
+    if len(mag_wavlt) == 0:
+        return None
+
     norm_mag_wavlt = np.abs(Wavelet.cwt_haar(data / np.abs(data), scale=wavelet_scale))
 
     var_mag = np.var(mag_wavlt)

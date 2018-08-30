@@ -102,8 +102,8 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
         demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
         print(demodulated)
-        self.assertEqual(len(demodulated), 21)
-        for i in range(8):
+        self.assertEqual(len(demodulated), 12)
+        for i in range(12):
             self.assertTrue(demodulated[i].startswith("aaaaaaaa"))
 
     def test_scislo(self):

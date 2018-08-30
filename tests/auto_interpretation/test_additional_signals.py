@@ -84,27 +84,6 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             self.assertTrue(demodulated[i].startswith("88888888888"))
             self.assertEqual(len(demodulated[i]), len(demodulated[0]))
 
-    def test_homematic(self):
-        path = self.get_path("homematic_kommunikation_an0.complex")
-        if not path:
-            return
-
-        data = Signal(path, "").data
-
-        result = AutoInterpretation.estimate(data)
-        mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
-
-        self.assertEqual(mod_type, "FSK")
-        self.assertEqual(bit_length, 100)
-
-        print(result)
-        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
-        print(demodulated)
-        self.assertEqual(len(demodulated), 2)
-        for i in range(2):
-            self.assertTrue(demodulated[i].startswith("aaaaaaaa"))
-
     def test_esaver(self):
         path = self.get_path("esaver_test4on.complex")
         if not path:

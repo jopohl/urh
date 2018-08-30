@@ -67,7 +67,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         for i in range(1, len(demod)):
             self.assertTrue(demod[i].startswith("aaaaaaaa"))
 
-    def test_auto_intepreation_elektromaten(self):
+    def test_auto_interpretation_elektromaten(self):
         data = Signal(get_path_for_data_file("elektromaten.coco"), "").data
         result = AutoInterpretation.estimate(data)
 
@@ -81,3 +81,18 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(len(demodulated), 11)
         for i in range(11):
             self.assertTrue(demodulated[i].startswith("8"))
+
+    def test_auto_interpretation_homematic(self):
+        data = Signal(get_path_for_data_file("homematic.coco"), "").data
+
+        result = AutoInterpretation.estimate(data)
+        mod_type, bit_length = result["modulation_type"], result["bit_length"]
+        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+
+        self.assertEqual(mod_type, "FSK")
+        self.assertEqual(bit_length, 100)
+
+        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)
+        self.assertEqual(len(demodulated), 2)
+        for i in range(2):
+            self.assertTrue(demodulated[i].startswith("aaaaaaaa"))

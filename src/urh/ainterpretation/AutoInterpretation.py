@@ -166,9 +166,9 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "OOK"
 
 
-def detect_center(rectangular_signal: np.ndarray):
+def detect_center(rectangular_signal: np.ndarray, n_histogram_bins=64):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
-    y, x = np.histogram(rect, bins=16)
+    y, x = np.histogram(rect, bins=n_histogram_bins)
 
     num_values = 2
     most_common_levels = []

@@ -5,6 +5,7 @@ import numpy as np
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import detect_center
 from urh.cythonext.signal_functions import afp_demod
+from urh.signalprocessing.Signal import Signal
 
 
 class TestCenterDetection(unittest.TestCase):
@@ -55,3 +56,19 @@ class TestCenterDetection(unittest.TestCase):
             center = detect_center(rect[start:end])
             self.assertGreaterEqual(center, 0.5326, msg="{}/{}".format(start, end))
             self.assertLessEqual(center, 0.9482, msg="{}/{}".format(start, end))
+
+    def test_homematic_center_detection(self):
+        data = Signal(get_path_for_data_file("homematic.coco"), "").data
+        rect = afp_demod(data, 0.0012, 1)
+
+        msg1 = rect[17719:37861]
+        msg2 = rect[70412:99385]
+
+        center1 = detect_center(msg1)
+        self.assertGreaterEqual(center1, -0.1285)
+        self.assertLessEqual(center1, -0.0413)
+
+        center2 = detect_center(msg2)
+        self.assertGreaterEqual(center2, -0.1377)
+        self.assertLessEqual(center2, -0.0367)
+

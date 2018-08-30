@@ -161,7 +161,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
             greatest_index = ten_greatest_indices[0]
             greatest = fft[greatest_index]
             min_distance = 10
-            min_freq = int(0.25 * greatest)
+            min_freq = int(0.1 * greatest)
 
             if any(abs(i - greatest_index) >= min_distance and fft[i] >= min_freq for i in ten_greatest_indices):
                 return "FSK"

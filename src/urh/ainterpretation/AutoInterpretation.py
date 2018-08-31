@@ -65,7 +65,10 @@ def detect_noise_level(magnitudes):
     # Get all indices for values which are in range of 10% of minimum mean value
     indices = np.nonzero(mean_values <= 1.1 * np.min(mean_values))[0]
 
-    return np.max([np.max(chunks[i]) for i in indices])
+    result = np.max([np.max(chunks[i]) for i in indices])
+
+    # Round up to fourth digit
+    return math.ceil(result * 10000) / 10000
 
 
 def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):

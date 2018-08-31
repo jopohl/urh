@@ -48,4 +48,4 @@ class TestNoiseDetection(unittest.TestCase):
         data = Signal(get_path_for_data_file("psk_generated.complex"), "").data
         noise_level = detect_noise_level(np.abs(data))
         self.assertGreater(noise_level, 0.0067)
-        self.assertLess(noise_level, 0.0081)
+        self.assertLessEqual(noise_level, 0.0081)

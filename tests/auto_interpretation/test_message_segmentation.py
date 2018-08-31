@@ -27,9 +27,9 @@ class TestMessageSegmentation(unittest.TestCase):
         segments = segment_messages_from_magnitudes(np.abs(signal), 0.0448)
         segments = merge_message_segments_for_ook(segments)
         self.assertEqual(len(segments), 3)
-        self.assertEqual(segments[0], (1091, 2424))
-        self.assertEqual(segments[1], (5232, 6565))
-        self.assertEqual(segments[2], (9439, 10785))
+        self.assertEqual(segments[0], (2107, 5432))
+        self.assertEqual(segments[1], (20428, 23758))
+        self.assertEqual(segments[2], (44216, 47546))
 
     def test_message_segmentation_fsk_xavax(self):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")

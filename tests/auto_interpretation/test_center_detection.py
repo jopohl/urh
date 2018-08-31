@@ -41,13 +41,12 @@ class TestCenterDetection(unittest.TestCase):
     def test_enocean_center_detection(self):
         data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
         rect = afp_demod(data, 0.05, 0)
-
-        messages = [rect[1058:2455], rect[5219:6575], rect[9413:10762]]
+        messages = [rect[2107:5432], rect[20428:23758], rect[44216:47546]]
 
         for i, msg in enumerate(messages):
             center = detect_center(msg)
-            self.assertGreaterEqual(center, 0.2592, msg=str(i))
-            self.assertLessEqual(center, 0.6202, msg=str(i))
+            self.assertGreaterEqual(center, 0.04, msg=str(i))
+            self.assertLessEqual(center, 0.066, msg=str(i))
 
     def test_ask_50_center_detection(self):
         message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]

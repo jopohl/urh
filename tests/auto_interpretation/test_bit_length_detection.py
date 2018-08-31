@@ -46,3 +46,7 @@ class TestAutoInterpretation(unittest.TestCase):
         plateau_lengths = [3, 8, 8, 8, 8, 8, 8, 8, 8, 16, 8, 8, 16, 32, 8, 8, 8, 8, 8, 24, 8, 24, 8, 24, 8, 24, 8, 24, 16, 16, 24, 8]
         merged_lengths = AutoInterpretation.merge_plateau_lengths(plateau_lengths)
         self.assertEqual(AutoInterpretation.get_bit_length_from_plateau_lengths(merged_lengths), 8)
+
+    def test_get_bit_length_from_merged_plateau_lengths(self):
+        merged_lengths = [40, 40, 40, 40, 40, 30, 50, 30, 90, 40, 40, 80, 160, 30, 50, 30]
+        self.assertEqual(AutoInterpretation.get_bit_length_from_plateau_lengths(merged_lengths), 40)

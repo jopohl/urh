@@ -7,7 +7,7 @@ from collections import Counter
 import numpy as np
 
 from urh.ainterpretation import Wavelet
-from urh.cythonext import auto_interpretation as cy_auto_interpretation
+from urh.cythonext import auto_interpretation as c_auto_interpretation
 from urh.cythonext import signal_functions
 
 
@@ -76,7 +76,7 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
     :param q: Factor which controls how many samples of previous above noise plateau must be under noise to be counted as noise
     :return:
     """
-    return cy_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold)
+    return c_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold)
 
 
 def merge_message_segments_for_ook(segments: list):
@@ -138,8 +138,8 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
     var_mag = np.var(mag_wavlt)
     var_norm_mag = np.var(norm_mag_wavlt)
 
-    var_filtered_mag = np.var(cy_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
-    var_filtered_norm_mag = np.var(cy_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
+    var_filtered_mag = np.var(c_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
+    var_filtered_norm_mag = np.var(c_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
 
     if all(v < 0.1 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
         return "OOK"
@@ -306,18 +306,22 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
 
     round_plateau_lengths(merged_plateau_lengths)
 
-    # filtered = [
-    #     min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
-    #     if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
-    # ]
-
-    filtered = cy_auto_interpretation.filter_plateau_lengths(np.array(merged_plateau_lengths, dtype=np.uint64))
-
-    if len(filtered) == 0:
+    histogram = c_auto_interpretation.get_threshold_divisor_histogram(np.array(merged_plateau_lengths, dtype=np.uint64))
+    if len(histogram) == 0:
         return 0
     else:
-        # Ensure we return a Python Integer to be harmonic with demodulator API
-        return int(np.percentile(filtered, 10, interpolation="lower"))
+        # Can't return simply argmax, since this could be a multiple of result (e.g. 2 1s are transmitted often)
+        sorted_indices = np.argsort(histogram)[::-1]
+        max_count = histogram[sorted_indices[0]]
+        result = sorted_indices[0]
+
+        for i in range(1, len(sorted_indices)):
+            if histogram[sorted_indices[i]] < 0.25 * max_count:
+                break
+            if sorted_indices[i] <= 0.5 * result:
+                result = sorted_indices[i]
+
+        return int(result)
 
 
 def estimate(signal: np.ndarray) -> dict:

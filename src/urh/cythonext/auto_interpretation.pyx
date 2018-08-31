@@ -100,15 +100,19 @@ def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold)
 
     return result
 
-cpdef unsigned long[:] filter_plateau_lengths(np.ndarray[np.uint64_t, ndim=1]  plateau_lengths):
-    # Cython version of this python code
-    # filtered = [
-    #     min(x, y) for x, y in itertools.combinations(merged_plateau_lengths, 2)
-    #     if x != 0 and y != 0 and max(x, y) / min(x, y) - int(max(x, y) / min(x, y)) < 0.2
-    # ]
-
+cpdef unsigned long[:] get_threshold_divisor_histogram(unsigned long[:] plateau_lengths, float threshold=0.2):
+    """
+    Get a histogram (i.e. count) how many times a value is a threshold divisor for other values in given data
+    
+    Threshold divisible is defined as having a decimal place less than .2 (threshold)
+    
+    :param plateau_lengths: 
+    :return: 
+    """
     cdef unsigned long num_lengths = len(plateau_lengths)
-    cdef np.ndarray[np.npy_bool, ndim=1, cast=True] mask = np.zeros(num_lengths, dtype=np.bool)
+
+    cdef np.ndarray[np.uint64_t, ndim=1] histogram = np.zeros(int(np.max(plateau_lengths)) + 1, dtype=np.uint64)
+
     cdef unsigned long i, j, x, y, minimum, maximum, min_index, k=0
 
     for i in range(0, num_lengths):
@@ -127,10 +131,10 @@ cpdef unsigned long[:] filter_plateau_lengths(np.ndarray[np.uint64_t, ndim=1]  p
                 minimum = y
                 maximum = x
 
-            if maximum / <double>minimum - (maximum / minimum) < 0.2:
-                mask[min_index] = 1
+            if maximum / <double>minimum - (maximum / minimum) < threshold:
+                histogram[minimum] += 1
 
-    return plateau_lengths[mask]
+    return histogram
 
 
 from cython.parallel import prange

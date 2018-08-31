@@ -14,6 +14,10 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
 
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.x"
+      PYTHON_ARCH: "64"
+
     - PYTHON: "C:\\Python35"
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "32"
@@ -22,6 +26,9 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "32"
 
+    - PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7.x"
+      PYTHON_ARCH: "32"
 
 max_jobs: 4
 clone_depth: 5
@@ -57,10 +64,10 @@ test_script:
   - IF "%APPVEYOR_REPO_TAG%" == "false" (python -m pytest -v -s)
 
 after_test:
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine cx_freeze!=5.1 six appdirs packaging pyaudio)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine six appdirs packaging pyaudio)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.6.x" (python data\build_cx.py))
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.6.x" (pip install cx_freeze & python data\build_cx.py))
   - IF "%APPVEYOR_REPO_TAG%" == "true" (dir dist)
 
 artifacts:

@@ -70,41 +70,6 @@ def release():
     call("twine upload dist/*", shell=True)
     #endregion
 
-    # region Publish to AUR
-    os.chdir(tempfile.gettempdir())
-    call(["wget", "https://github.com/jopohl/urh/tarball/v" + cur_version])
-    md5sum = check_output(["md5sum", "v" + cur_version]).decode("ascii").split(" ")[0]
-    sha256sum = check_output(["sha256sum", "v" + cur_version]).decode("ascii").split(" ")[0]
-    print("md5sum", md5sum)
-    print("sha256sum", sha256sum)
-
-    shutil.rmtree("aur", ignore_errors=True)
-    os.mkdir("aur")
-    os.chdir("aur")
-    call(["git", "clone", "git+ssh://aur@aur.archlinux.org/urh.git"])
-    try:
-        os.chdir("urh")
-    except FileNotFoundError:
-        input("Could not clone AUR package. Please clone manually in {} "
-              "and press enter afterwards".format(os.path.realpath(os.curdir)))
-        os.chdir("urh")
-
-    for line in fileinput.input("PKGBUILD", inplace=True):
-        if line.startswith("pkgver="):
-            print("pkgver=" + cur_version)
-        elif line.startswith("md5sums="):
-            print("md5sums=('" + md5sum + "')")
-        elif line.startswith("sha256sums="):
-            print("sha256sums=('" + sha256sum + "')")
-        else:
-            print(line, end="")
-
-    call("makepkg --printsrcinfo > .SRCINFO", shell=True)
-    call(["git", "commit", "-am", "version " + cur_version])
-    call(["git", "push"])
-
-    #endregion
-
     os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
     #region Build docker image and push to DockerHub

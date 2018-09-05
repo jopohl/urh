@@ -1,4 +1,5 @@
 from libc.stdint cimport uint8_t, uint16_t
+from libcpp cimport bool
 
 cdef extern from "libbladeRF.h":
     struct bladerf
@@ -10,20 +11,18 @@ cdef extern from "libbladeRF.h":
         BLADERF_BACKEND_CYPRESS,     # CyAPI
         BLADERF_BACKEND_DUMMY = 100, # Dummy used for development purposes
 
-    int BLADERF_SERIAL_LENGTH
-
     struct bladerf_devinfo:
-        bladerf_backend backend;             # Backend to use when connecting to device
-        char serial[BLADERF_SERIAL_LENGTH];  # Device serial number string
-        uint8_t usb_bus;              # Bus # device is attached to
-        uint8_t usb_addr;             # Device address on bus
-        unsigned int instance;               # Device instance or ID
+        bladerf_backend backend # Backend to use when connecting to device
+        char serial[33]         # Device serial number string
+        uint8_t usb_bus         # Bus # device is attached to
+        uint8_t usb_addr        # Device address on bus
+        unsigned int instance   # Device instance or ID
 
     int bladerf_get_device_list(bladerf_devinfo **devices)
     int bladerf_free_device_list(bladerf_devinfo *devices)
 
     int bladerf_open(bladerf **device, const char *device_identifier)
-    int bladerf_close(bladerf *device)
+    void bladerf_close(bladerf *device)
 
     struct bladerf_version:
         uint16_t major

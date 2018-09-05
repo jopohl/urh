@@ -71,3 +71,8 @@ cdef extern from "libbladeRF.h":
     int bladerf_get_gain(bladerf *dev, bladerf_channel ch, bladerf_gain *gain)
     int bladerf_set_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode mode)
     int bladerf_get_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode *mode)
+
+    ctypedef unsigned int bladerf_sample_rate
+
+    int bladerf_set_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate rate, bladerf_sample_rate *actual)
+    int bladerf_get_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate *rate)

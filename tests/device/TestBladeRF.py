@@ -15,11 +15,22 @@ class TestBladeRF(unittest.TestCase):
         print("Num rx channels", bladerf.get_channel_count(False))
         print("num tx channels", bladerf.get_channel_count(True))
 
-        bladerf.set_tx(False)
+        bladerf.set_tx(True)
         bladerf.set_channel(0)
         print("set gain", bladerf.set_gain(20))
         print("get gain", bladerf.get_gain())
         print("set gain", bladerf.set_gain(21))
         print("get gain", bladerf.get_gain())
+
+        bladerf.set_tx(False)
+        bladerf.set_channel(1)
+        print("Sample Rate", bladerf.get_sample_rate())
+        print("Set sample rate to 2e6", bladerf.set_sample_rate(int(2e6)))
+        print("sample rate", bladerf.get_sample_rate())
+        print("Set sample rate to 40e6", bladerf.set_sample_rate(int(40e6)))
+        print("sample rate", bladerf.get_sample_rate())
+        print("Set sample rate to 200e6", bladerf.set_sample_rate(int(200e6)))
+        print("sample rate", bladerf.get_sample_rate())
+
 
         bladerf.close()

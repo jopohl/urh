@@ -78,3 +78,14 @@ cpdef int get_gain():
         return result
     else:
         return -42
+
+cpdef int set_sample_rate(bladerf_sample_rate sample_rate):
+    return bladerf_set_sample_rate(_c_device, get_current_bladerf_channel(), sample_rate, NULL)
+
+cpdef bladerf_sample_rate get_sample_rate():
+    cdef bladerf_sample_rate result = 0
+    err = bladerf_get_sample_rate(_c_device, get_current_bladerf_channel(), &result)
+    if err != 0:
+        return 0
+
+    return result

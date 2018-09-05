@@ -3,6 +3,36 @@ from libcpp cimport bool
 
 cdef bladerf* _c_device
 
+cpdef int CHANNEL = 0
+cpdef bool IS_TX = False
+
+cpdef set_tx(bool is_tx):
+    global IS_TX
+    IS_TX = <bool>is_tx
+
+cpdef bool get_tx():
+    return IS_TX
+
+cpdef set_channel(bladerf_channel channel):
+    global CHANNEL
+    CHANNEL = <bladerf_channel>channel
+    return 0
+
+cpdef bladerf_channel get_channel():
+    return CHANNEL
+
+cpdef bladerf_channel get_current_bladerf_channel():
+    if IS_TX:
+        return BLADERF_CHANNEL_TX(get_channel())
+    else:
+        return BLADERF_CHANNEL_RX(get_channel())
+
+cpdef int enable_module():
+    return bladerf_enable_module(_c_device, get_current_bladerf_channel(), True)
+
+cpdef int disable_module():
+    return bladerf_enable_module(_c_device, get_current_bladerf_channel(), False)
+
 cpdef list get_device_list():
     cdef bladerf_devinfo* dev_list
     cdef int i, num_devices
@@ -36,3 +66,15 @@ cpdef size_t get_channel_count(bool tx):
         return bladerf_get_channel_count(_c_device, BLADERF_TX)
     else:
         return bladerf_get_channel_count(_c_device, BLADERF_RX)
+
+cpdef int set_gain(bladerf_gain gain):
+    return bladerf_set_gain(_c_device, get_current_bladerf_channel(), gain)
+
+cpdef int get_gain():
+    cdef bladerf_gain result = 0
+
+    err = bladerf_get_gain(_c_device, get_current_bladerf_channel(), &result)
+    if err == 0:
+        return result
+    else:
+        return -42

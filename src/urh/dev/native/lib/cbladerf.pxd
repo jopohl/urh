@@ -5,11 +5,11 @@ cdef extern from "libbladeRF.h":
     struct bladerf
 
     enum bladerf_backend:
-        BLADERF_BACKEND_ANY,         # "Don't Care" -- use any available backend
-        BLADERF_BACKEND_LINUX,       # Linux kernel driver
-        BLADERF_BACKEND_LIBUSB,      # libusb
-        BLADERF_BACKEND_CYPRESS,     # CyAPI
-        BLADERF_BACKEND_DUMMY = 100, # Dummy used for development purposes
+        BLADERF_BACKEND_ANY         # "Don't Care" -- use any available backend
+        BLADERF_BACKEND_LINUX       # Linux kernel driver
+        BLADERF_BACKEND_LIBUSB      # libusb
+        BLADERF_BACKEND_CYPRESS     # CyAPI
+        BLADERF_BACKEND_DUMMY = 100 # Dummy used for development purposes
 
     struct bladerf_devinfo:
         bladerf_backend backend # Backend to use when connecting to device
@@ -35,11 +35,11 @@ cdef extern from "libbladeRF.h":
     ctypedef enum bladerf_module:
         BLADERF_MODULE_INVALID = -1    # Invalid module entry
         BLADERF_MODULE_RX              # Receive Module
-        BLADERF_MODULE_TX               # Transmit Module
+        BLADERF_MODULE_TX              # Transmit Module
 
-    int bladerf_enable_module(bladerf *dev, bladerf_module m, bool enable)
 
     ctypedef int bladerf_channel
+    int bladerf_enable_module(bladerf *dev, bladerf_channel ch, bool enable)
 
     bladerf_channel BLADERF_CHANNEL_RX(bladerf_channel ch)
     bladerf_channel BLADERF_CHANNEL_TX(bladerf_channel ch)
@@ -51,9 +51,23 @@ cdef extern from "libbladeRF.h":
         BLADERF_TX = 1
 
     ctypedef enum bladerf_channel_layout:
-        BLADERF_RX_X1 = 0
-        BLADERF_TX_X1 = 1
-        BLADERF_RX_X2 = 2
-        BLADERF_TX_X2 = 3
+        BLADERF_RX_X1 = 0  # x1 RX (SISO)
+        BLADERF_TX_X1 = 1  # x1 TX (SISO
+        BLADERF_RX_X2 = 2  # x2 RX (MIMO)
+        BLADERF_TX_X2 = 3  # x2 TX (MIMO)
 
     size_t bladerf_get_channel_count(bladerf *dev, bladerf_direction dir)
+
+    ctypedef int bladerf_gain
+
+    ctypedef enum bladerf_gain_mode:
+        BLADERF_GAIN_DEFAULT
+        BLADERF_GAIN_MGC
+        BLADERF_GAIN_FASTATTACK_AGC
+        BLADERF_GAIN_SLOWATTACK_AGC
+        BLADERF_GAIN_HYBRID_AGC
+
+    int bladerf_set_gain(bladerf *dev, bladerf_channel ch, bladerf_gain gain)
+    int bladerf_get_gain(bladerf *dev, bladerf_channel ch, bladerf_gain *gain)
+    int bladerf_set_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode mode)
+    int bladerf_get_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode *mode)

@@ -1,4 +1,8 @@
 # Changelog
+## v2.2.5 (Upcoming)
+### New features
+- make USRP channel selectable [#525](https://github.com/jopohl/urh/pull/525)
+
 ## v2.2.4 (30/08/2018)
 ### Bugfixes
 - fix scaling of modulated preview in modulation dialog [#523](https://github.com/jopohl/urh/pull/523)

@@ -38,3 +38,22 @@ cdef extern from "libbladeRF.h":
         BLADERF_MODULE_TX               # Transmit Module
 
     int bladerf_enable_module(bladerf *dev, bladerf_module m, bool enable)
+
+    ctypedef int bladerf_channel
+
+    bladerf_channel BLADERF_CHANNEL_RX(bladerf_channel ch)
+    bladerf_channel BLADERF_CHANNEL_TX(bladerf_channel ch)
+    bladerf_channel BLADERF_CHANNEL_INVALID()
+    bool BLADERF_CHANNEL_IS_TX(bladerf_channel ch)
+
+    ctypedef enum bladerf_direction:
+        BLADERF_RX = 0
+        BLADERF_TX = 1
+
+    ctypedef enum bladerf_channel_layout:
+        BLADERF_RX_X1 = 0
+        BLADERF_TX_X1 = 1
+        BLADERF_RX_X2 = 2
+        BLADERF_TX_X2 = 3
+
+    size_t bladerf_get_channel_count(bladerf *dev, bladerf_direction dir)

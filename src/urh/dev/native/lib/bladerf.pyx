@@ -1,4 +1,5 @@
 from urh.dev.native.lib.cbladerf cimport *
+from libcpp cimport bool
 
 cdef bladerf* _c_device
 
@@ -29,3 +30,9 @@ cpdef int open(str serial=""):
 
 cpdef void close():
     bladerf_close(_c_device)
+
+cpdef size_t get_channel_count(bool tx):
+    if tx:
+        return bladerf_get_channel_count(_c_device, BLADERF_TX)
+    else:
+        return bladerf_get_channel_count(_c_device, BLADERF_RX)

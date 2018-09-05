@@ -16,3 +16,11 @@ class TestBladeRF(unittest.TestCase):
 
         print("Open first serial", bladerf.open(serials[0]))
         bladerf.close()
+
+        bladerf.open()
+        print("Num rx channels", bladerf.get_channel_count(False))
+        print("num tx channels", bladerf.get_channel_count(True))
+
+
+
+        bladerf.close()

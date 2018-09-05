@@ -40,7 +40,8 @@ DEVICE_CONFIG["USRP"] = {
     "bandwidth": dev_range(start=1, stop=120 * M, step=1),
     "rx_rf_gain": list(range(0, 101)),
     "tx_rf_gain": list(range(0, 101)),
-    "antenna": [0, 1]
+    "rx_channel": ["RX1", "RX2"],
+    "tx_channel": ["TX1", "TX2"]
 }
 
 # https://myriadrf.org/projects/limesdr/

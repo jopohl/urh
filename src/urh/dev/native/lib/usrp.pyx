@@ -26,7 +26,8 @@ cpdef set_tx(bint is_tx):
 
 cpdef set_channel(size_t channel):
     global CHANNEL
-    CHANNEL = channel
+    CHANNEL = <size_t>channel
+    return 0
 
 cpdef uhd_error open(str device_args):
     if not device_args:

@@ -16,6 +16,11 @@ class USRP(Device):
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
 
+    DEVICE_METHODS = Device.DEVICE_METHODS.copy()
+    DEVICE_METHODS.update({
+        Device.Command.SET_CHANNEL_INDEX.name: "set_channel"
+    })
+
     @classmethod
     def get_device_list(cls):
         return usrp.find_devices("")
@@ -89,8 +94,6 @@ class USRP(Device):
     @property
     def device_parameters(self):
         return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
-                            # Set Antenna needs to be called before other stuff!!!
-                            (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
                             (self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),

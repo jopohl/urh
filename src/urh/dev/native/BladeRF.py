@@ -10,6 +10,7 @@ from multiprocessing.connection import Connection
 
 class BladeRF(Device):
     SYNC_RX_CHUNK_SIZE = 16384
+    SYNC_TX_CHUNK_SIZE = 16384
 
     DEVICE_LIB = bladerf
     ASYNCHRONOUS = False
@@ -41,6 +42,11 @@ class BladeRF(Device):
         return ret == 0
 
     @classmethod
+    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+        bladerf.set_tx(is_tx)
+        return super().init_device(ctrl_connection, is_tx, parameters)
+
+    @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):
         ret = bladerf.close()
         ctrl_connection.send("CLOSE:" + str(ret))
@@ -48,14 +54,23 @@ class BladeRF(Device):
 
     @classmethod
     def prepare_sync_receive(cls, ctrl_connection: Connection):
-        ctrl_connection.send("Initializing stream...")
+        ctrl_connection.send("Initializing BladeRF..")
         ret = bladerf.prepare_sync()
-        ctrl_connection.send("Initialize stream:{0}".format(ret))
         return ret
 
     @classmethod
     def receive_sync(cls, data_conn: Connection):
         bladerf.receive_sync(data_conn, cls.SYNC_RX_CHUNK_SIZE)
+
+    @classmethod
+    def prepare_sync_send(cls, ctrl_connection: Connection):
+        ctrl_connection.send("Initializing BladeRF...")
+        ret = bladerf.prepare_sync()
+        return ret
+
+    @classmethod
+    def send_sync(cls, data):
+        bladerf.send_sync(data)
 
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):

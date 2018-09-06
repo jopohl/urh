@@ -1,9 +1,7 @@
+import copy
 from collections import OrderedDict, namedtuple
 
-import copy
-
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
-
 
 DEFAULT_FREQUENCY = 433.92e6
 DEFAULT_SAMPLE_RATE = 1e6
@@ -25,8 +23,8 @@ G = 10 ** 9
 # http://www.nuand.com/bladeRF-brief.pdf
 DEVICE_CONFIG["BladeRF"] = {
     "center_freq": dev_range(start=300 * M, stop=3.8 * G, step=1),
-    "sample_rate": dev_range(start=1*M, stop=40 * M, step=1),
-    "bandwidth": dev_range(start=1.5*M, stop=28 * M, step=1),
+    "sample_rate": dev_range(start=1.5 * M, stop=40 * M, step=1),
+    "bandwidth": dev_range(start=1.5 * M, stop=28 * M, step=1),
     "rx_channel": ["RX1", "RX2"],
     "tx_channel": ["TX1", "TX2"],
     "tx_rf_gain": list(range(0, 61)),
@@ -36,7 +34,7 @@ DEVICE_CONFIG["BladeRF"] = {
 # https://github.com/mossmann/hackrf/wiki/HackRF-One#features
 DEVICE_CONFIG["HackRF"] = {
     "center_freq": dev_range(start=10, stop=6 * G, step=1),
-    "sample_rate": dev_range(start=2*M, stop=20 * M, step=1),
+    "sample_rate": dev_range(start=2 * M, stop=20 * M, step=1),
     "bandwidth": dev_range(start=2 * M, stop=20 * M, step=1),
     "tx_rf_gain": [0, 14],
     "rx_rf_gain": [0, 14],
@@ -58,8 +56,8 @@ DEVICE_CONFIG["USRP"] = {
 # https://myriadrf.org/projects/limesdr/
 DEVICE_CONFIG["LimeSDR"] = {
     "center_freq": dev_range(start=100 * K, stop=int(3.8 * G), step=1),
-    "sample_rate": dev_range(start=2*M, stop=30 * M, step=1),
-    "bandwidth": dev_range(start=2*M, stop=130 * M, step=1),
+    "sample_rate": dev_range(start=2 * M, stop=30 * M, step=1),
+    "bandwidth": dev_range(start=2 * M, stop=130 * M, step=1),
     "rx_rf_gain": list(range(0, 101)),  # Normalized Gain 0-100%
     "tx_rf_gain": list(range(0, 101)),  # Normalized Gain 0-100%
     "rx_channel": ["RX1", "RX2"],
@@ -91,27 +89,28 @@ DEVICE_CONFIG[NetworkSDRInterfacePlugin.NETWORK_SDR_NAME] = {}
 # https://airspy.com/products/
 DEVICE_CONFIG["AirSpy R2"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [10*M, 10*M],    # This device always uses 10M, no matter what is configured.
-    "bandwidth": [10*M, 10*M],
-    "rx_rf_gain":  list(range(0, 16)),
-    "rx_if_gain":  list(range(0, 16)),
-    "rx_baseband_gain":  list(range(0, 16)),
+    "sample_rate": [10 * M, 10 * M],  # This device always uses 10M, no matter what is configured.
+    "bandwidth": [10 * M, 10 * M],
+    "rx_rf_gain": list(range(0, 16)),
+    "rx_if_gain": list(range(0, 16)),
+    "rx_baseband_gain": list(range(0, 16)),
 }
 
 DEVICE_CONFIG["AirSpy Mini"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [6*M, 6*M],      # Documentation says: "10, 6 and 3 MSPS IQ output" but it always uses 6M, no matter what is configured.
-    "bandwidth": [6*M, 6*M],
-    "rx_rf_gain":  list(range(0, 16)),
-    "rx_if_gain":  list(range(0, 16)),
-    "rx_baseband_gain":  list(range(0, 16)),
+    "sample_rate": [6 * M, 6 * M],
+# Documentation says: "10, 6 and 3 MSPS IQ output" but it always uses 6M, no matter what is configured.
+    "bandwidth": [6 * M, 6 * M],
+    "rx_rf_gain": list(range(0, 16)),
+    "rx_if_gain": list(range(0, 16)),
+    "rx_baseband_gain": list(range(0, 16)),
 }
 
 DEVICE_CONFIG["SDRPlay"] = {
-    "center_freq": dev_range(start=1*K, stop=2 * G, step=1),
+    "center_freq": dev_range(start=1 * K, stop=2 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=10 * M, step=1),
     "bandwidth": [0, 200e3, 300e3, 600e3, 1536e3, 5000e3, 6000e3, 7000e3, 8000e3],
-    "rx_rf_gain":  list(range(20, 60)),
+    "rx_rf_gain": list(range(20, 60)),
     "rx_if_gain": [0, 450, 1620, 2048],
     "rx_antenna": ["Antenna A", "Antenna B", "Hi-Z"],
     "rx_antenna_default_index": 0,
@@ -123,9 +122,9 @@ DEVICE_CONFIG["SoundCard"] = {
 }
 
 DEVICE_CONFIG["Fallback"] = {
-    "center_freq": dev_range(start=1*M, stop=6 * G, step=1),
+    "center_freq": dev_range(start=1 * M, stop=6 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=20 * M, step=1),
     "bandwidth": dev_range(start=2 * M, stop=20 * M, step=1),
-    "rx_rf_gain":  list(range(0, 51)),
-    "tx_rf_gain":  list(range(0, 51)),
+    "rx_rf_gain": list(range(0, 51)),
+    "tx_rf_gain": list(range(0, 51)),
 }

@@ -6,7 +6,7 @@ from libc.stdlib cimport malloc, free
 
 cdef bladerf* _c_device
 
-cpdef int CHANNEL = 0
+cdef bladerf_channel CHANNEL = 0
 cpdef bool IS_TX = False
 
 cpdef set_tx(bool is_tx):
@@ -152,3 +152,7 @@ cpdef int16_t[:] receive_sync(connection, unsigned int num_samples):
         return connection.send_bytes(<int16_t [:2*num_samples]>samples)
     finally:
         free(samples)
+
+cpdef int send_sync(int16_t[::1] samples):
+    cdef unsigned int num_samples = len(samples) // 2
+    return bladerf_sync_tx(_c_device, &samples[0], num_samples, NULL, 100)

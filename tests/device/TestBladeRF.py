@@ -55,6 +55,16 @@ class TestBladeRF(unittest.TestCase):
 
         for i in range(3):
             bladerf.receive_sync(child_conn, 4096)
-            print(parent_conn.recv_bytes())
+            data = parent_conn.recv_bytes()
+            print(data)
 
+        bladerf.close()
+
+        bladerf.open()
+        bladerf.set_tx(True)
+        bladerf.set_channel(0)
+        bladerf.prepare_sync()
+
+        for i in range(10):
+            print("Send", bladerf.send_sync(np.fromstring(data, dtype=np.int16)))
         bladerf.close()

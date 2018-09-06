@@ -1,4 +1,8 @@
 # Changelog
+## v2.2.5 (upcoming)
+### New features
+- added native support for BladeRF [#524](https://github.com/jopohl/urh/pull/524)
+
 ## v2.2.4 (30/08/2018)
 ### Bugfixes
 - fix scaling of modulated preview in modulation dialog [#523](https://github.com/jopohl/urh/pull/523)

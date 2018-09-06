@@ -1,7 +1,10 @@
 import time
+from multiprocessing.connection import Pipe
+
 import numpy as np
 import unittest
 
+from urh.dev.native.BladeRF import BladeRF
 from urh.util import util
 
 util.set_shared_library_path()
@@ -47,12 +50,11 @@ class TestBladeRF(unittest.TestCase):
         print("Frequency", bladerf.get_center_freq())
 
         bladerf.prepare_sync()
+
+        parent_conn, child_conn = Pipe()
+
         for i in range(3):
-            print(np.asarray(bladerf.receive_sync(4096)))
-            time.sleep(1)
-
-        # disable the module when done, otherwise some warnings
-        bladerf.disable_module()
-
+            bladerf.receive_sync(child_conn, 4096)
+            print(parent_conn.recv_bytes())
 
         bladerf.close()

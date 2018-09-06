@@ -74,6 +74,8 @@ cpdef int open(str serial=""):
         return bladerf_open(&_c_device, arg)
 
 cpdef void close():
+    # disable the module when done, otherwise some warnings when closing during RX/TX
+    disable_module()
     bladerf_close(_c_device)
 
 cpdef size_t get_channel_count(bool tx):
@@ -133,13 +135,13 @@ cpdef int prepare_sync():
     enable_module()
     return bladerf_sync_config(_c_device, get_current_channel_layout(), BLADERF_FORMAT_SC16_Q11, 32, 2048, 16, 100)
 
-cpdef int16_t[:] receive_sync(unsigned int num_samples):
+cpdef int16_t[:] receive_sync(connection, unsigned int num_samples):
     cdef int16_t *samples = <int16_t *> malloc(2*num_samples * sizeof(int16_t))
     if not samples:
         raise MemoryError()
 
     try:
         bladerf_sync_rx(_c_device, <void *>samples, num_samples, NULL, 100)
-        return <int16_t [:2*num_samples]>samples
+        return connection.send_bytes(<int16_t [:2*num_samples]>samples)
     finally:
         free(samples)

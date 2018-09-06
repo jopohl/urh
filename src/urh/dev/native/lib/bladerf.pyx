@@ -85,7 +85,10 @@ cpdef size_t get_channel_count(bool tx):
         return bladerf_get_channel_count(_c_device, BLADERF_RX)
 
 cpdef int set_gain(bladerf_gain gain):
-    set_gain_mode_to_manual()
+    if not IS_TX:
+        # set to manual mode in rx case
+        set_gain_mode_to_manual()
+
     return bladerf_set_gain(_c_device, get_current_bladerf_channel(), gain)
 
 cpdef int get_gain():

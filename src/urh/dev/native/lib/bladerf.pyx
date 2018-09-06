@@ -89,3 +89,27 @@ cpdef bladerf_sample_rate get_sample_rate():
         return 0
 
     return result
+
+cpdef int set_bandwidth(bladerf_bandwidth bandwidth):
+    return bladerf_set_bandwidth(_c_device, get_current_bladerf_channel(), bandwidth, NULL)
+
+cpdef bladerf_bandwidth get_bandwidth():
+    cdef bladerf_bandwidth result = 0
+    err = bladerf_get_bandwidth(_c_device, get_current_bladerf_channel(), &result)
+
+    if err != 0:
+        return 0
+
+    return result
+
+cpdef int set_center_freq(bladerf_frequency frequency):
+    return bladerf_set_frequency(_c_device, get_current_bladerf_channel(), frequency)
+
+cpdef bladerf_frequency get_center_freq():
+    cdef bladerf_frequency result = 0
+    err = bladerf_get_frequency(_c_device, get_current_bladerf_channel(), &result)
+
+    if err != 0:
+        return 0
+
+    return result

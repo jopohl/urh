@@ -32,5 +32,16 @@ class TestBladeRF(unittest.TestCase):
         print("Set sample rate to 200e6", bladerf.set_sample_rate(int(200e6)))
         print("sample rate", bladerf.get_sample_rate())
 
+        bladerf.set_tx(True)
+        bladerf.set_channel(1)
+        print("Bandwidth", bladerf.get_bandwidth())
+        print("Set Bandwidth to 2e6", bladerf.set_bandwidth(int(2e6)))
+        print("Bandwidth", bladerf.get_bandwidth())
+
+        bladerf.set_tx(False)
+        bladerf.set_channel(0)
+        print("Frequency", bladerf.get_center_freq())
+        print("Set Frequency to 433.92e6", bladerf.set_center_freq(int(433.92e6)))
+        print("Frequency", bladerf.get_center_freq())
 
         bladerf.close()

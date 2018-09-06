@@ -1,4 +1,4 @@
-from libc.stdint cimport uint8_t, uint16_t
+from libc.stdint cimport uint8_t, uint16_t, uint64_t
 from libcpp cimport bool
 
 cdef extern from "libbladeRF.h":
@@ -76,3 +76,13 @@ cdef extern from "libbladeRF.h":
 
     int bladerf_set_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate rate, bladerf_sample_rate *actual)
     int bladerf_get_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate *rate)
+
+    ctypedef unsigned int bladerf_bandwidth
+
+    int bladerf_set_bandwidth(bladerf *dev, bladerf_channel ch, bladerf_bandwidth bandwidth, bladerf_bandwidth *actual)
+    int bladerf_get_bandwidth(bladerf *dev, bladerf_channel ch, bladerf_bandwidth *bandwidth)
+
+    ctypedef uint64_t bladerf_frequency
+
+    int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency frequency)
+    int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency *frequency)

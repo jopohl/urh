@@ -1,3 +1,5 @@
+import time
+import numpy as np
 import unittest
 
 from urh.util import util
@@ -43,5 +45,14 @@ class TestBladeRF(unittest.TestCase):
         print("Frequency", bladerf.get_center_freq())
         print("Set Frequency to 433.92e6", bladerf.set_center_freq(int(433.92e6)))
         print("Frequency", bladerf.get_center_freq())
+
+        bladerf.prepare_sync()
+        for i in range(3):
+            print(np.asarray(bladerf.receive_sync(4096)))
+            time.sleep(1)
+
+        # disable the module when done, otherwise some warnings
+        bladerf.disable_module()
+
 
         bladerf.close()

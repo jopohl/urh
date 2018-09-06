@@ -1,5 +1,8 @@
+
 from urh.dev.native.lib.cbladerf cimport *
+from libc.stdint cimport int16_t
 from libcpp cimport bool
+from libc.stdlib cimport malloc, free
 
 cdef bladerf* _c_device
 
@@ -26,6 +29,18 @@ cpdef bladerf_channel get_current_bladerf_channel():
         return BLADERF_CHANNEL_TX(get_channel())
     else:
         return BLADERF_CHANNEL_RX(get_channel())
+
+cpdef bladerf_channel_layout get_current_channel_layout():
+    if get_channel() == 0:
+        if IS_TX:
+            return BLADERF_TX_X1
+        else:
+            return BLADERF_RX_X1
+    else:
+        if IS_TX:
+            return BLADERF_TX_X2
+        else:
+            return BLADERF_RX_X2
 
 cpdef int enable_module():
     return bladerf_enable_module(_c_device, get_current_bladerf_channel(), True)
@@ -113,3 +128,18 @@ cpdef bladerf_frequency get_center_freq():
         return 0
 
     return result
+
+cpdef int prepare_sync():
+    enable_module()
+    return bladerf_sync_config(_c_device, get_current_channel_layout(), BLADERF_FORMAT_SC16_Q11, 32, 2048, 16, 100)
+
+cpdef int16_t[:] receive_sync(unsigned int num_samples):
+    cdef int16_t *samples = <int16_t *> malloc(2*num_samples * sizeof(int16_t))
+    if not samples:
+        raise MemoryError()
+
+    try:
+        bladerf_sync_rx(_c_device, <void *>samples, num_samples, NULL, 100)
+        return <int16_t [:2*num_samples]>samples
+    finally:
+        free(samples)

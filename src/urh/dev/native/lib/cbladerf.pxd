@@ -1,4 +1,4 @@
-from libc.stdint cimport uint8_t, uint16_t, uint64_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 from libcpp cimport bool
 
 cdef extern from "libbladeRF.h":
@@ -86,3 +86,21 @@ cdef extern from "libbladeRF.h":
 
     int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency frequency)
     int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency *frequency)
+
+    ctypedef enum bladerf_format:
+        BLADERF_FORMAT_SC16_Q11
+        BLADERF_FORMAT_SC16_Q11_META
+
+    ctypedef uint64_t bladerf_timestamp
+
+    struct bladerf_metadata:
+        bladerf_timestamp timestamp
+        uint32_t flags
+        uint32_t status
+        unsigned int actual_count
+        uint8_t reserved[32]
+
+
+    int bladerf_sync_config(bladerf *dev, bladerf_channel_layout layout, bladerf_format format, unsigned int num_buffers, unsigned int buffer_size, unsigned int num_transfers, unsigned int stream_timeout)
+    int bladerf_sync_rx(bladerf *dev, void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
+    int bladerf_sync_tx(bladerf *dev, const void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)

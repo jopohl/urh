@@ -64,7 +64,9 @@ test_script:
   - IF "%APPVEYOR_REPO_TAG%" == "false" (python -m pytest -v -s)
 
 after_test:
-  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine six appdirs packaging pyaudio)
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (pip install wheel twine six appdirs packaging)
+  # PyAudio not yet ready for Python 3.7 on Windows
+  - IF "%APPVEYOR_REPO_TAG%" == "true" (IF NOT "%PYTHON_VERSION%" == "3.7.x" (pip install pyaudio))
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()")
   - IF "%APPVEYOR_REPO_TAG%" == "true" (python setup.py bdist_wheel)
   - IF "%APPVEYOR_REPO_TAG%" == "true" (IF "%PYTHON_VERSION%" == "3.6.x" (pip install cx_freeze & python data\build_cx.py))

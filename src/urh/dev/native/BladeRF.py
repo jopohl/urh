@@ -39,6 +39,10 @@ class BladeRF(Device):
         else:
             ctrl_connection.send("OPEN ({}):{}".format(device_identifier, ret))
 
+        ctrl_connection.send("If you experience problems, make sure you place a rbf file matching your device"
+                             " at the correct location. See http://www.nuand.com/fpga_images/"
+                             " and https://github.com/Nuand/bladeRF/wiki/FPGA-Autoloading")
+
         return ret == 0
 
     @classmethod

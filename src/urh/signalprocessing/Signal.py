@@ -107,12 +107,12 @@ class Signal(QObject):
         if sample_width == 3:
             num_samples = len(byte_frames) // (sample_width * num_channels)
             arr = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
-            raw_bytes = np.fromstring(byte_frames, dtype=np.uint8)
+            raw_bytes = np.frombuffer(byte_frames, dtype=np.uint8)
             arr[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
             arr[:, :, sample_width:] = (arr[:, :, sample_width - 1:sample_width] >> 7) * 255
             data = arr.view(np.int32).flatten()
         else:
-            data = np.fromstring(byte_frames, dtype=params["fmt"])
+            data = np.frombuffer(byte_frames, dtype=params["fmt"])
 
         if num_channels == 1:
             self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")

@@ -83,7 +83,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube", "HackRF",
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF",
                     "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
 
     def __init__(self):
@@ -130,6 +130,14 @@ class BackendHandler(object):
     def num_native_backends(self):
         return len([dev for dev, backend_container in self.device_backends.items()
                     if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
+
+    @property
+    def __bladerf_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import bladerf
+            return True
+        except ImportError:
+            return False
 
     @property
     def __hackrf_native_enabled(self) -> bool:
@@ -246,10 +254,16 @@ class BackendHandler(object):
         if self.gnuradio_is_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
 
+        if devname.lower() == "bladerf" and self.__bladerf_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
         if devname.lower() == "hackrf" and self.__hackrf_native_enabled:
+            supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
+            supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 
         if devname.lower() == "limesdr" and self.__lime_native_enabled:
@@ -261,6 +275,7 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
+            supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtltcp":

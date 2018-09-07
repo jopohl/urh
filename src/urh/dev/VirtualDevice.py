@@ -101,6 +101,10 @@ class VirtualDevice(QObject):
                     from urh.dev.native.LimeSDR import LimeSDR
                     self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                elif name == "bladerf":
+                    from urh.dev.native.BladeRF import BladeRF
+                    self.__dev = BladeRF(freq, sample_rate, bandwidth, gain,
+                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.startswith("airspy"):
                     from urh.dev.native.AirSpy import AirSpy
                     self.__dev = AirSpy(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,

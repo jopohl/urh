@@ -68,7 +68,7 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
                 f.write('#include <stdio.h>\n')
                 f.write('int main(void) {\n')
                 f.write(api_version_code)
-                f.write('}\n')
+                f.write("return 0;}")
 
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
             devnull = open(os.devnull, 'w')

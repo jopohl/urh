@@ -73,13 +73,15 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
             devnull = open(os.devnull, 'w')
             old_stderr = os.dup(sys.stderr.fileno())
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
+            #os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             check_api_program = os.path.join(tmp_dir, "check_api")
             compiler.link_executable(objects, check_api_program, library_dirs=library_dirs, libraries=libraries)
 
             return float(check_output(check_api_program))
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             return 0.0
     finally:
         if old_stderr is not None:

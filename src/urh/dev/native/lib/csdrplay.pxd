@@ -112,7 +112,11 @@ cdef extern from "mirsdrapi-rsp.h":
        float max;
        float min;
 
-    ctypedef void mir_sdr_StreamCallback_t(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset,unsigned int hwRemoved, void *cbContext)
+    IF SDRPLAY_API_VERSION >= 2.13:
+        ctypedef void mir_sdr_StreamCallback_t(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext)
+    ELSE:
+        ctypedef void mir_sdr_StreamCallback_t(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext)
+
     ctypedef void mir_sdr_GainChangeCallback_t(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext)
 
     mir_sdr_ErrT mir_sdr_ReadPacket(short *xi, short *xq, unsigned int *firstSampleNum, int *grChanged, int *rfChanged, int *fsChanged)

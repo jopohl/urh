@@ -83,6 +83,7 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
 
             return float(check_output(check_api_program, env=env))
         except Exception as e:
+            print("API version check failed: {}".format(e))
             return 0.0
     finally:
         if old_stderr is not None:

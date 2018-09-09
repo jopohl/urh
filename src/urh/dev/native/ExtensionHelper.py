@@ -77,6 +77,8 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             check_api_program = os.path.join(tmp_dir, "check_api")
             compiler.link_executable(objects, check_api_program, library_dirs=library_dirs, libraries=libraries)
+            if sys.platform == "win32":
+                os.environ["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
 
             return float(check_output(check_api_program))
         except Exception as e:

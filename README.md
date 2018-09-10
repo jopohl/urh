@@ -63,7 +63,7 @@ For the following linux distributions you can install URH using your package man
 
 | Distribution  | Install with |
 | ------------- | ------------- |
-|  Arch Linux  |  ``` yaourt -S urh ```  |
+|  Arch Linux  |  ``` pacman -S urh ```  |
 |  Gentoo / Pentoo  | ``` emerge -av urh ``` |
 | Fedora 25+ | ``` dnf install urh ```  |
 | openSUSE  | ``` zypper install urh ```  |

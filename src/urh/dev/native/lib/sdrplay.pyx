@@ -20,7 +20,7 @@ global reset_rx, reset_rx_request_received
 reset_rx = False
 reset_rx_request_received = False
 
-cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext):
+cdef void __rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
     cdef float* data = <float *>malloc(2*numSamples * sizeof(float))
 
     cdef unsigned int i = 0
@@ -47,6 +47,13 @@ cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum,
     finally:
         PyGILState_Release(gstate)
         free(data)
+
+IF SDRPLAY_API_VERSION >= 2.13:
+    cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext):
+        __rx_stream_callback(xi, xq, firstSampleNum, grChanged, rfChanged, fsChanged, numSamples, reset, cbContext)
+ELSE:
+    cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
+        __rx_stream_callback(xi, xq, firstSampleNum, grChanged, rfChanged, fsChanged, numSamples, reset, cbContext)
 
 cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext):
     return

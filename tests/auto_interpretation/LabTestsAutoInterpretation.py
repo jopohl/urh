@@ -21,7 +21,7 @@ class LabTestsAutoInterpretation(unittest.TestCase):
         message_powers = []
         for msg in messages:
             modulated = modulator.modulate(msg.encoded_bits, msg.pause)
-            message_powers.append(np.mean(np.abs(modulated[:-msg.pause])))
+            message_powers.append(np.mean(np.abs(modulated[:len(modulated)-msg.pause])))
             result.append(modulated)
 
         result = np.concatenate(result)

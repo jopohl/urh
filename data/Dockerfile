@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:18.04
 
 LABEL maintainer="Johannes.Pohl90@gmail.com"
 
@@ -8,12 +8,12 @@ ENV TZ=Europe/Berlin
 # To allow docker to connect to X run xhost +local:docker
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
- && apt-get update \
- && apt-get -y install wget gcc g++ git \
+ && apt-get -qq update \
+ && apt-get -qq install wget gcc g++ git \
                        python-pip python-zmq \
                        python3 python3-pip python3-pyaudio python3-pyqt5 python3-numpy python3-zmq python3-psutil \
                        fonts-dejavu-core libgles2-mesa libusb-1.0-0 \
-                       gr-osmosdr libgnuradio-zeromq* \
+                       gr-osmosdr libgnuradio-zeromq* > /dev/null \
  && python2 -m pip install pyusb \
  && python3 -m pip install setuptools cython \
  \
@@ -32,11 +32,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && python setup.py install \
  && rm -rf ../rfcat \
  \
- && apt-get -y remove wget gcc g++ git ttf-bitstream-vera \
- && apt-get -y autoremove \
+ && apt-get -qq remove wget gcc g++ git ttf-bitstream-vera \
+ && apt-get -qq autoremove \
  && dbus-uuidgen > /var/lib/dbus/machine-id \
- && apt-get -y clean all \
+ && apt-get -qq clean all \
  && mkdir /tmp/runtime-root \
  && chmod 0700 /tmp/runtime-root
 
-CMD XDG_RUNTIME_DIR=/tmp/runtime-root urh autoclose && XDG_RUNTIME_DIR=/tmp/runtime-root urh
+CMD XDG_RUNTIME_DIR=/tmp/runtime-root urh

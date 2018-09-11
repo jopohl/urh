@@ -11,9 +11,22 @@ from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
 
+
+
 DEVICES = {
     "airspy": {"lib": "airspy", "test_function": "open"},
-    "bladerf": {"lib": "bladeRF", "test_function": "bladerf_open"},
+    "bladerf": {"lib": "bladeRF", "test_function": "bladerf_open",
+                "api_header_include": "libbladeRF.h",
+                "api_version_check_code":
+                    """
+                    #include<stdio.h>
+                    #include<libbladeRF.h>
+                    
+                    int main(void) {
+                    struct bladerf_version result; bladerf_version(&result);
+                    printf("%f", result.major + result.minor/10.0 + result.patch/100.0);
+                    return 0;}
+                    """},
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init",
                "extras": {"HACKRF_MULTI_DEVICE_SUPPORT": "hackrf_open_by_serial"}},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
@@ -23,9 +36,12 @@ DEVICES = {
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
                 "test_function": "mir_sdr_ApiVersion",
-                "api_version_check_code": "float version=0.0;\n"
-                                          "mir_sdr_ApiVersion(&version);\n"
-                                          "printf(\"%f\", version);"}
+                "api_version_check_code":
+                """
+                #include<stdio.h>
+                int main(void) {
+                float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
+                """}
 }
 
 
@@ -65,10 +81,7 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
         try:
             file_name = os.path.join(tmp_dir, 'get_api_version.c')
             with open(file_name, 'w') as f:
-                f.write('#include <stdio.h>\n')
-                f.write('int main(void) {\n')
                 f.write(api_version_code)
-                f.write("return 0;}")
 
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
             devnull = open(os.devnull, 'w')

@@ -24,12 +24,13 @@ cdef extern from "libbladeRF.h":
     int bladerf_open(bladerf **device, const char *device_identifier)
     void bladerf_close(bladerf *device)
 
-    struct bladerf_version:
+    struct s_bladerf_version "bladerf_version":
         uint16_t major
         uint16_t minor
         uint16_t patch
         const char* describe
 
+    void bladerf_version(s_bladerf_version *version)
     int bladerf_get_serial(bladerf *dev, char *serial)
 
     ctypedef enum bladerf_module:
@@ -38,13 +39,17 @@ cdef extern from "libbladeRF.h":
         BLADERF_MODULE_TX              # Transmit Module
 
 
-    ctypedef int bladerf_channel
-    int bladerf_enable_module(bladerf *dev, bladerf_channel ch, bool enable)
+    IF BLADERF_API_VERSION >= 1.91:
+        ctypedef int bladerf_channel
+        bladerf_channel BLADERF_CHANNEL_RX(bladerf_channel ch)
+        bladerf_channel BLADERF_CHANNEL_TX(bladerf_channel ch)
+        bladerf_channel BLADERF_CHANNEL_INVALID()
+        bool BLADERF_CHANNEL_IS_TX(bladerf_channel ch)
+        int bladerf_enable_module(bladerf *dev, bladerf_channel ch, bool enable)
+    ELSE:
+        int bladerf_enable_module(bladerf *dev, bladerf_module m, bool enable)
 
-    bladerf_channel BLADERF_CHANNEL_RX(bladerf_channel ch)
-    bladerf_channel BLADERF_CHANNEL_TX(bladerf_channel ch)
-    bladerf_channel BLADERF_CHANNEL_INVALID()
-    bool BLADERF_CHANNEL_IS_TX(bladerf_channel ch)
+
 
     ctypedef enum bladerf_direction:
         BLADERF_RX = 0
@@ -56,36 +61,48 @@ cdef extern from "libbladeRF.h":
         BLADERF_RX_X2 = 2  # x2 RX (MIMO)
         BLADERF_TX_X2 = 3  # x2 TX (MIMO)
 
-    size_t bladerf_get_channel_count(bladerf *dev, bladerf_direction dir)
+    IF BLADERF_API_VERSION >= 1.91:
+        ctypedef enum bladerf_gain_mode:
+            BLADERF_GAIN_DEFAULT
+            BLADERF_GAIN_MGC
+            BLADERF_GAIN_FASTATTACK_AGC
+            BLADERF_GAIN_SLOWATTACK_AGC
+            BLADERF_GAIN_HYBRID_AGC
+    ELSE:
+        ctypedef enum bladerf_gain_mode:
+            BLADERF_GAIN_AUTOMATIC
+            BLADERF_GAIN_MANUAL
 
-    ctypedef int bladerf_gain
+    IF BLADERF_API_VERSION >= 1.91:
+        int bladerf_set_gain(bladerf *dev, bladerf_channel ch, int gain)
+        int bladerf_set_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode mode)
+    ELSE:
+        int bladerf_set_gain(bladerf *dev, bladerf_module mod, int gain)
+        int bladerf_set_gain_mode(bladerf *dev, bladerf_module mod, bladerf_gain_mode mode)
 
-    ctypedef enum bladerf_gain_mode:
-        BLADERF_GAIN_DEFAULT
-        BLADERF_GAIN_MGC
-        BLADERF_GAIN_FASTATTACK_AGC
-        BLADERF_GAIN_SLOWATTACK_AGC
-        BLADERF_GAIN_HYBRID_AGC
+    IF BLADERF_API_VERSION >= 1.91:
+        int bladerf_set_sample_rate(bladerf *dev, bladerf_channel ch, unsigned int rate, unsigned int *actual)
+        int bladerf_get_sample_rate(bladerf *dev, bladerf_channel ch, unsigned int  *rate)
+    ELSE:
+        int bladerf_set_sample_rate(bladerf *dev, bladerf_module module, unsigned int rate, unsigned int  *actual)
+        int bladerf_get_sample_rate(bladerf *dev, bladerf_module module, unsigned int *rate)
 
-    int bladerf_set_gain(bladerf *dev, bladerf_channel ch, bladerf_gain gain)
-    int bladerf_get_gain(bladerf *dev, bladerf_channel ch, bladerf_gain *gain)
-    int bladerf_set_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode mode)
-    int bladerf_get_gain_mode(bladerf *dev, bladerf_channel ch, bladerf_gain_mode *mode)
+    IF BLADERF_API_VERSION >= 1.91:
+        int bladerf_set_bandwidth(bladerf *dev, bladerf_channel ch, unsigned int bandwidth, unsigned int *actual)
+        int bladerf_get_bandwidth(bladerf *dev, bladerf_channel ch, unsigned int *bandwidth)
+    ELSE:
+        int bladerf_set_bandwidth(bladerf *dev, bladerf_module module, unsigned int bandwidth, unsigned int *actual)
+        int bladerf_get_bandwidth(bladerf *dev, bladerf_module module, unsigned int *bandwidth)
 
-    ctypedef unsigned int bladerf_sample_rate
-
-    int bladerf_set_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate rate, bladerf_sample_rate *actual)
-    int bladerf_get_sample_rate(bladerf *dev, bladerf_channel ch, bladerf_sample_rate *rate)
-
-    ctypedef unsigned int bladerf_bandwidth
-
-    int bladerf_set_bandwidth(bladerf *dev, bladerf_channel ch, bladerf_bandwidth bandwidth, bladerf_bandwidth *actual)
-    int bladerf_get_bandwidth(bladerf *dev, bladerf_channel ch, bladerf_bandwidth *bandwidth)
-
-    ctypedef uint64_t bladerf_frequency
-
-    int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency frequency)
-    int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency *frequency)
+    IF BLADERF_API_VERSION >= 2:
+        int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, uint64_t frequency)
+        int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, uint64_t *frequency)
+    ELIF BLADERF_API_VERSION >= 1.91:
+        int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, unsigned int frequency)
+        int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, unsigned int *frequency)
+    ELSE:
+        int bladerf_set_frequency(bladerf *dev, bladerf_module module, unsigned int frequency)
+        int bladerf_get_frequency(bladerf *dev, bladerf_module module, unsigned int *frequency)
 
     ctypedef enum bladerf_format:
         BLADERF_FORMAT_SC16_Q11
@@ -100,7 +117,19 @@ cdef extern from "libbladeRF.h":
         unsigned int actual_count
         uint8_t reserved[32]
 
+    IF BLADERF_API_VERSION >= 1.91:
+        int bladerf_sync_config(bladerf *dev, bladerf_channel_layout layout, bladerf_format format, unsigned int num_buffers, unsigned int buffer_size, unsigned int num_transfers, unsigned int stream_timeout)
+    ELSE:
+        int bladerf_sync_config(bladerf *dev, bladerf_module module, bladerf_format format, unsigned int num_buffers, unsigned int buffer_size, unsigned int num_transfers, unsigned int stream_timeout)
 
-    int bladerf_sync_config(bladerf *dev, bladerf_channel_layout layout, bladerf_format format, unsigned int num_buffers, unsigned int buffer_size, unsigned int num_transfers, unsigned int stream_timeout)
     int bladerf_sync_rx(bladerf *dev, void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
     int bladerf_sync_tx(bladerf *dev, const void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
+
+IF BLADERF_API_VERSION >= 2:
+    ctypedef uint64_t bladerf_frequency
+ELSE:
+    ctypedef unsigned int bladerf_frequency
+
+ctypedef unsigned int bladerf_sample_rate
+ctypedef unsigned int bladerf_bandwidth
+ctypedef int bladerf_gain

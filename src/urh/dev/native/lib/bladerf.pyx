@@ -6,7 +6,7 @@ from libc.stdlib cimport malloc, free
 
 cdef bladerf* _c_device
 
-cdef bladerf_channel CHANNEL = 0
+cdef int CHANNEL = 0
 cpdef bool IS_TX = False
 
 cpdef set_tx(bool is_tx):
@@ -16,31 +16,42 @@ cpdef set_tx(bool is_tx):
 cpdef bool get_tx():
     return IS_TX
 
-cpdef set_channel(bladerf_channel channel):
+cpdef set_channel(int channel):
     global CHANNEL
-    CHANNEL = <bladerf_channel>channel
+    CHANNEL = <int>channel
     return 0
 
-cpdef bladerf_channel get_channel():
+cpdef int get_channel():
     return CHANNEL
 
-cpdef bladerf_channel get_current_bladerf_channel():
-    if IS_TX:
-        return BLADERF_CHANNEL_TX(get_channel())
-    else:
-        return BLADERF_CHANNEL_RX(get_channel())
+IF BLADERF_API_VERSION >= 1.91:
+    cpdef int get_current_bladerf_channel():
+        if IS_TX:
+            return BLADERF_CHANNEL_TX(get_channel())
+        else:
+            return BLADERF_CHANNEL_RX(get_channel())
+ELSE:
+    cpdef bladerf_module get_current_bladerf_channel():
+        if IS_TX:
+            return BLADERF_MODULE_RX
+        else:
+            return BLADERF_MODULE_TX
 
-cpdef bladerf_channel_layout get_current_channel_layout():
-    if get_channel() == 0:
-        if IS_TX:
-            return BLADERF_TX_X1
+IF BLADERF_API_VERSION >= 1.91:
+    cpdef bladerf_channel_layout get_current_channel_layout():
+        if get_channel() == 0:
+            if IS_TX:
+                return BLADERF_TX_X1
+            else:
+                return BLADERF_RX_X1
         else:
-            return BLADERF_RX_X1
-    else:
-        if IS_TX:
-            return BLADERF_TX_X2
-        else:
-            return BLADERF_RX_X2
+            if IS_TX:
+                return BLADERF_TX_X2
+            else:
+                return BLADERF_RX_X2
+ELSE:
+    cpdef bladerf_module get_current_channel_layout():
+        return get_current_bladerf_channel()
 
 cpdef int enable_module():
     return bladerf_enable_module(_c_device, get_current_bladerf_channel(), True)
@@ -78,12 +89,6 @@ cpdef void close():
     disable_module()
     bladerf_close(_c_device)
 
-cpdef size_t get_channel_count(bool tx):
-    if tx:
-        return bladerf_get_channel_count(_c_device, BLADERF_TX)
-    else:
-        return bladerf_get_channel_count(_c_device, BLADERF_RX)
-
 cpdef int set_gain(bladerf_gain gain):
     if not IS_TX:
         # set to manual mode in rx case
@@ -91,17 +96,11 @@ cpdef int set_gain(bladerf_gain gain):
 
     return bladerf_set_gain(_c_device, get_current_bladerf_channel(), gain)
 
-cpdef int get_gain():
-    cdef bladerf_gain result = 0
-
-    err = bladerf_get_gain(_c_device, get_current_bladerf_channel(), &result)
-    if err == 0:
-        return result
-    else:
-        return -42
-
 cpdef int set_gain_mode_to_manual():
-    bladerf_set_gain_mode(_c_device, get_current_bladerf_channel(), BLADERF_GAIN_MGC)
+    IF BLADERF_API_VERSION >= 1.91:
+        bladerf_set_gain_mode(_c_device, get_current_bladerf_channel(), BLADERF_GAIN_MGC)
+    ELSE:
+        bladerf_set_gain_mode(_c_device, get_current_bladerf_channel(), BLADERF_GAIN_MANUAL)
 
 cpdef int set_sample_rate(bladerf_sample_rate sample_rate):
     return bladerf_set_sample_rate(_c_device, get_current_bladerf_channel(), sample_rate, NULL)
@@ -156,3 +155,14 @@ cpdef int16_t[:] receive_sync(connection, unsigned int num_samples):
 cpdef int send_sync(int16_t[::1] samples):
     cdef unsigned int num_samples = len(samples) // 2
     return bladerf_sync_tx(_c_device, &samples[0], num_samples, NULL, 100)
+
+cpdef float get_api_version():
+    cdef s_bladerf_version result
+
+    bladerf_version(&result)
+
+    print(result.major)
+    print(result.minor)
+    print(result.patch)
+
+    print(result.describe.decode())

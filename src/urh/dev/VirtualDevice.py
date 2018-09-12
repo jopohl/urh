@@ -87,39 +87,44 @@ class VirtualDevice(QObject):
             if name in map(str.lower, BackendHandler.DEVICE_NAMES):
                 if name == "hackrf":
                     from urh.dev.native.HackRF import HackRF
-                    self.__dev = HackRF(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
-                                        resume_on_full_receive_buffer)
+                    self.__dev = HackRF(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,
+                                        gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
+                                        resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.replace("-", "") == "rtlsdr":
                     from urh.dev.native.RTLSDR import RTLSDR
-                    self.__dev = RTLSDR(freq, gain, sample_rate, device_number=0,
+                    self.__dev = RTLSDR(freq=freq, gain=gain, srate=sample_rate, device_number=0,
                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.replace("-", "") == "rtltcp":
                     from urh.dev.native.RTLSDRTCP import RTLSDRTCP
-                    self.__dev = RTLSDRTCP(freq, gain, sample_rate, bandwidth, device_number=0,
+                    self.__dev = RTLSDRTCP(freq=freq, gain=gain, srate=sample_rate, bandwidth=bandwidth,
+                                           device_number=0,
                                            resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name == "limesdr":
                     from urh.dev.native.LimeSDR import LimeSDR
-                    self.__dev = LimeSDR(freq, gain, sample_rate, bandwidth, gain,
+                    self.__dev = LimeSDR(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth, gain=gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name == "bladerf":
                     from urh.dev.native.BladeRF import BladeRF
-                    self.__dev = BladeRF(freq, sample_rate, bandwidth, gain,
+                    self.__dev = BladeRF(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth, gain=gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.startswith("airspy"):
                     from urh.dev.native.AirSpy import AirSpy
-                    self.__dev = AirSpy(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain,
+                    self.__dev = AirSpy(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,
+                                        gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.startswith("usrp"):
                     from urh.dev.native.USRP import USRP
-                    self.__dev = USRP(freq, gain, sample_rate, bandwidth, gain,
+                    self.__dev = USRP(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth, gain=gain,
                                       resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.startswith("sdrplay"):
                     from urh.dev.native.SDRPlay import SDRPlay
-                    self.__dev = SDRPlay(freq, gain, bandwidth, gain, if_gain=if_gain,
+                    self.__dev = SDRPlay(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,
+                                         gain=gain, if_gain=if_gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name == "soundcard":
                     from urh.dev.native.SoundCard import SoundCard
-                    self.__dev = SoundCard(sample_rate, resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                    self.__dev = SoundCard(sample_rate=sample_rate,
+                                           resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 else:
                     raise NotImplementedError("Native Backend for {0} not yet implemented".format(name))
 

@@ -24,7 +24,7 @@ class MessageTypeDialog(QDialog):
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()
 
-        self.setWindowTitle(message_type.name)
+        self.setWindowTitle(self.tr("Rules for {}".format(message_type.name)))
         self.orig_message_type = copy.deepcopy(message_type)
         self.message_type = message_type
         self.ruleset_table_model = RulesetTableModel(message_type.ruleset, operator_descriptions, parent=self)

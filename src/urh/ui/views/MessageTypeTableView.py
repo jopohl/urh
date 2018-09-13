@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
-from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
+from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView, QHeaderView
 
 from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
@@ -9,6 +9,7 @@ class MessageTypeTableView(QTableView):
     # TODO: Review methods when integrated
     configureActionTriggered = pyqtSignal()
     auto_message_type_update_triggered = pyqtSignal()
+    configure_message_type_rules_triggered = pyqtSignal(int)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -26,6 +27,10 @@ class MessageTypeTableView(QTableView):
 
     def model(self) -> MessageTypeTableModel:
         return super().model()
+
+    def open_persistent_editor(self, column=1):
+        for row in range(self.model().rowCount()):
+            self.openPersistentEditor(self.model().index(row, column))
 
     def selection_range(self):
         """

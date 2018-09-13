@@ -375,17 +375,6 @@ class TestAnalysisTabGUI(QtTestCase):
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit Protocol Label...", names)
 
-    def test_open_message_type_dialog(self):
-        assert isinstance(self.cfc, CompareFrameController)
-        self.cfc.ui.btnMessagetypeSettings.click()
-        dialog = next((w for w in qApp.topLevelWidgets() if isinstance(w, MessageTypeDialog)), None)
-        self.assertIsNotNone(dialog)
-        self.assertEqual(dialog.windowTitle(), self.cfc.active_message_type.name)
-        dialog.close()
-        sip.delete(dialog)
-        QTest.qSleep(1)
-        QTest.qWait(10)
-
     def test_create_label_dialog(self):
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         dialog = self.cfc.create_protocol_label_dialog()

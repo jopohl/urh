@@ -1,9 +1,12 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
+from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
 
 from urh.signalprocessing.MessageType import MessageType
 
 
-class MessageTypeTableModel(QAbstractListModel):
+class MessageTypeTableModel(QAbstractTableModel):
+    message_type_visibility_changed = pyqtSignal(MessageType)
+    header_labels = ["Name", "Edit"]
+
     def __init__(self, message_types: list, parent=None):
         super().__init__(parent)
         self.message_types = message_types  # type: list[MessageType]
@@ -11,8 +14,13 @@ class MessageTypeTableModel(QAbstractListModel):
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.message_types)
 
-    def columnCount(self, parent: QModelIndex = ...):
-        return 1
+    def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
+        return len(self.header_labels)
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+            return self.header_labels[section]
+        return super().headerData(section, orientation, role)
 
     def update(self):
         self.beginResetModel()
@@ -26,18 +34,29 @@ class MessageTypeTableModel(QAbstractListModel):
         message_type = self.message_types[row]
 
         if role == Qt.DisplayRole:
-            return message_type.name
+            if index.column() == 0:
+                return message_type.name
+            elif index.column() == 1:
+                return ""
         elif role == Qt.CheckStateRole:
-            return message_type.show
+            if index.column() == 0:
+                return message_type.show
+            elif index.column() == 1:
+                return None
+        elif role == Qt.EditRole:
+            if index.column() == 0:
+                return message_type.name
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
         if role == Qt.CheckStateRole:
-            message_type = self.message_types[index.row()]
-            message_type.show = value
-            self.protolabel_visibility_changed.emit(proto_label)
+            if index.column() == 0:
+                message_type = self.message_types[index.row()]
+                message_type.show = value
+                self.message_type_visibility_changed.emit(message_type)
         elif role == Qt.EditRole:
-            message_type = self.message_types[index.row()]
-            message_type.name = value
+            if index.column() == 0 and value:
+                message_type = self.message_types[index.row()]
+                message_type.name = value
 
         return True
 

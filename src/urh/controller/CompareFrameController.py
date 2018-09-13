@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
 
 from urh import constants
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
@@ -22,6 +22,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
+from urh.ui.delegates.MessageTypeButtonDelegate import MessageTypeButtonDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator, util
@@ -101,6 +102,10 @@ class CompareFrameController(QWidget):
         self.ui.tblLabelValues.setModel(self.label_value_model)
         self.ui.tblViewMessageTypes.setModel(self.message_type_table_model)
 
+        self.ui.tblViewMessageTypes.setItemDelegateForColumn(1, MessageTypeButtonDelegate(parent=self.ui.tblViewMessageTypes))
+        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+
         self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
 
@@ -123,6 +128,8 @@ class CompareFrameController(QWidget):
         self.__set_decoding_error_label(None)
 
         self.__set_default_message_type_ui_status()
+
+        self.message_type_table_model.update()
 
     # region properties
 
@@ -261,6 +268,9 @@ class CompareFrameController(QWidget):
 
         self.ui.tblLabelValues.edit_label_action_triggered.connect(self.on_edit_label_action_triggered)
 
+        self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(self.on_configure_message_type_rules_triggered)
+        self.message_type_table_model.modelReset.connect(self.on_message_type_table_model_updated)
+
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
         self.ui.btnNextSearch.clicked.connect(self.on_btn_next_search_clicked)
         self.ui.btnPrevSearch.clicked.connect(self.on_btn_prev_search_clicked)
@@ -296,7 +306,6 @@ class CompareFrameController(QWidget):
         self.ui.cbMessagetypes.currentIndexChanged.connect(self.on_combobox_messagetype_index_changed)
         self.ui.cbMessagetypes.editTextChanged.connect(self.on_message_type_name_edited)
 
-        self.ui.btnMessagetypeSettings.clicked.connect(self.on_btn_message_type_settings_clicked)
         self.selection_timer.timeout.connect(self.on_table_selection_timer_timeout)
         self.ui.treeViewProtocols.selection_changed.connect(self.on_tree_view_selection_changed)
         self.proto_tree_model.item_dropped.connect(self.on_item_in_proto_tree_dropped)
@@ -959,11 +968,9 @@ class CompareFrameController(QWidget):
         if self.active_message_type == self.proto_analyzer.default_message_type:
             self.ui.cbMessagetypes.setEditable(False)
             self.ui.btnRemoveMessagetype.hide()
-            self.ui.btnMessagetypeSettings.hide()
         else:
             self.ui.cbMessagetypes.setEditable(True)
             self.ui.btnRemoveMessagetype.show()
-            self.ui.btnMessagetypeSettings.show()
 
     def update_automatic_assigned_message_types(self):
         self.proto_analyzer.update_auto_message_types()
@@ -1069,9 +1076,9 @@ class CompareFrameController(QWidget):
         self.protocol_model.update()
         self.active_message_type = self.proto_analyzer.default_message_type
 
-    @pyqtSlot()
-    def on_btn_message_type_settings_clicked(self):
-        dialog = MessageTypeDialog(self.active_message_type, parent=self)
+    @pyqtSlot(int)
+    def on_configure_message_type_rules_triggered(self, message_type_index: int):
+        dialog = MessageTypeDialog(self.proto_analyzer.message_types[message_type_index], parent=self)
         dialog.show()
         dialog.finished.connect(self.on_message_type_dialog_finished)
 
@@ -1232,7 +1239,7 @@ class CompareFrameController(QWidget):
         except AttributeError:
             self.show_protocol_label_dialog(0)
 
-    @pyqtSlot(int)
+    @pyqtSlot()
     def on_edit_label_action_triggered(self):
         self.show_protocol_label_dialog()
 
@@ -1457,3 +1464,7 @@ class CompareFrameController(QWidget):
     def on_protocol_updated(self):
         self.set_shown_protocols()
         self.ui.tblViewProtocol.zero_hide_offsets.clear()
+
+    @pyqtSlot()
+    def on_message_type_table_model_updated(self):
+        self.ui.tblViewMessageTypes.open_persistent_editor(column=1)

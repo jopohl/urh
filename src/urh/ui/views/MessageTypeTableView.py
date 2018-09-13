@@ -1,12 +1,12 @@
-import numpy
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
-from PyQt5.QtWidgets import QListView, QAbstractItemView, QMenu, QAction
+from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
-from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
+from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 
-class ProtocolLabelListView(QListView):
+class MessageTypeTableView(QTableView):
+    # TODO: Review methods when integrated
     editActionTriggered = pyqtSignal(int)
     selection_changed = pyqtSignal()
     configureActionTriggered = pyqtSignal()
@@ -26,7 +26,7 @@ class ProtocolLabelListView(QListView):
 
         self.addAction(self.del_rows_action)
 
-    def model(self) -> ProtocolLabelListModel:
+    def model(self) -> MessageTypeTableModel:
         return super().model()
 
     def selection_range(self):

@@ -1165,7 +1165,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="ProtocolLabelListView" name="listViewLabelNames">
+              <widget class="MessageTypeTableView" name="tblViewMessageTypes">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -1197,11 +1197,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ProtocolLabelListView</class>
-   <extends>QListView</extends>
-   <header>urh.ui.views.ProtocolLabelListView.h</header>
-  </customwidget>
-  <customwidget>
    <class>ProtocolTableView</class>
    <extends>QTableView</extends>
    <header>urh.ui.views.ProtocolTableView.h</header>
@@ -1215,6 +1210,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    <class>ProtocolTreeView</class>
    <extends>QTreeView</extends>
    <header>urh.ui.views.ProtocolTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MessageTypeTableView</class>
+   <extends>QTableView</extends>
+   <header>urh.ui.views.MessageTypeTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

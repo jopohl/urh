@@ -12,7 +12,7 @@ from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.models.ParticipantListModel import ParticipantListModel
-from urh.models.ProtocolLabelListModel import ProtocolLabelListModel
+from urh.models.MessageTypeTableModel import MessageTypeTableModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
@@ -92,15 +92,14 @@ class CompareFrameController(QWidget):
 
         self.protocol_model = ProtocolTableModel(self.proto_analyzer, project_manager.participants,
                                                  self)  # type: ProtocolTableModel
-        self.protocol_label_list_model = ProtocolLabelListModel(self.proto_analyzer,
-                                                                controller=self)  # type: ProtocolLabelListModel
+        self.message_type_table_model = MessageTypeTableModel(self.proto_analyzer.message_types)
 
         self.label_value_model = LabelValueTableModel(self.proto_analyzer,
                                                       controller=self)  # type: LabelValueTableModel
         self.ui.tblViewProtocol.setModel(self.protocol_model)
         self.ui.tblViewProtocol.controller = self
         self.ui.tblLabelValues.setModel(self.label_value_model)
-        self.ui.listViewLabelNames.setModel(self.protocol_label_list_model)
+        self.ui.tblViewMessageTypes.setModel(self.message_type_table_model)
 
         self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
@@ -180,7 +179,7 @@ class CompareFrameController(QWidget):
         self.ui.cbMessagetypes.blockSignals(True)
         self.ui.cbMessagetypes.setCurrentIndex(self.proto_analyzer.message_types.index(val))
         self.__set_default_message_type_ui_status()
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.ui.cbMessagetypes.blockSignals(False)
 
         self.update_field_type_combobox()
@@ -273,20 +272,24 @@ class CompareFrameController(QWidget):
         self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
         self.ui.lblClearAlignment.linkActivated.connect(self.on_label_clear_alignment_link_activated)
 
-        self.protocol_label_list_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
-        self.protocol_label_list_model.protocol_label_name_edited.connect(self.label_value_model.update)
-        self.protocol_label_list_model.label_removed.connect(self.on_label_removed)
+        self.label_value_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
+        self.label_value_model.protocol_label_name_edited.connect(self.label_value_model.update)
+        self.label_value_model.label_removed.connect(self.on_label_removed)
 
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)
         self.ui.btnLoadProto.clicked.connect(self.on_btn_load_proto_clicked)
 
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
 
-        self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
-        self.ui.listViewLabelNames.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
-        self.ui.listViewLabelNames.auto_message_type_update_triggered.connect(
+        # TODO: Move edit label action to table
+        #self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
+
+        self.ui.tblViewMessageTypes.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
+        self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
             self.update_automatic_assigned_message_types)
-        self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
+
+        # TODO: Move selection changed label to table
+        #self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
 
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)
 
@@ -312,7 +315,8 @@ class CompareFrameController(QWidget):
 
     def update_field_type_combobox(self):
         field_types = [ft.caption for ft in self.field_types]
-        self.ui.listViewLabelNames.setItemDelegate(ComboBoxDelegate(field_types, is_editable=True, return_index=False))
+        delegate = ComboBoxDelegate(field_types, is_editable=True, return_index=False)
+        self.ui.tblLabelValues.setItemDelegateForColumn(0, delegate)
 
     def set_decoding(self, decoding: Encoding, messages=None):
         """
@@ -358,7 +362,7 @@ class CompareFrameController(QWidget):
                 self.__set_decoding_error_label(None)
 
             self.protocol_model.update()
-            self.protocol_label_list_model.update()
+            self.message_type_table_model.update()
             self.label_value_model.update()
 
             for lbl in self.proto_analyzer.protocol_labels:
@@ -466,17 +470,17 @@ class CompareFrameController(QWidget):
 
         proto_label = message_type.add_protocol_label(start=start, end=end, name=name, type=first_unused_type)
 
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.protocol_model.update()
+        self.label_value_model.update()
 
         if edit_label_name:
             try:
-                index = self.protocol_label_list_model.message_type.index(proto_label)
-                self.ui.listViewLabelNames.edit(self.protocol_label_list_model.createIndex(index, 0))
+                index = self.ui.tblLabelValues.model().index(message_type.index(proto_label), 0)
+                self.ui.tblLabelValues.setCurrentIndex(index)
+                self.ui.tblLabelValues.edit(index)
             except ValueError:
                 pass
-
-        self.label_value_model.update()
 
         return True
 
@@ -620,10 +624,10 @@ class CompareFrameController(QWidget):
         if not ignore_table_model:
             self.protocol_model.update()
 
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
         self.label_value_model.update()
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
 
         if resize_table:
             self.ui.tblViewProtocol.resize_columns()
@@ -992,7 +996,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(int)
     def on_protocol_label_dialog_finished(self, dialog_result: int):
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.update_field_type_combobox()
         self.label_value_model.update()
         self.show_all_cols()
@@ -1028,8 +1032,8 @@ class CompareFrameController(QWidget):
             self.proto_analyzer.auto_assign_labels()
             self.protocol_model.update()
             self.label_value_model.update()
-            self.protocol_label_list_model.update()
-            self.ui.listViewLabelNames.clearSelection()
+            self.message_type_table_model.update()
+            self.ui.tblViewMessageTypes.clearSelection()
 
         self.ui.progressBarLogicAnalyzer.setValue(90)
 
@@ -1210,7 +1214,7 @@ class CompareFrameController(QWidget):
             self.ui.tblViewProtocol.resize_columns()
 
         self.protocol_model.update()
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.label_value_model.update()
 
     @pyqtSlot(ProtocolLabel, MessageType)
@@ -1222,13 +1226,13 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_label_selection_changed(self):
-        rows = [index.row() for index in self.ui.listViewLabelNames.selectedIndexes()]
+        rows = [index.row() for index in self.ui.tblLabelValues.selectedIndexes()]
         if len(rows) == 0:
             return
 
         maxrow = numpy.max(rows)
 
-        label = self.protocol_label_list_model.message_type[maxrow]
+        label = self.message_type_table_model.message_type[maxrow]
         if not label.show:
             return
 
@@ -1245,7 +1249,7 @@ class CompareFrameController(QWidget):
     @pyqtSlot(int)
     def on_undo_stack_index_changed(self, index: int):
         self.protocol_model.update()
-        self.protocol_label_list_model.update()
+        self.message_type_table_model.update()
         self.search()
 
     @pyqtSlot(ProtocolLabel)

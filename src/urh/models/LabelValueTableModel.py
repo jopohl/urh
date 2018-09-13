@@ -1,5 +1,6 @@
 import array
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+
+from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -10,6 +11,10 @@ from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
+    protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
+    protocol_label_name_edited = pyqtSignal()
+    label_removed = pyqtSignal(ProtocolLabel)
+
     header_labels = ["Name", 'Display format', 'Order [Bit/Byte]', 'Value']
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
@@ -133,20 +138,25 @@ class LabelValueTableModel(QAbstractTableModel):
                                "</ul>")
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole:
+        if role == Qt.EditRole and index.column() in (0, 1, 2):
             row = index.row()
             lbl = self.display_labels[row]
-            if index.column() == 1 or index.column() == 2:
-                if index.column() == 1:
-                    lbl.display_format_index = value
-                elif index.column() == 2:
-                    lbl.display_order_str = value
-                self.dataChanged.emit(self.index(row, 0),
-                                      self.index(row, self.columnCount()))
+
+            if index.column() == 0:
+                lbl.name = value
+                new_field_type = self.controller.field_types_by_caption.get(value, None)
+                self.controller.active_message_type.change_field_type_of_label(lbl, new_field_type)
+            elif index.column() == 1:
+                lbl.display_format_index = value
+            elif index.column() == 2:
+                lbl.display_order_str = value
+
+            self.dataChanged.emit(self.index(row, 0),
+                                  self.index(row, self.columnCount()))
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        if index.column() == 1 or index.column() == 2:
+        if index.column() in (0, 1, 2):
             flags |= Qt.ItemIsEditable
 
         return flags

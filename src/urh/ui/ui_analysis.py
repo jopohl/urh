@@ -551,16 +551,16 @@ class Ui_TabAnalysis(object):
         self.lblLabelValues.setAlignment(QtCore.Qt.AlignCenter)
         self.lblLabelValues.setObjectName("lblLabelValues")
         self.gridLayout.addWidget(self.lblLabelValues, 0, 1, 1, 1)
-        self.listViewLabelNames = ProtocolLabelListView(self.layoutWidget2)
+        self.tblViewMessageTypes = MessageTypeTableView(self.layoutWidget2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listViewLabelNames.sizePolicy().hasHeightForWidth())
-        self.listViewLabelNames.setSizePolicy(sizePolicy)
-        self.listViewLabelNames.setAcceptDrops(False)
-        self.listViewLabelNames.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.listViewLabelNames.setObjectName("listViewLabelNames")
-        self.gridLayout.addWidget(self.listViewLabelNames, 2, 0, 1, 1)
+        sizePolicy.setHeightForWidth(self.tblViewMessageTypes.sizePolicy().hasHeightForWidth())
+        self.tblViewMessageTypes.setSizePolicy(sizePolicy)
+        self.tblViewMessageTypes.setAcceptDrops(False)
+        self.tblViewMessageTypes.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.tblViewMessageTypes.setObjectName("tblViewMessageTypes")
+        self.gridLayout.addWidget(self.tblViewMessageTypes, 2, 0, 1, 1)
         self.verticalLayout_4.addLayout(self.gridLayout)
         self.verticalLayout_5.addWidget(self.splitter_2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -625,10 +625,10 @@ class Ui_TabAnalysis(object):
         self.btnRemoveMessagetype.setText(_translate("TabAnalysis", "..."))
         self.label.setText(_translate("TabAnalysis", "Message type:"))
         self.lblLabelValues.setText(_translate("TabAnalysis", "Label values for message"))
-        self.listViewLabelNames.setToolTip(_translate("TabAnalysis", "Manage your estimations for protocol fields here. To add custom field types use Rightclick -> Edit."))
+        self.tblViewMessageTypes.setToolTip(_translate("TabAnalysis", "Manage your estimations for protocol fields here. To add custom field types use Rightclick -> Edit."))
 
 from urh.ui.views.LabelValueTableView import LabelValueTableView
-from urh.ui.views.ProtocolLabelListView import ProtocolLabelListView
+from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.ui.views.ProtocolTableView import ProtocolTableView
 from urh.ui.views.ProtocolTreeView import ProtocolTreeView
 from . import urh_rc

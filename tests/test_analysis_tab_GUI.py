@@ -273,21 +273,21 @@ class TestAnalysisTabGUI(QtTestCase):
     def test_label_selection_changed(self):
         self.assertEqual(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
         self.cfc.add_protocol_label(40, 60, 2, 0, edit_label_name=False)
-        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
+        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 1)
         self.cfc.ui.listViewLabelNames.selectAll()
         self.assertEqual(len(self.cfc.ui.listViewLabelNames.selectedIndexes()), 1)
         self.assertGreater(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
 
     def test_remove_label(self):
         self.cfc.add_protocol_label(10, 20, 2, 0, edit_label_name=False)
-        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 1)
-        self.cfc.protocol_label_list_model.delete_label_at(0)
-        self.assertEqual(self.cfc.protocol_label_list_model.rowCount(), 0)
+        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 1)
+        self.cfc.message_type_table_model.delete_label_at(0)
+        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 0)
 
     def test_label_tooltip(self):
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.add_protocol_label(0, 16, 2, 0, edit_label_name=False)
-        model = self.cfc.protocol_label_list_model
+        model = self.cfc.message_type_table_model
         model.setData(model.index(0, 0), "test", Qt.EditRole)
         table_model = self.cfc.protocol_model
         for i in range(0, 16):

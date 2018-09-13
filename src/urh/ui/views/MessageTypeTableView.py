@@ -7,7 +7,6 @@ from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 class MessageTypeTableView(QTableView):
     # TODO: Review methods when integrated
-    editActionTriggered = pyqtSignal(int)
     selection_changed = pyqtSignal()
     configureActionTriggered = pyqtSignal()
     auto_message_type_update_triggered = pyqtSignal()
@@ -50,9 +49,6 @@ class MessageTypeTableView(QTableView):
         index = self.indexAt(pos)
         min_row, max_row = self.selection_range()
 
-        edit_action = menu.addAction("Edit Protocol Label...")
-        edit_action.setIcon(QIcon.fromTheme("configure"))
-
         assign_actions = []
         message_type_names = []
 
@@ -85,9 +81,7 @@ class MessageTypeTableView(QTableView):
 
         action = menu.exec_(self.mapToGlobal(pos))
 
-        if action == edit_action:
-            self.editActionTriggered.emit(index.row())
-        elif action == show_all_action:
+        if action == show_all_action:
             self.model().showAll()
         elif action == hide_all_action:
             self.model().hideAll()

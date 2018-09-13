@@ -11,7 +11,7 @@ from urh.ui.delegates.SectionComboBoxDelegate import SectionComboBoxDelegate
 
 
 class LabelValueTableView(QTableView):
-    edit_label_action_triggered = pyqtSignal(int)
+    edit_label_action_triggered = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -40,4 +40,4 @@ class LabelValueTableView(QTableView):
 
     @pyqtSlot()
     def on_edit_label_action_triggered(self):
-        self.edit_label_action_triggered.emit(-1)
+        self.edit_label_action_triggered.emit()

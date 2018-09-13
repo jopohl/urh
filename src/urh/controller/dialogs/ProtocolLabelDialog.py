@@ -24,7 +24,7 @@ class ProtocolLabelDialog(QDialog):
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
-    def __init__(self, preselected_index, message: Message, viewtype: int, parent=None):
+    def __init__(self, message: Message, viewtype: int, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
@@ -44,8 +44,6 @@ class ProtocolLabelDialog(QDialog):
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
-        if preselected_index >= 0:
-            self.ui.tblViewProtoLabels.selectRow(preselected_index)
         self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

@@ -18,7 +18,7 @@ class TestCRCGUIIntegration(QtTestCase):
         label_value_model = self.form.compare_frame_controller.label_value_model
 
         # Configure Normal Checksum and verify its wrong
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
+        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
         proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
@@ -33,7 +33,7 @@ class TestCRCGUIIntegration(QtTestCase):
                          constants.BG_COLOR_WRONG)
 
         # Configure WSP and verify its correct
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
+        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
         checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCategory.setCurrentIndex(1)
@@ -59,7 +59,7 @@ class TestCRCGUIIntegration(QtTestCase):
         label_value_model = self.form.compare_frame_controller.label_value_model
 
         # Configure Normal Checksum and verify its wrong
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
+        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
         proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
@@ -76,7 +76,7 @@ class TestCRCGUIIntegration(QtTestCase):
                          constants.BG_COLOR_WRONG)
 
         # Configure CC1101 and verify its correct
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog(0)
+        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
         checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCRCFunction.setCurrentText("CC1101")

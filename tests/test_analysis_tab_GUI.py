@@ -388,7 +388,7 @@ class TestAnalysisTabGUI(QtTestCase):
 
     def test_create_label_dialog(self):
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
-        dialog = self.cfc.create_protocol_label_dialog(0)
+        dialog = self.cfc.create_protocol_label_dialog()
         self.assertIsNotNone(dialog)
 
     def test_alignment(self):

@@ -567,8 +567,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_edit_labels_clicked(self):
         view_type = self.ui.cbViewType.currentIndex()
-        protocol_label_dialog = ProtocolLabelDialog(preselected_index=0,
-                                                    message=self.ui.tblViewMessage.selected_message,
+        protocol_label_dialog = ProtocolLabelDialog(message=self.ui.tblViewMessage.selected_message,
                                                     viewtype=view_type, parent=self)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 

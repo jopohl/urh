@@ -281,9 +281,6 @@ class CompareFrameController(QWidget):
 
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
 
-        # TODO: Move edit label action to table
-        #self.ui.listViewLabelNames.editActionTriggered.connect(self.on_edit_label_action_triggered)
-
         self.ui.tblViewMessageTypes.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
         self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
             self.update_automatic_assigned_message_types)
@@ -643,7 +640,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
-    def create_protocol_label_dialog(self, preselected_index: int):
+    def create_protocol_label_dialog(self):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
             longest_message = max(
@@ -651,15 +648,14 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        protocol_label_dialog = ProtocolLabelDialog(preselected_index=preselected_index,
-                                                    message=longest_message, viewtype=view_type, parent=self)
+        protocol_label_dialog = ProtocolLabelDialog(message=longest_message, viewtype=view_type, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
         return protocol_label_dialog
 
-    def show_protocol_label_dialog(self, preselected_index: int):
-        dialog = self.create_protocol_label_dialog(preselected_index)
+    def show_protocol_label_dialog(self):
+        dialog = self.create_protocol_label_dialog()
         dialog.exec_()
 
     def search(self):
@@ -1262,8 +1258,8 @@ class CompareFrameController(QWidget):
             self.show_protocol_label_dialog(0)
 
     @pyqtSlot(int)
-    def on_edit_label_action_triggered(self, preselected_index: int):
-        self.show_protocol_label_dialog(preselected_index)
+    def on_edit_label_action_triggered(self):
+        self.show_protocol_label_dialog()
 
     @pyqtSlot()
     def on_protocol_view_changed(self):

@@ -285,9 +285,6 @@ class CompareFrameController(QWidget):
         self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
             self.update_automatic_assigned_message_types)
 
-        # TODO: Move selection changed label to table
-        #self.ui.listViewLabelNames.selection_changed.connect(self.on_label_selection_changed)
-
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)
 
         self.project_manager.project_updated.connect(self.on_project_updated)
@@ -1219,28 +1216,6 @@ class CompareFrameController(QWidget):
             if msg.message_type == message_type:
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()
-
-    @pyqtSlot()
-    def on_label_selection_changed(self):
-        rows = [index.row() for index in self.ui.tblLabelValues.selectedIndexes()]
-        if len(rows) == 0:
-            return
-
-        maxrow = numpy.max(rows)
-
-        label = self.message_type_table_model.message_type[maxrow]
-        if not label.show:
-            return
-
-        try:
-            message = next(msg for msg in self.proto_analyzer.messages if label if msg.message_type)
-        except StopIteration:
-            # No messages present
-            return
-        start, end = message.get_label_range(label, self.protocol_model.proto_view, True)
-        indx = self.protocol_model.index(0, int((start + end) / 2))
-
-        self.ui.tblViewProtocol.scrollTo(indx)
 
     @pyqtSlot(int)
     def on_undo_stack_index_changed(self, index: int):

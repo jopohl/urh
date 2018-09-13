@@ -7,7 +7,6 @@ from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 class MessageTypeTableView(QTableView):
     # TODO: Review methods when integrated
-    selection_changed = pyqtSignal()
     configureActionTriggered = pyqtSignal()
     auto_message_type_update_triggered = pyqtSignal()
 
@@ -97,7 +96,3 @@ class MessageTypeTableView(QTableView):
         min_row, max_row = self.selection_range()
         if min_row > -1:
             self.model().delete_labels_at(min_row, max_row)
-
-    def selectionChanged(self, QItemSelection, QItemSelection_1):
-        self.selection_changed.emit()
-        super().selectionChanged(QItemSelection, QItemSelection_1)

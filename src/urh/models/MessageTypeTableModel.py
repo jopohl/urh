@@ -6,6 +6,7 @@ from urh.signalprocessing.MessageType import MessageType
 class MessageTypeTableModel(QAbstractTableModel):
     message_type_visibility_changed = pyqtSignal(MessageType)
     message_type_removed = pyqtSignal(MessageType)
+    message_type_name_edited = pyqtSignal(str)
     header_labels = ["Name", "Edit"]
 
     def __init__(self, message_types: list, parent=None):
@@ -61,6 +62,7 @@ class MessageTypeTableModel(QAbstractTableModel):
             if index.column() == 0 and value:
                 message_type = self.message_types[index.row()]
                 message_type.name = value
+                self.message_type_name_edited.emit(value)
 
         return True
 

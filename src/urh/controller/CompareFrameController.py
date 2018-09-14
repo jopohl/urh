@@ -4,9 +4,9 @@ from datetime import datetime
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
-    QItemSelectionRange
+    QItemSelectionRange, QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView, qApp
 
 from urh import constants
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
@@ -182,7 +182,6 @@ class CompareFrameController(QWidget):
 
         self.__selected_message_type = val
 
-        self.message_type_table_model.update()
         sel = QItemSelection()
         i = self.proto_analyzer.message_types.index(val)
         sel.append(QItemSelectionRange(self.message_type_table_model.index(i, 0)))
@@ -277,7 +276,7 @@ class CompareFrameController(QWidget):
         self.label_value_model.label_removed.connect(self.on_label_removed)
         self.label_value_model.label_color_changed.connect(self.on_label_color_changed)
 
-        self.ui.tblViewMessageTypes.selection_changed.connect(self.on_tbl_view_message_types_selection_changed)
+        self.ui.tblViewMessageTypes.selectionModel().currentRowChanged.connect(self.on_tbl_view_message_current_row_changed)
         self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(
             self.on_configure_message_type_rules_triggered)
         self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
@@ -286,6 +285,7 @@ class CompareFrameController(QWidget):
         self.message_type_table_model.modelReset.connect(self.on_message_type_table_model_updated)
         self.message_type_table_model.message_type_removed.connect(self.on_message_type_removed)
         self.message_type_table_model.message_type_visibility_changed.connect(self.on_message_type_visibility_changed)
+        self.message_type_table_model.message_type_name_edited.connect(self.on_message_type_name_edited)
 
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
         self.ui.btnNextSearch.clicked.connect(self.on_btn_next_search_clicked)
@@ -1409,13 +1409,12 @@ class CompareFrameController(QWidget):
 
         self.set_show_only_status()
 
-    @pyqtSlot()
-    def on_tbl_view_message_types_selection_changed(self):
-        selection = self.ui.tblViewMessageTypes.selectionModel().selectedIndexes()
-        if len(selection) == 0:
+    @pyqtSlot(QModelIndex, QModelIndex)
+    def on_tbl_view_message_current_row_changed(self, current: QModelIndex, previous: QModelIndex):
+        row = current.row()
+        if row == -1:
             return
 
-        row = min((index.row() for index in selection))
         self.active_message_type = self.proto_analyzer.message_types[row]
         self.ui.lblLabelValues.setText("Labels of {}".format(self.active_message_type.name))
         self.label_value_model.show_label_values = False
@@ -1473,3 +1472,8 @@ class CompareFrameController(QWidget):
     @pyqtSlot(MessageType)
     def on_message_type_visibility_changed(self, message_type: MessageType):
         self.set_message_type_visibility(message_type)
+
+    @pyqtSlot(str)
+    def on_message_type_name_edited(self, new_name: str):
+        if self.ui.lblLabelValues.text().startswith("Labels of"):
+            self.ui.lblLabelValues.setText("Labels of {}".format(new_name))

@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
-from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView, QHeaderView
+from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
 from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
@@ -17,7 +17,7 @@ class MessageTypeTableView(QTableView):
         self.setDragEnabled(True)
         self.setDropIndicatorShown(True)
 
-        self.del_rows_action = QAction("Delete selected labels", self)
+        self.del_rows_action = QAction("Delete selected message types", self)
         self.del_rows_action.setShortcut(QKeySequence.Delete)
         self.del_rows_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.del_rows_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
@@ -58,21 +58,7 @@ class MessageTypeTableView(QTableView):
 
         if min_row > -1:
             menu.addAction(self.del_rows_action)
-            message_type_names = [lset.name for lset in self.model().controller.proto_analyzer.message_types]
-
-            try:
-                proto_label = self.model().get_label_at(index.row())
-                avail_message_types = []
-                for message_type in self.model().controller.proto_analyzer.message_types:
-                    if proto_label not in message_type:
-                        avail_message_types.append(message_type)
-
-                if avail_message_types:
-                    assign_menu = menu.addMenu("Copy label(s) to message type")
-                    assign_menu.setIcon(QIcon.fromTheme("edit-copy"))
-                    assign_actions = [assign_menu.addAction(message_type.name) for message_type in avail_message_types]
-            except IndexError:
-                pass
+            message_type_names = [mt.name for mt in self.model().message_types]
 
         menu.addSeparator()
         show_all_action = menu.addAction("Show all")
@@ -100,4 +86,4 @@ class MessageTypeTableView(QTableView):
     def delete_rows(self):
         min_row, max_row = self.selection_range()
         if min_row > -1:
-            self.model().delete_labels_at(min_row, max_row)
+            self.model().delete_message_types_at(min_row, max_row)

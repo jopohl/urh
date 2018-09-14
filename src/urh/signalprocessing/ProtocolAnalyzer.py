@@ -57,12 +57,12 @@ class ProtocolAnalyzer(object):
 
         self.decoder = Encoding(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol
 
-        self.message_types = [MessageType("default")]
+        self.message_types = [MessageType("Default")]
 
     @property
     def default_message_type(self) -> MessageType:
         if len(self.message_types) == 0:
-            self.message_types.append(MessageType("default"))
+            self.message_types.append(MessageType("Default"))
 
         return self.message_types[0]
 

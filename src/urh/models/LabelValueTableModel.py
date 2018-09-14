@@ -154,6 +154,12 @@ class LabelValueTableModel(QAbstractTableModel):
             self.dataChanged.emit(self.index(row, 0),
                                   self.index(row, self.columnCount()))
 
+    def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
+        # todo: move action from MessageTypeTableView to LabelValueTableView
+        for lbl in self.message_type[start:end + 1]:
+            self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
+        self.controller.updateUI(resize_table=False)
+
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
         if index.column() in (0, 1, 2):

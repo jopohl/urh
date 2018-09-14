@@ -156,7 +156,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
         self.cfc.ui.btnAddMessagetype.click()
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 2)
-        self.cfc.ui.btnRemoveMessagetype.click()
+        self.cfc.message_type_table_model.delete_message_type_at(1)
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):

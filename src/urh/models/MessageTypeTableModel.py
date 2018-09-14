@@ -5,6 +5,7 @@ from urh.signalprocessing.MessageType import MessageType
 
 class MessageTypeTableModel(QAbstractTableModel):
     message_type_visibility_changed = pyqtSignal(MessageType)
+    message_type_removed = pyqtSignal(MessageType)
     header_labels = ["Name", "Edit"]
 
     def __init__(self, message_types: list, parent=None):
@@ -76,22 +77,17 @@ class MessageTypeTableModel(QAbstractTableModel):
     def get_label_at(self, row):
         return self.message_type[row]
 
-    def delete_label_at(self, label_id: int):
+    def delete_message_type_at(self, index: int):
         try:
-            lbl = self.message_type[label_id]
-            self.message_type.remove(lbl)
-            self.label_removed.emit(lbl)
+            message_type = self.message_types[index]
+            self.message_types.remove(message_type)
+            self.message_type_removed.emit(message_type)
         except IndexError:
             pass
 
-    def delete_labels_at(self, start: int, end: int):
+    def delete_message_types_at(self, start: int, end: int):
         for row in range(end, start - 1, -1):
-            self.delete_label_at(row)
-
-    def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
-        for lbl in self.message_type[start:end + 1]:
-            self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
-        self.controller.updateUI(resize_table=False)
+            self.delete_message_type_at(row)
 
     def flags(self, index):
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable

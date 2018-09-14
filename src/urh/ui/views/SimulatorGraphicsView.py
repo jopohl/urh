@@ -70,7 +70,7 @@ class SimulatorGraphicsView(QGraphicsView):
         if hasattr(self.sender(), "data") and self.sender().data():
             message_type = self.sender().data()
         else:
-            message_type = MessageType("default")
+            message_type = MessageType("Default")
         ref_item = self.context_menu_item
         if isinstance(ref_item, RuleConditionItem):
             position = QAbstractItemView.OnItem

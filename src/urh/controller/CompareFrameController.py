@@ -286,6 +286,8 @@ class CompareFrameController(QWidget):
         self.label_value_model.protocol_label_name_edited.connect(self.label_value_model.update)
         self.label_value_model.label_removed.connect(self.on_label_removed)
 
+        self.message_type_table_model.message_type_removed.connect(self.on_message_type_removed)
+
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)
         self.ui.btnLoadProto.clicked.connect(self.on_btn_load_proto_clicked)
 
@@ -301,7 +303,6 @@ class CompareFrameController(QWidget):
         self.participant_list_model.show_state_changed.connect(self.on_participant_show_state_changed)
 
         self.ui.btnAddMessagetype.clicked.connect(self.on_btn_new_message_type_clicked)
-        self.ui.btnRemoveMessagetype.clicked.connect(self.on_btn_remove_message_type_clicked)
 
         self.ui.cbMessagetypes.currentIndexChanged.connect(self.on_combobox_messagetype_index_changed)
         self.ui.cbMessagetypes.editTextChanged.connect(self.on_message_type_name_edited)
@@ -496,7 +497,6 @@ class CompareFrameController(QWidget):
         for msg in selected_messages:
             msg.message_type = self.active_message_type
         self.ui.cbMessagetypes.setFocus()
-        self.ui.btnRemoveMessagetype.show()
         self.protocol_model.update()
 
     def remove_protocol(self, protocol: ProtocolAnalyzer):
@@ -967,10 +967,8 @@ class CompareFrameController(QWidget):
     def __set_default_message_type_ui_status(self):
         if self.active_message_type == self.proto_analyzer.default_message_type:
             self.ui.cbMessagetypes.setEditable(False)
-            self.ui.btnRemoveMessagetype.hide()
         else:
             self.ui.cbMessagetypes.setEditable(True)
-            self.ui.btnRemoveMessagetype.show()
 
     def update_automatic_assigned_message_types(self):
         self.proto_analyzer.update_auto_message_types()
@@ -1065,16 +1063,6 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_btn_search_clicked(self):
         self.search()
-
-    @pyqtSlot()
-    def on_btn_remove_message_type_clicked(self):
-        for msg in self.proto_analyzer.messages:
-            if msg.message_type == self.active_message_type:
-                msg.message_type = self.proto_analyzer.default_message_type
-        self.proto_analyzer.message_types.remove(self.active_message_type)
-        self.fill_message_type_combobox()
-        self.protocol_model.update()
-        self.active_message_type = self.proto_analyzer.default_message_type
 
     @pyqtSlot(int)
     def on_configure_message_type_rules_triggered(self, message_type_index: int):
@@ -1468,3 +1456,11 @@ class CompareFrameController(QWidget):
     @pyqtSlot()
     def on_message_type_table_model_updated(self):
         self.ui.tblViewMessageTypes.open_persistent_editor(column=1)
+
+    @pyqtSlot(MessageType)
+    def on_message_type_removed(self, message_type: MessageType):
+        for msg in self.proto_analyzer.messages:
+            if msg.message_type == message_type:
+                msg.message_type = self.proto_analyzer.default_message_type
+        self.message_type_table_model.update()
+        self.active_message_type = self.proto_analyzer.default_message_type

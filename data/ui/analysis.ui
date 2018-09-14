@@ -1057,20 +1057,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QToolButton" name="btnRemoveMessagetype">
-                 <property name="toolTip">
-                  <string>Delete current message type</string>
-                 </property>
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                 <property name="icon">
-                  <iconset theme="list-remove">
-                   <normaloff>.</normaloff>.</iconset>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </item>
              <item row="0" column="0">

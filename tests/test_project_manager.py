@@ -172,8 +172,8 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
 
     def __set_label_name(self, index: int, name: str):
-        list_model = self.form.compare_frame_controller.ui.listViewLabelNames.model()
-        list_model.setData(list_model.createIndex(index, 0), name, role=Qt.EditRole)
+        model = self.form.compare_frame_controller.ui.tblLabelValues.model()
+        model.setData(model.createIndex(index, 0), name, role=Qt.EditRole)
 
     def test_project_dialog(self):
         frequency = 1e9

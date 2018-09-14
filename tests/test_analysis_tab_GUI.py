@@ -270,24 +270,16 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.groups[1].name, "New Group")
         self.assertEqual(self.cfc.groups[1].num_protocols, 0)
 
-    def test_label_selection_changed(self):
-        self.assertEqual(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
-        self.cfc.add_protocol_label(40, 60, 2, 0, edit_label_name=False)
-        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 1)
-        self.cfc.ui.listViewLabelNames.selectAll()
-        self.assertEqual(len(self.cfc.ui.listViewLabelNames.selectedIndexes()), 1)
-        self.assertGreater(self.cfc.ui.tblViewProtocol.horizontalScrollBar().value(), 0)
-
     def test_remove_label(self):
         self.cfc.add_protocol_label(10, 20, 2, 0, edit_label_name=False)
-        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 1)
-        self.cfc.message_type_table_model.delete_label_at(0)
-        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 0)
+        self.assertEqual(self.cfc.label_value_model.rowCount(), 1)
+        self.cfc.label_value_model.delete_label_at(0)
+        self.assertEqual(self.cfc.label_value_model.rowCount(), 0)
 
     def test_label_tooltip(self):
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.add_protocol_label(0, 16, 2, 0, edit_label_name=False)
-        model = self.cfc.message_type_table_model
+        model = self.cfc.label_value_model
         model.setData(model.index(0, 0), "test", Qt.EditRole)
         table_model = self.cfc.protocol_model
         for i in range(0, 16):
@@ -319,32 +311,32 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(model.rowCount(), 0)
         self.cfc.add_protocol_label(45, 56, 0, 0, edit_label_name=False)
         self.assertEqual(model.rowCount(), 1)
-        self.assertEqual(model.data(model.index(0, 1)), "Bit")
-        self.assertEqual(model.data(model.index(0, 3)), "000011001110")
+        self.assertEqual(model.data(model.index(0, 2)), "Bit")
+        self.assertEqual(model.data(model.index(0, 4)), "000011001110")
 
-        model.setData(model.index(0, 1), 1, role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 1)), "Hex")
-        self.assertEqual(model.data(model.index(0, 3)), "0ce")
+        model.setData(model.index(0, 2), 1, role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 2)), "Hex")
+        self.assertEqual(model.data(model.index(0, 4)), "0ce")
 
-        model.setData(model.index(0, 1), 2, role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 1)), "ASCII")
+        model.setData(model.index(0, 2), 2, role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 2)), "ASCII")
 
-        model.setData(model.index(0, 1), 3, role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 1)), "Decimal")
-        self.assertEqual(model.data(model.index(0, 3)), "206")
+        model.setData(model.index(0, 2), 3, role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 2)), "Decimal")
+        self.assertEqual(model.data(model.index(0, 4)), "206")
 
-        model.setData(model.index(0, 1), 4, role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 1)), "BCD")
-        self.assertEqual(model.data(model.index(0, 3)), "0??")
+        model.setData(model.index(0, 2), 4, role=Qt.EditRole)
+        self.assertEqual(model.data(model.index(0, 2)), "BCD")
+        self.assertEqual(model.data(model.index(0, 4)), "0??")
 
-        self.assertIn("display type", model.data(model.index(0, 1), Qt.ToolTipRole))
-        self.assertIn("bit order", model.data(model.index(0, 2), Qt.ToolTipRole))
+        self.assertIn("display type", model.data(model.index(0, 2), Qt.ToolTipRole))
+        self.assertIn("bit order", model.data(model.index(0, 3), Qt.ToolTipRole))
 
         lbl = self.cfc.proto_analyzer.default_message_type[0]
         self.assertEqual(lbl.display_endianness, "big")
-        model.setData(model.index(0, 2), "MSB/LE", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "MSB/LE", role=Qt.EditRole)
         self.assertEqual(lbl.display_endianness, "little")
-        model.setData(model.index(0, 2), "LSB/BE", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "LSB/BE", role=Qt.EditRole)
         self.assertEqual(lbl.display_endianness, "big")
 
     def test_label_list_view(self):
@@ -364,16 +356,16 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.message_type_table_model.rowCount(), 2)
 
         self.cfc.ui.tblViewProtocol.selectRow(0)
-        self.assertEqual(self.cfc.ui.listViewLabelNames.model().rowCount(), 1)
+        self.assertEqual(self.cfc.ui.tblLabelValues.model().rowCount(), 1)
 
         timer = QTimer(self.cfc)
         timer.setSingleShot(True)
         timer.timeout.connect(on_timeout)
         timer.start(1)
-        self.cfc.ui.listViewLabelNames.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
+        self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]
-        self.assertIn("Edit Protocol Label...", names)
+        self.assertIn("Edit...", names)
 
     def test_create_label_dialog(self):
         self.cfc.add_protocol_label(10, 20, 0, 0, False)

@@ -1,4 +1,5 @@
 from PyQt5.QtCore import Qt
+from urh.controller.MainController import MainController
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -29,7 +30,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 2), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
                          constants.BG_COLOR_WRONG)
 
         # Configure WSP and verify its correct
@@ -45,7 +46,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 2), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
                          constants.BG_COLOR_CORRECT)
 
     def test_cc1101_crc(self):
@@ -72,7 +73,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 2), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
                          constants.BG_COLOR_WRONG)
 
         # Configure CC1101 and verify its correct
@@ -93,7 +94,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 2), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
                          constants.BG_COLOR_CORRECT)
 
     def test_checksum_in_generation_tab(self):
@@ -102,8 +103,8 @@ class TestCRCGUIIntegration(QtTestCase):
         checksum_fieldtype = next(
             ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
 
-        label_list_model = self.form.compare_frame_controller.protocol_label_list_model
-        label_list_model.setData(label_list_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole)
+        label_model = self.form.compare_frame_controller.label_value_model
+        label_model.setData(label_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole)
 
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(1)

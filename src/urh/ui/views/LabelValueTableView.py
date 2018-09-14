@@ -39,7 +39,7 @@ class LabelValueTableView(QTableView):
     def create_context_menu(self):
         menu = QMenu()
         if self.model().rowCount() > 0:
-            edit_label_action = menu.addAction(self.tr("Edit labels..."))
+            edit_label_action = menu.addAction(self.tr("Edit..."))
             edit_label_action.setIcon(QIcon.fromTheme("configure"))
             edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
             menu.addSeparator()

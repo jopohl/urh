@@ -171,9 +171,21 @@ class LabelValueTableModel(QAbstractTableModel):
 
     def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
         # todo: add drag an drop from labels to message type
-        for lbl in self.message_type[start:end + 1]:
+        for lbl in self.display_labels[start:end + 1]:
             self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
         self.controller.updateUI(resize_table=False)
+
+    def delete_label_at(self, index: int):
+        try:
+            lbl = self.display_labels[index]
+            self.display_labels.remove(lbl)
+            self.label_removed.emit(lbl)
+        except IndexError:
+            pass
+
+    def delete_labels_at(self, start: int, end: int):
+        for row in range(end, start - 1, -1):
+            self.delete_label_at(row)
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)

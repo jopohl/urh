@@ -64,9 +64,6 @@ class MessageTypeTableModel(QAbstractTableModel):
 
         return True
 
-    def get_label_at(self, row):
-        return self.message_type[row]
-
     def delete_message_type_at(self, index: int):
         try:
             message_type = self.message_types[index]

@@ -26,7 +26,6 @@ class LabelValueTableView(QTableView):
                               ("Little Endian (LE)", [bo + "/LE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS])])
 
         self.setItemDelegateForColumn(3, SectionComboBoxDelegate(orders, parent=self))
-        self.setEditTriggers(QTableView.AllEditTriggers)
 
         self.del_rows_action = QAction("Delete selected labels", self)
         self.del_rows_action.setShortcut(QKeySequence.Delete)
@@ -36,13 +35,31 @@ class LabelValueTableView(QTableView):
 
         self.addAction(self.del_rows_action)
 
+    @property
+    def selected_min_max_row(self):
+        selected = self.selectionModel().selection()
+        if selected.isEmpty():
+            return -1, -1
+        min_row = min(rng.top() for rng in selected)
+        max_row = max(rng.bottom() for rng in selected)
+        return min_row, max_row
+
     def create_context_menu(self):
         menu = QMenu()
-        if self.model().rowCount() > 0:
+        min_row, max_row = self.selected_min_max_row
+        if self.model().rowCount() > 0 and min_row > -1:
             edit_label_action = menu.addAction(self.tr("Edit..."))
             edit_label_action.setIcon(QIcon.fromTheme("configure"))
             edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
-            menu.addSeparator()
+
+            if len(self.model().controller.proto_analyzer.message_types) > 1:
+                msg_type_menu = menu.addMenu("Copy to message type")
+                for i, message_type in enumerate(self.model().controller.proto_analyzer.message_types):
+                    if message_type != self.model().controller.active_message_type:
+                        msg_type_action = msg_type_menu.addAction(message_type.name)
+                        msg_type_action.setData(i)
+                        msg_type_action.triggered.connect(self.on_copy_to_msg_type_action_triggered)
+
             menu.addAction(self.del_rows_action)
         menu.addSeparator()
         configure_field_types_action = menu.addAction("Configure field types...")
@@ -58,14 +75,15 @@ class LabelValueTableView(QTableView):
         return super().model()
 
     def delete_rows(self):
-        selected = self.selectionModel().selection()
-        if selected.isEmpty():
-            return
-        min_row = min(rng.top() for rng in selected)
-        max_row = max(rng.bottom() for rng in selected)
-
-        self.model().delete_labels_at(min_row, max_row)
+        min_row, max_row = self.selected_min_max_row
+        if min_row > -1:
+            self.model().delete_labels_at(min_row, max_row)
 
     @pyqtSlot()
     def on_edit_label_action_triggered(self):
         self.edit_label_action_triggered.emit()
+
+    @pyqtSlot()
+    def on_copy_to_msg_type_action_triggered(self):
+        min_row, max_row = self.selected_min_max_row
+        self.model().add_labels_to_message_type(min_row, max_row, int(self.sender().data()))

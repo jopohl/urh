@@ -170,9 +170,9 @@ class LabelValueTableModel(QAbstractTableModel):
             return True
 
     def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
-        # todo: add drag an drop from labels to message type
         for lbl in self.display_labels[start:end + 1]:
-            self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
+            if lbl not in self.controller.proto_analyzer.message_types[message_type_id]:
+                self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
         self.controller.updateUI(resize_table=False)
 
     def delete_label_at(self, index: int):

@@ -476,7 +476,6 @@ class CompareFrameController(QWidget):
             try:
                 index = self.ui.tblLabelValues.model().index(message_type.index(proto_label), 0)
                 self.ui.tblLabelValues.setCurrentIndex(index)
-                self.ui.tblLabelValues.edit(index)
             except ValueError:
                 pass
 
@@ -1198,7 +1197,6 @@ class CompareFrameController(QWidget):
             self.ui.tblViewProtocol.resize_columns()
 
         self.protocol_model.update()
-        self.message_type_table_model.update()
         self.label_value_model.update()
 
     @pyqtSlot(ProtocolLabel, MessageType)

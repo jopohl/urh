@@ -357,11 +357,13 @@ class TestAnalysisTabGUI(QtTestCase):
 
         self.cfc.ui.tblViewProtocol.selectRow(0)
         self.assertEqual(self.cfc.ui.tblLabelValues.model().rowCount(), 1)
+        self.cfc.ui.tblLabelValues.selectAll()
 
         timer = QTimer(self.cfc)
         timer.setSingleShot(True)
         timer.timeout.connect(on_timeout)
         timer.start(1)
+
         self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]

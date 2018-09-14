@@ -6,8 +6,6 @@ from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 
 class MessageTypeTableView(QTableView):
-    # TODO: Review methods when integrated
-    configureActionTriggered = pyqtSignal()
     auto_message_type_update_triggered = pyqtSignal()
     configure_message_type_rules_triggered = pyqtSignal(int)
 
@@ -47,43 +45,25 @@ class MessageTypeTableView(QTableView):
 
         return min_row, max_row
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
+    def create_context_menu(self):
         menu = QMenu()
-        pos = event.pos()
-        index = self.indexAt(pos)
-        min_row, max_row = self.selection_range()
 
-        assign_actions = []
-        message_type_names = []
-
-        if min_row > -1:
+        if self.model().rowCount() > 1:
             menu.addAction(self.del_rows_action)
-            message_type_names = [mt.name for mt in self.model().message_types]
-
-        menu.addSeparator()
-        show_all_action = menu.addAction("Show all")
-        hide_all_action = menu.addAction("Hide all")
 
         menu.addSeparator()
         update_message_types_action = menu.addAction("Update automatically assigned message types")
         update_message_types_action.setIcon(QIcon.fromTheme("view-refresh"))
-        configure_action = menu.addAction("Configure field types...")
+        update_message_types_action.triggered.connect(self.auto_message_type_update_triggered.emit)
 
-        action = menu.exec_(self.mapToGlobal(pos))
+        return menu
 
-        if action == show_all_action:
-            self.model().showAll()
-        elif action == hide_all_action:
-            self.model().hideAll()
-        elif action == configure_action:
-            self.configureActionTriggered.emit()
-        elif action == update_message_types_action:
-            self.auto_message_type_update_triggered.emit()
-        elif action in assign_actions:
-            message_type_id = message_type_names.index(action.text())
-            self.model().add_labels_to_message_type(min_row, max_row, message_type_id)
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
 
     def delete_rows(self):
         min_row, max_row = self.selection_range()
         if min_row > -1:
+            # prevent default message type from being deleted
+            min_row = max(1, min_row)
             self.model().delete_message_types_at(min_row, max_row)

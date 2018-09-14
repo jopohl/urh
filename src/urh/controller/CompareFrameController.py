@@ -11,8 +11,8 @@ from urh import constants
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
-from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.MessageTypeTableModel import MessageTypeTableModel
+from urh.models.ParticipantListModel import ParticipantListModel
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 from urh.plugins.PluginManager import PluginManager
@@ -22,8 +22,8 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolGroup import ProtocolGroup
-from urh.ui.delegates.MessageTypeButtonDelegate import MessageTypeButtonDelegate
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
+from urh.ui.delegates.MessageTypeButtonDelegate import MessageTypeButtonDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator, util
 from urh.util.Formatter import Formatter
@@ -102,7 +102,8 @@ class CompareFrameController(QWidget):
         self.ui.tblLabelValues.setModel(self.label_value_model)
         self.ui.tblViewMessageTypes.setModel(self.message_type_table_model)
 
-        self.ui.tblViewMessageTypes.setItemDelegateForColumn(1, MessageTypeButtonDelegate(parent=self.ui.tblViewMessageTypes))
+        self.ui.tblViewMessageTypes.setItemDelegateForColumn(1, MessageTypeButtonDelegate(
+            parent=self.ui.tblViewMessageTypes))
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
@@ -267,9 +268,20 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.files_dropped.connect(self.on_files_dropped)
 
         self.ui.tblLabelValues.edit_label_action_triggered.connect(self.on_edit_label_action_triggered)
+        self.ui.tblLabelValues.configure_field_types_action_triggered.connect(
+            self.show_config_field_types_triggered.emit)
 
-        self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(self.on_configure_message_type_rules_triggered)
+        self.label_value_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
+        self.label_value_model.protocol_label_name_edited.connect(self.label_value_model.update)
+        self.label_value_model.label_removed.connect(self.on_label_removed)
+
+        self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(
+            self.on_configure_message_type_rules_triggered)
+        self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
+            self.update_automatic_assigned_message_types)
+
         self.message_type_table_model.modelReset.connect(self.on_message_type_table_model_updated)
+        self.message_type_table_model.message_type_removed.connect(self.on_message_type_removed)
 
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
         self.ui.btnNextSearch.clicked.connect(self.on_btn_next_search_clicked)
@@ -282,20 +294,10 @@ class CompareFrameController(QWidget):
         self.ui.lblShownRows.linkActivated.connect(self.on_label_shown_link_activated)
         self.ui.lblClearAlignment.linkActivated.connect(self.on_label_clear_alignment_link_activated)
 
-        self.label_value_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
-        self.label_value_model.protocol_label_name_edited.connect(self.label_value_model.update)
-        self.label_value_model.label_removed.connect(self.on_label_removed)
-
-        self.message_type_table_model.message_type_removed.connect(self.on_message_type_removed)
-
         self.ui.btnSaveProto.clicked.connect(self.on_btn_save_protocol_clicked)
         self.ui.btnLoadProto.clicked.connect(self.on_btn_load_proto_clicked)
 
         self.ui.btnAnalyze.clicked.connect(self.on_btn_analyze_clicked)
-
-        self.ui.tblViewMessageTypes.configureActionTriggered.connect(self.show_config_field_types_triggered.emit)
-        self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
-            self.update_automatic_assigned_message_types)
 
         self.protocol_model.ref_index_changed.connect(self.on_ref_index_changed)
 
@@ -1464,3 +1466,5 @@ class CompareFrameController(QWidget):
                 msg.message_type = self.proto_analyzer.default_message_type
         self.message_type_table_model.update()
         self.active_message_type = self.proto_analyzer.default_message_type
+        self.protocol_model.update()
+        self.label_value_model.update()

@@ -12,6 +12,7 @@ from urh.ui.delegates.SectionComboBoxDelegate import SectionComboBoxDelegate
 
 class LabelValueTableView(QTableView):
     edit_label_action_triggered = pyqtSignal()
+    configure_field_types_action_triggered = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -29,6 +30,10 @@ class LabelValueTableView(QTableView):
             edit_label_action = menu.addAction(self.tr("Edit labels..."))
             edit_label_action.setIcon(QIcon.fromTheme("configure"))
             edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
+        menu.addSeparator()
+        configure_field_types_action = menu.addAction("Configure field types...")
+        configure_field_types_action.triggered.connect(self.configure_field_types_action_triggered.emit)
+
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):

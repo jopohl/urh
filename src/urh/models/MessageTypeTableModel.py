@@ -61,19 +61,6 @@ class MessageTypeTableModel(QAbstractTableModel):
 
         return True
 
-    # Todo: Migrate the following methods to table
-    def showAll(self):
-        hidden_labels = [label for label in self.proto_analyzer.protocol_labels if not label.show]
-        for label in hidden_labels:
-            label.show = Qt.Checked
-            self.protolabel_visibility_changed.emit(label)
-
-    def hideAll(self):
-        visible_labels = [label for label in self.proto_analyzer.protocol_labels if label.show]
-        for label in visible_labels:
-            label.show = Qt.Unchecked
-            self.protolabel_visibility_changed.emit(label)
-
     def get_label_at(self, row):
         return self.message_type[row]
 

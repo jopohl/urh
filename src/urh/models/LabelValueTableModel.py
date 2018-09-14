@@ -115,7 +115,8 @@ class LabelValueTableModel(QAbstractTableModel):
                 return lbl.display_order_str
             elif j == 4:
                 return self.__display_data(lbl, calculated_crc)
-
+        elif role == Qt.CheckStateRole and j == 0:
+            return lbl.show
         elif role == Qt.BackgroundColorRole:
             if isinstance(lbl, ChecksumLabel) and j == 4:
                 start, end = self.message.get_label_range(lbl, 0, True)
@@ -146,10 +147,9 @@ class LabelValueTableModel(QAbstractTableModel):
                                "</ul>")
 
     def setData(self, index: QModelIndex, value, role=None):
+        row = index.row()
+        lbl = self.display_labels[row]
         if role == Qt.EditRole and index.column() in (0, 1, 2, 3):
-            row = index.row()
-            lbl = self.display_labels[row]
-
             if index.column() == 0:
                 lbl.name = value
                 new_field_type = self.controller.field_types_by_caption.get(value, None)
@@ -164,6 +164,10 @@ class LabelValueTableModel(QAbstractTableModel):
 
             self.dataChanged.emit(self.index(row, 0),
                                   self.index(row, self.columnCount()))
+        elif role == Qt.CheckStateRole and index.column() == 0:
+            lbl.show = value
+            self.protolabel_visibility_changed.emit(lbl)
+            return True
 
     def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
         # todo: add drag an drop from labels to message type
@@ -175,5 +179,7 @@ class LabelValueTableModel(QAbstractTableModel):
         flags = super().flags(index)
         if index.column() in (0, 1, 2, 3):
             flags |= Qt.ItemIsEditable
+        if index.column() == 0:
+            flags |= Qt.ItemIsUserCheckable
 
         return flags

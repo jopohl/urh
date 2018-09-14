@@ -93,7 +93,6 @@ class ProtocolLabelDialog(QDialog):
         self.model.special_status_label_changed.connect(self.on_label_special_status_changed)
 
     def open_editors(self, row):
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
     def keyPressEvent(self, event: QKeyEvent):

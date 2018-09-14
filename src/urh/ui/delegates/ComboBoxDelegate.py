@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot
+from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
 from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
@@ -24,6 +24,24 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
         if colors:
             assert len(items) == len(colors)
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
+        if self.colors:
+            try:
+                item = index.model().data(index)
+                index = self.items.index(item) if item in self.items else int(item)
+                color = self.colors[index]
+
+                x, y, h = option.rect.x(), option.rect.y(), option.rect.height()
+
+                rect = QRectF(x + 8, y + h / 2 - 8, 16, 16)
+                painter.fillRect(rect, QColor("black"))
+                rect = rect.adjusted(1, 1, -1, -1)
+                painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
+            except:
+                super().paint(painter, option, index)
+        else:
+            super().paint(painter, option, index)
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor = QComboBox(parent)

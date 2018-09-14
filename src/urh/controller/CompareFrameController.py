@@ -274,6 +274,7 @@ class CompareFrameController(QWidget):
         self.label_value_model.protolabel_visibility_changed.connect(self.on_protolabel_visibility_changed)
         self.label_value_model.protocol_label_name_edited.connect(self.label_value_model.update)
         self.label_value_model.label_removed.connect(self.on_label_removed)
+        self.label_value_model.label_color_changed.connect(self.on_label_color_changed)
 
         self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(
             self.on_configure_message_type_rules_triggered)
@@ -1468,3 +1469,7 @@ class CompareFrameController(QWidget):
         self.active_message_type = self.proto_analyzer.default_message_type
         self.protocol_model.update()
         self.label_value_model.update()
+
+    @pyqtSlot(ProtocolLabel)
+    def on_label_color_changed(self, lbl: ProtocolLabel):
+        self.protocol_model.update()

@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QIcon, QContextMenuEvent
 from PyQt5.QtWidgets import QTableView, QMenu
 
+from urh import constants
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -16,12 +17,15 @@ class LabelValueTableView(QTableView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setItemDelegateForColumn(1, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
+        self.setItemDelegateForColumn(1, ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
+                                                          colors=constants.LABEL_COLORS,
+                                                          parent=self))
+        self.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 
         orders = OrderedDict([("Big Endian (BE)", [bo + "/BE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS]),
                               ("Little Endian (LE)", [bo + "/LE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS])])
 
-        self.setItemDelegateForColumn(2, SectionComboBoxDelegate(orders, parent=self))
+        self.setItemDelegateForColumn(3, SectionComboBoxDelegate(orders, parent=self))
         self.setEditTriggers(QTableView.AllEditTriggers)
 
     def create_context_menu(self):

@@ -14,8 +14,9 @@ class LabelValueTableModel(QAbstractTableModel):
     protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
     protocol_label_name_edited = pyqtSignal()
     label_removed = pyqtSignal(ProtocolLabel)
+    label_color_changed = pyqtSignal(ProtocolLabel)
 
-    header_labels = ["Name", 'Display format', 'Order [Bit/Byte]', 'Value']
+    header_labels = ["Name", "Color", "Display format", "Order [Bit/Byte]", "Value"]
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
@@ -102,14 +103,16 @@ class LabelValueTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
+                return lbl.color_index
             elif j == 2:
-                return lbl.display_order_str
+                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 3:
+                return lbl.display_order_str
+            elif j == 4:
                 return self.__display_data(lbl, calculated_crc)
 
         elif role == Qt.BackgroundColorRole:
-            if isinstance(lbl, ChecksumLabel):
+            if isinstance(lbl, ChecksumLabel) and j == 4:
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
                     return constants.BG_COLOR_CORRECT
@@ -120,7 +123,7 @@ class LabelValueTableModel(QAbstractTableModel):
                 return None
 
         elif role == Qt.ToolTipRole:
-            if j == 1:
+            if j == 2:
                 return self.tr("Choose display type for the value of the label:"
                                "<ul>"
                                "<li>Bit</li>"
@@ -129,7 +132,7 @@ class LabelValueTableModel(QAbstractTableModel):
                                "<li>Decimal Number</li>"
                                "<li>Binary Coded Decimal (BCD)</li>"
                                "</ul>")
-            if j == 2:
+            if j == 3:
                 return self.tr("Choose bit order for the displayed value:"
                                "<ul>"
                                "<li>Most Significant Bit (MSB) [Default]</li>"
@@ -138,7 +141,7 @@ class LabelValueTableModel(QAbstractTableModel):
                                "</ul>")
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole and index.column() in (0, 1, 2):
+        if role == Qt.EditRole and index.column() in (0, 1, 2, 3):
             row = index.row()
             lbl = self.display_labels[row]
 
@@ -147,22 +150,25 @@ class LabelValueTableModel(QAbstractTableModel):
                 new_field_type = self.controller.field_types_by_caption.get(value, None)
                 self.controller.active_message_type.change_field_type_of_label(lbl, new_field_type)
             elif index.column() == 1:
-                lbl.display_format_index = value
+                lbl.color_index = value
+                self.label_color_changed.emit(lbl)
             elif index.column() == 2:
+                lbl.display_format_index = value
+            elif index.column() == 3:
                 lbl.display_order_str = value
 
             self.dataChanged.emit(self.index(row, 0),
                                   self.index(row, self.columnCount()))
 
     def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
-        # todo: move action from MessageTypeTableView to LabelValueTableView
+        # todo: add drag an drop from labels to message type
         for lbl in self.message_type[start:end + 1]:
             self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
         self.controller.updateUI(resize_table=False)
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        if index.column() in (0, 1, 2):
+        if index.column() in (0, 1, 2, 3):
             flags |= Qt.ItemIsEditable
 
         return flags

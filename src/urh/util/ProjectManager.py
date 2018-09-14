@@ -249,7 +249,7 @@ class ProjectManager(QObject):
             self.decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
 
             cfc.proto_analyzer.message_types = self.read_message_types()
-            cfc.fill_message_type_combobox()
+            cfc.message_type_table_model.update()
             cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants,
                                             decodings=cfc.decodings)
 

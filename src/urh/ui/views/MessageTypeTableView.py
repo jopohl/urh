@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QItemSelection
 from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
 from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
@@ -7,6 +7,7 @@ from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 class MessageTypeTableView(QTableView):
     auto_message_type_update_triggered = pyqtSignal()
+    selection_changed = pyqtSignal()
     configure_message_type_rules_triggered = pyqtSignal(int)
 
     def __init__(self, parent):
@@ -67,3 +68,7 @@ class MessageTypeTableView(QTableView):
             # prevent default message type from being deleted
             min_row = max(1, min_row)
             self.model().delete_message_types_at(min_row, max_row)
+
+    def selectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
+        super().selectionChanged(selected, deselected)
+        self.selection_changed.emit()

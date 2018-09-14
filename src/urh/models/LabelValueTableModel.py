@@ -25,7 +25,12 @@ class LabelValueTableModel(QAbstractTableModel):
         self.__message_index = 0
         self.display_labels = controller.active_message_type  # type: MessageType
 
+        self.show_label_values = True
+
     def __display_data(self, lbl: ProtocolLabel, expected_checksum: array = None):
+        if not self.show_label_values:
+            return "-"
+
         try:
             data = self.message.decoded_bits[lbl.start:lbl.end]
         except IndexError:

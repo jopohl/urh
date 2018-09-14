@@ -361,7 +361,7 @@ class TestAnalysisTabGUI(QtTestCase):
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         self.cfc.add_message_type()
-        self.assertEqual(self.cfc.ui.cbMessagetypes.count(), 2)
+        self.assertEqual(self.cfc.message_type_table_model.rowCount(), 2)
 
         self.cfc.ui.tblViewProtocol.selectRow(0)
         self.assertEqual(self.cfc.ui.listViewLabelNames.model().rowCount(), 1)

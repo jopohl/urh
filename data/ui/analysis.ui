@@ -1045,20 +1045,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
            </property>
            <item>
             <layout class="QGridLayout" name="gridLayout">
-             <item row="1" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <widget class="QComboBox" name="cbMessagetypes">
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="insertPolicy">
-                  <enum>QComboBox::NoInsert</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="sizePolicy">
@@ -1091,34 +1077,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="MessageTypeTableView" name="tblViewMessageTypes">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="acceptDrops">
-                <bool>false</bool>
-               </property>
-               <property name="toolTip">
-                <string/>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-              </widget>
-             </item>
              <item row="3" column="0">
               <widget class="QToolButton" name="btnAddMessagetype">
                <property name="sizePolicy">
@@ -1131,14 +1089,14 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 <string>Add a new message type</string>
                </property>
                <property name="text">
-                <string>Add message type</string>
+                <string>Add new message type</string>
                </property>
                <property name="icon">
                 <iconset theme="list-add">
                  <normaloff>.</normaloff>.</iconset>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextOnly</enum>
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -1171,6 +1129,34 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="0" rowspan="2">
+              <widget class="MessageTypeTableView" name="tblViewMessageTypes">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="acceptDrops">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string/>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="showGrid">
+                <bool>false</bool>
+               </property>
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>

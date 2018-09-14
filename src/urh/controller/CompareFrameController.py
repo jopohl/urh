@@ -3,7 +3,8 @@ import os
 from datetime import datetime
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale
+from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
+    QItemSelectionRange
 from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
 
@@ -58,7 +59,6 @@ class CompareFrameController(QWidget):
         self.decimal_point = QLocale().decimalPoint()
 
         self.__selected_message_type = self.proto_analyzer.default_message_type
-        self.fill_message_type_combobox()
 
         self.participant_list_model = ParticipantListModel(project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_list_model)
@@ -128,8 +128,6 @@ class CompareFrameController(QWidget):
 
         self.__set_decoding_error_label(None)
 
-        self.__set_default_message_type_ui_status()
-
         self.message_type_table_model.update()
 
     # region properties
@@ -179,16 +177,19 @@ class CompareFrameController(QWidget):
     @active_message_type.setter
     def active_message_type(self, val: MessageType):
         if val not in self.proto_analyzer.message_types:
-            logger.error("Message type {} not in mesage types".format(val.name))
+            logger.error("Message type {} not in message types".format(val.name))
             return
 
         self.__selected_message_type = val
 
-        self.ui.cbMessagetypes.blockSignals(True)
-        self.ui.cbMessagetypes.setCurrentIndex(self.proto_analyzer.message_types.index(val))
-        self.__set_default_message_type_ui_status()
         self.message_type_table_model.update()
-        self.ui.cbMessagetypes.blockSignals(False)
+        sel = QItemSelection()
+        i = self.proto_analyzer.message_types.index(val)
+        sel.append(QItemSelectionRange(self.message_type_table_model.index(i, 0)))
+
+        self.ui.tblViewMessageTypes.blockSignals(True)
+        self.ui.tblViewMessageTypes.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
+        self.ui.tblViewMessageTypes.blockSignals(False)
 
         self.update_field_type_combobox()
 
@@ -276,6 +277,7 @@ class CompareFrameController(QWidget):
         self.label_value_model.label_removed.connect(self.on_label_removed)
         self.label_value_model.label_color_changed.connect(self.on_label_color_changed)
 
+        self.ui.tblViewMessageTypes.selection_changed.connect(self.on_tbl_view_message_types_selection_changed)
         self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(
             self.on_configure_message_type_rules_triggered)
         self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
@@ -307,9 +309,6 @@ class CompareFrameController(QWidget):
         self.participant_list_model.show_state_changed.connect(self.on_participant_show_state_changed)
 
         self.ui.btnAddMessagetype.clicked.connect(self.on_btn_new_message_type_clicked)
-
-        self.ui.cbMessagetypes.currentIndexChanged.connect(self.on_combobox_messagetype_index_changed)
-        self.ui.cbMessagetypes.editTextChanged.connect(self.on_message_type_name_edited)
 
         self.selection_timer.timeout.connect(self.on_table_selection_timer_timeout)
         self.ui.treeViewProtocols.selection_changed.connect(self.on_tree_view_selection_changed)
@@ -416,15 +415,6 @@ class CompareFrameController(QWidget):
         self.ui.cbDecoding.setCurrentIndex(prev_index)
         self.ui.cbDecoding.blockSignals(False)
 
-    def fill_message_type_combobox(self):
-        self.ui.cbMessagetypes.blockSignals(True)
-        self.ui.cbMessagetypes.clear()
-        for message_type in self.proto_analyzer.message_types:
-            self.ui.cbMessagetypes.addItem(message_type.name)
-        self.ui.cbMessagetypes.blockSignals(False)
-        if self.ui.cbMessagetypes.count() <= 1:
-            self.ui.cbMessagetypes.setEditable(False)
-
     def add_protocol(self, protocol: ProtocolAnalyzer, group_id: int = 0) -> ProtocolAnalyzer:
         self.__protocols = None
         self.proto_tree_model.add_protocol(protocol, group_id)
@@ -451,7 +441,7 @@ class CompareFrameController(QWidget):
                         messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
                     self.proto_analyzer.message_types.append(messsage_type)
 
-        self.fill_message_type_combobox()
+        self.message_type_table_model.update()
         self.add_protocol(protocol=pa)
 
         self.set_shown_protocols()
@@ -495,12 +485,10 @@ class CompareFrameController(QWidget):
     def add_message_type(self, selected_messages: list = None):
         selected_messages = selected_messages if isinstance(selected_messages, list) else []
         self.proto_analyzer.add_new_message_type(labels=self.proto_analyzer.default_message_type)
-        self.fill_message_type_combobox()
-        self.ui.cbMessagetypes.setEditable(True)
+        self.message_type_table_model.update()
         self.active_message_type = self.proto_analyzer.message_types[-1]
         for msg in selected_messages:
             msg.message_type = self.active_message_type
-        self.ui.cbMessagetypes.setFocus()
         self.protocol_model.update()
 
     def remove_protocol(self, protocol: ProtocolAnalyzer):
@@ -627,14 +615,14 @@ class CompareFrameController(QWidget):
         index = self.proto_tree_model.createIndex(group_id, 0, self.proto_tree_model.rootItem.child(group_id))
         self.ui.treeViewProtocols.expand(index)
 
-    def updateUI(self, ignore_table_model=False, resize_table=True):
+    def updateUI(self, ignore_table_model=False, resize_table=True, ignore_message_type_table_model=False):
         if not ignore_table_model:
             self.protocol_model.update()
 
-        self.message_type_table_model.update()
         self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
         self.label_value_model.update()
-        self.message_type_table_model.update()
+        if not ignore_message_type_table_model:
+            self.message_type_table_model.update()
 
         if resize_table:
             self.ui.tblViewProtocol.resize_columns()
@@ -978,12 +966,6 @@ class CompareFrameController(QWidget):
         self.ui.lSearchTotal.setVisible(visible)
         self.ui.btnNextSearch.setVisible(visible)
 
-    def __set_default_message_type_ui_status(self):
-        if self.active_message_type == self.proto_analyzer.default_message_type:
-            self.ui.cbMessagetypes.setEditable(False)
-        else:
-            self.ui.cbMessagetypes.setEditable(True)
-
     def update_automatic_assigned_message_types(self):
         self.proto_analyzer.update_auto_message_types()
         self.protocol_model.update()
@@ -1056,7 +1038,7 @@ class CompareFrameController(QWidget):
         self.unsetCursor()
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(0)
 
-        self.fill_message_type_combobox()  # in case message types were added by logic analyzer
+        self.message_type_table_model.update()  # in case message types were added by logic analyzer
 
     @pyqtSlot()
     def on_btn_save_protocol_clicked(self):
@@ -1302,6 +1284,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_table_selection_timer_timeout(self):
+        self.label_value_model.show_label_values = True
         min_row, max_row, start, end = self.ui.tblViewProtocol.selection_range()
 
         if min_row == max_row == start == end == -1:
@@ -1309,7 +1292,7 @@ class CompareFrameController(QWidget):
             self.ui.lDecimalSelection.setText("")
             self.ui.lHexSelection.setText("")
             self.ui.lNumSelectedColumns.setText("0")
-            self.ui.lblLabelValues.setText(self.tr("Label values for message "))
+            self.ui.lblLabelValues.setText(self.tr("Labels for message "))
             self.label_value_model.message_index = -1
             self.active_message_type = self.proto_analyzer.default_message_type
             self.__set_decoding_error_label(message=None)
@@ -1360,7 +1343,7 @@ class CompareFrameController(QWidget):
         else:
             self.ui.lDecimalSelection.setText("")
 
-        self.ui.lblLabelValues.setText(self.tr("Label values for message #") + str(min_row + 1))
+        self.ui.lblLabelValues.setText(self.tr("Labels for message #") + str(min_row + 1))
         if min_row != self.label_value_model.message_index:
             self.label_value_model.message_index = min_row
 
@@ -1409,7 +1392,7 @@ class CompareFrameController(QWidget):
         self.ui.treeViewProtocols.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
         self.ui.treeViewProtocols.blockSignals(False)
 
-        self.updateUI(ignore_table_model=True, resize_table=False)
+        self.updateUI(ignore_table_model=True, resize_table=False, ignore_message_type_table_model=True)
 
     @pyqtSlot(int)
     def on_ref_index_changed(self, new_ref_index: int):
@@ -1426,9 +1409,17 @@ class CompareFrameController(QWidget):
 
         self.set_show_only_status()
 
-    @pyqtSlot(int)
-    def on_combobox_messagetype_index_changed(self, index: int):
-        self.active_message_type = self.proto_analyzer.message_types[index]
+    @pyqtSlot()
+    def on_tbl_view_message_types_selection_changed(self):
+        selection = self.ui.tblViewMessageTypes.selectionModel().selectedIndexes()
+        if len(selection) == 0:
+            return
+
+        row = min((index.row() for index in selection))
+        self.active_message_type = self.proto_analyzer.message_types[row]
+        self.ui.lblLabelValues.setText("Labels of {}".format(self.active_message_type.name))
+        self.label_value_model.show_label_values = False
+        self.label_value_model.update()
 
     @pyqtSlot(MessageType, list)
     def on_message_type_selected(self, message_type: MessageType, selected_messages: list):
@@ -1436,12 +1427,6 @@ class CompareFrameController(QWidget):
             msg.message_type = message_type
         self.active_message_type = message_type
         self.protocol_model.update()
-
-    @pyqtSlot(str)
-    def on_message_type_name_edited(self, edited_str: str):
-        if self.active_message_type == self.proto_analyzer.message_types[self.ui.cbMessagetypes.currentIndex()]:
-            self.active_message_type.name = edited_str
-            self.ui.cbMessagetypes.setItemText(self.ui.cbMessagetypes.currentIndex(), edited_str)
 
     @pyqtSlot(int)
     def on_message_type_dialog_finished(self, status: int):

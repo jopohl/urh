@@ -41,7 +41,10 @@ class MessageTypeTableModel(QAbstractTableModel):
                 return ""
         elif role == Qt.CheckStateRole:
             if index.column() == 0:
-                return message_type.show
+                if message_type.show:
+                    return Qt.Checked
+                else:
+                    return Qt.Unchecked
             elif index.column() == 1:
                 return None
         elif role == Qt.EditRole:
@@ -52,7 +55,7 @@ class MessageTypeTableModel(QAbstractTableModel):
         if role == Qt.CheckStateRole:
             if index.column() == 0:
                 message_type = self.message_types[index.row()]
-                message_type.show = value
+                message_type.show = bool(value)
                 self.message_type_visibility_changed.emit(message_type)
         elif role == Qt.EditRole:
             if index.column() == 0 and value:

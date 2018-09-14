@@ -40,7 +40,7 @@ class ProtocolTableView(TableView):
         self.hide_row_action = QAction("Hide selected rows", self)
         self.hide_row_action.setShortcut(QKeySequence("H"))
         self.hide_row_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
-        self.hide_row_action.triggered.connect(self.hide_row)
+        self.hide_row_action.triggered.connect(self.hide_rows)
 
         self.addAction(self.ref_message_action)
         self.addAction(self.hide_row_action)
@@ -221,25 +221,35 @@ class ProtocolTableView(TableView):
         else:
             self.model().refindex = self.rowAt(self.context_menu_pos.y())
 
-    @pyqtSlot()
-    def hide_row(self, row=None):
-        if row is None:
+    def set_row_visibility_status(self, show: bool, rows=None):
+        if rows is None:
             rows = self.selected_rows
-        elif isinstance(row, set) or isinstance(row, list):
-            rows = row
+        elif isinstance(rows, set) or isinstance(rows, list):
+            rows = rows
         else:
-            rows = [row]
+            rows = [rows]
 
         refindex = self.model().refindex
         for row in rows:
-            if row == refindex:
-                refindex += 1
-            self.hideRow(row)
-            self.model().hidden_rows.add(row)
+            if show:
+                self.showRow(row)
+                self.model().hidden_rows.discard(row)
+            else:
+                if row == refindex:
+                    refindex += 1
+                self.hideRow(row)
+                self.model().hidden_rows.add(row)
 
         self.model().refindex = refindex
         self.model().update()
         self.row_visibility_changed.emit()
+
+    def show_rows(self, rows=None):
+        self.set_row_visibility_status(show=True, rows=rows)
+
+    @pyqtSlot()
+    def hide_rows(self, row=None):
+        self.set_row_visibility_status(show=False, rows=row)
 
     @pyqtSlot()
     def on_bit_action_triggered(self):

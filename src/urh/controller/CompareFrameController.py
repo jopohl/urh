@@ -283,6 +283,7 @@ class CompareFrameController(QWidget):
 
         self.message_type_table_model.modelReset.connect(self.on_message_type_table_model_updated)
         self.message_type_table_model.message_type_removed.connect(self.on_message_type_removed)
+        self.message_type_table_model.message_type_visibility_changed.connect(self.on_message_type_visibility_changed)
 
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
         self.ui.btnNextSearch.clicked.connect(self.on_btn_next_search_clicked)
@@ -710,7 +711,7 @@ class CompareFrameController(QWidget):
 
             matching_rows = set(search_result[0] for search_result in self.protocol_model.search_results)
             rows_to_hide = set(range(0, self.protocol_model.row_count)) - matching_rows
-            self.ui.tblViewProtocol.hide_row(rows_to_hide)
+            self.ui.tblViewProtocol.hide_rows(rows_to_hide)
         else:
             self.show_all_rows()
             self.set_shown_protocols()
@@ -818,6 +819,16 @@ class CompareFrameController(QWidget):
                 self.ui.tblViewProtocol.setColumnHidden(i, not lbl.show)
         except Exception as e:
             pass
+
+    def set_message_type_visibility(self, message_type: MessageType):
+        try:
+            rows = {i for i, msg in enumerate(self.proto_analyzer.messages) if msg.message_type == message_type}
+            if message_type.show:
+                self.ui.tblViewProtocol.show_rows(rows)
+            else:
+                self.ui.tblViewProtocol.hide_rows(rows)
+        except Exception as e:
+            logger.exception(e)
 
     def show_all_rows(self):
         self.ui.lblShownRows.hide()
@@ -1187,7 +1198,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.set_copy_mode(writeable_status)
         self.ui.cbDecoding.setDisabled(writeable_status)
         self.refresh()
-        self.ui.tblViewProtocol.hide_row(hidden_rows)
+        self.ui.tblViewProtocol.hide_rows(hidden_rows)
 
     @pyqtSlot()
     def on_project_updated(self):
@@ -1473,3 +1484,7 @@ class CompareFrameController(QWidget):
     @pyqtSlot(ProtocolLabel)
     def on_label_color_changed(self, lbl: ProtocolLabel):
         self.protocol_model.update()
+
+    @pyqtSlot(MessageType)
+    def on_message_type_visibility_changed(self, message_type: MessageType):
+        self.set_message_type_visibility(message_type)

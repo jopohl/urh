@@ -190,7 +190,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.assertGreater(num_messages, 0)
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
-        self.cfc.ui.tblViewProtocol.hide_row(0)
+        self.cfc.ui.tblViewProtocol.hide_rows(0)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
         self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
 

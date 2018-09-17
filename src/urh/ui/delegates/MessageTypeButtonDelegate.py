@@ -12,6 +12,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
 
     def createEditor(self, parent, option, index):
         button = QToolButton(parent)
+        button.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         button.setIcon(QIcon.fromTheme("configure"))
         button.clicked.connect(self.on_btn_clicked)
         return button

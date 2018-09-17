@@ -107,6 +107,11 @@ class CompareFrameController(QWidget):
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
+
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+
         self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
 

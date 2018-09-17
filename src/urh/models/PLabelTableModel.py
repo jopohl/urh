@@ -14,7 +14,7 @@ class PLabelTableModel(QAbstractTableModel):
     special_status_label_changed = pyqtSignal(ProtocolLabel)
     apply_decoding_changed = pyqtSignal(ProtocolLabel)
 
-    def __init__(self, message: Message, field_types, parent=None):
+    def __init__(self, message: Message, field_types, active_index=None, parent=None):
         """
 
         :param message:
@@ -26,6 +26,8 @@ class PLabelTableModel(QAbstractTableModel):
         self.proto_view = 0
         self.__message = None
         self.message = message
+
+        self.active_index = active_index
 
         self.message_type = message.message_type  # type: MessageType
         self.field_types_by_caption = {ft.caption: ft for ft in field_types}
@@ -84,7 +86,7 @@ class PLabelTableModel(QAbstractTableModel):
             return Qt.AlignCenter
         elif role == Qt.FontRole and j == 0:
             font = QFont()
-            font.setItalic(self.message_type[i].field_type is None)
+            font.setBold(i == self.active_index)
             return font
         else:
             return None

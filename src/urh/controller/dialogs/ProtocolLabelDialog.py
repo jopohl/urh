@@ -24,14 +24,14 @@ class ProtocolLabelDialog(QDialog):
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
-    def __init__(self, message: Message, viewtype: int, parent=None):
+    def __init__(self, message: Message, viewtype: int, selected_index=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
         util.set_splitter_stylesheet(self.ui.splitter)
 
         field_types = FieldType.load_from_xml()
-        self.model = PLabelTableModel(message, field_types)
+        self.model = PLabelTableModel(message, field_types, active_index=selected_index)
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types],
                                                                                 is_editable=True,

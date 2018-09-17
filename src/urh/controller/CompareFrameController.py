@@ -637,7 +637,7 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.rootItem.addGroup()
         self.refresh()
 
-    def create_protocol_label_dialog(self):
+    def create_protocol_label_dialog(self, selected_index=None):
         view_type = self.ui.cbProtoView.currentIndex()
         try:
             longest_message = max(
@@ -645,14 +645,14 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        protocol_label_dialog = ProtocolLabelDialog(message=longest_message, viewtype=view_type, parent=self)
+        protocol_label_dialog = ProtocolLabelDialog(message=longest_message, viewtype=view_type, selected_index=selected_index, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
         return protocol_label_dialog
 
-    def show_protocol_label_dialog(self):
-        dialog = self.create_protocol_label_dialog()
+    def show_protocol_label_dialog(self,selected_index=None):
+        dialog = self.create_protocol_label_dialog(selected_index=selected_index)
         dialog.exec_()
 
     def search(self):
@@ -1219,7 +1219,7 @@ class CompareFrameController(QWidget):
         try:
             self.show_protocol_label_dialog(message_type.index(proto_label))
         except AttributeError:
-            self.show_protocol_label_dialog(0)
+            self.show_protocol_label_dialog(None)
 
     @pyqtSlot()
     def on_edit_label_action_triggered(self):

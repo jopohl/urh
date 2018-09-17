@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal, Qt, QItemSelection
+from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
 from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
 from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
@@ -56,6 +56,12 @@ class MessageTypeTableView(QTableView):
         update_message_types_action.setIcon(QIcon.fromTheme("view-refresh"))
         update_message_types_action.triggered.connect(self.auto_message_type_update_triggered.emit)
 
+        menu.addSeparator()
+        show_all_action = menu.addAction("Show all message types")
+        show_all_action.triggered.connect(self.on_show_all_action_triggered)
+        hide_all_action = menu.addAction("Hide all message types")
+        hide_all_action.triggered.connect(self.on_hide_all_action_triggered)
+
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
@@ -67,3 +73,13 @@ class MessageTypeTableView(QTableView):
             # prevent default message type from being deleted
             min_row = max(1, min_row)
             self.model().delete_message_types_at(min_row, max_row)
+
+    @pyqtSlot()
+    def on_show_all_action_triggered(self):
+        for i in range(self.model().rowCount()):
+            self.model().setData(self.model().index(i, 0), Qt.Checked, role=Qt.CheckStateRole)
+
+    @pyqtSlot()
+    def on_hide_all_action_triggered(self):
+        for i in range(self.model().rowCount()):
+            self.model().setData(self.model().index(i, 0), Qt.Unchecked, role=Qt.CheckStateRole)

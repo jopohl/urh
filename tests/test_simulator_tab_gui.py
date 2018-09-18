@@ -225,7 +225,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         names = [action.text() for action in menu.actions()]
         self.assertIn("Enforce encoding", names)
-        add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
+        add_label_action = next(action for action in menu.actions() if action.text() == "Create label...")
         add_label_action.trigger()
         menu.close()
         stc.ui.tblViewMessage.selectRow(0)

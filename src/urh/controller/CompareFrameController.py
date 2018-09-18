@@ -266,7 +266,8 @@ class CompareFrameController(QWidget):
         self.ui.tblViewProtocol.selection_changed.connect(self.on_table_selection_changed)
         self.ui.tblViewProtocol.writeable_changed.connect(self.on_writeable_changed)
         self.ui.tblViewProtocol.row_visibility_changed.connect(self.on_tbl_view_protocol_row_visibility_changed)
-        self.ui.tblViewProtocol.edit_label_clicked.connect(self.on_edit_label_clicked_in_table)
+        self.ui.tblViewProtocol.edit_label_triggered.connect(self.on_edit_label_clicked_in_table)
+        self.ui.tblViewProtocol.create_label_triggered.connect(self.on_create_label_triggered)
         self.ui.tblViewProtocol.participant_changed.connect(self.on_participant_edited)
         self.ui.tblViewProtocol.messagetype_selected.connect(self.on_message_type_selected)
         self.ui.tblViewProtocol.new_messagetype_clicked.connect(self.on_table_new_message_type_clicked)
@@ -1217,14 +1218,16 @@ class CompareFrameController(QWidget):
         self.message_type_table_model.update()
         self.search()
 
-    @pyqtSlot(ProtocolLabel)
-    def on_edit_label_clicked_in_table(self, proto_label: ProtocolLabel):
-
-        message_type = self.get_message_type_for_label(proto_label)
+    @pyqtSlot(int)
+    def on_edit_label_clicked_in_table(self, proto_label_index: int):
         try:
-            self.show_protocol_label_dialog(message_type.index(proto_label))
+            self.show_protocol_label_dialog(proto_label_index)
         except AttributeError:
             self.show_protocol_label_dialog(None)
+
+    @pyqtSlot(int, int, int)
+    def on_create_label_triggered(self, msg_index, start, end):
+        self.protocol_model.add_protocol_label(start, end - 1, msg_index)
 
     @pyqtSlot()
     def on_edit_label_action_triggered(self):

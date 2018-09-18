@@ -20,7 +20,6 @@ class ProtocolTableView(TableView):
     writeable_changed = pyqtSignal(bool)
     crop_sync_clicked = pyqtSignal()
     revert_sync_cropping_wanted = pyqtSignal()
-    edit_label_clicked = pyqtSignal(ProtocolLabel)
     files_dropped = pyqtSignal(list)
     participant_changed = pyqtSignal()
     new_messagetype_clicked = pyqtSignal(list)  # list of protocol messages
@@ -71,7 +70,7 @@ class ProtocolTableView(TableView):
             self.files_dropped.emit(event.mimeData().urls())
 
     def create_context_menu(self):
-        menu = QMenu()
+        menu = super().create_context_menu()
         row = self.rowAt(self.context_menu_pos.y())
         cols = [index.column() for index in self.selectionModel().selectedIndexes() if index.row() == row]
         cols.sort()
@@ -115,19 +114,6 @@ class ProtocolTableView(TableView):
 
         new_message_type_action = message_type_menu.addAction("Create new")
         new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
-
-        try:
-            self.selected_label = self.controller.get_labels_from_selection(row, row, cols[0], cols[-1])[0]
-            edit_label_action = menu.addAction(self.tr("Edit protocol label ") + self.selected_label.name)
-            edit_label_action.setIcon(QIcon.fromTheme("configure"))
-            edit_label_action.triggered.connect(self.on_edit_label_action_triggered)
-        except IndexError:
-            self.selected_label = None
-
-        create_label_action = menu.addAction(self.tr("Add protocol label"))  # type: QAction
-        create_label_action.setIcon(QIcon.fromTheme("list-add"))
-        create_label_action.setEnabled(not self.selection_is_empty)
-        create_label_action.triggered.connect(self.on_create_label_action_triggered)
 
         if self.model().participants and self.model().protocol and not self.selection_is_empty:
 
@@ -204,12 +190,6 @@ class ProtocolTableView(TableView):
 
         return menu
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
-        self.context_menu_pos = event.pos()
-        menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(self.context_menu_pos))
-        self.context_menu_pos = None
-
     @pyqtSlot()
     def set_ref_message(self):
         if self.model().refindex == -1:
@@ -274,15 +254,6 @@ class ProtocolTableView(TableView):
         for message in self.selected_messages:
             message.participant = self.participant_actions[self.sender()]
         self.participant_changed.emit()
-
-    @pyqtSlot()
-    def on_edit_label_action_triggered(self):
-        self.edit_label_clicked.emit(self.selected_label)
-
-    @pyqtSlot()
-    def on_create_label_action_triggered(self):
-        _, _, start, end = self.selection_range()
-        self.model().addProtoLabel(start, end - 1, self.rowAt(self.context_menu_pos.y()))
 
     @pyqtSlot()
     def on_message_type_action_triggered(self):

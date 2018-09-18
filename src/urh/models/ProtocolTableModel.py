@@ -34,7 +34,7 @@ class ProtocolTableModel(TableModel):
             self.update()
             self.ref_index_changed.emit(self._refindex)
 
-    def addProtoLabel(self, start, end, messagenr):
+    def add_protocol_label(self, start, end, messagenr):
         a = self.get_alignment_offset_at(messagenr)
         self.controller.add_protocol_label(start=start-a, end=end-a, messagenr=messagenr, proto_view=self.proto_view)
 

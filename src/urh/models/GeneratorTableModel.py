@@ -142,22 +142,6 @@ class GeneratorTableModel(TableModel):
         undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
         self.undo_stack.push(undo_action)
 
-    def get_selected_label_index(self, row: int, column: int):
-        if self.row_count == 0:
-            return -1
-
-        try:
-            msg = self.protocol.messages[row]
-        except IndexError:
-            logger.warning("{} is out of range for generator protocol".format(row))
-            return -1
-
-        for i, lbl in enumerate(msg.message_type):
-            if column in range(*msg.get_label_range(lbl, self.proto_view, False)):
-                return i
-
-        return -1
-
     def __set_italic_font_for_label_range(self, row, label, italic: bool):
         message = self.protocol.messages[row]
         for j in range(*message.get_label_range(lbl=label, view=self.proto_view, decode=False)):

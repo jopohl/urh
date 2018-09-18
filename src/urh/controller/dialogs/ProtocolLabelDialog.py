@@ -31,7 +31,7 @@ class ProtocolLabelDialog(QDialog):
         util.set_splitter_stylesheet(self.ui.splitter)
 
         field_types = FieldType.load_from_xml()
-        self.model = PLabelTableModel(message, field_types, active_index=selected_index)
+        self.model = PLabelTableModel(message, field_types)
 
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types],
                                                                                 is_editable=True,
@@ -56,6 +56,10 @@ class ProtocolLabelDialog(QDialog):
         self.ui.splitter.setSizes([self.height() / 2, self.height() / 2])
 
         self.create_connects()
+
+        if selected_index is not None:
+            self.ui.tblViewProtoLabels.setCurrentIndex(self.model.index(selected_index, 0))
+
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
 

@@ -157,7 +157,7 @@ class SimulatorTabController(QWidget):
         self.ui.goto_combobox.currentIndexChanged.connect(self.on_goto_combobox_index_changed)
         self.ui.spinBoxRepeat.valueChanged.connect(self.on_repeat_value_changed)
         self.ui.cbViewType.currentIndexChanged.connect(self.on_view_type_changed)
-        self.ui.tblViewMessage.create_label_clicked.connect(self.create_simulator_label)
+        self.ui.tblViewMessage.create_label_triggered.connect(self.create_simulator_label)
         self.ui.tblViewMessage.open_modulator_dialog_clicked.connect(self.open_modulator_dialog)
         self.ui.tblViewMessage.selectionModel().selectionChanged.connect(self.on_table_selection_changed)
         self.ui.tabWidget.currentChanged.connect(self.on_selected_tab_changed)
@@ -197,7 +197,7 @@ class SimulatorTabController(QWidget):
         self.ui.spinBoxRetries.valueChanged.connect(self.on_spinbox_retries_value_changed)
 
         self.ui.tblViewFieldValues.item_link_clicked.connect(self.on_table_item_link_clicked)
-        self.ui.tblViewMessage.edit_labels_clicked.connect(self.on_edit_labels_clicked)
+        self.ui.tblViewMessage.edit_label_triggered.connect(self.on_edit_label_triggered)
 
         self.ui.spinBoxCounterStart.editingFinished.connect(self.on_spinbox_counter_start_editing_finished)
         self.ui.spinBoxCounterStep.editingFinished.connect(self.on_spinbox_counter_step_editing_finished)
@@ -564,13 +564,12 @@ class SimulatorTabController(QWidget):
     def on_active_participants_updated(self):
         self.ui.listViewSimulate.model().update()
 
-    @pyqtSlot()
-    def on_edit_labels_clicked(self):
+    @pyqtSlot(int)
+    def on_edit_label_triggered(self, label_index: int):
         view_type = self.ui.cbViewType.currentIndex()
         protocol_label_dialog = ProtocolLabelDialog(message=self.ui.tblViewMessage.selected_message,
-                                                    viewtype=view_type, parent=self)
+                                                    viewtype=view_type, selected_index=label_index, parent=self)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
-
         protocol_label_dialog.showMaximized()
 
     @pyqtSlot()

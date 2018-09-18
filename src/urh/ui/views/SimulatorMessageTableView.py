@@ -15,9 +15,7 @@ from PyQt5.QtWidgets import QHeaderView
 
 
 class SimulatorMessageTableView(TableView):
-    create_label_clicked = pyqtSignal(int, int, int)
     open_modulator_dialog_clicked = pyqtSignal()
-    edit_labels_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -47,28 +45,11 @@ class SimulatorMessageTableView(TableView):
     def model(self) -> SimulatorMessageTableModel:
         return super().model()
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
-        self.context_menu_pos = event.pos()
-        menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(self.context_menu_pos))
-        self.context_menu_pos = None
-
     def create_context_menu(self) -> QMenu:
-        assert self.context_menu_pos is not None
-        menu = QMenu()
-
-        create_label_action = menu.addAction(self.tr("Add protocol label"))
-        create_label_action.setIcon(QIcon.fromTheme("list-add"))
-        create_label_action.setEnabled(not self.selection_is_empty)
-        create_label_action.triggered.connect(self.on_create_label_action_triggered)
+        menu = super().create_context_menu()
 
         if self.selection_is_empty:
             return menu
-
-        if len(self.selected_message.message_type) > 0:
-            edit_labels_action = menu.addAction("Edit labels...")
-            edit_labels_action.setIcon(QIcon.fromTheme("configure"))
-            edit_labels_action.triggered.connect(self.edit_labels_clicked.emit)
 
         menu.addSeparator()
         self._add_insert_column_menu(menu)
@@ -137,11 +118,6 @@ class SimulatorMessageTableView(TableView):
     @pyqtSlot()
     def on_open_modulator_dialog_action_triggered(self):
         self.open_modulator_dialog_clicked.emit()
-
-    @pyqtSlot()
-    def on_create_label_action_triggered(self):
-        min_row, _, start, end = self.selection_range()
-        self.create_label_clicked.emit(min_row, start, end)
 
     @pyqtSlot()
     def on_insert_column_left_action_triggered(self):

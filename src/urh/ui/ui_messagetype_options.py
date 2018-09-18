@@ -19,6 +19,7 @@ class Ui_DialogMessageType(object):
         self.cbRulesetMode.addItem("")
         self.gridLayout.addWidget(self.cbRulesetMode, 1, 0, 1, 2)
         self.tblViewRuleset = QtWidgets.QTableView(DialogMessageType)
+        self.tblViewRuleset.setShowGrid(False)
         self.tblViewRuleset.setObjectName("tblViewRuleset")
         self.gridLayout.addWidget(self.tblViewRuleset, 2, 0, 3, 2)
         self.btnRemoveRule = QtWidgets.QToolButton(DialogMessageType)

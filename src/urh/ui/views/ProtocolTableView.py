@@ -204,7 +204,7 @@ class ProtocolTableView(TableView):
     def set_row_visibility_status(self, show: bool, rows=None):
         if rows is None:
             rows = self.selected_rows
-        elif isinstance(rows, set) or isinstance(rows, list):
+        elif isinstance(rows, set) or isinstance(rows, list) or isinstance(rows, range):
             rows = rows
         else:
             rows = [rows]

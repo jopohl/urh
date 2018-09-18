@@ -1,5 +1,6 @@
 import locale
 import os
+from collections import defaultdict
 from datetime import datetime
 
 import numpy
@@ -817,8 +818,7 @@ class CompareFrameController(QWidget):
 
     def show_all_rows(self):
         self.ui.lblShownRows.hide()
-        for i in range(0, self.protocol_model.row_count):
-            self.ui.tblViewProtocol.showRow(i)
+        self.ui.tblViewProtocol.show_rows(range(0, self.protocol_model.row_count))
         self.set_shown_protocols()
 
     def show_all_cols(self):
@@ -1110,6 +1110,16 @@ class CompareFrameController(QWidget):
         self.__set_shown_rows_status_label()
         self.set_shown_protocols()
         self.set_show_only_status()
+
+        states_by_message_type = defaultdict(list)
+        for i, msg in enumerate(self.proto_analyzer.messages):
+            state = Qt.Unchecked if i in self.protocol_model.hidden_rows else Qt.Checked
+            states_by_message_type[msg.message_type].append(state)
+
+        for msg_type, states in states_by_message_type.items():
+            msg_type.show = states[0] if len(set(states)) == 1 else Qt.PartiallyChecked
+
+        self.message_type_table_model.update()
 
     @pyqtSlot(int)
     def on_check_box_show_only_labels_state_changed(self, new_state: int):

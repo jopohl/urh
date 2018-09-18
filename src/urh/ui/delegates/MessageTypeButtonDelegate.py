@@ -17,7 +17,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
 
         if QIcon.hasThemeIcon("configure"):
             icon = QIcon.fromTheme("configure")
-            icon = self.draw_indicator(icon, self.parent().model().get_num_rules_of_message_type_at(index.row()))
+            icon = self.draw_indicator(icon, self.parent().model().get_num_active_rules_of_message_type_at(index.row()))
             button.setIcon(icon)
         else:
             button.setText("...")

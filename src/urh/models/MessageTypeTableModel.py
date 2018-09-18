@@ -16,9 +16,12 @@ class MessageTypeTableModel(QAbstractTableModel):
 
         self.selected_message_type_indices = set()
 
-    def get_num_rules_of_message_type_at(self, index: int) -> int:
+    def get_num_active_rules_of_message_type_at(self, index: int) -> int:
         try:
-            return len(self.message_types[index].ruleset)
+            if self.message_types[index].assigned_by_ruleset:
+                return len(self.message_types[index].ruleset)
+            else:
+                return 0
         except IndexError:
             return 0
 

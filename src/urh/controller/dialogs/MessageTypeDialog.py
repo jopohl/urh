@@ -59,7 +59,7 @@ class MessageTypeDialog(QDialog):
         self.ui.rbAssignManually.clicked.connect(self.on_rb_assign_manually_clicked)
         self.ui.cbRulesetMode.currentIndexChanged.connect(self.on_cb_rulesetmode_current_index_changed)
 
-        self.ui.buttonBox.accepted.connect(self.on_accepted)
+        self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.on_rejected)
 
     def set_ruleset_ui_status(self):
@@ -77,12 +77,6 @@ class MessageTypeDialog(QDialog):
         self.ui.tblViewRuleset.setItemDelegateForColumn(3, None)
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
-
-    @pyqtSlot()
-    def on_accepted(self):
-        if len(self.message_type.ruleset) == 0 and self.message_type.assigned_by_ruleset:
-            self.message_type.assigned_by_ruleset = False
-        self.accept()
 
     @pyqtSlot()
     def on_rejected(self):

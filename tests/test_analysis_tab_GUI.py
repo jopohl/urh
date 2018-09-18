@@ -160,7 +160,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):
-        # Add protocol label should be disabled if table is empty
+
         self.cfc.proto_tree_model.rootItem.child(0).show = False
         QApplication.instance().processEvents()
 
@@ -169,10 +169,9 @@ class TestAnalysisTabGUI(QtTestCase):
         QApplication.instance().processEvents()
 
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
-
-        create_label_action = next(a for a in menu.actions() if a.text() == "Add protocol label")
-
-        self.assertFalse(create_label_action.isEnabled())
+        texts = [a.text() for a in menu.actions()]
+        # Add protocol label should not be there if table is empty
+        self.assertFalse(any("label" in text.lower() for text in texts))
 
     def test_show_in_interpretation(self):
         self.form.ui.tabWidget.setCurrentIndex(1)

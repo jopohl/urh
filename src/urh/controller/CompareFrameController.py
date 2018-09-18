@@ -4,9 +4,9 @@ from datetime import datetime
 
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
-    QItemSelectionRange, QModelIndex
-from PyQt5.QtGui import QContextMenuEvent, QIcon, QPalette
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView, qApp
+    QModelIndex
+from PyQt5.QtGui import QContextMenuEvent, QIcon
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
 
 from urh import constants
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
@@ -106,7 +106,6 @@ class CompareFrameController(QWidget):
             parent=self.ui.tblViewMessageTypes))
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-
 
         self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
@@ -273,7 +272,8 @@ class CompareFrameController(QWidget):
         self.label_value_model.label_removed.connect(self.on_label_removed)
         self.label_value_model.label_color_changed.connect(self.on_label_color_changed)
 
-        self.ui.tblViewMessageTypes.selectionModel().currentRowChanged.connect(self.on_tbl_view_message_current_row_changed)
+        self.ui.tblViewMessageTypes.selectionModel().currentRowChanged.connect(
+            self.on_tbl_view_message_current_row_changed)
         self.ui.tblViewMessageTypes.configure_message_type_rules_triggered.connect(
             self.on_configure_message_type_rules_triggered)
         self.ui.tblViewMessageTypes.auto_message_type_update_triggered.connect(
@@ -642,13 +642,14 @@ class CompareFrameController(QWidget):
         except ValueError:
             logger.warning("Configuring message type with empty message set.")
             longest_message = Message([True] * 1000, 1000, self.active_message_type)
-        protocol_label_dialog = ProtocolLabelDialog(message=longest_message, viewtype=view_type, selected_index=selected_index, parent=self)
+        protocol_label_dialog = ProtocolLabelDialog(message=longest_message, viewtype=view_type,
+                                                    selected_index=selected_index, parent=self)
         protocol_label_dialog.apply_decoding_changed.connect(self.on_apply_decoding_changed)
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
 
         return protocol_label_dialog
 
-    def show_protocol_label_dialog(self,selected_index=None):
+    def show_protocol_label_dialog(self, selected_index=None):
         dialog = self.create_protocol_label_dialog(selected_index=selected_index)
         dialog.exec_()
 
@@ -1220,7 +1221,7 @@ class CompareFrameController(QWidget):
     @pyqtSlot(int, int, int)
     def on_create_label_triggered(self, msg_index, start, end):
         a = self.protocol_model.get_alignment_offset_at(msg_index)
-        self.add_protocol_label(start=start-a, end=end-a,
+        self.add_protocol_label(start=start - a, end=end - a,
                                 messagenr=msg_index, proto_view=self.ui.cbProtoView.currentIndex())
 
     @pyqtSlot()
@@ -1314,7 +1315,7 @@ class CompareFrameController(QWidget):
         message = self.proto_analyzer.messages[min_row]
         self.active_message_type = message.message_type
 
-        selected_labels = self.get_labels_from_selection(min_row, min_row, start, end-1)
+        selected_labels = self.get_labels_from_selection(min_row, min_row, start, end - 1)
         self.label_value_model.selected_label_indices = {
             self.active_message_type.index(lbl) for lbl in selected_labels
         }

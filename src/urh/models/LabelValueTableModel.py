@@ -17,7 +17,7 @@ class LabelValueTableModel(QAbstractTableModel):
     label_removed = pyqtSignal(ProtocolLabel)
     label_color_changed = pyqtSignal(ProtocolLabel)
 
-    header_labels = ["Name", "Color", "Display format", "Order [Bit/Byte]", "Value"]
+    header_labels = ["Name", "Color ", "Display format", "Order [Bit/Byte]", "Value"]
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)

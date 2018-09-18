@@ -1,4 +1,5 @@
 from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
+from PyQt5.QtGui import QFont
 
 from urh.signalprocessing.MessageType import MessageType
 
@@ -12,6 +13,8 @@ class MessageTypeTableModel(QAbstractTableModel):
     def __init__(self, message_types: list, parent=None):
         super().__init__(parent)
         self.message_types = message_types  # type: list[MessageType]
+
+        self.selected_message_type_indices = set()
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.message_types)
@@ -51,6 +54,10 @@ class MessageTypeTableModel(QAbstractTableModel):
         elif role == Qt.EditRole:
             if index.column() == 0:
                 return message_type.name
+        elif role == Qt.FontRole and index.column() == 0:
+            font = QFont()
+            font.setBold(index.row() in self.selected_message_type_indices)
+            return font
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
         if role == Qt.CheckStateRole:

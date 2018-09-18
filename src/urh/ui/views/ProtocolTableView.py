@@ -1,14 +1,12 @@
+import numpy
 from PyQt5.QtCore import QItemSelection, pyqtSlot
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtWidgets import QHeaderView, QAction, QMenu, QActionGroup
 from PyQt5.QtGui import QKeySequence, QDropEvent, QIcon
-import numpy
+from PyQt5.QtWidgets import QHeaderView, QAction, QActionGroup
 
+from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.ui.views.TableView import TableView
 
 
@@ -96,8 +94,9 @@ class ProtocolTableView(TableView):
 
         message_type_menu_str = self.tr("Message type")
         if selected_message_type != -1:
-            message_type_menu_str += self.tr(" ("+selected_message_type.name+")")
+            message_type_menu_str += self.tr(" (" + selected_message_type.name + ")")
         message_type_menu = menu.addMenu(message_type_menu_str)
+        message_type_menu.setIcon(QIcon(":/icons/icons/message_type.svg"))
         message_type_group = QActionGroup(self)
         self.message_type_actions = {}
 
@@ -113,6 +112,7 @@ class ProtocolTableView(TableView):
             action.triggered.connect(self.on_message_type_action_triggered)
 
         new_message_type_action = message_type_menu.addAction("Create new")
+        new_message_type_action.setIcon(QIcon.fromTheme("list-add"))
         new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
 
         if self.model().participants and self.model().protocol and not self.selection_is_empty:

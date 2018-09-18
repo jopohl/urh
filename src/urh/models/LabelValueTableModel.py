@@ -1,6 +1,7 @@
 import array
 
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt5.QtGui import QFont
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -24,11 +25,12 @@ class LabelValueTableModel(QAbstractTableModel):
         self.controller = controller
         self.__message_index = 0
         self.display_labels = controller.active_message_type  # type: MessageType
+        self.selected_label_indices = set()
 
         self.show_label_values = True
 
     def __display_data(self, lbl: ProtocolLabel, expected_checksum: array = None):
-        if not self.show_label_values:
+        if not self.show_label_values or self.message is None:
             return "-"
 
         try:
@@ -96,10 +98,7 @@ class LabelValueTableModel(QAbstractTableModel):
         except IndexError:
             return None
 
-        if not lbl or not self.message:
-            return None
-
-        if isinstance(lbl, ChecksumLabel):
+        if isinstance(lbl, ChecksumLabel) and self.message is not None:
             calculated_crc = lbl.calculate_checksum_for_message(self.message, use_decoded_bits=True)
         else:
             calculated_crc = None
@@ -118,7 +117,7 @@ class LabelValueTableModel(QAbstractTableModel):
         elif role == Qt.CheckStateRole and j == 0:
             return lbl.show
         elif role == Qt.BackgroundColorRole:
-            if isinstance(lbl, ChecksumLabel) and j == 4:
+            if isinstance(lbl, ChecksumLabel) and j == 4 and self.message is not None:
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
                     return constants.BG_COLOR_CORRECT
@@ -145,6 +144,10 @@ class LabelValueTableModel(QAbstractTableModel):
                                "<li>Least Significant Bit (LSB)</li>"
                                "<li>Least Significant Digit (LSD)</li>"
                                "</ul>")
+        elif role == Qt.FontRole and j == 0:
+            font = QFont()
+            font.setBold(i in self.selected_label_indices)
+            return font
 
     def setData(self, index: QModelIndex, value, role=None):
         row = index.row()

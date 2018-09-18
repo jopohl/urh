@@ -186,15 +186,6 @@ class CompareFrameController(QWidget):
             return
 
         self.__selected_message_type = val
-
-        sel = QItemSelection()
-        i = self.proto_analyzer.message_types.index(val)
-        sel.append(QItemSelectionRange(self.message_type_table_model.index(i, 0)))
-
-        self.ui.tblViewMessageTypes.blockSignals(True)
-        self.ui.tblViewMessageTypes.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
-        self.ui.tblViewMessageTypes.blockSignals(False)
-
         self.update_field_type_combobox()
 
     @property
@@ -482,6 +473,7 @@ class CompareFrameController(QWidget):
             try:
                 index = self.ui.tblLabelValues.model().index(message_type.index(proto_label), 0)
                 self.ui.tblLabelValues.setCurrentIndex(index)
+                self.ui.tblLabelValues.edit(index)
             except ValueError:
                 pass
 
@@ -620,14 +612,13 @@ class CompareFrameController(QWidget):
         index = self.proto_tree_model.createIndex(group_id, 0, self.proto_tree_model.rootItem.child(group_id))
         self.ui.treeViewProtocols.expand(index)
 
-    def updateUI(self, ignore_table_model=False, resize_table=True, ignore_message_type_table_model=False):
+    def updateUI(self, ignore_table_model=False, resize_table=True):
         if not ignore_table_model:
             self.protocol_model.update()
 
         self.proto_tree_model.layoutChanged.emit()  # do not call update, as it prevents editing
         self.label_value_model.update()
-        if not ignore_message_type_table_model:
-            self.message_type_table_model.update()
+        self.message_type_table_model.update()
 
         if resize_table:
             self.ui.tblViewProtocol.resize_columns()
@@ -959,7 +950,7 @@ class CompareFrameController(QWidget):
             message = self.proto_analyzer.messages[i]
             for label in message.message_type:
                 lbl_start, lbl_end = message.get_label_range(lbl=label, view=view, decode=True)
-                if any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)) and not label in result:
+                if any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)) and label not in result:
                     result.append(label)
 
         return result
@@ -1227,7 +1218,9 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(int, int, int)
     def on_create_label_triggered(self, msg_index, start, end):
-        self.protocol_model.add_protocol_label(start, end - 1, msg_index)
+        a = self.protocol_model.get_alignment_offset_at(msg_index)
+        self.add_protocol_label(start=start-a, end=end-a,
+                                messagenr=msg_index, proto_view=self.ui.cbProtoView.currentIndex())
 
     @pyqtSlot()
     def on_edit_label_action_triggered(self):
@@ -1292,25 +1285,38 @@ class CompareFrameController(QWidget):
     def on_table_selection_timer_timeout(self):
         self.label_value_model.show_label_values = True
         min_row, max_row, start, end = self.ui.tblViewProtocol.selection_range()
+        self.selected_protocols.clear()
+        self.active_group_ids.clear()
+        self.message_type_table_model.selected_message_type_indices.clear()
+        self.label_value_model.selected_label_indices.clear()
 
         if min_row == max_row == start == end == -1:
+            self.label_value_model.message_index = -1
+            self.active_message_type = self.proto_analyzer.default_message_type
             self.ui.lBitsSelection.setText("")
             self.ui.lDecimalSelection.setText("")
             self.ui.lHexSelection.setText("")
             self.ui.lNumSelectedColumns.setText("0")
-            self.ui.lblLabelValues.setText(self.tr("Labels for message "))
-            self.label_value_model.message_index = -1
-            self.active_message_type = self.proto_analyzer.default_message_type
+            self.ui.lblLabelValues.setText(self.tr("Labels of {}".format(self.active_message_type.name)))
             self.__set_decoding_error_label(message=None)
+            self.updateUI(ignore_table_model=True, resize_table=False)
             return -1, -1
 
         selected_messages = self.selected_messages
+        self.message_type_table_model.selected_message_type_indices = {
+            self.proto_analyzer.message_types.index(msg.message_type) for msg in selected_messages
+        }
 
         cur_view = self.ui.cbProtoView.currentIndex()
         self.ui.lNumSelectedColumns.setText(str(end - start))
 
         message = self.proto_analyzer.messages[min_row]
         self.active_message_type = message.message_type
+
+        selected_labels = self.get_labels_from_selection(min_row, min_row, start, end-1)
+        self.label_value_model.selected_label_indices = {
+            self.active_message_type.index(lbl) for lbl in selected_labels
+        }
 
         f = 4 if cur_view == 1 else 8 if cur_view == 2 else 1
         start, end = start * f, end * f
@@ -1329,7 +1335,6 @@ class CompareFrameController(QWidget):
             self.label_value_model.message_index = min_row
 
         active_group_ids = set()
-        self.selected_protocols.clear()
 
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
             for i, tree_item in enumerate(tree_items):
@@ -1359,7 +1364,7 @@ class CompareFrameController(QWidget):
         self.ui.cbDecoding.setCurrentText("..." if different_encodings else message.decoder.name)
         self.ui.cbDecoding.blockSignals(False)
 
-        self.updateUI(ignore_table_model=True, resize_table=False, ignore_message_type_table_model=True)
+        self.updateUI(ignore_table_model=True, resize_table=False)
 
     @pyqtSlot(int)
     def on_ref_index_changed(self, new_ref_index: int):

@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
     QItemSelectionRange, QModelIndex
-from PyQt5.QtGui import QContextMenuEvent, QIcon
+from PyQt5.QtGui import QContextMenuEvent, QIcon, QPalette
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView, qApp
 
 from urh import constants
@@ -1312,49 +1312,23 @@ class CompareFrameController(QWidget):
         message = self.proto_analyzer.messages[min_row]
         self.active_message_type = message.message_type
 
-        if cur_view == 1:
-            start *= 4
-            end *= 4
-        elif cur_view == 2:
-            start *= 8
-            end *= 8
+        f = 4 if cur_view == 1 else 8 if cur_view == 2 else 1
+        start, end = start * f, end * f
 
         bits = message.decoded_bits_str[start:end]
-        sym_ind = [i for i, b in enumerate(bits) if b not in ("0", "1")]
-        hex_bits = []
-        pos = 0
-        decimals = []
-        for si in sym_ind:
-            hb = bits[pos:si]
-            hex_bits.append("".join("{0:x}".format(int(hb[i:i + 4], 2)) for i in range(0, len(hb), 4)))
-            hex_bits.append(bits[si])
-
-            if len(hb) > 0:
-                decimals.append(str(int(hb, 2)))
-            decimals.append(bits[si])
-
-            pos = si + 1
-        hex_bits.append("".join("{0:x}".format(int(bits[pos:][i:i + 4], 2)) for i in range(0, len(bits[pos:]), 4)))
-        if len(bits[pos:]) > 0:
-            decimals.append(str(int(bits[pos:], 2)))
-
-        # hexs = "".join(["{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)])
-        hexs = "".join(hex_bits)
+        hexs = "".join(("{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)))
+        decimals = str(int(bits, 2)) if len(bits) > 0 else ""
 
         self.ui.lBitsSelection.setText(bits)
         self.ui.lHexSelection.setText(hexs)
+        self.ui.lDecimalSelection.setText(decimals)
         self.__set_decoding_error_label(message)
-        if len(decimals) > 0:
-            self.ui.lDecimalSelection.setText("".join(decimals))
-        else:
-            self.ui.lDecimalSelection.setText("")
 
         self.ui.lblLabelValues.setText(self.tr("Labels for message #") + str(min_row + 1))
         if min_row != self.label_value_model.message_index:
             self.label_value_model.message_index = min_row
 
         active_group_ids = set()
-        selection = QItemSelection()
         self.selected_protocols.clear()
 
         for group, tree_items in self.proto_tree_model.protocol_tree_items.items():
@@ -1381,22 +1355,9 @@ class CompareFrameController(QWidget):
 
         # Set Decoding Combobox
         self.ui.cbDecoding.blockSignals(True)
-        different_encodings = False
-        enc = message.decoder
-        for message in selected_messages:
-            if message.decoder != enc:
-                different_encodings = True
-                break
-
-        if not different_encodings:
-            self.ui.cbDecoding.setCurrentText(message.decoder.name)
-        else:
-            self.ui.cbDecoding.setCurrentText("...")
+        different_encodings = any(msg.decoder != message.decoder for msg in selected_messages)
+        self.ui.cbDecoding.setCurrentText("..." if different_encodings else message.decoder.name)
         self.ui.cbDecoding.blockSignals(False)
-
-        self.ui.treeViewProtocols.blockSignals(True)
-        self.ui.treeViewProtocols.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
-        self.ui.treeViewProtocols.blockSignals(False)
 
         self.updateUI(ignore_table_model=True, resize_table=False, ignore_message_type_table_model=True)
 

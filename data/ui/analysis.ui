@@ -914,6 +914,12 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 <property name="acceptDrops">
                  <bool>false</bool>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+                </property>
+                <property name="frame">
+                 <bool>false</bool>
+                </property>
                 <property name="readOnly">
                  <bool>true</bool>
                 </property>
@@ -955,6 +961,12 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 <property name="acceptDrops">
                  <bool>false</bool>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+                </property>
+                <property name="frame">
+                 <bool>false</bool>
+                </property>
                 <property name="readOnly">
                  <bool>true</bool>
                 </property>
@@ -994,6 +1006,12 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </size>
                 </property>
                 <property name="acceptDrops">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+                </property>
+                <property name="frame">
                  <bool>false</bool>
                 </property>
                 <property name="readOnly">

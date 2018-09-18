@@ -25,8 +25,9 @@ class MessageTypeDialog(QDialog):
         operator_descriptions.sort()
 
         self.setWindowTitle(self.tr("Rules for {}".format(message_type.name)))
-        self.orig_message_type = copy.deepcopy(message_type)
         self.message_type = message_type
+        self.original_ruleset = copy.deepcopy(message_type.ruleset)
+        self.original_assigned_status = message_type.assigned_by_ruleset
         self.ruleset_table_model = RulesetTableModel(message_type.ruleset, operator_descriptions, parent=self)
         self.ui.tblViewRuleset.setModel(self.ruleset_table_model)
 
@@ -58,8 +59,8 @@ class MessageTypeDialog(QDialog):
         self.ui.rbAssignManually.clicked.connect(self.on_rb_assign_manually_clicked)
         self.ui.cbRulesetMode.currentIndexChanged.connect(self.on_cb_rulesetmode_current_index_changed)
 
-        self.ui.btnSaveAndApply.clicked.connect(self.on_btn_save_and_apply_clicked)
-        self.ui.btnClose.clicked.connect(self.on_btn_close_clicked)
+        self.ui.buttonBox.accepted.connect(self.on_accepted)
+        self.ui.buttonBox.rejected.connect(self.on_rejected)
 
     def set_ruleset_ui_status(self):
         self.ui.tblViewRuleset.setEnabled(self.message_type.assigned_by_ruleset)
@@ -78,6 +79,18 @@ class MessageTypeDialog(QDialog):
         super().closeEvent(event)
 
     @pyqtSlot()
+    def on_accepted(self):
+        if len(self.message_type.ruleset) == 0 and self.message_type.assigned_by_ruleset:
+            self.message_type.assigned_by_ruleset = False
+        self.accept()
+
+    @pyqtSlot()
+    def on_rejected(self):
+        self.message_type.ruleset = self.original_ruleset
+        self.message_type.assigned_by_ruleset = self.original_assigned_status
+        self.reject()
+
+    @pyqtSlot()
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
         self.message_type.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
@@ -85,15 +98,6 @@ class MessageTypeDialog(QDialog):
 
         for i in range(len(self.message_type.ruleset)):
             self.open_editors(i)
-
-    @pyqtSlot()
-    def on_btn_close_clicked(self):
-        self.message_type = self.orig_message_type
-        self.close()
-
-    @pyqtSlot()
-    def on_btn_save_and_apply_clicked(self):
-        self.close()
 
     @pyqtSlot()
     def on_btn_remove_rule_clicked(self):

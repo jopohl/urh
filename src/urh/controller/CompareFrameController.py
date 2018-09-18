@@ -964,6 +964,7 @@ class CompareFrameController(QWidget):
 
     def update_automatic_assigned_message_types(self):
         self.proto_analyzer.update_auto_message_types()
+        self.message_type_table_model.update()
         self.protocol_model.update()
 
     def refresh_assigned_participants_ui(self):
@@ -1060,7 +1061,7 @@ class CompareFrameController(QWidget):
     def on_configure_message_type_rules_triggered(self, message_type_index: int):
         dialog = MessageTypeDialog(self.proto_analyzer.message_types[message_type_index], parent=self)
         dialog.show()
-        dialog.finished.connect(self.on_message_type_dialog_finished)
+        dialog.accepted.connect(self.on_message_type_dialog_accepted)
 
     @pyqtSlot()
     def on_btn_new_message_type_clicked(self):
@@ -1399,8 +1400,8 @@ class CompareFrameController(QWidget):
         self.active_message_type = message_type
         self.protocol_model.update()
 
-    @pyqtSlot(int)
-    def on_message_type_dialog_finished(self, status: int):
+    @pyqtSlot()
+    def on_message_type_dialog_accepted(self):
         self.update_automatic_assigned_message_types()
 
     @pyqtSlot()

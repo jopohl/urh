@@ -59,14 +59,14 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(len(self.gframe.modulators), 2)
 
     def test_close_all(self):
-        self.form.close_all_files()
+        self.form.close_project()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.add_signal_to_form("ask.complex")
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
-        self.form.close_all_files()
+        self.form.close_project()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
@@ -236,7 +236,7 @@ class TestProjectManager(QtTestCase):
         dialog.ui.lineEdit_Path.setText(test_path)
         dialog.ui.lineEdit_Path.textEdited.emit(test_path)
         self.assertEqual(dialog.path, test_path)
-        dialog.ui.btnOK.click()
+        dialog.on_button_box_accepted()
 
         self.form.ui.tabWidget.setCurrentWidget(self.form.ui.tab_protocol)
         self.form.compare_frame_controller.ui.tabWidget.setCurrentWidget(

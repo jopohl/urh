@@ -151,7 +151,7 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[1].field_type, sync_field_type)
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
 
-        self.form.close_all_files()
+        self.form.close_project()
         self.wait_before_new_file()
         self.assertEqual(len(self.form.compare_frame_controller.active_message_type), 0)
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)

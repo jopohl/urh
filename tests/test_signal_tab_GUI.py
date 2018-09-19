@@ -11,7 +11,7 @@ from urh.signalprocessing.Participant import Participant
 
 
 class TestSignalTabGUI(QtTestCase):
-    def test_close_all(self):
+    def test_close_project(self):
         self.add_signal_to_form("esaver.coco")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all_files()
@@ -26,7 +26,7 @@ class TestSignalTabGUI(QtTestCase):
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
-        self.form.close_all_files()
+        self.form.close_project()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
 

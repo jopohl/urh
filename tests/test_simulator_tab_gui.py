@@ -60,7 +60,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        self.form.close_all_files()
+        self.form.close_project()
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 0)

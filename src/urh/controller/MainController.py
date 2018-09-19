@@ -460,7 +460,10 @@ class MainController(QMainWindow):
         self.save_project()
         self.close_all_files()
         self.compare_frame_controller.proto_analyzer.message_types.clear()
+        self.compare_frame_controller.active_message_type.clear()
         self.compare_frame_controller.updateUI()
+        self.project_manager.participants.clear()
+        self.participant_legend_model.update()
 
         self.filemodel.setRootPath(QDir.homePath())
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))

@@ -716,14 +716,8 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
+        self.close_project()
         pdc = ProjectDialog(parent=self)
-        try:
-            path = os.path.dirname(self.signal_tab_controller.signal_frames[0].signal.filename)
-        except (IndexError, AttributeError, TypeError):
-            path = None
-
-        if path:
-            pdc.set_path(path)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 

@@ -57,7 +57,7 @@ class QtTestCase(unittest.TestCase):
                 self.dialog = None
 
         if hasattr(self, "form"):
-            self.form.close_all()
+            self.form.close_all_files()
             self.form.close()
 
             if sys.platform == "win32" or sys.platform == "darwin":

@@ -212,7 +212,7 @@ class ProjectManager(QObject):
     def set_project_folder(self, path, ask_for_new_project=True, close_all=True):
         if self.project_file is not None or close_all:
             # Close existing project (if any) or existing files if requested
-            self.main_controller.close_all()
+            self.main_controller.close_all_files()
         FileOperator.RECENT_PATH = path
         util.PROJECT_PATH = path
         self.project_path = path

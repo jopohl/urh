@@ -361,6 +361,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionNew_Project"/>
     <addaction name="actionProject_settings"/>
     <addaction name="actionSave_project"/>
+    <addaction name="actionClose_project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_directory"/>
@@ -743,6 +744,14 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    </property>
    <property name="text">
     <string>IQ samples from csv</string>
+   </property>
+  </action>
+  <action name="actionClose_project">
+   <property name="icon">
+    <iconset theme="document-close"/>
+   </property>
+   <property name="text">
+    <string>Close project</string>
    </property>
   </action>
  </widget>

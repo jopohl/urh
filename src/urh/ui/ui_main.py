@@ -305,10 +305,15 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon.fromTheme("text-csv")
         self.actionSamples_from_csv.setIcon(icon)
         self.actionSamples_from_csv.setObjectName("actionSamples_from_csv")
+        self.actionClose_project = QtWidgets.QAction(MainWindow)
+        icon = QtGui.QIcon.fromTheme("document-close")
+        self.actionClose_project.setIcon(icon)
+        self.actionClose_project.setObjectName("actionClose_project")
         self.menuImport.addAction(self.actionSamples_from_csv)
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
         self.menuFile.addAction(self.actionSave_project)
+        self.menuFile.addAction(self.actionClose_project)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionOpen_directory)
@@ -391,6 +396,7 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt.setText(_translate("MainWindow", "About &Qt"))
         self.actionShowFileTree.setText(_translate("MainWindow", "&Show file tree"))
         self.actionSamples_from_csv.setText(_translate("MainWindow", "IQ samples from csv"))
+        self.actionClose_project.setText(_translate("MainWindow", "Close project"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

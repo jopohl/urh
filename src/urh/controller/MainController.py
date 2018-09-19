@@ -168,7 +168,7 @@ class MainController(QMainWindow):
 
         self.ui.actionFullscreen_mode.triggered.connect(self.on_fullscreen_action_triggered)
         self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
-        self.ui.actionClose_all.triggered.connect(self.on_close_all_action_triggered)
+        self.ui.actionCloseAllFiles.triggered.connect(self.on_close_all_files_action_triggered)
         self.ui.actionOpen.triggered.connect(self.on_open_file_action_triggered)
         self.ui.actionOpen_directory.triggered.connect(self.on_open_directory_action_triggered)
         self.ui.actionDecoding.triggered.connect(self.on_show_decoding_dialog_triggered)
@@ -404,11 +404,13 @@ class MainController(QMainWindow):
         self.save_project()
         super().closeEvent(event)
 
-    def close_all(self):
+    def close_all_files(self):
 
-        self.filemodel.setRootPath(QDir.homePath())
-        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.save_project()
+        # self.filemodel.setRootPath(QDir.homePath())
+        # self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
+        # self.save_project()
+        # self.project_manager.project_path = ""
+        # self.project_manager.project_file = None
 
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
@@ -417,8 +419,6 @@ class MainController(QMainWindow):
         self.generator_tab_controller.refresh_table()
         self.generator_tab_controller.refresh_label_list()
 
-        self.project_manager.project_path = ""
-        self.project_manager.project_file = None
         self.signal_tab_controller.signal_undo_stack.clear()
         self.compare_frame_controller.protocol_undo_stack.clear()
         self.generator_tab_controller.generator_undo_stack.clear()
@@ -434,7 +434,7 @@ class MainController(QMainWindow):
     def refresh_main_menu(self):
         enable = len(self.signal_protocol_dict) > 0
         self.ui.actionSaveAllSignals.setEnabled(enable)
-        self.ui.actionClose_all.setEnabled(enable)
+        self.ui.actionCloseAllFiles.setEnabled(enable)
 
     def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
@@ -767,8 +767,8 @@ class MainController(QMainWindow):
                 self.unsetCursor()
 
     @pyqtSlot()
-    def on_close_all_action_triggered(self):
-        self.close_all()
+    def on_close_all_files_action_triggered(self):
+        self.close_all_files()
 
     @pyqtSlot(list)
     def on_files_dropped(self, files):

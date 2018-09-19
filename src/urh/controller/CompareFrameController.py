@@ -633,8 +633,6 @@ class CompareFrameController(QWidget):
         self.set_shown_protocols()
 
     def reset(self):
-        for message_type in self.proto_analyzer.message_types:
-            message_type.clear()
         self.proto_tree_model.rootItem.clearChilds()
         self.proto_tree_model.rootItem.addGroup()
         self.refresh()

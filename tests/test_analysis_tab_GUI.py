@@ -393,7 +393,7 @@ class TestAnalysisTabGUI(QtTestCase):
 
     def test_alignment(self):
         assert isinstance(self.cfc, CompareFrameController)
-        self.form.close_all()
+        self.form.close_all_files()
         self.form.add_files([self.get_path_for_filename("misaligned.txt")])
         self.assertEqual(self.cfc.protocol_model.row_count, 16)
 

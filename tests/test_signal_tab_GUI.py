@@ -14,7 +14,7 @@ class TestSignalTabGUI(QtTestCase):
     def test_close_all(self):
         self.add_signal_to_form("esaver.coco")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
-        self.form.close_all()
+        self.form.close_all_files()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
@@ -26,7 +26,7 @@ class TestSignalTabGUI(QtTestCase):
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
-        self.form.close_all()
+        self.form.close_all_files()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
 

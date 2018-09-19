@@ -59,14 +59,14 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(len(self.gframe.modulators), 2)
 
     def test_close_all(self):
-        self.form.close_all()
+        self.form.close_all_files()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.add_signal_to_form("ask.complex")
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
-        self.form.close_all()
+        self.form.close_all_files()
         QApplication.instance().processEvents()
         QTest.qWait(self.CLOSE_TIMEOUT)
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
@@ -108,7 +108,7 @@ class TestProjectManager(QtTestCase):
         self.form.compare_frame_controller.refresh_assigned_participants_ui()
 
         self.form.save_project()
-        self.form.close_all()
+        self.form.close_all_files()
         self.wait_before_new_file()
         self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 0)
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
@@ -151,7 +151,7 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[1].field_type, sync_field_type)
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
 
-        self.form.close_all()
+        self.form.close_all_files()
         self.wait_before_new_file()
         self.assertEqual(len(self.form.compare_frame_controller.active_message_type), 0)
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)

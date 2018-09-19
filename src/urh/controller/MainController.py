@@ -146,6 +146,7 @@ class MainController(QMainWindow):
 
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
+        self.ui.actionClose_project.setVisible(False)
 
     def __set_non_project_warning_visibility(self):
         show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
@@ -162,13 +163,14 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
         self.ui.actionSave_project.triggered.connect(self.save_project)
+        self.ui.actionClose_project.triggered.connect(self.close_project)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
         self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
 
         self.ui.actionFullscreen_mode.triggered.connect(self.on_fullscreen_action_triggered)
         self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
-        self.ui.actionClose_all.triggered.connect(self.on_close_all_action_triggered)
+        self.ui.actionCloseAllFiles.triggered.connect(self.on_close_all_files_action_triggered)
         self.ui.actionOpen.triggered.connect(self.on_open_file_action_triggered)
         self.ui.actionOpen_directory.triggered.connect(self.on_open_directory_action_triggered)
         self.ui.actionDecoding.triggered.connect(self.on_show_decoding_dialog_triggered)
@@ -404,12 +406,7 @@ class MainController(QMainWindow):
         self.save_project()
         super().closeEvent(event)
 
-    def close_all(self):
-
-        self.filemodel.setRootPath(QDir.homePath())
-        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.save_project()
-
+    def close_all_files(self):
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
         self.generator_tab_controller.table_model.protocol.clear()
@@ -417,8 +414,6 @@ class MainController(QMainWindow):
         self.generator_tab_controller.refresh_table()
         self.generator_tab_controller.refresh_label_list()
 
-        self.project_manager.project_path = ""
-        self.project_manager.project_file = None
         self.signal_tab_controller.signal_undo_stack.clear()
         self.compare_frame_controller.protocol_undo_stack.clear()
         self.generator_tab_controller.generator_undo_stack.clear()
@@ -434,7 +429,7 @@ class MainController(QMainWindow):
     def refresh_main_menu(self):
         enable = len(self.signal_protocol_dict) > 0
         self.ui.actionSaveAllSignals.setEnabled(enable)
-        self.ui.actionClose_all.setEnabled(enable)
+        self.ui.actionCloseAllFiles.setEnabled(enable)
 
     def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
@@ -460,6 +455,19 @@ class MainController(QMainWindow):
 
     def save_project(self):
         self.project_manager.save_project(simulator_config=self.simulator_tab_controller.simulator_config)
+
+    def close_project(self):
+        self.save_project()
+        self.close_all_files()
+        self.compare_frame_controller.proto_analyzer.message_types.clear()
+        self.compare_frame_controller.updateUI()
+
+        self.filemodel.setRootPath(QDir.homePath())
+        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
+        self.hide_file_tree()
+
+        self.project_manager.project_path = ""
+        self.project_manager.project_file = None
 
     @pyqtSlot()
     def on_project_tab_bar_double_clicked(self):
@@ -724,10 +732,13 @@ class MainController(QMainWindow):
     def on_edit_menu_about_to_show(self):
         self.ui.actionShowFileTree.setChecked(self.ui.splitter.sizes()[0] > 0)
 
+    def hide_file_tree(self):
+        self.ui.splitter.setSizes([0, 1])
+
     @pyqtSlot()
     def on_action_show_filetree_triggered(self):
         if self.ui.splitter.sizes()[0] > 0:
-            self.ui.splitter.setSizes([0, 1])
+            self.hide_file_tree()
         else:
             self.ui.splitter.setSizes([1, 1])
 
@@ -767,8 +778,8 @@ class MainController(QMainWindow):
                 self.unsetCursor()
 
     @pyqtSlot()
-    def on_close_all_action_triggered(self):
-        self.close_all()
+    def on_close_all_files_action_triggered(self):
+        self.close_all_files()
 
     @pyqtSlot(list)
     def on_files_dropped(self, files):
@@ -876,6 +887,7 @@ class MainController(QMainWindow):
     def on_project_loaded_status_changed(self, project_loaded: bool):
         self.ui.actionProject_settings.setVisible(project_loaded)
         self.ui.actionSave_project.setVisible(project_loaded)
+        self.ui.actionClose_project.setVisible(project_loaded)
         self.ui.actionConvert_Folder_to_Project.setDisabled(project_loaded)
         self.__set_non_project_warning_visibility()
 

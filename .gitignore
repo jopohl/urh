@@ -3,6 +3,8 @@
 
 .coverage
 
+.pytest_cache
+
 # Pycharm
 .idea/
 
@@ -35,17 +37,15 @@ src/urh.egg-info/
 .cache/
 tests/data/URHProject.xml
 src/urh/cythonext/*.html
+src/urh/cythonext/*.c
+src/urh/cythonext/*.cpp
+
+src/urh/dev/native/lib/*.html
+src/urh/dev/native/lib/*.c
+src/urh/dev/native/lib/*.cpp
+
 /tests/show_gui
 
-hackrf.cpp
-airspy.cpp
-limesdr.cpp
-rtlsdr.cpp
-sdrplay.cpp
-usrp.c
 
-path_creator.cpp
-signal_functions.cpp
-util.cpp
 
 misc/*

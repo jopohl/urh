@@ -194,6 +194,9 @@ def detect_center(rectangular_signal: np.ndarray):
         if len(most_common_levels) == num_values:
             break
 
+    if len(most_common_levels) == 0:
+        return None
+
     # todo if num values greater two return more centers
     return np.mean(most_common_levels)
 
@@ -374,6 +377,8 @@ def estimate(signal: np.ndarray) -> dict:
         msg_rect_data = data[start:end]
 
         center = detect_center(msg_rect_data)
+        if center is None:
+            continue
 
         plateau_lengths = get_plateau_lengths(msg_rect_data, center, percentage=25)
         tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)

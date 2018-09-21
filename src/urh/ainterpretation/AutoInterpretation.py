@@ -173,18 +173,21 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "OOK"
 
 
-def detect_center(rectangular_signal: np.ndarray, n_histogram_bins=64):
+def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
-    y, x = np.histogram(rect, bins=n_histogram_bins)
+    hist_min, hist_max = util.minmax(rect)
+    hist_step = 0.05
+
+    y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max+hist_step, hist_step))
 
     num_values = 2
     most_common_levels = []
 
     for index in np.argsort(y)[::-1]:
+        # check if we have a local maximum in histogram, if yes, append the value
         left = y[index-1] if index > 0 else 0
         right = y[index+1] if index < len(y) - 1 else 0
 
-        # check if we have a local maximum in histogram, if yes, append the value
         if left < y[index] and y[index] > right:
             most_common_levels.append(x[index])
 

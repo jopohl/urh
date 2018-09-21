@@ -80,3 +80,10 @@ class TestCenterDetection(unittest.TestCase):
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1979)
         self.assertLessEqual(center, 0.1131)
+
+    def test_fsk_10db_center_detection(self):
+        data = Signal(get_path_for_data_file("FSK10.complex"), "").data
+        rect = afp_demod(data, 0, 1)
+        center = detect_center(rect)
+        self.assertGreaterEqual(center, -0.1413)
+        self.assertLessEqual(center, 0.05)

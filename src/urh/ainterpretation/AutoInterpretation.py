@@ -179,11 +179,15 @@ def detect_center(rectangular_signal: np.ndarray, n_histogram_bins=64):
 
     num_values = 2
     most_common_levels = []
-    used_indices = set()
+
     for index in np.argsort(y)[::-1]:
-        if not any(i in range(index - 1, index + 2) for i in used_indices):
-            used_indices.add(index)
+        left = y[index-1] if index > 0 else 0
+        right = y[index+1] if index < len(y) - 1 else 0
+
+        # check if we have a local maximum in histogram, if yes, append the value
+        if left < y[index] and y[index] > right:
             most_common_levels.append(x[index])
+
         if len(most_common_levels) == num_values:
             break
 

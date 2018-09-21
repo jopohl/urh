@@ -9,6 +9,7 @@ import numpy as np
 from urh.ainterpretation import Wavelet
 from urh.cythonext import auto_interpretation as c_auto_interpretation
 from urh.cythonext import signal_functions
+from urh.cythonext import util
 
 
 def max_without_outliers(data: np.ndarray, z=3):
@@ -58,7 +59,8 @@ def detect_noise_level(magnitudes):
     chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
 
     mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
-    if np.std(mean_values) <= 0.001:
+    minimum, maximum = util.minmax(mean_values)
+    if minimum / maximum > 0.9:
         # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 

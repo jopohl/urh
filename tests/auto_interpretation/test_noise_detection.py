@@ -49,3 +49,8 @@ class TestNoiseDetection(unittest.TestCase):
         noise_level = detect_noise_level(np.abs(data))
         self.assertGreater(noise_level, 0.0067)
         self.assertLessEqual(noise_level, 0.0081)
+
+    def test_for_noisy_fsk_15db_signal(self):
+        data = Signal(get_path_for_data_file("FSK15.complex"), "").data
+        noise_level = detect_noise_level(np.abs(data))
+        self.assertEqual(noise_level, 0)

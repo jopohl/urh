@@ -173,20 +173,33 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "OOK"
 
 
+def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) -> str:
+    modulations_for_messages = []
+    for start, end in message_indices:
+        mod = detect_modulation(signal[start:end])
+        if mod is not None:
+            modulations_for_messages.append(mod)
+
+    if len(modulations_for_messages) == 0:
+        return None
+
+    return max(set(modulations_for_messages), key=modulations_for_messages.count)
+
+
 def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
     hist_min, hist_max = util.minmax(rect)
     hist_step = 0.05
 
-    y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max+hist_step, hist_step))
+    y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
 
     num_values = 2
     most_common_levels = []
 
     for index in np.argsort(y)[::-1]:
         # check if we have a local maximum in histogram, if yes, append the value
-        left = y[index-1] if index > 0 else 0
-        right = y[index+1] if index < len(y) - 1 else 0
+        left = y[index - 1] if index > 0 else 0
+        right = y[index + 1] if index < len(y) - 1 else 0
 
         if left < y[index] and y[index] > right:
             most_common_levels.append(x[index])
@@ -348,16 +361,10 @@ def estimate(signal: np.ndarray) -> dict:
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
     # detect modulation
-    modulations_for_messages = []
-    for start, end in message_indices:
-        mod = detect_modulation(signal[start:end])
-        if mod is not None:
-            modulations_for_messages.append(mod)
-
-    if len(modulations_for_messages) == 0:
+    modulation = detect_modulation_for_messages(signal, message_indices)
+    if modulation is None:
         return None
 
-    modulation = max(set(modulations_for_messages), key=modulations_for_messages.count)
     if modulation == "OOK":
         message_indices = merge_message_segments_for_ook(message_indices)
 

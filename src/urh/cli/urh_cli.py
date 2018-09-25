@@ -189,6 +189,7 @@ def read_messages_to_send(arguments: argparse.Namespace):
         print("Either give messages (-m) or a file to read from (-file) not both.")
         sys.exit(1)
     elif arguments.messages is not None:
+        #support for calls from external tools e.g. metasploit
         if len(arguments.messages) == 1:
             message_strings = arguments.messages[0].split(' ')
         else:

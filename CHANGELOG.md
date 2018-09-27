@@ -1,8 +1,12 @@
 # Changelog
-## v2.2.5 (upcoming)
+## v2.3.0 (upcoming)
 ### New features
 - added native support for BladeRF [#524](https://github.com/jopohl/urh/pull/524)
 - added backward compatibility for SDRPlay < 2.13 [#528](https://github.com/jopohl/urh/pull/528)
+- improved UI for message type and label configuration in analysis [#532](https://github.com/jopohl/urh/pull/532)
+- rename __close all__ action to __close all files__ for more clarity [#532](https://github.com/jopohl/urh/pull/532)
+- added a __close project__ action [#532](https://github.com/jopohl/urh/pull/532)
+
 
 ## v2.2.4 (30/08/2018)
 ### Bugfixes

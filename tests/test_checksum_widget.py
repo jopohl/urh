@@ -85,7 +85,7 @@ class TestChecksumWidget(QtTestCase):
         mt = MessageType("test")
         mt.append(ChecksumLabel("test_crc", 8, 16, 0, FieldType("test_crc", FieldType.Function.CHECKSUM)))
 
-        self.dialog = ProtocolLabelDialog(0, Message([0] * 100, 0, mt), 0)
+        self.dialog = ProtocolLabelDialog(Message([0] * 100, 0, mt), 0)
         self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.count(), 1)
         self.assertEqual(self.dialog.ui.tabWidgetAdvancedSettings.tabText(0), "test_crc")
 

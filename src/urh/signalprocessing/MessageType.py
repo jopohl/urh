@@ -2,6 +2,8 @@ import random
 import uuid
 import xml.etree.ElementTree as ET
 
+from PyQt5.QtCore import Qt
+
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
@@ -16,13 +18,14 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
+    __slots__ = ["name", "show", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
         super().__init__(iterable)
 
         self.name = name
+        self.show = Qt.Checked
         self.__id = str(uuid.uuid4()) if id is None else id
 
         self.assigned_by_logic_analyzer = False

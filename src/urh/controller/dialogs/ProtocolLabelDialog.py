@@ -24,7 +24,7 @@ class ProtocolLabelDialog(QDialog):
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
-    def __init__(self, preselected_index, message: Message, viewtype: int, parent=None):
+    def __init__(self, message: Message, viewtype: int, selected_index=None, parent=None):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
@@ -44,8 +44,6 @@ class ProtocolLabelDialog(QDialog):
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
-        if preselected_index >= 0:
-            self.ui.tblViewProtoLabels.selectRow(preselected_index)
         self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -58,6 +56,10 @@ class ProtocolLabelDialog(QDialog):
         self.ui.splitter.setSizes([self.height() / 2, self.height() / 2])
 
         self.create_connects()
+
+        if selected_index is not None:
+            self.ui.tblViewProtoLabels.setCurrentIndex(self.model.index(selected_index, 0))
+
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
 
@@ -95,7 +97,6 @@ class ProtocolLabelDialog(QDialog):
         self.model.special_status_label_changed.connect(self.on_label_special_status_changed)
 
     def open_editors(self, row):
-        self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 3))
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
     def keyPressEvent(self, event: QKeyEvent):

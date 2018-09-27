@@ -34,6 +34,7 @@ class Ui_DialogLabels(object):
         self.tblViewProtoLabels.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.tblViewProtoLabels.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.tblViewProtoLabels.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tblViewProtoLabels.setShowGrid(False)
         self.tblViewProtoLabels.setObjectName("tblViewProtoLabels")
         self.verticalLayout.addWidget(self.tblViewProtoLabels)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()

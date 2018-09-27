@@ -68,11 +68,11 @@ class TestProtocolSniffer(QtTestCase):
         # send data
         send_data = np.concatenate(packages)
         self.network_sdr_plugin_sender.send_raw_data(send_data, 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
 
         # Send enough pauses to end sniffing
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(10 * bit_len, dtype=np.complex64), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
 
         sniffer.stop()
         self.assertEqual(sniffer.plain_bits_str, data)

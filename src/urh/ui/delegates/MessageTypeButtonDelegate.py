@@ -1,6 +1,8 @@
-from PyQt5.QtCore import pyqtSlot, QSize, Qt, QRectF
-from PyQt5.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics
-from PyQt5.QtWidgets import QStyledItemDelegate, QToolButton, QApplication, QWidget, QHBoxLayout
+import math
+
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
+from PyQt5.QtWidgets import QStyledItemDelegate, QToolButton
 
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.util import util
@@ -15,28 +17,26 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         button = QToolButton(parent)
         button.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
 
-        if QIcon.hasThemeIcon("configure"):
-            icon = QIcon.fromTheme("configure")
-            icon = self.draw_indicator(icon, self.parent().model().get_num_active_rules_of_message_type_at(index.row()))
-            button.setIcon(icon)
-        else:
-            button.setText("...")
+        num_rules = self.parent().model().get_num_active_rules_of_message_type_at(index.row())
 
+        if num_rules == 0:
+            icon = QIcon.fromTheme("configure")
+        else:
+            icon = self.draw_indicator(indicator=num_rules)
+
+        button.setIcon(icon)
+        button.setText("...")
         button.clicked.connect(self.on_btn_clicked)
         return button
 
-    def draw_indicator(self, icon: QIcon, indicator: int):
-        if indicator == 0:
-            return icon
-
-        pixmap = icon.pixmap(icon.actualSize(QSize(25, 25)))
+    @staticmethod
+    def draw_indicator(indicator: int):
+        pixmap = QPixmap(24, 24)
 
         painter = QPainter(pixmap)
         w, h = pixmap.width(), pixmap.height()
 
-        painter.setPen(Qt.transparent)
-        painter.setBrush(QColor(0, 0, 255, 150))
-        painter.drawEllipse(QRectF(w/3, h/3, 2*w/3, 2*h/3))
+        painter.fillRect(0, 0, w, h, QBrush((QColor(0, 0, 200, 255))))
 
         pen = QPen(QColor("white"))
         pen.setWidth(2)
@@ -44,6 +44,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
 
         font = util.get_monospace_font()
         font.setBold(True)
+        font.setPixelSize(16)
         painter.setFont(font)
 
         f = QFontMetrics(painter.font())
@@ -51,7 +52,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
 
         fw = f.width(indicator_str)
         fh = f.height()
-        painter.drawText(w - fw - 2, fh, indicator_str)
+        painter.drawText(math.ceil(w / 2 - fw / 2), math.ceil(h / 2 + fh / 4), indicator_str)
 
         painter.end()
         return QIcon(pixmap)

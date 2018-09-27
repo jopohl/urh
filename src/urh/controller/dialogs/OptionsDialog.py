@@ -6,8 +6,8 @@ import time
 
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QStyleFactory, \
-    QRadioButton, QFileDialog
+from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
+    QFileDialog
 
 from urh import constants, colormaps
 from urh.controller.widgets.PluginFrame import PluginFrame
@@ -373,10 +373,6 @@ class OptionsDialog(QDialog):
     @pyqtSlot(int)
     def on_combo_box_theme_index_changed(self, index: int):
         constants.SETTINGS.setValue('theme_index', index)
-        if index > 0:
-            QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
-        else:
-            QApplication.instance().setStyle(constants.SETTINGS.value("default_theme", type=str))
 
     @pyqtSlot(int)
     def on_combobox_icon_theme_index_changed(self, index: int):

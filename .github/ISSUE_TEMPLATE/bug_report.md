@@ -10,7 +10,7 @@ about: Create a report to help us improve
 ##### Actual Behavior
 
 ##### Steps To Reproduce
-Steps to reproduce the behavior:
+<!-- Explain the steps to reproduce the behavior. -->
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'

@@ -1,4 +1,3 @@
-import fileinput
 import os
 import shutil
 import sys
@@ -68,11 +67,11 @@ def release():
     # region Publish to PyPi
     call(["python", "setup.py", "sdist"])
     call("twine upload dist/*", shell=True)
-    #endregion
+    # endregion
 
     os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
-    #region Build docker image and push to DockerHub
+    # region Build docker image and push to DockerHub
     os.chdir(os.path.dirname(__file__))
     call(["docker", "login"])
     call(["docker", "build", "--no-cache",
@@ -80,7 +79,8 @@ def release():
           "--tag", "jopohl/urh:{}".format(cur_version), "."])
     call(["docker", "push", "jopohl/urh:latest"])
     call(["docker", "push", "jopohl/urh:{}".format(cur_version)])
-    #endregion
+    # endregion
+
 
 if __name__ == "__main__":
     cleanup()

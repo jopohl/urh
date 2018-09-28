@@ -1,5 +1,5 @@
 # Changelog
-## v2.3.0 (upcoming)
+## v2.3.0 (28/09/2018)
 ### New features
 - added native support for BladeRF [#524](https://github.com/jopohl/urh/pull/524)
 - added backward compatibility for SDRPlay < 2.13 [#528](https://github.com/jopohl/urh/pull/528)

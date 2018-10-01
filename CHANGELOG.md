@@ -1,4 +1,8 @@
 # Changelog
+## v2.3.1 (upcoming)
+### Improvements
+- ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)
+
 ## v2.3.0 (28/09/2018)
 ### New features
 - added native support for BladeRF [#524](https://github.com/jopohl/urh/pull/524)

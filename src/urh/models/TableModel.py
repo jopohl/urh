@@ -314,6 +314,9 @@ class TableModel(QAbstractTableModel):
 
     def find_protocol_value(self, value):
         self.search_results.clear()
+        if self.proto_view == 1:
+            value = value.lower()
+
         self.search_value = value
 
         if len(value) == 0:

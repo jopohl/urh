@@ -3,9 +3,11 @@
 ### New features
 - added __font size zoom__ to table views (analysis/generator/simulator); more details in [#546](https://github.com/jopohl/urh/pull/546)
 
-
 ### Improvements
 - ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)
+
+### Bugfixes
+- Fix display of RSSI indicator in Interpretation [#547](https://github.com/jopohl/urh/pull/547)
 
 ## v2.3.0 (28/09/2018)
 ### New features

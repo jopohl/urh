@@ -138,11 +138,11 @@ class TableView(QTableView):
             label_action.triggered.connect(self.on_create_or_edit_label_action_triggered)
             menu.addSeparator()
 
-        zoom_menu = menu.addMenu("Zoom font size")
-        zoom_menu.addAction(self.zoom_in_action)
-        zoom_menu.addAction(self.zoom_out_action)
-        zoom_menu.addAction(self.zoom_original_action)
-        menu.addSeparator()
+            zoom_menu = menu.addMenu("Zoom font size")
+            zoom_menu.addAction(self.zoom_in_action)
+            zoom_menu.addAction(self.zoom_out_action)
+            zoom_menu.addAction(self.zoom_original_action)
+            menu.addSeparator()
 
         return menu
 

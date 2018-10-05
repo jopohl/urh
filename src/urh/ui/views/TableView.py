@@ -20,6 +20,31 @@ class TableView(QTableView):
 
         self.use_header_colors = False
 
+        self.original_font_size = self.font().pointSize()
+        self.original_header_font_sizes = {"vertical": self.verticalHeader().font().pointSize(),
+                                           "horizontal": self.horizontalHeader().font().pointSize()}
+
+        self.zoom_in_action = QAction(self.tr("Zoom in"), self)
+        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
+        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
+        self.addAction(self.zoom_in_action)
+
+        self.zoom_out_action = QAction(self.tr("Zoom out"), self)
+        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
+        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
+        self.addAction(self.zoom_out_action)
+
+        self.zoom_original_action = QAction(self.tr("Zoom original"), self)
+        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
+        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
+        self.addAction(self.zoom_original_action)
+
     def _add_insert_column_menu(self, menu):
         column_menu = menu.addMenu("Insert column")
 
@@ -33,6 +58,27 @@ class TableView(QTableView):
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
+    def set_font_size(self, n: int):
+        if n < 1:
+            return
+        font = self.font()
+
+        if n <= self.original_font_size:
+            font.setPointSize(n)
+            self.setFont(font)
+
+        if n <= self.original_header_font_sizes["horizontal"]:
+            hheader_font = self.horizontalHeader().font()
+            hheader_font.setPointSize(n)
+            self.horizontalHeader().setFont(hheader_font)
+
+        if n <= self.original_header_font_sizes["vertical"]:
+            vheader_font = self.verticalHeader().font()
+            vheader_font.setPointSize(n)
+            self.verticalHeader().setFont(vheader_font)
+
+        self.resize_columns()
+
     @property
     def selection_is_empty(self) -> bool:
         return self.selectionModel().selection().isEmpty()
@@ -44,6 +90,18 @@ class TableView(QTableView):
             rows.add(index.row())
 
         return sorted(rows)
+
+    @pyqtSlot()
+    def on_zoom_in_action_triggered(self):
+        self.set_font_size(self.font().pointSize()+1)
+
+    @pyqtSlot()
+    def on_zoom_out_action_triggered(self):
+        self.set_font_size(self.font().pointSize()-1)
+
+    @pyqtSlot()
+    def on_zoom_original_action_triggered(self):
+        self.set_font_size(self.original_font_size)
 
     def selection_range(self):
         """
@@ -78,6 +136,12 @@ class TableView(QTableView):
                 label_action.setIcon(QIcon.fromTheme("configure"))
 
             label_action.triggered.connect(self.on_create_or_edit_label_action_triggered)
+            menu.addSeparator()
+
+            zoom_menu = menu.addMenu("Zoom font size")
+            zoom_menu.addAction(self.zoom_in_action)
+            zoom_menu.addAction(self.zoom_out_action)
+            zoom_menu.addAction(self.zoom_original_action)
             menu.addSeparator()
 
         return menu

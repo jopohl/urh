@@ -192,7 +192,7 @@ cdef float median(double[:] data, unsigned long start, unsigned long data_len, u
                 buffer[j] = temp
 
     try:
-        return buffer[<int>(k/2)]
+        return buffer[k//2]
     finally:
         free(buffer)
 

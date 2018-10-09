@@ -1,6 +1,8 @@
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
+from cpython cimport array
+import array
 
 cpdef tuple k_means(float[:] data, unsigned int k=2):
     cdef float[:] centers = np.empty(k, dtype=np.float32)
@@ -136,6 +138,37 @@ cpdef unsigned long[:] get_threshold_divisor_histogram(unsigned long[:] plateau_
 
     return histogram
 
+cpdef np.ndarray[np.uint64_t, ndim=1] get_plateau_lengths(float[:] rect_data, float center, int percentage=25):
+    if len(rect_data) == 0 or center is None:
+        return np.array([], dtype=np.uint64)
+
+    cdef int state, new_state
+    state = -1 if rect_data[0] <= center else 1
+    cdef unsigned long long plateau_length = 0
+    cdef unsigned long long current_sum = 0
+    cdef unsigned long long i = 0
+    cdef unsigned long long len_data = len(rect_data)
+    cdef float sample
+
+    cdef array.array result = array.array('Q', [])
+
+    for i in range(0, len_data):
+        if current_sum >= percentage * len_data / 100:
+            break
+
+        sample = rect_data[i]
+        new_state = -1 if sample <= center else 1
+
+        if state == new_state:
+            plateau_length += 1
+        else:
+            result.append(plateau_length)
+            current_sum += plateau_length
+            state = new_state
+            plateau_length = 1
+
+    return np.array(result, dtype=np.uint64)
+
 
 from cython.parallel import prange
 from libc.stdlib cimport malloc, free
@@ -159,12 +192,12 @@ cdef float median(double[:] data, unsigned long start, unsigned long data_len, u
                 buffer[j] = temp
 
     try:
-        return buffer[k/2]
+        return buffer[<int>(k/2)]
     finally:
         free(buffer)
 
 cpdef np.ndarray[np.float32_t, ndim=1] median_filter(double[:] data, unsigned int k=3):
-    cdef unsigned long start, end, i, n = len(data)
+    cdef long long start, end, i, n = len(data)
 
     cdef np.ndarray[np.float32_t, ndim=1] result = np.zeros(n, dtype=np.float32)
 

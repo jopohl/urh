@@ -1,11 +1,13 @@
-import numpy
 import numpy as np
-from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot
-from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon
-from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory
+from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon, QContextMenuEvent
+from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory, QMenu
 
 
 class TableView(QTableView):
+    create_label_triggered = pyqtSignal(int, int, int)
+    edit_label_triggered = pyqtSignal(int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -17,6 +19,31 @@ class TableView(QTableView):
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
 
         self.use_header_colors = False
+
+        self.original_font_size = self.font().pointSize()
+        self.original_header_font_sizes = {"vertical": self.verticalHeader().font().pointSize(),
+                                           "horizontal": self.horizontalHeader().font().pointSize()}
+
+        self.zoom_in_action = QAction(self.tr("Zoom in"), self)
+        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
+        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
+        self.addAction(self.zoom_in_action)
+
+        self.zoom_out_action = QAction(self.tr("Zoom out"), self)
+        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
+        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
+        self.addAction(self.zoom_out_action)
+
+        self.zoom_original_action = QAction(self.tr("Zoom original"), self)
+        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
+        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
+        self.addAction(self.zoom_original_action)
 
     def _add_insert_column_menu(self, menu):
         column_menu = menu.addMenu("Insert column")
@@ -31,6 +58,27 @@ class TableView(QTableView):
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
+    def set_font_size(self, n: int):
+        if n < 1:
+            return
+        font = self.font()
+
+        if n <= self.original_font_size:
+            font.setPointSize(n)
+            self.setFont(font)
+
+        if n <= self.original_header_font_sizes["horizontal"]:
+            hheader_font = self.horizontalHeader().font()
+            hheader_font.setPointSize(n)
+            self.horizontalHeader().setFont(hheader_font)
+
+        if n <= self.original_header_font_sizes["vertical"]:
+            vheader_font = self.verticalHeader().font()
+            vheader_font.setPointSize(n)
+            self.verticalHeader().setFont(vheader_font)
+
+        self.resize_columns()
+
     @property
     def selection_is_empty(self) -> bool:
         return self.selectionModel().selection().isEmpty()
@@ -42,6 +90,18 @@ class TableView(QTableView):
             rows.add(index.row())
 
         return sorted(rows)
+
+    @pyqtSlot()
+    def on_zoom_in_action_triggered(self):
+        self.set_font_size(self.font().pointSize()+1)
+
+    @pyqtSlot()
+    def on_zoom_out_action_triggered(self):
+        self.set_font_size(self.font().pointSize()-1)
+
+    @pyqtSlot()
+    def on_zoom_original_action_triggered(self):
+        self.set_font_size(self.original_font_size)
 
     def selection_range(self):
         """
@@ -58,6 +118,38 @@ class TableView(QTableView):
         bottom_right = max(range_to_tuple(rng.bottomRight()) for rng in selected)
 
         return top_left[0], bottom_right[0], top_left[1], bottom_right[1] + 1
+
+    def create_context_menu(self) -> QMenu:
+        menu = QMenu()
+        if self.context_menu_pos is None:
+            return menu
+
+        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
+                                                                     column=self.columnAt(self.context_menu_pos.x()))
+
+        if self.model().row_count > 0:
+            if selected_label_index == -1:
+                label_action = menu.addAction("Create label...")
+                label_action.setIcon(QIcon.fromTheme("list-add"))
+            else:
+                label_action = menu.addAction("Edit label...")
+                label_action.setIcon(QIcon.fromTheme("configure"))
+
+            label_action.triggered.connect(self.on_create_or_edit_label_action_triggered)
+            menu.addSeparator()
+
+            zoom_menu = menu.addMenu("Zoom font size")
+            zoom_menu.addAction(self.zoom_in_action)
+            zoom_menu.addAction(self.zoom_out_action)
+            zoom_menu.addAction(self.zoom_original_action)
+            menu.addSeparator()
+
+        return menu
+
+    def contextMenuEvent(self, event: QContextMenuEvent):
+        self.context_menu_pos = event.pos()
+        menu = self.create_context_menu()
+        menu.exec_(self.mapToGlobal(event.pos()))
 
     def select(self, row_1, col_1, row_2, col_2):
         selection = QItemSelection()
@@ -120,7 +212,7 @@ class TableView(QTableView):
             if start == -1:
                 return
 
-            self.model().insert_column(start, list(range(min_row, max_row+1)))
+            self.model().insert_column(start, list(range(min_row, max_row + 1)))
 
         if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
                 or event.modifiers() == Qt.ShiftModifier:
@@ -217,3 +309,13 @@ class TableView(QTableView):
     @pyqtSlot()
     def on_insert_column_right_action_triggered(self):
         self.model().insert_column(self.selection_range()[3], self.selected_rows)
+
+    @pyqtSlot()
+    def on_create_or_edit_label_action_triggered(self):
+        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
+                                                                     column=self.columnAt(self.context_menu_pos.x()))
+        if selected_label_index == -1:
+            min_row, max_row, start, end = self.selection_range()
+            self.create_label_triggered.emit(min_row, start, end)
+        else:
+            self.edit_label_triggered.emit(selected_label_index)

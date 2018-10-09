@@ -5,13 +5,28 @@ import tempfile
 from collections import defaultdict
 from distutils import ccompiler
 from importlib import import_module
+from subprocess import check_output
 
 from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
 
+
+
 DEVICES = {
     "airspy": {"lib": "airspy", "test_function": "open"},
+    "bladerf": {"lib": "bladeRF", "test_function": "bladerf_open",
+                "api_header_include": "libbladeRF.h",
+                "api_version_check_code":
+                    """
+                    #include<stdio.h>
+                    #include<libbladeRF.h>
+                    
+                    int main(void) {
+                    struct bladerf_version result; bladerf_version(&result);
+                    printf("%f", result.major + result.minor/10.0 + result.patch/100.0);
+                    return 0;}
+                    """},
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init",
                "extras": {"HACKRF_MULTI_DEVICE_SUPPORT": "hackrf_open_by_serial"}},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
@@ -20,7 +35,13 @@ DEVICES = {
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
-                "test_function": "mir_sdr_ApiVersion"}
+                "test_function": "mir_sdr_ApiVersion",
+                "api_version_check_code":
+                """
+                #include<stdio.h>
+                int main(void) {
+                float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
+                """}
 }
 
 
@@ -52,6 +73,39 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             devnull.close()
         shutil.rmtree(tmp_dir)
 
+
+def check_api_version(compiler, api_version_code, libraries, library_dirs, include_dirs) -> float:
+    tmp_dir = tempfile.mkdtemp(prefix='urh-')
+    devnull = old_stderr = None
+    try:
+        try:
+            file_name = os.path.join(tmp_dir, 'get_api_version.c')
+            with open(file_name, 'w') as f:
+                f.write(api_version_code)
+
+            # Redirect stderr to /dev/null to hide any error messages from the compiler.
+            devnull = open(os.devnull, 'w')
+            old_stderr = os.dup(sys.stderr.fileno())
+            os.dup2(devnull.fileno(), sys.stderr.fileno())
+            objects = compiler.compile([file_name], include_dirs=include_dirs)
+            check_api_program = os.path.join(tmp_dir, "check_api")
+            compiler.link_executable(objects, check_api_program, library_dirs=library_dirs, libraries=libraries)
+
+            env = os.environ.copy()
+            env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
+
+            return float(check_output(check_api_program, env=env))
+        except Exception as e:
+            print("API version check failed: {}".format(e))
+            return 0.0
+    finally:
+        if old_stderr is not None:
+            os.dup2(old_stderr, sys.stderr.fileno())
+        if devnull is not None:
+            devnull.close()
+        shutil.rmtree(tmp_dir)
+
+
 def get_device_extensions_and_extras(library_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
 
@@ -62,15 +116,8 @@ def get_device_extensions_and_extras(library_dirs=None):
 
     if os.path.isdir(os.path.join(cur_dir, "lib/shared")):
         # Device libs are packaged, so we are in release mode
-        result = []
-        include_dirs.append(os.path.realpath(os.path.join(cur_dir, "lib/shared/include")))
-        lib_dir = os.path.realpath(os.path.join(cur_dir, "lib/shared"))
-        for dev_name, params in DEVICES.items():
-            # Since drivers are bundled we can enforce the extras
-            device_extras.update({extra: 1 for extra in params.get("extras", dict())})
-            result.append(get_device_extension(dev_name, [params["lib"]], [lib_dir], include_dirs))
-
-        return result, device_extras
+        include_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared/include")))
+        library_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared")))
 
     if sys.platform == "darwin":
         # On Mac OS X clang is by default not smart enough to search in the lib dir
@@ -105,20 +152,24 @@ def get_device_extensions_and_extras(library_dirs=None):
         if build_device_extensions[dev_name] == 0:
             print("Skipping native {0} support".format(dev_name))
             continue
+
         if build_device_extensions[dev_name] == 1:
             print("Enforcing native {0} support".format(dev_name))
-            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
-            extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
-            result.append(extension)
+        elif compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
+            print("Found {0} lib. Will compile with native {1} support".format(params["lib"], dev_name))
+        else:
+            print("Skipping native support for {0}".format(dev_name))
             continue
 
-        if compiler_has_function(compiler, params["test_function"], (params["lib"],), library_dirs, include_dirs):
-            print("Found {0} lib. Will compile with native {1} support".format(params["lib"], dev_name))
-            device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
-            extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
-            result.append(extension)
-        else:
-            print("Skipping native support for {1}".format(params["lib"], dev_name))
+        device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
+        if "api_version_check_code" in params:
+            ver = check_api_version(compiler, params["api_version_check_code"], (params["lib"], ),
+                                    library_dirs, include_dirs)
+            device_extras[dev_name.upper() + "_API_VERSION"] = ver
+            print("    Detected {} v{}".format(dev_name.upper() + "_API_VERSION", ver))
+
+        extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
+        result.append(extension)
 
     return result, device_extras
 

@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
-from PyQt5.QtGui import QFont
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -8,7 +7,7 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 
 class PLabelTableModel(QAbstractTableModel):
-    header_labels = ["Name", "Start", "End", 'Color', 'Apply decoding']
+    header_labels = ["Name", "Start", "End", "Color", "Apply decoding"]
 
     label_removed = pyqtSignal(ProtocolLabel)
     special_status_label_changed = pyqtSignal(ProtocolLabel)
@@ -82,10 +81,6 @@ class PLabelTableModel(QAbstractTableModel):
                 return lbl.apply_decoding
         elif role == Qt.TextAlignmentRole:
             return Qt.AlignCenter
-        elif role == Qt.FontRole and j == 0:
-            font = QFont()
-            font.setItalic(self.message_type[i].field_type is None)
-            return font
         else:
             return None
 
@@ -111,7 +106,8 @@ class PLabelTableModel(QAbstractTableModel):
                 self.special_status_label_changed.emit(lbl)
 
         elif j == 1:
-            lbl.start = self.message.convert_index(int(value - 1), from_view=self.proto_view, to_view=0, decoded=True)[0]
+            lbl.start = self.message.convert_index(int(value - 1), from_view=self.proto_view, to_view=0, decoded=True)[
+                0]
         elif j == 2:
             lbl.end = self.message.convert_index(int(value), from_view=self.proto_view, to_view=0, decoded=True)[0]
         elif j == 3:

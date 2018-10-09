@@ -5,6 +5,7 @@ from collections import defaultdict
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack
+from urh.util.Logger import logger
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -313,6 +314,9 @@ class TableModel(QAbstractTableModel):
 
     def find_protocol_value(self, value):
         self.search_results.clear()
+        if self.proto_view == 1:
+            value = value.lower()
+
         self.search_value = value
 
         if len(value) == 0:
@@ -367,3 +371,19 @@ class TableModel(QAbstractTableModel):
             }
 
         return differences
+
+    def get_selected_label_index(self, row: int, column: int):
+        if self.row_count == 0:
+            return -1
+
+        try:
+            msg = self.protocol.messages[row]
+        except IndexError:
+            logger.warning("{} is out of range for generator protocol".format(row))
+            return -1
+
+        for i, lbl in enumerate(msg.message_type):
+            if column in range(*msg.get_label_range(lbl, self.proto_view, False)):
+                return i
+
+        return -1

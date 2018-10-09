@@ -15,5 +15,6 @@
     <file>../icons/splitter_handle_horizontal.svg</file>
     <file>../icons/splitter_handle_vertical.svg</file>
     <file>../icons/unlock.svg</file>
+    <file>../icons/message_type.svg</file>
   </qresource>
 </RCC>

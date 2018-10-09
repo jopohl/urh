@@ -2,7 +2,7 @@ import locale
 import time
 
 from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
-from PyQt5.QtGui import QCloseEvent, QIcon, QTransform
+from PyQt5.QtGui import QCloseEvent, QTransform
 from PyQt5.QtWidgets import QDialog, QGraphicsView
 
 from urh import constants
@@ -12,6 +12,7 @@ from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util import util
+from urh.util.Formatter import Formatter
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -226,7 +227,7 @@ class SendRecvDialog(QDialog):
         if len(new_messages) > 1:
             self.ui.txtEditErrors.setPlainText(txt + new_messages)
 
-        self.ui.lSamplesCaptured.setText("{0:n}".format(self.device.current_index))
+        self.ui.lSamplesCaptured.setText(Formatter.big_value_with_suffix(self.device.current_index, decimals=1))
         self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
         self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
 

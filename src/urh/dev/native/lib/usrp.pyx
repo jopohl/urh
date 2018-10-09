@@ -1,3 +1,5 @@
+import time
+
 from urh.dev.native.lib.cusrp cimport *
 import numpy as np
 # noinspection PyUnresolvedReferences
@@ -188,6 +190,9 @@ cpdef uhd_error set_center_freq(double center_freq):
     tune_request.target_freq = center_freq
     tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
     tune_request.dsp_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
+
+    # Blocks otherwise
+    time.sleep(0.25)
 
     cdef uhd_tune_result_t tune_result
     if IS_TX:

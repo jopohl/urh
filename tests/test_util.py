@@ -81,13 +81,16 @@ class TestUtil(QtTestCase):
         util.set_shared_library_path()
 
         # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import airspy
+
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import bladerf
+
+        # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import hackrf
 
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import rtlsdr
-
-        # noinspection PyUnresolvedReferences
-        from urh.dev.native.lib import airspy
 
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import limesdr

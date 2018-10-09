@@ -1,9 +1,9 @@
 # Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
 
-
-| Tests Linux/OSX  | Tests Windows | Test Coverage | Latest Release |
-| ------------- | ------------- | ------------- | -------- |  
-|[![Build Status](https://travis-ci.org/jopohl/urh.svg?branch=master)](https://travis-ci.org/jopohl/urh) | [![Build status](https://ci.appveyor.com/api/projects/status/8gxwx98ytrl5y3kt/branch/master?svg=true)](https://ci.appveyor.com/project/jopohl/urh/branch/master) | [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master) | [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh) |
+[![Travis (.org)](https://img.shields.io/travis/jopohl/urh.svg?logo=travis&label=Linux%2FOSX)](https://travis-ci.org/jopohl/urh)
+[![AppVeyor](https://img.shields.io/appveyor/ci/jopohl/urh.svg?label=Windows&logo=appveyor)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
+[![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
 
 
 The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
@@ -17,7 +17,7 @@ The Universal Radio Hacker (URH) is a software for investigating unknown wireles
 * __modulation support__ to inject the data back into the system
 * __simulation environment__ to perform stateful attacks
 
-To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/releases/download/v2.0.0/userguide.pdf), watch the [demonstration videos (YouTube)](https://www.youtube.com/watch?v=kuubkTDAxwA)
+To get started, download the [official userguide (PDF)](https://github.com/jopohl/urh/releases/download/v2.0.0/userguide.pdf), watch the [demonstration videos (YouTube)](https://www.youtube.com/watch?v=kuubkTDAxwA&index=1&list=PLlKjreY6G-1EKKBs9sucMdk8PwzcFuIPB)
 or check out the [wiki](https://github.com/jopohl/urh/wiki) for more information and supported devices. Scroll down this page to learn how to install URH on your system.
 
 Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LWU4ZWIzMTQ3NDAyNjkzODBhZTJiZDNmN2U0MTA4ZTM1MjhhNTNiYTc4YzQ5MDk2NjU5YzMxOWJmMDQyZDczYjg)
@@ -63,7 +63,7 @@ For the following linux distributions you can install URH using your package man
 
 | Distribution  | Install with |
 | ------------- | ------------- |
-|  Arch Linux  |  ``` yaourt -S urh ```  |
+|  Arch Linux  |  ``` pacman -S urh ```  |
 |  Gentoo / Pentoo  | ``` emerge -av urh ``` |
 | Fedora 25+ | ``` dnf install urh ```  |
 | openSUSE  | ``` zypper install urh ```  |

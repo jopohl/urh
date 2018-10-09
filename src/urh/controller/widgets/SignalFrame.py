@@ -273,12 +273,14 @@ class SignalFrame(QFrame):
             self.__set_duration()
 
         try:
-            sel_messages = self.ui.gvSignal.selected_messages
-        except AttributeError:
-            sel_messages = []
-        if len(sel_messages) == 1:
-            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
-        else:
+            start, end = int(self.ui.gvSignal.selection_area.start), int(self.ui.gvSignal.selection_area.end)
+            if start < end:
+                rssi = np.mean(np.abs(self.signal.data[start:end]))
+                self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(rssi)))
+            else:
+                self.ui.labelRSSI.setText("")
+        except Exception as e:
+            logger.exception(e)
             self.ui.labelRSSI.setText("")
 
     def change_signal_name(self):

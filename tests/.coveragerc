@@ -16,6 +16,8 @@ source = src/urh
 sort = Miss
 exclude_lines =
     pragma: no cover
+    def paint
+    def draw_indicator
     def mousePressEvent
     def mouseMoveEvent
     def mouseReleaseEvent

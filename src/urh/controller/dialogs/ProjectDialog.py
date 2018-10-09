@@ -43,7 +43,6 @@ class ProjectDialog(QDialog):
             self.ui.lineEdit_Path.setDisabled(True)
             self.setWindowTitle("Edit project settings")
             self.ui.lNewProject.setText("Edit project")
-            self.ui.btnOK.setText("Accept")
 
         self.ui.tblParticipants.setModel(self.participant_table_model)
         self.participant_table_model.update()
@@ -104,7 +103,8 @@ class ProjectDialog(QDialog):
         self.ui.btnDown.clicked.connect(self.ui.tblParticipants.on_move_down_action_triggered)
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_line_edit_path_text_edited)
-        self.ui.btnOK.clicked.connect(self.on_button_ok_clicked)
+        self.ui.buttonBox.accepted.connect(self.on_button_box_accepted)
+        self.ui.buttonBox.rejected.connect(self.reject)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
         self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
 
@@ -145,7 +145,7 @@ class ProjectDialog(QDialog):
         self.description = self.ui.txtEdDescription.toPlainText()
 
     @pyqtSlot()
-    def on_button_ok_clicked(self):
+    def on_button_box_accepted(self):
         self.path = os.path.realpath(self.path)
         if not os.path.exists(self.path):
             try:
@@ -159,7 +159,7 @@ class ProjectDialog(QDialog):
             return
 
         self.committed = True
-        self.close()
+        self.accept()
 
     @pyqtSlot(str)
     def on_line_edit_broadcast_address_text_edited(self, value: str):

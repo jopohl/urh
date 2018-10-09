@@ -1,4 +1,23 @@
 # Changelog
+## v2.3.1 (upcoming)
+### New features
+- added __font size zoom__ to table views (analysis/generator/simulator); more details in [#546](https://github.com/jopohl/urh/pull/546)
+
+### Improvements
+- ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)
+
+### Bugfixes
+- Fix display of RSSI indicator in Interpretation [#547](https://github.com/jopohl/urh/pull/547)
+
+## v2.3.0 (28/09/2018)
+### New features
+- added native support for BladeRF [#524](https://github.com/jopohl/urh/pull/524)
+- added backward compatibility for SDRPlay < 2.13 [#528](https://github.com/jopohl/urh/pull/528)
+- improved UI for message type and label configuration in analysis [#532](https://github.com/jopohl/urh/pull/532)
+- rename __close all__ action to __close all files__ for more clarity [#532](https://github.com/jopohl/urh/pull/532)
+- added a __close project__ action [#532](https://github.com/jopohl/urh/pull/532)
+
+
 ## v2.2.4 (30/08/2018)
 ### Bugfixes
 - fix scaling of modulated preview in modulation dialog [#523](https://github.com/jopohl/urh/pull/523)

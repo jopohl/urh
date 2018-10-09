@@ -60,7 +60,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        self.form.close_all()
+        self.form.close_project()
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 0)
@@ -88,7 +88,7 @@ class TestSimulatorTabGUI(QtTestCase):
         if os.path.isfile(filename):
             os.remove(filename)
         self.form.simulator_tab_controller.save_simulator_file(filename)
-        self.form.close_all()
+        self.form.close_all_files()
         self.form.project_manager.participants.clear()
         self.form.project_manager.project_updated.emit()
 
@@ -225,7 +225,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         names = [action.text() for action in menu.actions()]
         self.assertIn("Enforce encoding", names)
-        add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
+        add_label_action = next(action for action in menu.actions() if action.text() == "Create label...")
         add_label_action.trigger()
         menu.close()
         stc.ui.tblViewMessage.selectRow(0)

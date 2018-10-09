@@ -341,7 +341,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>27</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -361,6 +361,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionNew_Project"/>
     <addaction name="actionProject_settings"/>
     <addaction name="actionSave_project"/>
+    <addaction name="actionClose_project"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_directory"/>
@@ -371,7 +372,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionSniff_protocol"/>
     <addaction name="separator"/>
     <addaction name="actionSaveAllSignals"/>
-    <addaction name="actionClose_all"/>
+    <addaction name="actionCloseAllFiles"/>
     <addaction name="separator"/>
     <addaction name="actionConvert_Folder_to_Project"/>
    </widget>
@@ -532,13 +533,13 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <string>Show &amp;Compare Frame</string>
    </property>
   </action>
-  <action name="actionClose_all">
+  <action name="actionCloseAllFiles">
    <property name="icon">
     <iconset theme="window-close">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Close all</string>
+    <string>&amp;Close all files</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
@@ -743,6 +744,14 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    </property>
    <property name="text">
     <string>IQ samples from csv</string>
+   </property>
+  </action>
+  <action name="actionClose_project">
+   <property name="icon">
+    <iconset theme="document-close"/>
+   </property>
+   <property name="text">
+    <string>Close project</string>
    </property>
   </action>
  </widget>

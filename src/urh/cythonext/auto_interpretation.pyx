@@ -172,10 +172,10 @@ cpdef np.ndarray[np.uint64_t, ndim=1] get_plateau_lengths(float[:] rect_data, fl
 
 from cython.parallel import prange
 from libc.stdlib cimport malloc, free
+from libcpp.algorithm cimport sort
 
 cdef float median(double[:] data, unsigned long start, unsigned long data_len, unsigned int k=3) nogil:
-    cdef unsigned int i, j
-    cdef float temp
+    cdef unsigned long i, j
 
     if start + k > data_len:
         k = data_len - start
@@ -184,13 +184,7 @@ cdef float median(double[:] data, unsigned long start, unsigned long data_len, u
     for i in range(0, k):
         buffer[i] = data[start+i]
 
-    for i in range(0, k-1):
-        for j in range(i+1, k):
-            if buffer[j] < buffer[i]:
-                temp = buffer[i]
-                buffer[i] = buffer[j]
-                buffer[j] = temp
-
+    sort(&buffer[0], (&buffer[0]) + k)
     try:
         return buffer[k//2]
     finally:

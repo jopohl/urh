@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SignalFrame(object):
     def setupUi(self, SignalFrame):
         SignalFrame.setObjectName("SignalFrame")
-        SignalFrame.resize(1057, 509)
+        SignalFrame.resize(1057, 539)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -573,8 +573,10 @@ class Ui_SignalFrame(object):
         self.lNumSelectedSamples.setText(_translate("SignalFrame", "0"))
         self.lTextSelectedSamples.setToolTip(_translate("SignalFrame", "Number of currently selected samples."))
         self.lTextSelectedSamples.setText(_translate("SignalFrame", "selected"))
+        self.lDuration.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Duration of selected samples using the sample rate of the signal. You can change the sample rate in the info dialog of the signal. </p></body></html>"))
         self.lDuration.setText(_translate("SignalFrame", "42 µs"))
-        self.labelRSSI.setText(_translate("SignalFrame", "RSSI: 0,434"))
+        self.labelRSSI.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the average signal power of the selection. The closer this value is to zero, the stronger the selected signal is.</p></body></html>"))
+        self.labelRSSI.setText(_translate("SignalFrame", "0,434 dBm"))
         self.btnFilter.setText(_translate("SignalFrame", "Filter (moving average)"))
         self.lStart.setText(_translate("SignalFrame", "Start:"))
         self.lEnd.setText(_translate("SignalFrame", "End:"))

@@ -274,13 +274,16 @@ class SignalFrame(QFrame):
 
         try:
             start, end = int(self.ui.gvSignal.selection_area.start), int(self.ui.gvSignal.selection_area.end)
+            power_str = "-\u221e"  # minus infinity
             if start < end:
-                max_window_size = 10 ** 6
+                max_window_size = 10 ** 5
                 step_size = int(math.ceil((end-start)/max_window_size))
-                rssi = np.mean(np.abs(self.signal.data[start:end:step_size]))
-                self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(rssi)))
-            else:
-                self.ui.labelRSSI.setText("")
+                power = np.mean(np.abs(self.signal.data[start:end:step_size]))
+                if power > 0:
+                    power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
+
+            self.ui.labelRSSI.setText("{} dBm".format(power_str))
+
         except Exception as e:
             logger.exception(e)
             self.ui.labelRSSI.setText("")

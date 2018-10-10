@@ -1,4 +1,5 @@
 import locale
+import math
 import os
 from collections import defaultdict
 from datetime import datetime
@@ -1358,7 +1359,10 @@ class CompareFrameController(QWidget):
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
 
-        self.ui.lblRSSI.setText(locale.format_string("%.2f", message.rssi))
+        if message.rssi > 0:
+            self.ui.lblRSSI.setText(locale.format_string("%.2f dBm", 10*math.log10(message.rssi)))
+        else:
+            self.ui.lblRSSI.setText("-\u221e dBm")
         if isinstance(message.absolute_time, str):
             # For protocol files the abs time is the timestamp as string
             abs_time = message.absolute_time

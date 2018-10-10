@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>509</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1023,6 +1023,9 @@ stop:1 rgba(255, 255, 255, 0));
          </item>
          <item>
           <widget class="QLabel" name="lDuration">
+           <property name="toolTip">
+            <string/>
+           </property>
            <property name="text">
             <string>42 µs</string>
            </property>
@@ -1037,8 +1040,11 @@ stop:1 rgba(255, 255, 255, 0));
          </item>
          <item>
           <widget class="QLabel" name="labelRSSI">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the average signal power of the selection. The closer this value is to zero, the stronger the selected signal is.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
-            <string>RSSI: 0,434</string>
+            <string>0,434 dBm</string>
            </property>
           </widget>
          </item>

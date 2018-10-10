@@ -1024,7 +1024,7 @@ stop:1 rgba(255, 255, 255, 0));
          <item>
           <widget class="QLabel" name="lDuration">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of selected samples using the sample rate of the signal. You can change the sample rate in the info dialog of the signal. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string/>
            </property>
            <property name="text">
             <string>42 µs</string>

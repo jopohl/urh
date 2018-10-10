@@ -718,10 +718,12 @@ class SignalFrame(QFrame):
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
             self.draw_spectrogram(show_full_scene=True)
             self.__set_selected_bandwidth()
+            self.ui.labelRSSI.hide()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
+            self.ui.labelRSSI.show()
 
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()

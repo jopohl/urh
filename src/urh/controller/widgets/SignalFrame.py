@@ -275,7 +275,9 @@ class SignalFrame(QFrame):
         try:
             start, end = int(self.ui.gvSignal.selection_area.start), int(self.ui.gvSignal.selection_area.end)
             if start < end:
-                rssi = np.mean(np.abs(self.signal.data[start:end]))
+                max_window_size = 10 ** 6
+                step_size = int(math.ceil((end-start)/max_window_size))
+                rssi = np.mean(np.abs(self.signal.data[start:end:step_size]))
                 self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(rssi)))
             else:
                 self.ui.labelRSSI.setText("")

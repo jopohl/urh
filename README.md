@@ -4,7 +4,8 @@
 [![AppVeyor](https://img.shields.io/appveyor/ci/jopohl/urh.svg?label=Windows&logo=appveyor)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
-
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Percentage of issues still open")
 
 The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
 

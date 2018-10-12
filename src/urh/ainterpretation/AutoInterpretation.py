@@ -398,7 +398,7 @@ def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) ->
         return None
 
     try:
-        tolerance = np.percentile(tolerances, 50, interpolation="lower")
+        tolerance = np.percentile(tolerances, 50)
     except IndexError:
         # no tolerances found, default to 5% of bit length
         tolerance = max(1, int(0.05 * bit_length))

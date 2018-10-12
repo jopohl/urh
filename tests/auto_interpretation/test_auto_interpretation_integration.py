@@ -94,7 +94,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(mod_type, "ASK")
         self.assertEqual(bit_length, 600)
 
-        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
+        demodulated = demodulate(noised_data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
         self.assertEqual(len(demodulated), 11)
         for i in range(11):
             self.assertTrue(demodulated[i].startswith("8"))

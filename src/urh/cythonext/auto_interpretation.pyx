@@ -102,7 +102,7 @@ def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold)
 
     return result
 
-cpdef unsigned long[:] get_threshold_divisor_histogram(unsigned long[:] plateau_lengths, float threshold=0.2):
+cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:] plateau_lengths, float threshold=0.2):
     """
     Get a histogram (i.e. count) how many times a value is a threshold divisor for other values in given data
     
@@ -111,11 +111,11 @@ cpdef unsigned long[:] get_threshold_divisor_histogram(unsigned long[:] plateau_
     :param plateau_lengths: 
     :return: 
     """
-    cdef unsigned long num_lengths = len(plateau_lengths)
+    cdef unsigned long long num_lengths = len(plateau_lengths)
 
     cdef np.ndarray[np.uint64_t, ndim=1] histogram = np.zeros(int(np.max(plateau_lengths)) + 1, dtype=np.uint64)
 
-    cdef unsigned long i, j, x, y, minimum, maximum, min_index, k=0
+    cdef unsigned long long i, j, x, y, minimum, maximum, min_index, k=0
 
     for i in range(0, num_lengths):
         for j in range(i+1, num_lengths):

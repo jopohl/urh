@@ -29,9 +29,9 @@ class TestSpectrogram(QtTestCase):
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         self.__prepare_channel_separation(signal_frame)
 
-        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101")
-        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001")
-        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111")
+        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312kHz", target_bits="11001101", center=0.1)
+        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188kHz", target_bits="10101001", center=0.1)
+        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492kHz", target_bits="10010111", center=0.1)
 
     def test_cancel_filtering(self):
         super().setUp()
@@ -77,6 +77,8 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames + 1)
         filtered_frame = self.form.signal_tab_controller.signal_frames[1]
         filtered_frame.ui.cbModulationType.setCurrentText("ASK")
+        filtered_frame.ui.spinBoxNoiseTreshold.setValue(0)
+        filtered_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         filtered_frame.ui.spinBoxInfoLen.setValue(100)
         filtered_frame.ui.spinBoxInfoLen.editingFinished.emit()
         if center is not None:

@@ -408,7 +408,7 @@ def estimate(signal: np.ndarray, noise: float=None, modulation: str=None) -> dic
         "modulation_type": "ASK" if modulation == "OOK" else modulation,
         "bit_length": bit_length,
         "center": center,
-        "tolerance": tolerance,
+        "tolerance": int(tolerance),
         "noise": noise
     }
 

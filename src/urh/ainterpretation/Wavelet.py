@@ -11,26 +11,6 @@ def normalized_haar_wavelet(omega, scale):
     result = (1j * np.square(-1 + np.exp(0.5j * omega))) / omega_cpy
     return result
 
-def morlet_wavelet(omega, sigma):
-    k_omega = np.exp(-0.5*np.square(omega))
-    c_omega = np.power((1+np.exp(-np.square(sigma))-2*np.exp(-0.75*np.square(sigma))), -0.5)
-    result = np.exp(-0.5*np.square(sigma-omega)) - k_omega * np.exp(-0.5*np.square(omega))
-    return c_omega * np.power(np.pi, -0.25) * result
-
-def dwt_haar(data: np.ndarray, s0=1, s1=1, w0=1, w1=1, scale=1):
-    temp = data[:]
-
-    h = len(data) >> 1
-    for i in range(0, h):
-        k = i << 1
-        temp[i] = data[k] * s0 + data[k + 1] * s1
-        temp[i + h] = data[k] * w0 + data[k + 1] * w1
-
-    for i in range(len(data)):
-        data[i] = temp[i]
-
-    return data
-
 
 def cwt_haar(x: np.ndarray, scale=10):
     """
@@ -38,7 +18,7 @@ def cwt_haar(x: np.ndarray, scale=10):
     "A practical guide to wavelet analysis" by Christopher Torrence and Gilbert P Compo
 
     """
-    next_power_two = 2**int(np.log2(len(x)))
+    next_power_two = 2 ** int(np.log2(len(x)))
 
     x = x[0:next_power_two]
     num_data = len(x)
@@ -62,32 +42,32 @@ def cwt_haar(x: np.ndarray, scale=10):
 if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/fsk.complex", dtype=np.complex64)[5:15000]
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[462:754]
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/enocean.complex", dtype=np.complex64)[9724:10228]
+    data = np.fromfile("/home/joe/GIT/publications/ainterpretation/experiments/signals/esaver_test4on.complex",
+                       dtype=np.complex64)[86452:115541]
 
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/fsk.complex", dtype=np.complex64)[5:15000]
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[462:754]
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/enocean.complex", dtype=np.complex64)[9724:10228]
-    data = np.fromfile("/home/joe/GIT/publications/ainterpretation/experiments/signals/esaver_test4on.complex", dtype=np.complex64)[86452:115541]
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/action_ook.complex", dtype=np.complex64)[3780:4300]
 
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/action_ook.complex", dtype=np.complex64)[3780:4300]
-
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask50.complex", dtype=np.complex64)
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask50.complex", dtype=np.complex64)
     # Wavelet transform the data
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[0:2 ** 13]
 
     # data = np.fromfile("/tmp/generated.complex", dtype=np.complex64)
 
-    #data = np.fromfile("/tmp/psk.complex", dtype=np.complex64)
-    #data = np.fromfile("/home/joe/GIT/urh/tests/data/psk_generated.complex", dtype=np.complex64)[0:8000]
+    # data = np.fromfile("/tmp/psk.complex", dtype=np.complex64)
+    # data = np.fromfile("/home/joe/GIT/urh/tests/data/psk_generated.complex", dtype=np.complex64)[0:8000]
     modulator = Modulator("")
     modulator.modulation_type_str = "PSK"
     modulator.param_for_zero = 0
     modulator.param_for_one = 180
     modulator.carrier_freq_hz = 5e3
     modulator.sample_rate = 200e3
-    #data = modulator.modulate("1010", pause=0)
+    # data = modulator.modulate("1010", pause=0)
 
     # data = np.fromfile("/tmp/ask25.complex", dtype=np.complex64)
-    #data = np.fromfile("/tmp/ask1080.complex", dtype=np.complex64)
+    # data = np.fromfile("/tmp/ask1080.complex", dtype=np.complex64)
 
     scale = 4
     median_filter_order = 11

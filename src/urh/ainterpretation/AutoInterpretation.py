@@ -325,16 +325,16 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(result)
 
 
-def estimate(signal: np.ndarray) -> dict:
+def estimate(signal: np.ndarray, noise: float=None, modulation: str=None) -> dict:
     magnitudes = np.abs(signal)
     # find noise threshold
-    noise = detect_noise_level(magnitudes)
+    noise = detect_noise_level(magnitudes) if noise is None else noise
 
     # segment messages
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
     # detect modulation
-    modulation = detect_modulation_for_messages(signal, message_indices)
+    modulation = detect_modulation_for_messages(signal, message_indices) if modulation is None else modulation
     if modulation is None:
         return None
 

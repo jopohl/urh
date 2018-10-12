@@ -293,7 +293,7 @@ class MainController(QMainWindow):
         has_entry = self.project_manager.read_project_file_for_signal(signal)
 
         if not has_entry and not signal.changed:
-            signal.auto_detect()
+            signal.auto_detect(detect_modulation=True, detect_noise=False)
 
         signal.blockSignals(False)
 

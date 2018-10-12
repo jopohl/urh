@@ -737,7 +737,7 @@ class SignalFrame(QFrame):
     def on_btn_autodetect_clicked(self):
         self.signal.auto_detect_on_modulation_changed = bool(self.ui.btnAutoDetect.isChecked())
         if self.ui.btnAutoDetect.isChecked():
-            self.signal.auto_detect()
+            self.signal.auto_detect(detect_modulation=False, detect_noise=False)
 
     @pyqtSlot()
     def on_btn_replay_clicked(self):
@@ -1020,7 +1020,7 @@ class SignalFrame(QFrame):
             self.unsetCursor()
         elif action == auto_detect_action:
             self.setCursor(Qt.WaitCursor)
-            self.signal.auto_detect()
+            self.signal.auto_detect(detect_modulation=False, detect_noise=False)
             self.unsetCursor()
 
     def show_modulation_type(self):

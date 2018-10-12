@@ -213,11 +213,12 @@ def detect_center(rectangular_signal: np.ndarray):
     # todo if num values greater two return more centers
     return np.mean(most_common_levels)
 
+
 def estimate_tolerance_from_plateau_lengths(plateau_lengths, relative_max=0.05) -> int:
     if len(plateau_lengths) <= 1:
         return None
 
-    unique, counts = np.unique(plateau_lengths, return_counts=True)
+    unique = np.unique(plateau_lengths)
     maximum = max_without_outliers(unique, z=2)
 
     limit = relative_max * maximum
@@ -289,13 +290,11 @@ def get_tolerant_greatest_common_divisor(numbers):
     """
     gcd = math.gcd if sys.version_info >= (3, 5) else fractions.gcd
 
-    gcds = np.array([gcd(x, y) for x, y in itertools.combinations(numbers, 2) if gcd(x, y) != 1])
+    gcds = [gcd(x, y) for x, y in itertools.combinations(numbers, 2) if gcd(x, y) != 1]
     if len(gcds) == 0:
         return 1
 
-    values, counts = np.unique(gcds, return_counts=True)
-    most_frequent_indices = np.nonzero(counts == np.max(counts))
-    return np.max(values[most_frequent_indices])
+    return get_most_frequent_value(gcds)
 
 
 def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
@@ -325,7 +324,7 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(result)
 
 
-def estimate(signal: np.ndarray, noise: float=None, modulation: str=None) -> dict:
+def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) -> dict:
     magnitudes = np.abs(signal)
     # find noise threshold
     noise = detect_noise_level(magnitudes) if noise is None else noise

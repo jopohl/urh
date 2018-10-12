@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>509</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -431,7 +431,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      <item row="11" column="0" colspan="2">
       <widget class="QPushButton" name="btnAutoDetect">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center, Bit Length and Tolerance, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Autodetect parameters</string>

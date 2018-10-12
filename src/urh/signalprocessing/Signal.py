@@ -360,22 +360,6 @@ class Signal(QObject):
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
             return self.noise_threshold
 
-    def estimate_bitlen(self) -> int:
-        bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]
-        if bit_len is None:
-            bit_len = signal_functions.estimate_bit_len(self.qad, self.qad_center, self.tolerance, self.modulation_type)
-            self.__parameter_cache[self.modulation_type_str]["bit_len"] = bit_len
-        return bit_len
-
-    def estimate_qad_center(self) -> float:
-        center = self.__parameter_cache[self.modulation_type_str]["qad_center"]
-        if center is None:
-            noise_value = signal_functions.get_noise_for_mod_type(int(self.modulation_type))
-            qad = self.qad[np.where(self.qad > noise_value)] if noise_value < 0 else self.qad
-            center = signal_functions.estimate_qad_center(qad, constants.NUM_CENTERS)
-            self.__parameter_cache[self.modulation_type_str]["qad_center"] = center
-        return center
-
     def create_new(self, start=0, end=0, new_data=None):
         new_signal = Signal("", "New " + self.name)
 
@@ -399,6 +383,9 @@ class Signal(QObject):
                   else self.modulation_type_str}
 
         estimated_params = AutoInterpretation.estimate(self.data, **kwargs)
+        if estimated_params is None:
+            return
+
         orig_block = self.block_protocol_update
         self.block_protocol_update = True
 

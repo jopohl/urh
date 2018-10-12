@@ -21,7 +21,7 @@ class TestAdvancedModulationSettings(QtTestCase):
         protocol = signal_frame.proto_analyzer
 
         bits = "1000100010001110100011101000111010001000100011101000111010001110100011101000111010001110111011101"
-        pauses = [77116, 77114, 58218]
+        pauses = [77115, 77113, 58221]
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits, msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i], msg=str(i))

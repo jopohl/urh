@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SignalFrame(object):
     def setupUi(self, SignalFrame):
         SignalFrame.setObjectName("SignalFrame")
-        SignalFrame.resize(1057, 509)
+        SignalFrame.resize(1057, 539)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -552,7 +552,7 @@ class Ui_SignalFrame(object):
         self.lCenterOffset.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the threshold used for determining if a <span style=\" font-weight:600;\">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=\" font-style:italic;\">Quadrature Demod View.</span></p></body></html>"))
         self.lCenterOffset.setText(_translate("SignalFrame", "Center:"))
         self.spinBoxCenterOffset.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the threshold used for determining if a <span style=\" font-weight:600;\">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=\" font-style:italic;\">Quadrature Demod View</span>.</p></body></html>"))
-        self.btnAutoDetect.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.</p></body></html>"))
+        self.btnAutoDetect.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Automatically detect Center, Bit Length and Tolerance, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.</p></body></html>"))
         self.btnAutoDetect.setText(_translate("SignalFrame", "Autodetect parameters"))
         self.cbSignalView.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose the view of your signal. Analog, Demodulated or Spectrogram.</p><p>The quadrature demodulation uses a <span style=\" font-weight:600;\">treshold of magnitude,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this treshold will be eliminated (set to <span style=\" font-style:italic;\">-127</span>) after demod.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" font-weight:600;\">context menu</span>.</p><p>Current noise treshold is: </p></body></html>"))
         self.cbSignalView.setItemText(0, _translate("SignalFrame", "Analog"))

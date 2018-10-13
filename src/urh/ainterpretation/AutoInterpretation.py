@@ -11,6 +11,8 @@ from urh.cythonext import auto_interpretation as c_auto_interpretation
 from urh.cythonext import signal_functions
 from urh.cythonext import util
 
+# Maximum number of samples to consider when summing all samples over all messages during segmentation for performance.
+MAX_MESSAGE_SAMPLES = int(1e6)
 
 def max_without_outliers(data: np.ndarray, z=3):
     if len(data) == 0:
@@ -73,7 +75,7 @@ def detect_noise_level(magnitudes):
     return math.ceil(result * 10000) / 10000
 
 
-def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float):
+def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: float, max_message_samples=0):
     """
     Get the list of start, end indices of messages
 
@@ -81,7 +83,7 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
     :param q: Factor which controls how many samples of previous above noise plateau must be under noise to be counted as noise
     :return:
     """
-    return c_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold)
+    return c_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold, max_message_samples)
 
 
 def merge_message_segments_for_ook(segments: list):
@@ -330,7 +332,9 @@ def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) ->
     noise = detect_noise_level(magnitudes) if noise is None else noise
 
     # segment messages
-    message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
+    message_indices = segment_messages_from_magnitudes(magnitudes,
+                                                       noise_threshold=noise,
+                                                       max_message_samples=MAX_MESSAGE_SAMPLES)
 
     # detect modulation
     modulation = detect_modulation_for_messages(signal, message_indices) if modulation is None else modulation

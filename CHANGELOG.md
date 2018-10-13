@@ -2,6 +2,7 @@
 ## v2.3.1 (upcoming)
 ### New features
 - added __font size zoom__ to table views (analysis/generator/simulator); more details in [#546](https://github.com/jopohl/urh/pull/546)
+- greatly enhance accuracy of automatic interpretation [#550](https://github.com/jopohl/urh/pull/550)
 
 ### Improvements
 - ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)

@@ -36,6 +36,12 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
         self.assertEqual(demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0], "b25b6db6c80")
 
+    def test_auto_interpretation_overshoot_ook(self):
+        data = Signal(get_path_for_data_file("ook_overshoot.coco"), "").data
+        result = AutoInterpretation.estimate(data)
+        self.assertEqual(result["modulation_type"], "ASK")
+        self.assertEqual(result["bit_length"], 500)
+
     def test_auto_interpretation_enocean(self):
         enocean_signal = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
         result = AutoInterpretation.estimate(enocean_signal)

@@ -14,6 +14,7 @@ from urh.cythonext import util
 # Maximum number of samples to consider when summing all samples over all messages during segmentation for performance.
 MAX_MESSAGE_SAMPLES = int(1e6)
 
+
 def max_without_outliers(data: np.ndarray, z=3):
     if len(data) == 0:
         return None
@@ -105,7 +106,7 @@ def merge_message_segments_for_ook(segments: list):
     )
 
     # Find relatively large pauses, these mark new messages
-    min_pulse_length = min_without_outliers(pulses, z=2)
+    min_pulse_length = min_without_outliers(pulses, z=1)
     large_pause_indices = np.nonzero(pauses >= 8 * min_pulse_length)[0]
 
     # Merge Pulse Lengths between long pauses

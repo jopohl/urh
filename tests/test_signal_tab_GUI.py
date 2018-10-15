@@ -215,9 +215,7 @@ class TestSignalTabGUI(QtTestCase):
     def test_auto_detect_button(self):
         self.add_signal_to_form("esaver.coco")
         frame = self.form.signal_tab_controller.signal_frames[0]
-        self.assertTrue(frame.ui.btnAutoDetect.isChecked())
         frame.ui.btnAutoDetect.click()
-        self.assertFalse(frame.ui.btnAutoDetect.isChecked())
 
     def test_create_new_signal(self):
         self.add_signal_to_form("esaver.coco")

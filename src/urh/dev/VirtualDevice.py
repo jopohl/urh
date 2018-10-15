@@ -191,6 +191,18 @@ class VirtualDevice(QObject):
         self.__dev.bandwidth = value
 
     @property
+    def apply_dc_correction(self):
+        if self.backend == Backends.native:
+            return self.__dev.apply_dc_correction
+        else:
+            return None
+
+    @apply_dc_correction.setter
+    def apply_dc_correction(self, value: bool):
+        if self.backend == Backends.native:
+            self.__dev.apply_dc_correction = bool(value)
+
+    @property
     def bandwidth_is_adjustable(self):
         if self.backend == Backends.grc:
             return True

@@ -280,11 +280,16 @@ class SignalFrame(QFrame):
 
         try:
             start, end = int(self.ui.gvSignal.selection_area.start), int(self.ui.gvSignal.selection_area.end)
+            power_str = "-\u221e"  # minus infinity
             if start < end:
-                rssi = np.mean(np.abs(self.signal.data[start:end]))
-                self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(rssi)))
-            else:
-                self.ui.labelRSSI.setText("")
+                max_window_size = 10 ** 5
+                step_size = int(math.ceil((end-start)/max_window_size))
+                power = np.mean(np.abs(self.signal.data[start:end:step_size]))
+                if power > 0:
+                    power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
+
+            self.ui.labelRSSI.setText("{} dBm".format(power_str))
+
         except Exception as e:
             logger.exception(e)
             self.ui.labelRSSI.setText("")
@@ -719,10 +724,12 @@ class SignalFrame(QFrame):
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
             self.draw_spectrogram(show_full_scene=True)
             self.__set_selected_bandwidth()
+            self.ui.labelRSSI.hide()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
+            self.ui.labelRSSI.show()
 
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()

@@ -514,7 +514,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
             </property>
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="17">
+              <item row="0" column="16">
                <widget class="QToolButton" name="btnSaveProto">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -543,16 +543,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="12">
-               <widget class="QLabel" name="label_2">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>RSSI:</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="7">
                <widget class="QLabel" name="lSlash">
                 <property name="sizePolicy">
@@ -576,7 +566,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="16">
+              <item row="0" column="15">
                <widget class="QLabel" name="lTime">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -617,7 +607,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="13">
+              <item row="0" column="12">
                <widget class="QLabel" name="lblRSSI">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -626,29 +616,10 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </sizepolicy>
                 </property>
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Received Signal Strength Indicator&lt;/span&gt; indicates the average signal power of the current message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the average signal power of the current message. The nearer this value is to zero, the stronger the signal is.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string>1.04</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="lineEditSearch">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="acceptDrops">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Enter pattern here</string>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>true</bool>
+                 <string>-∞ dBm</string>
                 </property>
                </widget>
               </item>
@@ -711,7 +682,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="15">
+              <item row="0" column="14">
                <widget class="QLabel" name="label_3">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;Message Start&lt;/span&gt; is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -724,7 +695,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="14">
+              <item row="0" column="13">
                <widget class="Line" name="line_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -783,7 +754,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                 </property>
                </widget>
               </item>
-              <item row="0" column="18">
+              <item row="0" column="17">
                <widget class="QToolButton" name="btnLoadProto">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -807,6 +778,25 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                <widget class="QLabel" name="lblClearAlignment">
                 <property name="text">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;reset_alignment&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Reset alignment&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="lineEditSearch">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="acceptDrops">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Enter pattern here</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>

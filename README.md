@@ -4,7 +4,8 @@
 [![AppVeyor](https://img.shields.io/appveyor/ci/jopohl/urh.svg?label=Windows&logo=appveyor)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
-
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Percentage of issues still open")
 
 The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
 
@@ -24,8 +25,13 @@ Want to stay in touch? [![Slack](https://img.shields.io/badge/chat-on%20slack-bl
 
 If you find URH useful, please consider giving this repository a :star: or even [donate via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2). We appreciate your support!
 
-If you use URH in your research paper, please cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper, or directly use this BibTeX entry:
-```latex
+If you use URH in your research paper, please cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper, or directly use the following BibTeX entry.
+<details>
+  <summary>
+    <b>BibTeX entry for citing URH</b>
+  </summary>
+  
+  ```latex
 @inproceedings {220562,
 author = {Johannes Pohl and Andreas Noack},
 title = {Universal Radio Hacker: A Suite for Analyzing and Attacking Stateful Wireless Protocols},
@@ -36,6 +42,7 @@ url = {https://www.usenix.org/conference/woot18/presentation/pohl},
 publisher = {{USENIX} Association},
 }
 ```
+</details>
 
 # Installation
 Universal Radio Hacker can be installed via __pip__ or using the __package manager__ of your distribution (if included).

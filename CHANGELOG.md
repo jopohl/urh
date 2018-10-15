@@ -6,6 +6,7 @@
 
 ### Improvements
 - ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)
+- RSSI is now given in dBm [#549](https://github.com/jopohl/urh/pull/549)
 
 ### Bugfixes
 - Fix display of RSSI indicator in Interpretation [#547](https://github.com/jopohl/urh/pull/547)

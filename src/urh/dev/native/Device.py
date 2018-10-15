@@ -272,6 +272,8 @@ class Device(object):
         self.spectrum_x = None
         self.spectrum_y = None
 
+        self.apply_dc_correction = False
+
     def _start_read_rcv_buffer_thread(self):
         self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
         self.read_recv_buffer_thread.daemon = True
@@ -616,7 +618,7 @@ class Device(object):
             logger.exception(e)
 
     @staticmethod
-    def unpack_complex(buffer):
+    def unpack_complex(buffer) -> np.ndarray:
         pass
 
     @staticmethod
@@ -649,6 +651,10 @@ class Device(object):
                 n_samples = len(samples)
                 if n_samples == 0:
                     continue
+
+                if self.apply_dc_correction:
+                    samples -= np.mean(samples)
+
             except OSError as e:
                 logger.exception(e)
                 continue

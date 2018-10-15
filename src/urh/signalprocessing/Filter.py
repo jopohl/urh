@@ -11,6 +11,7 @@ from urh.util.Logger import logger
 
 class FilterType(Enum):
     moving_average = "moving average"
+    dc_correction = "DC correction"
     custom = "custom"
 
 
@@ -26,6 +27,12 @@ class Filter(object):
     def __init__(self, taps: list, filter_type: FilterType = FilterType.custom):
         self.filter_type = filter_type
         self.taps = taps
+
+    def work(self, input_signal: np.ndarray) -> np.ndarray:
+        if self.filter_type == FilterType.dc_correction:
+            return input_signal - np.mean(input_signal)
+        else:
+            return self.apply_fir_filter(input_signal)
 
     def apply_fir_filter(self, input_signal: np.ndarray) -> np.ndarray:
         if input_signal.dtype != np.complex64:

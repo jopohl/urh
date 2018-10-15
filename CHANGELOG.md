@@ -2,6 +2,7 @@
 ## v2.3.1 (upcoming)
 ### New features
 - added __font size zoom__ to table views (analysis/generator/simulator); more details in [#546](https://github.com/jopohl/urh/pull/546)
+- added __DC correction__ option to recording dialogs and as a new filter type in Interpretation [#552](https://github.com/jopohl/urh/pull/552) 
 
 ### Improvements
 - ignore case when searching for hex values in analysis [#544](https://github.com/jopohl/urh/pull/544)

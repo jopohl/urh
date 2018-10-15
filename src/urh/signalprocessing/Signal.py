@@ -50,7 +50,6 @@ class Signal(QObject):
         self.noise_max_plot = 0
         self.block_protocol_update = False
 
-        self.auto_detect_on_modulation_changed = True
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
         if modulation is None:
@@ -179,9 +178,6 @@ class Signal(QObject):
         if self.__modulation_type != value:
             self.__modulation_type = value
             self._qad = None
-
-            if self.auto_detect_on_modulation_changed:
-                self.auto_detect(emit_update=False, detect_noise=False, detect_modulation=False)
 
             self.modulation_type_changed.emit(self.__modulation_type)
             if not self.block_protocol_update:
@@ -393,10 +389,7 @@ class Signal(QObject):
             self.noise_threshold = estimated_params["noise"]
 
         if detect_modulation:
-            orig_auto_detect_on_modulation_change = self.auto_detect_on_modulation_changed
-            self.auto_detect_on_modulation_changed = False
             self.modulation_type_str = estimated_params["modulation_type"]
-            self.auto_detect_on_modulation_changed = orig_auto_detect_on_modulation_change
 
         self.qad_center = estimated_params["center"]
         self.tolerance = estimated_params["tolerance"]

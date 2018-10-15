@@ -1157,7 +1157,7 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_configure_filter_action_triggered(self):
-        self.filter_dialog.set_dsp_filter(self.dsp_filter)
+        self.filter_dialog.set_dsp_filter_status(self.dsp_filter.filter_type)
         self.filter_dialog.exec()
 
     @pyqtSlot(Filter)

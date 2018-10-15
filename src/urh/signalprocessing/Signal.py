@@ -470,7 +470,7 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def filter_range(self, start: int, end: int, fir_filter: Filter):
-        self._fulldata[start:end] = fir_filter.apply_fir_filter(self._fulldata[start:end])
+        self._fulldata[start:end] = fir_filter.work(self._fulldata[start:end])
         self._qad[start:end] = signal_functions.afp_demod(self.data[start:end],
                                                           self.noise_threshold, self.modulation_type)
         self.__invalidate_after_edit()

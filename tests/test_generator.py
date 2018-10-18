@@ -61,7 +61,7 @@ class TestGenerator(QtTestCase):
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 2)
         signal_frame = self.form.signal_tab_controller.signal_frames[1]
 
-        self.assertEqual(signal_frame.signal.num_samples, 14374)
+        self.assertEqual(signal_frame.signal.num_samples, 14377)
         signal_frame.ui.cbProtoView.setCurrentIndex(0)
         self.assertEqual(signal_frame.ui.lineEditSignalName.text(), "test_generator")
         signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK

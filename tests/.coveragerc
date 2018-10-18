@@ -38,3 +38,4 @@ exclude_lines =
     def export_demodulated
     def main
     class DeviceOptionsTableModel
+    if __name__ == "__main__"

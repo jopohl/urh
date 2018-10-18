@@ -318,7 +318,6 @@ class ProjectManager(QObject):
         signal_tag.set("noise_threshold", str(signal.noise_threshold))
         signal_tag.set("noise_minimum", str(signal.noise_min_plot))
         signal_tag.set("noise_maximum", str(signal.noise_max_plot))
-        signal_tag.set("auto_detect_on_modulation_changed", str(signal.auto_detect_on_modulation_changed))
         signal_tag.set("modulation_type", str(signal.modulation_type))
         signal_tag.set("sample_rate", str(signal.sample_rate))
         signal_tag.set("pause_threshold", str(signal.pause_threshold))
@@ -465,9 +464,6 @@ class ProjectManager(QObject):
                 signal.name = sig_tag.attrib["name"]
                 signal.qad_center = float(sig_tag.get("qad_center", 0))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
-                signal.auto_detect_on_modulation_changed = False if \
-                    sig_tag.attrib[
-                        "auto_detect_on_modulation_changed"] == 'False' else True
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))

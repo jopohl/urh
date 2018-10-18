@@ -105,6 +105,15 @@ class SignalFrame(QFrame):
             self.configure_filter_action.triggered.connect(self.on_configure_filter_action_triggered)
             self.ui.btnFilter.setMenu(self.filter_menu)
 
+            self.auto_detect_menu = QMenu()
+            self.detect_noise_action = self.auto_detect_menu.addAction(self.tr("Additionally detect noise"))
+            self.detect_noise_action.setCheckable(True)
+            self.detect_noise_action.setChecked(False)
+            self.detect_modulation_action = self.auto_detect_menu.addAction(self.tr("Additionally detect modulation"))
+            self.detect_modulation_action.setCheckable(True)
+            self.detect_modulation_action.setChecked(False)
+            self.ui.btnAutoDetect.setMenu(self.auto_detect_menu)
+
             if self.signal.wav_mode:
                 self.ui.lSignalTyp.setText("Signal (*.wav)")
             else:
@@ -237,13 +246,11 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.blockSignals(block)
         self.ui.spinBoxInfoLen.blockSignals(block)
         self.ui.spinBoxNoiseTreshold.blockSignals(block)
-        self.ui.btnAutoDetect.blockSignals(block)
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
-        self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
@@ -251,7 +258,6 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.blockSignals(False)
         self.ui.spinBoxInfoLen.blockSignals(False)
         self.ui.spinBoxNoiseTreshold.blockSignals(False)
-        self.ui.btnAutoDetect.blockSignals(False)
 
     def set_empty_frame_visibilities(self):
         for widget in dir(self.ui):
@@ -742,9 +748,8 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
-        self.signal.auto_detect_on_modulation_changed = bool(self.ui.btnAutoDetect.isChecked())
-        if self.ui.btnAutoDetect.isChecked():
-            self.signal.auto_detect()
+        self.signal.auto_detect(detect_modulation=self.detect_modulation_action.isChecked(),
+                                detect_noise=self.detect_noise_action.isChecked())
 
     @pyqtSlot()
     def on_btn_replay_clicked(self):
@@ -1001,7 +1006,6 @@ class SignalFrame(QFrame):
                                                  parameter_name="noise_threshold",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
-            self.disable_auto_detection()
 
     def set_qad_tooltip(self, noise_threshold):
         self.ui.cbSignalView.setToolTip(
@@ -1027,23 +1031,13 @@ class SignalFrame(QFrame):
             self.unsetCursor()
         elif action == auto_detect_action:
             self.setCursor(Qt.WaitCursor)
-            self.signal.auto_detect()
+            self.signal.auto_detect(detect_modulation=False, detect_noise=False)
             self.unsetCursor()
 
     def show_modulation_type(self):
         self.ui.cbModulationType.blockSignals(True)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.cbModulationType.blockSignals(False)
-
-    def disable_auto_detection(self):
-        """
-        Disable auto detection when user manually edited a value
-
-        :return:
-        """
-        if self.signal.auto_detect_on_modulation_changed:
-            self.signal.auto_detect_on_modulation_changed = False
-            self.ui.btnAutoDetect.setChecked(False)
 
     def on_participant_changed(self):
         if hasattr(self, "proto_analyzer") and self.proto_analyzer:
@@ -1124,7 +1118,6 @@ class SignalFrame(QFrame):
                                                      parameter_value=self.ui.spinBoxTolerance.value())
             self.undo_stack.push(tolerance_action)
             self.ui.spinBoxTolerance.blockSignals(False)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def on_spinbox_infolen_editing_finished(self):
@@ -1135,7 +1128,6 @@ class SignalFrame(QFrame):
                                                   parameter_value=self.ui.spinBoxInfoLen.value())
             self.undo_stack.push(bitlen_action)
             self.ui.spinBoxInfoLen.blockSignals(False)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def on_spinbox_center_editing_finished(self):
@@ -1145,7 +1137,6 @@ class SignalFrame(QFrame):
                                                   parameter_name="qad_center",
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def refresh(self, draw_full_signal=False):

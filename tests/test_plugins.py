@@ -32,29 +32,30 @@ class TestPlugins(QtTestCase):
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
     def test_zero_hide_plugin_gui(self):
-        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 377)
+        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331)
         zh = ZeroHidePlugin()
-        zh.following_zeros = 188
+        zh.following_zeros = 158
         action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
                                self.cframe.proto_analyzer, 0)
         action.trigger()
-        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 377 - 188)
+
+        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331 - 158)
 
         self.cframe.protocol_undo_stack.undo()
-        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 377)
+        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331)
 
     def test_zero_hide_plugin_function(self):
         zh = ZeroHidePlugin()
         zh.following_zeros = 3
         self.add_signal_to_form("ask.complex")
         self.form.ui.tabWidget.setCurrentIndex(1)
-        test_bits = "10110010010110110110110110110110110001000000"
+        test_bits = "1011001001011011011011011011011011001000000"
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits)
 
         action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
                                self.cframe.proto_analyzer, 0)
         action.trigger()
-        self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], "10110010010110110110110110110110111")
+        self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], "1011001001011011011011011011011011001")
 
     def test_sdr_interface_plugin(self):
         si = NetworkSDRInterfacePlugin(resume_on_full_receive_buffer=True)

@@ -428,32 +428,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="11" column="0" colspan="2">
-      <widget class="QPushButton" name="btnAutoDetect">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Autodetect parameters</string>
-       </property>
-       <property name="icon">
-        <iconset theme="system-software-update">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="15" column="1">
       <widget class="QComboBox" name="cbSignalView">
        <property name="sizePolicy">
@@ -694,6 +668,40 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
       <widget class="QLabel" name="labelSpectrogramMax">
        <property name="text">
         <string>Data&lt;sub&gt;max&lt;/sub&gt;:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0" colspan="2">
+      <widget class="QToolButton" name="btnAutoDetect">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect &lt;span style=&quot; font-weight:600;&quot;&gt;center&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;tolerance&lt;/span&gt;. You can also choose to addtionally detect the &lt;span style=&quot; font-weight:600;&quot;&gt;noise&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;modulation&lt;/span&gt; when clicking this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Autodetect parameters</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
        </property>
       </widget>
      </item>

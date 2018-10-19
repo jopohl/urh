@@ -52,6 +52,8 @@ def release():
     # Publish new version number
     call(["git", "add", version_file])
     call(["git", "commit", "-m", "version" + cur_version])
+
+    input("Pushing to GitHub now. Press a key to continue.")
     call(["git", "push"])
 
     os.chdir(script_dir)

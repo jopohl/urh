@@ -1,8 +1,8 @@
 # Changelog
-## v2.3.1 (upcoming)
+## v2.4.0 (19/10/2018)
 ### New features
 - added __font size zoom__ to table views (analysis/generator/simulator); more details in [#546](https://github.com/jopohl/urh/pull/546)
-- greatly enhance accuracy of automatic interpretation [#550](https://github.com/jopohl/urh/pull/550)
+- greatly enhance __accuracy of automatic interpretation__ [#550](https://github.com/jopohl/urh/pull/550)
 - added __DC correction__ option to recording dialogs and as a new filter type in Interpretation [#552](https://github.com/jopohl/urh/pull/552) 
 
 ### Improvements

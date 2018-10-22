@@ -3,7 +3,7 @@
 ### New features
 - Add an option to disable automatic detection of interpretation parameters for newly loaded signals to the ``` Edit ``` menu [#555](https://github.com/jopohl/urh/pull/555) 
 
-### Bugfixes
+### Fixed bugs
 - fix off by one error when creating a new label in analysis
 - fix crash when opening a project with saved dc correction setting
 

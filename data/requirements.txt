@@ -1,4 +1,5 @@
-numpy
+numpy; sys.platform != 'darwin'
+numpy!=1.15.3; sys.platform == "darwin"
 psutil
 pyqt5; sys_platform != 'win32'
 pyqt5!=5.11.1,!=5.11.2,!=5.11.3; sys_platform == 'win32'

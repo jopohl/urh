@@ -385,6 +385,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="separator"/>
     <addaction name="actionShowFileTree"/>
     <addaction name="actionFullscreen_mode"/>
+    <addaction name="separator"/>
+    <addaction name="actionAuto_detect_new_signals"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -748,10 +750,22 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
   </action>
   <action name="actionClose_project">
    <property name="icon">
-    <iconset theme="document-close"/>
+    <iconset theme="document-close">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Close project</string>
+   </property>
+  </action>
+  <action name="actionAuto_detect_new_signals">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto detect signals on loading</string>
    </property>
   </action>
  </widget>

@@ -99,7 +99,10 @@ class DeviceSettingsWidget(QWidget):
             self.set_default_bb_gain()
 
         if self.is_rx:
-            self.ui.checkBoxDCCorrection.setChecked(conf_dict.get("apply_dc_correction", False))
+            checked = conf_dict.get("apply_dc_correction", False)
+            if isinstance(checked, str):
+                checked = True if checked == "True" else False
+            self.ui.checkBoxDCCorrection.setChecked(checked)
 
         self.emit_editing_finished_signals()
 

@@ -5,7 +5,7 @@ import traceback
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication
+    QMessageBox, QApplication, qApp
 
 from urh import constants, version
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
@@ -81,6 +81,9 @@ class MainController(QMainWindow):
         self.cancel_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
         self.addAction(self.cancel_action)
+
+        self.ui.actionAuto_detect_new_signals.setChecked(constants.SETTINGS.value("auto_detect_new_signals",
+                                                                                  True, bool))
 
         self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
@@ -179,6 +182,7 @@ class MainController(QMainWindow):
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
         self.ui.actionSamples_from_csv.triggered.connect(self.on_import_samples_from_csv_action_triggered)
+        self.ui.actionAuto_detect_new_signals.triggered.connect(self.on_auto_detect_new_signals_action_triggered)
 
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
@@ -292,8 +296,11 @@ class MainController(QMainWindow):
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
 
-        if not has_entry and not signal.changed:
+        if self.ui.actionAuto_detect_new_signals.isChecked() and not has_entry and not signal.changed:
+            sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageLoading)
+            qApp.processEvents()
             signal.auto_detect(detect_modulation=True, detect_noise=False)
+            sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageSignal)
 
         signal.blockSignals(False)
 
@@ -862,6 +869,10 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_import_samples_from_csv_action_triggered(self):
         self.__import_csv(file_name="")
+
+    @pyqtSlot(bool)
+    def on_auto_detect_new_signals_action_triggered(self, checked: bool):
+        constants.SETTINGS.setValue("auto_detect_new_signals", bool(checked))
 
     def __import_csv(self, file_name, group_id=0):
         def on_data_imported(complex_file, sample_rate):

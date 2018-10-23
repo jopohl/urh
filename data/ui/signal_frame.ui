@@ -940,6 +940,25 @@ stop:1 rgba(255, 255, 255, 0));
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="pageLoading">
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="labelLoadingAutoInterpretation">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Running automatic detecting of demodulation parameters.&lt;/p&gt;&lt;p&gt;You can disable this behaviour for newly loaded signals by unchecking &lt;span style=&quot; font-weight:600;&quot;&gt;Edit&lt;/span&gt; -&amp;gt; &lt;span style=&quot; font-weight:600;&quot;&gt;Auto detect signals on loading&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
          <item>

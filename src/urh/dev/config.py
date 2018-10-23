@@ -99,7 +99,7 @@ DEVICE_CONFIG["AirSpy R2"] = {
 DEVICE_CONFIG["AirSpy Mini"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
     "sample_rate": [6 * M, 6 * M],
-# Documentation says: "10, 6 and 3 MSPS IQ output" but it always uses 6M, no matter what is configured.
+    # Documentation says: "10, 6 and 3 MSPS IQ output" but it always uses 6M, no matter what is configured.
     "bandwidth": [6 * M, 6 * M],
     "rx_rf_gain": list(range(0, 16)),
     "rx_if_gain": list(range(0, 16)),

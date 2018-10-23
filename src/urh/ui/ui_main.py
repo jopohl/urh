@@ -309,6 +309,10 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon.fromTheme("document-close")
         self.actionClose_project.setIcon(icon)
         self.actionClose_project.setObjectName("actionClose_project")
+        self.actionAuto_detect_new_signals = QtWidgets.QAction(MainWindow)
+        self.actionAuto_detect_new_signals.setCheckable(True)
+        self.actionAuto_detect_new_signals.setChecked(True)
+        self.actionAuto_detect_new_signals.setObjectName("actionAuto_detect_new_signals")
         self.menuImport.addAction(self.actionSamples_from_csv)
         self.menuFile.addAction(self.actionNew_Project)
         self.menuFile.addAction(self.actionProject_settings)
@@ -332,6 +336,8 @@ class Ui_MainWindow(object):
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionShowFileTree)
         self.menuEdit.addAction(self.actionFullscreen_mode)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionAuto_detect_new_signals)
         self.menuHelp.addAction(self.actionAbout_AutomaticHacker)
         self.menuHelp.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -397,6 +403,7 @@ class Ui_MainWindow(object):
         self.actionShowFileTree.setText(_translate("MainWindow", "&Show file tree"))
         self.actionSamples_from_csv.setText(_translate("MainWindow", "IQ samples from csv"))
         self.actionClose_project.setText(_translate("MainWindow", "Close project"))
+        self.actionAuto_detect_new_signals.setText(_translate("MainWindow", "Auto detect signals on loading"))
 
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

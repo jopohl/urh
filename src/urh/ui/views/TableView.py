@@ -93,11 +93,11 @@ class TableView(QTableView):
 
     @pyqtSlot()
     def on_zoom_in_action_triggered(self):
-        self.set_font_size(self.font().pointSize()+1)
+        self.set_font_size(self.font().pointSize() + 1)
 
     @pyqtSlot()
     def on_zoom_out_action_triggered(self):
-        self.set_font_size(self.font().pointSize()-1)
+        self.set_font_size(self.font().pointSize() - 1)
 
     @pyqtSlot()
     def on_zoom_original_action_triggered(self):

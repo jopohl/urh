@@ -1230,7 +1230,7 @@ class CompareFrameController(QWidget):
     @pyqtSlot(int, int, int)
     def on_create_label_triggered(self, msg_index, start, end):
         a = self.protocol_model.get_alignment_offset_at(msg_index)
-        self.add_protocol_label(start=start - a, end=end - a,
+        self.add_protocol_label(start=start - a, end=end - a - 1,
                                 messagenr=msg_index, proto_view=self.ui.cbProtoView.currentIndex())
 
     @pyqtSlot()

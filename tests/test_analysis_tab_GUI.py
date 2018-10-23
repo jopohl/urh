@@ -1,17 +1,14 @@
 import copy
-import sip
 
 from PyQt5.QtCore import QPoint, Qt, QModelIndex
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu, qApp
+from PyQt5.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.MainController import MainController
-from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
-from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.signalprocessing.FieldType import FieldType
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 
@@ -383,7 +380,7 @@ class TestAnalysisTabGUI(QtTestCase):
         pattern = "6768676"
         for i in range(self.cfc.protocol_model.row_count):
             for j in range(len(pattern)):
-                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j+11)) != pattern[j]:
+                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j + 11)) != pattern[j]:
                     aligned = False
                     break
 

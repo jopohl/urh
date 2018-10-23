@@ -1,5 +1,5 @@
 # Changelog
-## v2.4.1 (upcoming)
+## v2.4.1 (23/10/2018)
 ### New features
 - Add an option to disable automatic detection of interpretation parameters for newly loaded signals to the ``` Edit ``` menu [#555](https://github.com/jopohl/urh/pull/555) 
 

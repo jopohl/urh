@@ -151,6 +151,8 @@ class TableView(QTableView):
         menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
 
+        self.context_menu_pos = None
+
     def select(self, row_1, col_1, row_2, col_2):
         selection = QItemSelection()
         start_index = self.model().index(row_1, col_1)

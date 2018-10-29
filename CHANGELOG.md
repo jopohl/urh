@@ -1,4 +1,8 @@
 # Changelog
+## v2.4.2 (23/10/2018)
+### Bugfixes
+- fix problem with set reference message shortcut [#559](https://github.com/jopohl/urh/pull/559)
+
 ## v2.4.1 (23/10/2018)
 ### New features
 - Add an option to disable automatic detection of interpretation parameters for newly loaded signals to the ``` Edit ``` menu [#555](https://github.com/jopohl/urh/pull/555) 

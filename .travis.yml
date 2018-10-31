@@ -17,7 +17,6 @@ matrix:
       dist: xenial
       sudo: true
     - os: osx
-      osx_image: xcode9.2
       language: generic
 
   allow_failures:

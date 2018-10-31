@@ -121,7 +121,9 @@ class MessageType(list):
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
-            self.add_protocol_label(lbl.start, lbl.end - 1, name=lbl.name, color_ind=lbl.color_index)
+            added = self.add_protocol_label(lbl.start, lbl.end - 1, name=lbl.name, color_ind=lbl.color_index)
+            added.display_format_index = lbl.display_format_index
+            added.display_bit_order_index = lbl.display_bit_order_index
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:

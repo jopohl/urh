@@ -132,6 +132,7 @@ def build_device_from_args(arguments: argparse.Namespace):
                            bandwidth=bandwidth,
                            gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
 
+    result.freq_correction = arguments.frequency_correction
     if arguments.device_identifier is not None:
         try:
             result.device_number = int(arguments.device_identifier)
@@ -152,6 +153,7 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     result.rcv_device.frequency = arguments.frequency
     result.rcv_device.sample_rate = arguments.sample_rate
     result.rcv_device.bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
+    result.rcv_device.freq_correction = arguments.frequency_correction
     if arguments.gain is not None:
         result.rcv_device.gain = arguments.gain
     if arguments.if_gain is not None:
@@ -280,6 +282,8 @@ def create_parser():
     group1.add_argument("-if", "--if-gain", type=int, help="IF gain to use (only supported for some SDRs)")
     group1.add_argument("-bb", "--baseband-gain", type=int, help="Baseband gain to use (only supported for some SDRs)")
     group1.add_argument("-a", "--adaptive-noise", action="store_true", help="Use adaptive noise when receiving.")
+    group1.add_argument("-fcorr", "--frequency-correction", default=1, type=int,
+                        help="Set the frequency correction for SDR (if supported)")
 
     group2 = parser.add_argument_group('Modulation/Demodulation settings',
                                        "Configure the Modulator/Demodulator. Not required in raw mode."

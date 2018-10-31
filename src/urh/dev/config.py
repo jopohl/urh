@@ -74,7 +74,7 @@ DEVICE_CONFIG["RTL-SDR"] = {
     "center_freq": dev_range(start=0.1 * M, stop=2200 * M, step=1),
     "sample_rate": dev_range(start=1, stop=int(3.2 * M), step=1),
     "bandwidth": dev_range(start=1, stop=int(3.2 * M), step=1),
-    "rx_rf_gain": list(range(0, 51)),  # CAUTION: API is *10 so e.g. 1 needs to be given as 10 to API
+    "rx_rf_gain": list(range(-4, 51)),  # CAUTION: API is *10 so e.g. 1 needs to be given as 10 to API
     "direct_sampling": ["disabled", "I-ADC input enabled", "Q-ADC input enabled"],
     "freq_correction": dev_range(start=-1 * 10 ** 3, stop=1 * 10 ** 3, step=1)
 }

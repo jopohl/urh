@@ -1332,7 +1332,7 @@ class CompareFrameController(QWidget):
         f = 4 if cur_view == 1 else 8 if cur_view == 2 else 1
         start, end = start * f, end * f
 
-        bits = message.decoded_bits_str[start:end]
+        bits = message.decoded_bits_str[start-message.alignment_offset:end-message.alignment_offset]
         hexs = "".join(("{0:x}".format(int(bits[i:i + 4], 2)) for i in range(0, len(bits), 4)))
         decimals = str(int(bits, 2)) if len(bits) > 0 else ""
 

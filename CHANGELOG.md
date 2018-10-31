@@ -5,6 +5,7 @@
 
 ### Bugfixes
 - fix problem with set reference message shortcut [#559](https://github.com/jopohl/urh/pull/559)
+- fix loading decodings and centralized place for decodings [#563](https://github.com/jopohl/urh/pull/563)
 
 ## v2.4.1 (23/10/2018)
 ### New features

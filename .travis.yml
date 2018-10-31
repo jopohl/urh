@@ -17,8 +17,8 @@ matrix:
       dist: xenial
       sudo: true
     - os: osx
-      osx_image: xcode9.2
       language: generic
+      osx_image: xcode10
 
   allow_failures:
     - python: 3.4_with_system_site_packages

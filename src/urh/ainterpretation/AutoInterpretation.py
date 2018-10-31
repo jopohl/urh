@@ -70,7 +70,10 @@ def detect_noise_level(magnitudes):
     # Get all indices for values which are in range of 10% of minimum mean value
     indices = np.nonzero(mean_values <= 1.1 * np.min(mean_values))[0]
 
-    result = np.max([np.max(chunks[i]) for i in indices])
+    try:
+        result = np.max([np.max(chunks[i]) for i in indices if len(chunks[i]) > 0])
+    except ValueError:
+        return 0
 
     # Round up to fourth digit
     return math.ceil(result * 10000) / 10000
@@ -191,6 +194,7 @@ def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) ->
 
 def detect_center(rectangular_signal: np.ndarray):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
+
     hist_min, hist_max = util.minmax(rect)
     hist_step = 0.05
 

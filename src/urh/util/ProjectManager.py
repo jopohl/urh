@@ -116,7 +116,7 @@ class ProjectManager(QObject):
 
     def load_decodings(self):
         if self.project_file:
-            prefix = os.path.realpath(os.path.dirname(self.project_file))
+            return
         else:
             prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
 
@@ -143,25 +143,16 @@ class ProjectManager(QObject):
             self.decodings = fallback
             return
 
-        if not f:
-            self.decodings = fallback
-            return
-
         decodings = []
-        for line in f:
+        for line in map(str.strip, f):
             tmp_conf = []
-            for j in line.split(","):
-                tmp = j.strip()
-                tmp = tmp.replace("'", "")
-                if not "\n" in tmp and tmp != "":
-                    tmp_conf.append(tmp)
+            for j in map(str.strip, line.split(",")):
+                tmp_conf.append(j.replace("'", ""))
             decodings.append(Encoding(tmp_conf))
         f.close()
 
-        if decodings:
-            self.decodings = decodings
-        else:
-            self.decodings = fallback
+        self.decodings = decodings if decodings else fallback
+
 
     @staticmethod
     def read_device_conf_dict(tag: ET.Element, target_dict):

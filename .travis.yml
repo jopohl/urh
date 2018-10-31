@@ -18,6 +18,7 @@ matrix:
       sudo: true
     - os: osx
       language: generic
+      osx_image: xcode8
 
   allow_failures:
     - python: 3.4_with_system_site_packages

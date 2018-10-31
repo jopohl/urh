@@ -1,5 +1,8 @@
 # Changelog
-## v2.4.2 (23/10/2018)
+## v2.4.2 (upcoming)
+### New features
+- enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561)
+
 ### Bugfixes
 - fix problem with set reference message shortcut [#559](https://github.com/jopohl/urh/pull/559)
 

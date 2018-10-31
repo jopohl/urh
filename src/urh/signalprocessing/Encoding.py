@@ -843,6 +843,6 @@ class Encoding(object):
 
         decoders = []
         for decoding_tag in xml_tag.findall("decoding"):
-            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",") if d.strip().replace("'", "")]
+            conf = [d.strip().replace("'", "") for d in decoding_tag.text.split(",")]
             decoders.append(Encoding(conf))
         return decoders

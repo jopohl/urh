@@ -2,6 +2,7 @@
 ## v2.4.2 (upcoming)
 ### New features
 - enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561)
+- ergonomic improvements [#564](https://github.com/jopohl/urh/pull/564)
 
 ### Bugfixes
 - fix problem with set reference message shortcut [#559](https://github.com/jopohl/urh/pull/559)

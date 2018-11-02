@@ -150,7 +150,7 @@ class GeneratorTableView(TableView):
             menu.addAction(self.copy_action)
 
         if self.model().row_count > 0:
-            duplicate_action = menu.addAction("Duplicate line")
+            duplicate_action = menu.addAction("Duplicate selected lines")
             duplicate_action.setIcon(QIcon.fromTheme("edit-table-insert-row-under"))
             duplicate_action.triggered.connect(self.on_duplicate_action_triggered)
 
@@ -188,8 +188,7 @@ class GeneratorTableView(TableView):
 
     @pyqtSlot()
     def on_duplicate_action_triggered(self):
-        row = self.rowAt(self.context_menu_pos.y())
-        self.model().duplicate_row(row)
+        self.model().duplicate_rows(self.selected_rows)
 
     @pyqtSlot()
     def on_clear_action_triggered(self):

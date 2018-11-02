@@ -656,6 +656,9 @@ class MainController(QMainWindow):
                 self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
             # Modulators may got changed from Simulator Dialog
             self.generator_tab_controller.refresh_modulators()
+            # Signals may got reordered in analysis
+            self.generator_tab_controller.tree_model.update()
+            self.generator_tab_controller.ui.treeProtocols.expandAll()
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):

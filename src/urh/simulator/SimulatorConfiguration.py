@@ -115,12 +115,12 @@ class SimulatorConfiguration(QObject):
     def on_project_updated(self):
         self.broadcast_part.address_hex = self.project_manager.broadcast_address_hex
         participants = self.participants
-
-        messages = [msg for msg in self.get_all_messages() if
-                    ((msg.participant and msg.participant not in participants) or
-                     (msg.destination and msg.destination not in participants))]
-
-        self.delete_items(messages)
+        # handle deleted participants
+        for msg in self.get_all_messages():
+            if msg.participant not in participants:
+                msg.participant = None
+            elif msg.destination not in participants:
+                msg.destination = None
 
         self.participants_changed.emit()
 

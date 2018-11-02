@@ -119,7 +119,7 @@ class SimulatorConfiguration(QObject):
         for msg in self.get_all_messages():
             if msg.participant not in participants:
                 msg.participant = None
-            elif msg.destination not in participants:
+            if msg.destination not in participants:
                 msg.destination = None
 
         self.participants_changed.emit()

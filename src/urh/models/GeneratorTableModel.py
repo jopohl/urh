@@ -128,8 +128,8 @@ class GeneratorTableModel(TableModel):
         clear_action = Clear(self.protocol)
         self.undo_stack.push(clear_action)
 
-    def duplicate_row(self, row: int):
-        self.protocol.duplicate_line(row)
+    def duplicate_rows(self, rows: list):
+        self.protocol.duplicate_lines(rows)
         self.update()
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):

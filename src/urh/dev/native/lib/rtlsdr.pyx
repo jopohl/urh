@@ -178,7 +178,10 @@ cpdef list get_tuner_gains():
     cdef int*gains = <int *> malloc(num_gains * sizeof(int))
     crtlsdr.rtlsdr_get_tuner_gains(_c_device, gains)
 
-    return [gains[i] for i in range(num_gains)]
+    try:
+        return [gains[i] for i in range(num_gains)]
+    finally:
+        free(gains)
 
 cpdef int set_tuner_gain(int gain):
     """

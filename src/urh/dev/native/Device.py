@@ -72,6 +72,18 @@ class Device(object):
 
         if method_name:
             try:
+                try:
+                    check_method_name = cls.DEVICE_METHODS[tag+"_get_allowed_values"]
+                    allowed_values = getattr(cls.DEVICE_LIB, check_method_name)()
+                    next_allowed = min(allowed_values, key=lambda x: abs(x-value))
+                    if value != next_allowed:
+                        ctrl_connection.send("{}: {} not in range of supported values. Assuming {}".format(
+                            tag, value, next_allowed
+                        ))
+                        value = next_allowed
+                except (KeyError, AttributeError):
+                    pass
+
                 ret = getattr(cls.DEVICE_LIB, method_name)(value)
                 ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
             except AttributeError as e:

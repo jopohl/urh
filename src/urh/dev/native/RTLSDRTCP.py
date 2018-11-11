@@ -1,10 +1,10 @@
+import select
+import socket
+
 import numpy as np
 
 from urh.dev.native.Device import Device
 from urh.util.Logger import logger
-
-import socket
-import select
 
 
 class RTLSDRTCP(Device):
@@ -29,8 +29,7 @@ class RTLSDRTCP(Device):
             sdr.set_parameter("freqCorrection", int(freq_correction), ctrl_connection)
             sdr.set_parameter("directSampling", int(direct_sampling_mode), ctrl_connection)
             # Gain has to be set last, otherwise it does not get considered by RTL-SDR
-            sdr.set_parameter("tunerGain", 10 * int(gain),
-                              ctrl_connection)  # gain is multiplied by 10 because of rtlsdr-API
+            sdr.set_parameter("tunerGain", int(gain), ctrl_connection)
             exit_requested = False
 
             while not exit_requested:
@@ -63,11 +62,11 @@ class RTLSDRTCP(Device):
 
         elif tag == self.Command.SET_RF_GAIN.name:
             logger.info("RTLSDRTCP: Set tuner gain to {0}".format(int(value)))
-            return self.set_parameter("tunerGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
+            return self.set_parameter("tunerGain", int(value), ctrl_connection)
 
         elif tag == self.Command.SET_IF_GAIN.name:
             logger.info("RTLSDRTCP: Set if gain to {0}".format(int(value)))
-            return self.set_parameter("tunerIFGain", 10 * int(value), ctrl_connection)  # calculate *10 for API
+            return self.set_parameter("tunerIFGain", int(value), ctrl_connection)
 
         elif tag == self.Command.SET_SAMPLE_RATE.name:
             logger.info("RTLSDRTCP: Set sample_rate to {0}".format(int(value)))

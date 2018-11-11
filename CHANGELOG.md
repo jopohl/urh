@@ -1,7 +1,7 @@
 # Changelog
 ## v2.4.2 (upcoming)
 ### New features
-- enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561)
+- enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561) + [#566](https://github.com/jopohl/urh/pull/566)
 - ergonomic improvements [#564](https://github.com/jopohl/urh/pull/564)
 
 ### Bugfixes

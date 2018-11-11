@@ -15,6 +15,7 @@ class RTLSDR(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
         Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
+        Device.Command.SET_RF_GAIN.name+"_get_allowed_values": "get_tuner_gains",
         Device.Command.SET_BANDWIDTH.name: "set_tuner_bandwidth",
         Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
         Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
@@ -73,7 +74,7 @@ class RTLSDR(Device):
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
                             (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
-                            (self.Command.SET_RF_GAIN.name, 10 * self.gain),
+                            (self.Command.SET_RF_GAIN.name, self.gain),
                             ("identifier", self.device_number)])
 
     @property
@@ -85,9 +86,6 @@ class RTLSDR(Device):
             super().set_device_bandwidth(bandwidth)
         else:
             logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")
-
-    def set_device_gain(self, gain):
-        super().set_device_gain(10 * gain)
 
     @staticmethod
     def unpack_complex(buffer):

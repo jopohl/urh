@@ -153,7 +153,6 @@ class ProjectManager(QObject):
 
         self.decodings = decodings if decodings else fallback
 
-
     @staticmethod
     def read_device_conf_dict(tag: ET.Element, target_dict):
         if tag is None:
@@ -161,7 +160,10 @@ class ProjectManager(QObject):
 
         for dev_tag in tag:
             try:
-                value = float(dev_tag.text)
+                try:
+                    value = int(dev_tag.text)
+                except ValueError:
+                    value = float(dev_tag.text)
             except ValueError:
                 value = dev_tag.text
             target_dict[dev_tag.tag] = value

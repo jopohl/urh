@@ -61,7 +61,7 @@ class Participant(object):
         root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
         root.set("relative_rssi", str(self.relative_rssi))
-        root.set("simulate", str(int(self.simulate)))
+        root.set("simulate", str(int(bool(self.simulate))))
 
         return root
 

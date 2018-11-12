@@ -10,9 +10,12 @@ from urh.util.Formatter import Formatter
 
 class SimulatorMessage(Message, SimulatorItem):
     def __init__(self, destination: Participant, plain_bits,
-                 pause: int, message_type: MessageType, decoder=None, source=None):
+                 pause: int, message_type: MessageType, decoder=None, source=None, timestamp=None):
         Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
         SimulatorItem.__init__(self)
+        if timestamp is not None:
+            self.timestamp = timestamp
+
         self.destination = destination
         self.send_recv_messages = []
         self.repeat = 1
@@ -81,4 +84,5 @@ class SimulatorMessage(Message, SimulatorItem):
                                    decoders=decoders,
                                    message_types=message_types)
         destination = Participant.find_matching(tag.get("destination_id", ""), participants)
-        return SimulatorMessage(destination, msg.plain_bits, msg.pause, msg.message_type, msg.decoder, msg.participant)
+        return SimulatorMessage(destination, msg.plain_bits, msg.pause, msg.message_type, msg.decoder, msg.participant,
+                                timestamp=msg.timestamp)

@@ -47,7 +47,7 @@ after_test:
   - IF NOT "%PYTHON_VERSION%" == "3.7.x" (pip install pyaudio)
   - python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
   - python setup.py bdist_wheel
-  - pip install cx_freeze & python data\build_cx.py)
+  - pip install cx_freeze & python data\build_cx.py
   - dir dist
 
 artifacts:

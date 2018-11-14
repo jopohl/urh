@@ -1,4 +1,8 @@
 # Changelog
+## v2.4.3 (upcoming)
+### Bugfixes
+- Do not add URH to autostart on windows [#569](https://github.com/jopohl/urh/pull/569)
+
 ## v2.4.2 (11/11/2018)
 ### New features
 - enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561) + [#566](https://github.com/jopohl/urh/pull/566)

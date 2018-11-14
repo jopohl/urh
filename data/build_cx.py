@@ -43,21 +43,6 @@ def build_exe(build_cmd='build'):
              None,  # ShowCmd
              'TARGETDIR'  # WkDir
              ),
-
-            ("StartupShortcut",  # Shortcut
-             "StartupFolder",  # Directory_
-             "Universal Radio Hacker",  # Name
-             "TARGETDIR",  # Component_
-             "[TARGETDIR]urh.exe",  # Target
-             None,  # Arguments
-             None,  # Description
-             None,  # Hotkey
-             None,  # Icon
-             None,  # IconIndex
-             None,  # ShowCmd
-             'TARGETDIR'  # WkDir
-             ),
-
         ]
 
 

@@ -2,10 +2,10 @@ from cplutosdr cimport *
 from libc.stdint cimport int16_t
 
 from libc.stdlib cimport malloc, free
-cdef iio_device* _c_device
+cdef iio_context* _c_context
 
-cdef iio_channel *_rx0_i, *_rx0_q
-cdef iio_buffer *_rx_buffer
+
+cdef iio_buffer* _rx_buffer
 
 cdef bool RX = True
 cdef size_t RX_BUFFER_SIZE = 4096
@@ -29,16 +29,50 @@ cpdef tuple scan_devices():
 
     return descs, uris
 
-cpdef int setup_rx(str uri):
-    cdef iio_context *ctx = iio_create_context_from_uri(uri.encode())
-    global _c_device
-    _c_device = iio_context_find_device(ctx, "cf-ad9361-lpc")
-    set_rx_channels_status(enable=True)
+cpdef int set_center_freq(long long center_freq):
+    cdef iio_device* phy = iio_context_find_device(_c_context, "ad9361-phy")
+    if RX:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "altvoltage0", True), "frequency", center_freq)
+    else:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "altvoltage1", True), "frequency", center_freq)
 
+cpdef int set_sample_rate(long long sample_rate):
+    cdef iio_device* phy = iio_context_find_device(_c_context, "ad9361-phy")
+    if RX:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", False), "sampling_frequency", sample_rate)
+    else:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", True), "sampling_frequency", sample_rate)
+
+cpdef int set_bandwidth(long long bandwidth):
+    cdef iio_device* phy = iio_context_find_device(_c_context, "ad9361-phy")
+    if RX:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", False), "rf_bandwidth", bandwidth)
+    else:
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", True), "rf_bandwidth", bandwidth)
+
+cpdef int set_rf_gain(long long gain):
+    cdef iio_device* phy = iio_context_find_device(_c_context, "ad9361-phy")
+    if RX:
+        iio_channel_attr_write(iio_device_find_channel(phy, "voltage0", False), "gain_control_mode", "manual")
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", False), "hardwaregain", gain)
+    else:
+        iio_channel_attr_write(iio_device_find_channel(phy, "voltage0", True), "gain_control_mode", "manual")
+        return iio_channel_attr_write_longlong(iio_device_find_channel(phy, "voltage0", True), "hardwaregain", gain)
+
+cpdef int open(str uri):
+    global _c_context
+    _c_context = iio_create_context_from_uri(uri.encode())
+
+    if _c_context != NULL:
+        return 0
+    else:
+        return -1
+
+cpdef int setup_rx():
+    dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
+    set_rx_channels_status(enable=True)
     global _rx_buffer
-    _rx_buffer = iio_device_create_buffer(_c_device, RX_BUFFER_SIZE, False)
-    if not _rx_buffer:
-        return  -1
+    _rx_buffer = iio_device_create_buffer(dev, RX_BUFFER_SIZE, False)
     return 0
 
 cpdef bytes receive_sync():
@@ -46,13 +80,15 @@ cpdef bytes receive_sync():
     cdef void *p_end
     cdef ssize_t p_inc
     cdef int16_t i, q
+    cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
 
     iio_buffer_refill(_rx_buffer)
 
     p_inc = iio_buffer_step(_rx_buffer)
     p_end = iio_buffer_end(_rx_buffer)
 
-    p_dat = iio_buffer_first(_rx_buffer, _rx0_i)
+    chan = iio_device_find_channel(dev, "voltage0", 0)
+    p_dat = iio_buffer_first(_rx_buffer, chan)
 
     cdef int16_t *samples = <int16_t *> malloc(2*RX_BUFFER_SIZE * sizeof(int16_t))
     cdef unsigned int index = 0
@@ -73,27 +109,22 @@ cpdef bytes receive_sync():
 
 
 cpdef stop_rx():
-    iio_buffer_destroy(_rx_buffer)
     set_rx_channels_status(enable=False)
+    iio_buffer_destroy(_rx_buffer)
     return 0
 
 cpdef set_rx_channels_status(bool enable):
-    global _rx0_i, _rx0_q
-    _rx0_i = iio_device_find_channel(_c_device, "voltage0", 0)
-    _rx0_q = iio_device_find_channel(_c_device, "voltage1", 0)
+    cdef iio_channel *rx0_i
+    cdef iio_channel *rx0_q
+    cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
+    rx0_i = iio_device_find_channel(dev, "voltage0", 0)
+    rx0_q = iio_device_find_channel(dev, "voltage1", 0)
 
     if enable:
-        iio_channel_enable(_rx0_i)
-        iio_channel_enable(_rx0_q)
+        iio_channel_enable(rx0_i)
+        iio_channel_enable(rx0_q)
     else:
-        iio_channel_disable(_rx0_i)
-        iio_channel_disable(_rx0_q)
+        iio_channel_disable(rx0_i)
+        iio_channel_disable(rx0_q)
 
-cpdef setup(str uri):
-    if RX:
-        setup_rx(uri)
-
-
-cpdef unsigned int get_channel_count():
-    return iio_device_get_channels_count(_c_device)
 

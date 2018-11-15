@@ -40,4 +40,7 @@ cdef extern from "iio.h":
     void iio_channel_enable(iio_channel *chn)
     void iio_channel_disable(iio_channel *chn)
     bool iio_channel_is_enabled(iio_channel *chn)
+    int iio_channel_attr_write_longlong(const iio_channel *chn, const char *attr, long long val)
+    int iio_channel_attr_write_double(const iio_channel *chn, const char *attr, double val)
+    ssize_t iio_channel_attr_write(const iio_channel *chn, const char *attr, const char *src)
 

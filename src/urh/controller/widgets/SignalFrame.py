@@ -1084,6 +1084,12 @@ class SignalFrame(QFrame):
         else:
             font.setBold(False)
             self.ui.btnSaveSignal.hide()
+            for i in range(self.undo_stack.count()):
+                cmd = self.undo_stack.command(i)
+                if isinstance(cmd, EditSignalAction):
+                    # https://github.com/jopohl/urh/issues/570
+                    cmd.signal_was_changed = True
+
         self.ui.lineEditSignalName.setFont(font)
 
     @pyqtSlot()

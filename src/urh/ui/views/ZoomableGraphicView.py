@@ -20,6 +20,8 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.context_menu_position = None  # type: QPoint
         self.scene_type = 0
 
+        self.auto_fit_on_resize_is_blocked = False
+
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
         self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
         self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
@@ -124,7 +126,7 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom(zoom_factor, cursor_pos=event.pos())
 
     def resizeEvent(self, event):
-        if self.sceneRect().width() == 0:
+        if self.sceneRect().width() == 0 or self.auto_fit_on_resize_is_blocked:
             return
 
         self.auto_fit_view()

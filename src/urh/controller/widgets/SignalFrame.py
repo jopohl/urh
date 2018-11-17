@@ -1080,6 +1080,8 @@ class SignalFrame(QFrame):
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
         font = self.ui.lineEditSignalName.font()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = True
+
         if self.signal.changed:
             font.setBold(True)
             self.ui.btnSaveSignal.show()
@@ -1091,6 +1093,9 @@ class SignalFrame(QFrame):
                 if isinstance(cmd, EditSignalAction):
                     # https://github.com/jopohl/urh/issues/570
                     cmd.signal_was_changed = True
+
+        qApp.processEvents()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = False
 
         self.ui.lineEditSignalName.setFont(font)
 

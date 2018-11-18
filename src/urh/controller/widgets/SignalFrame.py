@@ -4,9 +4,9 @@ from multiprocessing import Process, Array
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
-from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
+from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
+from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
 
 from urh import constants
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
@@ -740,6 +740,7 @@ class SignalFrame(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
+            qApp.processEvents()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
             self.__set_samples_in_view()
             self.__set_duration()
@@ -988,6 +989,7 @@ class SignalFrame(QFrame):
         self.update_number_selected_samples()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
+        self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):
@@ -1077,7 +1079,9 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
-        font = self.ui.lineEditSignalName.font()  # type: QFont
+        font = self.ui.lineEditSignalName.font()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = True
+
         if self.signal.changed:
             font.setBold(True)
             self.ui.btnSaveSignal.show()
@@ -1089,6 +1093,9 @@ class SignalFrame(QFrame):
                 if isinstance(cmd, EditSignalAction):
                     # https://github.com/jopohl/urh/issues/570
                     cmd.signal_was_changed = True
+
+        qApp.processEvents()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = False
 
         self.ui.lineEditSignalName.setFont(font)
 

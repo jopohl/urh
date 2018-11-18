@@ -10,7 +10,6 @@ cdef iio_buffer* _tx_buffer
 
 cdef bool IS_TX = True
 cdef size_t RX_BUFFER_SIZE = 4096
-cdef size_t TX_BUFFER_SIZE = 4096
 
 cpdef set_tx(bool is_tx):
     global IS_TX
@@ -68,18 +67,21 @@ cpdef int open(str uri):
     else:
         return -1
 
-cpdef int setup_rx():
+cpdef int setup_rx(size_t buffer_size):
     dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
     set_rx_channels_status(enable=True)
     global _rx_buffer
+
+    global RX_BUFFER_SIZE
+    RX_BUFFER_SIZE = buffer_size
     _rx_buffer = iio_device_create_buffer(dev, RX_BUFFER_SIZE, False)
     return 0
 
-cpdef int setup_tx():
+cpdef int setup_tx(size_t buffer_size):
     dev = iio_context_find_device(_c_context, "cf-ad9361-dds-core-lpc")
     set_tx_channels_status(enable=True)
     global _tx_buffer
-    _tx_buffer = iio_device_create_buffer(dev, 2*TX_BUFFER_SIZE, False)
+    _tx_buffer = iio_device_create_buffer(dev, buffer_size, False)
     return 0
 
 cpdef bytes receive_sync(connection):

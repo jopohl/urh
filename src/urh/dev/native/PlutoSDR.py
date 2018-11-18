@@ -10,8 +10,8 @@ import numpy as np
 
 
 class PlutoSDR(Device):
-    SYNC_RX_CHUNK_SIZE = 16384
-    SYNC_TX_CHUNK_SIZE = 16384
+    SYNC_RX_CHUNK_SIZE = 65536
+    SYNC_TX_CHUNK_SIZE = 65536
 
     DEVICE_LIB = plutosdr
     ASYNCHRONOUS = False
@@ -59,8 +59,7 @@ class PlutoSDR(Device):
     @classmethod
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing PlutoSDR..")
-        plutosdr.RX_BUFFER_SIZE = cls.SYNC_RX_CHUNK_SIZE
-        ret = plutosdr.setup_rx()
+        ret = plutosdr.setup_rx(cls.SYNC_RX_CHUNK_SIZE)
         return ret
 
     @classmethod
@@ -70,8 +69,7 @@ class PlutoSDR(Device):
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):
         ctrl_connection.send("Initializing PlutoSDR...")
-        plutosdr.TX_BUFFER_SIZE = cls.SYNC_TX_CHUNK_SIZE
-        ret = plutosdr.setup_tx()
+        ret = plutosdr.setup_tx(cls.SYNC_TX_CHUNK_SIZE // 2)
         return ret
 
     @classmethod

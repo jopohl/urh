@@ -6,9 +6,11 @@ cdef iio_context* _c_context
 
 
 cdef iio_buffer* _rx_buffer
+cdef iio_buffer* _tx_buffer
 
 cdef bool IS_TX = True
 cdef size_t RX_BUFFER_SIZE = 4096
+cdef size_t TX_BUFFER_SIZE = 4096
 
 cpdef set_tx(bool is_tx):
     global IS_TX
@@ -73,6 +75,13 @@ cpdef int setup_rx():
     _rx_buffer = iio_device_create_buffer(dev, RX_BUFFER_SIZE, False)
     return 0
 
+cpdef int setup_tx():
+    dev = iio_context_find_device(_c_context, "cf-ad9361-dds-core-lpc")
+    set_tx_channels_status(enable=True)
+    global _tx_buffer
+    _tx_buffer = iio_device_create_buffer(dev, 2*TX_BUFFER_SIZE, False)
+    return 0
+
 cpdef bytes receive_sync(connection):
     cdef void *p_dat
     cdef void *p_end
@@ -85,7 +94,7 @@ cpdef bytes receive_sync(connection):
     p_inc = iio_buffer_step(_rx_buffer)
     p_end = iio_buffer_end(_rx_buffer)
 
-    chan = iio_device_find_channel(dev, "voltage0", 0)
+    chan = iio_device_find_channel(dev, "voltage0", False)
     p_dat = iio_buffer_first(_rx_buffer, chan)
 
     cdef int16_t *samples = <int16_t *> malloc(2*RX_BUFFER_SIZE * sizeof(int16_t))
@@ -105,6 +114,31 @@ cpdef bytes receive_sync(connection):
     finally:
         free(samples)
 
+cpdef int send_sync(int16_t[::1] samples):
+    cdef unsigned int i = 0
+    cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-dds-core-lpc")
+    cdef void *p_dat = iio_buffer_first(_tx_buffer, iio_device_find_channel(dev, "voltage0", True))
+    cdef void *p_end = iio_buffer_end(_tx_buffer)
+    cdef ssize_t p_inc = iio_buffer_step(_tx_buffer)
+
+    cdef unsigned int n = len(samples)
+
+    while p_dat < p_end:
+        if i < n:
+            (<int16_t*>p_dat)[0] = samples[i]
+        else:
+            (<int16_t*>p_dat)[0] = 0
+
+        if i + 1 < n:
+            (<int16_t*>p_dat)[1] = samples[i+1]
+        else:
+            (<int16_t*>p_dat)[0] = 0
+
+        p_dat += p_inc
+        i += 2
+
+    n_send = iio_buffer_push(_tx_buffer)
+    return 0 if n_send > 0 else -1
 
 cpdef stop_rx():
     set_rx_channels_status(enable=False)
@@ -112,20 +146,24 @@ cpdef stop_rx():
     return 0
 
 cpdef stop_tx():
-    raise NotImplementedError("todo")
+    set_tx_channels_status(enable=False)
+    iio_buffer_destroy(_tx_buffer)
+    return 0
 
 cpdef int close():
     if IS_TX:
-        return stop_tx()
+        stop_tx()
     else:
-        return stop_rx()
+        stop_rx()
+
+    iio_context_destroy(_c_context)
 
 cpdef set_rx_channels_status(bool enable):
     cdef iio_channel *rx0_i
     cdef iio_channel *rx0_q
     cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
-    rx0_i = iio_device_find_channel(dev, "voltage0", 0)
-    rx0_q = iio_device_find_channel(dev, "voltage1", 0)
+    rx0_i = iio_device_find_channel(dev, "voltage0", False)
+    rx0_q = iio_device_find_channel(dev, "voltage1", False)
 
     if enable:
         iio_channel_enable(rx0_i)
@@ -135,3 +173,16 @@ cpdef set_rx_channels_status(bool enable):
         iio_channel_disable(rx0_q)
 
 
+cpdef set_tx_channels_status(bool enable):
+    cdef iio_channel *tx0_i
+    cdef iio_channel *tx0_q
+    cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-dds-core-lpc")
+    tx0_i = iio_device_find_channel(dev, "voltage0", True)
+    tx0_q = iio_device_find_channel(dev, "voltage1", True)
+
+    if enable:
+        iio_channel_enable(tx0_i)
+        iio_channel_enable(tx0_q)
+    else:
+        iio_channel_disable(tx0_i)
+        iio_channel_disable(tx0_q)

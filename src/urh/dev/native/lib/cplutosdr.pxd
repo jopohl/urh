@@ -17,6 +17,7 @@ cdef extern from "iio.h":
     const char * iio_context_info_get_description(const iio_context_info *info)
     const char * iio_context_info_get_uri(const iio_context_info *info)
     iio_device * iio_context_find_device(const iio_context *ctx, const char *name)
+    void iio_context_destroy(iio_context *ctx)
 
     iio_context* iio_create_default_context()
     iio_context * iio_create_context_from_uri(const char *uri)
@@ -28,6 +29,7 @@ cdef extern from "iio.h":
     ssize_t iio_buffer_step(const iio_buffer *buf)
     void * iio_buffer_first(const iio_buffer *buf, const iio_channel *chn)
     void * iio_buffer_end(const iio_buffer *buf)
+    ssize_t iio_buffer_push(iio_buffer *buf)
 
     const char * iio_device_get_name(const iio_device *dev)
     iio_channel * iio_device_find_channel(const iio_device *dev, const char *name, bool output)

@@ -10,8 +10,8 @@ import numpy as np
 
 
 class PlutoSDR(Device):
-    SYNC_RX_CHUNK_SIZE = 4096
-    SYNC_TX_CHUNK_SIZE = 4096
+    SYNC_RX_CHUNK_SIZE = 16384
+    SYNC_TX_CHUNK_SIZE = 16384
 
     DEVICE_LIB = plutosdr
     ASYNCHRONOUS = False
@@ -68,6 +68,17 @@ class PlutoSDR(Device):
     def receive_sync(cls, data_conn: Connection):
         plutosdr.receive_sync(data_conn)
 
+    @classmethod
+    def prepare_sync_send(cls, ctrl_connection: Connection):
+        ctrl_connection.send("Initializing PlutoSDR...")
+        plutosdr.TX_BUFFER_SIZE = cls.SYNC_TX_CHUNK_SIZE
+        ret = plutosdr.setup_tx()
+        return ret
+
+    @classmethod
+    def send_sync(cls, data):
+        plutosdr.send_sync(data)
+
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
@@ -93,11 +104,13 @@ class PlutoSDR(Device):
         result = np.empty(len(unpacked)//2, dtype=np.complex64)
         result.real = unpacked[::2] / 2048
         result.imag = unpacked[1::2] / 2048
+
         return result
 
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):
         arr = Array("h", 2 * len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.int16)
-        numpy_view[:] = (2048 * complex_samples.view(np.float32)).astype(np.int16)
+        # https://wiki.analog.com/resources/eval/user-guides/ad-fmcomms2-ebz/software/basic_iq_datafiles#binary_format
+        numpy_view[:] = np.left_shift((2048 * complex_samples.view(np.float32)).astype(np.int16), 4)
         return arr

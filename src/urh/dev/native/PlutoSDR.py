@@ -28,7 +28,6 @@ class PlutoSDR(Device):
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         device_identifier = device_identifier if isinstance(device_identifier, str) else ""
-        print(device_identifier)
         try:
             device_identifier = re.search("\[.*\]", device_identifier).groups(0)
         except (IndexError, AttributeError):

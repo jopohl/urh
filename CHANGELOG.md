@@ -1,4 +1,9 @@
 # Changelog
+## v2.4.3 (upcoming)
+### Bugfixes
+- do not add URH to autostart on windows [#569](https://github.com/jopohl/urh/pull/569)
+- save button was not shown when change on saved signal was undone [#571](https://github.com/jopohl/urh/pull/571)
+
 ## v2.4.2 (11/11/2018)
 ### New features
 - enhance settings for RTL-SDR [#561](https://github.com/jopohl/urh/pull/561) + [#566](https://github.com/jopohl/urh/pull/566)

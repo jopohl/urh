@@ -96,6 +96,9 @@ class TestUtil(QtTestCase):
         from urh.dev.native.lib import limesdr
 
         # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import plutosdr
+
+        # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import usrp
 
         # noinspection PyUnresolvedReferences

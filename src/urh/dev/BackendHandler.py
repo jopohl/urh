@@ -84,7 +84,7 @@ class BackendHandler(object):
 
     """
     DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF",
-                    "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
+                    "LimeSDR", "PlutoSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
 
     def __init__(self):
 
@@ -130,6 +130,14 @@ class BackendHandler(object):
     def num_native_backends(self):
         return len([dev for dev, backend_container in self.device_backends.items()
                     if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
+
+    @property
+    def __plutosdr_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import plutosdr
+            return True
+        except ImportError:
+            return False
 
     @property
     def __bladerf_native_enabled(self) -> bool:
@@ -253,6 +261,10 @@ class BackendHandler(object):
         supports_rx, supports_tx = self.__device_has_gr_scripts(devname)
         if self.gnuradio_is_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
+
+        if devname.lower() == "plutosdr" and self.__plutosdr_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
 
         if devname.lower() == "bladerf" and self.__bladerf_native_enabled:
             supports_rx, supports_tx = True, True

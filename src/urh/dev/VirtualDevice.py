@@ -107,6 +107,10 @@ class VirtualDevice(QObject):
                     from urh.dev.native.BladeRF import BladeRF
                     self.__dev = BladeRF(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth, gain=gain,
                                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                elif name == "plutosdr":
+                    from urh.dev.native.PlutoSDR import PlutoSDR
+                    self.__dev = PlutoSDR(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth, gain=gain,
+                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.startswith("airspy"):
                     from urh.dev.native.AirSpy import AirSpy
                     self.__dev = AirSpy(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,

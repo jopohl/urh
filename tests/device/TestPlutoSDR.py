@@ -1,3 +1,5 @@
+from multiprocessing import Pipe
+
 from urh.util import util
 import numpy as np
 util.set_shared_library_path()
@@ -16,8 +18,12 @@ def test_cython_wrapper():
 
     print("prepare rx", plutosdr.setup_rx())
 
-    for _ in range(10):
-        print(np.frombuffer(plutosdr.receive_sync(), dtype=np.int16))
+    parent_conn, child_conn = Pipe()
+
+    for i in range(10):
+        plutosdr.receive_sync(child_conn)
+        data = parent_conn.recv_bytes()
+        print(np.frombuffer(data, dtype=np.int16))
 
     print("stop rx", plutosdr.stop_rx())
 

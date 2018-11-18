@@ -83,19 +83,13 @@ cpdef int setup_tx():
     return 0
 
 cpdef bytes receive_sync(connection):
-    cdef void *p_dat
-    cdef void *p_end
-    cdef ssize_t p_inc
-    cdef int16_t i, q
     cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-lpc")
+    cdef char *p_dat = <char*>iio_buffer_first(_rx_buffer, iio_device_find_channel(dev, "voltage0", False))
+    cdef char *p_end = <char*>iio_buffer_end(_rx_buffer)
+    cdef ssize_t p_inc = iio_buffer_step(_rx_buffer)
+    cdef int16_t i, q
 
     iio_buffer_refill(_rx_buffer)
-
-    p_inc = iio_buffer_step(_rx_buffer)
-    p_end = iio_buffer_end(_rx_buffer)
-
-    chan = iio_device_find_channel(dev, "voltage0", False)
-    p_dat = iio_buffer_first(_rx_buffer, chan)
 
     cdef int16_t *samples = <int16_t *> malloc(2*RX_BUFFER_SIZE * sizeof(int16_t))
     cdef unsigned int index = 0
@@ -117,8 +111,8 @@ cpdef bytes receive_sync(connection):
 cpdef int send_sync(int16_t[::1] samples):
     cdef unsigned int i = 0
     cdef iio_device* dev = iio_context_find_device(_c_context, "cf-ad9361-dds-core-lpc")
-    cdef void *p_dat = iio_buffer_first(_tx_buffer, iio_device_find_channel(dev, "voltage0", True))
-    cdef void *p_end = iio_buffer_end(_tx_buffer)
+    cdef char *p_dat = <char*>iio_buffer_first(_tx_buffer, iio_device_find_channel(dev, "voltage0", True))
+    cdef char *p_end = <char*>iio_buffer_end(_tx_buffer)
     cdef ssize_t p_inc = iio_buffer_step(_tx_buffer)
 
     cdef unsigned int n = len(samples)

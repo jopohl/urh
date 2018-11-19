@@ -1,5 +1,8 @@
 # Changelog
-## v2.4.3 (upcoming)
+## v2.5.0 (upcoming)
+### New features
+- Add native support for PlutoSDR [#574](https://github.com/jopohl/urh/pull/574)
+
 ### Bugfixes
 - do not add URH to autostart on windows [#569](https://github.com/jopohl/urh/pull/569)
 - save button was not shown when change on saved signal was undone [#571](https://github.com/jopohl/urh/pull/571)

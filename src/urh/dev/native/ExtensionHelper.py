@@ -30,6 +30,7 @@ DEVICES = {
     "hackrf": {"lib": "hackrf", "test_function": "hackrf_init",
                "extras": {"HACKRF_MULTI_DEVICE_SUPPORT": "hackrf_open_by_serial"}},
     "limesdr": {"lib": "LimeSuite", "test_function": "LMS_GetDeviceList"},
+    "plutosdr": {"lib": "iio", "test_function": "iio_create_default_context"},
     "rtlsdr": {"lib": "rtlsdr", "test_function": "rtlsdr_get_device_name",
                "extras": {"RTLSDR_BANDWIDTH_SUPPORT": "rtlsdr_set_tuner_bandwidth"}},
     # Use C only for USRP to avoid boost dependency

@@ -73,7 +73,7 @@ class SoundCard(Device):
     @classmethod
     def receive_sync(cls, data_conn: Connection):
         if cls.pyaudio_stream:
-            data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE))
+            data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE, exception_on_overflow=False))
 
     @classmethod
     def send_sync(cls, data):

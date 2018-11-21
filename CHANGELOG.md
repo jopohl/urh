@@ -1,5 +1,8 @@
 # Changelog
-## v2.5.0 (upcoming)
+## v2.5.1 (upcoming)
+- improve stability when capturing with SoundCard
+
+## v2.5.0 (19/11/2018)
 ### New features
 - Add native support for PlutoSDR [#574](https://github.com/jopohl/urh/pull/574)
 

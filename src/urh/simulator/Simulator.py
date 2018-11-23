@@ -115,7 +115,7 @@ class Simulator(QObject):
         self.simulation_stopped.emit()
 
         if self.is_simulating:
-            self.log_message("Stop simulation" + " ({})".format(msg.strip()) if msg else "")
+            self.log_message("Stop simulation" + (" ({})".format(msg.strip()) if msg else ""))
             self.is_simulating = False
             self.do_restart = False
 

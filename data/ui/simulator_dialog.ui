@@ -113,7 +113,7 @@
             <x>0</x>
             <y>0</y>
             <width>1066</width>
-            <height>767</height>
+            <height>766</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -181,7 +181,7 @@
             <x>0</x>
             <y>0</y>
             <width>1066</width>
-            <height>767</height>
+            <height>766</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -523,7 +523,7 @@ QGroupBox::indicator:checked {
               <bool>true</bool>
              </property>
              <property name="placeholderText">
-              <string>After starting the simulation you will the log messages of your configured SDRs here.</string>
+              <string>After simulation start you will see the log messages of your configured SDRs here.</string>
              </property>
             </widget>
            </item>

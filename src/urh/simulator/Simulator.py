@@ -112,12 +112,12 @@ class Simulator(QObject):
             self.sender_ready = True
 
     def stop(self, msg=""):
-        self.log_message("Stop simulation: " + "{}".format(msg))
-        self.is_simulating = False
+        self.simulation_stopped.emit()
 
-        if msg == "Finished":
-            # Ensure devices can send their last data before killing them
-            time.sleep(0.5)
+        if self.is_simulating:
+            self.log_message("Stop simulation" + " ({})".format(msg.strip()) if msg else "")
+            self.is_simulating = False
+            self.do_restart = False
 
         # stop devices
         if self.sniffer:
@@ -125,8 +125,6 @@ class Simulator(QObject):
 
         if self.sender:
             self.sender.stop()
-
-        self.simulation_stopped.emit()
 
     def restart(self):
         self.transcript.start_new_round()

@@ -79,7 +79,7 @@ class TestMaincontrollerGUI(QtTestCase):
 
         timer = QTimer(self.form)
         timer.setSingleShot(True)
-        timer.setInterval(10)
+        timer.setInterval(50)
         timer.timeout.connect(accept_csv_dialog)
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)

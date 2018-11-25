@@ -1,6 +1,9 @@
 # Changelog
-## v2.5.1 (upcoming)
+## v2.5.1 (25/11/2018)
+### Bugfixes
 - improve stability when capturing with SoundCard
+- fix bug making the docker container crash at startup
+- stop simulation instantly after finishing
 
 ## v2.5.0 (19/11/2018)
 ### New features

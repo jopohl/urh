@@ -262,7 +262,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tune this value using either &lt;span style=&quot; font-style:italic;&quot;&gt;the spinbox on the right&lt;/span&gt; or the &lt;span style=&quot; font-style:italic;&quot;&gt;context-menu of the SignalView&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Bit Length:</string>
@@ -281,7 +281,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tune this value using either &lt;span style=&quot; font-style:italic;&quot;&gt;the spinbox on the right&lt;/span&gt; or the &lt;span style=&quot; font-style:italic;&quot;&gt;context-menu of the SignalView&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="minimum">
         <number>1</number>

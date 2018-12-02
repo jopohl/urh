@@ -4,6 +4,9 @@
 - certain windows (e.g. decoding) can't be closed on OSX
 - prevent crash in substitution encoding
 
+### Adjustments
+- remove ```Save and Close``` of fuzzing dialog, as closing means saving here anyway
+
 ## v2.5.1 (25/11/2018)
 ### Bugfixes
 - improve stability when capturing with SoundCard

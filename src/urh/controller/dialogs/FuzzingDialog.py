@@ -117,7 +117,6 @@ class FuzzingDialog(QDialog):
         self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
         self.ui.btnAddBoundaries.clicked.connect(self.on_btn_add_boundaries_clicked)
         self.ui.btnAddRandom.clicked.connect(self.on_btn_add_random_clicked)
-        self.ui.btnSaveAndClose.clicked.connect(self.close)
         self.ui.comboBoxFuzzingLabel.editTextChanged.connect(self.set_current_label_name)
 
     def update_message_data_string(self):

@@ -3,6 +3,7 @@
 ### Bugfixes
 - certain windows (e.g. decoding) can't be closed on OSX
 - prevent crash in substitution encoding
+- consider alignment offset when showing selected labels
 
 ### Adjustments
 - remove ```Save and Close``` of fuzzing dialog, as closing means saving here anyway

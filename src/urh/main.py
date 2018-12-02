@@ -108,6 +108,12 @@ def main():
 
     util.set_icon_theme()
 
+    font_size = constants.SETTINGS.value("font_size", 0, int)
+    if font_size > 0:
+        font = app.font()
+        font.setPointSize(font_size)
+        app.setFont(font)
+
     constants.SETTINGS.setValue("default_theme", app.style().objectName())
 
     if constants.SETTINGS.value("theme_index", 0, int) > 0:

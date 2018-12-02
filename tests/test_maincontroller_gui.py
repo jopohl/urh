@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 import wave
 
@@ -72,13 +73,16 @@ class TestMaincontrollerGUI(QtTestCase):
         w.close()
 
     def test_import_csv(self):
+        if sys.platform == "darwin":
+            return
+
         def accept_csv_dialog():
-            w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialog)), None)
-            w.accept()
+            for w in QApplication.topLevelWidgets():
+                if isinstance(w, CSVImportDialog):
+                    w.accept()
             timer.stop()
 
         timer = QTimer(self.form)
-        timer.setSingleShot(True)
         timer.setInterval(50)
         timer.timeout.connect(accept_csv_dialog)
 

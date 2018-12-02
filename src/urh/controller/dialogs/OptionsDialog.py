@@ -7,7 +7,7 @@ import time
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
-    QFileDialog
+    QFileDialog, qApp
 
 from urh import constants, colormaps
 from urh.controller.widgets.PluginFrame import PluginFrame
@@ -147,6 +147,7 @@ class OptionsDialog(QDialog):
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         self.device_options_model = DeviceOptionsTableModel(self.backend_handler, self)
         self.device_options_model.update()
@@ -198,6 +199,8 @@ class OptionsDialog(QDialog):
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
         self.ui.lineEditGnuradioDirectory.setCompleter(completer)
 
+        self.ui.spinBoxFontSize.setValue(qApp.font().pointSize())
+
         self.refresh_device_tab()
 
         self.create_connects()
@@ -245,6 +248,7 @@ class OptionsDialog(QDialog):
         self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
         self.ui.btnViewBuildLog.clicked.connect(self.on_btn_view_build_log_clicked)
         self.ui.labelDeviceMissingInfo.linkActivated.connect(self.on_label_device_missing_info_link_activated)
+        self.ui.spinBoxFontSize.editingFinished.connect(self.on_spin_box_font_size_editing_finished)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
@@ -496,6 +500,13 @@ class OptionsDialog(QDialog):
 
             d = util.create_textbox_dialog(info, "Health check for native extensions", self)
             d.show()
+
+    @pyqtSlot()
+    def on_spin_box_font_size_editing_finished(self):
+        constants.SETTINGS.setValue("font_size", self.ui.spinBoxFontSize.value())
+        font = qApp.font()
+        font.setPointSize(self.ui.spinBoxFontSize.value())
+        qApp.setFont(font)
 
     @staticmethod
     def write_default_options():

@@ -1,6 +1,6 @@
 import os
 
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QRegExpValidator, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
@@ -10,7 +10,6 @@ from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogContro
 from urh.dev import config
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.signalprocessing.Participant import Participant
-from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_project import Ui_ProjectDialog
 from urh.util import FileOperator
 from urh.util.Errors import Errors
@@ -25,6 +24,7 @@ class ProjectDialog(QDialog):
 
         self.ui = Ui_ProjectDialog()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         if new_project:
             self.participant_table_model = ParticipantTableModel([])

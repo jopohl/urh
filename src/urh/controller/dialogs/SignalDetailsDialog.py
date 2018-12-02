@@ -18,6 +18,7 @@ class SignalDetailsDialog(QDialog):
         self.ui = Ui_SignalDetails()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         file = self.signal.filename
 

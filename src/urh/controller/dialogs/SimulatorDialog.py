@@ -39,6 +39,7 @@ class SimulatorDialog(QDialog):
         self.ui.setupUi(self)
 
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         self.simulator_config = simulator_config  # type: SimulatorConfiguration
         self.rx_needed = self.simulator_config.rx_needed

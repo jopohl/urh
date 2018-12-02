@@ -18,6 +18,8 @@ class FuzzingDialog(QDialog):
         self.ui = Ui_FuzzingDialog()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
+
         self.protocol = protocol
         msg_index = msg_index if msg_index != -1 else 0
         self.ui.spinBoxFuzzMessage.setValue(msg_index + 1)
@@ -115,7 +117,6 @@ class FuzzingDialog(QDialog):
         self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
         self.ui.btnAddBoundaries.clicked.connect(self.on_btn_add_boundaries_clicked)
         self.ui.btnAddRandom.clicked.connect(self.on_btn_add_random_clicked)
-        self.ui.btnSaveAndClose.clicked.connect(self.close)
         self.ui.comboBoxFuzzingLabel.editTextChanged.connect(self.set_current_label_name)
 
     def update_message_data_string(self):

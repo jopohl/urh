@@ -581,16 +581,19 @@ class Encoding(object):
         errors = zero_padding
 
         i = 0
-        while i < len(padded_inpt):
-            cnt = src.count(padded_inpt[i:i + minimum_item_size])
-            if cnt == 1:
-                output.extend(dst[src.index(padded_inpt[i:i + minimum_item_size])])
-            elif cnt < 1:
-                output.extend(padded_inpt[i:i + 1])
-                i += 1
-                errors += 1
-                continue
-            i += minimum_item_size
+        try:
+            while i < len(padded_inpt):
+                cnt = src.count(padded_inpt[i:i + minimum_item_size])
+                if cnt == 1:
+                    output.extend(dst[src.index(padded_inpt[i:i + minimum_item_size])])
+                elif cnt < 1:
+                    output.extend(padded_inpt[i:i + 1])
+                    i += 1
+                    errors += 1
+                    continue
+                i += minimum_item_size
+        except IndexError:
+            return [], 42, self.ErrorState.WRONG_INPUT
 
         return output, errors, self.ErrorState.SUCCESS
 

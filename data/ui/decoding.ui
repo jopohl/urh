@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1018</width>
-    <height>570</height>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,22 +153,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_4">
-         <property name="font">
-          <font>
-           <italic>true</italic>
-           <strikeout>false</strikeout>
-          </font>
-         </property>
-         <property name="text">
-          <string>Signal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="ListWidget" name="decoderchain">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
@@ -196,21 +180,6 @@
          </property>
          <property name="viewMode">
           <enum>QListView::ListMode</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_7">
-         <property name="font">
-          <font>
-           <italic>true</italic>
-          </font>
-         </property>
-         <property name="text">
-          <string>Decoded Bits</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>

@@ -946,11 +946,15 @@ class CompareFrameController(QWidget):
 
         view = self.ui.cbProtoView.currentIndex()
         result = []
+        f = 1 if self.ui.cbProtoView.currentIndex() == 0 else 4 if self.ui.cbProtoView.currentIndex() == 1 else 8
         for i in range(row_start, row_end):
             message = self.proto_analyzer.messages[i]
             for label in message.message_type:
+                if label in result:
+                    continue
                 lbl_start, lbl_end = message.get_label_range(lbl=label, view=view, decode=True)
-                if any(j in range(lbl_start, lbl_end) for j in range(col_start, col_end)) and label not in result:
+                a = message.alignment_offset
+                if any(j in range(lbl_start, lbl_end) for j in range(col_start - a//f, col_end - a//f)):
                     result.append(label)
 
         return result

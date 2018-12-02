@@ -19,6 +19,8 @@ class ModulatorDialog(QDialog):
         self.ui = Ui_DialogModulation()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
+
         self.lock_samples_in_view = False
 
         if tree_model is not None:

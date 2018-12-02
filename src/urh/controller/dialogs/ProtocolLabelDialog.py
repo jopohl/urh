@@ -62,6 +62,7 @@ class ProtocolLabelDialog(QDialog):
 
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         try:
             self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))

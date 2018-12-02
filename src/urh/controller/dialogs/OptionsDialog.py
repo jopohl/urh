@@ -147,6 +147,7 @@ class OptionsDialog(QDialog):
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         self.device_options_model = DeviceOptionsTableModel(self.backend_handler, self)
         self.device_options_model.update()

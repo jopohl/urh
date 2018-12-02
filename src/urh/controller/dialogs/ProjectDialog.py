@@ -25,6 +25,7 @@ class ProjectDialog(QDialog):
 
         self.ui = Ui_ProjectDialog()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         if new_project:
             self.participant_table_model = ParticipantTableModel([])

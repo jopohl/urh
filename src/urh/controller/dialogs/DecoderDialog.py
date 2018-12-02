@@ -27,6 +27,7 @@ class DecoderDialog(QDialog):
         self.ui = Ui_Decoder()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         # Variables
         self.old_inpt_txt = ""

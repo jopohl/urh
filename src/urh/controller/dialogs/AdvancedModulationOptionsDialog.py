@@ -13,6 +13,7 @@ class AdvancedModulationOptionsDialog(QDialog):
         self.ui = Ui_DialogAdvancedModSettings()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         self.pause_threshold = pause_threshold
         self.message_length_divisor = message_length_divisor

@@ -1,4 +1,8 @@
 # Changelog
+## v2.5.2 (upcoming)
+### Bugfixes
+- certain windows (e.g. decoding) can't be closed on OSX
+
 ## v2.5.1 (25/11/2018)
 ### Bugfixes
 - improve stability when capturing with SoundCard

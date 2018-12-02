@@ -20,6 +20,7 @@ class MessageTypeDialog(QDialog):
         self.ui = Ui_DialogMessageType()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()

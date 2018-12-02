@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
+    <width>803</width>
     <height>822</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -32,8 +32,8 @@
         <rect>
          <x>20</x>
          <y>20</y>
-         <width>314</width>
-         <height>99</height>
+         <width>324</width>
+         <height>102</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
@@ -147,6 +147,33 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="labelFontSize">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Application font size (&lt;span style=&quot; font-weight:600;&quot;&gt;restart&lt;/span&gt; for full effect):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxFontSize">
+           <property name="suffix">
+            <string>pt</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>120</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QLabel" name="label_9">
@@ -217,8 +244,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>708</width>
-               <height>447</height>
+               <width>723</width>
+               <height>404</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>

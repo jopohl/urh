@@ -9,7 +9,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
         DialogOptions.setObjectName("DialogOptions")
-        DialogOptions.resize(788, 822)
+        DialogOptions.resize(803, 822)
         icon = QtGui.QIcon.fromTheme("configure")
         DialogOptions.setWindowIcon(icon)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(DialogOptions)
@@ -19,7 +19,7 @@ class Ui_DialogOptions(object):
         self.tabGeneration = QtWidgets.QWidget()
         self.tabGeneration.setObjectName("tabGeneration")
         self.layoutWidget = QtWidgets.QWidget(self.tabGeneration)
-        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 314, 99))
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 324, 102))
         self.layoutWidget.setObjectName("layoutWidget")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -72,6 +72,18 @@ class Ui_DialogOptions(object):
         self.checkBoxAlignLabels = QtWidgets.QCheckBox(self.tabView)
         self.checkBoxAlignLabels.setObjectName("checkBoxAlignLabels")
         self.verticalLayout.addWidget(self.checkBoxAlignLabels)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.labelFontSize = QtWidgets.QLabel(self.tabView)
+        self.labelFontSize.setObjectName("labelFontSize")
+        self.horizontalLayout.addWidget(self.labelFontSize)
+        self.spinBoxFontSize = QtWidgets.QSpinBox(self.tabView)
+        self.spinBoxFontSize.setMinimum(1)
+        self.spinBoxFontSize.setMaximum(120)
+        self.spinBoxFontSize.setProperty("value", 10)
+        self.spinBoxFontSize.setObjectName("spinBoxFontSize")
+        self.horizontalLayout.addWidget(self.spinBoxFontSize)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_9 = QtWidgets.QLabel(self.tabView)
@@ -103,7 +115,7 @@ class Ui_DialogOptions(object):
         self.scrollAreaSpectrogramColormap.setWidgetResizable(True)
         self.scrollAreaSpectrogramColormap.setObjectName("scrollAreaSpectrogramColormap")
         self.scrollAreaWidgetSpectrogramColormapContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 708, 447))
+        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 723, 404))
         self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -272,7 +284,7 @@ class Ui_DialogOptions(object):
         self.verticalLayout_6.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(1)
 
     def retranslateUi(self, DialogOptions):
         _translate = QtCore.QCoreApplication.translate
@@ -291,6 +303,8 @@ class Ui_DialogOptions(object):
         self.checkBoxHoldShiftToDrag.setText(_translate("DialogOptions", "Hold shift to drag"))
         self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
         self.checkBoxAlignLabels.setText(_translate("DialogOptions", "Align on labels"))
+        self.labelFontSize.setText(_translate("DialogOptions", "<html><head/><body><p>Application font size (<span style=\" font-weight:600;\">restart</span> for full effect):</p></body></html>"))
+        self.spinBoxFontSize.setSuffix(_translate("DialogOptions", "pt"))
         self.label_9.setText(_translate("DialogOptions", "Choose application theme (requires restart):"))
         self.comboBoxTheme.setItemText(0, _translate("DialogOptions", "native look (default)"))
         self.comboBoxTheme.setItemText(1, _translate("DialogOptions", "fallback theme"))

@@ -2,6 +2,7 @@
 ## v2.5.2 (upcoming)
 ### Bugfixes
 - certain windows (e.g. decoding) can't be closed on OSX
+- prevent crash in substitution encoding
 
 ## v2.5.1 (25/11/2018)
 ### Bugfixes

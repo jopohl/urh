@@ -75,6 +75,7 @@ class TestMaincontrollerGUI(QtTestCase):
         def accept_csv_dialog():
             w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, CSVImportDialog)), None)
             w.accept()
+            w.close()
             timer.stop()
 
         timer = QTimer(self.form)

@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 import wave
 
@@ -72,6 +73,9 @@ class TestMaincontrollerGUI(QtTestCase):
         w.close()
 
     def test_import_csv(self):
+        if sys.platform == "darwin":
+            return
+
         def accept_csv_dialog():
             for w in QApplication.topLevelWidgets():
                 if isinstance(w, CSVImportDialog):

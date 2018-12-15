@@ -55,10 +55,10 @@ install:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
-      pip3 install pytest-cov coveralls pytest-xdist
+      pip3 install --upgrade pytest-cov coveralls pytest-xdist
       coverage --version
     else
-      pip3 install pytest pytest-xdist
+      pip3 install --upgrade pytest pytest-xdist
     fi
   - |
     if [[ $TRAVIS_OS_NAME == "linux" ]]

@@ -17,7 +17,7 @@
    <string>Decoding</string>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>

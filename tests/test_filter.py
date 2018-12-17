@@ -37,6 +37,8 @@ class TestFilter(QtTestCase):
         self.sig_frame.ui.spinBoxInfoLen.editingFinished.emit()
         self.sig_frame.ui.spinBoxCenterOffset.setValue(center)
         self.sig_frame.ui.spinBoxCenterOffset.editingFinished.emit()
+        self.sig_frame.ui.spinBoxTolerance.setValue(5)
+        self.sig_frame.ui.spinBoxTolerance.editingFinished.emit()
 
         self.assertTrue(self.sig_frame.proto_analyzer.plain_hex_str[0].startswith(expected),
                         msg=self.sig_frame.proto_analyzer.plain_hex_str[0])

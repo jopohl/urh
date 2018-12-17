@@ -208,7 +208,10 @@ def detect_center(rectangular_signal: np.ndarray):
     rect = rect[int(0.05*len(rect)):int(0.95*len(rect))]
 
     hist_min, hist_max = util.minmax(rect)
-    hist_step = 0.05
+
+    # The step size of histogram is set to variance of the rectangular signal
+    # If a signal has low variance we need to be more accurate at center detection
+    hist_step = float(np.var(rect))
 
     y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
 

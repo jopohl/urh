@@ -5,6 +5,8 @@ import numpy as np
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import detect_center
 from urh.cythonext.signal_functions import afp_demod
+
+from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.Signal import Signal
 
 
@@ -46,7 +48,7 @@ class TestCenterDetection(unittest.TestCase):
         for i, msg in enumerate(messages):
             center = detect_center(msg)
             self.assertGreaterEqual(center, 0.04, msg=str(i))
-            self.assertLessEqual(center, 0.066, msg=str(i))
+            self.assertLessEqual(center, 0.072, msg=str(i))
 
     def test_ask_50_center_detection(self):
         message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
@@ -87,3 +89,20 @@ class TestCenterDetection(unittest.TestCase):
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1413)
         self.assertLessEqual(center, 0.05)
+
+    def test_fsk_live_capture(self):
+        data = Signal(get_path_for_data_file("fsk_live.coco"), "").data
+
+        n = 10
+        moving_average_filter = Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
+        filtered_data = moving_average_filter.apply_fir_filter(data)
+
+        rect = afp_demod(filtered_data, 0.0175, 1)
+        center = detect_center(rect)
+        self.assertGreaterEqual(center, -0.0148, msg="Filtered")
+        self.assertLessEqual(center, 0.01, msg="Filtered")
+
+        rect = afp_demod(data, 0.0175, 1)
+        center = detect_center(rect)
+        self.assertGreaterEqual(center, -0.02, msg="Original")
+        self.assertLessEqual(center, 0.01, msg="Original")

@@ -29,6 +29,14 @@ def min_without_outliers(data: np.ndarray, z=2):
     return np.min(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
 
+def is_above_noise(data: np.ndarray, noise_level: float) -> bool:
+    mean_power_squared = np.mean(data.real ** 2 + data.imag ** 2)
+    if mean_power_squared > noise_level ** 2:
+        return True
+    else:
+        return False
+
+
 def get_most_frequent_value(values: list):
     """
     Return the most frequent value in list.

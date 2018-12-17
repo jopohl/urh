@@ -5,8 +5,9 @@ from threading import Thread
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject
-
 from urh.cythonext.signal_functions import grab_pulse_lens
+
+from urh.ainterpretation import AutoInterpretation
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.Message import Message
@@ -23,6 +24,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     started = pyqtSignal()
     stopped = pyqtSignal()
     message_sniffed = pyqtSignal(int)
+
+    BUFFER_SIZE_MB = 250
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
                  modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False):
@@ -45,7 +48,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
-        self.data_cache = []
+        self.__buffer = np.zeros(int(self.BUFFER_SIZE_MB * 1000 * 1000 / 8), dtype=np.complex64)
+        self.__current_buffer_index = 0
+
         self.reading_data = False
         self.adaptive_noise = False
 
@@ -56,6 +61,20 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.__sniff_file = ""
         self.__store_data = True
+
+    def __add_to_buffer(self, data: np.ndarray):
+        n = len(data)
+        if n + self.__current_buffer_index > len(self.__buffer):
+            n = len(self.__buffer) - self.__current_buffer_index - 1
+
+        self.__buffer[self.__current_buffer_index:self.__current_buffer_index + n] = data[:]
+        self.__current_buffer_index += n
+
+    def __clear_buffer(self):
+        self.__current_buffer_index = 0
+
+    def __buffer_is_full(self):
+        return self.__current_buffer_index >= len(self.__buffer) - 2
 
     def decoded_to_string(self, view: int, start=0, include_timestamps=True):
         result = []
@@ -118,7 +137,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                     msg = Message.from_plain_bits_str(bit_str)
                     msg.decoder = self.decoder
                     self.messages.append(msg)
-                    self.message_sniffed.emit(len(self.messages)-1)
+                    self.message_sniffed.emit(len(self.messages) - 1)
 
                 self.rcv_device.free_data()  # do not store received bits twice
 
@@ -140,27 +159,29 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if len(data) == 0:
             return
 
-        rssi_squared = np.mean(data.real ** 2 + data.imag ** 2)
-        is_above_noise = rssi_squared > self.signal.noise_threshold ** 2
+        is_above_noise = AutoInterpretation.is_above_noise(data, self.signal.noise_threshold)
+
         if self.adaptive_noise and not is_above_noise:
             self.signal.noise_threshold = 0.9 * self.signal.noise_threshold + 0.1 * np.max(np.abs(data))
 
         if is_above_noise:
-            self.data_cache.append(data)
+            self.__add_to_buffer(data)
             self.pause_length = 0
-            return
+            if not self.__buffer_is_full():
+                return
         else:
             self.pause_length += len(data)
             if self.pause_length < 10 * self.signal.bit_len:
-                self.data_cache.append(data)
-                return
+                self.__add_to_buffer(data)
+                if not self.__buffer_is_full():
+                    return
 
-        if len(self.data_cache) == 0:
+        if self.__current_buffer_index == 0:
             return
 
         # clear cache and start a new message
-        self.signal._fulldata = np.concatenate(self.data_cache)
-        self.data_cache.clear()
+        self.signal._fulldata = self.__buffer[0:self.__current_buffer_index]
+        self.__clear_buffer()
         self.signal._qad = None
 
         bit_len = self.signal.bit_len
@@ -173,7 +194,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
                               decoder=self.decoder)
             self.messages.append(message)
-            self.message_sniffed.emit(len(self.messages)-1)
+            self.message_sniffed.emit(len(self.messages) - 1)
 
     def stop(self):
         self.is_running = False
@@ -184,7 +205,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             logger.error("Sniff thread is still alive")
 
     def clear(self):
-        self.data_cache.clear()
+        self.__clear_buffer()
         self.messages.clear()
 
     def __emit_started(self):

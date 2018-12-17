@@ -25,12 +25,14 @@ class TestGenerator(QtTestCase):
         self.add_signal_to_form("ask.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK
-        signal_frame.ui.spinBoxInfoLen.setValue(295)
-        signal_frame.ui.spinBoxCenterOffset.setValue(-0.1667)
-        signal_frame.refresh()
+        signal_frame.ui.spinBoxInfoLen.setValue(300)
+        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxCenterOffset.setValue(0.032)
+        signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
         signal_frame.ui.cbProtoView.setCurrentIndex(0)
 
         proto = "1011001001011011011011011011011011001000000"
+        print(signal_frame.ui.txtEdProto.toPlainText())
         self.assertTrue(signal_frame.ui.txtEdProto.toPlainText().startswith(proto))
 
         # Set Decoding

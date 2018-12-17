@@ -217,8 +217,8 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.get_all_message_items()[0].setSelected(True)
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        stc.ui.tblViewMessage.selectColumn(2)
-        x, y = stc.ui.tblViewMessage.columnViewportPosition(2), stc.ui.tblViewMessage.rowViewportPosition(0)
+        stc.ui.tblViewMessage.selectColumn(4)
+        x, y = stc.ui.tblViewMessage.columnViewportPosition(4), stc.ui.tblViewMessage.rowViewportPosition(0)
         pos = QPoint(x, y)
         stc.ui.tblViewMessage.context_menu_pos = pos
         menu = stc.ui.tblViewMessage.create_context_menu()

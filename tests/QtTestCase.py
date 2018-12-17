@@ -38,7 +38,6 @@ class QtTestCase(unittest.TestCase):
     def tearDownClass(cls):
         cls.app.quit()
 
-        sip.delete(cls.app)
         cls.app = None
         QTest.qWait(10)
         time.sleep(0.1)

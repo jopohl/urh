@@ -53,7 +53,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.reading_data = False
         self.adaptive_noise = False
-        self.adaptive_center = True
+        self.adaptive_center = False
 
         self.pause_length = 0
         self.is_running = False

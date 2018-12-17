@@ -53,7 +53,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         self.reading_data = False
         self.adaptive_noise = False
-        self.adaptive_center = False
+        self.automatic_center = False
 
         self.pause_length = 0
         self.is_running = False
@@ -186,8 +186,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.signal._qad = None
 
         bit_len = self.signal.bit_len
-        if self.adaptive_center:
+        if self.automatic_center:
+            old_center = self.signal.qad_center
             self.signal.qad_center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*self.signal.bit_len)
+            logger.debug("Setting center from {:.3f} to {:.3f}".format(old_center, self.signal.qad_center))
 
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
                                 self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)

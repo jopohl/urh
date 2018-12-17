@@ -38,6 +38,9 @@ class SniffSettingsWidget(QWidget):
                                        backend_handler=BackendHandler() if backend_handler is None else backend_handler,
                                        network_raw_mode=network_raw_mode)
 
+        self.sniffer.adaptive_noise = self.ui.checkBoxAdaptiveNoise.isChecked()
+        self.sniffer.automatic_center = self.ui.checkBoxAutoCenter.isChecked()
+
         self.create_connects()
         self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())
         self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
@@ -77,6 +80,8 @@ class SniffSettingsWidget(QWidget):
         set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
         self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
         self.ui.checkBoxAdaptiveNoise.setChecked(bool(conf_dict.get("adaptive_noise", False)))
+        self.ui.checkBoxAutoCenter.setChecked(bool(conf_dict.get("automatic_center", False)))
+        self.ui.spinbox_sniff_Center.setDisabled(self.ui.checkBoxAutoCenter.isChecked())
 
         self.emit_editing_finished_signals()
 
@@ -92,6 +97,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.checkBox_sniff_Timestamp.clicked.connect(self.on_checkbox_sniff_timestamp_clicked)
         self.ui.btn_sniff_use_signal.clicked.connect(self.on_btn_sniff_use_signal_clicked)
         self.ui.checkBoxAdaptiveNoise.clicked.connect(self.on_check_box_adaptive_noise_clicked)
+        self.ui.checkBoxAutoCenter.clicked.connect(self.on_check_box_auto_center_clicked)
 
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
@@ -108,7 +114,8 @@ class SniffSettingsWidget(QWidget):
                                                 tolerance=self.sniffer.signal.tolerance,
                                                 modulation_index=self.sniffer.signal.modulation_type,
                                                 decoding_name=self.sniffer.decoder.name,
-                                                adaptive_noise=self.sniffer.adaptive_noise))
+                                                adaptive_noise=self.sniffer.adaptive_noise,
+                                                automatic_center=self.sniffer.automatic_center))
 
     @pyqtSlot()
     def on_noise_edited(self):
@@ -186,3 +193,8 @@ class SniffSettingsWidget(QWidget):
     @pyqtSlot()
     def on_check_box_adaptive_noise_clicked(self):
         self.sniffer.adaptive_noise = self.ui.checkBoxAdaptiveNoise.isChecked()
+
+    @pyqtSlot()
+    def on_check_box_auto_center_clicked(self):
+        self.sniffer.automatic_center = self.ui.checkBoxAutoCenter.isChecked()
+        self.ui.spinbox_sniff_Center.setDisabled(self.ui.checkBoxAutoCenter.isChecked())

@@ -200,12 +200,15 @@ def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) ->
     return max(set(modulations_for_messages), key=modulations_for_messages.count)
 
 
-def detect_center(rectangular_signal: np.ndarray):
+def detect_center(rectangular_signal: np.ndarray, max_size=None):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
 
     # Ignore the first and last 5% of samples,
     # because there tends to be an overshoot at start/end of rectangular signal
     rect = rect[int(0.05*len(rect)):int(0.95*len(rect))]
+
+    if max_size is not None and len(rect) > max_size:
+        rect = rect[0:max_size]
 
     hist_min, hist_max = util.minmax(rect)
 

@@ -1,4 +1,8 @@
 # Changelog
+## v2.5.3 (19/12/2018)
+### Bugfixes
+- fix crash when using spectrum analyzer with GNU Radio backend [#588](https://github.com/jopohl/urh/pull/588)
+
 ## v2.5.2 (10/12/2018)
 ### Bugfixes
 - certain windows (e.g. decoding) can't be closed on OSX

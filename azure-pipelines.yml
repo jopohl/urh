@@ -31,7 +31,7 @@ jobs:
   - script: |
       export DISPLAY=:99.0
       export LIBOVERLAY_SCROLLBAR=0
-      sh -e xvfb start
+      sh -e /usr/bin/Xvfb start
       sleep 5
     displayName: "Start xvfb"
 

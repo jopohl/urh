@@ -292,7 +292,7 @@ class TestSimulator(QtTestCase):
         lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
 
         ext_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
-        if sys.platform == "nt":
+        if sys.platform == "win32":
             ext_program = "python " + ext_program
 
         lbl1.value_type_index = 3

@@ -220,6 +220,9 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
+        if sys.platform == "win32":
+            coder_in_dir_with_spaces = "python " + coder_in_dir_with_spaces
+
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
 
@@ -247,6 +250,9 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
         coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
+
+        if sys.platform == "win32":
+            coder_in_dir_with_spaces = "python " + coder_in_dir_with_spaces
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])

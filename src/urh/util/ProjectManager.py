@@ -418,7 +418,12 @@ class ProjectManager(QObject):
             for proto_frame in cfc.protocols[i]:
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
-                    proto_tag.set("filename", os.path.relpath(proto_frame.filename, self.project_path))
+                    try:
+                        rel_file_name = os.path.relpath(proto_frame.filename, self.project_path)
+                    except ValueError:
+                        rel_file_name = proto_frame.filename
+
+                    proto_tag.set("filename", rel_file_name)
 
         root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
                                                   messages=[msg for proto in cfc.full_protocol_list for msg in

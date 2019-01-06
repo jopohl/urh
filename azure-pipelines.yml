@@ -87,8 +87,14 @@ jobs:
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
-  - script: pytest -s -v tests
+  - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'
 
 - job: 'OSX'
   pool:
@@ -114,5 +120,11 @@ jobs:
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
-  - script: pytest -s -v tests
+  - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'

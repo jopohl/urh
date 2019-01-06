@@ -29,7 +29,7 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-  - script: python -m pip install --upgrade pip && pip install -r requirements.txt
+  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
     displayName: 'Install dependencies'
 
   - script: |

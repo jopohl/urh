@@ -33,7 +33,7 @@ jobs:
       sudo apt-get install libhackrf-dev librtlsdr-dev
     displayName: 'Install dependencies'
 
-  - script: python cython/build.py
+  - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"
 
   - script: |
@@ -74,7 +74,28 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
-      pip install pytest
+      pip install pytest pytest-faulthandler
+    displayName: 'Install dependencies'
+
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
+  - script: pytest tests
+    displayName: 'pytest'
+
+- job: 'OSX'
+  pool:
+    vmImage: 'macOS-10.13'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: 3.7
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      pip install pytest pytest-faulthandler
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace

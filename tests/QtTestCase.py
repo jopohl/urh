@@ -31,7 +31,7 @@ class QtTestCase(unittest.TestCase):
         assert mp.get_start_method() == "spawn"
 
         write_settings()
-        self.app = QApplication([self.__name__])
+        self.app = QApplication(["urh test"])
 
         self.form = MainController()
         if self.SHOW:

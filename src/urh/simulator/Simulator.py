@@ -502,8 +502,8 @@ class Simulator(QObject):
                 cmd = self.__fill_counter_values(lbl.external_program)
                 result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
-                    log_msg = "Result value of external program {} ({}) does not match label length {}"
-                    logger.error(log_msg.format(result, len(result), lbl.end - lbl.start))
+                    log_msg = "Result value of external program {}: {} ({}) does not match label length {}"
+                    logger.error(log_msg.format(cmd, result, len(result), lbl.end - lbl.start))
                     continue
 
                 try:

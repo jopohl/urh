@@ -31,6 +31,8 @@ jobs:
       pip install -r data/requirements.txt
       pip install pytest!=4.1 pytest-xdist
       sudo apt-get install libhackrf-dev librtlsdr-dev
+      sh -e /etc/init.d/xvfb start
+      sleep 5
     displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py
@@ -38,7 +40,7 @@ jobs:
 
   - script: |
       touch tests/show_gui
-      xvfb-run pytest -s --boxed tests
+      pytest -s --boxed tests
     displayName: 'pytest'
 
 - job: 'Windows'
@@ -80,26 +82,32 @@ jobs:
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
-  - script: pytest tests
+  - script: pytest -s tests
     displayName: 'pytest'
 
 - job: 'OSX'
   pool:
     vmImage: 'macOS-10.13'
 
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: 3.7
+      versionSpec: '$(python.arch)'
 
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
+      brew install hackrf librtlsdr
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
-  - script: pytest tests
+  - script: pytest -s tests
     displayName: 'pytest'

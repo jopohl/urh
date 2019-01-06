@@ -29,7 +29,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
-      pip install pytest pytest-xdist
+      pip install pytest!=4.1 pytest-xdist
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace

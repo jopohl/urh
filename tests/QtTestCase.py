@@ -22,7 +22,8 @@ class QtTestCase(unittest.TestCase):
     WAIT_TIMEOUT_BEFORE_NEW = 10
     SHOW = os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui"))
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         import multiprocessing as mp
         try:
             mp.set_start_method("spawn")
@@ -31,8 +32,18 @@ class QtTestCase(unittest.TestCase):
         assert mp.get_start_method() == "spawn"
 
         write_settings()
-        self.app = QApplication(["urh test"])
+        cls.app = QApplication([cls.__name__])
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.app.quit()
+
+        sip.delete(cls.app)
+        cls.app = None
+        QTest.qWait(10)
+        time.sleep(0.1)
+
+    def setUp(self):
         self.form = MainController()
         if self.SHOW:
             self.form.show()
@@ -52,15 +63,7 @@ class QtTestCase(unittest.TestCase):
             if sys.platform == "win32" or sys.platform == "darwin":
                 sip.delete(self.form)
                 self.form = None
-
-        self.app.quit()
-
-        sip.delete(self.app)
-        self.app = None
-        QTest.qWait(10)
-        time.sleep(0.1)
-
-        if sys.platform == "darwin":
+        if sys.platform == "darwin" or sys.platform == "win32":
             gc.collect()
 
     def wait_before_new_file(self):

@@ -1,4 +1,4 @@
-# Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
+# Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/) [![Blackhat Arsenal 2018](https://raw.githubusercontent.com/jopohl/badges/master/arsenal/europe/2018.svg?sanitize=true)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/)
 
 [![Travis (.org)](https://img.shields.io/travis/jopohl/urh/master.svg?logo=travis&label=Linux%2FOSX)](https://travis-ci.org/jopohl/urh)
 [![AppVeyor](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows&logo=appveyor)](https://ci.appveyor.com/project/jopohl/urh/branch/master)

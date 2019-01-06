@@ -33,12 +33,19 @@ jobs:
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
     displayName: 'Install dependencies'
 
+  - script: |
+      export DISPLAY=:99.0
+      export LIBOVERLAY_SCROLLBAR=0
+      sh -e xvfb start
+      sleep 5
+    displayName: "Start xvfb"
+
   - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"
 
   - script: |
       touch tests/show_gui
-      DISPLAY=:99.0 LIBOVERLAY_SCROLLBAR=0 xvfb-run pytest -s --boxed tests
+      pytest -s --boxed tests
     displayName: 'pytest'
 
 - job: 'Windows'

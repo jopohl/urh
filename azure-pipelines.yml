@@ -30,8 +30,8 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest!=4.1 pytest-xdist
-      sudo apt-get install libhackrf-dev librtlsdr-dev
-      sh -e /etc/init.d/xvfb start
+      sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
+      service xvfb start
       sleep 5
     displayName: 'Install dependencies'
 

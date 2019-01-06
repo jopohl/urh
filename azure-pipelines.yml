@@ -33,7 +33,7 @@ jobs:
       pip install pytest
       touch tests/show_gui
       python setup.py build_ext --inplace
-      pytest tests
+      pytest -s tests
     displayName: 'pytest'
 
 - job: 'Windows'

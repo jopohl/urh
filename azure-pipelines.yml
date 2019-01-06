@@ -26,14 +26,18 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      pip install pytest pytest-xdist
     displayName: 'Install dependencies'
 
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
   - script: |
-      pip install pytest
       touch tests/show_gui
-      python setup.py build_ext --inplace
-      pytest -s tests
+      xvfb-run pytest -s --boxed tests
     displayName: 'pytest'
 
 - job: 'Windows'
@@ -66,11 +70,14 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: '$(python.arch)'
 
-  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      pip install pytest
     displayName: 'Install dependencies'
 
-  - script: |
-      pip install pytest
-      python setup.py build_ext --inplace
-      pytest tests
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
+  - script: pytest tests
     displayName: 'pytest'

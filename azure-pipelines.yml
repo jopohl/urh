@@ -8,20 +8,17 @@ trigger:
 
 jobs:
 
-- job: 'Test'
+- job: 'Test Linux'
   pool:
     vmImage: 'Ubuntu-16.04'
   strategy:
     matrix:
-      Python34:
-        python.version: '3.4'
       Python35:
         python.version: '3.5'
       Python36:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
-    maxParallel: 4
 
   steps:
   - task: UsePythonVersion@0
@@ -34,5 +31,46 @@ jobs:
 
   - script: |
       pip install pytest
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml
+      touch tests/show_gui
+      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      pytest tests
+    displayName: 'pytest'
+
+- job: 'Test Windows'
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python35-64:
+        python.version: '3.5'
+        python.arch: 'x64'
+      Python35-32:
+        python.version: '3.5'
+        python.arch: 'x86'
+      Python36-64:
+        python.version: '3.6'
+        python.arch: 'x64'
+      Python36-32:
+        python.version: '3.6'
+        python.arch: 'x86'
+      Python37-64:
+        python.version: '3.7'
+        python.arch: 'x64'
+      Python37-32:
+        python.version: '3.7'
+        python.arch: 'x86'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: '$(python.arch)'
+
+  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install pytest
+      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      pytest tests
     displayName: 'pytest'

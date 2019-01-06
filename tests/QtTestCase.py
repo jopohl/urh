@@ -49,6 +49,8 @@ class QtTestCase(unittest.TestCase):
             self.form.show()
 
     def tearDown(self):
+        return
+
         if hasattr(self, "dialog"):
             self.dialog.close()
 

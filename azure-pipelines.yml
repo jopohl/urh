@@ -24,16 +24,9 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
-      pip install pytest!=4.1 pytest-xdist
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
+      pip install pytest!=4.1 pytest-xdist pytest-xvfb
     displayName: 'Install dependencies'
-
-  - script: |
-      export DISPLAY=:99.0
-      export LIBOVERLAY_SCROLLBAR=0
-      sh -e /usr/bin/Xvfb start
-      sleep 5
-    displayName: "Start xvfb"
 
   - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"

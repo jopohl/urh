@@ -1,5 +1,6 @@
 import os
 import socket
+import sys
 import tempfile
 import time
 from multiprocessing import Process, Value
@@ -290,10 +291,14 @@ class TestSimulator(QtTestCase):
         lbl1 = messages[0].message_type[0]  # type: SimulatorProtocolLabel
         lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
 
+        ext_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        if sys.platform == "nt":
+            ext_program = "python " + ext_program
+
         lbl1.value_type_index = 3
-        lbl1.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        lbl1.external_program = ext_program
         lbl2.value_type_index = 3
-        lbl2.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        lbl2.external_program = ext_program
 
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
         action.model_item.sleep_time = 0.001

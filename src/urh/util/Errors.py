@@ -8,6 +8,7 @@ class Errors:
     @staticmethod
     def generic_error(title: str, msg: str, detailed_msg: str = None):
         w = QWidget()
+        print(title, msg, detailed_msg)
         if detailed_msg:
             msg = "Error: <b>" + msg.replace("\n",
                                              "<br>") + "</b>" + "<br><br>----------<br><br>" + detailed_msg.replace(

@@ -325,33 +325,29 @@ class MainController(QMainWindow):
         protocol.eliminate()
 
     def close_signal_frame(self, signal_frame: SignalFrame):
+        self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
         try:
-            self.project_manager.write_signal_information_to_project_file(signal_frame.signal)
-            try:
-                proto = self.signal_protocol_dict[signal_frame]
-            except KeyError:
-                proto = None
+            proto = self.signal_protocol_dict[signal_frame]
+        except KeyError:
+            proto = None
 
-            if proto is not None:
-                self.close_protocol(proto)
-                del self.signal_protocol_dict[signal_frame]
+        if proto is not None:
+            self.close_protocol(proto)
+            del self.signal_protocol_dict[signal_frame]
 
-            if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
-                self.signal_tab_controller.ui.scrlAreaSignals.setMinimumHeight(
-                    self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() - signal_frame.height())
+        if self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() > signal_frame.height():
+            self.signal_tab_controller.ui.scrlAreaSignals.setMinimumHeight(
+                self.signal_tab_controller.ui.scrlAreaSignals.minimumHeight() - signal_frame.height())
 
-            if signal_frame.signal is not None:
-                # Non-Empty Frame (when a signal and not a protocol is opened)
-                self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
+        if signal_frame.signal is not None:
+            # Non-Empty Frame (when a signal and not a protocol is opened)
+            self.file_proxy_model.open_files.discard(signal_frame.signal.filename)
 
-            signal_frame.eliminate()
+        signal_frame.eliminate()
 
-            self.compare_frame_controller.ui.treeViewProtocols.expandAll()
-            self.set_frame_numbers()
-            self.refresh_main_menu()
-        except Exception as e:
-            Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
-            self.unsetCursor()
+        self.compare_frame_controller.ui.treeViewProtocols.expandAll()
+        self.set_frame_numbers()
+        self.refresh_main_menu()
 
     def add_files(self, filepaths, group_id=0, enforce_sample_rate=None):
         num_files = len(filepaths)

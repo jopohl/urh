@@ -1,0 +1,76 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+- master
+
+jobs:
+
+- job: 'Linux'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install pytest
+      touch tests/show_gui
+      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      pytest tests
+    displayName: 'pytest'
+
+- job: 'Windows'
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python35-64:
+        python.version: '3.5'
+        python.arch: 'x64'
+      Python35-32:
+        python.version: '3.5'
+        python.arch: 'x86'
+      Python36-64:
+        python.version: '3.6'
+        python.arch: 'x64'
+      Python36-32:
+        python.version: '3.6'
+        python.arch: 'x86'
+      Python37-64:
+        python.version: '3.7'
+        python.arch: 'x64'
+      Python37-32:
+        python.version: '3.7'
+        python.arch: 'x86'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: '$(python.arch)'
+
+  - script: python -m pip install --upgrade pip && pip install -r data/requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install pytest
+      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      pytest tests
+    displayName: 'pytest'

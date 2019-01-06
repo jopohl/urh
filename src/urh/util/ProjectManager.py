@@ -297,14 +297,20 @@ class ProjectManager(QObject):
         for signal_tag in root.iter("signal"):
             existing_filenames[signal_tag.attrib["filename"]] = signal_tag
 
-        if os.path.relpath(signal.filename, self.project_path) in existing_filenames.keys():
-            signal_tag = existing_filenames[os.path.relpath(signal.filename, self.project_path)]
+        try:
+            relative_path = os.path.relpath(signal.filename, self.project_path)
+        except ValueError:
+            # Can happen e.g. on Windows when Project is in C:\ and signal on D:\
+            relative_path = None
+
+        if relative_path is not None and relative_path in existing_filenames.keys():
+            signal_tag = existing_filenames[relative_path]
         else:
             # Create new tag
             signal_tag = ET.SubElement(root, "signal")
 
         signal_tag.set("name", signal.name)
-        signal_tag.set("filename", os.path.relpath(signal.filename, self.project_path))
+        signal_tag.set("filename", relative_path if relative_path is not None else signal.filename)
         signal_tag.set("bit_length", str(signal.bit_len))
         signal_tag.set("qad_center", str(signal.qad_center))
         signal_tag.set("tolerance", str(signal.tolerance))

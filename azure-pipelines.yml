@@ -32,7 +32,7 @@ jobs:
   - script: |
       pip install pytest
       touch tests/show_gui
-      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      python setup.py build_ext --inplace
       pytest tests
     displayName: 'pytest'
 
@@ -71,6 +71,6 @@ jobs:
 
   - script: |
       pip install pytest
-      python src/urh/cythonext/build.py &> /tmp/build_log.txt
+      python setup.py build_ext --inplace
       pytest tests
     displayName: 'pytest'

@@ -9,9 +9,6 @@ trigger:
 jobs:
 
 - job: 'Linux'
-  env:
-     DISPLAY=:99.0
-     LIBOVERLAY_SCROLLBAR=0
   pool:
     vmImage: 'Ubuntu-16.04'
   strategy:
@@ -34,8 +31,6 @@ jobs:
       pip install -r data/requirements.txt
       pip install pytest!=4.1 pytest-xdist
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      sudo service xvfb start
-      sleep 5
     displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py
@@ -43,7 +38,7 @@ jobs:
 
   - script: |
       touch tests/show_gui
-      pytest -s --boxed tests
+      DISPLAY=:99.0 LIBOVERLAY_SCROLLBAR=0 xvfb-run pytest -s --boxed tests
     displayName: 'pytest'
 
 - job: 'Windows'

@@ -164,7 +164,7 @@ jobs:
       pip install .
       urh --version
       urh autoclose
-    displayName: 'Testrun'
+    displayName: 'Test run'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

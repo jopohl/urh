@@ -78,18 +78,18 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: '$(arch)'
 
+  - powershell: |
+      if (($arch) -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
+      Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
+      echo "Arch: $(arch)"
+      echo "URL: $url"
+    displayName: 'download SDR drivers'
+
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
     displayName: 'Install dependencies'
-
-  - powershell: |
-      if ($arch -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
-      Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
-      echo "Arch: $arch"
-      echo "URL: $url"
-    displayName: 'download SDR drivers'
 
   - task: ExtractFiles@1
     inputs:

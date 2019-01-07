@@ -70,6 +70,7 @@ jobs:
       allowCoverageVariance: true
       coverageVariance: 0.1
       coverageDeltaType: percentage
+      coverageType: lines
 
 - job: 'Windows'
   pool:

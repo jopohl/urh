@@ -55,33 +55,33 @@ jobs:
     matrix:
       Python35-64:
         python.version: '3.5'
-        arch: 'x64'
+        python.arch: 'x64'
       Python35-32:
         python.version: '3.5'
-        arch: 'x86'
+        python.arch: 'x86'
       Python36-64:
         python.version: '3.6'
-        arch: 'x64'
+        python.arch: 'x64'
       Python36-32:
         python.version: '3.6'
-        arch: 'x86'
+        python.arch: 'x86'
       Python37-64:
         python.version: '3.7'
-        arch: 'x64'
+        python.arch: 'x64'
       Python37-32:
         python.version: '3.7'
-        arch: 'x86'
+        python.arch: 'x86'
 
   steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
-      architecture: '$(arch)'
+      architecture: '$(python.arch)'
 
   - powershell: |
-      if ("$(arch)" -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
+      if ("$(python.arch)" -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
       Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
-      echo "Arch: $(arch)"
+      echo "Arch: $(python.arch)"
       echo "URL: $url"
     displayName: 'download SDR drivers'
 

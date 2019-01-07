@@ -46,7 +46,7 @@ jobs:
   - script: |
       pip install .
       urh --version
-      urh autoclose
+      xvfb-run urh autoclose
     displayName: 'Testrun'
 
   - task: PublishTestResults@2
@@ -63,7 +63,7 @@ jobs:
 
   - script: |
       coverage combine
-      coveralls --rcfile=tests/.coveragerc
+      COVERALLS_REPO_TOKEN=%COVERALLS_TOKEN% coveralls --rcfile=tests/.coveragerc
     displayName: 'upload to coveralls'
     condition: eq(variables['python.version'], '3.6')
 

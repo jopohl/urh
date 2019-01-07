@@ -87,15 +87,5 @@ script:
   - urh --version
   - urh autoclose
 
-after_success:
-  - |
-    if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
-    then
-      coverage combine
-      coveralls --rcfile=tests/.coveragerc
-    else
-      echo "coverage upload only for python 3.6"
-    fi
-
 after_script:
   - cat /tmp/build_log.txt

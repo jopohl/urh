@@ -18,7 +18,7 @@ matrix:
       sudo: true
     - os: osx
       language: generic
-      osx_image: xcode10
+      osx_image: xcode10.0
 
   allow_failures:
     - python: 3.4_with_system_site_packages
@@ -55,7 +55,7 @@ install:
   - |
     if [[ $TRAVIS_PYTHON_VERSION == "3.6"* ]]
     then
-      pip3 install --upgrade pytest-cov coveralls pytest-xdist
+      pip3 install --upgrade pytest!=4.1 pytest-cov coveralls pytest-xdist
       coverage --version
     else
       pip3 install --upgrade pytest pytest-xdist

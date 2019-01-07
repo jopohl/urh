@@ -122,6 +122,12 @@ jobs:
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
+  - script: |
+      pip install wheel twine six appdirs packaging cx_freeze
+      pip install "pyaudio; python_version < '3.7'"
+    displayName: "Install build deps"
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'
 

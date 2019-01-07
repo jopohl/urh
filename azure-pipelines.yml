@@ -108,8 +108,6 @@ jobs:
     displayName: 'download SDR drivers'
 
   - script: |
-      echo "Twine URL:"
-      echo %TWINE_REPOSITORY_URL%
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
@@ -138,9 +136,13 @@ jobs:
     displayName: "Build MSI and wheel"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
-  - script: twine upload --skip-existing dist/*.whl
+  - script: echo %TWINE_USERNAME% #twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    env:
+      TWINE_USERNAME: $(twine.username)
+      TWINE_PASSWORD: $(twine.password)
+      TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'

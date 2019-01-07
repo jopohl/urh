@@ -125,8 +125,16 @@ jobs:
   - script: |
       pip install wheel twine six appdirs packaging cx_freeze
       pip install "pyaudio; python_version < '3.7'"
+      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build deps"
-    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+
+  - script: |
+      python setup.py bdist_wheel
+      IF "%PYTHON_VERSION%" == "3.6" (python data\build_cx.py)
+      dir dist
+    displayName: "Build MSI and wheel"
+    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'

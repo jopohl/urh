@@ -55,28 +55,28 @@ jobs:
     matrix:
       Python35-64:
         python.version: '3.5'
-        python.arch: 'x64'
+        arch: 'x64'
       Python35-32:
         python.version: '3.5'
-        python.arch: 'x86'
+        arch: 'x86'
       Python36-64:
         python.version: '3.6'
-        python.arch: 'x64'
+        arch: 'x64'
       Python36-32:
         python.version: '3.6'
-        python.arch: 'x86'
+        arch: 'x86'
       Python37-64:
         python.version: '3.7'
-        python.arch: 'x64'
+        arch: 'x64'
       Python37-32:
         python.version: '3.7'
-        python.arch: 'x86'
+        arch: 'x86'
 
   steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
-      architecture: '$(python.arch)'
+      architecture: '$(arch)'
 
   - script: |
       python -m pip install --upgrade pip
@@ -85,9 +85,9 @@ jobs:
     displayName: 'Install dependencies'
 
   - powershell: |
-      if ($(Agent.OSArchitecture) -eq "X86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
+      if ($arch -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
       Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
-      echo "Arch: $(Agent.OSArchitecture)"
+      echo "Arch: $arch"
       echo "URL: $url"
     displayName: 'download SDR drivers'
 

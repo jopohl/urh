@@ -63,7 +63,7 @@ class QtTestCase(unittest.TestCase):
             if sys.platform == "win32" or sys.platform == "darwin":
                 sip.delete(self.form)
                 self.form = None
-        if sys.platform == "darwin":
+        if sys.platform == "darwin" or sys.platform == "win32":
             gc.collect()
 
     def wait_before_new_file(self):

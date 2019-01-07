@@ -1,5 +1,6 @@
 import os
 import socket
+import sys
 import tempfile
 import time
 from multiprocessing import Process, Value
@@ -140,11 +141,11 @@ class TestSimulator(QtTestCase):
         # yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
         # send some zeros to simulate the end of a message
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        time.sleep(0.5)
-        receive_process.join(20)
+        time.sleep(1)
+        receive_process.join(25)
 
         logger.info("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
 
@@ -290,10 +291,14 @@ class TestSimulator(QtTestCase):
         lbl1 = messages[0].message_type[0]  # type: SimulatorProtocolLabel
         lbl2 = messages[1].message_type[0]  # type: SimulatorProtocolLabel
 
+        ext_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        if sys.platform == "win32":
+            ext_program = "python " + ext_program
+
         lbl1.value_type_index = 3
-        lbl1.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        lbl1.external_program = ext_program
         lbl2.value_type_index = 3
-        lbl2.external_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
+        lbl2.external_program = ext_program
 
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
         action.model_item.sleep_time = 0.001
@@ -340,7 +345,7 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
-        self.assertEqual(bits[0], "101010101")
+        self.assertEqual(bits[0].rstrip("0"), "101010101")
         time.sleep(0.5)
 
         QTest.qWait(1000)

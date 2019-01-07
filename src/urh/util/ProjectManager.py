@@ -297,14 +297,20 @@ class ProjectManager(QObject):
         for signal_tag in root.iter("signal"):
             existing_filenames[signal_tag.attrib["filename"]] = signal_tag
 
-        if os.path.relpath(signal.filename, self.project_path) in existing_filenames.keys():
-            signal_tag = existing_filenames[os.path.relpath(signal.filename, self.project_path)]
+        try:
+            file_path = os.path.relpath(signal.filename, self.project_path)
+        except ValueError:
+            # Can happen e.g. on Windows when Project is in C:\ and signal on D:\
+            file_path = signal.filename
+
+        if file_path in existing_filenames.keys():
+            signal_tag = existing_filenames[file_path]
         else:
             # Create new tag
             signal_tag = ET.SubElement(root, "signal")
 
         signal_tag.set("name", signal.name)
-        signal_tag.set("filename", os.path.relpath(signal.filename, self.project_path))
+        signal_tag.set("filename", file_path)
         signal_tag.set("bit_length", str(signal.bit_len))
         signal_tag.set("qad_center", str(signal.qad_center))
         signal_tag.set("tolerance", str(signal.tolerance))
@@ -394,7 +400,12 @@ class ProjectManager(QObject):
                 open_files.append(open_filename)
 
                 file_tag = ET.SubElement(root, "open_file")
-                file_tag.set("name", os.path.relpath(open_filename, self.project_path))
+                try:
+                    file_path = os.path.relpath(open_filename, self.project_path)
+                except ValueError:
+                    file_path = open_filename
+
+                file_tag.set("name", file_path)
                 file_tag.set("position", str(i))
             except Exception:
                 pass
@@ -412,7 +423,12 @@ class ProjectManager(QObject):
             for proto_frame in cfc.protocols[i]:
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
-                    proto_tag.set("filename", os.path.relpath(proto_frame.filename, self.project_path))
+                    try:
+                        rel_file_name = os.path.relpath(proto_frame.filename, self.project_path)
+                    except ValueError:
+                        rel_file_name = proto_frame.filename
+
+                    proto_tag.set("filename", rel_file_name)
 
         root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
                                                   messages=[msg for proto in cfc.full_protocol_list for msg in
@@ -430,8 +446,13 @@ class ProjectManager(QObject):
         tree = ET.parse(self.project_file)
         root = tree.getroot()
 
+        try:
+            signal_filename = os.path.relpath(signal.filename, self.project_path)
+        except ValueError:
+            signal_filename = signal.filename
+
         for sig_tag in root.iter("signal"):
-            if sig_tag.attrib["filename"] == os.path.relpath(signal.filename, self.project_path):
+            if sig_tag.attrib["filename"] == signal_filename:
                 messages_tag = sig_tag.find("messages")
 
                 try:
@@ -451,9 +472,14 @@ class ProjectManager(QObject):
 
         tree = ET.parse(self.project_file)
         root = tree.getroot()
+
+        try:
+            signal_filename = os.path.relpath(signal.filename, self.project_path)
+        except ValueError:
+            signal_filename = signal.filename
+
         for sig_tag in root.iter("signal"):
-            if sig_tag.attrib["filename"] == os.path.relpath(signal.filename,
-                                                             self.project_path):
+            if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
                 signal.qad_center = float(sig_tag.get("qad_center", 0))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
@@ -476,7 +502,9 @@ class ProjectManager(QObject):
 
             for file_tag in root.findall("open_file"):
                 pos = int(file_tag.attrib["position"])
-                filename = os.path.normpath(os.path.join(self.project_path, file_tag.attrib["name"]))
+                filename = file_tag.attrib["name"]
+                if not os.path.isfile(filename):
+                    filename = os.path.normpath(os.path.join(self.project_path, filename))
                 file_names.insert(pos, filename)
 
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -503,7 +531,9 @@ class ProjectManager(QObject):
             group = tree_root.child(int(id))
 
             for proto_tag in group_tag.iter("cf_protocol"):
-                filename = os.path.normpath(os.path.join(self.project_path, proto_tag.attrib["filename"]))
+                filename = proto_tag.attrib["filename"]
+                if not os.path.isfile(filename):
+                    filename = os.path.normpath(os.path.join(self.project_path, filename))
                 try:
                     proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
                 except StopIteration:

@@ -188,6 +188,8 @@ class TestSendRecvDialog(QtTestCase):
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
         QApplication.instance().processEvents()
+        QTest.qWait(50)
+
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 
         spectrum_dialog.ui.btnStop.click()

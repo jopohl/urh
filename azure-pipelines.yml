@@ -64,6 +64,7 @@ jobs:
 
   - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@5
     displayName: 'Check coverage'
+    condition: eq(variables['python.version'], '3.6')
     inputs:
       checkCoverage: true
       allowCoverageVariance: true

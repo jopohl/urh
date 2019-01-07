@@ -42,7 +42,11 @@ def receive(port, current_index, target_index, elapsed):
 
     start = False
     while True:
-        data = conn.recv(65536 * 8)
+        try:
+            data = conn.recv(65536 * 8)
+        except:
+            continue
+
         if not start:
             start = True
             t = time.time()
@@ -129,7 +133,7 @@ class TestSimulator(QtTestCase):
         receive_process.start()
 
         # Ensure receiver is running
-        time.sleep(10)
+        time.sleep(2)
 
         # spy = QSignalSpy(self.network_sdr_plugin_receiver.rcv_index_changed)
         simulator.start()
@@ -141,11 +145,11 @@ class TestSimulator(QtTestCase):
         # yappi.start()
 
         self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
-        time.sleep(1)
+        time.sleep(0.5)
         # send some zeros to simulate the end of a message
         self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        time.sleep(1)
-        receive_process.join(25)
+        time.sleep(0.5)
+        receive_process.join(15)
 
         logger.info("PROCESS TIME: {0:.2f}ms".format(elapsed.value))
 

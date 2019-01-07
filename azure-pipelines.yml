@@ -62,13 +62,13 @@ jobs:
       reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
     condition: eq(variables['python.version'], '3.6')
 
-  - script: |
-      coverage combine
-      echo $SYSTEM_PULLREQUEST_PULLREQUESTID
-      echo $SYSTEM_PULLREQUEST_PULLREQUESTNUMBER
-      COVERALLS_REPO_TOKEN=$COVERALLSTOKEN CI_PULL_REQUEST=$SYSTEM_PULLREQUEST_PULLREQUESTNUMBER CI_NAME=azure coveralls --rcfile=tests/.coveragerc
-    displayName: 'upload to coveralls'
-    condition: eq(variables['python.version'], '3.6')
+  - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@5
+    displayName: 'Check coverage'
+    inputs:
+      checkCoverage: true
+      allowCoverageVariance: true
+      coverageVariance: 0.1
+      coverageDeltaType: percentage
 
 - job: 'Windows'
   pool:

@@ -28,7 +28,7 @@ jobs:
       pip install pytest!=4.1 pytest-xdist pytest-xvfb pytest-cov
     displayName: 'Install dependencies'
 
-  - script: python src/urh/cythonext/build.py
+  - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
   - script: |
@@ -83,6 +83,17 @@ jobs:
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
     displayName: 'Install dependencies'
+
+  - powershell: |
+      if($python.arch -eq x86){$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"}else{$url=https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip}
+      Invoke-WebRequest -Uri $url -OutFile C:\windlls.zip
+    displayName: 'download SDR drivers'
+
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: 'C:\windlls.zip'
+      destinationFolder: src\urh\dev\native\lib\shared
+      #cleanDestinationFolder: true
 
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"

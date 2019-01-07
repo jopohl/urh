@@ -63,7 +63,8 @@ jobs:
 
   - script: |
       coverage combine
-      COVERALLS_REPO_TOKEN=%COVERALLS_TOKEN% coveralls --rcfile=tests/.coveragerc
+      echo $COVERALLS_TOKEN
+      COVERALLS_REPO_TOKEN=$COVERALLS_TOKEN coveralls --rcfile=tests/.coveragerc
     displayName: 'upload to coveralls'
     condition: eq(variables['python.version'], '3.6')
 

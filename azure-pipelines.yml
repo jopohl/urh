@@ -85,7 +85,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - powershell: |
-      if($(python.arch) -eq x86){$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"}else{$url=https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip}
+      if ($python.arch -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url=https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip}
       Invoke-WebRequest -Uri $url -OutFile C:\windlls.zip
     displayName: 'download SDR drivers'
 

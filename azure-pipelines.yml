@@ -108,7 +108,7 @@ jobs:
     displayName: 'download SDR drivers'
 
   - script: |
-      echo $TWINE_REPOSITORY_URL
+      echo %TWINE_REPOSITORY_URL%
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
@@ -135,6 +135,10 @@ jobs:
       IF "%PYTHON_VERSION%" == "3.6" (python data\build_cx.py)
       dir dist
     displayName: "Build MSI and wheel"
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+
+  - script: twine upload --skip-existing dist/*.whl
+    displayName: "Upload wheel to PyPi"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests

@@ -43,6 +43,12 @@ jobs:
     displayName: 'pytest without coverage'
     condition: ne(variables['python.version'], '3.6')
 
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Testrun'
+
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
@@ -114,6 +120,12 @@ jobs:
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'
 
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Testrun'
+
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
@@ -146,6 +158,12 @@ jobs:
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'pytest'
+
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Testrun'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

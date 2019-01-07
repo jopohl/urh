@@ -33,7 +33,7 @@ jobs:
 
   - script: |
       touch tests/show_gui
-      pytest -s --boxed --junitxml=junit/test-results.xml --cov=src/urh --cov-report=xml --cov-report=html tests
+      pytest -s --boxed --junitxml=junit/test-results.xml --cov=src/urh --cov-report=xml --cov-report=html --cov-config tests/.coveragerc tests
     displayName: 'pytest with coverage'
     condition: eq(variables['python.version'], '3.6')
 

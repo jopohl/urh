@@ -136,9 +136,9 @@ jobs:
     displayName: "Build MSI and wheel"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
-  - script: echo %TWINE_USERNAME% #twine upload --skip-existing dist/*.whl
+  - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"
-    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
     env:
       TWINE_USERNAME: $(twine.username)
       TWINE_PASSWORD: $(twine.password)

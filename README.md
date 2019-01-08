@@ -1,8 +1,8 @@
 # Universal Radio Hacker [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/) [![Blackhat Arsenal 2018](https://raw.githubusercontent.com/jopohl/badges/master/arsenal/europe/2018.svg?sanitize=true)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/)
 
-[![Travis (.org)](https://img.shields.io/travis/jopohl/urh/master.svg?logo=travis&label=Linux%2FOSX)](https://travis-ci.org/jopohl/urh)
-[![AppVeyor](https://img.shields.io/appveyor/ci/jopohl/urh/master.svg?label=Windows&logo=appveyor)](https://ci.appveyor.com/project/jopohl/urh/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/jopohl/urh/badge.svg?branch=master)](https://coveralls.io/github/jopohl/urh?branch=master)
+[![Build Status](https://dev.azure.com/jopohl/urh/_apis/build/status/jopohl.urh?branchName=master)](https://dev.azure.com/jopohl/urh/_build/latest?definitionId=2?branchName=master)
+[![Azure Pipeline tests](https://img.shields.io/azure-devops/tests/jopohl/urh/2.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)
+[![Coverage](https://img.shields.io/azure-devops/coverage/jopohl/urh/2.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Percentage of issues still open")

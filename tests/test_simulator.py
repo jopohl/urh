@@ -42,24 +42,21 @@ def receive(port, current_index, target_index, elapsed):
 
     start = False
     while True:
-        try:
-            data = conn.recv(65536 * 8)
+        data = conn.recv(65536 * 8)
 
-            if not start:
-                start = True
-                t = time.time()
+        if not start:
+            start = True
+            t = time.time()
 
-            if len(data) > 0:
-                while len(data) % 8 != 0:
-                    data += conn.recv(len(data) % 8)
+        if len(data) > 0:
+            while len(data) % 8 != 0:
+                data += conn.recv(len(data) % 8)
 
-                arr = np.frombuffer(data, dtype=np.complex64)
-                current_index.value += len(arr)
+            arr = np.frombuffer(data, dtype=np.complex64)
+            current_index.value += len(arr)
 
-            if current_index.value == target_index:
-                break
-        except:
-            continue
+        if current_index.value == target_index:
+            break
 
     conn.close()
     elapsed.value = 1000 * (time.time() - t)

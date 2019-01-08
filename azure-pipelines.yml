@@ -1,0 +1,215 @@
+trigger:
+- master
+- refs/tags/v*
+
+jobs:
+
+- job: 'Linux'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
+      pip install pytest!=4.1 pytest-xdist pytest-xvfb pytest-cov coveralls
+    displayName: 'Install dependencies'
+
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
+  - script: |
+      touch tests/show_gui
+      pytest -s --boxed --junitxml=junit/test-results.xml --cov=src/urh --cov-report=xml --cov-report=html --cov-config tests/.coveragerc tests
+    displayName: 'Run pytest with coverage'
+    condition: eq(variables['python.version'], '3.6')
+
+  - script: |
+      touch tests/show_gui
+      pytest -s --boxed --junitxml=junit/test-results.xml tests
+    displayName: 'Run pytest without coverage'
+    condition: ne(variables['python.version'], '3.6')
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
+    condition: eq(variables['python.version'], '3.6')
+
+  - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@5
+    displayName: 'Check coverage'
+    condition: eq(variables['python.version'], '3.6')
+    inputs:
+      checkCoverage: true
+      allowCoverageVariance: true
+      coverageVariance: 0.1
+      coverageDeltaType: percentage
+      coverageType: lines
+
+  - script: |
+      pip install .
+      urh --version
+      xvfb-run urh autoclose
+    displayName: 'Testrun'
+
+- job: 'Windows'
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python35-64:
+        python.version: '3.5'
+        python.arch: 'x64'
+      Python35-32:
+        python.version: '3.5'
+        python.arch: 'x86'
+      Python36-64:
+        python.version: '3.6'
+        python.arch: 'x64'
+      Python36-32:
+        python.version: '3.6'
+        python.arch: 'x86'
+      Python37-64:
+        python.version: '3.7'
+        python.arch: 'x64'
+      Python37-32:
+        python.version: '3.7'
+        python.arch: 'x86'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: '$(python.arch)'
+
+  - powershell: |
+      if ("$(python.arch)" -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
+      Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
+    displayName: 'download SDR drivers'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      pip install pytest pytest-faulthandler
+    displayName: 'Install dependencies'
+
+  - task: ExtractFiles@1
+    inputs:
+      archiveFilePatterns: 'C:\windlls.zip'
+      destinationFolder: src\urh\dev\native\lib\shared
+      #cleanDestinationFolder: true
+
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
+  - script: |
+      pip install wheel twine six appdirs packaging cx_freeze
+      pip install "pyaudio; python_version < '3.7'"
+      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+    displayName: "Install build dependencies"
+
+  - script: python setup.py bdist_wheel
+    displayName: "Build python wheel"
+
+  - script: python data\build_cx.py
+    condition: eq(variables['python.version'], '3.6')
+    displayName: "Build MSI"
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: dist/
+      artifactName: 'dist'
+    displayName: "Publish Build Artifacts"
+
+  - script: twine upload --skip-existing dist/*.whl
+    displayName: "Upload wheel to PyPi"
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    env:
+      TWINE_USERNAME: $(twine.username)
+      TWINE_PASSWORD: $(twine.password)
+      TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+
+  - task: GitHubRelease@0
+    displayName: 'GitHub release'
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    inputs:
+      gitHubConnection: 'github connection 1'
+      repositoryName: jopohl/urh
+      assets: 'dist/*.msi'
+      assetUploadMode: 'replace'
+      addChangeLog: true
+
+  - script: pytest --junitxml=junit/test-results.xml -s -v tests
+    displayName: 'Run pytest'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Testrun'
+
+- job: 'OSX'
+  pool:
+    vmImage: 'macOS-10.13'
+
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r data/requirements.txt
+      pip install pytest pytest-faulthandler
+      brew install hackrf librtlsdr
+    displayName: 'Install dependencies'
+
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
+  - script: pytest --junitxml=junit/test-results.xml -s -v tests
+    displayName: 'Run pytest'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Test run'

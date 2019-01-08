@@ -161,7 +161,7 @@ jobs:
       addChangeLog: true
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
-  displayName: 'Run pytest'
+    displayName: 'Run pytest'
 
   - script: |
       pip install .

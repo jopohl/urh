@@ -155,6 +155,8 @@ jobs:
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
     inputs:
       gitHubConnection: 'github connection 1'
+      action: 'edit'
+      tag: $(Build.SourceBranchName)
       repositoryName: jopohl/urh
       assets: 'dist/*.msi'
       assetUploadMode: 'replace'

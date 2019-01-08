@@ -34,13 +34,13 @@ jobs:
   - script: |
       touch tests/show_gui
       pytest -s --boxed --junitxml=junit/test-results.xml --cov=src/urh --cov-report=xml --cov-report=html --cov-config tests/.coveragerc tests
-    displayName: 'pytest with coverage'
+    displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.6')
 
   - script: |
       touch tests/show_gui
       pytest -s --boxed --junitxml=junit/test-results.xml tests
-    displayName: 'pytest without coverage'
+    displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.6')
 
   - script: |
@@ -150,8 +150,18 @@ jobs:
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
+  - task: GitHubRelease@0
+    displayName: 'GitHub release'
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    inputs:
+      gitHubConnection: 'github release connection'
+      repositoryName: jopohl/urh
+      assets: 'dist/*.msi'
+      assetUploadMode: 'replace'
+      addChangeLog: true
+
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
-    displayName: 'pytest'
+  displayName: 'Run pytest'
 
   - script: |
       pip install .
@@ -190,7 +200,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
-    displayName: 'pytest'
+    displayName: 'Run pytest'
 
   - script: |
       pip install .

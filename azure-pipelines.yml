@@ -127,14 +127,24 @@ jobs:
       pip install "pyaudio; python_version < '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build deps"
-    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
   - script: |
       python setup.py bdist_wheel
       IF "%PYTHON_VERSION%" == "3.6" (python data\build_cx.py)
       dir dist
     displayName: "Build MSI and wheel"
-    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: dist/
+      #artifactName: 'drop'
+    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    #publishLocation: 'Container' # Options: container, filePath
+    #targetPath: # Required when publishLocation == FilePath
+    #parallel: false # Optional
+    #parallelCount: # Optional
 
   - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"

@@ -44,12 +44,6 @@ jobs:
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.6')
 
-  - script: |
-      pip install .
-      urh --version
-      xvfb-run urh autoclose
-    displayName: 'Testrun'
-
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
@@ -72,6 +66,12 @@ jobs:
       coverageVariance: 0.1
       coverageDeltaType: percentage
       coverageType: lines
+
+  - script: |
+      pip install .
+      urh --version
+      xvfb-run urh autoclose
+    displayName: 'Testrun'
 
 - job: 'Windows'
   pool:
@@ -128,7 +128,6 @@ jobs:
       pip install "pyaudio; python_version < '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
-    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
@@ -164,17 +163,17 @@ jobs:
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'Run pytest'
 
-  - script: |
-      pip install .
-      urh --version
-      urh autoclose
-    displayName: 'Testrun'
-
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-*.xml'
       testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Testrun'
 
 - job: 'OSX'
   pool:
@@ -203,14 +202,14 @@ jobs:
   - script: pytest --junitxml=junit/test-results.xml -s -v tests
     displayName: 'Run pytest'
 
-  - script: |
-      pip install .
-      urh --version
-      urh autoclose
-    displayName: 'Test run'
-
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-*.xml'
       testRunTitle: 'Publish test results for Python $(python.version)'
+
+  - script: |
+      pip install .
+      urh --version
+      urh autoclose
+    displayName: 'Test run'

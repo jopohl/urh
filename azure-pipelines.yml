@@ -129,19 +129,18 @@ jobs:
     displayName: "Install build dependencies"
     #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
-  - script: |
-      python setup.py bdist_wheel
-      IF "%PYTHON_VERSION%" == "3.6" (python data\build_cx.py)
-      dir dist
-    displayName: "Build MSI and Wheel"
-    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+  - script: python setup.py bdist_wheel
+    displayName: "Build python wheel"
+
+  - script: python data\build_cx.py
+    condition: eq(variables['python.version'], '3.6')
+    displayName: "Build MSI"
 
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
-    #condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
 
   - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"

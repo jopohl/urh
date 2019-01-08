@@ -154,7 +154,7 @@ jobs:
     displayName: 'GitHub release'
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
     inputs:
-      gitHubConnection: 'githubconn'
+      gitHubConnection: 'github connection 1'
       repositoryName: jopohl/urh
       assets: 'dist/*.msi'
       assetUploadMode: 'replace'

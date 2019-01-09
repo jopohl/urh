@@ -76,6 +76,15 @@ class TestCenterDetection(unittest.TestCase):
         self.assertGreaterEqual(center2, -0.1377)
         self.assertLessEqual(center2, -0.0367)
 
+    def test_noised_homematic_center_detection(self):
+        data = Signal(get_path_for_data_file("noised_homematic.complex"), "").data
+        rect = afp_demod(data, 0.0,  1)
+
+        center = detect_center(rect)
+
+        self.assertGreater(center, -0.0148)
+        self.assertLess(center, 0.0024)
+
     def test_fsk_15db_center_detection(self):
         data = Signal(get_path_for_data_file("FSK15.complex"), "").data
         rect = afp_demod(data, 0, 1)

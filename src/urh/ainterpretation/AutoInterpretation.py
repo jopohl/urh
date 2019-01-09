@@ -221,12 +221,19 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
     num_values = 2
     most_common_levels = []
 
+    window_size = max(2, int(0.05*len(y)))
+
+    def get_elem(arr, index: int, default):
+        if 0 <= index < len(arr):
+            return arr[index]
+        else:
+            return default
+
     for index in np.argsort(y)[::-1]:
         # check if we have a local maximum in histogram, if yes, append the value
-        left = y[index - 1] if index > 0 else 0
-        right = y[index + 1] if index < len(y) - 1 else 0
-
-        if left < y[index] and y[index] > right:
+        if all(y[index] > get_elem(y, index+i, 0) and
+               y[index] > get_elem(y, index-i, 0)
+               for i in range(1, window_size+1)):
             most_common_levels.append(x[index])
 
         if len(most_common_levels) == num_values:

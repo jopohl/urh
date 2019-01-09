@@ -183,6 +183,9 @@ class TestSimulator(QtTestCase):
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
+        self.get_free_port()
+        time.sleep(0.4)
+
         port = self.get_free_port()
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port

@@ -172,6 +172,10 @@ class TestDecoding(unittest.TestCase):
     def test_external(self):
         encoder = get_path_for_data_file("encode.py")
         decoder = get_path_for_data_file("decode.py")
+
+        encoder = '{} "{}"'.format(sys.executable, encoder)
+        decoder = '{} "{}"'.format(sys.executable, decoder)
+
         e = Encoding(["test external", constants.DECODING_EXTERNAL, decoder + ";" + encoder])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
@@ -193,6 +197,9 @@ class TestDecoding(unittest.TestCase):
 
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
+
+        encoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, encoder_in_dir_with_spaces)
+        decoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, decoder_in_dir_with_spaces)
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       decoder_in_dir_with_spaces + ";" + encoder_in_dir_with_spaces])
@@ -219,6 +226,8 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(code, coder_in_dir_with_spaces)
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
+
+        coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
 
         e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])

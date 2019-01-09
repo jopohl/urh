@@ -164,7 +164,7 @@ class TestSimulator(QtTestCase):
 
         ext_program = get_path_for_data_file("external_program_simulator.py") + " " + counter_item_str
         if sys.platform == "win32":
-            ext_program = "python " + ext_program
+            ext_program = sys.executable + " " + ext_program
 
         lbl1.value_type_index = 3
         lbl1.external_program = ext_program
@@ -183,9 +183,6 @@ class TestSimulator(QtTestCase):
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
-        self.get_free_port()
-        time.sleep(0.4)
-
         port = self.get_free_port()
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port
@@ -194,7 +191,7 @@ class TestSimulator(QtTestCase):
         name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
         dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(name)
-        QTest.qWait(10)
+        QTest.qWait(100)
         simulator = dialog.simulator
         simulator.sniffer.rcv_device.set_server_port(port)
 
@@ -204,7 +201,7 @@ class TestSimulator(QtTestCase):
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         s.bind(("", port))
         s.listen(1)
-        QTest.qWait(10)
+        QTest.qWait(100)
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
@@ -215,7 +212,8 @@ class TestSimulator(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
         self.alice.send_raw_data(modulator.modulate("100"+"10101010"*42), 1)
-        time.sleep(0.1)
+        time.sleep(1)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)

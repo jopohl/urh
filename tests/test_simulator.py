@@ -45,7 +45,7 @@ class TestSimulator(QtTestCase):
         name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
         dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(name)
-        QTest.qWait(10)
+        QTest.qWait(100)
         simulator = dialog.simulator
         simulator.sniffer.rcv_device.set_server_port(port)
 
@@ -55,7 +55,7 @@ class TestSimulator(QtTestCase):
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         s.bind(("", port))
         s.listen(1)
-        QTest.qWait(10)
+        QTest.qWait(100)
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
@@ -81,7 +81,8 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        time.sleep(0.1)
+        time.sleep(1)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -96,7 +97,8 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        time.sleep(0.1)
+        time.sleep(1)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -111,7 +113,8 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        time.sleep(0.1)
+        time.sleep(1)
+        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -121,7 +124,8 @@ class TestSimulator(QtTestCase):
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
 
-        QTest.qWait(50)
+        time.sleep(1)
+        QTest.qWait(100)
         self.assertTrue(simulator.simulation_is_finished())
 
         time.sleep(1)

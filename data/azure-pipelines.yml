@@ -195,6 +195,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
+      brew update
       brew install hackrf librtlsdr
     displayName: 'Install dependencies'
 

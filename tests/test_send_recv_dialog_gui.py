@@ -178,7 +178,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.close()
 
         QApplication.instance().processEvents()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        QTest.qWait(5*self.SEND_RECV_TIMEOUT)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
         self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
@@ -190,7 +190,7 @@ class TestSendRecvDialog(QtTestCase):
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
         QApplication.instance().processEvents()
-        QTest.qWait(250)
+        QTest.qWait(500)
         QApplication.instance().processEvents()
 
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)

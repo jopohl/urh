@@ -23,7 +23,7 @@ from urh.util.SettingsProxy import SettingsProxy
 class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 * 10 ** 6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
         self.num_zeros_for_pause = 1000
 

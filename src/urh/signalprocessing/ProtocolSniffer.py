@@ -25,7 +25,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     stopped = pyqtSignal()
     message_sniffed = pyqtSignal(int)
 
-    BUFFER_SIZE_MB = 250
+    BUFFER_SIZE_MB = 100
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
                  modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False):

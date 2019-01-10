@@ -59,7 +59,6 @@ class TestSendRecvDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
-        ProtocolSniffer.BUFFER_SIZE_MB = 1
         self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 

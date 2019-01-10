@@ -32,7 +32,6 @@ class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
 
-        ProtocolSniffer.BUFFER_SIZE_MB = 1
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
         self.carl = Participant("Carl", "C")

@@ -10,6 +10,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
@@ -43,6 +44,7 @@ class QtTestCase(unittest.TestCase):
         time.sleep(0.1)
 
     def setUp(self):
+        ProtocolSniffer.BUFFER_SIZE_MB = 0.5
         self.form = MainController()
         if self.SHOW:
             self.form.show()

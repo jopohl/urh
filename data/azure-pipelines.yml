@@ -195,7 +195,8 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
-      port install hackrf librtlsdr
+      brew update
+      brew install hackrf librtlsdr
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace

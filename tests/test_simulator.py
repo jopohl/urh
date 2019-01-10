@@ -125,10 +125,6 @@ class TestSimulator(QtTestCase):
         self.assertEqual(int(bits, 2), seq_num + 5)
 
         time.sleep(1)
-        QTest.qWait(100)
-        self.assertTrue(simulator.simulation_is_finished())
-
-        time.sleep(1)
 
         conn.close()
         s.close()
@@ -222,10 +218,6 @@ class TestSimulator(QtTestCase):
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
-
-        time.sleep(1)
-        QTest.qWait(100)
-        self.assertTrue(simulator.simulation_is_finished())
 
         time.sleep(1)
         conn.close()

@@ -160,10 +160,11 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if len(data) == 0:
             return
 
-        is_above_noise = AutoInterpretation.is_above_noise(data, self.signal.noise_threshold)
+        power_spectrum = data.real ** 2 + data.imag ** 2
+        is_above_noise = np.sqrt(np.mean(power_spectrum)) > self.signal.noise_threshold
 
         if self.adaptive_noise and not is_above_noise:
-            self.signal.noise_threshold = 0.9 * self.signal.noise_threshold + 0.1 * np.max(np.abs(data))
+            self.signal.noise_threshold = 0.9 * self.signal.noise_threshold + 0.1 * np.sqrt(np.max(power_spectrum))
 
         if is_above_noise:
             self.__add_to_buffer(data)

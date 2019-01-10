@@ -86,6 +86,8 @@ class TestSimulator(QtTestCase):
         time.sleep(1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        time.sleep(1)
+        QTest.qWait(100)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -102,6 +104,8 @@ class TestSimulator(QtTestCase):
         time.sleep(1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        time.sleep(1)
+        QTest.qWait(100)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -118,6 +122,8 @@ class TestSimulator(QtTestCase):
         time.sleep(1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        time.sleep(1)
+        QTest.qWait(100)
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -217,6 +223,8 @@ class TestSimulator(QtTestCase):
         time.sleep(1)
         QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        time.sleep(1)
+        QTest.qWait(100)
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")

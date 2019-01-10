@@ -7,6 +7,7 @@ import time
 import numpy as np
 # import yappi
 from PyQt5.QtTest import QTest
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -23,6 +24,7 @@ from urh.util.SettingsProxy import SettingsProxy
 class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
+        ProtocolSniffer.BUFFER_SIZE_MB = 1
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
         self.num_zeros_for_pause = 1000

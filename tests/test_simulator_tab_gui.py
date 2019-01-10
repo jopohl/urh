@@ -9,6 +9,9 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from urh.util.SettingsProxy import SettingsProxy
+
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -28,6 +31,10 @@ from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
+
+        ProtocolSniffer.BUFFER_SIZE_MB = 1
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+
         self.carl = Participant("Carl", "C")
         self.dennis = Participant("Dennis", "D")
         self.participants = [self.carl, self.dennis]

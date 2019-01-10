@@ -8,6 +8,7 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -57,7 +58,8 @@ class TestSendRecvDialog(QtTestCase):
 
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
+        ProtocolSniffer.BUFFER_SIZE_MB = 1
         self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 

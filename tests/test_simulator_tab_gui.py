@@ -360,13 +360,13 @@ class TestSimulatorTabGUI(QtTestCase):
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         QTest.qWait(1000)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

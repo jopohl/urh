@@ -336,6 +336,8 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
 
         stc.simulator_scene.select_all_items()
+        stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
+
 
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis
@@ -353,8 +355,11 @@ class TestSimulatorTabGUI(QtTestCase):
         rcv_port = self.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
 
+        dialog.simulator.sniffer.adaptive_noise = False
+        dialog.simulator.sniffer.automatic_center = False
+
         dialog.ui.btnStartStop.click()
-        QTest.qWait(100)
+        QTest.qWait(1000)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
@@ -362,17 +367,18 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(1)
+
+        time.sleep(7)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(1)
-        QTest.qWait(1000)
+
+        time.sleep(7)
+        QTest.qWait(2000)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)
-
         self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()

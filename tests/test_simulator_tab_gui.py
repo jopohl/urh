@@ -354,7 +354,7 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
 
         dialog.ui.btnStartStop.click()
-        QTest.qWait(100)
+        QTest.qWait(1000)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
@@ -372,6 +372,8 @@ class TestSimulatorTabGUI(QtTestCase):
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)
+
+        QTest.qWait(1000)
 
         self.assertIn("Mismatch for label: preamble", simulator_log)
 

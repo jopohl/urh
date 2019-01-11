@@ -336,6 +336,8 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
 
         stc.simulator_scene.select_all_items()
+        stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
+
 
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis
@@ -353,6 +355,9 @@ class TestSimulatorTabGUI(QtTestCase):
         rcv_port = self.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
 
+        dialog.simulator.sniffer.adaptive_noise = False
+        dialog.simulator.sniffer.automatic_center = False
+
         dialog.ui.btnStartStop.click()
         QTest.qWait(1000)
 
@@ -362,19 +367,18 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(0.1)
+
+        time.sleep(5)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(0.1)
+
+        time.sleep(5)
         QTest.qWait(1000)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)
-
-        QTest.qWait(1000)
-
         self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()

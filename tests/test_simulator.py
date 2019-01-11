@@ -7,7 +7,6 @@ import time
 import numpy as np
 # import yappi
 from PyQt5.QtTest import QTest
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -81,7 +80,7 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -96,7 +95,7 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -111,7 +110,7 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         bits = self.__demodulate(conn)
@@ -167,7 +166,7 @@ class TestSimulator(QtTestCase):
         lbl2.external_program = ext_program
 
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, SleepActionItem))
-        action.model_item.sleep_time = 0.001
+        action.model_item.sleep_time = 0.000000001
         stc.simulator_scene.clearSelection()
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, TriggerCommandActionItem))
         action.setSelected(True)
@@ -196,37 +195,31 @@ class TestSimulator(QtTestCase):
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         s.bind(("", port))
         s.listen(1)
-        QTest.qWait(100)
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
-        QTest.qWait(1500)
+        QTest.qWait(500)
 
         conn, addr = s.accept()
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
-        self.alice.send_raw_data(modulator.modulate("100"+"10101010"*42), 1)
+        self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
         time.sleep(1)
-        QTest.qWait(100)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        time.sleep(1)
-        QTest.qWait(100)
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
-        time.sleep(10)
-        QTest.qWait(1000)
+        time.sleep(1)
+        QTest.qWait(500)
         conn.close()
         s.close()
-
-        QTest.qWait(100)
 
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
-        time.sleep(5)
+        time.sleep(3)
         data = connection.recv(65536)
         while len(data) % 8 != 0:
             data += connection.recv(65536)

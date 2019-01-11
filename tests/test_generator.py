@@ -25,9 +25,10 @@ class TestGenerator(QtTestCase):
         self.add_signal_to_form("ask.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK
-        signal_frame.ui.spinBoxInfoLen.setValue(295)
-        signal_frame.ui.spinBoxCenterOffset.setValue(-0.1667)
-        signal_frame.refresh()
+        signal_frame.ui.spinBoxInfoLen.setValue(300)
+        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxCenterOffset.setValue(0.032)
+        signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
         signal_frame.ui.cbProtoView.setCurrentIndex(0)
 
         proto = "1011001001011011011011011011011011001000000"
@@ -41,16 +42,18 @@ class TestGenerator(QtTestCase):
         self.assertTrue(self.__is_inv_proto(proto, proto_inv))
 
         # Move with encoding to generator
-        gframe = self.form.generator_tab_controller
+        gframe = self.form.generator_tab_controller  # type: GeneratorTabController
         gframe.ui.cbViewType.setCurrentIndex(0)
         self.add_signal_to_generator(signal_index=0)
         self.assertEqual(array.array("B", list(map(int, proto_inv))), gframe.table_model.display_data[0])
         self.assertNotEqual(array.array("B", list(map(int, proto))), gframe.table_model.display_data[0])
 
+        gframe.table_model.protocol.messages[0].pause = 0
+
         # Generate Datafile
         modulator = gframe.modulators[0]
         modulator.modulation_type = 0
-        modulator.samples_per_bit = 295
+        modulator.samples_per_bit = 300
         buffer = gframe.prepare_modulation_buffer(gframe.total_modulated_samples, show_error=False)
         modulated_data = gframe.modulate_data(buffer)
         filename = os.path.join(QDir.tempPath(), "test_generator.complex")
@@ -61,7 +64,7 @@ class TestGenerator(QtTestCase):
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 2)
         signal_frame = self.form.signal_tab_controller.signal_frames[1]
 
-        self.assertEqual(signal_frame.signal.num_samples, 14377)
+        self.assertEqual(signal_frame.signal.num_samples, 300 * len(proto))
         signal_frame.ui.cbProtoView.setCurrentIndex(0)
         self.assertEqual(signal_frame.ui.lineEditSignalName.text(), "test_generator")
         signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK

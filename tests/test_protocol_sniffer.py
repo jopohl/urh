@@ -16,7 +16,7 @@ from urh.util.SettingsProxy import SettingsProxy
 class TestProtocolSniffer(QtTestCase):
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 100 * 10 ** 6
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
     def test_protocol_sniffer(self):
         bit_len = 100

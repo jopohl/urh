@@ -9,6 +9,9 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from urh.util.SettingsProxy import SettingsProxy
+
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -28,6 +31,9 @@ from urh.ui.RuleExpressionValidator import RuleExpressionValidator
 class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
+
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+
         self.carl = Participant("Carl", "C")
         self.dennis = Participant("Dennis", "D")
         self.participants = [self.carl, self.dennis]
@@ -217,8 +223,8 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.get_all_message_items()[0].setSelected(True)
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        stc.ui.tblViewMessage.selectColumn(2)
-        x, y = stc.ui.tblViewMessage.columnViewportPosition(2), stc.ui.tblViewMessage.rowViewportPosition(0)
+        stc.ui.tblViewMessage.selectColumn(4)
+        x, y = stc.ui.tblViewMessage.columnViewportPosition(4), stc.ui.tblViewMessage.rowViewportPosition(0)
         pos = QPoint(x, y)
         stc.ui.tblViewMessage.context_menu_pos = pos
         menu = stc.ui.tblViewMessage.create_context_menu()
@@ -354,14 +360,14 @@ class TestSimulatorTabGUI(QtTestCase):
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(0.5)
+        time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(0.5)
-        QTest.qWait(500)
+        time.sleep(1)
+        QTest.qWait(1000)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>482</width>
-    <height>377</height>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -144,19 +144,6 @@ QGroupBox::indicator:checked {
           <widget class="QLabel" name="label_sniff_Center">
            <property name="text">
             <string>Center:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
-           <property name="decimals">
-            <number>4</number>
-           </property>
-           <property name="minimum">
-            <double>-3.140000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>3.140000000000000</double>
            </property>
           </widget>
          </item>
@@ -303,6 +290,36 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QDoubleSpinBox" name="spinbox_sniff_Center">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="decimals">
+              <number>4</number>
+             </property>
+             <property name="minimum">
+              <double>-3.140000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>3.140000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxAutoCenter">
+             <property name="text">
+              <string>Automatic</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
       </item>
@@ -314,7 +331,6 @@ QGroupBox::indicator:checked {
  <tabstops>
   <tabstop>groupBoxSniffSettings</tabstop>
   <tabstop>spinbox_sniff_Noise</tabstop>
-  <tabstop>spinbox_sniff_Center</tabstop>
   <tabstop>spinbox_sniff_BitLen</tabstop>
   <tabstop>spinbox_sniff_ErrorTolerance</tabstop>
   <tabstop>combox_sniff_Modulation</tabstop>

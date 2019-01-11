@@ -28,7 +28,6 @@ def min_without_outliers(data: np.ndarray, z=2):
 
     return np.min(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
-
 def get_most_frequent_value(values: list):
     """
     Return the most frequent value in list.
@@ -192,23 +191,40 @@ def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) ->
     return max(set(modulations_for_messages), key=modulations_for_messages.count)
 
 
-def detect_center(rectangular_signal: np.ndarray):
+def detect_center(rectangular_signal: np.ndarray, max_size=None):
     rect = rectangular_signal[rectangular_signal > -4]  # do not consider noise
 
+    # Ignore the first and last 5% of samples,
+    # because there tends to be an overshoot at start/end of rectangular signal
+    rect = rect[int(0.05*len(rect)):int(0.95*len(rect))]
+
+    if max_size is not None and len(rect) > max_size:
+        rect = rect[0:max_size]
+
     hist_min, hist_max = util.minmax(rect)
-    hist_step = 0.05
+
+    # The step size of histogram is set to variance of the rectangular signal
+    # If a signal has low variance we need to be more accurate at center detection
+    hist_step = float(np.var(rect))
 
     y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
 
     num_values = 2
     most_common_levels = []
 
+    window_size = max(2, int(0.05*len(y)))
+
+    def get_elem(arr, index: int, default):
+        if 0 <= index < len(arr):
+            return arr[index]
+        else:
+            return default
+
     for index in np.argsort(y)[::-1]:
         # check if we have a local maximum in histogram, if yes, append the value
-        left = y[index - 1] if index > 0 else 0
-        right = y[index + 1] if index < len(y) - 1 else 0
-
-        if left < y[index] and y[index] > right:
+        if all(y[index] > get_elem(y, index+i, 0) and
+               y[index] > get_elem(y, index-i, 0)
+               for i in range(1, window_size+1)):
             most_common_levels.append(x[index])
 
         if len(most_common_levels) == num_values:

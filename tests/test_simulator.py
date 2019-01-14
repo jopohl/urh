@@ -231,6 +231,7 @@ class TestSimulator(QtTestCase):
 
     def __demodulate(self, connection: socket.socket):
         connection.settimeout(0.1)
+        time.sleep(self.TIMEOUT)
 
         total_data = []
         while True:

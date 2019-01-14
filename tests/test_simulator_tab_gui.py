@@ -1,5 +1,4 @@
 import os
-import socket
 import tempfile
 import time
 from array import array
@@ -7,13 +6,8 @@ from array import array
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest, QSignalSpy
+from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
-
-from tests.utils_testing import wait_for_sniffer_message_received
-from urh.util.SettingsProxy import SettingsProxy
-
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -28,6 +22,7 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulatorTabGUI(QtTestCase):
@@ -177,13 +172,13 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(2)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+4, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 4, len(stc.simulator_message_table_model.protocol.messages[i]))
 
         stc.ui.cbViewType.setCurrentText("Bit")
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(6)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+5, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 5, len(stc.simulator_message_table_model.protocol.messages[i]))
 
     def test_simulator_graphics_view(self):
         self.__setup_project()

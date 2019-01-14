@@ -9,7 +9,7 @@ import numpy as np
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file, wait_for_sniffer_message_received
+from tests.utils_testing import get_path_for_data_file
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Modulator import Modulator

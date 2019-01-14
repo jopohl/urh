@@ -362,14 +362,14 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.client_port = rcv_port
 
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(0.1)
+        time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(10000)
+        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(0.1)
+        time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(10000)
+        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
 
         QTest.qWait(100)
 

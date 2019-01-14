@@ -218,7 +218,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             logger.error(msg)
             return None
 
-    def shutdown_socket(self, sock):
+    @staticmethod
+    def shutdown_socket(sock):
         try:
             sock.shutdown(socket.SHUT_RDWR)
         except OSError:

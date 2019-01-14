@@ -21,7 +21,7 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulator(QtTestCase):
-    TIMEOUT = 0.5
+    TIMEOUT = 1.0
 
     def setUp(self):
         super().setUp()

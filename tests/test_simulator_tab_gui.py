@@ -369,14 +369,10 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
-            return
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
-            return
 
         QTest.qWait(100)
 

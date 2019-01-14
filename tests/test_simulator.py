@@ -243,7 +243,10 @@ class TestSimulator(QtTestCase):
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
-        QTest.qWait(250)
+        while simulator.is_simulating:
+            logger.debug("Wait for simulator to finish")
+            time.sleep(1)
+
         NetworkSDRInterfacePlugin.shutdown_socket(conn)
         NetworkSDRInterfacePlugin.shutdown_socket(s)
 

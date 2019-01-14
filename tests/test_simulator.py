@@ -83,10 +83,12 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
         time.sleep(self.TIMEOUT)
+        current_item = simulator.current_item
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
         if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+            while current_item == simulator.current_item:
+                time.sleep(self.TIMEOUT)  # wait till simulator processes message
         else:
             return
 
@@ -103,9 +105,11 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         time.sleep(self.TIMEOUT)
+        current_item = simulator.current_item
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+            while current_item == simulator.current_item:
+                time.sleep(self.TIMEOUT)  # wait till simulator processes message
         else:
             return
 
@@ -122,9 +126,11 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         time.sleep(self.TIMEOUT)
+        current_item = simulator.current_item
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+            while current_item == simulator.current_item:
+                time.sleep(self.TIMEOUT)  # wait till simulator processes message
         else:
             return
 

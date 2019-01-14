@@ -241,6 +241,9 @@ class TestSimulator(QtTestCase):
             except socket.timeout:
                 break
 
+        if len(total_data) == 0:
+            print("[TEST ERROR] Did not receive any data from socket.")
+
         arr = np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64))
         signal = Signal("", "")
         signal._fulldata = arr

@@ -1,5 +1,6 @@
-import psutil
 import sys
+
+import psutil
 
 from urh import constants
 from urh.util.Formatter import Formatter
@@ -12,6 +13,7 @@ class SettingsProxy(object):
     """
     Centralize common settings operations
     """
+
     @staticmethod
     def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: bool) -> int:
         if SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE:
@@ -27,10 +29,10 @@ class SettingsProxy(object):
             threshold = constants.SETTINGS.value('ram_threshold', 0.6, float)
             num_samples = threshold * (psutil.virtual_memory().available / 8)
 
-        # Do not let it allocate too much on 32 bit
-        if 8*num_samples > sys.maxsize // 2:
-            num_samples = sys.maxsize // (8 * 2)
+        # Do not let it allocate too much memory on 32 bit
+        if 8 * 2 * num_samples > sys.maxsize:
+            num_samples = sys.maxsize // (8 * 2 * 1.5)
             logger.info("Correcting buffer size to {}".format(num_samples))
 
-        logger.info("Try to allocate receive buffer with size {0}B".format(Formatter.big_value_with_suffix(num_samples*8)))
+        logger.info("Allocate receive buffer with {0}B".format(Formatter.big_value_with_suffix(num_samples * 8)))
         return int(num_samples)

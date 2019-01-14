@@ -211,8 +211,8 @@ class TestSimulator(QtTestCase):
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
-        time.sleep(1)
-        QTest.qWait(500)
+        time.sleep(2)
+        QTest.qWait(1000)
         conn.close()
         s.close()
 
@@ -221,8 +221,6 @@ class TestSimulator(QtTestCase):
     def __demodulate(self, connection):
         time.sleep(3)
         data = connection.recv(65536)
-        while len(data) % 8 != 0:
-            data += connection.recv(65536)
 
         arr = np.array(np.frombuffer(data, dtype=np.complex64))
         signal = Signal("", "")

@@ -256,7 +256,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                         self.send_data(data, sock)
                         self.current_sent_sample += len(data)
 
-                    time.sleep(0.0000001)
+                    time.sleep(0.01)
 
                 self.current_sending_repeat += 1
                 self.current_sent_sample = 0

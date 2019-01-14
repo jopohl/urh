@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -364,14 +365,16 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
+            logger.error("sniffer did not receive message")
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(35000):
+            logger.error("sniffer did not receive message")
 
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)

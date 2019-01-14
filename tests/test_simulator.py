@@ -93,13 +93,10 @@ class TestSimulator(QtTestCase):
             return
 
         bits = self.__demodulate(conn)
-        if len(bits) == 0 and sys.platform == "win32":
-            print("[TEST ERROR] Could not receive")
-            return
 
         self.assertEqual(len(bits), 1)
         bits = bits[0]
-        self.assertTrue(bits.startswith(preamble_str + sync_str))
+        self.assertTrue(bits.startswith(preamble_str + sync_str), msg=bits)
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 1)
 
@@ -118,9 +115,6 @@ class TestSimulator(QtTestCase):
             return
 
         bits = self.__demodulate(conn)
-        if len(bits) == 0 and sys.platform == "win32":
-            print("[TEST ERROR] Could not receive")
-            return
 
         self.assertEqual(len(bits), 1)
         bits = bits[0]
@@ -143,9 +137,6 @@ class TestSimulator(QtTestCase):
             return
 
         bits = self.__demodulate(conn)
-        if len(bits) == 0 and sys.platform == "win32":
-            print("[TEST ERROR] Could not receive")
-            return
 
         self.assertEqual(len(bits), 1)
 
@@ -246,10 +237,6 @@ class TestSimulator(QtTestCase):
             return
 
         bits = self.__demodulate(conn)
-        if len(bits) == 0 and sys.platform == "win32":
-            print("[TEST ERROR] Could not receive")
-            return
-
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
         time.sleep(self.TIMEOUT)
@@ -269,6 +256,7 @@ class TestSimulator(QtTestCase):
             data = connection.recv(65536)
             while len(data) % 8 != 0:
                 data += connection.recv(65536)
+                time.sleep(0.1)
         except:
             return []
 

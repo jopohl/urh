@@ -85,7 +85,8 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
+            logger.error("sniffer did not receive message")
 
         bits = self.__demodulate(conn)
 
@@ -102,7 +103,8 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
+            logger.error("sniffer did not receive message")
 
         bits = self.__demodulate(conn)
 
@@ -119,7 +121,8 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
+            logger.error("sniffer did not receive message")
 
         bits = self.__demodulate(conn)
 
@@ -233,7 +236,7 @@ class TestSimulator(QtTestCase):
 
     def __demodulate(self, connection: socket.socket):
         connection.settimeout(0.1)
-        time.sleep(3)
+        time.sleep(5)
 
         total_data = []
         while True:

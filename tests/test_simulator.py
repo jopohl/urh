@@ -180,7 +180,8 @@ class TestSimulator(QtTestCase):
         self.assertEqual(stc.ui.detail_view_widget.currentIndex(), 4)
         fname = tempfile.mktemp()
         self.assertFalse(os.path.isfile(fname))
-        external_command = "cmd.exe /C copy NUL {}".format(fname) if os.name == "nt" else "touch {}".format(fname)
+
+        external_command = sys.executable + " -c \"open('{}', 'w').close()\"".format(fname)
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 

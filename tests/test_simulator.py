@@ -66,8 +66,11 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
+        QTest.qWait(250)
 
-        QTest.qWait(500)
+        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message")
+            time.sleep(1)
 
         conn, addr = s.accept()
 
@@ -220,7 +223,11 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
-        QTest.qWait(500)
+        QTest.qWait(250)
+
+        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message")
+            time.sleep(1)
 
         conn, addr = s.accept()
 

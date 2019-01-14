@@ -21,7 +21,7 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulator(QtTestCase):
-    TIMEOUT = 1.0
+    TIMEOUT = 0.5
 
     def setUp(self):
         super().setUp()
@@ -216,22 +216,19 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
 
+        time.sleep(3)
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
-        time.sleep(self.TIMEOUT)
-        QTest.qWait(100)
+        QTest.qWait(250)
         NetworkSDRInterfacePlugin.shutdown_socket(conn)
         NetworkSDRInterfacePlugin.shutdown_socket(s)
 
-        if sys.platform != "win32":
-            self.assertTrue(os.path.isfile(fname))
-        elif not os.path.isfile(fname):
-            print("[INTERNAL TEST ERROR] File on windows was not created during simulation")
+        self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection: socket.socket):
         connection.settimeout(0.1)
-        time.sleep(self.TIMEOUT)
+        time.sleep(3)
 
         total_data = []
         while True:

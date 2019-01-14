@@ -178,10 +178,12 @@ class TestSimulator(QtTestCase):
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, TriggerCommandActionItem))
         action.setSelected(True)
         self.assertEqual(stc.ui.detail_view_widget.currentIndex(), 4)
-        fname = tempfile.mktemp()
-        self.assertFalse(os.path.isfile(fname))
+        file_name = os.path.join(tempfile.gettempdir(), "external_test")
+        if os.path.isfile(file_name):
+            os.remove(file_name)
 
-        external_command = sys.executable + " -c \"open('{}', 'w').close()\"".format(fname)
+        self.assertFalse(os.path.isfile(file_name))
+        external_command = "cmd.exe /C copy NUL {}".format(file_name) if os.name == "nt" else "touch {}".format(file_name)
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
@@ -226,7 +228,7 @@ class TestSimulator(QtTestCase):
         NetworkSDRInterfacePlugin.shutdown_socket(conn)
         NetworkSDRInterfacePlugin.shutdown_socket(s)
 
-        self.assertTrue(os.path.isfile(fname))
+        self.assertTrue(os.path.isfile(file_name))
 
     def __demodulate(self, connection: socket.socket):
         connection.settimeout(0.1)

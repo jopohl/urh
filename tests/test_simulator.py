@@ -9,7 +9,7 @@ import numpy as np
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file
+from tests.utils_testing import get_path_for_data_file, wait_for_sniffer_message_received
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Modulator import Modulator
@@ -80,8 +80,11 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+
+        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            return
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -95,8 +98,11 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            return
+
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -110,8 +116,10 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            return
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -119,8 +127,6 @@ class TestSimulator(QtTestCase):
         self.assertTrue(bits.startswith(preamble_str + sync_str))
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
-
-        time.sleep(1)
 
         conn.close()
         s.close()
@@ -205,8 +211,10 @@ class TestSimulator(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
         self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            return
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
@@ -219,8 +227,10 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(fname))
 
     def __demodulate(self, connection):
-        time.sleep(3)
+        time.sleep(0.1)
         data = connection.recv(65536)
+        if len(data) % 8 != 0:
+            data += connection.recv(65536)
 
         arr = np.array(np.frombuffer(data, dtype=np.complex64))
         signal = Signal("", "")

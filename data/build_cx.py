@@ -3,6 +3,7 @@ import sys
 
 import cx_Freeze
 
+
 def build_exe(build_cmd='build'):
     # have to make sure args looks right
     sys.argv = sys.argv[:1] + [build_cmd]
@@ -45,14 +46,18 @@ def build_exe(build_cmd='build'):
              ),
         ]
 
-
         executables = [
             cx_Freeze.Executable(
-            app_path,
-            targetName="urh.exe",
-            icon=os.path.join("data", 'icons', 'appicon.ico'),
-            copyright="Copyright (C) 2018 Johannes Pohl, Andreas Noack",
-            base="Win32GUI"),
+                app_path,
+                targetName="urh.exe",
+                icon=os.path.join("data", 'icons', 'appicon.ico'),
+                copyright="Copyright (C) 2019 Johannes Pohl, Andreas Noack",
+                base="Win32GUI"),
+
+            cx_Freeze.Executable(
+                app_path,
+                targetName="urh-debug.exe",
+                copyright="Copyright (C) 2019 Johannes Pohl, Andreas Noack"),
 
             cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")
         ]
@@ -88,7 +93,7 @@ def build_exe(build_cmd='build'):
         },
         'bdist_msi': {
             "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}",
-            "data":  {"Shortcut": shortcut_table}
+            "data": {"Shortcut": shortcut_table}
         }
     }
 

@@ -368,12 +368,12 @@ class TestSimulatorTabGUI(QtTestCase):
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
 
-        time.sleep(7)
+        time.sleep(10)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
 
-        time.sleep(7)
+        time.sleep(10)
         QTest.qWait(2000)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

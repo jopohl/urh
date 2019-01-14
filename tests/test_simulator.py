@@ -221,7 +221,7 @@ class TestSimulator(QtTestCase):
         if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
             logger.error("sniffer did not receive message")
 
-        time.sleep(5)
+        time.sleep(10)
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 

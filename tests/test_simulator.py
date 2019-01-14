@@ -226,7 +226,7 @@ class TestSimulator(QtTestCase):
             print("[INTERNAL TEST ERROR] File on windows was not created during simulation")
 
     def __demodulate(self, connection: socket.socket):
-        connection.settimeout(1)
+        connection.settimeout(5)
 
         total_data = []
         try:

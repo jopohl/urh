@@ -7,6 +7,7 @@ import time
 import numpy as np
 # import yappi
 from PyQt5.QtTest import QTest, QSignalSpy
+from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -218,7 +219,7 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
         if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
-            print("[TEST WARNING] sniffer did not receive message")
+            logger.error("sniffer did not receive message")
 
         time.sleep(5)
         bits = self.__demodulate(conn)
@@ -246,7 +247,7 @@ class TestSimulator(QtTestCase):
                 break
 
         if len(total_data) == 0:
-            print("[TEST ERROR] Did not receive any data from socket.")
+            logger.error("Did not receive any data from socket.")
 
         arr = np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64))
         signal = Signal("", "")

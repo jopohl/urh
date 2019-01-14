@@ -214,9 +214,10 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000)
+        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
+            print("[TEST WARNING] sniffer did not receive message")
 
-        time.sleep(3)
+        time.sleep(5)
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 

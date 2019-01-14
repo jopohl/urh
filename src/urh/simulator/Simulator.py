@@ -379,8 +379,10 @@ class Simulator(QObject):
         if isinstance(message, list) and len(message) > 0:
             self.log_messages.append(timestamp + ": " + message[0])
             self.log_messages.extend(message[1:])
+            logger.debug("\n".join(message))
         else:
             self.log_messages.append(timestamp + ": " + message)
+            logger.debug(message)
 
     def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
         if len(received_msg.decoded_bits) == 0:

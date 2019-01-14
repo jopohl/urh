@@ -7,8 +7,10 @@ from array import array
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest
+from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+
+from tests.utils_testing import wait_for_sniffer_message_received
 from urh.util.SettingsProxy import SettingsProxy
 
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
@@ -338,7 +340,6 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
 
-
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis
             stc.ui.gvSimulator.message_updated.emit(msg)
@@ -364,17 +365,20 @@ class TestSimulatorTabGUI(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
+
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
+            return
 
-        time.sleep(10)
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(1)
+        time.sleep(0.1)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
+            return
 
-        time.sleep(10)
-        QTest.qWait(2000)
+        QTest.qWait(100)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)

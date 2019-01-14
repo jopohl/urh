@@ -56,7 +56,7 @@ def build_exe(build_cmd='build'):
 
             cx_Freeze.Executable(
                 app_path,
-                targetName="urh-debug.exe",
+                targetName="urh_debug.exe",
                 copyright="Copyright (C) 2019 Johannes Pohl, Andreas Noack"),
 
             cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")

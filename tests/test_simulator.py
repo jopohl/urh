@@ -21,6 +21,8 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulator(QtTestCase):
+    TIMEOUT = 0.5
+
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
@@ -80,10 +82,12 @@ class TestSimulator(QtTestCase):
         msg1 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
-        time.sleep(0.1)
+        time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
-        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+        else:
             return
 
         bits = self.__demodulate(conn)
@@ -98,11 +102,12 @@ class TestSimulator(QtTestCase):
         msg2 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
-        time.sleep(0.1)
+        time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+        else:
             return
-
 
         bits = self.__demodulate(conn)
         self.assertEqual(len(bits), 1)
@@ -116,9 +121,11 @@ class TestSimulator(QtTestCase):
         msg3 = preamble + sync + seq + data + checksum
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
-        time.sleep(0.1)
+        time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+        else:
             return
 
         bits = self.__demodulate(conn)
@@ -211,16 +218,19 @@ class TestSimulator(QtTestCase):
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
 
         self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
-        time.sleep(0.1)
+        time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+
+        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
+            time.sleep(self.TIMEOUT)  # wait till simulator processes message
+        else:
             return
 
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
-        time.sleep(2)
-        QTest.qWait(1000)
+        time.sleep(self.TIMEOUT)
+        QTest.qWait(100)
         conn.close()
         s.close()
 
@@ -230,7 +240,6 @@ class TestSimulator(QtTestCase):
             print("[INTERNAL TEST ERROR] File on windows was not created during simulation")
 
     def __demodulate(self, connection):
-        time.sleep(0.1)
         data = connection.recv(65536)
         if len(data) % 8 != 0:
             data += connection.recv(65536)

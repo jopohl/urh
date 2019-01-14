@@ -250,17 +250,21 @@ class TestSimulator(QtTestCase):
             print("[INTERNAL TEST ERROR] File on windows was not created during simulation")
 
     def __demodulate(self, connection: socket.socket):
-        connection.settimeout(5)
+        connection.settimeout(1)
 
+        total_data = []
         try:
-            data = connection.recv(65536)
-            while len(data) % 8 != 0:
-                data += connection.recv(65536)
-                time.sleep(0.1)
-        except:
-            return []
+            while True:
+                data = connection.recv(65536)
+                if data:
+                    total_data.append(data)
+                    time.sleep(0.01)
+                else:
+                    break
+        except Exception as e:
+            pass
 
-        arr = np.array(np.frombuffer(data, dtype=np.complex64))
+        arr = np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64))
         signal = Signal("", "")
         signal._fulldata = arr
         pa = ProtocolAnalyzer(signal)

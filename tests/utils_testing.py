@@ -62,16 +62,3 @@ path = os.path.realpath(os.path.join(f, ".."))
 
 def get_path_for_data_file(filename):
     return os.path.join(path, "data", filename)
-
-
-def wait_for_sniffer_message_received(sniffer: ProtocolSniffer, timeout_ms):
-    spy = QSignalSpy(sniffer.message_sniffed)
-    if spy.wait(int(timeout_ms)):
-        return True
-    else:
-        if sys.platform == "win32":
-            print("[INTERNAL TEST ERROR] Didn't receive a message, exiting test...", file=sys.stderr)
-        else:
-            raise Exception("Did not receive a message from sniffer")
-
-        return False

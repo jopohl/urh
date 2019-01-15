@@ -218,7 +218,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             logger.error(msg)
             return None
 
-    def shutdown_socket(self, sock):
+    @staticmethod
+    def shutdown_socket(sock):
         try:
             sock.shutdown(socket.SHUT_RDWR)
         except OSError:
@@ -254,8 +255,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                     if len(data) > 0:
                         self.send_data(data, sock)
                         self.current_sent_sample += len(data)
-
-                    time.sleep(0.0000001)
 
                 self.current_sending_repeat += 1
                 self.current_sent_sample = 0

@@ -6,10 +6,15 @@ import time
 
 import numpy as np
 # import yappi
-from PyQt5.QtTest import QTest
+from PyQt5.QtTest import QTest, QSignalSpy
+
+from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+
+from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
-from tests.utils_testing import get_path_for_data_file, wait_for_sniffer_message_received
+from tests.utils_testing import get_path_for_data_file
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Modulator import Modulator
@@ -21,7 +26,7 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulator(QtTestCase):
-    TIMEOUT = 1.0
+    TIMEOUT = 0.5
 
     def setUp(self):
         super().setUp()
@@ -43,7 +48,9 @@ class TestSimulator(QtTestCase):
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port
 
-        dialog = self.form.simulator_tab_controller.get_simulator_dialog()
+        dialog = self.form.simulator_tab_controller.get_simulator_dialog()  # type: SimulatorDialog
+        dialog.project_manager.simulator_timeout_ms = 999999999
+
         name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
         dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(name)
@@ -59,8 +66,11 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
+        QTest.qWait(250)
 
-        QTest.qWait(500)
+        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message")
+            time.sleep(1)
 
         conn, addr = s.accept()
 
@@ -85,15 +95,15 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
-        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
-        else:
-            return
+        while not any("Sending message 2" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to send message 2")
+            time.sleep(1)
 
         bits = self.__demodulate(conn)
+
         self.assertEqual(len(bits), 1)
         bits = bits[0]
-        self.assertTrue(bits.startswith(preamble_str + sync_str))
+        self.assertTrue(bits.startswith(preamble_str + sync_str), msg=bits)
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 1)
 
@@ -104,12 +114,13 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
-        else:
-            return
+
+        while not any("Sending message 4" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to send message 4")
+            time.sleep(1)
 
         bits = self.__demodulate(conn)
+
         self.assertEqual(len(bits), 1)
         bits = bits[0]
         self.assertTrue(bits.startswith(preamble_str + sync_str))
@@ -123,25 +134,29 @@ class TestSimulator(QtTestCase):
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
-        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
-        else:
-            return
+
+        while not any("Sending message 6" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to send message 6")
+            time.sleep(1)
 
         bits = self.__demodulate(conn)
+
         self.assertEqual(len(bits), 1)
+
         bits = bits[0]
         self.assertTrue(bits.startswith(preamble_str + sync_str))
         bits = bits.replace(preamble_str + sync_str, "")
         self.assertEqual(int(bits, 2), seq_num + 5)
 
-        conn.close()
-        s.close()
+        NetworkSDRInterfacePlugin.shutdown_socket(conn)
+        NetworkSDRInterfacePlugin.shutdown_socket(s)
 
     def test_external_program_simulator(self):
-        stc = self.form.simulator_tab_controller
+        stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         stc.ui.btnAddParticipant.click()
         stc.ui.btnAddParticipant.click()
+
+        stc.project_manager.simulator_timeout_ms = 999999999
 
         stc.simulator_scene.add_counter_action(None, 0)
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, CounterActionItem))
@@ -184,9 +199,12 @@ class TestSimulator(QtTestCase):
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, TriggerCommandActionItem))
         action.setSelected(True)
         self.assertEqual(stc.ui.detail_view_widget.currentIndex(), 4)
-        fname = tempfile.mktemp()
-        self.assertFalse(os.path.isfile(fname))
-        external_command = "cmd.exe /C copy NUL {}".format(fname) if os.name == "nt" else "touch {}".format(fname)
+        file_name = os.path.join(tempfile.gettempdir(), "external_test")
+        if os.path.isfile(file_name):
+            os.remove(file_name)
+
+        self.assertFalse(os.path.isfile(file_name))
+        external_command = "cmd.exe /C copy NUL {}".format(file_name) if os.name == "nt" else "touch {}".format(file_name)
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
@@ -211,7 +229,11 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
-        QTest.qWait(500)
+        QTest.qWait(250)
+
+        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message")
+            time.sleep(1)
 
         conn, addr = s.accept()
 
@@ -221,30 +243,42 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
 
-        if wait_for_sniffer_message_received(simulator.sniffer, timeout_ms=10e3):
-            time.sleep(self.TIMEOUT)  # wait till simulator processes message
-        else:
-            return
+        while not any("Sending message" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to send message")
+            time.sleep(1)
 
+        time.sleep(self.TIMEOUT)
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
+        while simulator.is_simulating:
+            logger.debug("Wait for simulator to finish")
+            time.sleep(1)
+
+        NetworkSDRInterfacePlugin.shutdown_socket(conn)
+        NetworkSDRInterfacePlugin.shutdown_socket(s)
+
+        self.assertTrue(os.path.isfile(file_name))
+
+    def __demodulate(self, connection: socket.socket):
+        connection.settimeout(0.1)
         time.sleep(self.TIMEOUT)
-        QTest.qWait(100)
-        conn.close()
-        s.close()
 
-        if sys.platform != "win32":
-            self.assertTrue(os.path.isfile(fname))
-        elif not os.path.isfile(fname):
-            print("[INTERNAL TEST ERROR] File on windows was not created during simulation")
+        total_data = []
+        while True:
+            try:
+                data = connection.recv(65536)
+                if data:
+                    total_data.append(data)
+                else:
+                    break
+            except socket.timeout:
+                break
 
-    def __demodulate(self, connection):
-        data = connection.recv(65536)
-        if len(data) % 8 != 0:
-            data += connection.recv(65536)
+        if len(total_data) == 0:
+            logger.error("Did not receive any data from socket.")
 
-        arr = np.array(np.frombuffer(data, dtype=np.complex64))
+        arr = np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64))
         signal = Signal("", "")
         signal._fulldata = arr
         pa = ProtocolAnalyzer(signal)

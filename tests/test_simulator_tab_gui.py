@@ -1,5 +1,4 @@
 import os
-import socket
 import tempfile
 import time
 from array import array
@@ -9,11 +8,7 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
-
-from tests.utils_testing import wait_for_sniffer_message_received
-from urh.util.SettingsProxy import SettingsProxy
-
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -28,6 +23,7 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulatorTabGUI(QtTestCase):
@@ -177,13 +173,13 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(2)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+4, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 4, len(stc.simulator_message_table_model.protocol.messages[i]))
 
         stc.ui.cbViewType.setCurrentText("Bit")
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(6)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+5, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 5, len(stc.simulator_message_table_model.protocol.messages[i]))
 
     def test_simulator_graphics_view(self):
         self.__setup_project()
@@ -360,24 +356,32 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog.simulator.sniffer.automatic_center = False
 
         dialog.ui.btnStartStop.click()
-        QTest.qWait(1000)
+
+        while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message 1")
+            time.sleep(1)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
 
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
-            return
+
+        while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator wait for message 2")
+            time.sleep(1)
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not wait_for_sniffer_message_received(dialog.simulator.sniffer, timeout_ms=10e3):
-            return
+        while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for mismatching message")
+            time.sleep(1)
 
+        QTest.qWait(250)
+        QApplication.processEvents()
         QTest.qWait(100)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

@@ -376,8 +376,10 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for mismatching message")
+            time.sleep(1)
 
-        time.sleep(1)
         QTest.qWait(250)
         QApplication.processEvents()
         QTest.qWait(100)

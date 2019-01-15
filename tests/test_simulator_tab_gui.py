@@ -356,24 +356,30 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog.simulator.sniffer.automatic_center = False
 
         dialog.ui.btnStartStop.click()
-        QTest.qWait(1000)
+
+        while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message 1")
+            print(dialog.simulator.log_messages)
+            time.sleep(1)
+            QTest.qWait(250)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
 
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(30000):
-            logger.error("sniffer did not receive message")
+
+        while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator wait for message 2")
+            time.sleep(1)
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        if not QSignalSpy(dialog.simulator.sniffer.message_sniffed).wait(35000):
-            logger.error("sniffer did not receive message")
 
+        time.sleep(1)
         QTest.qWait(250)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

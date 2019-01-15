@@ -359,9 +359,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to wait for message 1")
-            print(dialog.simulator.log_messages)
             time.sleep(1)
-            QTest.qWait(250)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
@@ -381,6 +379,8 @@ class TestSimulatorTabGUI(QtTestCase):
 
         time.sleep(1)
         QTest.qWait(250)
+        QApplication.processEvents()
+        QTest.qWait(100)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)

@@ -120,7 +120,7 @@ cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:
 
     cdef np.ndarray[np.uint64_t, ndim=1] histogram = np.zeros(int(np.max(plateau_lengths)) + 1, dtype=np.uint64)
 
-    cdef unsigned long long i, j, x, y, minimum, maximum, min_index, k=0
+    cdef unsigned long long i, j, x, y, minimum, maximum
 
     for i in range(0, num_lengths):
         for j in range(i+1, num_lengths):
@@ -130,11 +130,9 @@ cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:
                 continue
 
             if x < y:
-                min_index = i
                 minimum = x
                 maximum = y
             else:
-                min_index = j
                 minimum = y
                 maximum = x
 

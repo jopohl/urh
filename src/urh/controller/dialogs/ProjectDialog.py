@@ -171,8 +171,8 @@ class ProjectDialog(QDialog):
         if directory:
             self.set_path(directory)
 
-    @pyqtSlot(str, dict)
-    def set_recording_params_from_spectrum_analyzer_link(self, dev_name, args: dict):
+    @pyqtSlot(dict)
+    def set_recording_params_from_spectrum_analyzer_link(self, args: dict):
         self.ui.spinBoxFreq.setValue(args["frequency"])
         self.ui.spinBoxSampleRate.setValue(args["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(args["bandwidth"])

@@ -283,7 +283,7 @@ class SignalFrame(QFrame):
             power_str = "-\u221e"  # minus infinity
             if start < end:
                 max_window_size = 10 ** 5
-                step_size = int(math.ceil((end-start)/max_window_size))
+                step_size = int(math.ceil((end - start) / max_window_size))
                 power = np.mean(np.abs(self.signal.data[start:end:step_size]))
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
@@ -749,8 +749,15 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
-        self.signal.auto_detect(detect_modulation=self.detect_modulation_action.isChecked(),
-                                detect_noise=self.detect_noise_action.isChecked())
+        self.ui.btnAutoDetect.setEnabled(False)
+        self.setCursor(Qt.WaitCursor)
+        success = self.signal.auto_detect(detect_modulation=self.detect_modulation_action.isChecked(),
+                                          detect_noise=self.detect_noise_action.isChecked())
+        self.ui.btnAutoDetect.setEnabled(True)
+        self.unsetCursor()
+        if not success:
+            Errors.generic_error(self.tr("Autodetection failed"),
+                                 self.tr("Failed to autodetect parameters for this signal."))
 
     @pyqtSlot()
     def on_btn_replay_clicked(self):
@@ -1249,7 +1256,8 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_btn_advanced_modulation_settings_clicked(self):
-        dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
+        dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor,
+                                                 parent=self)
         dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()

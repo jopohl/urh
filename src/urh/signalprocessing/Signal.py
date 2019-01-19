@@ -372,7 +372,7 @@ class Signal(QObject):
         new_signal.changed = True
         return new_signal
 
-    def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False):
+    def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,
                   "modulation": None if detect_modulation
                   else "OOK" if self.__modulation_order == 2 and self.__modulation_type == 0
@@ -380,7 +380,7 @@ class Signal(QObject):
 
         estimated_params = AutoInterpretation.estimate(self.data, **kwargs)
         if estimated_params is None:
-            return
+            return False
 
         orig_block = self.block_protocol_update
         self.block_protocol_update = True
@@ -399,6 +399,8 @@ class Signal(QObject):
 
         if emit_update and not self.block_protocol_update:
             self.protocol_needs_update.emit()
+
+        return True
 
     def clear_parameter_cache(self):
         for mod in self.parameter_cache.keys():

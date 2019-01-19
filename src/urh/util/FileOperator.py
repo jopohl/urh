@@ -34,15 +34,16 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
         dialog.setFileMode(QFileDialog.ExistingFiles)
         dialog.setWindowTitle("Open Files")
         if name_filter == "full":
-            name_filter = "All files (*);;Complex (*.complex);;" \
+            name_filter = "All Files (*);;" \
+                          "Complex (*.complex);;" \
                           "Complex16 unsigned (*.complex16u *.cu8);;" \
                           "Complex16 signed (*.complex16s *.cs8);;" \
-                          "Wave (*.wav);;" \
+                          "WAV (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
                           "Binary Protocols (*.bin);;" \
-                          "Fuzzprofiles (*.fuzz.xml *.fuzz);;" \
+                          "Fuzzing Profiles (*.fuzz.xml *.fuzz);;" \
                           "Simulator (*.sim.xml *.sim)" \
-                          "Plain bits (*.txt);;" \
+                          "Plain Bits (*.txt);;" \
                           "Tar Archives (*.tar *.tar.gz *.tar.bz2);;" \
                           "Zip Archives (*.zip)"
         elif name_filter == "proto":
@@ -98,21 +99,24 @@ def uncompress_archives(file_names, temp_dir):
 def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal"):
     global RECENT_PATH
     if caption == "Save signal":
-        name_filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) " \
-                      "(*.complex16u *.cu8);;Complex16 files (2 signed int8) (*.complex16s *.cs8);;" \
-                      "Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
+        name_filter = "Complex (*.complex);;" \
+                      "Complex16 unsigned (*.complex16u *.cu8);;" \
+                      "Complex16 signed (*.complex16s *.cs8);;" \
+                      "Complex compressed (*.coco);;" \
+                      "WAV (*.wav);;" \
+                      "All Files (*)"
         if wav_only:
-            name_filter = "wav files (*.wav);;all files (*)"
+            name_filter = "WAV Files (*.wav);;All Files (*)"
     elif caption == "Save fuzz profile":
-        name_filter = "Fuzzfiles (*.fuzz.xml *.fuzz);;All files (*)"
+        name_filter = "Fuzzing Profile (*.fuzz.xml *.fuzz);;All Files (*)"
     elif caption == "Save encoding":
         name_filter = ""
     elif caption == "Save simulator profile":
-        name_filter = "Simulator (*.sim.xml *.sim);;All files (*)"
+        name_filter = "Simulator (*.sim.xml *.sim);;All Files (*)"
     elif caption == "Export spectrogram":
         name_filter = "Frequency Time (*.ft);;Frequency Time Amplitude (*.fta)"
     else:
-        name_filter = "Protocols (*.proto.xml *.proto);;Binary Protocol (*.bin);;All files (*)"
+        name_filter = "Protocols (*.proto.xml *.proto);;Binary Protocol (*.bin);;All Files (*)"
 
     filename = None
     dialog = QFileDialog()

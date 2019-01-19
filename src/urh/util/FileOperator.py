@@ -35,8 +35,8 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
         dialog.setWindowTitle("Open Files")
         if name_filter == "full":
             name_filter = "All files (*);;Complex (*.complex);;" \
-                          "Complex16 unsigned (*.complex16u);;" \
-                          "Complex16 signed (*.complex16s);;" \
+                          "Complex16 unsigned (*.complex16u *.cu8);;" \
+                          "Complex16 signed (*.complex16s *.cs8);;" \
                           "Wave (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
                           "Binary Protocols (*.bin);;" \
@@ -99,7 +99,7 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
     global RECENT_PATH
     if caption == "Save signal":
         name_filter = "Complex files (*.complex);;Complex16 files (2 unsigned int8) " \
-                      "(*.complex16u);;Complex16 files (2 signed int8) (*.complex16s);;" \
+                      "(*.complex16u *.cu8);;Complex16 files (2 signed int8) (*.complex16s *.cs8);;" \
                       "Compressed complex files (*.coco);;wav files (*.wav);;all files (*)"
         if wav_only:
             name_filter = "wav files (*.wav);;all files (*)"
@@ -181,9 +181,9 @@ def save_data(data, filename: str, sample_rate=1e6, num_channels=2):
 def convert_data_to_format(data: np.ndarray, filename: str):
     if filename.endswith(".wav"):
         return (data.view(np.float32) * 32767).astype(np.int16)
-    elif filename.endswith(".complex16u"):
+    elif filename.endswith(".complex16u") or filename.endswith(".cu8"):
         return (127.5 * (data.view(np.float32) + 1.0)).astype(np.uint8)
-    elif filename.endswith(".complex16s"):
+    elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
         return (127.5 * ((data.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
     else:
         return data

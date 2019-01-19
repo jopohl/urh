@@ -35,8 +35,8 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
         dialog.setWindowTitle("Open Files")
         if name_filter == "full":
             name_filter = "All files (*);;Complex (*.complex);;" \
-                          "Complex16 unsigned (*.complex16u);;" \
-                          "Complex16 signed (*.complex16s);;" \
+                          "Complex16 unsigned (*.complex16u *.cu8);;" \
+                          "Complex16 signed (*.complex16s *.cs8);;" \
                           "Wave (*.wav);;" \
                           "Protocols (*.proto.xml *.proto);;" \
                           "Binary Protocols (*.bin);;" \

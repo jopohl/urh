@@ -46,7 +46,7 @@ cpdef tuple k_means(float[:] data, unsigned int k=2):
     return centers, clusters
 
 
-def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold, unsigned long max_message_samples=0):
+def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold):
     """
     Get the list of start, end indices of messages
 
@@ -97,9 +97,6 @@ def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold,
             state = 1
             start = i - conseq_above
             conseq_below = conseq_above = 0
-
-        if max_message_samples > 0 and summed_message_samples > max_message_samples:
-            return result
 
     # append last message
     if state == 1 and start < N - conseq_below:

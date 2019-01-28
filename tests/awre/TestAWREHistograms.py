@@ -55,7 +55,7 @@ class TestAWREHistograms(AWRETestCase):
 
         plt.subplot("221")
         plt.title("All messages")
-        format_finder = FormatFinder(pg.protocol)
+        format_finder = FormatFinder(pg.protocol.messages)
 
         for i, sync_end in enumerate(format_finder.sync_ends):
             self.assertEqual(sync_end, 24, msg=str(i))
@@ -112,7 +112,7 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol).items())):
+                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol.messages).items())):
             plt.subplot(2, 2, i + 3)
             plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
             Histogram(bitvectors).subplot_on(plt)
@@ -163,7 +163,7 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol).items())):
+                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol.messages).items())):
             plt.subplot(2, 2, i + 3)
             plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
             Histogram(bitvectors).subplot_on(plt)

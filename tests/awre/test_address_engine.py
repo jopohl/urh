@@ -41,7 +41,7 @@ class TestAddressEngine(AWRETestCase):
 
         self.save_protocol("address_one_participant", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
 
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         address_dict = address_engine.find_addresses()
@@ -73,7 +73,7 @@ class TestAddressEngine(AWRETestCase):
 
         self.save_protocol("address_two_participants", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
 
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         address_dict = address_engine.find_addresses()
@@ -130,7 +130,7 @@ class TestAddressEngine(AWRETestCase):
 
         self.save_protocol("address_two_participants_with_acks", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         address_dict = address_engine.find_addresses()
         self.assertEqual(len(address_dict), 2)
@@ -193,7 +193,7 @@ class TestAddressEngine(AWRETestCase):
 
         self.save_protocol("address_two_participants_with_acks_and_types", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
         address_engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         address_dict = address_engine.find_addresses()
         self.assertEqual(len(address_dict), 2)

@@ -31,7 +31,7 @@ class TestLengthEngine(AWRETestCase):
 
         self.save_protocol("simple_length", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
 
         length_engine = LengthEngine(ff.bitvectors)
         highscored_ranges = length_engine.find(n_gram_length=8)
@@ -78,7 +78,7 @@ class TestLengthEngine(AWRETestCase):
 
         self.save_protocol("easy_length", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
 
         length_engine = LengthEngine(ff.bitvectors)
         highscored_ranges = length_engine.find(n_gram_length=8)
@@ -121,7 +121,7 @@ class TestLengthEngine(AWRETestCase):
 
         self.save_protocol("medium_length", pg)
 
-        ff = FormatFinder(pg.protocol)
+        ff = FormatFinder(pg.protocol.messages)
 
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)

@@ -1,6 +1,5 @@
 import array
 import copy
-import sys
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
@@ -8,8 +7,7 @@ import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
-from urh.awre.FormatFinder import FormatFinder
-from urh.cythonext import signal_functions, util
+from urh.cythonext import signal_functions
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -224,7 +222,7 @@ class ProtocolAnalyzer(object):
         bit_len = signal.bit_len
 
         ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                signal.modulation_type, signal.bit_len)
+                                                 signal.modulation_type, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":
@@ -659,84 +657,6 @@ class ProtocolAnalyzer(object):
                     message.message_type = message_type
                     break
 
-    def auto_assign_participants(self, participants):
-        """
-
-        :type participants: list of Participant
-        :return:
-        """
-        if len(participants) == 0:
-            return
-
-        if len(participants) == 1:
-            for message in self.messages:
-                message.participant = participants[0]
-            return
-
-        # Try to assign participants based on SRC_ADDRESS label and participant address
-        for msg in filter(lambda m: m.participant is None, self.messages):
-            src_address = msg.get_src_address_from_data()
-            if src_address:
-                try:
-                    msg.participant = next(p for p in participants if p.address_hex == src_address)
-                except StopIteration:
-                    pass
-
-        # Assign remaining participants based on RSSI of messages
-        rssis = np.array([msg.rssi for msg in self.messages], dtype=np.float32)
-        min_rssi, max_rssi = util.minmax(rssis)
-        center_spacing = (max_rssi - min_rssi) / (len(participants) - 1)
-        centers = [min_rssi + i * center_spacing for i in range(0, len(participants))]
-        rssi_assigned_centers = []
-
-        for rssi in rssis:
-            center_index = np.argmin(np.abs(rssi - centers))
-            rssi_assigned_centers.append(int(center_index))
-
-        participants.sort(key=lambda participant: participant.relative_rssi)
-        for message, center_index in zip(self.messages, rssi_assigned_centers):
-            if message.participant is None:
-                message.participant = participants[center_index]
-
-    def auto_assign_participant_addresses(self, participants):
-        """
-
-        :type participants: list of Participant
-        :return:
-        """
-        participants_without_address = [p for p in participants if not p.address_hex]
-
-        if len(participants_without_address) == 0:
-            return
-
-        for msg in self.messages:
-            if msg.participant in participants_without_address:
-                src_address = msg.get_src_address_from_data()
-                if src_address:
-                    participants_without_address.remove(msg.participant)
-                    msg.participant.address_hex = src_address
-
-    def auto_assign_decodings(self, decodings):
-        """
-        :type decodings: list of Encoding
-        """
-        nrz_decodings = [decoding for decoding in decodings if decoding.is_nrz or decoding.is_nrzi]
-        fallback = nrz_decodings[0] if nrz_decodings else None
-        candidate_decodings = [decoding for decoding in decodings
-                               if decoding not in nrz_decodings and not decoding.contains_cut]
-
-        for message in self.messages:
-            decoder_found = False
-
-            for decoder in candidate_decodings:
-                if decoder.applies_for_message(message.plain_bits):
-                    message.decoder = decoder
-                    decoder_found = True
-                    break
-
-            if not decoder_found and fallback:
-                message.decoder = fallback
-
     def auto_assign_labels(self):
         from urh.awre.FormatFinder import FormatFinder
         format_finder = FormatFinder(self)
@@ -747,7 +667,9 @@ class ProtocolAnalyzer(object):
         for i, rng in enumerate(format_finder.message_types[0]):
             self.default_message_type.append(ProtocolLabel(name=rng.field_type,
                                                            start=rng.bit_start, end=rng.bit_end, color_index=i,
-                                                           field_type=FieldType.from_caption(rng.field_type)))
+                                                           field_type=FieldType.from_caption(rng.field_type)
+                                                           )
+                                             )
 
     @staticmethod
     def get_protocol_from_string(message_strings: list, is_hex=None, default_pause=0, sample_rate=1e6):

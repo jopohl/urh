@@ -11,6 +11,7 @@ from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
 
 from urh import constants
+from urh.awre import AutoAssigner
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
@@ -1011,7 +1012,7 @@ class CompareFrameController(QWidget):
 
         if self.assign_participants_action.isChecked():
             for protocol in self.protocol_list:
-                protocol.auto_assign_participants(self.protocol_model.participants)
+                AutoAssigner.auto_assign_participants(protocol.messages, self.protocol_model.participants)
             self.refresh_assigned_participants_ui()
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
@@ -1033,7 +1034,8 @@ class CompareFrameController(QWidget):
         self.ui.progressBarLogicAnalyzer.setValue(90)
 
         if self.assign_participant_address_action.isChecked():
-            self.proto_analyzer.auto_assign_participant_addresses(self.protocol_model.participants)
+            AutoAssigner.auto_assign_participant_addresses(self.proto_analyzer.messages,
+                                                           self.protocol_model.participants)
 
         self.ui.progressBarLogicAnalyzer.setValue(100)
         self.unsetCursor()

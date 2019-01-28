@@ -28,7 +28,7 @@ class TestAWRERealProtocols(AWRETestCase):
         preamble = CommonRange(field_type=FieldType.Function.PREAMBLE.value, start=3, length=8)
         sync = CommonRange(field_type=FieldType.Function.SYNC.value, start=11, length=4)
 
-        ff = FormatFinder(enocean_protocol, self.participants)
+        ff = FormatFinder(enocean_protocol.messages, self.participants)
         ff.perform_iteration()
 
         message_types = ff.message_types
@@ -57,7 +57,7 @@ class TestAWRERealProtocols(AWRETestCase):
         dst_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=88, length=24)
         src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=112, length=24)
 
-        ff = FormatFinder(protocol=protocol, participants=self.participants)
+        ff = FormatFinder(messages=protocol.messages, participants=self.participants)
         # a = next(e for e in ff.engines if isinstance(e, AddressEngine))
         # a.known_addresses_by_participant[0] = np.array([1, 11,  6,  0,  3,  3], dtype=np.uint8)
         ff.perform_iteration()
@@ -107,7 +107,7 @@ class TestAWRERealProtocols(AWRETestCase):
 
 
         participants = sorted({msg.participant for msg in protocol.messages})
-        ff = FormatFinder(protocol, participants=participants)
+        ff = FormatFinder(protocol.messages, participants=participants)
         ff.perform_iteration()
 
         self.assertGreater(len(ff.message_types), 0)

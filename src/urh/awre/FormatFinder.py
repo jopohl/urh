@@ -4,26 +4,29 @@ from collections import defaultdict, Counter
 
 import numpy as np
 
+from urh.awre import AutoAssigner
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.cythonext import awre_util
+from urh.signalprocessing.Message import Message
 
 
 class FormatFinder(object):
     MIN_MESSAGES_PER_CLUSTER = 2
 
-    def __init__(self, protocol, participants=None, shortest_field_length=None):
+    def __init__(self, messages, participants=None, shortest_field_length=None):
         """
 
-        :type protocol: urh.signalprocessing.ProtocolAnalyzer.ProtocolAnalyzer
+        :type messages: list of Message
         :param participants:
         """
         if participants is not None:
-            protocol.auto_assign_participants(participants)
-        self.preamble_starts, self.preamble_lengths, sync_len = Preprocessor(protocol.messages).preprocess()
+            AutoAssigner.auto_assign_participants(messages, participants)
+
+        self.preamble_starts, self.preamble_lengths, sync_len = Preprocessor(messages).preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
 
         if shortest_field_length is None:
@@ -32,17 +35,18 @@ class FormatFinder(object):
         n = self.shortest_field_length
         for i, value in enumerate(self.sync_ends):
             # In doubt it is better to under estimate the sync end
-            self.sync_ends[i] = n * max(int(math.floor((value - self.preamble_starts[i]) / n)), 1) + self.preamble_starts[i]
+            self.sync_ends[i] = n * max(int(math.floor((value - self.preamble_starts[i]) / n)), 1) + \
+                                self.preamble_starts[i]
 
             if self.sync_ends[i] - self.preamble_starts[i] < self.preamble_lengths[i]:
                 self.preamble_lengths[i] = self.sync_ends[i] - self.preamble_starts[i]
 
-        self.messages = protocol.messages
-        self.bitvectors = self.get_bitvectors_from_messages(protocol.messages, self.sync_ends)
+        self.messages = messages  # type: list[Message]
+        self.bitvectors = self.get_bitvectors_from_messages(messages, self.sync_ends)
         self.hexvectors = self.get_hexvectors(self.bitvectors)
         self.xor_matrix = self.build_xor_matrix()
-        participants = list(sorted(set(msg.participant for msg in protocol.messages)))
-        self.participant_indices = [participants.index(msg.participant) for msg in protocol.messages]
+        participants = list(sorted(set(msg.participant for msg in messages)))
+        self.participant_indices = [participants.index(msg.participant) for msg in messages]
 
         self.engines = [
             LengthEngine(self.bitvectors),
@@ -120,7 +124,7 @@ class FormatFinder(object):
         for bitvector in bitvectors:
             hexvector = np.empty(int(math.ceil(len(bitvector) / 4)), dtype=np.uint8)
             for i in range(0, len(hexvector)):
-                bits = bitvector[4*i:4*(i+1)]
+                bits = bitvector[4 * i:4 * (i + 1)]
                 hexvector[i] = int("".join(map(str, bits)), 2)
             result.append(hexvector)
 
@@ -134,14 +138,14 @@ class FormatFinder(object):
         return [np.array(msg.decoded_bits[sync_ends[i]:], dtype=np.int8) for i, msg in enumerate(messages)]
 
     @staticmethod
-    def get_bitvectors_by_participant(protocol) -> dict:
+    def get_bitvectors_by_participant(messages: list) -> dict:
         result = defaultdict(list)
-        for msg in protocol.messages:
+        for msg in messages:  # type: Message
             result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.int8))
         return result
 
     @staticmethod
-    def create_message_types(label_set: set, num_messages: int=None):
+    def create_message_types(label_set: set, num_messages: int = None):
         """
 
         :param label_set:
@@ -157,7 +161,7 @@ class FormatFinder(object):
         result = []
         for i in message_indices:
             labels = sorted(set(rng for rng in label_set if i in rng.message_indices
-                         and not isinstance(rng, EmptyCommonRange)))
+                                and not isinstance(rng, EmptyCommonRange)))
 
             container = next((container for container in result if container.has_same_ranges(labels)), None)
             if container is None:
@@ -226,7 +230,7 @@ class FormatFinder(object):
             possible_solutions = []
             for i, rng in enumerate(partition):
                 # Append every range to this solution that does not overlap with current rng
-                solution = [rng] + [r for r in partition[i+1:] if not rng.overlaps_with(r)]
+                solution = [rng] + [r for r in partition[i + 1:] if not rng.overlaps_with(r)]
                 possible_solutions.append(solution)
 
             best_solution = max(possible_solutions, key=lambda sol: sum(r.score for r in sol))

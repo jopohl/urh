@@ -659,7 +659,7 @@ class ProtocolAnalyzer(object):
 
     def auto_assign_labels(self):
         from urh.awre.FormatFinder import FormatFinder
-        format_finder = FormatFinder(self)
+        format_finder = FormatFinder(self.messages)
         format_finder.perform_iteration()
 
         # TODO: Consider present labels and do not clear default message type

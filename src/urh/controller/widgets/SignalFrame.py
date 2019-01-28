@@ -4,9 +4,9 @@ from multiprocessing import Process, Array
 
 import numpy as np
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
-from PyQt5.QtGui import QFontDatabase, QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
+from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication
+from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
 
 from urh import constants
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
@@ -104,6 +104,15 @@ class SignalFrame(QFrame):
             self.configure_filter_action.setIcon(QIcon.fromTheme("configure"))
             self.configure_filter_action.triggered.connect(self.on_configure_filter_action_triggered)
             self.ui.btnFilter.setMenu(self.filter_menu)
+
+            self.auto_detect_menu = QMenu()
+            self.detect_noise_action = self.auto_detect_menu.addAction(self.tr("Additionally detect noise"))
+            self.detect_noise_action.setCheckable(True)
+            self.detect_noise_action.setChecked(False)
+            self.detect_modulation_action = self.auto_detect_menu.addAction(self.tr("Additionally detect modulation"))
+            self.detect_modulation_action.setCheckable(True)
+            self.detect_modulation_action.setChecked(False)
+            self.ui.btnAutoDetect.setMenu(self.auto_detect_menu)
 
             if self.signal.wav_mode:
                 self.ui.lSignalTyp.setText("Signal (*.wav)")
@@ -237,13 +246,11 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.blockSignals(block)
         self.ui.spinBoxInfoLen.blockSignals(block)
         self.ui.spinBoxNoiseTreshold.blockSignals(block)
-        self.ui.btnAutoDetect.blockSignals(block)
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
-        self.ui.btnAutoDetect.setChecked(self.signal.auto_detect_on_modulation_changed)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
@@ -251,7 +258,6 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.blockSignals(False)
         self.ui.spinBoxInfoLen.blockSignals(False)
         self.ui.spinBoxNoiseTreshold.blockSignals(False)
-        self.ui.btnAutoDetect.blockSignals(False)
 
     def set_empty_frame_visibilities(self):
         for widget in dir(self.ui):
@@ -273,12 +279,19 @@ class SignalFrame(QFrame):
             self.__set_duration()
 
         try:
-            sel_messages = self.ui.gvSignal.selected_messages
-        except AttributeError:
-            sel_messages = []
-        if len(sel_messages) == 1:
-            self.ui.labelRSSI.setText("RSSI: {}".format(Formatter.big_value_with_suffix(sel_messages[0].rssi)))
-        else:
+            start, end = int(self.ui.gvSignal.selection_area.start), int(self.ui.gvSignal.selection_area.end)
+            power_str = "-\u221e"  # minus infinity
+            if start < end:
+                max_window_size = 10 ** 5
+                step_size = int(math.ceil((end - start) / max_window_size))
+                power = np.mean(np.abs(self.signal.data[start:end:step_size]))
+                if power > 0:
+                    power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
+
+            self.ui.labelRSSI.setText("{} dBm".format(power_str))
+
+        except Exception as e:
+            logger.exception(e)
             self.ui.labelRSSI.setText("")
 
     def change_signal_name(self):
@@ -711,10 +724,12 @@ class SignalFrame(QFrame):
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSpectrogram)
             self.draw_spectrogram(show_full_scene=True)
             self.__set_selected_bandwidth()
+            self.ui.labelRSSI.hide()
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
+            self.ui.labelRSSI.show()
 
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
@@ -725,6 +740,7 @@ class SignalFrame(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
+            qApp.processEvents()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
             self.__set_samples_in_view()
             self.__set_duration()
@@ -733,9 +749,15 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
-        self.signal.auto_detect_on_modulation_changed = bool(self.ui.btnAutoDetect.isChecked())
-        if self.ui.btnAutoDetect.isChecked():
-            self.signal.auto_detect()
+        self.ui.btnAutoDetect.setEnabled(False)
+        self.setCursor(Qt.WaitCursor)
+        success = self.signal.auto_detect(detect_modulation=self.detect_modulation_action.isChecked(),
+                                          detect_noise=self.detect_noise_action.isChecked())
+        self.ui.btnAutoDetect.setEnabled(True)
+        self.unsetCursor()
+        if not success:
+            Errors.generic_error(self.tr("Autodetection failed"),
+                                 self.tr("Failed to autodetect parameters for this signal."))
 
     @pyqtSlot()
     def on_btn_replay_clicked(self):
@@ -974,6 +996,7 @@ class SignalFrame(QFrame):
         self.update_number_selected_samples()
 
         self.set_qad_tooltip(self.signal.noise_threshold)
+        self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):
@@ -992,7 +1015,6 @@ class SignalFrame(QFrame):
                                                  parameter_name="noise_threshold",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
-            self.disable_auto_detection()
 
     def set_qad_tooltip(self, noise_threshold):
         self.ui.cbSignalView.setToolTip(
@@ -1018,23 +1040,13 @@ class SignalFrame(QFrame):
             self.unsetCursor()
         elif action == auto_detect_action:
             self.setCursor(Qt.WaitCursor)
-            self.signal.auto_detect()
+            self.signal.auto_detect(detect_modulation=False, detect_noise=False)
             self.unsetCursor()
 
     def show_modulation_type(self):
         self.ui.cbModulationType.blockSignals(True)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.cbModulationType.blockSignals(False)
-
-    def disable_auto_detection(self):
-        """
-        Disable auto detection when user manually edited a value
-
-        :return:
-        """
-        if self.signal.auto_detect_on_modulation_changed:
-            self.signal.auto_detect_on_modulation_changed = False
-            self.ui.btnAutoDetect.setChecked(False)
 
     def on_participant_changed(self):
         if hasattr(self, "proto_analyzer") and self.proto_analyzer:
@@ -1063,17 +1075,35 @@ class SignalFrame(QFrame):
 
             self.undo_stack.push(modulation_action)
 
+            if self.ui.cbSignalView.currentIndex() == 1:
+                self.scene_manager.init_scene()
+                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
+                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
+                self.ui.gvLegend.refresh()
+                self.on_slider_y_scale_value_changed()
+
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
-        font = self.ui.lineEditSignalName.font()  # type: QFont
+        font = self.ui.lineEditSignalName.font()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = True
+
         if self.signal.changed:
             font.setBold(True)
             self.ui.btnSaveSignal.show()
         else:
             font.setBold(False)
             self.ui.btnSaveSignal.hide()
+            for i in range(self.undo_stack.count()):
+                cmd = self.undo_stack.command(i)
+                if isinstance(cmd, EditSignalAction):
+                    # https://github.com/jopohl/urh/issues/570
+                    cmd.signal_was_changed = True
+
+        qApp.processEvents()
+        self.ui.gvSignal.auto_fit_on_resize_is_blocked = False
+
         self.ui.lineEditSignalName.setFont(font)
 
     @pyqtSlot()
@@ -1108,7 +1138,6 @@ class SignalFrame(QFrame):
                                                      parameter_value=self.ui.spinBoxTolerance.value())
             self.undo_stack.push(tolerance_action)
             self.ui.spinBoxTolerance.blockSignals(False)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def on_spinbox_infolen_editing_finished(self):
@@ -1119,7 +1148,6 @@ class SignalFrame(QFrame):
                                                   parameter_value=self.ui.spinBoxInfoLen.value())
             self.undo_stack.push(bitlen_action)
             self.ui.spinBoxInfoLen.blockSignals(False)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def on_spinbox_center_editing_finished(self):
@@ -1129,7 +1157,6 @@ class SignalFrame(QFrame):
                                                   parameter_name="qad_center",
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
-            self.disable_auto_detection()
 
     @pyqtSlot()
     def refresh(self, draw_full_signal=False):
@@ -1150,7 +1177,7 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_configure_filter_action_triggered(self):
-        self.filter_dialog.set_dsp_filter(self.dsp_filter)
+        self.filter_dialog.set_dsp_filter_status(self.dsp_filter.filter_type)
         self.filter_dialog.exec()
 
     @pyqtSlot(Filter)
@@ -1229,7 +1256,8 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_btn_advanced_modulation_settings_clicked(self):
-        dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor, parent=self)
+        dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor,
+                                                 parent=self)
         dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()

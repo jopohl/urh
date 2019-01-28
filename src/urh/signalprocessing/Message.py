@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 import time
 
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -20,7 +21,8 @@ class Message(object):
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state", "timestamp",
-                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos"]
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos",
+                 "alignment_offset"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
                  fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
@@ -50,6 +52,8 @@ class Message(object):
 
         self.align_labels = True
         self.fuzz_created = fuzz_created
+
+        self.alignment_offset = 0
 
         self.__decoded_bits = None
         self.__encoded_bits = None
@@ -299,7 +303,7 @@ class Message(object):
             if self.__get_hex_ascii_index_from_bit_index(i, to_hex=is_hex)[0] == from_index:
                 return i, i + factor - 1
 
-        return len(bits), len(bits)
+        return factor * from_index, factor * (from_index+1) - 1
 
     def __get_hex_ascii_index_from_bit_index(self, bit_index: int, to_hex: bool) -> tuple:
         factor = 4 if to_hex else 8
@@ -352,6 +356,27 @@ class Message(object):
             raise ValueError("Not enough bit samples for calculating duration")
 
         return (self.bit_sample_pos[-1] - self.bit_sample_pos[0]) / sample_rate
+
+    def get_src_address_from_data(self, decoded=True):
+        """
+        Return the SRC address of a message if SRC_ADDRESS label is present in message type of the message
+        Return None otherwise
+
+        :param decoded:
+        :return:
+        """
+        src_address_label = next((lbl for lbl in self.message_type if lbl.field_type
+                                  and lbl.field_type.function == FieldType.Function.SRC_ADDRESS), None)
+        if src_address_label:
+            start, end = self.get_label_range(src_address_label, view=1, decode=decoded)
+            if decoded:
+                src_address = self.decoded_hex_str[start:end]
+            else:
+                src_address = self.plain_hex_str[start:end]
+        else:
+            src_address = None
+
+        return src_address
 
     @staticmethod
     def __bit_chains_to_hex(bit_chains) -> array.array:
@@ -502,7 +527,8 @@ class Message(object):
         result.from_xml(tag, participants, decoders=decoders, message_types=message_types)
         return result
 
-    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool):
-        start = self.convert_index(index=lbl.start, from_view=0, to_view=view, decoded=decode)[0]
-        end = self.convert_index(index=lbl.end, from_view=0, to_view=view, decoded=decode)[1]
+    def get_label_range(self, lbl: ProtocolLabel, view: int, decode: bool, consider_alignment=False):
+        a = self.alignment_offset if consider_alignment else 0
+        start = self.convert_index(index=lbl.start+a, from_view=0, to_view=view, decoded=decode)[0]
+        end = self.convert_index(index=lbl.end+a, from_view=0, to_view=view, decoded=decode)[1]
         return int(start), int(end)

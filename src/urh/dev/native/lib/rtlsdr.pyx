@@ -1,6 +1,4 @@
-# cython wrapper for RTL-SDR (https://github.com/pinkavaj/rtl-sdr)
-
-cimport crtlsdr
+cimport urh.dev.native.lib.crtlsdr as crtlsdr
 from libc.stdlib cimport malloc, free
 
 ctypedef unsigned char uint8_t
@@ -16,11 +14,22 @@ cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
     (<object>f)(buffer[0:length])
 
 
-cpdef bandwidth_is_adjustable():
-    if crtlsdr.RTLSDR_HAS_BANDWIDTH:
+IF RTLSDR_BANDWIDTH_SUPPORT == 1:
+    cpdef bandwidth_is_adjustable():
         return True
-    else:
+    cpdef int set_tuner_bandwidth(uint32_t bw):
+        """
+        Set the bandwidth for the device.
+    
+        :param bw: bandwidth in Hz. Zero means automatic BW selection.
+        :return 0 on success
+        """
+        return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
+ELSE:
+    cpdef bandwidth_is_adjustable():
         return False
+    cpdef int set_tuner_bandwidth(uint32_t bw):
+        return -100
 
 cpdef uint32_t get_device_count():
     return crtlsdr.rtlsdr_get_device_count()
@@ -169,7 +178,10 @@ cpdef list get_tuner_gains():
     cdef int*gains = <int *> malloc(num_gains * sizeof(int))
     crtlsdr.rtlsdr_get_tuner_gains(_c_device, gains)
 
-    return [gains[i] for i in range(num_gains)]
+    try:
+        return [gains[i] for i in range(num_gains)]
+    finally:
+        free(gains)
 
 cpdef int set_tuner_gain(int gain):
     """
@@ -214,18 +226,6 @@ cpdef int set_tuner_gain_mode(int manual):
     :return: 0 on success
     """
     return crtlsdr.rtlsdr_set_tuner_gain_mode(_c_device, manual)
-
-cpdef int set_tuner_bandwidth(uint32_t bw):
-    """
-    Set the bandwidth for the device.
-
-    :param bw: bandwidth in Hz. Zero means automatic BW selection.
-    :return 0 on success
-    """
-    if not crtlsdr.RTLSDR_HAS_BANDWIDTH:
-        return -100
-
-    return crtlsdr.rtlsdr_set_tuner_bandwidth(_c_device, bw)
 
 cpdef int set_sample_rate(uint32_t sample_rate):
     """

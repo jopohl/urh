@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtWidgets import QDialog
 
 from urh.signalprocessing.Filter import Filter, FilterType
@@ -12,22 +12,32 @@ class FilterDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_FilterDialog()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         self.error_message = ""
 
-        self.set_dsp_filter(dsp_filter)
+        self.set_dsp_filter_status(dsp_filter.filter_type)
         self.create_connects()
 
-    def set_dsp_filter(self, dsp_filter: Filter):
-        if dsp_filter.filter_type == FilterType.moving_average:
+    def set_dsp_filter_status(self, dsp_filter_type: FilterType):
+        if dsp_filter_type == FilterType.moving_average:
             self.ui.radioButtonMovingAverage.setChecked(True)
             self.ui.lineEditCustomTaps.setEnabled(False)
+            self.ui.spinBoxNumTaps.setEnabled(True)
+        elif dsp_filter_type == FilterType.dc_correction:
+            self.ui.radioButtonDCcorrection.setChecked(True)
+            self.ui.lineEditCustomTaps.setEnabled(False)
+            self.ui.spinBoxNumTaps.setEnabled(False)
         else:
             self.ui.radioButtonCustomTaps.setChecked(True)
+            self.ui.spinBoxNumTaps.setEnabled(True)
+            self.ui.lineEditCustomTaps.setEnabled(True)
 
     def create_connects(self):
         self.ui.radioButtonMovingAverage.clicked.connect(self.on_radio_button_moving_average_clicked)
         self.ui.radioButtonCustomTaps.clicked.connect(self.on_radio_button_custom_taps_clicked)
+        self.ui.radioButtonDCcorrection.clicked.connect(self.on_radio_button_dc_correction_clicked)
+
         self.ui.spinBoxNumTaps.valueChanged.connect(self.set_error_status)
         self.ui.lineEditCustomTaps.textEdited.connect(self.set_error_status)
         self.ui.buttonBox.accepted.connect(self.on_accept_clicked)
@@ -37,6 +47,8 @@ class FilterDialog(QDialog):
         if self.ui.radioButtonMovingAverage.isChecked():
             n = self.ui.spinBoxNumTaps.value()
             return Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
+        elif self.ui.radioButtonDCcorrection.isChecked():
+            return Filter([], filter_type=FilterType.dc_correction)
         else:
             # custom filter
             try:
@@ -67,13 +79,19 @@ class FilterDialog(QDialog):
 
     @pyqtSlot(bool)
     def on_radio_button_moving_average_clicked(self, checked: bool):
-        self.ui.lineEditCustomTaps.setDisabled(checked)
+        if checked:
+            self.set_dsp_filter_status(FilterType.moving_average)
 
     @pyqtSlot(bool)
     def on_radio_button_custom_taps_clicked(self, checked: bool):
-        self.ui.lineEditCustomTaps.setEnabled(checked)
         if checked:
+            self.set_dsp_filter_status(FilterType.custom)
             self.set_error_status()
+
+    @pyqtSlot(bool)
+    def on_radio_button_dc_correction_clicked(self, checked: bool):
+        if checked:
+            self.set_dsp_filter_status(FilterType.dc_correction)
 
     @pyqtSlot()
     def on_accept_clicked(self):

@@ -28,13 +28,13 @@ class TestFileOperator(QtTestCase):
 
         with tarfile.open("test.tar.gz", "w:gz") as tar:
             for name in ["1.complex", "2.complex", "3.complex"]:
-                data = np.ndarray(10, dtype=np.complex64)
+                data = np.ones(10, dtype=np.complex64)
                 data.tofile(name)
                 tar.add(name)
 
         with ZipFile('test.zip', 'w') as zip:
             for name in ["4.complex", "5.complex"]:
-                data = np.ndarray(10, dtype=np.complex64)
+                data = np.ones(20, dtype=np.complex64)
                 data.tofile(name)
                 zip.write(name)
 

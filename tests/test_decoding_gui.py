@@ -13,7 +13,7 @@ from urh.signalprocessing.Encoding import Encoding
 class TestDecodingGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
 
         # add empty signal
         path = os.path.join(tempfile.gettempdir(), "empty.complex")
@@ -126,6 +126,7 @@ class TestDecodingGUI(QtTestCase):
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)
 
         timer = QTimer(self.dialog)
+        timer.setSingleShot(True)
         timer.timeout.connect(set_save_name)
         timer.start(10)
         self.dialog.ui.saveas.click()

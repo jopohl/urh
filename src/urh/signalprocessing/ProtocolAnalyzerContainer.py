@@ -57,12 +57,13 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
 
-    def duplicate_line(self, row: int):
-        try:
-            self.messages.insert(row + 1, copy.deepcopy(self.messages[row]))
-            self.qt_signals.line_duplicated.emit()
-        except Exception as e:
-            logger.error("Duplicating line ", str(e))
+    def duplicate_lines(self, rows: list):
+        for row in reversed(rows):
+            try:
+                self.messages.insert(max(rows) + 1, copy.deepcopy(self.messages[row]))
+            except Exception as e:
+                logger.error("Duplicating line ", str(e))
+        self.qt_signals.line_duplicated.emit()
 
     def fuzz(self, mode: FuzzMode, default_pause=None):
         result = []

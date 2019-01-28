@@ -1,5 +1,5 @@
 import numpy as np
-from climesdr cimport *
+from urh.dev.native.lib.climesdr cimport *
 from libc.stdlib cimport malloc, free
 # noinspection PyUnresolvedReferences
 from cython.view cimport array as cvarray  # needed for converting of malloc array to python array

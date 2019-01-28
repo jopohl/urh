@@ -20,8 +20,7 @@ class TestProtocolLabelDialog(QtTestCase):
         self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False)  # equals 40-55 in view
 
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), 2)
-        self.dialog = ProtocolLabelDialog(preselected_index=1,
-                                          message=self.cframe.proto_analyzer.messages[0],
+        self.dialog = ProtocolLabelDialog(message=self.cframe.proto_analyzer.messages[0],
                                           viewtype=0, parent=self.cframe)
 
         if self.SHOW:

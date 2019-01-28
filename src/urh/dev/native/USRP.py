@@ -88,10 +88,7 @@ class USRP(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
-                            # Set Antenna needs to be called before other stuff!!!
-                            (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
-                            (self.Command.SET_FREQUENCY.name, self.frequency),
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain * 0.01),

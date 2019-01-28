@@ -1,5 +1,7 @@
 import array
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+
+from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt5.QtGui import QFont
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -10,7 +12,12 @@ from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    header_labels = ["Name", 'Display format', 'Order [Bit/Byte]', 'Value']
+    protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
+    protocol_label_name_edited = pyqtSignal()
+    label_removed = pyqtSignal(ProtocolLabel)
+    label_color_changed = pyqtSignal(ProtocolLabel)
+
+    header_labels = ["Name", "Color ", "Display format", "Order [Bit/Byte]", "Value"]
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, controller, parent=None):
         super().__init__(parent)
@@ -18,8 +25,14 @@ class LabelValueTableModel(QAbstractTableModel):
         self.controller = controller
         self.__message_index = 0
         self.display_labels = controller.active_message_type  # type: MessageType
+        self.selected_label_indices = set()
+
+        self.show_label_values = True
 
     def __display_data(self, lbl: ProtocolLabel, expected_checksum: array = None):
+        if not self.show_label_values or self.message is None:
+            return "-"
+
         try:
             data = self.message.decoded_bits[lbl.start:lbl.end]
         except IndexError:
@@ -85,10 +98,7 @@ class LabelValueTableModel(QAbstractTableModel):
         except IndexError:
             return None
 
-        if not lbl or not self.message:
-            return None
-
-        if isinstance(lbl, ChecksumLabel):
+        if isinstance(lbl, ChecksumLabel) and self.message is not None:
             calculated_crc = lbl.calculate_checksum_for_message(self.message, use_decoded_bits=True)
         else:
             calculated_crc = None
@@ -97,14 +107,17 @@ class LabelValueTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
+                return lbl.color_index
             elif j == 2:
-                return lbl.display_order_str
+                return lbl.DISPLAY_FORMATS[lbl.display_format_index]
             elif j == 3:
+                return lbl.display_order_str
+            elif j == 4:
                 return self.__display_data(lbl, calculated_crc)
-
+        elif role == Qt.CheckStateRole and j == 0:
+            return lbl.show
         elif role == Qt.BackgroundColorRole:
-            if isinstance(lbl, ChecksumLabel):
+            if isinstance(lbl, ChecksumLabel) and j == 4 and self.message is not None:
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
                     return constants.BG_COLOR_CORRECT
@@ -115,7 +128,7 @@ class LabelValueTableModel(QAbstractTableModel):
                 return None
 
         elif role == Qt.ToolTipRole:
-            if j == 1:
+            if j == 2:
                 return self.tr("Choose display type for the value of the label:"
                                "<ul>"
                                "<li>Bit</li>"
@@ -124,29 +137,64 @@ class LabelValueTableModel(QAbstractTableModel):
                                "<li>Decimal Number</li>"
                                "<li>Binary Coded Decimal (BCD)</li>"
                                "</ul>")
-            if j == 2:
+            if j == 3:
                 return self.tr("Choose bit order for the displayed value:"
                                "<ul>"
                                "<li>Most Significant Bit (MSB) [Default]</li>"
                                "<li>Least Significant Bit (LSB)</li>"
                                "<li>Least Significant Digit (LSD)</li>"
                                "</ul>")
+        elif role == Qt.FontRole and j == 0:
+            font = QFont()
+            font.setBold(i in self.selected_label_indices)
+            return font
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole:
-            row = index.row()
-            lbl = self.display_labels[row]
-            if index.column() == 1 or index.column() == 2:
-                if index.column() == 1:
-                    lbl.display_format_index = value
-                elif index.column() == 2:
-                    lbl.display_order_str = value
-                self.dataChanged.emit(self.index(row, 0),
-                                      self.index(row, self.columnCount()))
+        row = index.row()
+        lbl = self.display_labels[row]
+        if role == Qt.EditRole and index.column() in (0, 1, 2, 3):
+            if index.column() == 0:
+                lbl.name = value
+                new_field_type = self.controller.field_types_by_caption.get(value, None)
+                self.controller.active_message_type.change_field_type_of_label(lbl, new_field_type)
+            elif index.column() == 1:
+                lbl.color_index = value
+                self.label_color_changed.emit(lbl)
+            elif index.column() == 2:
+                lbl.display_format_index = value
+            elif index.column() == 3:
+                lbl.display_order_str = value
+
+            self.dataChanged.emit(self.index(row, 0),
+                                  self.index(row, self.columnCount()))
+        elif role == Qt.CheckStateRole and index.column() == 0:
+            lbl.show = value
+            self.protolabel_visibility_changed.emit(lbl)
+            return True
+
+    def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
+        for lbl in self.display_labels[start:end + 1]:
+            if lbl not in self.controller.proto_analyzer.message_types[message_type_id]:
+                self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
+        self.controller.updateUI(resize_table=False)
+
+    def delete_label_at(self, index: int):
+        try:
+            lbl = self.display_labels[index]
+            self.display_labels.remove(lbl)
+            self.label_removed.emit(lbl)
+        except IndexError:
+            pass
+
+    def delete_labels_at(self, start: int, end: int):
+        for row in range(end, start - 1, -1):
+            self.delete_label_at(row)
 
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
-        if index.column() == 1 or index.column() == 2:
+        if index.column() in (0, 1, 2, 3):
             flags |= Qt.ItemIsEditable
+        if index.column() == 0:
+            flags |= Qt.ItemIsUserCheckable
 
         return flags

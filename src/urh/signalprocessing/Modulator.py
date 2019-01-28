@@ -1,16 +1,15 @@
+import array
 import locale
 import xml.etree.ElementTree as ET
 
 import numpy as np
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
-from urh.cythonext import path_creator, signalFunctions
+from urh.cythonext import path_creator, signal_functions
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
-import array
 
 
 class Modulator(object):
@@ -124,23 +123,23 @@ class Modulator(object):
 
     @property
     def data_scene(self) -> QGraphicsScene:
-        ones = np.ones(self.samples_per_bit, dtype=np.float32) * 1
-        zeros = np.ones(self.samples_per_bit, dtype=np.float32) * -1
         n = self.samples_per_bit * len(self.display_bits)
-        y = []
-        for bit in self.display_bits:
+        y = np.ones(n, dtype=np.float32)
+
+        for i, bit in enumerate(self.display_bits):
             if bit == "0":
-                y.extend(zeros)
-            elif bit == "1":
-                y.extend(ones)
+                y[i*self.samples_per_bit:(i+1)*self.samples_per_bit] = -1.0
+
         x = np.arange(0, n).astype(np.int64)
+
         scene = ZoomableScene()
-        scene.setSceneRect(0, -1, n, 2)
+        scene.setSceneRect(0, -1.25, n, 2.5)
         scene.setBackgroundBrush(constants.BGCOLOR)
-        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, Qt.FlatCap))
-        y = np.array(y) if len(y) > 0 else np.array(y).astype(np.float32)
+        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
+
         path = path_creator.array_to_QPath(x, y)
-        scene.addPath(path, QPen(constants.LINECOLOR, Qt.FlatCap))
+        scene.addPath(path, QPen(constants.LINECOLOR, 0))
+
         return scene
 
     def modulate(self, data=None, pause=0, start=0):
@@ -164,26 +163,26 @@ class Modulator(object):
         result = np.zeros(0, dtype=np.complex64)
 
         if mod_type == "FSK":
-            result = signalFunctions.modulate_fsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_fsk(data, pause, start, self.carrier_amplitude,
                                                   self.param_for_zero, self.param_for_one,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "ASK":
             a0 = self.carrier_amplitude * (self.param_for_zero / 100)
             a1 = self.carrier_amplitude * (self.param_for_one / 100)
-            result = signalFunctions.modulate_ask(data, pause, start, a0, a1,
+            result = signal_functions.modulate_ask(data, pause, start, a0, a1,
                                                   self.carrier_freq_hz,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "PSK":
             phi0 = self.param_for_zero * (np.pi / 180)
             phi1 = self.param_for_one * (np.pi / 180)
-            result = signalFunctions.modulate_psk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_psk(data, pause, start, self.carrier_amplitude,
                                                   self.carrier_freq_hz,
                                                   phi0, phi1, self.sample_rate,
                                                   self.samples_per_bit)
         elif mod_type == "GFSK":
-            result = signalFunctions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
                                                    self.param_for_zero, self.param_for_one,
                                                    self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                    self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)

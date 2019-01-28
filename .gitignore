@@ -3,6 +3,8 @@
 
 .coverage
 
+.pytest_cache
+
 # Pycharm
 .idea/
 
@@ -35,6 +37,15 @@ src/urh.egg-info/
 .cache/
 tests/data/URHProject.xml
 src/urh/cythonext/*.html
+src/urh/cythonext/*.c
+src/urh/cythonext/*.cpp
+
+src/urh/dev/native/lib/*.html
+src/urh/dev/native/lib/*.c
+src/urh/dev/native/lib/*.cpp
+
 /tests/show_gui
+
+
 
 misc/*

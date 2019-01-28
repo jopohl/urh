@@ -1,10 +1,9 @@
-from subprocess import call, DEVNULL
-
-from urh import constants
 import os
 import sys
 from enum import Enum
+from subprocess import call, DEVNULL
 
+from urh import constants
 from urh.util.Logger import logger
 
 
@@ -84,12 +83,20 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "Bladerf", "FUNcube", "HackRF",
-                    "LimeSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF",
+                    "LimeSDR", "PlutoSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
 
     def __init__(self):
 
-        self.python2_exe = constants.SETTINGS.value('python2_exe', self.__get_python2_interpreter())
+        python2_exe = constants.SETTINGS.value('python2_exe', '')
+        if not python2_exe:
+            self.__python2_exe = self.__get_python2_interpreter()
+            constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
+        else:
+            self.__python2_exe = python2_exe
+
+        constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
+
         self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
         self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
 
@@ -110,9 +117,35 @@ class BackendHandler(object):
         self.get_backends()
 
     @property
+    def python2_exe(self):
+        return self.__python2_exe
+
+    @python2_exe.setter
+    def python2_exe(self, value):
+        if value != self.__python2_exe:
+            self.__python2_exe = value
+            constants.SETTINGS.setValue("python2_exe", value)
+
+    @property
     def num_native_backends(self):
         return len([dev for dev, backend_container in self.device_backends.items()
                     if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
+
+    @property
+    def __plutosdr_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import plutosdr
+            return True
+        except ImportError:
+            return False
+
+    @property
+    def __bladerf_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import bladerf
+            return True
+        except ImportError:
+            return False
 
     @property
     def __hackrf_native_enabled(self) -> bool:
@@ -200,7 +233,7 @@ class BackendHandler(object):
                     self.gnuradio_is_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
                                                       shell=True, stderr=DEVNULL) == 0
                 except OSError as e:
-                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: "+str(e))
+                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: " + str(e))
                     self.gnuradio_is_installed = True
             else:
                 self.gnuradio_is_installed = False
@@ -229,10 +262,20 @@ class BackendHandler(object):
         if self.gnuradio_is_installed and (supports_rx or supports_tx):
             backends.add(Backends.grc)
 
+        if devname.lower() == "plutosdr" and self.__plutosdr_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
+        if devname.lower() == "bladerf" and self.__bladerf_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
         if devname.lower() == "hackrf" and self.__hackrf_native_enabled:
+            supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 
         if devname.lower() == "usrp" and self.__usrp_native_enabled:
+            supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 
         if devname.lower() == "limesdr" and self.__lime_native_enabled:
@@ -244,6 +287,7 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
+            supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
         if devname.lower().replace("-", "") == "rtltcp":
@@ -266,6 +310,14 @@ class BackendHandler(object):
             ab, rx_suprt, tx_suprt = self.__avail_backends_for_device(device_name)
             container = BackendContainer(device_name.lower(), ab, rx_suprt, tx_suprt)
             self.device_backends[device_name.lower()] = container
+
+    def get_key_from_device_display_text(self, displayed_device_name):
+        displayed_device_name = displayed_device_name.lower()
+        for key in self.DEVICE_NAMES:
+            key = key.lower()
+            if displayed_device_name.startswith(key):
+                return key
+        return None
 
     @staticmethod
     def perform_soundcard_health_check():

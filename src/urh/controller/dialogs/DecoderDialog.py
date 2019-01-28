@@ -27,6 +27,7 @@ class DecoderDialog(QDialog):
         self.ui = Ui_Decoder()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
 
         # Variables
         self.old_inpt_txt = ""
@@ -149,23 +150,16 @@ class DecoderDialog(QDialog):
 
     def save_to_file(self):
         if self.project_manager.project_file:
-            prefix = os.path.realpath(os.path.dirname(
-                self.project_manager.project_file))
+            self.project_manager.decodings = self.decodings
         else:
             prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
-
-        f = open(os.path.join(prefix, constants.DECODINGS_FILE), "w")
-        if not f:
-            return
-
-        for i in range(0, self.ui.combobox_decodings.count()):
-            str = ""
-            for j in self.decodings[i].get_chain():
-                str += repr(j) + ", "
-            str += "\n"
-            f.write(str)
-
-        f.close()
+            with open(os.path.join(prefix, constants.DECODINGS_FILE), "w") as f:
+                for i in range(0, self.ui.combobox_decodings.count()):
+                    str = ""
+                    for j in self.decodings[i].get_chain():
+                        str += repr(j) + ", "
+                    str += "\n"
+                    f.write(str)
 
     def saveas(self):
         # Ask for a name

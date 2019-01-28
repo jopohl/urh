@@ -1,6 +1,3 @@
-cdef extern from "config.h":
-    cdef bint RTLSDR_HAS_BANDWIDTH
-
 cdef extern from "rtl-sdr.h":
     ctypedef struct rtlsdr_dev_t:
         pass
@@ -33,7 +30,8 @@ cdef extern from "rtl-sdr.h":
     int rtlsdr_set_freq_correction(rtlsdr_dev_t *dev, int ppm);
     int rtlsdr_get_freq_correction(rtlsdr_dev_t *dev);
 
-    int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw);
+    IF RTLSDR_BANDWIDTH_SUPPORT == 1:
+        int rtlsdr_set_tuner_bandwidth(rtlsdr_dev_t *dev, uint32_t bw);
 
     ctypedef enum rtlsdr_tuner:
         RTLSDR_TUNER_UNKNOWN = 0,

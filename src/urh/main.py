@@ -74,13 +74,14 @@ def main():
             from data import generate_ui
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
-            print("Will not regenerate UI, because script can't be found. This is okay in release.")
+            # The generate UI script cannot be found so we are most likely in release mode, no problem here.
+            pass
 
     from urh.util import util
-    util.set_windows_lib_path()
+    util.set_shared_library_path()
 
     try:
-        import urh.cythonext.signalFunctions
+        import urh.cythonext.signal_functions
         import urh.cythonext.path_creator
         import urh.cythonext.util
     except ImportError:
@@ -106,6 +107,12 @@ def main():
     app.setWindowIcon(QIcon(":/icons/icons/appicon.png"))
 
     util.set_icon_theme()
+
+    font_size = constants.SETTINGS.value("font_size", 0, int)
+    if font_size > 0:
+        font = app.font()
+        font.setPointSize(font_size)
+        app.setFont(font)
 
     constants.SETTINGS.setValue("default_theme", app.style().objectName())
 

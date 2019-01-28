@@ -144,8 +144,8 @@ class GeneratorTabController(QWidget):
         self.ui.btnGenerate.clicked.connect(self.generate_file)
         self.label_list_model.protolabel_fuzzing_status_changed.connect(self.handle_plabel_fuzzing_state_changed)
         self.ui.btnFuzz.clicked.connect(self.on_btn_fuzzing_clicked)
-        self.ui.tableMessages.create_fuzzing_label_clicked.connect(self.create_fuzzing_label)
-        self.ui.tableMessages.edit_fuzzing_label_clicked.connect(self.show_fuzzing_dialog)
+        self.ui.tableMessages.create_label_triggered.connect(self.create_fuzzing_label)
+        self.ui.tableMessages.edit_label_triggered.connect(self.show_fuzzing_dialog)
         self.ui.listViewProtoLabels.selection_changed.connect(self.handle_label_selection_changed)
         self.ui.listViewProtoLabels.edit_on_item_triggered.connect(self.show_fuzzing_dialog)
 

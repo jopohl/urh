@@ -7,7 +7,9 @@ import numpy as np
 from PyQt5.QtCore import pyqtSignal, QObject, QDir, Qt
 from PyQt5.QtWidgets import QApplication
 
-import urh.cythonext.signalFunctions as signal_functions
+import urh.cythonext.signal_functions as signal_functions
+from urh.ainterpretation import AutoInterpretation
+
 from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.util import FileOperator
@@ -48,12 +50,13 @@ class Signal(QObject):
         self.noise_max_plot = 0
         self.block_protocol_update = False
 
-        self.auto_detect_on_modulation_changed = True
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
         if modulation is None:
             modulation = "FSK"
         self.__modulation_type = self.MODULATION_TYPES.index(modulation)
+        self.__modulation_order = 2
+
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
         if len(filename) > 0:
@@ -65,18 +68,18 @@ class Signal(QObject):
                 self.__load_complex_file(filename)
 
             self.filename = filename
-            self.noise_threshold = self.calc_noise_threshold(int(0.99 * self.num_samples), self.num_samples)
+            self.noise_threshold = AutoInterpretation.detect_noise_level(np.abs(self.data))
         else:
             self.filename = ""
 
     def __load_complex_file(self, filename: str):
-        if filename.endswith(".complex16u"):
+        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
             raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
             self._fulldata.real = (raw['r'] / 127.5) - 1.0
             self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-        elif filename.endswith(".complex16s"):
+        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
             raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
             self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
@@ -107,12 +110,12 @@ class Signal(QObject):
         if sample_width == 3:
             num_samples = len(byte_frames) // (sample_width * num_channels)
             arr = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
-            raw_bytes = np.fromstring(byte_frames, dtype=np.uint8)
+            raw_bytes = np.frombuffer(byte_frames, dtype=np.uint8)
             arr[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
             arr[:, :, sample_width:] = (arr[:, :, sample_width - 1:sample_width] >> 7) * 255
             data = arr.view(np.int32).flatten()
         else:
-            data = np.fromstring(byte_frames, dtype=params["fmt"])
+            data = np.frombuffer(byte_frames, dtype=params["fmt"])
 
         if num_channels == 1:
             self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
@@ -165,7 +168,7 @@ class Signal(QObject):
         return self.__modulation_type
 
     @modulation_type.setter
-    def modulation_type(self, value: str):
+    def modulation_type(self, value: int):
         """
         0 - "ASK", 1 - "FSK", 2 - "PSK", 3 - "APSK (QAM)"
 
@@ -176,9 +179,6 @@ class Signal(QObject):
             self.__modulation_type = value
             self._qad = None
 
-            if self.auto_detect_on_modulation_changed:
-                self.auto_detect(emit_update=False)
-
             self.modulation_type_changed.emit(self.__modulation_type)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
@@ -186,6 +186,10 @@ class Signal(QObject):
     @property
     def modulation_type_str(self):
         return self.MODULATION_TYPES[self.modulation_type]
+
+    @modulation_type_str.setter
+    def modulation_type_str(self, value: str):
+        self.modulation_type = self.MODULATION_TYPES.index(value)
 
     @property
     def bit_len(self):
@@ -352,22 +356,6 @@ class Signal(QObject):
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
             return self.noise_threshold
 
-    def estimate_bitlen(self) -> int:
-        bit_len = self.__parameter_cache[self.modulation_type_str]["bit_len"]
-        if bit_len is None:
-            bit_len = signal_functions.estimate_bit_len(self.qad, self.qad_center, self.tolerance, self.modulation_type)
-            self.__parameter_cache[self.modulation_type_str]["bit_len"] = bit_len
-        return bit_len
-
-    def estimate_qad_center(self) -> float:
-        center = self.__parameter_cache[self.modulation_type_str]["qad_center"]
-        if center is None:
-            noise_value = signal_functions.get_noise_for_mod_type(int(self.modulation_type))
-            qad = self.qad[np.where(self.qad > noise_value)] if noise_value < 0 else self.qad
-            center = signal_functions.estimate_qad_center(qad, constants.NUM_CENTERS)
-            self.__parameter_cache[self.modulation_type_str]["qad_center"] = center
-        return center
-
     def create_new(self, start=0, end=0, new_data=None):
         new_signal = Signal("", "New " + self.name)
 
@@ -384,22 +372,35 @@ class Signal(QObject):
         new_signal.changed = True
         return new_signal
 
-    def auto_detect(self, emit_update=True):
-        needs_update = False
-        old_qad_center = self.__qad_center
-        self.__qad_center = self.estimate_qad_center()
-        if self.__qad_center != old_qad_center:
-            self.qad_center_changed.emit(self.__qad_center)
-            needs_update = True
+    def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
+        kwargs = {"noise": None if detect_noise else self.noise_threshold,
+                  "modulation": None if detect_modulation
+                  else "OOK" if self.__modulation_order == 2 and self.__modulation_type == 0
+                  else self.modulation_type_str}
 
-        old_bit_len = self.__bit_len
-        self.__bit_len = self.estimate_bitlen()
-        if self.__bit_len != old_bit_len:
-            self.bit_len_changed.emit(self.__bit_len)
-            needs_update = True
+        estimated_params = AutoInterpretation.estimate(self.data, **kwargs)
+        if estimated_params is None:
+            return False
 
-        if emit_update and needs_update and not self.block_protocol_update:
+        orig_block = self.block_protocol_update
+        self.block_protocol_update = True
+
+        if detect_noise:
+            self.noise_threshold = estimated_params["noise"]
+
+        if detect_modulation:
+            self.modulation_type_str = estimated_params["modulation_type"]
+
+        self.qad_center = estimated_params["center"]
+        self.tolerance = estimated_params["tolerance"]
+        self.bit_len = estimated_params["bit_length"]
+
+        self.block_protocol_update = orig_block
+
+        if emit_update and not self.block_protocol_update:
             self.protocol_needs_update.emit()
+
+        return True
 
     def clear_parameter_cache(self):
         for mod in self.parameter_cache.keys():
@@ -471,7 +472,7 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def filter_range(self, start: int, end: int, fir_filter: Filter):
-        self._fulldata[start:end] = fir_filter.apply_fir_filter(self._fulldata[start:end])
+        self._fulldata[start:end] = fir_filter.work(self._fulldata[start:end])
         self._qad[start:end] = signal_functions.afp_demod(self.data[start:end],
                                                           self.noise_threshold, self.modulation_type)
         self.__invalidate_after_edit()

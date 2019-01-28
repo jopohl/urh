@@ -45,6 +45,9 @@ def gen():
         for line in fileinput.input(out_file_path, inplace=True):
             if line.startswith("# Form implementation generated from reading ui file") or line.startswith("# Created by: "):
                 continue
+            if line.strip().startswith("QtCore.QMetaObject.connectSlotsByName("):
+                # disable auto slot connection, as we do not use it, and it causes crash on python 3.7
+                continue
             print(line, end='')
 
     for f in rc_files:

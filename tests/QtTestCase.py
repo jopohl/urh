@@ -1,19 +1,19 @@
 import faulthandler
+import gc
 import os
 import sip
 import sys
 import time
 import unittest
-import gc
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
-from urh.util.Logger import logger
 
 faulthandler.enable()
 
@@ -34,18 +34,17 @@ class QtTestCase(unittest.TestCase):
 
         write_settings()
         cls.app = QApplication([cls.__name__])
-        logger.debug("Start new app with name {}".format(cls.app.applicationName()))
 
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-        if sys.platform == "win32" or sys.platform == "darwin":
-            sip.delete(cls.app)
-            cls.app = None
-            QTest.qWait(10)
-            time.sleep(0.1)
+
+        cls.app = None
+        QTest.qWait(10)
+        time.sleep(0.1)
 
     def setUp(self):
+        ProtocolSniffer.BUFFER_SIZE_MB = 0.5
         self.form = MainController()
         if self.SHOW:
             self.form.show()
@@ -59,14 +58,15 @@ class QtTestCase(unittest.TestCase):
                 self.dialog = None
 
         if hasattr(self, "form"):
-            self.form.close_all()
+            self.form.close_all_files()
             self.form.close()
 
             if sys.platform == "win32" or sys.platform == "darwin":
                 sip.delete(self.form)
                 self.form = None
-        if sys.platform == "darwin":
+        if sys.platform == "darwin" or sys.platform == "win32":
             gc.collect()
+
     def wait_before_new_file(self):
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)

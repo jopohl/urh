@@ -1,5 +1,4 @@
 import os
-import socket
 import tempfile
 import time
 from array import array
@@ -7,8 +6,9 @@ from array import array
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest
+from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -23,11 +23,15 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
+
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+
         self.carl = Participant("Carl", "C")
         self.dennis = Participant("Dennis", "D")
         self.participants = [self.carl, self.dennis]
@@ -60,7 +64,7 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        self.form.close_all()
+        self.form.close_project()
         self.assertEqual(len(stc.simulator_config.get_all_items()), 0)
         stc.simulator_scene.select_all_items()
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 0)
@@ -88,7 +92,7 @@ class TestSimulatorTabGUI(QtTestCase):
         if os.path.isfile(filename):
             os.remove(filename)
         self.form.simulator_tab_controller.save_simulator_file(filename)
-        self.form.close_all()
+        self.form.close_all_files()
         self.form.project_manager.participants.clear()
         self.form.project_manager.project_updated.emit()
 
@@ -169,13 +173,13 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(2)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+4, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 4, len(stc.simulator_message_table_model.protocol.messages[i]))
 
         stc.ui.cbViewType.setCurrentText("Bit")
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(6)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i]+5, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(lens[i] + 5, len(stc.simulator_message_table_model.protocol.messages[i]))
 
     def test_simulator_graphics_view(self):
         self.__setup_project()
@@ -217,15 +221,15 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.simulator_scene.get_all_message_items()[0].setSelected(True)
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
-        stc.ui.tblViewMessage.selectColumn(2)
-        x, y = stc.ui.tblViewMessage.columnViewportPosition(2), stc.ui.tblViewMessage.rowViewportPosition(0)
+        stc.ui.tblViewMessage.selectColumn(4)
+        x, y = stc.ui.tblViewMessage.columnViewportPosition(4), stc.ui.tblViewMessage.rowViewportPosition(0)
         pos = QPoint(x, y)
         stc.ui.tblViewMessage.context_menu_pos = pos
         menu = stc.ui.tblViewMessage.create_context_menu()
 
         names = [action.text() for action in menu.actions()]
         self.assertIn("Enforce encoding", names)
-        add_label_action = next(action for action in menu.actions() if action.text() == "Add protocol label")
+        add_label_action = next(action for action in menu.actions() if action.text() == "Create label...")
         add_label_action.trigger()
         menu.close()
         stc.ui.tblViewMessage.selectRow(0)
@@ -330,6 +334,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
 
         stc.simulator_scene.select_all_items()
+        stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
 
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis
@@ -347,25 +352,41 @@ class TestSimulatorTabGUI(QtTestCase):
         rcv_port = self.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
 
+        dialog.simulator.sniffer.adaptive_noise = False
+        dialog.simulator.sniffer.automatic_center = False
+
         dialog.ui.btnStartStop.click()
-        QTest.qWait(100)
+
+        while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator to wait for message 1")
+            time.sleep(1)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
         sender.client_port = rcv_port
+
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        time.sleep(0.1)
+
+        while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for simulator wait for message 2")
+            time.sleep(1)
+
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(0.1)
+        time.sleep(0.5)
         sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
-        QTest.qWait(500)
+        while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
+            logger.debug("Waiting for mismatching message")
+            time.sleep(1)
+
+        QTest.qWait(250)
+        QApplication.processEvents()
+        QTest.qWait(100)
 
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)
-
         self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()
@@ -391,7 +412,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
         self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
 

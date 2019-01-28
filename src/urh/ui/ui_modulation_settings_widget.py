@@ -117,7 +117,6 @@ class Ui_ModulationSettings(object):
 
         self.retranslateUi(ModulationSettings)
         self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
-        QtCore.QMetaObject.connectSlotsByName(ModulationSettings)
         ModulationSettings.setTabOrder(self.groupBoxSniffSettings, self.comboBoxModulationProfiles)
         ModulationSettings.setTabOrder(self.comboBoxModulationProfiles, self.btnConfigurationDialog)
 

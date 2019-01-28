@@ -3,6 +3,7 @@ import sys
 
 import cx_Freeze
 
+
 def build_exe(build_cmd='build'):
     # have to make sure args looks right
     sys.argv = sys.argv[:1] + [build_cmd]
@@ -24,19 +25,39 @@ def build_exe(build_cmd='build'):
 
     if sys.platform == 'win32':
         include_files = [os.path.join("data", 'icons', 'appicon.ico')]
-        arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
-        lib_path = os.path.join("src", "urh", "dev", "native", "lib", "win", arch)
+        lib_path = os.path.join("src", "urh", "dev", "native", "lib", "shared")
         for f in os.listdir(lib_path):
-            include_files.append(os.path.join(lib_path, f))
+            if f.endswith(".dll") or f.endswith(".txt"):
+                include_files.append(os.path.join(lib_path, f))
+
+        shortcut_table = [
+            ("DesktopShortcut",  # Shortcut
+             "DesktopFolder",  # Directory_
+             "Universal Radio Hacker",  # Name
+             "TARGETDIR",  # Component_
+             "[TARGETDIR]urh.exe",  # Target
+             None,  # Arguments
+             None,  # Description
+             None,  # Hotkey
+             None,  # Icon
+             None,  # IconIndex
+             None,  # ShowCmd
+             'TARGETDIR'  # WkDir
+             ),
+        ]
 
         executables = [
             cx_Freeze.Executable(
-            app_path,
-            targetName="urh.exe",
-            icon=os.path.join("data", 'icons', 'appicon.ico'),
-            shortcutName="Universal Radio Hacker",
-            shortcutDir="DesktopFolder",
-            base="Win32GUI"),
+                app_path,
+                targetName="urh.exe",
+                icon=os.path.join("data", 'icons', 'appicon.ico'),
+                copyright="Copyright (C) 2019 Johannes Pohl, Andreas Noack",
+                base="Win32GUI"),
+
+            cx_Freeze.Executable(
+                app_path,
+                targetName="urh_debug.exe",
+                copyright="Copyright (C) 2019 Johannes Pohl, Andreas Noack"),
 
             cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")
         ]
@@ -46,6 +67,8 @@ def build_exe(build_cmd='build'):
             cx_Freeze.Executable(app_path, targetName="urh", icon=os.path.join("data", 'icons', 'appicon.png')),
             cx_Freeze.Executable(cli_path, targetName="urh_cli.exe")
         ]
+
+        shortcut_table = None
 
     for f in os.listdir(os.path.join("src", "urh", "dev", "gr", "scripts")):
         if f.endswith(".py"):
@@ -66,10 +89,11 @@ def build_exe(build_cmd='build'):
             "excludes": ["tkinter"],
             "includes": ['numpy.core._methods', 'numpy.lib.format', 'six', 'appdirs', 'pyaudio',
                          'packaging', 'packaging.version', 'packaging.specifiers', 'packaging.requirements',
-                         'setuptools.msvc'] + plugins
+                         'setuptools.msvc', 'html.parser'] + plugins
         },
         'bdist_msi': {
-            "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}"
+            "upgrade_code": "{96abcdef-1337-4711-cafe-beef4a1ce42}",
+            "data": {"Shortcut": shortcut_table}
         }
     }
 

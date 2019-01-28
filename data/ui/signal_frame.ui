@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>509</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -262,7 +262,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tune this value using either &lt;span style=&quot; font-style:italic;&quot;&gt;the spinbox on the right&lt;/span&gt; or the &lt;span style=&quot; font-style:italic;&quot;&gt;context-menu of the SignalView&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Bit Length:</string>
@@ -281,7 +281,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tune this value using either &lt;span style=&quot; font-style:italic;&quot;&gt;the spinbox on the right&lt;/span&gt; or the &lt;span style=&quot; font-style:italic;&quot;&gt;context-menu of the SignalView&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -425,32 +425,6 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
        <property name="singleStep">
         <double>0.000100000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0" colspan="2">
-      <widget class="QPushButton" name="btnAutoDetect">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect Center and Bit Length, when you change the demodulation type. You can disable this behaviour for faster switching between demodulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Autodetect parameters</string>
-       </property>
-       <property name="icon">
-        <iconset theme="system-software-update">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>16</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -697,6 +671,40 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
+     <item row="11" column="0" colspan="2">
+      <widget class="QToolButton" name="btnAutoDetect">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect &lt;span style=&quot; font-weight:600;&quot;&gt;center&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;tolerance&lt;/span&gt;. You can also choose to addtionally detect the &lt;span style=&quot; font-weight:600;&quot;&gt;noise&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;modulation&lt;/span&gt; when clicking this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Autodetect parameters</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -932,6 +940,25 @@ stop:1 rgba(255, 255, 255, 0));
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="pageLoading">
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="labelLoadingAutoInterpretation">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Running automatic detecting of demodulation parameters.&lt;/p&gt;&lt;p&gt;You can disable this behaviour for newly loaded signals by unchecking &lt;span style=&quot; font-weight:600;&quot;&gt;Edit&lt;/span&gt; -&amp;gt; &lt;span style=&quot; font-weight:600;&quot;&gt;Auto detect signals on loading&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
          <item>
@@ -1023,6 +1050,9 @@ stop:1 rgba(255, 255, 255, 0));
          </item>
          <item>
           <widget class="QLabel" name="lDuration">
+           <property name="toolTip">
+            <string/>
+           </property>
            <property name="text">
             <string>42 µs</string>
            </property>
@@ -1037,8 +1067,11 @@ stop:1 rgba(255, 255, 255, 0));
          </item>
          <item>
           <widget class="QLabel" name="labelRSSI">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the average signal power of the selection. The closer this value is to zero, the stronger the selected signal is.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
-            <string>RSSI: 0,434</string>
+            <string>0,434 dBm</string>
            </property>
           </widget>
          </item>

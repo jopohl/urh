@@ -10,8 +10,6 @@ from urh.ui.views.TableView import TableView
 
 
 class GeneratorTableView(TableView):
-    create_fuzzing_label_clicked = pyqtSignal(int, int, int)
-    edit_fuzzing_label_clicked = pyqtSignal(int)
     encodings_updated = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -142,21 +140,7 @@ class GeneratorTableView(TableView):
             painter.drawLine(rect.topLeft(), rect.topRight())
 
     def create_context_menu(self) -> QMenu:
-        assert self.context_menu_pos is not None
-        menu = QMenu()
-        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
-                                                                     column=self.columnAt(self.context_menu_pos.x()))
-
-        if self.model().row_count > 0:
-            if selected_label_index == -1:
-                fuzzing_action = menu.addAction("Create fuzzing label...")
-                fuzzing_action.setIcon(QIcon.fromTheme("list-add"))
-            else:
-                fuzzing_action = menu.addAction("Edit fuzzing label...")
-                fuzzing_action.setIcon(QIcon.fromTheme("configure"))
-
-            fuzzing_action.triggered.connect(self.on_fuzzing_action_triggered)
-            menu.addSeparator()
+        menu = super().create_context_menu()
 
         add_message_action = menu.addAction("Add empty message...")
         add_message_action.setIcon(QIcon.fromTheme("edit-table-insert-row-below"))
@@ -166,7 +150,7 @@ class GeneratorTableView(TableView):
             menu.addAction(self.copy_action)
 
         if self.model().row_count > 0:
-            duplicate_action = menu.addAction("Duplicate line")
+            duplicate_action = menu.addAction("Duplicate selected lines")
             duplicate_action.setIcon(QIcon.fromTheme("edit-table-insert-row-under"))
             duplicate_action.triggered.connect(self.on_duplicate_action_triggered)
 
@@ -202,25 +186,9 @@ class GeneratorTableView(TableView):
 
         return menu
 
-    def contextMenuEvent(self, event: QContextMenuEvent):
-        self.context_menu_pos = event.pos()
-        menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
-
-    @pyqtSlot()
-    def on_fuzzing_action_triggered(self):
-        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
-                                                                     column=self.columnAt(self.context_menu_pos.x()))
-        if selected_label_index == -1:
-            min_row, max_row, start, end = self.selection_range()
-            self.create_fuzzing_label_clicked.emit(min_row, start, end)
-        else:
-            self.edit_fuzzing_label_clicked.emit(selected_label_index)
-
     @pyqtSlot()
     def on_duplicate_action_triggered(self):
-        row = self.rowAt(self.context_menu_pos.y())
-        self.model().duplicate_row(row)
+        self.model().duplicate_rows(self.selected_rows)
 
     @pyqtSlot()
     def on_clear_action_triggered(self):

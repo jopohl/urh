@@ -34,6 +34,7 @@ class Ui_DialogLabels(object):
         self.tblViewProtoLabels.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.tblViewProtoLabels.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.tblViewProtoLabels.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tblViewProtoLabels.setShowGrid(False)
         self.tblViewProtoLabels.setObjectName("tblViewProtoLabels")
         self.verticalLayout.addWidget(self.tblViewProtoLabels)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -66,7 +67,6 @@ class Ui_DialogLabels(object):
         self.verticalLayout_3.addWidget(self.btnConfirm)
 
         self.retranslateUi(DialogLabels)
-        QtCore.QMetaObject.connectSlotsByName(DialogLabels)
 
     def retranslateUi(self, DialogLabels):
         _translate = QtCore.QCoreApplication.translate

@@ -4,13 +4,14 @@ from enum import Enum
 import numpy as np
 
 from urh import constants
-from urh.cythonext import signalFunctions
+from urh.cythonext import signal_functions
 from urh.util import util
 from urh.util.Logger import logger
 
 
 class FilterType(Enum):
     moving_average = "moving average"
+    dc_correction = "DC correction"
     custom = "custom"
 
 
@@ -27,11 +28,17 @@ class Filter(object):
         self.filter_type = filter_type
         self.taps = taps
 
+    def work(self, input_signal: np.ndarray) -> np.ndarray:
+        if self.filter_type == FilterType.dc_correction:
+            return input_signal - np.mean(input_signal)
+        else:
+            return self.apply_fir_filter(input_signal)
+
     def apply_fir_filter(self, input_signal: np.ndarray) -> np.ndarray:
         if input_signal.dtype != np.complex64:
             input_signal = np.array(input_signal, dtype=np.complex64)
 
-        return signalFunctions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
+        return signal_functions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 
     @staticmethod
     def read_configured_filter_bw() -> float:

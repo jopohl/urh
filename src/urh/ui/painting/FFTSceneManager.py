@@ -1,5 +1,4 @@
 import numpy as np
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainterPath, QPen
 from PyQt5.QtWidgets import QGraphicsPathItem
 
@@ -17,8 +16,7 @@ class FFTSceneManager(SceneManager):
         self.scene = GridScene(parent=graphic_view)
         self.scene.setBackgroundBrush(constants.BGCOLOR)
 
-        self.peak_item = self.scene.addPath(QPainterPath(),
-                                            QPen(constants.PEAK_COLOR, Qt.FlatCap))  # type: QGraphicsPathItem
+        self.peak_item = self.scene.addPath(QPainterPath(), QPen(constants.PEAK_COLOR, 0))  # type: QGraphicsPathItem
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         start = int(x1) if x1 > 0 else 0

@@ -1,13 +1,13 @@
 import array
 import os
 import shlex
+import shutil
+import subprocess
 import sys
 import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
-import shutil
-import subprocess
 
 import numpy as np
 from PyQt5.QtCore import Qt
@@ -15,9 +15,10 @@ from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QSplitter
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
-
 from urh import constants
 from urh.util.Logger import logger
+
+PROJECT_PATH = None   # for referencing in external program calls
 
 BCD_ERROR_SYMBOL = "?"
 BCD_LUT = {"{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)}
@@ -46,27 +47,44 @@ def set_icon_theme():
         QIcon.setThemeName("")
 
 
-def set_windows_lib_path():
-    dll_dir = get_windows_lib_path()
-    if dll_dir:
-        os.environ['PATH'] = dll_dir + ";" + os.environ['PATH']
+def set_shared_library_path():
+    shared_lib_dir = get_shared_library_path()
 
+    if shared_lib_dir:
 
-def get_windows_lib_path():
-    dll_dir = ""
-    if sys.platform == "win32":
-        if not hasattr(sys, "frozen"):
-            util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
-                else os.path.dirname(os.path.realpath(os.readlink(__file__)))
-            urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
-            assert os.path.isdir(urh_dir)
-
-            arch = "x64" if sys.maxsize > 2 ** 32 else "x86"
-            dll_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "win", arch))
+        if sys.platform == "win32":
+            current_path =  os.environ.get("PATH", '')
+            if not current_path.startswith(shared_lib_dir):
+                os.environ["PATH"] = shared_lib_dir + os.pathsep + current_path
         else:
-            dll_dir = os.path.dirname(sys.executable)
+            # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
+            exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
+            import ctypes
 
-    return dll_dir
+            for lib in sorted(os.listdir(shared_lib_dir)):
+                if any(lib.endswith(ext) for ext in exts):
+                    lib_path = os.path.join(shared_lib_dir, lib)
+                    if os.path.isfile(lib_path):
+                        try:
+                            ctypes.cdll.LoadLibrary(lib_path)
+                        except Exception as e:
+                            logger.exception(e)
+
+
+def get_shared_library_path():
+    if hasattr(sys, "frozen"):
+        return os.path.dirname(sys.executable)
+
+    util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+        else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+    urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
+    assert os.path.isdir(urh_dir)
+
+    shared_lib_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "shared"))
+    if os.path.isdir(shared_lib_dir):
+        return shared_lib_dir
+    else:
+        return ""
 
 
 def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):
@@ -330,7 +348,11 @@ def parse_command(command: str):
     if len(splitted) == 0:
         return "", []
 
-    cmd = [splitted.pop(0)]
+    cmd = splitted.pop(0)
+    if PROJECT_PATH is not None and not os.path.isabs(cmd) and shutil.which(cmd) is None:
+        # Path relative to project path
+        cmd = os.path.normpath(os.path.join(PROJECT_PATH, cmd))
+    cmd = [cmd]
 
     # This is for legacy support, if you have filenames with spaces and did not quote them
     while shutil.which(" ".join(cmd)) is None and len(splitted) > 0:
@@ -408,18 +430,18 @@ def validate_command(command: str):
 
 
 def set_splitter_stylesheet(splitter: QSplitter):
-    splitter.setHandleWidth(6)
-    bgcolor = constants.BGCOLOR.lighter(120)
-    r, g, b = bgcolor.red(), bgcolor.green(), bgcolor.blue()
+    splitter.setHandleWidth(4)
+    bgcolor = constants.BGCOLOR.lighter(150)
+    r, g, b, a = bgcolor.red(), bgcolor.green(), bgcolor.blue(), bgcolor.alpha()
     splitter.setStyleSheet("QSplitter::handle:vertical {{margin: 4px 0px; "
                            "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-                           "stop:0 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                           "stop:1 rgba(255, 255, 255, 0));"
+                           "stop:0.2 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+                           "stop:0.8 rgba(255, 255, 255, 0));"
                            "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
                            "QSplitter::handle:horizontal {{margin: 4px 0px; "
                            "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-                           "stop:0 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, 255),"
-                           "stop:1 rgba(255, 255, 255, 0));"
-                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b))
+                           "stop:0.2 rgba(255, 255, 255, 0),"
+                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+                           "stop:0.8 rgba(255, 255, 255, 0));"
+                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b, a))

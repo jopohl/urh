@@ -8,6 +8,7 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -57,8 +58,8 @@ class TestSendRecvDialog(QtTestCase):
 
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 10 ** 6
-        self.signal = Signal(get_path_for_data_file("esaver.complex"), "testsignal")
+        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
+        self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
@@ -176,7 +177,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.close()
 
         QApplication.instance().processEvents()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        QTest.qWait(5*self.SEND_RECV_TIMEOUT)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
         self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
@@ -188,6 +189,9 @@ class TestSendRecvDialog(QtTestCase):
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
         QApplication.instance().processEvents()
+        QTest.qWait(500)
+        QApplication.instance().processEvents()
+
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 
         spectrum_dialog.ui.btnStop.click()
@@ -224,7 +228,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.close()
 
     def test_continuous_send_dialog(self):
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.__add_first_signal_to_generator()
 
         port = self.get_free_port()
@@ -266,7 +270,7 @@ class TestSendRecvDialog(QtTestCase):
     def test_sniff(self):
         assert isinstance(self.form, MainController)
         # add a signal so we can use it
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         logger.debug("Added signalfile")
         QApplication.instance().processEvents()
 
@@ -298,7 +302,8 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        QTest.qWait(2000)
+        time.sleep(2)
+        QTest.qWait(100)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

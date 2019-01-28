@@ -40,7 +40,7 @@ class ProtocolSniffDialog(SendRecvDialog):
         # set really in on_device_started
         self.scene_manager = None  # type: LiveSceneManager
         self.create_connects()
-        self.device_settings_widget.update_for_new_device(reset_gains=False)
+        self.device_settings_widget.update_for_new_device(overwrite_settings=False)
 
 
 
@@ -111,7 +111,6 @@ class ProtocolSniffDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_clear_clicked(self):
-        self.ui.btnClear.setEnabled(False)
         self.ui.txtEd_sniff_Preview.clear()
         self.scene_manager.clear_path()
         self.device.current_index = 0

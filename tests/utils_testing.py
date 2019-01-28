@@ -1,6 +1,10 @@
 import os
+import sys
+
+from PyQt5.QtTest import QSignalSpy
 
 from urh import constants
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 
 def trace_calls(frame, event, arg):
@@ -48,6 +52,7 @@ def write_settings():
         settings.setValue("not_show_save_dialog", True)
         settings.setValue("NetworkSDRInterface", True)
         settings.setValue("align_labels", True)
+
 
 # sys.settrace(trace_calls)
 

@@ -2,7 +2,6 @@ import array
 import copy
 import sys
 import xml.etree.ElementTree as ET
-from collections import defaultdict
 from xml.dom import minidom
 
 import numpy as np
@@ -10,7 +9,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.awre.FormatFinder import FormatFinder
-from urh.cythonext import signalFunctions, util
+from urh.cythonext import signal_functions, util
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -43,7 +42,7 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal, filename=None):
+    def __init__(self, signal: Signal or None, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
         if filename is None:
@@ -59,12 +58,12 @@ class ProtocolAnalyzer(object):
 
         self.decoder = Encoding(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol
 
-        self.message_types = [MessageType("default")]
+        self.message_types = [MessageType("Default")]
 
     @property
     def default_message_type(self) -> MessageType:
         if len(self.message_types) == 0:
-            self.message_types.append(MessageType("default"))
+            self.message_types.append(MessageType("Default"))
 
         return self.message_types[0]
 
@@ -224,16 +223,8 @@ class ProtocolAnalyzer(object):
 
         bit_len = signal.bit_len
 
-        try:
-            ppseq = signalFunctions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                    signal.modulation_type, signal.bit_len)
-        except TypeError:
-            # Remove this check in version 1.7
-            print("Extension method has changed! To fix this, first move to URHs base directory "
-                  "then recompile the extensions using the following command:")
-            print("python3 src/urh/cythonext/build.py")
-            print("and finally restart the application")
-            sys.exit(1)
+        ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
+                                                signal.modulation_type, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":
@@ -477,57 +468,6 @@ class ProtocolAnalyzer(object):
 
         return self.messages[message_indx].convert_range(index1, index2, from_view, to_view, decoded)
 
-    def find_differences(self, refindex: int, view: int):
-        """
-        Search all differences between protocol messages regarding a reference message
-
-        :param refindex: index of reference message
-        :rtype: dict[int, set[int]]
-        """
-        differences = defaultdict(set)
-
-        if refindex >= len(self.messages):
-            return differences
-
-        if view == 0:
-            proto = self.decoded_proto_bits_str
-        elif view == 1:
-            proto = self.decoded_hex_str
-        elif view == 2:
-            proto = self.decoded_ascii_str
-        else:
-            return differences
-
-        refmessage = proto[refindex]
-        len_refmessage = len(refmessage)
-
-        for i, message in enumerate(proto):
-            if i == refindex:
-                continue
-
-            diff_cols = set()
-
-            for j, value in enumerate(message):
-                if j >= len_refmessage:
-                    break
-
-                if value != refmessage[j]:
-                    diff_cols.add(j)
-
-            len_message = len(message)
-            if len_message != len_refmessage:
-                len_diff = abs(len_refmessage - len_message)
-                start = len_refmessage
-                if len_refmessage > len_message:
-                    start = len_message
-                end = start + len_diff
-                for k in range(start, end):
-                    diff_cols.add(k)
-
-            differences[i] = diff_cols
-
-        return differences
-
     def estimate_frequency_for_one(self, sample_rate: float, nbits=42) -> float:
         """
         Calculates the frequency of at most nbits logical ones and returns the mean of these frequencies
@@ -536,6 +476,23 @@ class ProtocolAnalyzer(object):
         :return:
         """
         return self.__estimate_frequency_for_bit(True, sample_rate, nbits)
+
+    def align_messages(self, pattern: str, view_type: int, use_decoded=True):
+        if view_type == 0:
+            bit_pattern = pattern
+        elif view_type == 1:
+            bit_pattern = "".join(map(str, urh_util.hex2bit(pattern)))
+        elif view_type == 2:
+            bit_pattern = "".join(map(str, urh_util.ascii2bit(pattern)))
+        else:
+            raise ValueError("Unknown view type {}".format(view_type))
+
+        indices = [msg.decoded_bits_str.find(bit_pattern) if use_decoded else msg.plain_bits_str.find(bit_pattern)
+                   for msg in self.messages]
+
+        max_index = max(indices)
+        for i, msg in enumerate(self.messages):
+            msg.alignment_offset = 0 if indices[i] == -1 else max_index - indices[i]
 
     def estimate_frequency_for_zero(self, sample_rate: float, nbits=42) -> float:
         """
@@ -581,6 +538,18 @@ class ProtocolAnalyzer(object):
                 self.message_types.append(
                     MessageType(name=name + str(i), iterable=[copy.deepcopy(lbl) for lbl in labels]))
                 break
+
+    def to_binary(self, filename: str, use_decoded: bool):
+        with open(filename, "wb") as f:
+            for msg in self.messages:
+                bits = msg.decoded_bits if use_decoded else msg.plain_bits
+                aggregated = urh_util.aggregate_bits(bits, size=8)
+                f.write(bytes(aggregated))
+
+    def from_binary(self, filename: str):
+        aggregated = np.fromfile(filename, dtype=np.uint8)
+        unaggregated = [int(b) for n in aggregated for b in "{0:08b}".format(n)]
+        self.messages.append(Message(unaggregated, 0, self.default_message_type))
 
     def to_xml_tag(self, decodings, participants, tag_name="protocol",
                    include_message_type=False, write_bits=False, messages=None, modulators=None) -> ET.Element:
@@ -685,7 +654,7 @@ class ProtocolAnalyzer(object):
 
     def update_auto_message_types(self):
         for message in self.messages:
-            for message_type in (msg_type for msg_type in self.message_types if msg_type.assigned_by_ruleset):
+            for message_type in filter(lambda m: m.assigned_by_ruleset and len(m.ruleset) > 0, self.message_types):
                 if message_type.ruleset.applies_for_message(message):
                     message.message_type = message_type
                     break
@@ -704,6 +673,16 @@ class ProtocolAnalyzer(object):
                 message.participant = participants[0]
             return
 
+        # Try to assign participants based on SRC_ADDRESS label and participant address
+        for msg in filter(lambda m: m.participant is None, self.messages):
+            src_address = msg.get_src_address_from_data()
+            if src_address:
+                try:
+                    msg.participant = next(p for p in participants if p.address_hex == src_address)
+                except StopIteration:
+                    pass
+
+        # Assign remaining participants based on RSSI of messages
         rssis = np.array([msg.rssi for msg in self.messages], dtype=np.float32)
         min_rssi, max_rssi = util.minmax(rssis)
         center_spacing = (max_rssi - min_rssi) / (len(participants) - 1)
@@ -711,18 +690,31 @@ class ProtocolAnalyzer(object):
         rssi_assigned_centers = []
 
         for rssi in rssis:
-            center_index = 0
-            diff = 999
-            for i, center in enumerate(centers):
-                if abs(center - rssi) < diff:
-                    center_index = i
-                    diff = abs(center - rssi)
-            rssi_assigned_centers.append(center_index)
+            center_index = np.argmin(np.abs(rssi - centers))
+            rssi_assigned_centers.append(int(center_index))
 
         participants.sort(key=lambda participant: participant.relative_rssi)
         for message, center_index in zip(self.messages, rssi_assigned_centers):
             if message.participant is None:
                 message.participant = participants[center_index]
+
+    def auto_assign_participant_addresses(self, participants):
+        """
+
+        :type participants: list of Participant
+        :return:
+        """
+        participants_without_address = [p for p in participants if not p.address_hex]
+
+        if len(participants_without_address) == 0:
+            return
+
+        for msg in self.messages:
+            if msg.participant in participants_without_address:
+                src_address = msg.get_src_address_from_data()
+                if src_address:
+                    participants_without_address.remove(msg.participant)
+                    msg.participant.address_hex = src_address
 
     def auto_assign_decodings(self, decodings):
         """

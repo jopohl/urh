@@ -9,7 +9,7 @@ from tests.QtTestCase import QtTestCase
 class TestLabels(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("esaver.complex")
+        self.add_signal_to_form("esaver.coco")
         self.cframe = self.form.compare_frame_controller
         self.cframe.ui.cbProtoView.setCurrentIndex(0)
         self.gframe = self.form.generator_tab_controller

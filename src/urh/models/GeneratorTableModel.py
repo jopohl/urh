@@ -128,8 +128,8 @@ class GeneratorTableModel(TableModel):
         clear_action = Clear(self.protocol)
         self.undo_stack.push(clear_action)
 
-    def duplicate_row(self, row: int):
-        self.protocol.duplicate_line(row)
+    def duplicate_rows(self, rows: list):
+        self.protocol.duplicate_lines(rows)
         self.update()
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):
@@ -141,22 +141,6 @@ class GeneratorTableModel(TableModel):
         tmp_protocol.messages = [message]
         undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
         self.undo_stack.push(undo_action)
-
-    def get_selected_label_index(self, row: int, column: int):
-        if self.row_count == 0:
-            return -1
-
-        try:
-            msg = self.protocol.messages[row]
-        except IndexError:
-            logger.warning("{} is out of range for generator protocol".format(row))
-            return -1
-
-        for i, lbl in enumerate(msg.message_type):
-            if column in range(*msg.get_label_range(lbl, self.proto_view, False)):
-                return i
-
-        return -1
 
     def __set_italic_font_for_label_range(self, row, label, italic: bool):
         message = self.protocol.messages[row]

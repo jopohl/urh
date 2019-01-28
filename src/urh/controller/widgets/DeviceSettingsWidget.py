@@ -37,6 +37,9 @@ class DeviceSettingsWidget(QWidget):
         if self.is_rx:
             self.ui.spinBoxNRepeat.hide()
             self.ui.labelNRepeat.hide()
+        else:
+            self.ui.labelDCCorrection.hide()
+            self.ui.checkBoxDCCorrection.hide()
 
         self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
         self.ui.cbDevice.clear()
@@ -71,29 +74,35 @@ class DeviceSettingsWidget(QWidget):
 
         self.ui.cbDevice.setCurrentText(conf_dict.get("name", ""))
         dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name, adjust_gains=False)
+        self.set_device_ui_items_visibility(dev_name, overwrite_settings=True)
 
         set_val(self.ui.spinBoxFreq, "frequency", config.DEFAULT_FREQUENCY)
         set_val(self.ui.spinBoxSampleRate, "sample_rate", config.DEFAULT_SAMPLE_RATE)
         set_val(self.ui.spinBoxBandwidth, "bandwidth", config.DEFAULT_BANDWIDTH)
-        set_val(self.ui.spinBoxGain, self.rx_tx_prefix+"gain", config.DEFAULT_GAIN)
-        set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix+"if_gain", config.DEFAULT_IF_GAIN)
-        set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix+"baseband_gain", config.DEFAULT_BB_GAIN)
+        set_val(self.ui.spinBoxGain, self.rx_tx_prefix + "gain", config.DEFAULT_GAIN)
+        set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix + "if_gain", config.DEFAULT_IF_GAIN)
+        set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix + "baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
         set_val(self.ui.spinBoxNRepeat, "num_sending_repeats",
                 constants.SETTINGS.value('num_sending_repeats', 1, type=int))
 
-        if self.rx_tx_prefix+"antenna_index" in conf_dict:
-            self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix+"antenna_index"])
+        if self.rx_tx_prefix + "antenna_index" in conf_dict:
+            self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix + "antenna_index"])
 
-        if self.rx_tx_prefix+"gain" not in conf_dict:
+        if self.rx_tx_prefix + "gain" not in conf_dict:
             self.set_default_rf_gain()
 
-        if self.rx_tx_prefix+"if_gain" not in conf_dict:
+        if self.rx_tx_prefix + "if_gain" not in conf_dict:
             self.set_default_if_gain()
 
-        if self.rx_tx_prefix+"baseband_gain" not in conf_dict:
+        if self.rx_tx_prefix + "baseband_gain" not in conf_dict:
             self.set_default_bb_gain()
+
+        if self.is_rx:
+            checked = conf_dict.get("apply_dc_correction", False)
+            if isinstance(checked, str):
+                checked = True if checked == "True" else False
+            self.ui.checkBoxDCCorrection.setChecked(checked)
 
         self.emit_editing_finished_signals()
 
@@ -147,7 +156,10 @@ class DeviceSettingsWidget(QWidget):
         self.ui.btnLockBWSR.clicked.connect(self.on_btn_lock_bw_sr_clicked)
 
         self.ui.btnRefreshDeviceIdentifier.clicked.connect(self.on_btn_refresh_device_identifier_clicked)
-        self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(self.on_combo_box_device_identifier_current_index_changed)
+        self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(
+            self.on_combo_box_device_identifier_current_index_changed)
+
+        self.ui.checkBoxDCCorrection.clicked.connect(self.on_check_box_dc_correction_clicked)
 
     def set_gain_defaults(self):
         self.set_default_rf_gain()
@@ -183,7 +195,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxIFGain.valueChanged.emit(self.ui.spinBoxIFGain.value())
         self.ui.spinBoxBasebandGain.valueChanged.emit(self.ui.spinBoxBasebandGain.value())
 
-    def set_device_ui_items_visibility(self, device_name: str, adjust_gains=True):
+    def set_device_ui_items_visibility(self, device_name: str, overwrite_settings=True):
         key = device_name if device_name in config.DEVICE_CONFIG.keys() else "Fallback"
         conf = config.DEVICE_CONFIG[key]
         key_ui_dev_param_map = {"center_freq": "Freq", "sample_rate": "SampleRate", "bandwidth": "Bandwidth"}
@@ -201,7 +213,7 @@ class DeviceSettingsWidget(QWidget):
                     spinbox.setSingleStep(conf[key][1] - conf[key][0])
                     spinbox.auto_update_step_size = False
                     if "default_" + key in conf:
-                        spinbox.setValue(conf["default_"+key])
+                        spinbox.setValue(conf["default_" + key])
                 else:
                     spinbox.setMinimum(conf[key].start)
                     spinbox.setMaximum(conf[key].stop)
@@ -248,7 +260,7 @@ class DeviceSettingsWidget(QWidget):
                 assert len(gain_values) >= 2
                 spinbox.setMinimum(gain_values[0])
                 spinbox.setMaximum(gain_values[-1])
-                if adjust_gains:
+                if overwrite_settings:
                     spinbox.setValue(gain_values[len(gain_values) // 2])
                 spinbox.setSingleStep(gain_values[1] - gain_values[0])
                 spinbox.setVisible(True)
@@ -259,19 +271,20 @@ class DeviceSettingsWidget(QWidget):
                 slider.setVisible(False)
             getattr(self.ui, "slider" + ui_element).setVisible(conf_key in conf)
 
-        key_ui_channel_ant_map = {prefix + "antenna": "Antenna", prefix + "channel": "Channel"}
-        for conf_key, ui_element in key_ui_channel_ant_map.items():
-            getattr(self.ui, "label" + ui_element).setVisible(conf_key in conf)
-            combobox = getattr(self.ui, "comboBox" + ui_element)  # type: QComboBox
-            if conf_key in conf:
-                combobox.clear()
-                combobox.addItems(conf[conf_key])
-                if conf_key + "_default_index" in conf:
-                    combobox.setCurrentIndex(conf[conf_key + "_default_index"])
+        if overwrite_settings:
+            key_ui_channel_ant_map = {prefix + "antenna": "Antenna", prefix + "channel": "Channel"}
+            for conf_key, ui_element in key_ui_channel_ant_map.items():
+                getattr(self.ui, "label" + ui_element).setVisible(conf_key in conf)
+                combobox = getattr(self.ui, "comboBox" + ui_element)  # type: QComboBox
+                if conf_key in conf:
+                    combobox.clear()
+                    combobox.addItems(conf[conf_key])
+                    if conf_key + "_default_index" in conf:
+                        combobox.setCurrentIndex(conf[conf_key + "_default_index"])
 
-                combobox.setVisible(True)
-            else:
-                combobox.setVisible(False)
+                    combobox.setVisible(True)
+                else:
+                    combobox.setVisible(False)
 
         multi_dev_support = hasattr(self.device, "has_multi_device_support") and self.device.has_multi_device_support
         self.ui.labelDeviceIdentifier.setVisible(multi_dev_support)
@@ -281,6 +294,9 @@ class DeviceSettingsWidget(QWidget):
         self.ui.labelIP.setVisible("ip" in conf)
         self.ui.spinBoxPort.setVisible("port" in conf)
         self.ui.labelPort.setVisible("port" in conf)
+        show_dc_correction = self.is_rx and self.device is not None and self.device.apply_dc_correction is not None
+        self.ui.checkBoxDCCorrection.setVisible(show_dc_correction)
+        self.ui.labelDCCorrection.setVisible(show_dc_correction)
 
     def get_devices_for_combobox(self, continuous_send_mode):
         items = []
@@ -326,11 +342,12 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxPort.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
+        self.ui.checkBoxDCCorrection.clicked.emit(self.ui.checkBoxDCCorrection.isChecked())
 
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}
         for attrib in ("frequency", "sample_rate", "bandwidth", "gain", "if_gain", "baseband_gain", "freq_correction",
-                       "antenna_index", "num_sending_repeats"):
+                       "antenna_index", "num_sending_repeats", "apply_dc_correction"):
             try:
                 value = getattr(self.device, attrib, None)
                 if value is not None:
@@ -450,7 +467,7 @@ class DeviceSettingsWidget(QWidget):
         except (ValueError, KeyError):
             pass
 
-    def update_for_new_device(self, reset_gains=True):
+    def update_for_new_device(self, overwrite_settings=True):
         if self.device is not None:
             self.device.free_data()
 
@@ -458,9 +475,9 @@ class DeviceSettingsWidget(QWidget):
         self.selected_device_changed.emit()
 
         dev_name = self.ui.cbDevice.currentText()
-        self.set_device_ui_items_visibility(dev_name, adjust_gains=reset_gains)
+        self.set_device_ui_items_visibility(dev_name, overwrite_settings=overwrite_settings)
 
-        if reset_gains:
+        if overwrite_settings:
             self.set_gain_defaults()
 
         self.sync_gain_sliders()
@@ -470,7 +487,7 @@ class DeviceSettingsWidget(QWidget):
 
     @pyqtSlot()
     def on_cb_device_current_index_changed(self):
-        self.update_for_new_device(reset_gains=True)
+        self.update_for_new_device(overwrite_settings=True)
 
     @pyqtSlot()
     def on_btn_refresh_device_identifier_clicked(self):
@@ -479,11 +496,16 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxDeviceIdentifier.clear()
         self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
 
+    @pyqtSlot(bool)
+    def on_check_box_dc_correction_clicked(self, checked: bool):
+        self.device.apply_dc_correction = bool(checked)
+
     @pyqtSlot()
     def on_combo_box_device_identifier_current_index_changed(self):
         if self.device is not None:
             self.device.device_serial = self.ui.comboBoxDeviceIdentifier.currentText()
             self.device.device_number = self.ui.comboBoxDeviceIdentifier.currentIndex()
+
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication

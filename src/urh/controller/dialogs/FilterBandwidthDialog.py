@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QDialog, QLabel, QRadioButton
 
 from urh import constants
@@ -11,6 +11,7 @@ class FilterBandwidthDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogFilterBandwidth()
         self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window)
 
         bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
         custom_bw = constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)

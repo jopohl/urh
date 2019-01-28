@@ -14,7 +14,7 @@ class TestMessageTypeOptionsGUI(QtTestCase):
             self.dialog.show()
 
     def test_message_type_dialog_parameters(self):
-        self.assertEqual(self.message_type.name, self.dialog.windowTitle())
+        self.assertIn(self.message_type.name, self.dialog.windowTitle())
         self.assertEqual(self.message_type.assign_manually, not self.dialog.ui.rbAssignAutomatically.isChecked())
         self.assertEqual(self.message_type.assign_manually, self.dialog.ui.rbAssignManually.isChecked())
 

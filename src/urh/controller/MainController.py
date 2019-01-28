@@ -5,7 +5,7 @@ import traceback
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication
+    QMessageBox, QApplication, qApp
 
 from urh import constants, version
 from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
@@ -82,6 +82,9 @@ class MainController(QMainWindow):
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
         self.addAction(self.cancel_action)
 
+        self.ui.actionAuto_detect_new_signals.setChecked(constants.SETTINGS.value("auto_detect_new_signals",
+                                                                                  True, bool))
+
         self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
 
@@ -146,6 +149,7 @@ class MainController(QMainWindow):
 
         self.ui.actionProject_settings.setVisible(False)
         self.ui.actionSave_project.setVisible(False)
+        self.ui.actionClose_project.setVisible(False)
 
     def __set_non_project_warning_visibility(self):
         show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
@@ -162,13 +166,14 @@ class MainController(QMainWindow):
         self.ui.actionNew_Project.setShortcut(QKeySequence.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
         self.ui.actionSave_project.triggered.connect(self.save_project)
+        self.ui.actionClose_project.triggered.connect(self.close_project)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(self.on_show_about_clicked)
         self.ui.actionRecord.triggered.connect(self.on_show_record_dialog_action_triggered)
 
         self.ui.actionFullscreen_mode.triggered.connect(self.on_fullscreen_action_triggered)
         self.ui.actionSaveAllSignals.triggered.connect(self.signal_tab_controller.save_all)
-        self.ui.actionClose_all.triggered.connect(self.on_close_all_action_triggered)
+        self.ui.actionCloseAllFiles.triggered.connect(self.on_close_all_files_action_triggered)
         self.ui.actionOpen.triggered.connect(self.on_open_file_action_triggered)
         self.ui.actionOpen_directory.triggered.connect(self.on_open_directory_action_triggered)
         self.ui.actionDecoding.triggered.connect(self.on_show_decoding_dialog_triggered)
@@ -177,6 +182,7 @@ class MainController(QMainWindow):
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
         self.ui.actionSamples_from_csv.triggered.connect(self.on_import_samples_from_csv_action_triggered)
+        self.ui.actionAuto_detect_new_signals.triggered.connect(self.on_auto_detect_new_signals_action_triggered)
 
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
@@ -290,8 +296,11 @@ class MainController(QMainWindow):
         signal.blockSignals(True)
         has_entry = self.project_manager.read_project_file_for_signal(signal)
 
-        if not has_entry and not signal.changed:
-            signal.auto_detect()
+        if self.ui.actionAuto_detect_new_signals.isChecked() and not has_entry and not signal.changed:
+            sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageLoading)
+            qApp.processEvents()
+            signal.auto_detect(detect_modulation=True, detect_noise=False)
+            sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageSignal)
 
         signal.blockSignals(False)
 
@@ -367,7 +376,7 @@ class MainController(QMainWindow):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
             elif filename.endswith(".coco"):
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
-            elif filename.endswith(".proto") or filename.endswith(".proto.xml"):
+            elif filename.endswith(".proto") or filename.endswith(".proto.xml") or filename.endswith(".bin"):
                 self.add_protocol_file(filename)
             elif filename.endswith(".wav"):
                 try:
@@ -404,12 +413,7 @@ class MainController(QMainWindow):
         self.save_project()
         super().closeEvent(event)
 
-    def close_all(self):
-
-        self.filemodel.setRootPath(QDir.homePath())
-        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
-        self.save_project()
-
+    def close_all_files(self):
         self.signal_tab_controller.close_all()
         self.compare_frame_controller.reset()
         self.generator_tab_controller.table_model.protocol.clear()
@@ -417,8 +421,6 @@ class MainController(QMainWindow):
         self.generator_tab_controller.refresh_table()
         self.generator_tab_controller.refresh_label_list()
 
-        self.project_manager.project_path = ""
-        self.project_manager.project_file = None
         self.signal_tab_controller.signal_undo_stack.clear()
         self.compare_frame_controller.protocol_undo_stack.clear()
         self.generator_tab_controller.generator_undo_stack.clear()
@@ -434,7 +436,7 @@ class MainController(QMainWindow):
     def refresh_main_menu(self):
         enable = len(self.signal_protocol_dict) > 0
         self.ui.actionSaveAllSignals.setEnabled(enable)
-        self.ui.actionClose_all.setEnabled(enable)
+        self.ui.actionCloseAllFiles.setEnabled(enable)
 
     def apply_default_view(self, view_index: int):
         self.compare_frame_controller.ui.cbProtoView.setCurrentIndex(view_index)
@@ -460,6 +462,22 @@ class MainController(QMainWindow):
 
     def save_project(self):
         self.project_manager.save_project(simulator_config=self.simulator_tab_controller.simulator_config)
+
+    def close_project(self):
+        self.save_project()
+        self.close_all_files()
+        self.compare_frame_controller.proto_analyzer.message_types.clear()
+        self.compare_frame_controller.active_message_type.clear()
+        self.compare_frame_controller.updateUI()
+        self.project_manager.participants.clear()
+        self.participant_legend_model.update()
+
+        self.filemodel.setRootPath(QDir.homePath())
+        self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(QDir.homePath())))
+        self.hide_file_tree()
+
+        self.project_manager.project_path = ""
+        self.project_manager.project_file = None
 
     @pyqtSlot()
     def on_project_tab_bar_double_clicked(self):
@@ -638,6 +656,9 @@ class MainController(QMainWindow):
                 self.generator_tab_controller.ui.tabWidget.widget(i).layout().setContentsMargins(0, 7 + h - th, 0, 0)
             # Modulators may got changed from Simulator Dialog
             self.generator_tab_controller.refresh_modulators()
+            # Signals may got reordered in analysis
+            self.generator_tab_controller.tree_model.update()
+            self.generator_tab_controller.ui.treeProtocols.expandAll()
 
     @pyqtSlot()
     def on_show_record_dialog_action_triggered(self):
@@ -705,14 +726,8 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
+        self.close_project()
         pdc = ProjectDialog(parent=self)
-        try:
-            path = os.path.dirname(self.signal_tab_controller.signal_frames[0].signal.filename)
-        except (IndexError, AttributeError, TypeError):
-            path = None
-
-        if path:
-            pdc.set_path(path)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
 
@@ -724,10 +739,13 @@ class MainController(QMainWindow):
     def on_edit_menu_about_to_show(self):
         self.ui.actionShowFileTree.setChecked(self.ui.splitter.sizes()[0] > 0)
 
+    def hide_file_tree(self):
+        self.ui.splitter.setSizes([0, 1])
+
     @pyqtSlot()
     def on_action_show_filetree_triggered(self):
         if self.ui.splitter.sizes()[0] > 0:
-            self.ui.splitter.setSizes([0, 1])
+            self.hide_file_tree()
         else:
             self.ui.splitter.setSizes([1, 1])
 
@@ -767,8 +785,8 @@ class MainController(QMainWindow):
                 self.unsetCursor()
 
     @pyqtSlot()
-    def on_close_all_action_triggered(self):
-        self.close_all()
+    def on_close_all_files_action_triggered(self):
+        self.close_all_files()
 
     @pyqtSlot(list)
     def on_files_dropped(self, files):
@@ -855,6 +873,10 @@ class MainController(QMainWindow):
     def on_import_samples_from_csv_action_triggered(self):
         self.__import_csv(file_name="")
 
+    @pyqtSlot(bool)
+    def on_auto_detect_new_signals_action_triggered(self, checked: bool):
+        constants.SETTINGS.setValue("auto_detect_new_signals", bool(checked))
+
     def __import_csv(self, file_name, group_id=0):
         def on_data_imported(complex_file, sample_rate):
             sample_rate = None if sample_rate == 0 else sample_rate
@@ -876,6 +898,7 @@ class MainController(QMainWindow):
     def on_project_loaded_status_changed(self, project_loaded: bool):
         self.ui.actionProject_settings.setVisible(project_loaded)
         self.ui.actionSave_project.setVisible(project_loaded)
+        self.ui.actionClose_project.setVisible(project_loaded)
         self.ui.actionConvert_Folder_to_Project.setDisabled(project_loaded)
         self.__set_non_project_warning_visibility()
 

@@ -4,6 +4,7 @@ import numpy as np
 import time
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.signalprocessing.Filter import Filter
 
 
@@ -11,8 +12,8 @@ class TestFilter(QtTestCase):
     def setUp(self):
         super().setUp()
 
-        self.add_signal_to_form("unaveraged.complex")
-        self.sig_frame = self.form.signal_tab_controller.signal_frames[0]
+        self.add_signal_to_form("unaveraged.coco")
+        self.sig_frame = self.form.signal_tab_controller.signal_frames[0] # type: SignalFrame
 
     def test_fir_filter(self):
         input_signal = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 42], dtype=np.complex64)
@@ -31,10 +32,13 @@ class TestFilter(QtTestCase):
         center = 0
 
         self.sig_frame.ui.btnFilter.click()
+        self.sig_frame.ui.cbModulationType.setCurrentText("FSK")
         self.sig_frame.ui.spinBoxInfoLen.setValue(bit_len)
         self.sig_frame.ui.spinBoxInfoLen.editingFinished.emit()
         self.sig_frame.ui.spinBoxCenterOffset.setValue(center)
         self.sig_frame.ui.spinBoxCenterOffset.editingFinished.emit()
+        self.sig_frame.ui.spinBoxTolerance.setValue(5)
+        self.sig_frame.ui.spinBoxTolerance.editingFinished.emit()
 
         self.assertTrue(self.sig_frame.proto_analyzer.plain_hex_str[0].startswith(expected),
                         msg=self.sig_frame.proto_analyzer.plain_hex_str[0])
@@ -90,23 +94,18 @@ class TestFilter(QtTestCase):
         self.assertTrue(np.array_equal(result_np, expected_result))
 
         result_fft = Filter.fft_convolve_1d(x, h)
-        self.assertTrue(np.array_equal(result_fft, expected_result))
+        self.assertEqual(len(expected_result), len(result_fft))
+        for i in range(len(expected_result)):
+            self.assertAlmostEqual(expected_result[i], result_fft[i], places=8, msg=str(i))
 
         x = np.linspace(0, 1, num=10 ** 3).astype(np.complex64)
         h = Filter.design_windowed_sinc_bandpass(0.1, 0.4, 0.01)
         # fft convolve is faster if IR is round about 400 samples or windowed sinc has bandwidth of 0.01
-        #print(len(h))
 
-        t_np = time.time()
         result_np = np.convolve(x, h, mode="same")
-        t_np = time.time() - t_np
-
-        t_fft = time.time()
         result_fft = Filter.fft_convolve_1d(x, h)
-        t_fft = time.time() - t_fft
 
         np.testing.assert_array_almost_equal(result_np, result_fft)
-        #print("fft convolve time", t_fft, "np convolve time", t_np)
 
     def test_bandpass_filter(self):
         # GUI tests for bandpass filter are in test_spectrogram.py

@@ -16,6 +16,8 @@ source = src/urh
 sort = Miss
 exclude_lines =
     pragma: no cover
+    def paint
+    def draw_indicator
     def mousePressEvent
     def mouseMoveEvent
     def mouseReleaseEvent
@@ -35,3 +37,5 @@ exclude_lines =
     def export_to_fta
     def export_demodulated
     def main
+    class DeviceOptionsTableModel
+    if __name__ == "__main__"

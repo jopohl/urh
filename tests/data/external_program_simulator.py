@@ -8,14 +8,12 @@ messages = sys.stdin.readlines()
 # ->1010100000111111
 # <-1000001111000000
 
-# return a string that consists of the first bit of every message
-result = []
 message = messages[0]
 direction = message[0:2]
-message.replace(direction, "")
+
 if direction == "->":
     result = "10" * int(sys.argv[1])
 else:
     result = "01" * int(sys.argv[1])
 
-print("".join(result), end="")
+print(result, end="")

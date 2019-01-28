@@ -3,6 +3,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import qApp
 
 from urh import constants
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
@@ -121,7 +122,8 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
             if j == 0:
                 label.name = value
-                label.field_type = self.controller.field_types_by_caption.get(value, None)
+                ft = self.controller.field_types_by_caption.get(value, FieldType("Custom", FieldType.Function.CUSTOM))
+                label.field_type = ft
             elif j == 1:
                 label.display_format_index = value
             elif j == 2:

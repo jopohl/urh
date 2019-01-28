@@ -112,12 +112,12 @@ class Simulator(QObject):
             self.sender_ready = True
 
     def stop(self, msg=""):
-        self.log_message("Stop simulation: " + "{}".format(msg))
-        self.is_simulating = False
+        self.simulation_stopped.emit()
 
-        if msg == "Finished":
-            # Ensure devices can send their last data before killing them
-            time.sleep(0.5)
+        if self.is_simulating:
+            self.log_message("Stop simulation" + (" ({})".format(msg.strip()) if msg else ""))
+            self.is_simulating = False
+            self.do_restart = False
 
         # stop devices
         if self.sniffer:
@@ -125,8 +125,6 @@ class Simulator(QObject):
 
         if self.sender:
             self.sender.stop()
-
-        self.simulation_stopped.emit()
 
     def restart(self):
         self.transcript.start_new_round()
@@ -381,8 +379,10 @@ class Simulator(QObject):
         if isinstance(message, list) and len(message) > 0:
             self.log_messages.append(timestamp + ": " + message[0])
             self.log_messages.extend(message[1:])
+            logger.debug("\n".join(message))
         else:
             self.log_messages.append(timestamp + ": " + message)
+            logger.debug(message)
 
     def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
         if len(received_msg.decoded_bits) == 0:
@@ -449,7 +449,7 @@ class Simulator(QObject):
 
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
-        modulated = modulator.modulate(message.encoded_bits, pause=0)
+        modulated = modulator.modulate(message.encoded_bits, pause=message.pause)
 
         curr_repeat = 0
 
@@ -504,8 +504,8 @@ class Simulator(QObject):
                 cmd = self.__fill_counter_values(lbl.external_program)
                 result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
-                    log_msg = "Result value of external program {} ({}) does not match label length {}"
-                    logger.error(log_msg.format(result, len(result), lbl.end - lbl.start))
+                    log_msg = "Result value of external program {}: {} ({}) does not match label length {}"
+                    logger.error(log_msg.format(cmd, result, len(result), lbl.end - lbl.start))
                     continue
 
                 try:

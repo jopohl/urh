@@ -60,23 +60,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QLabel" name="lblNewPath">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note: A new directory will be created.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="label">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Choose a path:</string>
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="lineEdit_Path">
+       <property name="statusTip">
+        <string/>
        </property>
       </widget>
      </item>
@@ -87,78 +74,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QLineEdit" name="lineEdit_Path">
-       <property name="statusTip">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="4" colspan="2">
-      <widget class="QToolButton" name="btnRemoveParticipant">
-       <property name="toolTip">
-        <string>Remove participant</string>
-       </property>
+     <item row="1" column="3">
+      <widget class="QLabel" name="lblNewPath">
        <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset theme="list-remove">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="3">
-      <widget class="QSpinBox" name="spinBoxGain">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0" colspan="2">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Broadcast address (hex):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0" colspan="2">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Description:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="4" colspan="2">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Hz</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="2">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Default gain:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="4">
-      <widget class="QToolButton" name="btnUp">
-       <property name="toolTip">
-        <string>Move selected participants up</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset theme="go-up"/>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note: A new directory will be created.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -336,6 +255,88 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0" colspan="2">
+      <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Choose a path:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="4" colspan="2">
+      <widget class="QToolButton" name="btnRemoveParticipant">
+       <property name="toolTip">
+        <string>Remove participant</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-remove">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="QSpinBox" name="spinBoxGain">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0" colspan="2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Broadcast address (hex):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="2">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Description:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="4" colspan="2">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Hz</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="2">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Default gain:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="4">
+      <widget class="QToolButton" name="btnUp">
+       <property name="toolTip">
+        <string>Move selected participants up</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="go-up">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
      <item row="8" column="0" colspan="4">
       <widget class="QLabel" name="lOpenSpectrumAnalyzer">
        <property name="text">
@@ -365,25 +366,15 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="go-down"/>
+        <iconset theme="go-down">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="btnOK">
-       <property name="text">
-        <string>Create new project</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnCancel">
-       <property name="text">
-        <string>Cancel</string>
+     <item row="17" column="3">
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
@@ -415,26 +406,7 @@
   <tabstop>btnAddParticipant</tabstop>
   <tabstop>btnRemoveParticipant</tabstop>
   <tabstop>lineEditBroadcastAddress</tabstop>
-  <tabstop>btnOK</tabstop>
-  <tabstop>btnCancel</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>btnCancel</sender>
-   <signal>clicked()</signal>
-   <receiver>ProjectDialog</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>498</x>
-     <y>221</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>334</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

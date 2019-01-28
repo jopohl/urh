@@ -335,7 +335,6 @@ class Ui_GeneratorTab(object):
         self.retranslateUi(GeneratorTab)
         self.tabWidget.setCurrentIndex(0)
         self.stackedWidgetFuzzing.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(GeneratorTab)
 
     def retranslateUi(self, GeneratorTab):
         _translate = QtCore.QCoreApplication.translate

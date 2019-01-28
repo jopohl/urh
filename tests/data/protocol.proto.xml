@@ -32,7 +32,7 @@
       <message bits="101010101010101010101010101010100110011101101000011001110110100011111100110010100000001110010000100101111000000110000" decoding_index="0" message_type_id="vNDKarFPQ2iPTSFgXDWyOgCX5acPWrLlQIAqFEtC1AEUxm2s7F" modulator_index="0" participant_id="2oSTQqYue1LthyW6VYxYuG5ZEWY0DlkSyJkhzEqMflsQ8lN3i3" pause="186057"/>
    </messages>
    <message_types>
-      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="vNDKarFPQ2iPTSFgXDWyOgCX5acPWrLlQIAqFEtC1AEUxm2s7F" name="default">
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="vNDKarFPQ2iPTSFgXDWyOgCX5acPWrLlQIAqFEtC1AEUxm2s7F" name="Default">
          <ruleset mode="0"/>
       </message_type>
    </message_types>

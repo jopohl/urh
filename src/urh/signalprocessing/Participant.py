@@ -29,7 +29,13 @@ class Participant(object):
         return self.__id
 
     def __repr__(self):
-        return "Participant: {0} ({1})".format(self.name, self.shortname)
+        if self.address_hex:
+            return "{0} ({1}) [{2}]".format(self.name, self.shortname, self.address_hex)
+        else:
+            return "{0} ({1})".format(self.name, self.shortname)
+
+    def __str__(self):
+        return repr(self)
 
     def id_match(self, id):
         return self.__id == id
@@ -55,7 +61,7 @@ class Participant(object):
         root.set("color_index", str(self.color_index))
         root.set("id", str(self.__id))
         root.set("relative_rssi", str(self.relative_rssi))
-        root.set("simulate", str(int(self.simulate)))
+        root.set("simulate", str(int(bool(self.simulate))))
 
         return root
 

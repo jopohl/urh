@@ -30,6 +30,9 @@ class SpectrumThread(AbstractBaseThread):
             while not self.isInterruptionRequested():
                 try:
                     rcvd += recv(32768)  # Receive Buffer = 32768 Byte
+                except zmq.error.Again:
+                    # timeout
+                    continue
                 except (zmq.error.ContextTerminated, ConnectionResetError):
                     self.stop("Stopped receiving, because connection was reset")
                     return

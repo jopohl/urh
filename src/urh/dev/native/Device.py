@@ -7,14 +7,17 @@ from multiprocessing.connection import Connection
 from pickle import UnpicklingError
 
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal
 
 from urh.dev.native.SendConfig import SendConfig
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
+from urh.util import util
+# set shared library path when processes spawn so they can also find the .so's in bundled case
+util.set_shared_library_path()
 
-class Device(QObject):
+
+class Device(object):
     JOIN_TIMEOUT = 1.0
 
     SYNC_TX_CHUNK_SIZE = 0
@@ -69,6 +72,18 @@ class Device(QObject):
 
         if method_name:
             try:
+                try:
+                    check_method_name = cls.DEVICE_METHODS[tag+"_get_allowed_values"]
+                    allowed_values = getattr(cls.DEVICE_LIB, check_method_name)()
+                    next_allowed = min(allowed_values, key=lambda x: abs(x-value))
+                    if value != next_allowed:
+                        ctrl_connection.send("{}: {} not in range of supported values. Assuming {}".format(
+                            tag, value, next_allowed
+                        ))
+                        value = next_allowed
+                except (KeyError, AttributeError):
+                    pass
+
                 ret = getattr(cls.DEVICE_LIB, method_name)(value)
                 ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
             except AttributeError as e:
@@ -268,6 +283,8 @@ class Device(QObject):
 
         self.spectrum_x = None
         self.spectrum_y = None
+
+        self.apply_dc_correction = False
 
     def _start_read_rcv_buffer_thread(self):
         self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
@@ -613,7 +630,7 @@ class Device(QObject):
             logger.exception(e)
 
     @staticmethod
-    def unpack_complex(buffer):
+    def unpack_complex(buffer) -> np.ndarray:
         pass
 
     @staticmethod
@@ -646,6 +663,10 @@ class Device(QObject):
                 n_samples = len(samples)
                 if n_samples == 0:
                     continue
+
+                if self.apply_dc_correction:
+                    samples -= np.mean(samples)
+
             except OSError as e:
                 logger.exception(e)
                 continue

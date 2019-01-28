@@ -4,7 +4,7 @@ import sys
 
 from urh.util import util
 
-util.set_windows_lib_path()
+util.set_shared_library_path()
 
 
 from urh.dev.native.USRP import USRP

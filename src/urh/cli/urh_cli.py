@@ -26,10 +26,10 @@ if os.path.isdir(SRC_DIR):
 
 from urh.util import util
 
-util.set_windows_lib_path()
+util.set_shared_library_path()
 
 try:
-    import urh.cythonext.signalFunctions
+    import urh.cythonext.signal_functions
     import urh.cythonext.path_creator
     import urh.cythonext.util
 except ImportError:
@@ -132,6 +132,7 @@ def build_device_from_args(arguments: argparse.Namespace):
                            bandwidth=bandwidth,
                            gain=arguments.gain, if_gain=arguments.if_gain, baseband_gain=arguments.baseband_gain)
 
+    result.freq_correction = arguments.frequency_correction
     if arguments.device_identifier is not None:
         try:
             result.device_number = int(arguments.device_identifier)
@@ -152,6 +153,7 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     result.rcv_device.frequency = arguments.frequency
     result.rcv_device.sample_rate = arguments.sample_rate
     result.rcv_device.bandwidth = arguments.sample_rate if arguments.bandwidth is None else arguments.bandwidth
+    result.rcv_device.freq_correction = arguments.frequency_correction
     if arguments.gain is not None:
         result.rcv_device.gain = arguments.gain
     if arguments.if_gain is not None:
@@ -189,7 +191,11 @@ def read_messages_to_send(arguments: argparse.Namespace):
         print("Either give messages (-m) or a file to read from (-file) not both.")
         sys.exit(1)
     elif arguments.messages is not None:
-        message_strings = arguments.messages
+        #support for calls from external tools e.g. metasploit
+        if len(arguments.messages) == 1:
+            message_strings = arguments.messages[0].split(' ')
+        else:
+            message_strings = arguments.messages
     elif arguments.filename is not None:
         with open(arguments.filename) as f:
             message_strings = list(map(str.strip, f.readlines()))
@@ -226,6 +232,7 @@ def modulate_messages(messages, modulator):
     print("\nSuccessfully modulated {} messages".format(len(messages)))
     return buffer
 
+
 def parse_project_file(file_path: str):
     import xml.etree.ElementTree as ET
     from urh.util.ProjectManager import ProjectManager
@@ -244,7 +251,7 @@ def parse_project_file(file_path: str):
     ProjectManager.read_device_conf_dict(root.find("device_conf"), target_dict=result)
     result["device"] = result["name"]
 
-    modulators = ProjectManager.read_modulators_from_file(file_path)
+    modulators = Modulator.modulators_from_xml_tag(root)
     if len(modulators) > 0:
         modulator = modulators[0]
         result["carrier_frequency"] = modulator.carrier_freq_hz
@@ -255,6 +262,7 @@ def parse_project_file(file_path: str):
         result["modulation_type"] = modulator.modulation_type_str
 
     return result
+
 
 def create_parser():
     parser = argparse.ArgumentParser(description='This is the Command Line Interface for the Universal Radio Hacker.',
@@ -274,6 +282,8 @@ def create_parser():
     group1.add_argument("-if", "--if-gain", type=int, help="IF gain to use (only supported for some SDRs)")
     group1.add_argument("-bb", "--baseband-gain", type=int, help="Baseband gain to use (only supported for some SDRs)")
     group1.add_argument("-a", "--adaptive-noise", action="store_true", help="Use adaptive noise when receiving.")
+    group1.add_argument("-fcorr", "--frequency-correction", default=1, type=int,
+                        help="Set the frequency correction for SDR (if supported)")
 
     group2 = parser.add_argument_group('Modulation/Demodulation settings',
                                        "Configure the Modulator/Demodulator. Not required in raw mode."
@@ -369,8 +379,8 @@ def main():
 
     args.bandwidth = get_val(args.bandwidth, project_params, "bandwidth", None)
     rx_tx_prefix = "rx_" if args.receive else "tx_"
-    args.gain = get_val(args.gain, project_params, rx_tx_prefix+"gain", None)
-    args.if_gain = get_val(args.if_gain, project_params, rx_tx_prefix+"if_gain", None)
+    args.gain = get_val(args.gain, project_params, rx_tx_prefix + "gain", None)
+    args.if_gain = get_val(args.if_gain, project_params, rx_tx_prefix + "if_gain", None)
     args.baseband_gain = get_val(args.baseband_gain, project_params, rx_tx_prefix + "baseband_gain", None)
 
     if args.modulation_type is None:
@@ -387,8 +397,10 @@ def main():
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)
 
-    args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency", DEFAULT_CARRIER_FREQUENCY)
-    args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude", DEFAULT_CARRIER_AMPLITUDE)
+    args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency",
+                                     DEFAULT_CARRIER_FREQUENCY)
+    args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude",
+                                     DEFAULT_CARRIER_AMPLITUDE)
     args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
     args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
     args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
@@ -402,7 +414,7 @@ def main():
     Logger.save_log_level()
 
     argument_string = "\n".join("{} {}".format(arg, getattr(args, arg)) for arg in vars(args))
-    logger.debug("Using these parameters\n"+argument_string)
+    logger.debug("Using these parameters\n" + argument_string)
 
     if args.transmit:
         device = build_device_from_args(args)

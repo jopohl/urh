@@ -54,6 +54,9 @@ stop:1 rgba(255, 255, 255, 0));
          <property name="horizontalScrollMode">
           <enum>QAbstractItemView::ScrollPerPixel</enum>
          </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>

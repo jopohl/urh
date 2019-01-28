@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import QRectF, QLineF, Qt
+from PyQt5.QtCore import QRectF, QLineF
 from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
 from urh import constants
@@ -27,7 +27,7 @@ class GridScene(ZoomableScene):
     def drawBackground(self, painter: QPainter, rect: QRectF):
         # freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
         if self.draw_grid and len(self.frequencies) > 0:
-            painter.setPen(QPen(painter.pen().color(), Qt.FlatCap))
+            painter.setPen(QPen(painter.pen().color(), 0))
             parent_width = self.parent().width() if hasattr(self.parent(), "width") else 750
             view_rect = self.parent().view_rect() if hasattr(self.parent(), "view_rect") else rect
 
@@ -80,7 +80,7 @@ class GridScene(ZoomableScene):
         y2 = self.sceneRect().y() + self.sceneRect().height()
 
         if self.frequency_marker is None:
-            pen = QPen(constants.LINECOLOR, Qt.FlatCap)
+            pen = QPen(constants.LINECOLOR, 0)
             self.frequency_marker = [None, None]
             self.frequency_marker[0] = self.addLine(x_pos, y1, x_pos, y2, pen)
             self.frequency_marker[1] = self.addSimpleText("")

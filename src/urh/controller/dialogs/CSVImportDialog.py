@@ -22,6 +22,8 @@ class CSVImportDialog(QDialog):
         self.ui = Ui_DialogCSVImport()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.Window)
+
         self.ui.btnAutoDefault.hide()
 
         completer = QCompleter()

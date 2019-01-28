@@ -69,7 +69,6 @@ class Ui_Interpretation(object):
         self.horizontalLayout.addWidget(self.scrollArea)
 
         self.retranslateUi(Interpretation)
-        QtCore.QMetaObject.connectSlotsByName(Interpretation)
 
     def retranslateUi(self, Interpretation):
         _translate = QtCore.QCoreApplication.translate

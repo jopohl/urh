@@ -62,6 +62,7 @@ class SoundCard(Device):
             cls.pyaudio_stream = cls.pyaudio_handle.open(format=pyaudio.paFloat32,
                                                          channels=2,
                                                          rate=cls.SAMPLE_RATE,
+                                                         frames_per_buffer=cls.CHUNK_SIZE,
                                                          output=True)
             ctrl_connection.send("Successfully started pyaudio stream")
             return 0
@@ -72,15 +73,14 @@ class SoundCard(Device):
     @classmethod
     def receive_sync(cls, data_conn: Connection):
         if cls.pyaudio_stream:
-            data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE))
+            data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE, exception_on_overflow=False))
 
     @classmethod
     def send_sync(cls, data):
         if cls.pyaudio_stream:
-            if isinstance(data, np.ndarray):
-                cls.pyaudio_stream.write(data.tostring())
-            else:
-                cls.pyaudio_stream.write(bytes(data))
+            data_bytes = data.tostring() if isinstance(data, np.ndarray) else bytes(data)
+            # pad with zeros if smaller than chunk size
+            cls.pyaudio_stream.write(data_bytes.ljust(cls.CHUNK_SIZE*8, b'\0'))
 
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):

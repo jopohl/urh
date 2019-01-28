@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from urh.signalprocessing.Modulator import Modulator
-from urh.cythonext import signalFunctions
+from urh.cythonext import signal_functions
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from tests.utils_testing import get_path_for_data_file
@@ -34,7 +34,7 @@ class PlotTests(unittest.TestCase):
         plt.title("Modulated Wave")
 
         plt.subplot(2, 1, 2)
-        qad = signalFunctions.afp_demod(np.ascontiguousarray(data), 0, 1)
+        qad = signal_functions.afp_demod(np.ascontiguousarray(data), 0, 1)
         plt.plot(qad)
         plt.title("Quad Demod")
 

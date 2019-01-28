@@ -1,5 +1,6 @@
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
+from urh.dev.BackendHandler import BackendHandler
 from urh.models.PluginListModel import PluginListModel
 from urh.plugins.PluginManager import PluginManager
 
@@ -43,13 +44,7 @@ class TestOptionsGUI(QtTestCase):
         self.dialog.ui.tabWidget.setCurrentIndex(4)
         self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
-        self.dialog.ui.listWidgetDevices.setCurrentRow(0)
-        dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()
-        for i in range(1, self.dialog.ui.listWidgetDevices.count()):
-            self.dialog.ui.listWidgetDevices.setCurrentRow(i)
-            self.assertNotEqual(dev_name, self.dialog.ui.listWidgetDevices.currentItem().text())
-            dev_name = self.dialog.ui.listWidgetDevices.currentItem().text()
-
+        self.assertEqual(self.dialog.ui.tblDevices.model().rowCount(), len(BackendHandler.DEVICE_NAMES))
         self.dialog.ui.radioButtonPython2Interpreter.click()
 
         self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())

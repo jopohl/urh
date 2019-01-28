@@ -7,6 +7,7 @@ from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Participant import Participant
 
 
 class TestLengthEngine(AWRETestCase):
@@ -120,6 +121,56 @@ class TestLengthEngine(AWRETestCase):
                 pg.generate_message(message_type=mb2.message_type, data="0xaf")
 
         self.save_protocol("medium_length", pg)
+
+        ff = FormatFinder(pg.protocol.messages)
+
+        ff.perform_iteration()
+        self.assertEqual(len(ff.message_types), 2)
+        length_mt = next(mt for mt in ff.message_types if EmptyCommonRange("length") not in mt)
+        length_range = next(rng for rng in length_mt if rng.field_type == "length")
+
+        for i, sync_end in enumerate(ff.sync_ends):
+            self.assertEqual(sync_end, 16, msg=str(i))
+
+        self.assertEqual(16, length_range.bit_start)
+        self.assertEqual(8, length_range.length)
+
+    def test_two_message_types_same_length(self):
+        """
+        Protocol with two message types.
+        Messages have all same length
+        However, the length fields are not on same position in message types
+
+        :return:
+        """
+        mb1 = MessageTypeBuilder("mt1")
+        mb1.add_label(FieldType.Function.PREAMBLE, 8)
+        mb1.add_label(FieldType.Function.SYNC, 8)
+        mb1.add_label(FieldType.Function.LENGTH, 8)
+        mb1.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb1.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        mb2 = MessageTypeBuilder("mt2")
+        mb2.add_label(FieldType.Function.PREAMBLE, 8)
+        mb2.add_label(FieldType.Function.SYNC, 8)
+        mb2.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb2.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb2.add_label(FieldType.Function.LENGTH, 8)
+
+        alice = Participant("Alice", "A", address_hex="1234")
+        bob = Participant("Bob", "B", address_hex="cafe")
+
+        pg = ProtocolGenerator([mb1.message_type, mb2.message_type],
+                               syncs_by_mt={mb1.message_type: "11110011",
+                                            mb2.message_type: "11110011"},
+                               participants=[alice, bob])
+        num_messages = 20
+        for i in range(num_messages):
+            source, dest = (alice, bob) if i % 2 == 0 else (bob, alice)
+            pg.generate_message(data="0xab", source=source, destination=dest, message_type=mb1.message_type)
+            pg.generate_message(data="0xcd", source=source, destination=dest, message_type=mb2.message_type)
+
+        self.save_protocol("len_test_two_mt", pg)
 
         ff = FormatFinder(pg.protocol.messages)
 

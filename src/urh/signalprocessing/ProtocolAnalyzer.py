@@ -120,6 +120,10 @@ class ProtocolAnalyzer(object):
         return [msg.plain_ascii_str for msg in self.messages]
 
     @property
+    def decoded_bits(self):
+        return [msg.decoded_bits for msg in self.messages]
+
+    @property
     def decoded_proto_bits_str(self):
         """
 

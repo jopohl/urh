@@ -67,6 +67,26 @@ class MessageType(list):
         """
         return self.__get_unlabeled_ranges_from_labels(self)
 
+    def __create_label(self, name: str, start: int, end: int, color_index: int, auto_created: bool,
+                       field_type: FieldType):
+        if field_type is not None:
+            if field_type.function == FieldType.Function.CHECKSUM:
+                # If we have sync or preamble labels start behind last one:
+                pre_sync_label_ends = [lbl.end for lbl in self if lbl.is_preamble or lbl.is_sync]
+                if len(pre_sync_label_ends) > 0:
+                    range_start = max(pre_sync_label_ends)
+                else:
+                    range_start = 0
+
+                if range_start >= start:
+                    range_start = 0
+
+                return ChecksumLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
+                                     auto_created=auto_created, data_range_start=range_start)
+
+        return ProtocolLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
+                             auto_created=auto_created)
+
     @staticmethod
     def __get_unlabeled_ranges_from_labels(labels):
         """
@@ -92,6 +112,9 @@ class MessageType(list):
         labels = self + other_message_type
         labels.sort()
         return self.__get_unlabeled_ranges_from_labels(labels)
+
+    def get_first_label_with_type(self, field_type: FieldType.Function) -> ProtocolLabel:
+        return next((lbl for lbl in self if lbl.field_type and lbl.field_type.function == field_type), None)
 
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)
@@ -131,20 +154,6 @@ class MessageType(list):
         else:
             logger.warning(lbl.name + " is not in set, so cant be removed")
 
-    def to_xml(self) -> ET.Element:
-        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id,
-                                                    "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0",
-                                                    "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
-        for lbl in self:
-            try:
-                result.append(lbl.to_xml())
-            except TypeError:
-                logger.error("Could not save label: " + str(lbl))
-
-        result.append(self.ruleset.to_xml())
-
-        return result
-
     def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
         if not isinstance(label, ProtocolLabel) and hasattr(label, "field_type"):
             # In case of SimulatorProtocolLabel
@@ -158,25 +167,19 @@ class MessageType(list):
         else:
             label.field_type = field_type
 
-    def __create_label(self, name: str, start: int, end: int, color_index: int, auto_created: bool,
-                       field_type: FieldType):
-        if field_type is not None:
-            if field_type.function == FieldType.Function.CHECKSUM:
-                # If we have sync or preamble labels start behind last one:
-                pre_sync_label_ends = [lbl.end for lbl in self if lbl.is_preamble or lbl.is_sync]
-                if len(pre_sync_label_ends) > 0:
-                    range_start = max(pre_sync_label_ends)
-                else:
-                    range_start = 0
+    def to_xml(self) -> ET.Element:
+        result = ET.Element("message_type", attrib={"name": self.name, "id": self.id,
+                                                    "assigned_by_ruleset": "1" if self.assigned_by_ruleset else "0",
+                                                    "assigned_by_logic_analyzer": "1" if self.assigned_by_logic_analyzer else "0"})
+        for lbl in self:
+            try:
+                result.append(lbl.to_xml())
+            except TypeError:
+                logger.error("Could not save label: " + str(lbl))
 
-                if range_start >= start:
-                    range_start = 0
+        result.append(self.ruleset.to_xml())
 
-                return ChecksumLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
-                                     auto_created=auto_created, data_range_start=range_start)
-
-        return ProtocolLabel(name=name, start=start, end=end, color_index=color_index, field_type=field_type,
-                             auto_created=auto_created)
+        return result
 
     @staticmethod
     def from_xml(tag: ET.Element):

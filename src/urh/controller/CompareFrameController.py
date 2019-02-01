@@ -1,6 +1,7 @@
 import locale
 import math
 import os
+import traceback
 from collections import defaultdict
 from datetime import datetime
 
@@ -9,6 +10,7 @@ from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItem
     QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
+from urh.util.Errors import Errors
 
 from urh import constants
 from urh.awre import AutoAssigner
@@ -1025,11 +1027,17 @@ class CompareFrameController(QWidget):
         self.ui.progressBarLogicAnalyzer.setValue(75)
 
         if self.assign_labels_action.isChecked():
-            self.proto_analyzer.auto_assign_labels()
-            self.protocol_model.update()
-            self.label_value_model.update()
-            self.message_type_table_model.update()
-            self.ui.tblViewMessageTypes.clearSelection()
+            try:
+                self.proto_analyzer.auto_assign_labels()
+                self.protocol_model.update()
+                self.label_value_model.update()
+                self.message_type_table_model.update()
+                self.ui.tblViewMessageTypes.clearSelection()
+            except Exception as e:
+                logger.exception(e)
+                Errors.generic_error("Failed to assign labels",
+                                     "An error occurred during automatic label assignment",
+                                     traceback.format_exc())
 
         self.ui.progressBarLogicAnalyzer.setValue(90)
 

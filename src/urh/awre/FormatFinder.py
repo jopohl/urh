@@ -26,7 +26,10 @@ class FormatFinder(object):
         if participants is not None:
             AutoAssigner.auto_assign_participants(messages, participants)
 
-        self.preamble_starts, self.preamble_lengths, sync_len = Preprocessor(messages).preprocess()
+        existing_message_types = {i: msg.message_type for i, msg in enumerate(messages)}
+
+        preprocessor = Preprocessor(self.get_bitvectors_from_messages(messages), existing_message_types)
+        self.preamble_starts, self.preamble_lengths, sync_len = preprocessor.preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
 
         if shortest_field_length is None:
@@ -41,7 +44,6 @@ class FormatFinder(object):
             if self.sync_ends[i] - self.preamble_starts[i] < self.preamble_lengths[i]:
                 self.preamble_lengths[i] = self.sync_ends[i] - self.preamble_starts[i]
 
-        self.messages = messages  # type: list[Message]
         self.bitvectors = self.get_bitvectors_from_messages(messages, self.sync_ends)
         self.hexvectors = self.get_hexvectors(self.bitvectors)
         self.xor_matrix = self.build_xor_matrix()
@@ -135,13 +137,13 @@ class FormatFinder(object):
         if sync_ends is None:
             sync_ends = defaultdict(lambda: None)
 
-        return [np.array(msg.decoded_bits[sync_ends[i]:], dtype=np.int8) for i, msg in enumerate(messages)]
+        return [np.array(msg.decoded_bits[sync_ends[i]:], dtype=np.uint8) for i, msg in enumerate(messages)]
 
     @staticmethod
     def get_bitvectors_by_participant(messages: list) -> dict:
         result = defaultdict(list)
         for msg in messages:  # type: Message
-            result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.int8))
+            result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.uint8))
         return result
 
     @staticmethod

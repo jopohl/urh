@@ -64,7 +64,7 @@ class TestAWRERealProtocols(AWRETestCase):
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"
 
-        preprocessor = Preprocessor(protocol.messages)
+        preprocessor = Preprocessor(protocol.decoded_bits)
         possible_syncs = preprocessor.find_possible_syncs()
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)

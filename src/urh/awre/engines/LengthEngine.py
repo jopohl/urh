@@ -1,6 +1,5 @@
 import math
 from collections import defaultdict
-from pprint import pprint
 
 import numpy as np
 
@@ -27,16 +26,36 @@ class LengthEngine(Engine):
 
         # TODO: From here we should start a loop for subclustering
         common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
+        self.filter_common_ranges(common_ranges_by_length)
+        self._debug("Common Ranges:", common_ranges_by_length)
 
-        # Ranges must be common along length clusters
-        # but their values must differ, so now we rule out all ranges that are
-        #   1. common across clusters AND
-        #   2. have same value
+        # TODO: Try different endianess
+        scored_ranges = self.score_ranges(common_ranges_by_length, n_gram_length)
+        self._debug("Scored Ranges", scored_ranges)
+
+        # Take the ranges with highest score per cluster if it's score surpasses the minimum score
+        high_scores_by_length = self.choose_high_scored_ranges(scored_ranges, bitvectors_by_n_gram_length,
+                                                               minimum_score)
+        self._debug("Highscored Ranges", high_scores_by_length)
+        return high_scores_by_length.values()
+
+    @staticmethod
+    def filter_common_ranges(common_ranges_by_length: dict):
+        """
+        Ranges must be common along length clusters
+        but their values must differ, so now we rule out all ranges that are
+          1. common across clusters AND
+          2. have same value
+
+        :return:
+        """
+
         ranges = [r for rng in common_ranges_by_length.values() for r in rng]
         for rng in ranges:
             count = len([r for r in ranges if rng.start == r.start
                          and rng.length == r.length
-                         and rng.value_str == r.value_str])
+                         and rng.value_str == r.value_str]
+                        )
             if count < 2:
                 continue
 
@@ -46,9 +65,16 @@ class LengthEngine(Engine):
                 except ValueError:
                     pass
 
-        self._debug("Common Ranges:", common_ranges_by_length)
+    @staticmethod
+    def score_ranges(common_ranges_by_length: dict, n_gram_length: int):
+        """
+        Calculate score for the common ranges
 
-        # TODO: Try different endianess
+        :param common_ranges_by_length:
+        :param n_gram_length:
+        :return:
+        """
+
         # The window length must be smaller than common range's length
         # and is something like 8 in case of on 8 bit integer.
         # We make this generic so e.g. 4 bit integers are supported as well
@@ -69,7 +95,7 @@ class LengthEngine(Engine):
                     bits = common_range.value_str
                     max_score = max_start = -1
                     for start in range(0, len(bits) + 1 - window_length, n_gram_length):
-                        score = self.score_bits(bits[start:start + window_length], length, position=start)
+                        score = LengthEngine.score_bits(bits[start:start + window_length], length, position=start)
                         if score > max_score:
                             max_score = score
                             max_start = start
@@ -81,11 +107,12 @@ class LengthEngine(Engine):
                                       range_type=common_range.range_type)
                     scored_ranges[length][window_length].append(rng)
 
-        self._debug("scored ranges", scored_ranges)
+        return scored_ranges
 
-        # Take the ranges with highest score per cluster if it's score surpasses the minimum score
+    def choose_high_scored_ranges(self, scored_ranges: dict, bitvectors_by_n_gram_length: dict, minimum_score: float):
         high_scores_by_length = dict()
 
+        # Choose all ranges with highest score per cluster if score surpasses the minimum score
         for length, ranges_by_window_length in scored_ranges.items():
             for window_length, ranges in ranges_by_window_length.items():
                 high_score_range = max(ranges, key=lambda x: x.score, default=None)  # type: CommonRange
@@ -119,8 +146,7 @@ class LengthEngine(Engine):
                                                             score=max_score, field_type="length",
                                                             message_indices={msg_index}, range_type="bit")
 
-        self._debug("Highscore ranges", high_scores_by_length)
-        return high_scores_by_length.values()
+        return high_scores_by_length
 
     @staticmethod
     def score_bits(bits: str, target_length: int, position: int):

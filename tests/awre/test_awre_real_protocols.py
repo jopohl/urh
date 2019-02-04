@@ -107,6 +107,8 @@ class TestAWRERealProtocols(AWRETestCase):
 
 
         participants = sorted({msg.participant for msg in protocol.messages})
+
+        self.clear_message_types(protocol.messages)
         ff = FormatFinder(protocol.messages, participants=participants)
         ff.perform_iteration()
 

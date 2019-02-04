@@ -3,6 +3,7 @@ import tempfile
 import unittest
 
 import numpy
+from urh.signalprocessing.MessageType import MessageType
 
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
@@ -20,6 +21,12 @@ class AWRETestCase(unittest.TestCase):
         for field_type_function in FieldType.Function:
             result.append(FieldType(field_type_function.value, field_type_function))
         return result
+
+    @staticmethod
+    def clear_message_types(messages: list):
+        mt = MessageType("empty")
+        for msg in messages:
+            msg.message_type = mt
 
     @staticmethod
     def build_protocol_generator(preamble_syncs: list, num_messages: tuple, data: tuple) -> ProtocolGenerator:

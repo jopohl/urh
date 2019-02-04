@@ -11,7 +11,9 @@ from urh.awre.engines.AddressEngine import AddressEngine
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.cythonext import awre_util
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.MessageType import MessageType
 
 
 class FormatFinder(object):
@@ -26,9 +28,12 @@ class FormatFinder(object):
         if participants is not None:
             AutoAssigner.auto_assign_participants(messages, participants)
 
-        existing_message_types = {i: msg.message_type for i, msg in enumerate(messages)}
+        existing_message_types_by_msg = {i: msg.message_type for i, msg in enumerate(messages)}
+        self.existing_message_types = defaultdict(list)
+        for i, message_type in existing_message_types_by_msg.items():
+            self.existing_message_types[message_type].append(i)
 
-        preprocessor = Preprocessor(self.get_bitvectors_from_messages(messages), existing_message_types)
+        preprocessor = Preprocessor(self.get_bitvectors_from_messages(messages), existing_message_types_by_msg)
         self.preamble_starts, self.preamble_lengths, sync_len = preprocessor.preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
 
@@ -49,12 +54,6 @@ class FormatFinder(object):
         self.xor_matrix = self.build_xor_matrix()
         participants = list(sorted(set(msg.participant for msg in messages)))
         self.participant_indices = [participants.index(msg.participant) for msg in messages]
-
-        self.engines = [
-            LengthEngine(self.bitvectors),
-            AddressEngine(self.hexvectors, self.participant_indices),
-            SequenceNumberEngine(self.bitvectors)
-        ]
 
         self.label_set = set()
         self.message_types = [[]]
@@ -83,12 +82,31 @@ class FormatFinder(object):
                 mt = self.message_types[-1]
             mt.append(merged_rng)
 
-    def perform_iteration(self):
-        for engine in self.engines:
-            high_scored_ranges = []  # type: list[CommonRange]
-            high_scored_ranges.extend(engine.find())
+    def perform_iteration_for_message_type(self, message_type: MessageType):
+        indices = self.existing_message_types[message_type]
+        engines = []
+
+        if not message_type.get_first_label_with_type(FieldType.Function.LENGTH):
+            engines.append(LengthEngine([self.bitvectors[i] for i in indices]))
+        if not message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS) \
+                and not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
+            engines.append(AddressEngine([self.hexvectors[i] for i in indices],
+                                         [self.participant_indices[i] for i in indices]))
+        if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
+            engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices]))
+
+        # TODO Label set per message type?
+        for engine in engines:
+            high_scored_ranges = engine.find()  # type: list[CommonRange]
+            self.retransform_message_indices(high_scored_ranges, indices)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
+
+    def perform_iteration(self):
+        for message_type in self.existing_message_types:
+            self.perform_iteration_for_message_type(message_type)
+
+        # TODO: Consider existing message types
         self.message_types = self.create_message_types(self.label_set)
         self.message_types = self.retransform_message_types(self.message_types, self.preamble_starts,
                                                             self.preamble_lengths, self.sync_ends)
@@ -239,6 +257,19 @@ class FormatFinder(object):
             result.extend(best_solution)
 
         return CommonRangeContainer(result, message_indices=copy.copy(container.message_indices))
+
+    @staticmethod
+    def retransform_message_indices(common_ranges, indices: list):
+        """
+        Retransform the found message indices of an engine to the original index space
+        based on the message indices of the message type
+
+        :type common_ranges: list of CommonRange
+        :param indices: Messages belonging to the message type the engine ran for
+        :return:
+        """
+        for common_range in common_ranges:
+            common_range.message_indices = {indices[i] for i in common_range.message_indices}
 
     @staticmethod
     def retransform_message_types(message_types, preamble_starts, preamble_lengths, sync_ends):

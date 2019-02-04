@@ -30,6 +30,7 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         self.save_protocol("simple_sequence_number", pg)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
 
         seq_engine = SequenceNumberEngine(ff.bitvectors, n_gram_length=8)
@@ -67,6 +68,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         highscored_ranges = seq_engine.find()
         self.assertEqual(len(highscored_ranges), 1)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
@@ -106,6 +108,7 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         self.save_protocol("two_sequence_numbers", pg)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
 
         seq_engine = SequenceNumberEngine(ff.bitvectors, n_gram_length=8)

@@ -1,13 +1,10 @@
-import random
-
 from tests.awre.AWRETestCase import AWRETestCase
-from urh.awre.FormatFinder import FormatFinder
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange
+from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.Participant import Participant
 
 
 class TestLengthEngine(AWRETestCase):
@@ -28,10 +25,11 @@ class TestLengthEngine(AWRETestCase):
                                syncs_by_mt={mb.message_type: "0x9a9d"})
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(5*i, data_length))
+                pg.generate_message(data=pg.decimal_to_bits(5 * i, data_length))
 
         self.save_protocol("simple_length", pg)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
 
         length_engine = LengthEngine(ff.bitvectors)
@@ -62,7 +60,7 @@ class TestLengthEngine(AWRETestCase):
 
         num_messages_by_data_length = {32: 10, 64: 15, 16: 5, 24: 7}
         pg = ProtocolGenerator([mb.message_type],
-                               preambles_by_mt={mb.message_type: "10"*8},
+                               preambles_by_mt={mb.message_type: "10" * 8},
                                syncs_by_mt={mb.message_type: "0xcafe"})
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
@@ -71,14 +69,15 @@ class TestLengthEngine(AWRETestCase):
                 elif i % 4 == 1:
                     data = "0" * data_length
                 elif i % 4 == 2:
-                    data = "10" * (data_length//2)
+                    data = "10" * (data_length // 2)
                 else:
-                    data = "01" * (data_length//2)
+                    data = "01" * (data_length // 2)
 
                 pg.generate_message(data=data)
 
         self.save_protocol("easy_length", pg)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
 
         length_engine = LengthEngine(ff.bitvectors)
@@ -117,11 +116,12 @@ class TestLengthEngine(AWRETestCase):
         num_messages_by_data_length = {8: 5, 16: 10, 32: 5}
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(10*i, data_length), message_type=mb1.message_type)
+                pg.generate_message(data=pg.decimal_to_bits(10 * i, data_length), message_type=mb1.message_type)
                 pg.generate_message(message_type=mb2.message_type, data="0xaf")
 
         self.save_protocol("medium_length", pg)
 
+        self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
 
         ff.perform_iteration()

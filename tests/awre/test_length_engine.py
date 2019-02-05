@@ -1,3 +1,5 @@
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
+
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange
 from urh.awre.FormatFinder import FormatFinder
@@ -39,11 +41,8 @@ class TestLengthEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        label = next(lbl for lbl in ff.message_types[0]
-                     if lbl.field_type == "length")
-        self.assertIsInstance(label, CommonRange)
-        self.assertEqual(label.field_type, "length")
-        self.assertEqual(label.bit_start, 24)
+        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 8)
 
     def test_easy_protocol(self):
@@ -87,11 +86,10 @@ class TestLengthEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        label = next(lbl for lbl in ff.message_types[0]
-                     if lbl.field_type == "length")
-        self.assertIsInstance(label, CommonRange)
-        self.assertEqual(label.field_type, "length")
-        self.assertEqual(label.bit_start, 32)
+        print(ff.message_types[0])
+        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        self.assertIsInstance(label, ProtocolLabel)
+        self.assertEqual(label.start, 32)
         self.assertEqual(label.length, 8)
 
     def test_medium_protocol(self):
@@ -126,11 +124,11 @@ class TestLengthEngine(AWRETestCase):
 
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
-        length_mt = next(mt for mt in ff.message_types if EmptyCommonRange("length") not in mt)
-        length_range = next(rng for rng in length_mt if rng.field_type == "length")
+        length_mt = next(mt for mt in ff.message_types if mt.get_first_label_with_type(FieldType.Function.LENGTH) is not None)
+        length_label = length_mt.get_first_label_with_type(FieldType.Function.LENGTH)
 
         for i, sync_end in enumerate(ff.sync_ends):
             self.assertEqual(sync_end, 16, msg=str(i))
 
-        self.assertEqual(16, length_range.bit_start)
-        self.assertEqual(8, length_range.length)
+        self.assertEqual(16, length_label.start)
+        self.assertEqual(8, length_label.length)

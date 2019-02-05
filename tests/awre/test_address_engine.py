@@ -90,14 +90,14 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         mt = ff.message_types[0]
-        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 32)
-        self.assertEqual(dst_addr.bit_end, 47)
-        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertEqual(dst_addr.start, 32)
+        self.assertEqual(dst_addr.length, 16)
+        src_addr = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
         self.assertIsNotNone(src_addr)
-        self.assertEqual(src_addr.bit_start, 48)
-        self.assertEqual(src_addr.bit_end, 63)
+        self.assertEqual(src_addr.start, 48)
+        self.assertEqual(src_addr.length, 16)
 
     def test_two_participants_with_ack_messages(self):
         mb = MessageTypeBuilder("data")
@@ -147,20 +147,20 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
         mt = ff.message_types[0]
-        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 32)
-        self.assertEqual(dst_addr.bit_end, 47)
-        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertEqual(dst_addr.start, 32)
+        self.assertEqual(dst_addr.length, 16)
+        src_addr = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
         self.assertIsNotNone(src_addr)
-        self.assertEqual(src_addr.bit_start, 48)
-        self.assertEqual(src_addr.bit_end, 63)
+        self.assertEqual(src_addr.start, 48)
+        self.assertEqual(src_addr.length, 16)
 
         mt = ff.message_types[1]
-        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 32)
-        self.assertEqual(dst_addr.bit_end, 47)
+        self.assertEqual(dst_addr.start, 32)
+        self.assertEqual(dst_addr.length, 16)
 
     def test_two_participants_with_ack_messages_and_type(self):
         mb = MessageTypeBuilder("data")
@@ -211,20 +211,20 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
         mt = ff.message_types[0]
-        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 40)
-        self.assertEqual(dst_addr.bit_end, 55)
-        src_addr = next((cr for cr in mt if cr.field_type == "source address"), None)
+        self.assertEqual(dst_addr.start, 40)
+        self.assertEqual(dst_addr.length, 16)
+        src_addr = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
         self.assertIsNotNone(src_addr)
-        self.assertEqual(src_addr.bit_start, 56)
-        self.assertEqual(src_addr.bit_end, 71)
+        self.assertEqual(src_addr.start, 56)
+        self.assertEqual(src_addr.length, 16)
 
         mt = ff.message_types[1]
-        dst_addr = next((cr for cr in mt if cr.field_type == "destination address"), None)
+        dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
-        self.assertEqual(dst_addr.bit_start, 32)
-        self.assertEqual(dst_addr.bit_end, 47)
+        self.assertEqual(dst_addr.start, 32)
+        self.assertEqual(dst_addr.length, 16)
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util

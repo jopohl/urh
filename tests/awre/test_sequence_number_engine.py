@@ -40,11 +40,8 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        label = next(lbl for lbl in ff.message_types[0]
-                     if lbl.field_type == "sequence number")
-        self.assertIsInstance(label, CommonRange)
-        self.assertEqual(label.field_type, "sequence number")
-        self.assertEqual(label.bit_start, 24)
+        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 8)
 
     def test_16bit_seq_nr(self):
@@ -73,11 +70,8 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        label = next(lbl for lbl in ff.message_types[0]
-                     if lbl.field_type == "sequence number")
-        self.assertIsInstance(label, CommonRange)
-        self.assertEqual(label.field_type, "sequence number")
-        self.assertEqual(label.bit_start, 24)
+        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 16)
 
     def test_multiple_sequence_numbers(self):

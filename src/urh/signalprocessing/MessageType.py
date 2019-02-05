@@ -120,6 +120,9 @@ class MessageType(list):
         super().append(lbl)
         self.sort()
 
+    def give_new_id(self):
+        self.__id = str(uuid.uuid4())
+
     def add_protocol_label(self, start: int, end: int, name=None, color_ind=None,
                            auto_created=False, type: FieldType = None) -> ProtocolLabel:
 

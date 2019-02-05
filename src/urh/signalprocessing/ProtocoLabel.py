@@ -72,6 +72,10 @@ class ProtocolLabel(object):
         return self.field_type is not None and self.field_type.function == FieldType.Function.SYNC
 
     @property
+    def length(self) -> int:
+        return self.end - self.start
+
+    @property
     def field_type(self) -> FieldType:
         return self.__field_type
 

@@ -12,7 +12,7 @@ class TestFormatFinder(AWRETestCase):
         rng2 = CommonRange(8, 8, "1" * 8, score=1, field_type="Address")
         rng2.message_indices = {0, 1, 2}
 
-        message_types = FormatFinder.create_message_types({rng1, rng2})
+        message_types = FormatFinder.create_common_range_containers({rng1, rng2})
         self.assertEqual(len(message_types), 1)
 
         expected = CommonRangeContainer([rng1, rng2], message_indices={0, 1, 2})
@@ -26,7 +26,7 @@ class TestFormatFinder(AWRETestCase):
         rng3 = CommonRange(16, 8, "1" * 8, score=1, field_type="Seq")
         rng3.message_indices = {1, 3, 5, 7, 12}
 
-        message_types = FormatFinder.create_message_types({rng1, rng2, rng3})
+        message_types = FormatFinder.create_common_range_containers({rng1, rng2, rng3})
         expected1 = CommonRangeContainer([rng1], message_indices={0, 6, 8})
         expected2 = CommonRangeContainer([rng1, rng2], message_indices={2, 4})
         expected3 = CommonRangeContainer([rng1, rng2, rng3], message_indices={12})

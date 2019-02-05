@@ -666,14 +666,10 @@ class ProtocolAnalyzer(object):
         format_finder = FormatFinder(self.messages)
         format_finder.perform_iteration()
 
-        # TODO: Consider present labels and do not clear default message type
-        self.default_message_type.clear()
-        for i, rng in enumerate(format_finder.message_types[0]):
-            self.default_message_type.append(ProtocolLabel(name=rng.field_type,
-                                                           start=rng.bit_start, end=rng.bit_end, color_index=i,
-                                                           field_type=FieldType.from_caption(rng.field_type)
-                                                           )
-                                             )
+        self.message_types[:] = format_finder.message_types
+        for msg_type, indices in format_finder.existing_message_types.items():
+            for i in indices:
+                self.messages[i].message_type = msg_type
 
     @staticmethod
     def get_protocol_from_string(message_strings: list, is_hex=None, default_pause=0, sample_rate=1e6):

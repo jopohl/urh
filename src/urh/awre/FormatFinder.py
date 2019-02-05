@@ -14,6 +14,7 @@ from urh.cythonext import awre_util
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 
 class FormatFinder(object):
@@ -55,34 +56,22 @@ class FormatFinder(object):
         participants = list(sorted(set(msg.participant for msg in messages)))
         self.participant_indices = [participants.index(msg.participant) for msg in messages]
 
-        self.label_set = set()
-        self.message_types = [[]]
+    @property
+    def message_types(self):
+        """
 
-    def update_message_types(self, common_ranges: list):
-        if not common_ranges:
-            return
-
-        # We need at least as many message types as there are field types.
-        # E.g. if we have three length fields with different ranges we need at least three message types
-        num_message_types = max(Counter(rng.field_type for rng in common_ranges).values())
-        while len(self.message_types) < num_message_types:
-            self.message_types.append([])
-
-        # Now we update the message types or add new ones if necessary
-        for merged_rng in common_ranges:
-            # Find a message type that not has already a field in this range
-            try:
-                mt = next(
-                    mt for mt in self.message_types
-                    if not any(merged_rng.overlaps_with(rng) for rng in mt)
-                    and not any(rng.field_type == merged_rng.field_type for rng in mt)
-                )
-            except StopIteration:
-                self.message_types.append([])
-                mt = self.message_types[-1]
-            mt.append(merged_rng)
+        :rtype: list of MessageType
+        """
+        return list(self.existing_message_types.keys())
 
     def perform_iteration_for_message_type(self, message_type: MessageType):
+        """
+        Perform a field inference iteration for messages of the given message type
+        This routine will return newly found fields as a set of Common Ranges
+
+        :param message_type:
+        :rtype: set of CommonRange
+        """
         indices = self.existing_message_types[message_type]
         engines = []
 
@@ -95,24 +84,58 @@ class FormatFinder(object):
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
             engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices]))
 
-        # TODO Label set per message type?
+        result = set()
         for engine in engines:
             high_scored_ranges = engine.find()  # type: list[CommonRange]
             high_scored_ranges = self.retransform_message_indices(high_scored_ranges, indices, self.sync_ends)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
-            self.label_set.update(merged_ranges)
+            result.update(merged_ranges)
+        return result
 
     def perform_iteration(self):
-        for message_type in self.existing_message_types:
-            self.perform_iteration_for_message_type(message_type)
+        for message_type in self.existing_message_types.copy():
+            new_fields_for_message_type = self.perform_iteration_for_message_type(message_type)
+            new_fields_for_message_type.update(
+                self.get_preamble_and_sync(self.preamble_starts, self.preamble_lengths, self.sync_ends,
+                                           message_type_indices=self.existing_message_types[message_type])
+            )
 
-        # TODO: Consider existing message types
-        self.message_types = self.create_message_types(self.label_set)
-        self.message_types = self.retransform_message_types(self.message_types, self.preamble_starts,
-                                                            self.preamble_lengths, self.sync_ends)
+            self.remove_overlapping_fields(new_fields_for_message_type, message_type)
+            containers = self.create_common_range_containers(new_fields_for_message_type)
+            if len(containers) == 1:
+                for rng in containers[0]:
+                    self.add_range_to_message_type(rng, message_type)
+            elif len(containers) > 1:
+                del self.existing_message_types[message_type]
+
+                for i, container in enumerate(containers):
+                    new_message_type = copy.deepcopy(message_type)  # type: MessageType
+                    if i > 0:
+                        new_message_type.name += " #{}".format(i)
+                        new_message_type.give_new_id()
+
+                    for rng in container:
+                        self.add_range_to_message_type(rng, new_message_type)
+
+                    self.existing_message_types[new_message_type].extend(list(container.message_indices))
 
     def build_xor_matrix(self):
         return awre_util.build_xor_matrix(self.bitvectors)
+
+    @staticmethod
+    def remove_overlapping_fields(common_ranges, message_type: MessageType):
+        """
+        Remove all fields from a set of CommonRanges which overlap with fields of the existing message type
+
+        :type common_ranges: set of CommonRange
+        :param message_type:
+        :return:
+        """
+        for rng in common_ranges.copy():
+            for lbl in message_type:  # type: ProtocolLabel
+                if any(i in range(rng.bit_start, rng.bit_end) for i in range(lbl.start, lbl.end)):
+                    common_ranges.discard(rng)
+                    break
 
     @staticmethod
     def merge_common_ranges(common_ranges):
@@ -136,6 +159,14 @@ class FormatFinder(object):
                 merged_ranges.append(common_range)
 
         return merged_ranges
+
+    @staticmethod
+    def add_range_to_message_type(common_range: CommonRange, message_type: MessageType):
+        message_type.add_protocol_label(name=common_range.field_type,
+                                        start=common_range.bit_start, end=common_range.bit_end,
+                                        auto_created=True,
+                                        type=FieldType.from_caption(common_range.field_type)
+                                        )
 
     @staticmethod
     def get_hexvectors(bitvectors: list):
@@ -165,8 +196,10 @@ class FormatFinder(object):
         return result
 
     @staticmethod
-    def create_message_types(label_set: set, num_messages: int = None):
+    def create_common_range_containers(label_set: set, num_messages: int = None):
         """
+        Create message types from set of labels.
+        Handle overlapping conflicts and create multiple message types if needed
 
         :param label_set:
         :param num_messages:
@@ -259,7 +292,7 @@ class FormatFinder(object):
         return CommonRangeContainer(result, message_indices=copy.copy(container.message_indices))
 
     @staticmethod
-    def retransform_message_indices(common_ranges, indices: list, sync_ends) -> list:
+    def retransform_message_indices(common_ranges, message_type_indices: list, sync_ends) -> list:
         """
         Retransform the found message indices of an engine to the original index space
         based on the message indices of the message type.
@@ -268,14 +301,14 @@ class FormatFinder(object):
         match the position in the original space
 
         :type common_ranges: list of CommonRange
-        :param indices: Messages belonging to the message type the engine ran for
+        :param message_type_indices: Messages belonging to the message type the engine ran for
         :type sync_ends: np.ndarray
         :return:
         """
         result = []
         for common_range in common_ranges:
             # Retransform message indices into original space
-            message_indices = np.fromiter((indices[i] for i in common_range.message_indices),
+            message_indices = np.fromiter((message_type_indices[i] for i in common_range.message_indices),
                                           dtype=int, count=len(common_range.message_indices))
 
             # If we have different sync_ends we need to create a new common range for each different sync_length
@@ -289,39 +322,34 @@ class FormatFinder(object):
         return result
 
     @staticmethod
-    def retransform_message_types(message_types, preamble_starts, preamble_lengths, sync_ends):
+    def get_preamble_and_sync(preamble_starts, preamble_lengths, sync_ends, message_type_indices):
         """
-        Retransform the message types into original message space.
-        That is, consider preamble and sync information.
+        Get preamble and sync common ranges based on the data
 
-        1. We need to add sync end of a message to the corresponding ranges
-        2. Furthermore, we need to create a new message type if messages of label have different sync ends
-        3. While we are on it, we create Preamble and Sync ranges in this method
-
-        :type message_types: list of CommonRangeContainer
         :type preamble_starts: np.ndarray
         :type preamble_lengths: np.ndarray
         :type sync_ends: np.ndarray
-        :return:
+        :type message_type_indices: list
+        :rtype: set of CommonRange
         """
         assert len(preamble_starts) == len(preamble_lengths) == len(sync_ends)
 
-        result = []
-        for i, sync_end in enumerate(sync_ends):
-            preamble = CommonRange(preamble_starts[i], preamble_lengths[i], field_type="preamble")
-            preamble_end = preamble_starts[i] + preamble_lengths[i]
-            sync = CommonRange(preamble_end, sync_end - preamble_end, field_type="synchronization")
-
-            mt = next((copy.deepcopy(mt) for mt in message_types if i in mt.message_indices),
-                      CommonRangeContainer([], set()))
-
-            mt.message_indices = {i}
-            mt.add_ranges([preamble, sync])
-
-            existing = next((m for m in result if mt.has_same_ranges(list(m))), None)  # type: CommonRange
-            if existing is None:
-                result.append(mt)
+        result = set()  # type: set[CommonRange]
+        for i in message_type_indices:
+            preamble = CommonRange(preamble_starts[i], preamble_lengths[i], field_type="preamble", message_indices={i})
+            existing_preamble = next((rng for rng in result if preamble == rng), None)
+            if existing_preamble is not None:
+                existing_preamble.message_indices.add(i)
             else:
-                existing.message_indices.add(i)
+                result.add(preamble)
+
+            preamble_end = preamble_starts[i] + preamble_lengths[i]
+            sync_end = sync_ends[i]
+            sync = CommonRange(preamble_end, sync_end - preamble_end, field_type="synchronization", message_indices={i})
+            existing_sync = next((rng for rng in result if sync == rng), None)
+            if existing_sync is not None:
+                existing_sync.message_indices.add(i)
+            else:
+                result.add(sync)
 
         return result

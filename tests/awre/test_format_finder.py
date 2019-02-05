@@ -1,8 +1,8 @@
 import numpy as np
 
 from tests.awre.AWRETestCase import AWRETestCase
-from urh.awre.FormatFinder import FormatFinder
 from urh.awre.CommonRange import CommonRange, CommonRangeContainer
+from urh.awre.FormatFinder import FormatFinder
 
 
 class TestFormatFinder(AWRETestCase):
@@ -41,36 +41,24 @@ class TestFormatFinder(AWRETestCase):
         self.assertIn(expected4, message_types)
         self.assertIn(expected5, message_types)
 
-    def test_retransform_message_types(self):
-        preamble_starts = np.array([0, 0, 0, 0, 0])
-        preamble_lengths = np.array([8, 8, 8, 10, 10])
+    def test_retransform_message_indices(self):
         sync_ends = np.array([12, 12, 12, 14, 14])
 
-        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="length")
-        container = CommonRangeContainer([rng], message_indices={0, 1, 2, 3, 4})
-        retransformed = FormatFinder.retransform_message_types([container], preamble_starts,
-                                                               preamble_lengths, sync_ends)
-        self.assertEqual(len(retransformed), 2)
+        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2, 3, 4})
+        retransformed_ranges = FormatFinder.retransform_message_indices([rng], [0, 1, 2, 3, 4], sync_ends)
 
-        expected1 = CommonRangeContainer(
-            [
-                CommonRange(0, 8, "1" * 8, score=1, field_type="preamble"),
-                CommonRange(8, 4, "1" * 8, score=1, field_type="synchronization"),
-                CommonRange(12, 8, "1" * 8, score=1, field_type="length")
-            ],
-            message_indices={0, 1, 2}
-        )
-        expected2 = CommonRangeContainer(
-            [
-                CommonRange(0, 10, "1" * 8, score=1, field_type="preamble"),
-                CommonRange(10, 4, "1" * 8, score=1, field_type="synchronization"),
-                CommonRange(14, 8, "1" * 8, score=1, field_type="length")
-            ],
-            message_indices={3, 4}
-        )
+        # two different sync ends
+        self.assertEqual(len(retransformed_ranges), 2)
 
-        self.assertIn(expected1, retransformed)
-        self.assertIn(expected2, retransformed)
+        expected1 = CommonRange(12, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2})
+        expected2 = CommonRange(14, 8, "1" * 8, score=1, field_type="length", message_indices={3, 4})
+
+        self.assertIn(expected1, retransformed_ranges)
+        self.assertIn(expected2, retransformed_ranges)
+
+    def test_retransform_message_types(self):
+        # todo
+        pass
 
     def test_handle_no_overlapping_conflict(self):
         rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")

@@ -98,7 +98,7 @@ class FormatFinder(object):
         # TODO Label set per message type?
         for engine in engines:
             high_scored_ranges = engine.find()  # type: list[CommonRange]
-            self.retransform_message_indices(high_scored_ranges, indices)
+            high_scored_ranges = self.retransform_message_indices(high_scored_ranges, indices, self.sync_ends)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             self.label_set.update(merged_ranges)
 
@@ -259,17 +259,34 @@ class FormatFinder(object):
         return CommonRangeContainer(result, message_indices=copy.copy(container.message_indices))
 
     @staticmethod
-    def retransform_message_indices(common_ranges, indices: list):
+    def retransform_message_indices(common_ranges, indices: list, sync_ends) -> list:
         """
         Retransform the found message indices of an engine to the original index space
-        based on the message indices of the message type
+        based on the message indices of the message type.
+
+        Furthermore, set the sync_end of the common ranges so bit_start and bit_end
+        match the position in the original space
 
         :type common_ranges: list of CommonRange
         :param indices: Messages belonging to the message type the engine ran for
+        :type sync_ends: np.ndarray
         :return:
         """
+        result = []
         for common_range in common_ranges:
-            common_range.message_indices = {indices[i] for i in common_range.message_indices}
+            # Retransform message indices into original space
+            message_indices = np.fromiter((indices[i] for i in common_range.message_indices),
+                                          dtype=int, count=len(common_range.message_indices))
+
+            # If we have different sync_ends we need to create a new common range for each different sync_length
+            matching_sync_ends = sync_ends[message_indices]
+            for sync_end in np.unique(matching_sync_ends):
+                rng = copy.deepcopy(common_range)
+                rng.sync_end = sync_end
+                rng.message_indices = set(message_indices[np.nonzero(matching_sync_ends == sync_end)])
+                result.append(rng)
+
+        return result
 
     @staticmethod
     def retransform_message_types(message_types, preamble_starts, preamble_lengths, sync_ends):
@@ -299,9 +316,6 @@ class FormatFinder(object):
                       CommonRangeContainer([], set()))
 
             mt.message_indices = {i}
-            for rng in mt:
-                rng.sync_end = sync_end
-
             mt.add_ranges([preamble, sync])
 
             existing = next((m for m in result if mt.has_same_ranges(list(m))), None)  # type: CommonRange

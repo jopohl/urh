@@ -41,6 +41,7 @@ jobs:
   - script: |
       cd tests
       touch show_gui
+      coverage --version
       pytest -s -v --junitxml=junit/test-results.xml
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')

@@ -87,7 +87,15 @@ class TestAddressEngine(AWRETestCase):
         self.assertIn(self.bob.address_hex, addresses_1)
         self.assertIn(self.bob.address_hex, addresses_2)
 
+        ff.known_participant_addresses.clear()
+        self.assertEqual(len(ff.known_participant_addresses), 0)
         ff.perform_iteration()
+
+        self.assertEqual(len(ff.known_participant_addresses), 2)
+        self.assertIn(bytes([int(h, 16) for h in self.alice.address_hex]), ff.known_participant_addresses.values())
+        self.assertIn(bytes([int(h, 16) for h in self.bob.address_hex]), ff.known_participant_addresses.values())
+        print(ff.known_participant_addresses)
+
         self.assertEqual(len(ff.message_types), 1)
         mt = ff.message_types[0]
         dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
@@ -144,6 +152,7 @@ class TestAddressEngine(AWRETestCase):
         self.assertIn(self.bob.address_hex, addresses_1)
         self.assertIn(self.bob.address_hex, addresses_2)
 
+        ff.known_participant_addresses.clear()
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
         mt = ff.message_types[0]
@@ -208,6 +217,7 @@ class TestAddressEngine(AWRETestCase):
         self.assertIn(self.bob.address_hex, addresses_1)
         self.assertIn(self.bob.address_hex, addresses_2)
 
+        ff.known_participant_addresses.clear()
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
         mt = ff.message_types[0]

@@ -10,7 +10,7 @@ from urh.util.Logger import logger
 
 
 class AddressEngine(Engine):
-    def __init__(self, msg_vectors, participant_indices, range_type="hex"):
+    def __init__(self, msg_vectors, participant_indices, known_participant_addresses: dict = None):
         """
 
         :param msg_vectors: Message data behind synchronization
@@ -27,9 +27,10 @@ class AddressEngine(Engine):
         for i, participant_index in enumerate(self.participant_indices):
             self.message_indices_by_participant[participant_index].append(i)
 
-        self.known_addresses_by_participant = dict()  # type: dict[int, np.ndarray]
-
-        self.range_type = range_type
+        if known_participant_addresses is None:
+            self.known_addresses_by_participant = dict()  # type: dict[int, np.ndarray]
+        else:
+            self.known_addresses_by_participant = known_participant_addresses  # type: dict[int, np.ndarray]
 
     @staticmethod
     def cross_swap_check(rng1: CommonRange, rng2: CommonRange):
@@ -63,7 +64,7 @@ class AddressEngine(Engine):
                     else:
                         common_ranges.append(CommonRange(index, len(address), address,
                                                          message_indices={i},
-                                                         range_type=self.range_type))
+                                                         range_type="hex"))
 
         num_messages_by_participant = defaultdict(int)
         for participant in self.participant_indices:
@@ -101,6 +102,9 @@ class AddressEngine(Engine):
         # Now we find the most probable address for all participants
         self.__assign_participant_addresses(addresses_by_participant, high_scored_ranges_by_participant)
 
+        # Write it back to the dict so future iterations can use it
+        self.known_addresses_by_participant.update(addresses_by_participant)
+
         # Now we can separate SRC and DST
         for participant, ranges in high_scored_ranges_by_participant.items():
             address = addresses_by_participant[participant]
@@ -117,7 +121,7 @@ class AddressEngine(Engine):
             scored_participants_addresses[participant] = defaultdict(int)
             for i in self.message_indices_by_participant[participant]:
                 matching = [rng for rng in high_scored_ranges_by_participant[participant]
-                            if i in rng.message_indices]
+                            if i in rng.message_indices and rng.value.tostring() in addresses]
 
                 if len(matching) == 1:
                     # only one address, so probably a destination and not a source
@@ -130,8 +134,12 @@ class AddressEngine(Engine):
         taken_addresses = set()
         for participant, addresses in scored_participants_addresses.items():
             # sort filtered results to prevent randomness for equal scores
-            found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
-                                key=addresses.get)
+            try:
+                found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
+                                    key=addresses.get)
+            except ValueError:
+                continue
+
             if len(addresses_by_participant[participant]) == 1:
                 assigned = list(addresses_by_participant[participant])[0]
                 addresses_by_participant[participant] = assigned
@@ -201,6 +209,8 @@ class AddressEngine(Engine):
 
         common_ranges_by_participant = dict()
         for participant, msg_indices in self.message_indices_by_participant.items():
+            if participant in already_assigned:
+                continue
             common_ranges_by_participant[participant] = self.find_common_ranges_exhaustive(self.msg_vectors,
                                                                                            msg_indices,
                                                                                            range_type="hex"

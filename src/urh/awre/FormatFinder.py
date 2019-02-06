@@ -55,6 +55,10 @@ class FormatFinder(object):
         self.xor_matrix = self.build_xor_matrix()
         participants = list(sorted(set(msg.participant for msg in messages)))
         self.participant_indices = [participants.index(msg.participant) for msg in messages]
+        self.known_participant_addresses = {
+            participants.index(p): np.array([int(h, 16) for h in p.address_hex], dtype=np.uint8)
+            for p in participants if p and p.address_hex
+        }
 
     @property
     def message_types(self):
@@ -80,7 +84,8 @@ class FormatFinder(object):
         if not message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS) \
                 and not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
             engines.append(AddressEngine([self.hexvectors[i] for i in indices],
-                                         [self.participant_indices[i] for i in indices]))
+                                         [self.participant_indices[i] for i in indices],
+                                         self.known_participant_addresses))
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
             engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices]))
 

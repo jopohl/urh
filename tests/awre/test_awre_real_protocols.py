@@ -110,17 +110,11 @@ class TestAWRERealProtocols(AWRETestCase):
         # prevent interfering with preassinged labels
         protocol.message_types = [MessageType("default")]
 
-        preamble = CommonRange(field_type=FieldType.Function.PREAMBLE.value, start=0, length=32)
-        sync = CommonRange(field_type=FieldType.Function.SYNC.value, start=32, length=32)
-        length = CommonRange(field_type=FieldType.Function.LENGTH.value, start=64, length=8)
-        sequence_number = CommonRange(field_type=FieldType.Function.SEQUENCE_NUMBER.value, start=72, length=8)
-        src_address = CommonRange(field_type=FieldType.Function.SRC_ADDRESS.value, start=96, length=24)
-        dst_address = CommonRange(field_type=FieldType.Function.DST_ADDRESS.value, start=120, length=24)
-
         participants = sorted({msg.participant for msg in protocol.messages})
 
         self.clear_message_types(protocol.messages)
         ff = FormatFinder(protocol.messages, participants=participants)
+        ff.known_participant_addresses.clear()
         ff.perform_iteration()
 
         self.assertGreater(len(ff.message_types), 0)

@@ -27,22 +27,23 @@ jobs:
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
       pip install pytest!=4.1 pytest-xvfb pytest-xdist pytest-cov coveralls
+      coverage --version
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
   - script: |
-      touch tests/show_gui
-      pytest -s -v --junitxml=junit/test-results.xml --cov-config tests/.coveragerc tests
-    displayName: 'Run pytest with coverage'
-    condition: eq(variables['python.version'], '3.7')
-
-  - script: |
       cd tests
       touch show_gui
       coverage --version
       pytest -s -v --junitxml=junit/test-results.xml
+    displayName: 'Run pytest with coverage'
+    condition: eq(variables['python.version'], '3.7')
+
+  - script: |
+      touch tests/show_gui
+      pytest -s -v tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 

@@ -37,7 +37,7 @@ jobs:
       cd tests
       touch show_gui
       coverage --version
-      pytest -s -v --junitxml=junit/test-results.xml
+      pytest -s -v --junitxml=../junit/test-results.xml
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 

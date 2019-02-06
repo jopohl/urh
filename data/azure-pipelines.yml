@@ -37,10 +37,8 @@ jobs:
       touch tests/show_gui
       cp tests/.coveragerc .
       pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
-      coverage combine
       coverage xml
       coverage html
-      ls -a
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
@@ -69,7 +67,7 @@ jobs:
     inputs:
       checkCoverage: true
       allowCoverageVariance: true
-      coverageVariance: 0.1
+      coverageVariance: 0.15
       coverageDeltaType: percentage
       coverageType: lines
 

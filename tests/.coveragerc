@@ -1,6 +1,6 @@
 [run]
 omit = 
-       /src/urh/tests/* 
+       src/urh/tests/*
        */__init__.py
        src/urh/cythonext/*
        src/urh/dev/*

@@ -53,19 +53,17 @@ class QtTestCase(unittest.TestCase):
         if hasattr(self, "dialog"):
             self.dialog.close()
 
-            if sys.platform == "win32" or sys.platform == "darwin":
-                sip.delete(self.dialog)
-                self.dialog = None
+            sip.delete(self.dialog)
+            self.dialog = None
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
 
-            if sys.platform == "win32" or sys.platform == "darwin":
-                sip.delete(self.form)
-                self.form = None
-        if sys.platform == "darwin" or sys.platform == "win32":
-            gc.collect()
+            sip.delete(self.form)
+            self.form = None
+
+        gc.collect()
 
     def wait_before_new_file(self):
         QApplication.instance().processEvents()

@@ -39,8 +39,9 @@ jobs:
     condition: eq(variables['python.version'], '3.7')
 
   - script: |
-      touch tests/show_gui
-      pytest -s -v --junitxml=junit/test-results.xml tests
+      cd tests
+      touch show_gui
+      pytest -s -v --junitxml=junit/test-results.xml
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 

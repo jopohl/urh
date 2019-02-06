@@ -37,6 +37,7 @@ jobs:
       touch tests/show_gui
       cp tests/.coveragerc .
       pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      coverage combine
       coverage xml
       coverage html
       ls -a

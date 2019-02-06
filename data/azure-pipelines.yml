@@ -26,7 +26,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      pip install pytest!=4.1 pytest-xvfb pytest-xdist pytest-cov coveralls
+      pip install pytest pytest-xvfb pytest-cov coveralls
       coverage --version
     displayName: 'Install dependencies'
 
@@ -36,8 +36,10 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc --cov-report=xml --cov-report=html tests
-      ls
+      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      coverage xml
+      coverage html
+      ls -a
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 

@@ -1,6 +1,7 @@
 [run]
+include = src/*
 omit = 
-       /src/urh/tests/* 
+       tests/*
        */__init__.py
        src/urh/cythonext/*
        src/urh/dev/*

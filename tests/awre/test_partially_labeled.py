@@ -73,8 +73,8 @@ class TestPartiallyLabeled(AWRETestCase):
         self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.LENGTH))
         self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
         self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
-        self.assertIsNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
 
     @staticmethod
     def __message_types_have_same_labels(mt1: MessageType, mt2: MessageType):

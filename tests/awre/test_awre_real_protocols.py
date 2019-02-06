@@ -66,8 +66,8 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
         self.assertEqual(len(ff.message_types), 2)
-        mt1 = ff.message_types[0]
-        mt2 = ff.message_types[1]
+        mt1 = ff.message_types[1]
+        mt2 = ff.message_types[0]
 
         preamble = mt1.get_first_label_with_type(FieldType.Function.PREAMBLE)
         self.assertEqual(preamble.start, 0)

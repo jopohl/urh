@@ -155,7 +155,7 @@ class TestAddressEngine(AWRETestCase):
         ff.known_participant_addresses.clear()
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
-        mt = ff.message_types[0]
+        mt = ff.message_types[1]
         dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
         self.assertEqual(dst_addr.start, 32)
@@ -165,7 +165,7 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(src_addr.start, 48)
         self.assertEqual(src_addr.length, 16)
 
-        mt = ff.message_types[1]
+        mt = ff.message_types[0]
         dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
         self.assertEqual(dst_addr.start, 32)
@@ -220,7 +220,7 @@ class TestAddressEngine(AWRETestCase):
         ff.known_participant_addresses.clear()
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
-        mt = ff.message_types[0]
+        mt = ff.message_types[1]
         dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
         self.assertEqual(dst_addr.start, 40)
@@ -230,7 +230,7 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(src_addr.start, 56)
         self.assertEqual(src_addr.length, 16)
 
-        mt = ff.message_types[1]
+        mt = ff.message_types[0]
         dst_addr = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
         self.assertIsNotNone(dst_addr)
         self.assertEqual(dst_addr.start, 32)

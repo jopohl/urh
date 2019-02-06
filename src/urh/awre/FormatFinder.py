@@ -66,7 +66,7 @@ class FormatFinder(object):
 
         :rtype: list of MessageType
         """
-        return list(self.existing_message_types.keys())
+        return sorted(self.existing_message_types.keys())
 
     def perform_iteration_for_message_type(self, message_type: MessageType):
         """

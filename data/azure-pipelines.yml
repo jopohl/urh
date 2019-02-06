@@ -26,7 +26,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      pip install pytest pytest-xvfb pytest-cov pytest-xdist coveralls
+      pip install pytest pytest-xvfb pytest-cov pytest-xdist
       coverage --version
     displayName: 'Install dependencies'
 

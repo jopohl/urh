@@ -26,7 +26,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      pip install pytest!=4.1 pytest-xvfb pytest-cov coveralls
+      pip install pytest!=4.1 pytest-xvfb pytest-xdist pytest-cov coveralls
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace
@@ -36,13 +36,13 @@ jobs:
       touch tests/show_gui
       pytest -s -v --junitxml=junit/test-results.xml --cov=src/urh --cov-report=xml --cov-report=html --cov-config tests/.coveragerc tests
     displayName: 'Run pytest with coverage'
-    condition: eq(variables['python.version'], '3.6')
+    condition: eq(variables['python.version'], '3.7')
 
   - script: |
       touch tests/show_gui
       pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
-    condition: ne(variables['python.version'], '3.6')
+    condition: ne(variables['python.version'], '3.7')
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -55,11 +55,11 @@ jobs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
       reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
-    condition: eq(variables['python.version'], '3.6')
+    condition: eq(variables['python.version'], '3.7')
 
   - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@5
     displayName: 'Check coverage'
-    condition: eq(variables['python.version'], '3.6')
+    condition: eq(variables['python.version'], '3.7')
     inputs:
       checkCoverage: true
       allowCoverageVariance: true

@@ -1,14 +1,14 @@
 [run]
-include = src/*
+include = */src/*
 omit = 
-       tests/*
+       */tests/*
        */__init__.py
-       src/urh/cythonext/*
-       src/urh/dev/*
-       src/urh/ui/xtra_icons_rc.py
-       src/urh/main.py
-       src/urh/util/Errors.py
-       src/urh/plugins/RfCat/RfCatPlugin.py
+       */src/urh/cythonext/*
+       */src/urh/dev/*
+       */src/urh/ui/xtra_icons_rc.py
+       */src/urh/main.py
+       */src/urh/util/Errors.py
+       */src/urh/plugins/RfCat/RfCatPlugin.py
 
 concurrency = multiprocessing
 source = src/urh

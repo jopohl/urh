@@ -126,7 +126,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      pip install wheel twine six appdirs packaging setuptools pyinstaller
+      pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller
       pip install "pyaudio; python_version < '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"

@@ -4,6 +4,8 @@ import locale
 import re
 import os
 import sys
+import multiprocessing
+
 
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette, QIcon, QColor
@@ -153,9 +155,8 @@ def main():
     constants.SEND_INDICATOR_COLOR = selection_color
 
     main_window = MainController()
-    import multiprocessing as mp
     # allow usage of prange (OpenMP) in Processes
-    mp.set_start_method("spawn")
+    multiprocessing.set_start_method("spawn")
 
     if sys.platform == "darwin":
         menu_bar = main_window.menuBar()
@@ -164,8 +165,6 @@ def main():
         # Ensure we get the app icon in windows taskbar
         import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
-        import multiprocessing as mp
-        mp.freeze_support()
 
     main_window.showMaximized()
     # main_window.setFixedSize(1920, 1080 - 30)  # Youtube
@@ -182,4 +181,7 @@ def main():
 
 
 if __name__ == "__main__":
+    if hasattr(sys, "frozen"):
+        multiprocessing.freeze_support()
+
     main()

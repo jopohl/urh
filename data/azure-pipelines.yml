@@ -42,9 +42,7 @@ jobs:
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: |
-      touch tests/show_gui
-      pytest --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -67,7 +65,7 @@ jobs:
     inputs:
       checkCoverage: true
       allowCoverageVariance: true
-      coverageVariance: 0.15
+      coverageVariance: 0.2
       coverageDeltaType: percentage
       coverageType: lines
 

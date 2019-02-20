@@ -204,7 +204,11 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
     # If a signal has low variance we need to be more accurate at center detection
     hist_step = float(np.var(rect))
 
-    y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
+    try:
+        y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
+    except ZeroDivisionError:
+        # For a segment with zero variance (constant line) it is not possible to find a center
+        return None
 
     num_values = 2
     most_common_levels = []

@@ -36,15 +36,13 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc --boxed tests
       coverage xml
       coverage html
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: |
-      touch tests/show_gui
-      pytest --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 

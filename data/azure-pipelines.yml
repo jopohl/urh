@@ -126,7 +126,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      pip install wheel twine six appdirs packaging cx_freeze
+      pip install wheel twine six appdirs packaging pyinstaller
       pip install "pyaudio; python_version < '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
@@ -134,7 +134,7 @@ jobs:
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
 
-  - script: python data\build_cx.py
+  - script: pyinstaller --windowed --hidden-import=packaging.specifiers --hidden-import=packaging.requirements --hidden-import=urh.plugins.InsertSine.InsertSinePlugin --add-data "src/urh/plugins/InsertSine/*:urh/plugins/InsertSine" --add-data "src/urh/dev/native/lib/shared:." --exclude-module=matplotlib src/urhmain.py
     condition: eq(variables['python.version'], '3.6')
     displayName: "Build MSI"
 

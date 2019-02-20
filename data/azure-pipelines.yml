@@ -65,7 +65,7 @@ jobs:
     inputs:
       checkCoverage: true
       allowCoverageVariance: true
-      coverageVariance: 0.15
+      coverageVariance: 0.2
       coverageDeltaType: percentage
       coverageType: lines
 

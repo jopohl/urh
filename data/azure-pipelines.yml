@@ -126,7 +126,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      pip install wheel twine six appdirs packaging pyinstaller
+      pip install wheel twine six appdirs packaging setuptools pyinstaller
       pip install "pyaudio; python_version < '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
@@ -134,7 +134,7 @@ jobs:
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
 
-  - script: pyinstaller --windowed --hidden-import=setuptools._vendor --hidden-import=packaging.specifiers --hidden-import=packaging.requirements --hidden-import=numpy.core._methods --hidden-import=numpy.core._dtype_ctyaddpes --add-data "src/urh/plugins;urh/plugins" --add-data "src/urh/dev/native/lib/shared;." --exclude-module=matplotlib src/urh/main.py
+  - script: pyinstaller --windowed --hidden-import=packaging.specifiers --hidden-import=packaging.requirements --hidden-import=numpy.core._methods --hidden-import=numpy.core._dtype_ctyaddpes --add-data "src/urh/plugins;urh/plugins" --add-data "src/urh/dev/native/lib/shared;." --exclude-module=matplotlib src/urh/main.py
     condition: eq(variables['python.version'], '3.6')
     displayName: "Build MSI"
 

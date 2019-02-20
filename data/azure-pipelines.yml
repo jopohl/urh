@@ -36,7 +36,7 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc --boxed tests
+      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
       coverage xml
       coverage html
     displayName: 'Run pytest with coverage'

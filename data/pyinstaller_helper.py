@@ -29,3 +29,9 @@ cmd.append(os.path.join(urh_path, "src/urh/main.py"))
 cmd = " ".join(cmd)
 print(cmd)
 call(cmd, shell=True)
+
+suffix = ""
+if sys.platform == "win32":
+    suffix = "-x{}".format(64 if sys.maxsize > 2**32 else 86)
+
+os.rename("./dist/main", "./dist/urh{}".format(suffix))

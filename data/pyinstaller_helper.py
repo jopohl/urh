@@ -21,8 +21,6 @@ for src, dst in DATA:
 for exclude in EXCLUDE:
     cmd.append("--exclude-module={}".format(exclude))
 
-cmd.extend(["--distpath", "./dist-{}".format(64 if sys.maxsize > 2**32 else 32)])
-
 urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 cmd.append(os.path.join(urh_path, "src/urh/main.py"))

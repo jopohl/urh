@@ -142,7 +142,7 @@ jobs:
       choco install innosetup
       python src/urh/version.py > C:\urh_version.txt
       set /p URHVERSION=<C:\urh_version.txt
-      iscc /dMyAppVersion=URHVERSION /dArch=$(python.arch) data/inno.iss
+      iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
     condition: eq(variables['python.version'], '3.6')
     displayName: "Create setup.exe"
 

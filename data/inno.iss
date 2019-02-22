@@ -12,6 +12,7 @@ AppUpdatesURL=https://github.com/jopohl/urh
 DefaultDirName={pf}\Universal Radio Hacker
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
+OutputDir=c:\dist
 OutputBaseFilename=Universal.Radio.Hacker-{#Arch}
 Compression=lzma2/max
 SolidCompression=yes

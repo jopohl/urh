@@ -148,7 +148,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: dist/
+      pathtoPublish: C:dist/
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
 

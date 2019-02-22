@@ -27,14 +27,17 @@ cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")
 
 cmd.extend(["--distpath", "./pyinstaller"])
 
-os.rename(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh.py"))
+shutil.copy(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh.py"))
+shutil.copy(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh_debug.py"))
 urh_cmd = cmd + ["--windowed", os.path.join(urh_path, "src/urh/urh.py")]
+urh_debug_cmd = cmd + [os.path.join(urh_path, "src/urh/urh_debug.py")]
 cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
-for cmd in (urh_cmd, cli_cmd):
+for cmd in (urh_cmd, cli_cmd, urh_debug_cmd):
     cmd = " ".join(cmd)
     print(cmd)
     sys.stdout.flush()
     call(cmd, shell=True)
 
 shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
+shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

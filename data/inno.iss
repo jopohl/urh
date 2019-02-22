@@ -12,7 +12,7 @@ AppUpdatesURL=https://github.com/jopohl/urh
 DefaultDirName={pf}\Universal Radio Hacker
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
-OutputDir=c:\dist
+OutputDir=..\dist
 OutputBaseFilename=Universal.Radio.Hacker-{#Arch}
 Compression=lzma2/max
 SolidCompression=yes
@@ -24,7 +24,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\dist\urh\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\pyinstaller\urh\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

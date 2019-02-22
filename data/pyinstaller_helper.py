@@ -24,6 +24,8 @@ for exclude in EXCLUDE:
 urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 
+cmd.extend(["--distpath", "./pyinstaller"])
+
 os.rename(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh.py"))
 cmd.append(os.path.join(urh_path, "src/urh/urh.py"))
 cmd = " ".join(cmd)

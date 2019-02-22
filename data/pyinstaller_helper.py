@@ -23,13 +23,12 @@ for exclude in EXCLUDE:
 
 urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
-cmd.append(os.path.join(urh_path, "src/urh/main.py"))
+
+os.rename(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh.py"))
+cmd.append(os.path.join(urh_path, "src/urh/urh.py"))
 cmd = " ".join(cmd)
 print(cmd)
 call(cmd, shell=True)
 
-suffix = ""
 if sys.platform == "win32":
-    suffix = "-x{}".format(64 if sys.maxsize > 2**32 else 86)
-
-os.rename("./dist/main", "./dist/urh{}".format(suffix))
+    os.rename("./dist/urh", "./dist/urh-x{}".format(64 if sys.maxsize > 2**32 else 86))

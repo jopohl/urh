@@ -14,7 +14,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 OutputDir=..\dist
 OutputBaseFilename=Universal.Radio.Hacker-{#Arch}
-Compression=lzma2/max
+Compression=lzma2/ultra
 SolidCompression=yes
 
 [Languages]

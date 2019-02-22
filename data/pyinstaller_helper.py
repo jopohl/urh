@@ -29,6 +29,3 @@ cmd.append(os.path.join(urh_path, "src/urh/urh.py"))
 cmd = " ".join(cmd)
 print(cmd)
 call(cmd, shell=True)
-
-if sys.platform == "win32":
-    os.rename("./dist/urh", "./dist/urh-x{}".format(64 if sys.maxsize > 2**32 else 86))

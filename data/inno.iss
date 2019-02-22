@@ -2,9 +2,10 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{8A0E36A6-DE56-46B8-BCC3-C16D1BC759CC}
+AppId={{96abcdef-1337-4711-cafe-beef4a1ce42}
 AppName=Universal Radio Hacker
 AppVersion={#MyAppVersion}
+VersionInfoVersion={#MyAppVersion}
 AppPublisher=Johannes Pohl
 AppPublisherURL=https://github.com/jopohl/urh
 AppSupportURL=https://github.com/jopohl/urh

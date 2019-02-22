@@ -6,6 +6,7 @@ AppId={{96abcdef-1337-4711-cafe-beef4a1ce42}
 AppName=Universal Radio Hacker
 AppVersion={#MyAppVersion}
 VersionInfoVersion={#MyAppVersion}
+ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayName=Universal Radio Hacker
 AppPublisher=Johannes Pohl
 AppPublisherURL=https://github.com/jopohl/urh

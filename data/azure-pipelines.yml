@@ -168,7 +168,7 @@ jobs:
       action: 'edit'
       tag: $(Build.SourceBranchName)
       repositoryName: jopohl/urh
-      assets: 'dist/*.msi'
+      assets: 'dist/*.exe'
       assetUploadMode: 'replace'
       addChangeLog: true
 

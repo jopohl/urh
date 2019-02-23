@@ -128,8 +128,8 @@ jobs:
   - script: |
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
       pip install "pyaudio; python_version < '3.7'"
-      pip install "https://dl.dropboxusercontent.com/s/ev5gnc0y3u4850y/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7' and '64' in platform_machine"
-      pip install "https://dl.dropboxusercontent.com/s/8dklxnowwn7jxou/PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7' and '64' not in platform_machine"
+      pip install "https://dl.dropboxusercontent.com/s/ev5gnc0y3u4850y/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
+      pip install "https://dl.dropboxusercontent.com/s/8dklxnowwn7jxou/PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 

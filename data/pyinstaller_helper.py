@@ -4,16 +4,16 @@ import shutil
 import sys
 from multiprocessing.pool import Pool
 
-import PyInstaller.__main__
-
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
                   "numpy.core._methods", "numpy.core._dtype_ctypes"]
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
-
-def run_pyinstaller(cmd_list: list):
-    PyInstaller.__main__.run(cmd_list)
+def run_cmd(cmd_list: list):
+    cmd = " ".join(cmd_list)
+    print(cmd)
+    sys.stdout.flush()
+    os.system(cmd)
 
 
 if __name__ == '__main__':

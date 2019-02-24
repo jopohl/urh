@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 from multiprocessing.pool import Pool
+import  PyInstaller.__main__
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
                   "numpy.core._methods", "numpy.core._dtype_ctypes"]
@@ -41,8 +42,11 @@ if __name__ == '__main__':
     urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
     cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
-    with Pool(3) as p:
-        p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
+    # with Pool(3) as p:
+    #     p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
+
+    for cmd in [urh_cmd, urh_debug_cmd, cli_cmd]:
+        PyInstaller.__main__.run(cmd)
 
     shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
     shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

@@ -3,16 +3,12 @@ import os
 import shutil
 import sys
 from multiprocessing.pool import Pool
-import  PyInstaller.__main__
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
                   "numpy.core._methods", "numpy.core._dtype_ctypes"]
-
-
-urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
-DATA = [(os.path.join(urh_path, "src/urh/dev/native/lib/shared"), "."),
-        (os.path.join(urh_path, "src/urh/plugins"), "urh/plugins"), ]
+DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
+
 
 def run_pyinstaller(cmd_list: list):
     cmd = " ".join(cmd_list)
@@ -23,7 +19,7 @@ def run_pyinstaller(cmd_list: list):
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-    cmd = []
+    cmd = ["pyinstaller"]
     if sys.platform == "darwin":
         cmd.append("--onefile")
 
@@ -37,20 +33,18 @@ if __name__ == '__main__':
     for exclude in EXCLUDE:
         cmd.append("--exclude-module={}".format(exclude))
 
+    urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
     cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 
     cmd.extend(["--distpath", "./pyinstaller"])
+    cmd.extend(["--log-level", "ERROR"])
 
     urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
     urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
     cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
-    # with Pool(3) as p:
-    #     p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
-
-    for cmd in [urh_cmd, urh_debug_cmd, cli_cmd]:
-        print(cmd)
-        PyInstaller.__main__.run(cmd)
+    with Pool(3) as p:
+        p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
 
     shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
     shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

@@ -1,19 +1,19 @@
+import multiprocessing
 import os
 import shutil
 import sys
-import multiprocessing
 from multiprocessing.pool import Pool
+
+import PyInstaller.__main__
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
                   "numpy.core._methods", "numpy.core._dtype_ctypes"]
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
-def run_cmd(cmd_list: list):
-    cmd = " ".join(cmd_list)
-    print(cmd)
-    sys.stdout.flush()
-    os.system(cmd)
+
+def run_pyinstaller(cmd_list: list):
+    PyInstaller.__main__.run(cmd_list)
 
 
 if __name__ == '__main__':
@@ -37,16 +37,12 @@ if __name__ == '__main__':
 
     cmd.extend(["--distpath", "./pyinstaller"])
 
-    shutil.copy(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh.py"))
-    shutil.copy(os.path.join(urh_path, "src/urh/main.py"), os.path.join(urh_path, "src/urh/urh_debug.py"))
-    urh_cmd = cmd + ["--windowed", os.path.join(urh_path, "src/urh/urh.py")]
-    urh_debug_cmd = cmd + [os.path.join(urh_path, "src/urh/urh_debug.py")]
+    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
+    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
     cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
-
     with Pool(3) as p:
-        p.map(run_cmd, [urh_cmd, cli_cmd, urh_debug_cmd])
-
+        p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
 
     shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
     shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

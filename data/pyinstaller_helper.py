@@ -7,7 +7,11 @@ import  PyInstaller.__main__
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
                   "numpy.core._methods", "numpy.core._dtype_ctypes"]
-DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
+
+
+urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
+DATA = [(os.path.join(urh_path, "src/urh/dev/native/lib/shared"), "."),
+        (os.path.join(urh_path, "src/urh/plugins"), "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
 def run_pyinstaller(cmd_list: list):
@@ -33,7 +37,6 @@ if __name__ == '__main__':
     for exclude in EXCLUDE:
         cmd.append("--exclude-module={}".format(exclude))
 
-    urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
     cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 
     cmd.extend(["--distpath", "./pyinstaller"])

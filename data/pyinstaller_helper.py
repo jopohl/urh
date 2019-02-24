@@ -37,6 +37,8 @@ if __name__ == '__main__':
     cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 
     cmd.extend(["--distpath", "./pyinstaller"])
+    cmd.extend(["--path", r"C:\Windows\WinSxS\x86_microsoft-windows-m..namespace-downlevel_31bf3856ad364e35_10.0.15063.0_none_7c5a1866018b960d"])
+
 
     urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
     urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]

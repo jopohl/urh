@@ -1,3 +1,4 @@
+import fileinput
 import os
 import shutil
 import sys
@@ -46,8 +47,10 @@ def release():
     numbers[-1] = str(int(numbers[-1]) + 1)
     cur_version = ".".join(numbers)
 
-    with open(version_file, "w") as f:
-        f.write('VERSION = "{0}" \n'.format(cur_version))
+    for line in fileinput.input(version_file, inplace=True):
+        if line.startswith("VERSION"):
+            line = 'VERSION = "{0}" \n'.format(cur_version)
+        print(line, end='')
 
     # Publish new version number
     call(["git", "add", version_file])

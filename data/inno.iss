@@ -16,7 +16,7 @@ DefaultDirName={pf}\Universal Radio Hacker
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 OutputDir=..\dist
-OutputBaseFilename=Universal.Radio.Hacker-{#Arch}
+OutputBaseFilename=Universal.Radio.Hacker-{#MyAppVersion}-{#Arch}
 Compression=lzma2/ultra
 SolidCompression=yes
 

@@ -38,14 +38,15 @@ if __name__ == '__main__':
 
     cmd.extend(["--distpath", "./pyinstaller"])
 
-    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
-    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
-    cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
+    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, r"src\urh\main.py")]
+    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, r"src\urh\main.py")]
+    cli_cmd = cmd + [os.path.join(urh_path, r"src\urh\cli\urh_cli.py")]
 
     # with Pool(3) as p:
     #     p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
 
     for cmd in [urh_cmd, urh_debug_cmd, cli_cmd]:
+        print(cmd)
         PyInstaller.__main__.run(cmd)
 
     shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")

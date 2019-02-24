@@ -9,7 +9,7 @@ HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
-def run_cmd(cmd_list: list):
+def run_pyinstaller(cmd_list: list):
     cmd = " ".join(cmd_list)
     print(cmd)
     sys.stdout.flush()

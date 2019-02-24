@@ -19,7 +19,7 @@ def run_pyinstaller(cmd_list: list):
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-    cmd = ["pyinstaller"]
+    cmd = []
     if sys.platform == "darwin":
         cmd.append("--onefile")
 
@@ -38,9 +38,9 @@ if __name__ == '__main__':
 
     cmd.extend(["--distpath", "./pyinstaller"])
 
-    urh_cmd = cmd + ["--name=urh", "--windowed", "../src/urh/main.py"]
-    urh_debug_cmd = cmd + ["--name=urh_debug", "../src/urh/main.py"]
-    cli_cmd = cmd + ["../src/urh/main.py"]
+    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
+    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
+    cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
     # with Pool(3) as p:
     #     p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])

@@ -13,7 +13,7 @@ import PyInstaller.__main__
 
 def run_pyinstaller(cmd_list: list):
     print(cmd_list)
-    PyInstaller.__main__(cmd_list)
+    PyInstaller.__main__.run(cmd_list)
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()

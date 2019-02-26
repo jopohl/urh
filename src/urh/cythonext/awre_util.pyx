@@ -1,4 +1,5 @@
 # noinspection PyUnresolvedReferences
+from array import array
 cimport numpy as np
 import numpy as np
 
@@ -66,7 +67,7 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
     return smaller_len
 
-cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):
+cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b, unsigned long[:] ignore_indices=None):
     """
     Find the indices of occurrences of b in a. 
     
@@ -74,18 +75,21 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b):
     :param b: Subarray to search for
     :return: List of start indices of b in a 
     """
-    cdef unsigned int i, j
-    cdef unsigned int len_a = len(a), len_b = len(b)
+    cdef unsigned long i, j
+    cdef unsigned long len_a = len(a), len_b = len(b)
+
+    if ignore_indices is None:
+        ignore_indices = array("L", [])
 
     if len_b > len_a:
-        return -1
+        return []
 
     cdef list result = []
     cdef bool found
     for i in range(0, (len_a-len_b) + 1):
         found = True
         for j in range(0, len_b):
-            if a[i+j] != b[j]:
+            if a[i+j] != b[j] or i+j in ignore_indices:
                 found = False
                 break
         if found:

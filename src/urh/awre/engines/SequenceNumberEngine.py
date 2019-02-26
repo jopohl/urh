@@ -14,7 +14,7 @@ class SequenceNumberEngine(Engine):
 
     """
 
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9):
+    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, already_labeled: list = None):
         """
 
         :type bitvectors: list of np.ndarray
@@ -23,7 +23,10 @@ class SequenceNumberEngine(Engine):
         self.bitvectors = bitvectors
         self.n_gram_length = n_gram_length
         self.minimum_score = minimum_score
-
+        if already_labeled is None:
+            self.already_labeled_cols = set()
+        else:
+            self.already_labeled_cols = {e for rng in already_labeled for e in range(*rng)}
 
     def find(self):
         diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)
@@ -35,7 +38,10 @@ class SequenceNumberEngine(Engine):
 
         scores_by_column = dict()
         for column, frequencies in diff_frequencies_by_column.items():
-            scores_by_column[column] = self.calc_score(frequencies)
+            if column not in self.already_labeled_cols:
+                scores_by_column[column] = self.calc_score(frequencies)
+            else:
+                scores_by_column[column] = 0
 
         result = []
         for candidate_column in sorted(scores_by_column, key=scores_by_column.get, reverse=True):

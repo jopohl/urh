@@ -1,6 +1,9 @@
+import copy
 import itertools
-from urh.util import util
+
 import numpy as np
+
+from urh.util import util
 
 
 class CommonRange(object):
@@ -100,6 +103,42 @@ class CommonRange(object):
             raise ValueError("Need another bit range to compare")
         return any(i in range(self.bit_start, self.bit_end)
                    for i in range(other.bit_start, other.bit_end))
+
+    def ensure_not_overlaps(self, start: int, end: int):
+        """
+
+        :param start:
+        :param end:
+        :rtype: list of CommonRange
+        """
+        if end < self.start or start > self.end:
+            # Other range is right or left of our range -> no overlapping
+            return [copy.deepcopy(self)]
+
+        if start < self.start < end < self.end:
+            # overlaps on the left
+            result = copy.deepcopy(self)
+            result.length -= (end + 1) - result.start
+            result.start = end + 1
+            return [result]
+
+        if self.start < start < self.end < end:
+            # overlaps on the right
+            result = copy.deepcopy(self)
+            result.length -= self.end + 1 - start
+            return [result]
+
+        if self.start < start and self.end > end:
+            # overlaps in the middle
+            left = copy.deepcopy(self)
+            right = copy.deepcopy(self)
+
+            left.length -= (left.end + 1 - start)
+            right.start = end + 1
+            right.length = self.end - end
+            return [left, right]
+
+        return []
 
 
 class EmptyCommonRange(CommonRange):

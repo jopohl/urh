@@ -79,15 +79,22 @@ class FormatFinder(object):
         indices = self.existing_message_types[message_type]
         engines = []
 
+        # We can take an arbitrary sync end to correct the already labeled fields for this message type,
+        # because if the existing labels would have different sync positions,
+        # they would not belong to the same message type in the first place
+        sync_end = self.sync_ends[indices[0]] if indices else 0
+        already_labeled = [(lbl.start-sync_end, lbl.end-sync_end) for lbl in message_type if lbl.start >= sync_end]
+
         if not message_type.get_first_label_with_type(FieldType.Function.LENGTH):
-            engines.append(LengthEngine([self.bitvectors[i] for i in indices]))
+            engines.append(LengthEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
         if not message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS) \
                 and not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
             engines.append(AddressEngine([self.hexvectors[i] for i in indices],
                                          [self.participant_indices[i] for i in indices],
-                                         self.known_participant_addresses))
+                                         self.known_participant_addresses,
+                                         already_labeled=already_labeled))
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
-            engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices]))
+            engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
 
         result = set()
         for engine in engines:

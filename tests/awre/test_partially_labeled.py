@@ -76,6 +76,54 @@ class TestPartiallyLabeled(AWRETestCase):
         self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
         self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
 
+    def test_type_part_already_labeled(self):
+        protocol = self.__prepare_simple_example_protocol()
+        self.clear_message_types(protocol.messages)
+        ff = FormatFinder(protocol.messages)
+
+        # overlaps type
+        ff.message_types[0].add_protocol_label_start_length(32, 8)
+        ff.perform_iteration()
+        self.assertEqual(1, len(ff.message_types))
+
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+
+    def test_length_part_already_labeled(self):
+        protocol = self.__prepare_simple_example_protocol()
+        self.clear_message_types(protocol.messages)
+        ff = FormatFinder(protocol.messages)
+
+        # overlaps length
+        ff.message_types[0].add_protocol_label_start_length(24, 8)
+        ff.perform_iteration()
+        self.assertEqual(1, len(ff.message_types))
+
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
+        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+
+    def test_address_part_already_labeled(self):
+        protocol = self.__prepare_simple_example_protocol()
+        self.clear_message_types(protocol.messages)
+        ff = FormatFinder(protocol.messages)
+
+        # overlaps dst address
+        ff.message_types[0].add_protocol_label_start_length(40, 16)
+        ff.perform_iteration()
+        self.assertEqual(1, len(ff.message_types))
+
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
+        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
+        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+
     @staticmethod
     def __message_types_have_same_labels(mt1: MessageType, mt2: MessageType):
         if len(mt1) != len(mt2):
@@ -123,5 +171,27 @@ class TestPartiallyLabeled(AWRETestCase):
             pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
 
         self.save_protocol("labeled_protocol", pg)
+
+        return pg.protocol
+
+    def __prepare_simple_example_protocol(self):
+        alice = Participant("Alice", "A", address_hex="1234")
+        bob = Participant("Bob", "B", address_hex="cafe")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.TYPE, 8)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x6768"},
+                               participants=[alice, bob])
+
+        for i in range(10):
+            pg.generate_message(data="0xabc", source=alice, destination=bob)
+            pg.generate_message(data="0xabcde", source=bob, destination=alice)
 
         return pg.protocol

@@ -1,4 +1,6 @@
 import itertools
+import math
+from array import array
 from collections import defaultdict
 
 import numpy as np
@@ -10,7 +12,8 @@ from urh.util.Logger import logger
 
 
 class AddressEngine(Engine):
-    def __init__(self, msg_vectors, participant_indices, known_participant_addresses: dict = None):
+    def __init__(self, msg_vectors, participant_indices, known_participant_addresses: dict = None,
+                 already_labeled: list = None):
         """
 
         :param msg_vectors: Message data behind synchronization
@@ -23,6 +26,12 @@ class AddressEngine(Engine):
 
         self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
+        self.already_labeled = []
+        if already_labeled is not None:
+            for start, end in already_labeled:
+                # convert it to hex
+                self.already_labeled.append((int(math.ceil(start / 4)), int(math.ceil(end / 4))))
+
         self.message_indices_by_participant = defaultdict(list)
         for i, participant_index in enumerate(self.participant_indices):
             self.message_indices_by_participant[participant_index].append(i)
@@ -53,10 +62,11 @@ class AddressEngine(Engine):
                      for address_list in addresses_by_participant.values()
                      for a in address_list]
 
+        already_labeled_cols = array("L", [e for rng in self.already_labeled for e in range(*rng)])
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
             for address in addresses:
-                for index in awre_util.find_occurrences(msg_vector, address):
+                for index in awre_util.find_occurrences(msg_vector, address, already_labeled_cols):
                     common_ranges = ranges_by_participant[participant]
                     rng = next((cr for cr in common_ranges if cr.matches(index, address)), None)  # type: CommonRange
                     if rng is not None:
@@ -211,10 +221,10 @@ class AddressEngine(Engine):
         for participant, msg_indices in self.message_indices_by_participant.items():
             if participant in already_assigned:
                 continue
-            common_ranges_by_participant[participant] = self.find_common_ranges_exhaustive(self.msg_vectors,
-                                                                                           msg_indices,
-                                                                                           range_type="hex"
-                                                                                           )
+
+            common_ranges = self.find_common_ranges_exhaustive(self.msg_vectors, msg_indices, range_type="hex")
+            common_ranges = self.ignore_already_labeled(common_ranges, self.already_labeled)
+            common_ranges_by_participant[participant] = common_ranges
 
         self._debug("Common ranges by participant:", common_ranges_by_participant)
 

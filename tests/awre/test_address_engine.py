@@ -1,6 +1,8 @@
 import random
+from array import array
 
 import numpy as np
+from urh.signalprocessing.MessageType import MessageType
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
@@ -89,6 +91,7 @@ class TestAddressEngine(AWRETestCase):
 
         ff.known_participant_addresses.clear()
         self.assertEqual(len(ff.known_participant_addresses), 0)
+
         ff.perform_iteration()
 
         self.assertEqual(len(ff.known_participant_addresses), 2)
@@ -263,4 +266,13 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(len(indices), 2)
         index = indices[0]
         self.assertEqual(str1[index:index + len(str2)], str2)
+
+        # Test with ignoring indices
+        indices = awre_util.find_occurrences(seq1, seq2, array("L", list(range(0, 205))))
+        self.assertEqual(len(indices), 1)
+
+        # Test with ignoring indices
+        indices = awre_util.find_occurrences(seq1, seq2, array("L", list(range(0, 210))))
+        self.assertEqual(len(indices), 0)
+
         self.assertEqual(awre_util.find_occurrences(seq1, np.ones(10, dtype=np.uint8)), [])

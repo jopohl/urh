@@ -145,6 +145,10 @@ class MessageType(list):
 
         return proto_label  # Return label to set editor focus after adding
 
+    def add_protocol_label_start_length(self, start: int, length: int, name=None, color_ind=None,
+                                        auto_created=False, type: FieldType = None) -> ProtocolLabel:
+        return self.add_protocol_label(start, start + length - 1, name, color_ind, auto_created, type)
+
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
             added = self.add_protocol_label(lbl.start, lbl.end - 1, name=lbl.name, color_ind=lbl.color_index)

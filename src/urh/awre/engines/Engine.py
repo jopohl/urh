@@ -50,6 +50,27 @@ class Engine(object):
         return result
 
     @staticmethod
+    def ignore_already_labeled(common_ranges, already_labeled):
+        """
+        Shrink the common ranges so that they not overlap with already labeled ranges.
+        Empty common ranges are removed after shrinking
+
+        :type common_ranges: list of CommonRange
+        :type already_labeled: list of tuple
+        :return: list of CommonRange
+        """
+        result = []
+        for common_range in common_ranges:
+            range_result = [common_range]
+            for start, end in already_labeled:
+                for rng in range_result[:]:
+                    range_result.remove(rng)
+                    range_result.extend(rng.ensure_not_overlaps(start, end))
+            result.extend(range_result)
+
+        return result
+
+    @staticmethod
     def find_longest_common_sub_sequences(seq1, seq2) -> list:
         result = []
         if seq1 is None or seq2 is None:

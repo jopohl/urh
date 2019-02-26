@@ -9,13 +9,14 @@ from urh.util import util
 
 
 class LengthEngine(Engine):
-    def __init__(self, bitvectors):
+    def __init__(self, bitvectors, already_labeled=None):
         """
 
         :type bitvectors: list of np.ndarray
         :param bitvectors: bitvectors behind the synchronization
         """
         self.bitvectors = bitvectors
+        self.already_labeled = [] if already_labeled is None else already_labeled
 
     def find(self, n_gram_length=8, minimum_score=0.1):
         # Consider the n_gram_length
@@ -26,6 +27,9 @@ class LengthEngine(Engine):
 
         # TODO: From here we should start a loop for subclustering
         common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
+        for length, ranges in common_ranges_by_length.items():
+            common_ranges_by_length[length] = self.ignore_already_labeled(ranges, self.already_labeled)
+
         self.filter_common_ranges(common_ranges_by_length)
         self._debug("Common Ranges:", common_ranges_by_length)
 

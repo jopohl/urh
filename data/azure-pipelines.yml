@@ -42,9 +42,7 @@ jobs:
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: |
-      touch tests/show_gui
-      pytest --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -67,7 +65,7 @@ jobs:
     inputs:
       checkCoverage: true
       allowCoverageVariance: true
-      coverageVariance: 0.15
+      coverageVariance: 0.2
       coverageDeltaType: percentage
       coverageType: lines
 
@@ -128,17 +126,25 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      pip install wheel twine six appdirs packaging cx_freeze
+      pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
       pip install "pyaudio; python_version < '3.7'"
+      pip install "https://dl.dropboxusercontent.com/s/ev5gnc0y3u4850y/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
+      pip install "https://dl.dropboxusercontent.com/s/8dklxnowwn7jxou/PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
 
-  - script: python data\build_cx.py
-    condition: eq(variables['python.version'], '3.6')
-    displayName: "Build MSI"
+  - script: python data/pyinstaller_helper.py
+    condition: eq(variables['python.version'], '3.7')
+    displayName: "Run PyInstaller"
+
+  - script: |
+      for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
+      iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
+    condition: eq(variables['python.version'], '3.7')
+    displayName: "Create setup.exe"
 
   - task: PublishBuildArtifacts@1
     inputs:
@@ -162,7 +168,7 @@ jobs:
       action: 'edit'
       tag: $(Build.SourceBranchName)
       repositoryName: jopohl/urh
-      assets: 'dist/*.msi'
+      assets: 'dist/*.exe'
       assetUploadMode: 'replace'
       addChangeLog: true
 

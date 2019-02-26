@@ -9,15 +9,17 @@ HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
-import PyInstaller.__main__
 
 def run_pyinstaller(cmd_list: list):
-    print(cmd_list)
-    PyInstaller.__main__.run(cmd_list)
+    cmd = " ".join(cmd_list)
+    print(cmd)
+    sys.stdout.flush()
+    os.system(cmd)
+
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-    cmd = []
+    cmd = ["pyinstaller"]
     if sys.platform == "darwin":
         cmd.append("--onefile")
 

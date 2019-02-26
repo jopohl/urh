@@ -1,7 +1,6 @@
 import faulthandler
 import gc
 import os
-import sip
 import sys
 import time
 import unittest
@@ -52,15 +51,11 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-
-            sip.delete(self.dialog)
             self.dialog = None
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
-
-            sip.delete(self.form)
             self.form = None
 
         gc.collect()

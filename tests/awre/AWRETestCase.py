@@ -3,6 +3,8 @@ import tempfile
 import unittest
 
 import numpy
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+
 from urh.signalprocessing.MessageType import MessageType
 
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
@@ -65,7 +67,10 @@ class AWRETestCase(unittest.TestCase):
     @staticmethod
     def save_protocol(name, protocol_generator):
         filename = os.path.join(tempfile.gettempdir(), name + ".proto")
-        protocol_generator.to_file(filename)
+        if isinstance(protocol_generator, ProtocolGenerator):
+            protocol_generator.to_file(filename)
+        elif isinstance(protocol_generator, ProtocolAnalyzer):
+            protocol_generator.to_xml_file(filename, [], [], write_bits=True)
         info = "Protocol written to " + filename
         print()
         print("-" * len(info))

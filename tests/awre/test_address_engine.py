@@ -2,6 +2,8 @@ import random
 from array import array
 
 import numpy as np
+
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 
 from tests.awre.AWRETestCase import AWRETestCase
@@ -11,6 +13,7 @@ from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.AddressEngine import AddressEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util import util
 
 
@@ -238,6 +241,30 @@ class TestAddressEngine(AWRETestCase):
         self.assertIsNotNone(dst_addr)
         self.assertEqual(dst_addr.start, 32)
         self.assertEqual(dst_addr.length, 16)
+
+    def test_paper_example(self):
+        alice = Participant("Alice", "A")
+        bob = Participant("Bob", "B")
+        participants = [alice, bob]
+        msg1 = Message.from_plain_hex_str("aabb1234")
+        msg1.participant = alice
+        msg2 = Message.from_plain_hex_str("aabb6789")
+        msg2.participant = alice
+        msg3 = Message.from_plain_hex_str("bbaa4711")
+        msg3.participant = bob
+        msg4 = Message.from_plain_hex_str("bbaa1337")
+        msg4.participant = bob
+
+        protocol = ProtocolAnalyzer(None)
+        protocol.messages.extend([msg1, msg2, msg3, msg4])
+        self.save_protocol("paper_example", protocol)
+
+        bitvectors = FormatFinder.get_bitvectors_from_messages(protocol.messages)
+        hexvectors = FormatFinder.get_hexvectors(bitvectors)
+        address_engine = AddressEngine(hexvectors, participant_indices=[participants.index(msg.participant) for msg in protocol.messages])
+        print(address_engine.find_addresses())
+
+        print(address_engine.find())
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util

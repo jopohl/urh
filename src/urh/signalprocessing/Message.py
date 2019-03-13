@@ -466,6 +466,12 @@ class Message(object):
         plain_bits = list(map(int, bits))
         return Message(plain_bits=plain_bits, pause=pause, message_type=MessageType("none"))
 
+    @staticmethod
+    def from_plain_hex_str(hex_str, pause=0):
+        lut = {"{0:x}".format(i): "{0:04b}".format(i) for i in range(16)}
+        bits = "".join((lut[h] for h in hex_str))
+        return Message.from_plain_bits_str(bits, pause)
+
     def to_xml(self, decoders=None, include_message_type=False, write_bits=False) -> ET.Element:
         root = ET.Element("message")
         root.set("message_type_id", self.message_type.id)

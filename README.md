@@ -49,12 +49,12 @@ Universal Radio Hacker can be installed via __pip__ or using the __package manag
 Below you find more specific installation instructions for:
 - [Windows](#windows)
 - [Linux](#linux)
-  - [Via Package Manager](#via-package-manager)
-  - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-ubuntudebian)
+  - [Install via Package Manager](#install-via-package-manager)
+  - [Generic Installation with pip (Ubuntu/Debian)](#generic-installation-with-pip-ubuntudebian)
   - [Docker Image](#docker-image)
 - [Mac OS X](#mac-os-x)
 - [Updating your installation](#update-your-installation)
-  - [Updating with Pip](#updating-with-pip)
+  - [Updating with pip](#updating-with-pip)
   - [Updating with MSI](#updating-with-msi)
 - [Running from source](#running-from-source)
 
@@ -99,7 +99,7 @@ corresponding native device support.
 4. Type ``` urh ``` in a terminal to get it started.
 
 ## Update your installation
-### Updating with Pip
+### Updating with pip
 If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
 
 ### Updating with MSI

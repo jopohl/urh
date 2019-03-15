@@ -65,20 +65,12 @@ On Windows, URH can be installed with it's [MSI Installer](https://github.com/jo
 If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
 ## Linux
-### Via Package Manager
-For the following linux distributions you can install URH using your package manager.
+### Install via Package Manager
+URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__. If available, simply use your package manager to install URH. 
 
-| Distribution  | Install with |
-| ------------- | ------------- |
-|  Arch Linux  |  ``` pacman -S urh ```  |
-|  Gentoo / Pentoo  | ``` emerge -av urh ``` |
-| Fedora 25+ | ``` dnf install urh ```  |
-| openSUSE  | ``` zypper install urh ```  |
-
-
-### Generic way with pip (Ubuntu/Debian)
-URH you can also be installed with __pip__ using ```pip3 install urh```. 
-In case you are running Ubuntu or Debian read on for more specific instructions.
+### Generic Installation with pip (Ubuntu/Debian)
+URH you can also be installed with using ```python3 -m pip install urh```. 
+In case you are running __Ubuntu__ or __Debian__ read on for more specific instructions.
 
 In order to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.
 

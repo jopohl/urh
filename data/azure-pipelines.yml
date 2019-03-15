@@ -68,6 +68,7 @@ jobs:
       coverageVariance: 0.2
       coverageDeltaType: percentage
       coverageType: lines
+      baseBranchRef: refs/heads/master
 
   - script: |
       pip install .

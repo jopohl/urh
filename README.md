@@ -70,11 +70,19 @@ For the following linux distributions you can install URH using your package man
 
 | Distribution  | Install with |
 | ------------- | ------------- |
-|  Arch Linux  |  ``` pacman -S urh ```  |
+|  Arch Linux\*  |  ``` pacman -S urh ```  |
 |  Gentoo / Pentoo  | ``` emerge -av urh ``` |
 | Fedora 25+ | ``` dnf install urh ```  |
 | openSUSE  | ``` zypper install urh ```  |
+| FreeBSD  | ``` pkg install urh ```  |
+| NixOS  | ``` nix-env -iA nixos.urh ```  |
 
+\* Ensure the community repo is enabled in _/etc/pacman.conf_ with:
+
+```
+[community]
+Include = /etc/pacman.d/mirrorlist
+```
 
 ### Generic way with pip (Ubuntu/Debian)
 URH you can also be installed with __pip__ using ```pip3 install urh```. 

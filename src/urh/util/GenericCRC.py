@@ -209,12 +209,23 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
+    def guess_all(self, inpt, trash_max = 7):
+        polynomial_sizes = [16, 8]
+        len_input = len(inpt)
+        for s in polynomial_sizes:
+            for i in range(len_input - s - trash_max, len_input - s):
+                vrfy_crc = inpt[i:i+s]
+                ret = self.guess_standard_parameters_and_datarange(inpt, vrfy_crc)
+                if ret != (0,0,0):
+                    return ret, i, i+s
+        return 0,0,0,0,0
+
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed.
         # Note: vfry_crc is included inpt!
         for i in range(0, 2 ** 8):
             self.set_crc_parameters(i)
-            if self.crc(inpt) == vrfy_crc:
+            if len(vrfy_crc) == self.poly_order and self.crc(inpt) == vrfy_crc:
                 return i
         return False
 

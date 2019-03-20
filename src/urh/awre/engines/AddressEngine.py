@@ -63,6 +63,8 @@ class AddressEngine(Engine):
                      for a in address_list]
 
         already_labeled_cols = array("L", [e for rng in self.already_labeled for e in range(*rng)])
+
+        # Find occurrences of address candidates in messages and create common ranges over matching positions
         for i, msg_vector in enumerate(self.msg_vectors):
             participant = self.participant_indices[i]
             for address in addresses:
@@ -93,6 +95,7 @@ class AddressEngine(Engine):
 
         high_scored_ranges_by_participant = defaultdict(list)
 
+        # Get highscored ranges by participant
         for participant, common_ranges in ranges_by_participant.items():
             # Sort by negative score so ranges with highest score appear first
             # Secondary sort by tuple to ensure order when ranges have same score
@@ -103,9 +106,6 @@ class AddressEngine(Engine):
                                                      if len(a) == addr_len}
 
             for rng in filter(lambda r: r.length == addr_len, sorted_ranges):
-                # Here we have ranges sorted by score. We assign destination address to first (highest scored) range
-                # because it is more likely for a message to only have a destination address than only a source address
-                rng.field_type = "address"
                 rng.score = min(rng.score, 1.0)
                 high_scored_ranges_by_participant[participant].append(rng)
 
@@ -127,6 +127,7 @@ class AddressEngine(Engine):
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
         scored_participants_addresses = dict()
+
         for participant, addresses in addresses_by_participant.items():
             scored_participants_addresses[participant] = defaultdict(int)
             for i in self.message_indices_by_participant[participant]:
@@ -166,7 +167,7 @@ class AddressEngine(Engine):
         Last we check for messages that were sent to broadcast
           1. we search for messages that have a SRC address but no DST address
           2. we look at other messages that have this SRC field and find the corresponding DST position
-          3. we evaluate the value of DST less message and compare these values with each other.
+          3. we evaluate the value of message without DST from 1 and compare these values with each other.
              if they match, we found the broadcast address
         :param high_scored_ranges_by_participant:
         :return:

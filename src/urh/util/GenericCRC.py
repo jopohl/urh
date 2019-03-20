@@ -3,8 +3,8 @@ import copy
 from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
-from urh.util import util
 from urh.cythonext import util as c_util
+from urh.util import util
 
 
 class GenericCRC(object):
@@ -52,7 +52,8 @@ class GenericCRC(object):
             return False
 
         return all(getattr(self, attrib) == getattr(other, attrib) for attrib in (
-        "polynomial", "reverse_polynomial", "reverse_all", "little_endian", "lsb_first", "start_value", "final_xor"))
+            "polynomial", "reverse_polynomial", "reverse_all", "little_endian", "lsb_first", "start_value",
+            "final_xor"))
 
     @property
     def poly_order(self):
@@ -103,19 +104,19 @@ class GenericCRC(object):
 
     def get_crc_datarange(self, inpt, vrfy_crc):
         return c_util.get_crc_datarange(array.array("B", inpt),
-                            array.array("B", self.polynomial),
-                            array.array("B", vrfy_crc),
-                            array.array("B", self.start_value),
-                            array.array("B", self.final_xor),
-                            self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+                                        array.array("B", self.polynomial),
+                                        array.array("B", vrfy_crc),
+                                        array.array("B", self.start_value),
+                                        array.array("B", self.final_xor),
+                                        self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
 
     def reference_crc(self, inpt):
         len_inpt = len(inpt)
         if len(self.start_value) < self.poly_order - 1:
             return False
-        crc = copy.copy(self.start_value[0:(self.poly_order-1)])
+        crc = copy.copy(self.start_value[0:(self.poly_order - 1)])
 
-        for i in range(0, len_inpt+7, 8):
+        for i in range(0, len_inpt + 7, 8):
             for j in range(0, 8):
 
                 if self.lsb_first:
@@ -156,7 +157,7 @@ class GenericCRC(object):
         elif self.poly_order - 1 == 64 and self.little_endian:
             for pos1, pos2 in [(0, 7), (1, 6), (2, 5), (3, 4)]:
                 self.__swap_bytes(crc, pos1, pos2)
-        #return crc
+        # return crc
         return array.array("B", crc)
 
     def calculate(self, bits: array.array):
@@ -209,16 +210,16 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
-    def guess_all(self, inpt, trash_max = 7):
+    def guess_all(self, inpt, trash_max=7):
         polynomial_sizes = [16, 8]
         len_input = len(inpt)
         for s in polynomial_sizes:
             for i in range(len_input - s - trash_max, len_input - s):
-                vrfy_crc = inpt[i:i+s]
+                vrfy_crc = inpt[i:i + s]
                 ret = self.guess_standard_parameters_and_datarange(inpt, vrfy_crc)
-                if ret != (0,0,0):
-                    return ret, i, i+s
-        return 0,0,0,0,0
+                if ret != (0, 0, 0):
+                    return ret[0], ret[1], ret[2], i, i + s
+        return 0, 0, 0, 0, 0
 
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed.

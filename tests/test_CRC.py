@@ -1,9 +1,11 @@
-import unittest, time
+import time
+import unittest
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 from urh.util.WSPChecksum import WSPChecksum
+
 
 class TestCRC(unittest.TestCase):
     def test_crc(self):
@@ -31,6 +33,16 @@ class TestCRC(unittest.TestCase):
                     nv += "1"
 
             self.assertEqual(util.bit2hex(c.crc(e.str2bit(value[4:-8]))), expect)
+
+    def test_crc8(self):
+        messages = ["aabbcc", "abcdee", "dacafe"]
+
+        expected = ["7d", "24", "33"]
+        crc = GenericCRC(polynomial=GenericCRC.DEFAULT_POLYNOMIALS["8_standard"])
+
+        for msg, expect in zip(messages, expected):
+            bits = util.hex2bit(msg)
+            self.assertEqual(util.bit2hex(crc.crc(bits)), expect)
 
     def test_different_crcs(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
@@ -148,13 +160,13 @@ class TestCRC(unittest.TestCase):
             t = time.time()
             result = c.guess_standard_parameters_and_datarange(c.str2arr(inpt), c.str2arr(vrfy_crc))
             t1 += time.time() - t
-            #print(result, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
-            self.assertEqual(result[0], 2)                          # Parameters = 2
-            self.assertEqual(result[1], len(inpt) - 1 - 16 - 88)    # start of datarange
-            self.assertEqual(result[2], len(inpt) - 1 - 16)         # end of datarange
-            inpt = "0"+inpt if i%2 == 0 else "1"+inpt
-        #print("Performance:", t1/runs)
-        self.assertLess(t1/runs, 0.1)   # Should be faster than 100ms in average
+            # print(result, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
+            self.assertEqual(result[0], 2)  # Parameters = 2
+            self.assertEqual(result[1], len(inpt) - 1 - 16 - 88)  # start of datarange
+            self.assertEqual(result[2], len(inpt) - 1 - 16)  # end of datarange
+            inpt = "0" + inpt if i % 2 == 0 else "1" + inpt
+        # print("Performance:", t1/runs)
+        self.assertLess(t1 / runs, 0.1)  # Should be faster than 100ms in average
 
     def test_adaptive_crc_calculation(self):
         c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,

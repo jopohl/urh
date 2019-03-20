@@ -1,23 +1,22 @@
+import array
 import math
 from collections import defaultdict
 
 import numpy as np
 
-from urh.awre.CommonRange import CommonRange, ChecksumRange
+from urh.awre.CommonRange import ChecksumRange
 from urh.awre.engines.Engine import Engine
-from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 
 
 class ChecksumEngine(Engine):
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, already_labeled: list = None):
+    def __init__(self, bitvectors, n_gram_length=8, already_labeled: list = None):
         """
         :type bitvectors: list of np.ndarray
         :param bitvectors: bitvectors behind the synchronization
         """
         self.bitvectors = bitvectors
         self.n_gram_length = n_gram_length
-        self.minimum_score = minimum_score
         if already_labeled is None:
             self.already_labeled_cols = set()
         else:
@@ -35,17 +34,17 @@ class ChecksumEngine(Engine):
             for i, index in enumerate(message_indices):
                 inpt = self.bitvectors[index]
                 crc_parameter, start, stop, crc_start, crc_stop = crc.guess_all(inpt)
-                if (crc_parameter, start, stop, crc_start, crc_stop) != (0,0,0,0,0):
+                if (crc_parameter, start, stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
                     result.append(ChecksumRange(start=crc_start,
-                                                length=crc_stop-crc_start,
+                                                length=crc_stop - crc_start,
                                                 score=1,
                                                 field_type="checksum",
-                                                message_indices=message_indices
+                                                message_indices={i}
                                                 ))
                     crc.set_crc_parameters(crc_parameter)
-                    for j in range(i+1, len(message_indices)):
+                    for j in range(i + 1, len(message_indices)):
                         inpt = self.bitvectors[message_indices[j]]
-                        if crc.crc(inpt) == inpt[crc_start:crc_stop]:
+                        if crc.crc(inpt) == array.array("B", inpt[crc_start:crc_stop]):
                             result[-1].message_indices.add(j)
         return result
 

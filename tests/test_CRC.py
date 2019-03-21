@@ -38,7 +38,7 @@ class TestCRC(unittest.TestCase):
         messages = ["aabbcc", "abcdee", "dacafe"]
 
         expected = ["7d", "24", "33"]
-        crc = GenericCRC(polynomial=GenericCRC.DEFAULT_POLYNOMIALS["8_standard"])
+        crc = GenericCRC(polynomial=GenericCRC.DEFAULT_POLYNOMIALS["8_ccitt"])
 
         for msg, expect in zip(messages, expected):
             bits = util.hex2bit(msg)

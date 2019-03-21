@@ -25,6 +25,10 @@ class GenericCRC(object):
         # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
         ("16_dnp", array.array("B", [1,
                                      0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
+
+        # x^8 + x^2 + x + 1
+        ("8_ccitt", array.array("B", [1,
+                                      0, 0, 0, 0, 0, 1, 1, 1]))
     ])
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,

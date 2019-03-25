@@ -1,4 +1,7 @@
+from urh.signalprocessing.FieldType import FieldType
+
 from tests.awre.AWRETestCase import AWRETestCase
+from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.Message import Message
@@ -119,3 +122,37 @@ class TestAWREPreprocessing(AWRETestCase):
 
         preprocessor = Preprocessor(pa.decoded_bits)
         print(preprocessor.get_difference_matrix())
+
+    @staticmethod
+    def build_protocol_generator(preamble_syncs: list, num_messages: tuple, data: tuple) -> ProtocolGenerator:
+        message_types = []
+        preambles_by_mt = dict()
+        syncs_by_mt = dict()
+
+        assert len(preamble_syncs) == len(num_messages) == len(data)
+
+        for i, (preamble, sync_word) in enumerate(preamble_syncs):
+            assert isinstance(preamble, str)
+            assert isinstance(sync_word, str)
+
+            preamble, sync_word = map(ProtocolGenerator.to_bits, (preamble, sync_word))
+
+            mb = MessageTypeBuilder("message type #{0}".format(i))
+            mb.add_label(FieldType.Function.PREAMBLE, len(preamble))
+            mb.add_label(FieldType.Function.SYNC, len(sync_word))
+
+            message_types.append(mb.message_type)
+            preambles_by_mt[mb.message_type] = preamble
+            syncs_by_mt[mb.message_type] = sync_word
+
+        pg = ProtocolGenerator(message_types, preambles_by_mt=preambles_by_mt, syncs_by_mt=syncs_by_mt)
+        for i, msg_type in enumerate(message_types):
+            for j in range(num_messages[i]):
+                if callable(data[i]):
+                    msg_data = pg.decimal_to_bits(data[i](j), num_bits=8)
+                else:
+                    msg_data = data[i]
+
+                pg.generate_message(message_type=msg_type, data=msg_data)
+
+        return pg

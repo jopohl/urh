@@ -116,6 +116,9 @@ class MessageType(list):
     def get_first_label_with_type(self, field_type: FieldType.Function) -> ProtocolLabel:
         return next((lbl for lbl in self if lbl.field_type and lbl.field_type.function == field_type), None)
 
+    def num_labels_with_type(self, field_type: FieldType.Function) -> int:
+        return len([lbl for lbl in self if lbl.field_type and lbl.field_type.function == field_type])
+
     def append(self, lbl: ProtocolLabel):
         super().append(lbl)
         self.sort()

@@ -38,14 +38,18 @@ class FormatFinder(object):
         self.preamble_starts, self.preamble_lengths, sync_len = preprocessor.preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
 
-        if shortest_field_length is None:
-            self.shortest_field_length = 8 if sync_len >= 8 else 4 if sync_len >= 4 else 1
+        n = shortest_field_length
+        if n is None:
+            # 0 = no sync found
+            n = 8 if sync_len >= 8 else 4 if sync_len >= 4 else 1 if sync_len >= 1 else 0
 
-        n = self.shortest_field_length
         for i, value in enumerate(self.sync_ends):
             # In doubt it is better to under estimate the sync end
-            self.sync_ends[i] = n * max(int(math.floor((value - self.preamble_starts[i]) / n)), 1) + \
-                                self.preamble_starts[i]
+            if n > 0:
+                self.sync_ends[i] = n * max(int(math.floor((value - self.preamble_starts[i]) / n)), 1) + \
+                                    self.preamble_starts[i]
+            else:
+                self.sync_ends[i] = self.preamble_starts[i]
 
             if self.sync_ends[i] - self.preamble_starts[i] < self.preamble_lengths[i]:
                 self.preamble_lengths[i] = self.sync_ends[i] - self.preamble_starts[i]
@@ -352,7 +356,7 @@ class FormatFinder(object):
             existing_preamble = next((rng for rng in result if preamble == rng), None)
             if existing_preamble is not None:
                 existing_preamble.message_indices.add(i)
-            else:
+            elif preamble_lengths[i] > 0:
                 result.add(preamble)
 
             preamble_end = preamble_starts[i] + preamble_lengths[i]
@@ -361,7 +365,7 @@ class FormatFinder(object):
             existing_sync = next((rng for rng in result if sync == rng), None)
             if existing_sync is not None:
                 existing_sync.message_indices.add(i)
-            else:
+            elif sync_end - preamble_end > 0:
                 result.add(sync)
 
         return result

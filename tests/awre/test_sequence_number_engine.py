@@ -5,6 +5,7 @@ from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Participant import Participant
 
 
 class TestSequenceNumberEngine(AWRETestCase):
@@ -40,6 +41,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
+        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
         label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 8)
@@ -70,9 +72,52 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
+        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
         label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 16)
+
+    def test_no_sequence_number(self):
+        """
+        Ensure no sequence number is labeled, when it cannot be found
+
+        :return:
+        """
+        alice = Participant("Alice", address_hex="dead")
+        bob = Participant("Bob", address_hex="beef")
+
+        mb = MessageTypeBuilder("protocol_with_one_message_type")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        num_messages = 3
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x1337"},
+                               participants=[alice, bob])
+
+        for i in range(num_messages):
+            if i % 2 == 0:
+                source, destination = alice, bob
+            else:
+                source, destination = bob, alice
+            pg.generate_message(data="", source=source, destination=destination)
+
+        self.save_protocol("protocol_1", pg)
+
+        # Delete message type information -> no prior knowledge
+        self.clear_message_types(pg.protocol.messages)
+
+        ff = FormatFinder(pg.protocol.messages)
+        ff.known_participant_addresses.clear()
+        ff.perform_iteration()
+
+        self.assertEqual(len(ff.message_types), 1)
+
+        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 0)
 
     def test_multiple_sequence_numbers(self):
         """

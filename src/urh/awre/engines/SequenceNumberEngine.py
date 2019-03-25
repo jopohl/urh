@@ -29,6 +29,10 @@ class SequenceNumberEngine(Engine):
             self.already_labeled_cols = {e for rng in already_labeled for e in range(*rng)}
 
     def find(self):
+        if len(self.bitvectors) <= 2:
+            # We need at least 3 bitvectors to properly find a sequence number
+            return []
+
         diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)
         diff_frequencies_by_column = dict()
 
@@ -36,6 +40,7 @@ class SequenceNumberEngine(Engine):
             unique, counts = np.unique(diff_matrix[:, j], return_counts=True)
             diff_frequencies_by_column[j] = dict(zip(unique, counts))
 
+        self._debug("Diff_frequencies_by_column", diff_frequencies_by_column)
         scores_by_column = dict()
         for column, frequencies in diff_frequencies_by_column.items():
             if column not in self.already_labeled_cols:
@@ -43,6 +48,7 @@ class SequenceNumberEngine(Engine):
             else:
                 scores_by_column[column] = 0
 
+        self._debug("Scores by column", scores_by_column)
         result = []
         for candidate_column in sorted(scores_by_column, key=scores_by_column.get, reverse=True):
             score = scores_by_column[candidate_column]

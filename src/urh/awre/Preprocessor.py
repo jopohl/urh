@@ -115,6 +115,8 @@ class Preprocessor(object):
 
         self.__debug("Sync word lengths", sync_lengths)
         self.__debug("Possible sync words", possible_sync_words)
+        if len(possible_sync_words) == 0:
+            return []
 
         # We may have sync lengths that are too long here.
         # This happens, when there are constant fields behind sync such as length field for messages with same length.

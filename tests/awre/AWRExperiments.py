@@ -1,5 +1,8 @@
 import random
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
@@ -7,11 +10,15 @@ from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
 
-import matplotlib.pyplot as plt
-
 
 class AWRExperiments(AWRETestCase):
-    def __prepare_protocol_1(self, num_messages):
+    def __prepare_protocol_1(self, num_messages, num_broken_messages=0):
+        """
+
+        :param num_messages:
+        :param num_broken_messages: probability that a bit is flipped
+        :return:
+        """
         alice = Participant("Alice", address_hex="dead")
         bob = Participant("Bob", address_hex="beef")
 
@@ -28,6 +35,7 @@ class AWRExperiments(AWRETestCase):
                                participants=[alice, bob])
 
         random.seed(0)
+        np.random.seed(0)
         for i in range(num_messages):
             if i % 2 == 0:
                 source, destination = alice, bob
@@ -35,8 +43,14 @@ class AWRExperiments(AWRETestCase):
             else:
                 source, destination = bob, alice
                 data_length = 16
-            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                source=source, destination=destination)
+
+            if num_broken_messages == 0:
+                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                    source=source, destination=destination)
+            else:
+                l = random.choice([8, 16, 64])
+                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (l - 1)), l))
+                num_broken_messages -= 1
 
         self.save_protocol("protocol_1", pg)
 
@@ -76,7 +90,7 @@ class AWRExperiments(AWRETestCase):
 
         return max(0, accuracy * 100)
 
-    def test_with_one_message_type(self):
+    def test_against_num_messages(self):
         num_messages = list(range(1, 12))
         accuracies = []
 
@@ -97,5 +111,30 @@ class AWRExperiments(AWRETestCase):
 
         plt.plot(num_messages, accuracies)
         plt.xlabel("Number of messages")
+        plt.ylabel("Accuracy in %")
+        plt.show()
+
+    def test_against_broken_messages(self):
+        num_messages = 16
+        num_broken_messages = list(range(0, num_messages))
+        accuracies = []
+
+        for broken in num_broken_messages:
+            protocol, expected_labels = self.__prepare_protocol_1(num_messages=num_messages, num_broken_messages=broken)
+
+            ff = FormatFinder(protocol.messages)
+            ff.known_participant_addresses.clear()
+            ff.perform_iteration()
+
+            # self.assertEqual(len(ff.message_types), 1)
+
+            print("Expected ({}): {}".format(len(expected_labels), expected_labels))
+            print(ff.message_types[0])
+
+            accuracy = self.calculate_accuracy(ff.message_types[0], expected_labels)
+            accuracies.append(accuracy)
+
+        plt.plot(num_broken_messages, accuracies)
+        plt.xlabel("Number of broken messages")
         plt.ylabel("Accuracy in %")
         plt.show()

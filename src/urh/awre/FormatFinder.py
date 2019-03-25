@@ -1,6 +1,6 @@
 import copy
 import math
-from collections import defaultdict, Counter
+from collections import defaultdict
 
 import numpy as np
 
@@ -57,8 +57,9 @@ class FormatFinder(object):
         self.bitvectors = self.get_bitvectors_from_messages(messages, self.sync_ends)
         self.hexvectors = self.get_hexvectors(self.bitvectors)
         self.xor_matrix = self.build_xor_matrix()
-        participants = list(sorted(set(msg.participant for msg in messages)))
-        self.participant_indices = [participants.index(msg.participant) for msg in messages]
+        participants = list(sorted(set(msg.participant for msg in messages if msg.participant is not None)))
+        self.participant_indices = [participants.index(msg.participant) if msg.participant is not None else -1
+                                    for msg in messages]
         self.known_participant_addresses = {
             participants.index(p): np.array([int(h, 16) for h in p.address_hex], dtype=np.uint8)
             for p in participants if p and p.address_hex
@@ -87,7 +88,7 @@ class FormatFinder(object):
         # because if the existing labels would have different sync positions,
         # they would not belong to the same message type in the first place
         sync_end = self.sync_ends[indices[0]] if indices else 0
-        already_labeled = [(lbl.start-sync_end, lbl.end-sync_end) for lbl in message_type if lbl.start >= sync_end]
+        already_labeled = [(lbl.start - sync_end, lbl.end - sync_end) for lbl in message_type if lbl.start >= sync_end]
 
         if not message_type.get_first_label_with_type(FieldType.Function.LENGTH):
             engines.append(LengthEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))

@@ -102,7 +102,7 @@ class AddressEngine(Engine):
             sorted_ranges = sorted(filter(lambda cr: cr.score > 0.1, common_ranges), key=lambda cr: (-cr.score, cr))
 
             addr_len = sorted_ranges[0].length if len(sorted_ranges) > 0 else 0
-            addresses_by_participant[participant] = {a for a in addresses_by_participant[participant]
+            addresses_by_participant[participant] = {a for a in addresses_by_participant.get(participant, [])
                                                      if len(a) == addr_len}
 
             for rng in filter(lambda r: r.length == addr_len, sorted_ranges):

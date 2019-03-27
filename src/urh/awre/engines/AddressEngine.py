@@ -112,6 +112,13 @@ class AddressEngine(Engine):
         # Now we find the most probable address for all participants
         self.__assign_participant_addresses(addresses_by_participant, high_scored_ranges_by_participant)
 
+        # Eliminate participants for which we could not assign an address
+        for participant, address in addresses_by_participant.copy().items():
+            if address is None:
+                del addresses_by_participant[participant]
+                if participant in high_scored_ranges_by_participant:
+                    del high_scored_ranges_by_participant[participant]
+
         # Write it back to the dict so future iterations can use it
         self.known_addresses_by_participant.update(addresses_by_participant)
 
@@ -149,6 +156,8 @@ class AddressEngine(Engine):
                 found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
                                     key=addresses.get)
             except ValueError:
+                # Could not assign address for this participant
+                addresses_by_participant[participant] = None
                 continue
 
             if len(addresses_by_participant[participant]) == 1:

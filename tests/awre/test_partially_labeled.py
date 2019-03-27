@@ -83,6 +83,7 @@ class TestPartiallyLabeled(AWRETestCase):
 
         # overlaps type
         ff.message_types[0].add_protocol_label_start_length(32, 8)
+        ff.known_participant_addresses.clear()
         ff.perform_iteration()
         self.assertEqual(1, len(ff.message_types))
 

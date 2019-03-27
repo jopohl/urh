@@ -120,7 +120,7 @@ class AddressEngine(Engine):
                     del high_scored_ranges_by_participant[participant]
 
         # Write it back to the dict so future iterations can use it
-        self.known_addresses_by_participant.update({p: np.fromstring(addr, dtype=np.uint8)
+        self.known_addresses_by_participant.update({p: np.frombuffer(addr, dtype=np.uint8)
                                                     for p, addr in addresses_by_participant.items()})
 
         # Now we can separate SRC and DST

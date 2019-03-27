@@ -98,8 +98,8 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
 
         self.assertEqual(len(ff.known_participant_addresses), 2)
-        self.assertIn(bytes([int(h, 16) for h in self.alice.address_hex]), ff.known_participant_addresses.values())
-        self.assertIn(bytes([int(h, 16) for h in self.bob.address_hex]), ff.known_participant_addresses.values())
+        self.assertIn(bytes([int(h, 16) for h in self.alice.address_hex]), map(bytes, ff.known_participant_addresses.values()))
+        self.assertIn(bytes([int(h, 16) for h in self.bob.address_hex]), map(bytes, ff.known_participant_addresses.values()))
         print(ff.known_participant_addresses)
 
         self.assertEqual(len(ff.message_types), 1)

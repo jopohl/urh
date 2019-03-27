@@ -120,7 +120,8 @@ class AddressEngine(Engine):
                     del high_scored_ranges_by_participant[participant]
 
         # Write it back to the dict so future iterations can use it
-        self.known_addresses_by_participant.update(addresses_by_participant)
+        self.known_addresses_by_participant.update({p: np.fromstring(addr, dtype=np.uint8)
+                                                    for p, addr in addresses_by_participant.items()})
 
         # Now we can separate SRC and DST
         for participant, ranges in high_scored_ranges_by_participant.items():
@@ -137,6 +138,11 @@ class AddressEngine(Engine):
 
         for participant, addresses in addresses_by_participant.items():
             scored_participants_addresses[participant] = defaultdict(int)
+            if participant in self.known_addresses_by_participant:
+                address = self.known_addresses_by_participant[participant].tostring()
+                scored_participants_addresses[participant][address] = 9999
+                continue
+
             for i in self.message_indices_by_participant[participant]:
                 matching = [rng for rng in high_scored_ranges_by_participant[participant]
                             if i in rng.message_indices and rng.value.tostring() in addresses]
@@ -225,11 +231,13 @@ class AddressEngine(Engine):
     def find_addresses(self) -> dict:
         already_assigned = list(self.known_addresses_by_participant.keys())
         if len(already_assigned) == len(self.message_indices_by_participant):
+            self._debug("Skipping find addresses as already known.")
             return dict()
 
         common_ranges_by_participant = dict()
         for participant, msg_indices in self.message_indices_by_participant.items():
             if participant in already_assigned:
+                self._debug("Skipping participant {} with known address in address finding".format(participant))
                 continue
 
             common_ranges = self.find_common_ranges_exhaustive(self.msg_vectors, msg_indices, range_type="hex")

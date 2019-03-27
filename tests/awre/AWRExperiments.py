@@ -1,3 +1,4 @@
+import array
 import random
 
 import matplotlib.pyplot as plt
@@ -48,8 +49,12 @@ class AWRExperiments(AWRETestCase):
                 pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
                                     source=source, destination=destination)
             else:
-                l = random.choice([8, 16, 64])
-                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (l - 1)), l))
+                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                    source=source, destination=destination)
+
+                msg = pg.protocol.messages[-1]
+                pos = random.randint(0, len(msg.plain_bits) // 2)
+                msg.plain_bits[pos:] = array.array("B", [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
                 num_broken_messages -= 1
 
         self.save_protocol("protocol_1", pg)
@@ -58,6 +63,55 @@ class AWRExperiments(AWRETestCase):
         self.clear_message_types(pg.protocol.messages)
 
         return pg.protocol, mb.message_type
+
+    def __prepare_protocol_1a(self, num_messages, num_broken_messages=0):
+        """
+
+        :param num_messages:
+        :param num_broken_messages: probability that a bit is flipped
+        :return:
+        """
+        alice = Participant("Alice", address_hex="dead01")
+        bob = Participant("Bob", address_hex="beef24")
+
+        mb = MessageTypeBuilder("protocol_with_one_message_type")
+        mb.add_label(FieldType.Function.PREAMBLE, 72)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 24)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 24)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x1337"},
+                               preambles_by_mt={mb.message_type: "10" * 36},
+                               participants=[alice, bob])
+
+        random.seed(0)
+        np.random.seed(0)
+        for i in range(num_messages):
+            if i % 2 == 0:
+                source, destination = alice, bob
+                data_length = 8
+            else:
+                source, destination = bob, alice
+                data_length = 16
+
+            if num_broken_messages == 0:
+                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                    source=source, destination=destination)
+            else:
+                l = random.choice([8, 16, 64])
+                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (l - 1)), l))
+                num_broken_messages -= 1
+
+        self.save_protocol("protocol_1a", pg)
+
+        # Delete message type information -> no prior knowledge
+        self.clear_message_types(pg.protocol.messages)
+
+        return pg.protocol, mb.message_type
+
 
     @staticmethod
     def calculate_accuracy(labels, expected_labels, penalty_for_additional_labels=True):

@@ -58,7 +58,7 @@ class AddressEngine(Engine):
         # Find the address candidates by participant in messages
         ranges_by_participant = defaultdict(list)  # type: dict[int, list[CommonRange]]
 
-        addresses = [np.array(np.frombuffer(a, dtype=np.uint8))
+        addresses = [np.array(np.fromstring(a, dtype=np.uint8))
                      for address_list in addresses_by_participant.values()
                      for a in address_list]
 

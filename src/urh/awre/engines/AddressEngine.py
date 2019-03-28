@@ -140,7 +140,7 @@ class AddressEngine(Engine):
             scored_participants_addresses[participant] = defaultdict(int)
             if participant in self.known_addresses_by_participant:
                 address = self.known_addresses_by_participant[participant].tostring()
-                scored_participants_addresses[participant][address] = 9999
+                scored_participants_addresses[participant][address] = 9999999999
                 continue
 
             for i in self.message_indices_by_participant[participant]:
@@ -156,7 +156,7 @@ class AddressEngine(Engine):
                         scored_participants_addresses[participant][address] += 1
 
         taken_addresses = set()
-        for participant, addresses in scored_participants_addresses.items():
+        for participant, addresses in sorted(scored_participants_addresses.items()):
             # sort filtered results to prevent randomness for equal scores
             try:
                 found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
@@ -166,16 +166,8 @@ class AddressEngine(Engine):
                 addresses_by_participant[participant] = None
                 continue
 
-            if len(addresses_by_participant[participant]) == 1:
-                assigned = list(addresses_by_participant[participant])[0]
-                addresses_by_participant[participant] = assigned
-                if found_address != assigned:
-                    logger.warning("Found a different address ({}) for participant {} than the assigned one {}".format(
-                        found_address, participant, assigned))
-                taken_addresses.add(assigned)
-            else:
-                addresses_by_participant[participant] = found_address
-                taken_addresses.add(found_address)
+            addresses_by_participant[participant] = found_address
+            taken_addresses.add(found_address)
 
     def __find_broadcast_fields(self, high_scored_ranges_by_participant, addresses_by_participant: dict):
         """

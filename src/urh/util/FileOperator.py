@@ -23,9 +23,8 @@ RECENT_PATH = QDir.homePath()
 
 def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QFileDialog:
     fip = FileIconProvider()
-    dialog = QFileDialog(parent)
+    dialog = QFileDialog(parent=parent, directory=RECENT_PATH)
     dialog.setIconProvider(fip)
-    dialog.setDirectory(RECENT_PATH)
 
     if directory_mode:
         dialog.setFileMode(QFileDialog.Directory)
@@ -119,13 +118,10 @@ def get_save_file_name(initial_name: str, wav_only=False, caption="Save signal")
         name_filter = "Protocols (*.proto.xml *.proto);;Binary Protocol (*.bin);;All Files (*)"
 
     filename = None
-    dialog = QFileDialog()
+    dialog = QFileDialog(directory=RECENT_PATH, caption=caption, filter=name_filter)
     dialog.setFileMode(QFileDialog.AnyFile)
-    dialog.setNameFilter(name_filter)
     dialog.setViewMode(QFileDialog.Detail)
-    dialog.setDirectory(RECENT_PATH)
     dialog.setLabelText(QFileDialog.Accept, "Save")
-    dialog.setWindowTitle(caption)
     dialog.setAcceptMode(QFileDialog.AcceptSave)
     dialog.selectFile(initial_name)
 

@@ -380,10 +380,7 @@ class TestSimulatorTabGUI(QtTestCase):
             logger.debug("Waiting for mismatching message")
             time.sleep(1)
 
-        QTest.qWait(250)
-        QApplication.processEvents()
-        QTest.qWait(100)
-
+        dialog.on_timer_timeout()  # enforce writing to text view
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)

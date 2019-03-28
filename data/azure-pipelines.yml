@@ -65,9 +65,10 @@ jobs:
     inputs:
       checkCoverage: true
       allowCoverageVariance: true
-      coverageVariance: 0.2
+      coverageVariance: 0.4
       coverageDeltaType: percentage
       coverageType: lines
+      baseBranchRef: refs/heads/master
 
   - script: |
       pip install .

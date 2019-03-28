@@ -1405,7 +1405,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot(int)
     def on_ref_index_changed(self, new_ref_index: int):
-        if new_ref_index != -1:
+        if new_ref_index != -1 and self.protocol_model.row_count:
             hide_correction = 0
             for i in range(0, self.protocol_model.row_count):
                 if self.ui.tblViewProtocol.isRowHidden((new_ref_index + i) % self.protocol_model.row_count):

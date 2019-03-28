@@ -21,7 +21,7 @@ M = 10 ** 6
 G = 10 ** 9
 
 DEVICE_CONFIG["PlutoSDR"] = {
-    "center_freq": dev_range(start=325 * M, stop=3.8 * G, step=1),
+    "center_freq": dev_range(start=70 * M, stop=6 * G, step=1),
     "sample_rate": dev_range(start=2.1 * M, stop=61.44 * M, step=1),
     "bandwidth": dev_range(start=0.2 * M, stop=56 * M, step=1),
     "tx_rf_gain": list(range(-89, 1)),

@@ -49,12 +49,12 @@ Universal Radio Hacker can be installed via __pip__ or using the __package manag
 Below you find more specific installation instructions for:
 - [Windows](#windows)
 - [Linux](#linux)
-  - [Via Package Manager](#via-package-manager)
-  - [Generic way with pip (Ubuntu/Debian)](#generic-way-with-pip-ubuntudebian)
+  - [Install via Package Manager](#install-via-package-manager)
+  - [Generic Installation with pip (Ubuntu/Debian)](#generic-installation-with-pip-ubuntudebian)
   - [Docker Image](#docker-image)
 - [Mac OS X](#mac-os-x)
 - [Updating your installation](#update-your-installation)
-  - [Updating with Pip](#updating-with-pip)
+  - [Updating with pip](#updating-with-pip)
   - [Updating with MSI](#updating-with-msi)
 - [Running from source](#running-from-source)
 
@@ -65,20 +65,12 @@ On Windows, URH can be installed with it's [MSI Installer](https://github.com/jo
 If you get an error about missing ``` api-ms-win-crt-runtime-l1-1-0.dll ```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
 ## Linux
-### Via Package Manager
-For the following linux distributions you can install URH using your package manager.
+### Install via Package Manager
+URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__. If available, simply use your package manager to install URH. 
 
-| Distribution  | Install with |
-| ------------- | ------------- |
-|  Arch Linux  |  ``` pacman -S urh ```  |
-|  Gentoo / Pentoo  | ``` emerge -av urh ``` |
-| Fedora 25+ | ``` dnf install urh ```  |
-| openSUSE  | ``` zypper install urh ```  |
-
-
-### Generic way with pip (Ubuntu/Debian)
-URH you can also be installed with __pip__ using ```pip3 install urh```. 
-In case you are running Ubuntu or Debian read on for more specific instructions.
+### Generic Installation with pip (Ubuntu/Debian)
+URH you can also be installed with using ```python3 -m pip install urh```. 
+In case you are running __Ubuntu__ or __Debian__ read on for more specific instructions.
 
 In order to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ``` libairspy-dev ```, ``` libhackrf-dev ```, ``` librtlsdr-dev  ```, ``` libuhd-dev  ```.
 
@@ -107,7 +99,7 @@ corresponding native device support.
 4. Type ``` urh ``` in a terminal to get it started.
 
 ## Update your installation
-### Updating with Pip
+### Updating with pip
 If you installed URH via pip you can keep it up to date with ``` pip3 install --upgrade urh ```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
 
 ### Updating with MSI

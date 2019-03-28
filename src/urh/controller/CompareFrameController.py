@@ -445,7 +445,7 @@ class CompareFrameController(QWidget):
 
         update_project = False
         for msg in pa.messages:
-            if msg.participant not in self.project_manager.participants:
+            if msg.participant is not None and msg.participant not in self.project_manager.participants:
                 self.project_manager.participants.append(msg.participant)
                 update_project = True
 

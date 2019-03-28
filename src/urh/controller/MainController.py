@@ -257,6 +257,7 @@ class MainController(QMainWindow):
         proto = self.compare_frame_controller.add_protocol_from_file(filename)
         if proto:
             self.__add_empty_frame_for_filename(proto, filename)
+        self.ui.tabWidget.setCurrentWidget(self.ui.tab_protocol)
 
     def add_fuzz_profile(self, filename):
         self.ui.tabWidget.setCurrentIndex(2)

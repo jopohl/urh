@@ -266,6 +266,8 @@ class SignalFrame(QFrame):
                                                 self.ui.btnCloseSignal, self.ui.lineEditSignalName):
                 w.hide()
 
+        self.adjustSize()
+
     def cancel_filtering(self):
         self.filter_abort_wanted = True
 

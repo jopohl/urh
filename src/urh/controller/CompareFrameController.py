@@ -443,6 +443,15 @@ class CompareFrameController(QWidget):
                         messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
                     self.proto_analyzer.message_types.append(messsage_type)
 
+        update_project = False
+        for msg in pa.messages:
+            if msg.participant not in self.project_manager.participants:
+                self.project_manager.participants.append(msg.participant)
+                update_project = True
+
+        if update_project:
+            self.project_manager.project_updated.emit()
+
         self.message_type_table_model.update()
         self.add_protocol(protocol=pa)
 

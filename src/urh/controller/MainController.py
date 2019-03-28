@@ -208,6 +208,7 @@ class MainController(QMainWindow):
             self.on_show_field_types_config_action_triggered)
 
         self.compare_frame_controller.load_protocol_clicked.connect(self.on_compare_frame_controller_load_protocol_clicked)
+        self.compare_frame_controller.ui.listViewParticipants.doubleClicked.connect(self.on_project_settings_action_triggered)
 
         self.ui.lnEdtTreeFilter.textChanged.connect(self.on_file_tree_filter_text_changed)
 

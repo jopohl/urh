@@ -81,18 +81,6 @@ jobs:
     vmImage: 'vs2017-win2016'
   strategy:
     matrix:
-      Python35-64:
-        python.version: '3.5'
-        python.arch: 'x64'
-      Python35-32:
-        python.version: '3.5'
-        python.arch: 'x86'
-      Python36-64:
-        python.version: '3.6'
-        python.arch: 'x64'
-      Python36-32:
-        python.version: '3.6'
-        python.arch: 'x86'
       Python37-64:
         python.version: '3.7'
         python.arch: 'x64'
@@ -137,14 +125,11 @@ jobs:
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
 
-  - script: python data/pyinstaller_helper.py
-    condition: eq(variables['python.version'], '3.7')
-    displayName: "Run PyInstaller"
-
   - script: |
+      python data/pyinstaller_helper.py
       for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
       iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
-    condition: eq(variables['python.version'], '3.7')
+    condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 
   - task: PublishBuildArtifacts@1

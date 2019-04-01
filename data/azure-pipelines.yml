@@ -102,7 +102,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
-      pip install pytest pytest-faulthandler
+      pip install pytest pytest-faulthandler pytest-xdist
     displayName: 'Install dependencies'
 
   - task: ExtractFiles@1
@@ -158,7 +158,7 @@ jobs:
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest -n auto --dist=loadfile -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest'
 
   - task: PublishTestResults@2

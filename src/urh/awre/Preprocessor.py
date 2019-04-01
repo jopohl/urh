@@ -1,5 +1,6 @@
 import itertools
 import math
+import os
 from collections import defaultdict
 
 import numpy as np
@@ -82,11 +83,31 @@ class Preprocessor(object):
             raw_preamble_positions = self.get_raw_preamble_positions()
         return self.determine_sync_candidates(raw_preamble_positions, difference_matrix, n_gram_length=4)
 
+    @staticmethod
+    def merge_possible_sync_words(possible_sync_words: dict, n_gram_length: int):
+        """
+        Merge possible sync words by looking for common prefixes
+
+        :param possible_sync_words: dict of possible sync words and their frequencies
+        :return:
+        """
+        result = defaultdict(int)
+        if len(possible_sync_words) < 2:
+            return possible_sync_words.copy()
+
+        for sync1, sync2 in itertools.combinations(possible_sync_words, 2):
+            common_prefix = os.path.commonprefix([sync1, sync2])
+            if len(common_prefix) > n_gram_length:
+                result[common_prefix] += possible_sync_words[sync1] + possible_sync_words[sync2]
+            else:
+                result[sync1] += possible_sync_words[sync1]
+                result[sync2] += possible_sync_words[sync2]
+        return result
+
     def determine_sync_candidates(self,
                                   raw_preamble_positions: np.ndarray,
                                   difference_matrix: np.ndarray,
                                   n_gram_length=4) -> list:
-        sync_lengths = defaultdict(int)
         possible_sync_words = defaultdict(int)
 
         for i in range(difference_matrix.shape[0]):
@@ -110,23 +131,29 @@ class Preprocessor(object):
                     if sync_word not in ("", "10", "01"):
                         # Sync word must not be empty or just two bits long and "10" or "01" because
                         # that would be indistinguishable from the preamble
-                        sync_lengths[sync_len] += 1
                         possible_sync_words[sync_word] += 1
 
-        self.__debug("Sync word lengths", sync_lengths)
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
             return []
 
+        possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
+        self.__debug("Merged sync words", possible_sync_words)
+
         # We may have sync lengths that are too long here.
         # This happens, when there are constant fields behind sync such as length field for messages with same length.
-        # Therefore, we take the minimum sync length which surpasses the 75 percentile of frequencies.
+        # Therefore, we take the minimum sync length which surpasses the 90 percentile of frequencies.
         # For example, for these values
         #   {32: 174, 36: 302, 40: 64, 80: 52, 132: 16, 136: 16}
-        #   32 would get chosen over 36, because it's frequency surpasses the 75 percentile and is smaller than 36.
+        #   32 would get chosen over 36, because it's frequency surpasses the 90 percentile and is smaller than 36.
         # In doubt, it is better to underestimate the sync length
         # because overestimation will lead to serious errors when the other engines start operating.
-        percentile = np.percentile(list(sync_lengths.values()), 75)
+        sync_lengths = defaultdict(int)
+        for sync_word, frequency in possible_sync_words.items():
+            sync_lengths[len(sync_word)] += frequency
+
+        self.__debug("Sync lengths", sync_lengths)
+        percentile = np.percentile(list(sync_lengths.values()), 90)
         estimated_sync_length = min(sync_len for sync_len, frequency in sync_lengths.items() if frequency >= percentile)
 
         # Now we look at all possible sync words with this length

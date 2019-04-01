@@ -1,10 +1,12 @@
-from urh.signalprocessing.FieldType import FieldType
+import random
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
@@ -96,16 +98,63 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs[0:2])
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs[0:2])
 
+    def test_sync_word_finding_common_prefix(self):
+        """
+        Messages are very similiar (odd and even ones are the same)
+        However, they do not have two different sync words!
+        The algorithm needs to check for a common prefix of the two found sync words
+
+        :return:
+        """
+        sync = "0x1337"
+        num_messages = 10
+
+        alice = Participant("Alice", address_hex="dead01")
+        bob = Participant("Bob", address_hex="beef24")
+
+        mb = MessageTypeBuilder("protocol_with_one_message_type")
+        mb.add_label(FieldType.Function.PREAMBLE, 72)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 24)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 24)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x1337"},
+                               preambles_by_mt={mb.message_type: "10" * 36},
+                               participants=[alice, bob])
+
+        random.seed(0)
+        for i in range(num_messages):
+            if i % 2 == 0:
+                source, destination = alice, bob
+                data_length = 8
+            else:
+                source, destination = bob, alice
+                data_length = 16
+            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                source=source, destination=destination)
+
+        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        possible_syncs = preprocessor.find_possible_syncs()
+        self.save_protocol("sync_by_common_prefix", pg)
+        self.assertEqual(len(possible_syncs), 1)
+
+        # +0000 is okay, because this will get fixed by correction in FormatFinder
+        self.assertIn(possible_syncs[0], [ProtocolGenerator.to_bits(sync), ProtocolGenerator.to_bits(sync)+"0000"])
+
     def test_with_given_preamble_and_sync(self):
         preamble = "10101010"
         sync = "10011"
         pg = self.build_protocol_generator(preamble_syncs=[(preamble, sync)],
                                            num_messages=(20,),
-                                           data=(lambda i: 10 * i, ))
+                                           data=(lambda i: 10 * i,))
 
         # If we have a odd preamble length, the last bit of the preamble is counted to the sync
         preprocessor = Preprocessor(pg.protocol.decoded_bits,
-                                    existing_message_types={i: msg.message_type for i, msg in enumerate(pg.protocol.messages)})
+                                    existing_message_types={i: msg.message_type for i, msg in
+                                                            enumerate(pg.protocol.messages)})
         preamble_starts, preamble_lengths, sync_len = preprocessor.preprocess()
 
         self.save_protocol("given_preamble", pg)

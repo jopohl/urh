@@ -140,21 +140,8 @@ class Preprocessor(object):
         possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
         self.__debug("Merged sync words", possible_sync_words)
 
-        # We may have sync lengths that are too long here.
-        # This happens, when there are constant fields behind sync such as length field for messages with same length.
-        # Therefore, we take the minimum sync length which surpasses the 90 percentile of frequencies.
-        # For example, for these values
-        #   {32: 174, 36: 302, 40: 64, 80: 52, 132: 16, 136: 16}
-        #   32 would get chosen over 36, because it's frequency surpasses the 90 percentile and is smaller than 36.
-        # In doubt, it is better to underestimate the sync length
-        # because overestimation will lead to serious errors when the other engines start operating.
-        sync_lengths = defaultdict(int)
-        for sync_word, frequency in possible_sync_words.items():
-            sync_lengths[len(sync_word)] += frequency
-
-        self.__debug("Sync lengths", sync_lengths)
-        percentile = np.percentile(list(sync_lengths.values()), 90)
-        estimated_sync_length = min(sync_len for sync_len, frequency in sync_lengths.items() if frequency >= percentile)
+        scores = self.__score_sync_lengths(possible_sync_words, n_gram_length)
+        estimated_sync_length = max(scores, key=scores.get)
 
         # Now we look at all possible sync words with this length
         sync_words = {word: frequency for word, frequency in possible_sync_words.items()
@@ -198,6 +185,30 @@ class Preprocessor(object):
         for i in range(len(self.bitvectors)):
             for j in range(i + 1, len(self.bitvectors)):
                 result[i, j] = awre_util.find_first_difference(self.bitvectors[i], self.bitvectors[j])
+
+        return result
+
+    def __score_sync_lengths(self, possible_sync_words: dict, n_gram_length: int):
+        sync_lengths = defaultdict(int)
+        for sync_word, frequency in possible_sync_words.items():
+            # aggregate by n gram length
+            length = len(sync_word) - len(sync_word) % n_gram_length
+            sync_lengths[length] += frequency
+
+        self.__debug("Sync lengths", sync_lengths)
+
+        result = defaultdict(int)
+        # aggregate by byte if possible
+        # choose the smaller length when on same byte
+        for sync_length, frequency in sorted(sync_lengths.items()):
+            try:
+                sl_on_same_byte = next(
+                    sl for sl in result if sl in range(sync_length - n_gram_length, sync_length + n_gram_length))
+                result[sl_on_same_byte] += frequency
+            except StopIteration:
+                result[sync_length] = frequency
+
+        self.__debug("Sync length scores", result)
 
         return result
 

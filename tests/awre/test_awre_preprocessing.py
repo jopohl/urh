@@ -86,8 +86,8 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertEqual(preamble[-1] + sync[:-1], possible_syncs[0])
 
     def test_sync_word_finding_with_two_sync_words(self):
-        preamble = "0xaaaaaaaa"
-        sync1, sync2 = "0x9a7d9a7d", "0x67686768"
+        preamble = "0xaaaa"
+        sync1, sync2 = "0x1234", "0xcafe"
         pg = self.build_protocol_generator(preamble_syncs=[(preamble, sync1), (preamble, sync2)],
                                            num_messages=(15, 10),
                                            data=(lambda i: 12 * i, lambda i: 16 * i))
@@ -95,8 +95,8 @@ class TestAWREPreprocessing(AWRETestCase):
         possible_syncs = preprocessor.find_possible_syncs()
         self.save_protocol("two_syncs", pg)
         self.assertGreaterEqual(len(possible_syncs), 2)
-        self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs[0:2])
-        self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs[0:2])
+        self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
+        self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
     def test_sync_word_finding_common_prefix(self):
         """

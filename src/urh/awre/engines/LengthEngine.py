@@ -140,9 +140,10 @@ class LengthEngine(Engine):
 
             for rng in found_ranges:
                 bits = util.convert_numbers_to_hex_string(bitvector[rng.start:rng.end + 1])
-                score = self.score_bits(bits, length, rng.start)
-                if score > max_score:
-                    best_match, max_score = rng, score
+                if bits:
+                    score = self.score_bits(bits, length, rng.start)
+                    if score > max_score:
+                        best_match, max_score = rng, score
 
             if best_match is not None:
                 high_scores_by_length[length] = CommonRange(best_match.start, best_match.length,

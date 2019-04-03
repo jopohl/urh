@@ -65,7 +65,7 @@ class SequenceNumberEngine(Engine):
             message_indices = set(message_indices) | set(message_indices + 1)
 
             if len(result) > 0 \
-                    and result[-1].start == (candidate_column-1) * self.n_gram_length \
+                    and result[-1].start == (candidate_column - 1) * self.n_gram_length \
                     and result[-1].message_indices == message_indices:
                 # Since the scoring neglects zeros, the score for leading sequence number parts will also be high
                 # and match the same indices as the lower parts, therefore we implicitly consider big AND little endian
@@ -80,6 +80,17 @@ class SequenceNumberEngine(Engine):
                                           message_indices=message_indices
                                           )
                               )
+
+        # Now we expand the sequence number ranges when stuff left of it is constant
+        for common_range in result:
+            rows = np.array(list(common_range.message_indices)[1:]) - 1
+            column = (common_range.start // self.n_gram_length) - 1
+
+            while column >= 0 and not np.any(diff_matrix[rows, column]):
+                # all elements are zero in diff matrix, so we have a constant
+                common_range.start -= self.n_gram_length
+                common_range.length += self.n_gram_length
+                column = (common_range.start // self.n_gram_length) - 1
 
         return result
 

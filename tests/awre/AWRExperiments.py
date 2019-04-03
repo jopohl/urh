@@ -4,6 +4,9 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+
+from urh.signalprocessing.MessageType import MessageType
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
@@ -15,7 +18,7 @@ from urh.signalprocessing.Participant import Participant
 
 class AWRExperiments(AWRETestCase):
     @staticmethod
-    def _prepare_protocol_1():
+    def _prepare_protocol_1() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="dead")
         bob = Participant("Bob", address_hex="beef")
 
@@ -31,10 +34,10 @@ class AWRExperiments(AWRETestCase):
                                syncs_by_mt={mb.message_type: "0x1337"},
                                participants=[alice, bob])
 
-        return pg, [mb.message_type]
+        return pg
 
     @staticmethod
-    def _prepare_protocol_2():
+    def _prepare_protocol_2() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="dead01")
         bob = Participant("Bob", address_hex="beef24")
 
@@ -51,13 +54,13 @@ class AWRExperiments(AWRETestCase):
                                preambles_by_mt={mb.message_type: "10" * 36},
                                participants=[alice, bob])
 
-        return pg, [mb.message_type]
+        return pg
 
     def get_protocol(self, protocol_number: int, num_messages, num_broken_messages=0):
         if protocol_number == 1:
-            pg, expected_message_types = self._prepare_protocol_1()
+            pg = self._prepare_protocol_1()
         elif protocol_number == 2:
-            pg, expected_message_types = self._prepare_protocol_2()
+            pg = self._prepare_protocol_2()
         else:
             raise ValueError("Unknown protocol number")
 
@@ -84,44 +87,45 @@ class AWRExperiments(AWRETestCase):
 
         self.save_protocol("protocol_{}".format(protocol_number), pg)
 
+        expected_message_types = [msg.message_type for msg in pg.protocol.messages]
+
         # Delete message type information -> no prior knowledge
         self.clear_message_types(pg.protocol.messages)
 
         return pg.protocol, expected_message_types
 
     @staticmethod
-    def calculate_accuracy(labels, expected_labels, penalty_for_additional_labels=True):
+    def calculate_accuracy(messages, expected_labels):
         """
         Calculate the accuracy of labels compared to expected labels
         Accuracy is 100% when labels == expected labels
         Accuracy drops by 1 / len(expected_labels) for every expected label not present in labels
 
-        :param penalty_for_additional_labels:
-        :type labels: list of ProtocolLabel
-        :type expected_labels: list of ProtocolLabel
+        :type messages: list of Message
+        :type expected_labels: list of MessageType
         :return:
         """
+        accuracy = 0
+        for i, msg in enumerate(messages):
+            expected = expected_labels[i]  # type: MessageType
+            msg_accuracy = 1
+            for lbl in expected:
+                try:
+                    next(l for l in msg.message_type if
+                         l.start == lbl.start and l.end == lbl.end and l.field_type.function == lbl.field_type.function)
+                    found = True
+                except StopIteration:
+                    found = False
 
-        accuracy = 1
-        for lbl in expected_labels:
-            try:
-                next(l for l in labels if
-                     l.start == lbl.start and l.end == lbl.end and l.field_type.function == lbl.field_type.function)
-                found = True
-            except StopIteration:
-                found = False
+                if not found:
+                    msg_accuracy -= 1 / len(expected)
 
-            if not found:
-                accuracy -= 1 / len(expected_labels)
+            accuracy += msg_accuracy * (1/len(messages))
 
-        if penalty_for_additional_labels and len(labels) > len(expected_labels):
-            # Penalty if there are more labels found than present
-            accuracy -= (len(labels) - len(expected_labels)) / len(expected_labels)
-
-        return max(0, accuracy * 100)
+        return accuracy * 100
 
     def test_against_num_messages(self):
-        num_messages = list(range(1, 20))
+        num_messages = list(range(1, 24))
         accuracies = defaultdict(list)
 
         protocols = [1, 2]
@@ -131,18 +135,9 @@ class AWRExperiments(AWRETestCase):
         for protocol_nr in protocols:
             for n in num_messages:
                 protocol, expected_labels = self.get_protocol(protocol_nr, num_messages=n)
+                self.__perform_iteration_for_protocol(protocol)
 
-                ff = FormatFinder(protocol.messages)
-                ff.known_participant_addresses.clear()
-                ff.perform_iteration()
-
-                self.assertEqual(len(ff.message_types), 1)
-
-                print("Expected ({}): {}".format(len(expected_labels), expected_labels))
-                print(ff.message_types[0])
-
-                # TODO: Enhance this when having protocols with multiple message types
-                accuracy = self.calculate_accuracy(ff.message_types[0], expected_labels[0])
+                accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
 
         self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %")
@@ -165,20 +160,11 @@ class AWRExperiments(AWRETestCase):
                 tmp_accuracies = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
                     protocol, expected_labels = self.get_protocol(protocol_nr,
-                                                                  num_messages=16,
+                                                                  num_messages=num_messages,
                                                                   num_broken_messages=broken)
 
-                    ff = FormatFinder(protocol.messages)
-                    ff.known_participant_addresses.clear()
-                    ff.perform_iteration()
-
-                    #self.assertEqual(len(ff.message_types), 1)
-
-                    print("Expected ({}): {}".format(len(expected_labels), expected_labels))
-                    print(ff.message_types[0])
-
-                    # TODO: Enhance this when having protocols with multiple message types
-                    accuracy = self.calculate_accuracy(ff.message_types[0], expected_labels[0])
+                    self.__perform_iteration_for_protocol(protocol)
+                    accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                     tmp_accuracies[i] = accuracy
 
                 accuracies["protocol {}".format(protocol_nr)].append(np.mean(tmp_accuracies))
@@ -213,3 +199,13 @@ class AWRExperiments(AWRETestCase):
 
         plt.legend()
         plt.show()
+
+    @staticmethod
+    def __perform_iteration_for_protocol(protocol: ProtocolAnalyzer):
+        ff = FormatFinder(protocol.messages)
+        ff.known_participant_addresses.clear()
+        ff.perform_iteration()
+
+        for msg_type, indices in ff.existing_message_types.items():
+            for i in indices:
+                protocol.messages[i].message_type = msg_type

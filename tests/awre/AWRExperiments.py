@@ -72,13 +72,10 @@ class AWRExperiments(AWRETestCase):
                 source, destination = pg.participants[1], pg.participants[0]
                 data_length = 16
 
-            if num_broken_messages == 0:
-                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                    source=source, destination=destination)
-            else:
-                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                    source=source, destination=destination)
+            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
+                                source=source, destination=destination)
 
+            if num_broken_messages > 0:
                 msg = pg.protocol.messages[-1]
                 pos = random.randint(0, len(msg.plain_bits) // 2)
                 msg.plain_bits[pos:] = array.array("B",

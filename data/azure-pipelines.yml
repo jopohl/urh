@@ -192,10 +192,6 @@ jobs:
       mkdir src/urh/dev/native/lib/shared
       tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
       rm osx-64.tar.bz2
-      echo "test 1"
-      python3 -c "from ctypes import cdll; cdll.LoadLibrary('src/urh/dev/native/lib/shared/libusb-1.0.dylib'); cdll.LoadLibrary('src/urh/dev/native/lib/shared/libbladeRF.2.dylib')"
-      echo "test 2"
-      python3 -c "from ctypes import cdll; cdll.LoadLibrary('src/urh/dev/native/lib/shared/libbladeRF.2.dylib')"
     displayName: "download and unpack SDR drivers"
 
   - script: |

@@ -44,13 +44,10 @@ if __name__ == '__main__':
     cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
     os.makedirs("./pyinstaller")
-    if not sys.platform == "darwin":
+    if sys.platform == "darwin":
+        run_pyinstaller(cmd)
+    else:
         with Pool(3) as p:
             p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
-    else:
-        for cmd in [urh_cmd, cli_cmd, urh_debug_cmd]:
-            run_pyinstaller(cmd)
-
-    print(os.listdir("./pyinstaller/urh_cli"))
-    shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
-    shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")
+        shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
+        shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

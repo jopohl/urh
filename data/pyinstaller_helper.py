@@ -19,10 +19,9 @@ def run_pyinstaller(cmd_list: list):
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
-    cmd = ["pyinstaller"]
+    cmd = ["pyinstaller", "--clean"]
     if sys.platform == "darwin":
         cmd.append("--onefile")
-        cmd.append("--clean")
 
     for hidden_import in HIDDEN_IMPORTS:
         cmd.append("--hidden-import={}".format(hidden_import))
@@ -47,5 +46,6 @@ if __name__ == '__main__':
     with Pool(3) as p:
         p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
 
+    print(os.listdir("./pyinstaller/urh_cli"))
     shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
     shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

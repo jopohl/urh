@@ -95,8 +95,7 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             env = os.environ.copy()
             env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
             if sys.platform == "darwin":
-                dyld_path = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("DYLD_LIBRARY_PATH", "")
-                env["DYLD_LIBRARY_PATH"] = dyld_path
+                env["DYLD_FALLBACK_LIBRARY_PATH"] = os.pathsep.join(library_dirs)
 
             return float(check_output(check_api_program, env=env))
         except Exception as e:

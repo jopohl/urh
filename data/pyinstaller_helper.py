@@ -22,6 +22,7 @@ if __name__ == '__main__':
     cmd = ["pyinstaller"]
     if sys.platform == "darwin":
         cmd.append("--onefile")
+        cmd.append("--clean")
 
     for hidden_import in HIDDEN_IMPORTS:
         cmd.append("--hidden-import={}".format(hidden_import))

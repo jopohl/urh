@@ -96,8 +96,8 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
             if sys.platform == "darwin":
                 env["DYLD_FALLBACK_LIBRARY_PATH"] = os.pathsep.join(library_dirs)
+                print(check_output("DYLD_FALLBACK_LIBRARY_PATH={0} otool -L {0}/libbladeRF.2.dylib".format(library_dirs[0]), shell=True))
 
-            print(env)
             return float(check_output(check_api_program, env=env))
         except Exception as e:
             print("API version check failed: {}".format(e))

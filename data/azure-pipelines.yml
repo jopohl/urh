@@ -192,7 +192,6 @@ jobs:
       mkdir src/urh/dev/native/lib/shared
       tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
       rm osx-64.tar.bz2
-      LD_LIBRARY_PATH=src/urh/dev/native/lib/shared python -c "from ctypes import cdll; cdll.LoadLibrary('src/urh/dev/native/lib/shared/libmirsdrapi-rsp.so')"
     displayName: "download and unpack SDR drivers"
 
   - script: |

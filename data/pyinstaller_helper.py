@@ -15,7 +15,10 @@ def run_pyinstaller(cmd_list: list, env: list=None):
     print(cmd)
     sys.stdout.flush()
     env = [] if env is None else env
-    os.system(" ".join(env) + " " + cmd)
+    if env:
+        os.system(" ".join(env) + " " + cmd)
+    else:
+        os.system(cmd)
 
 
 if __name__ == '__main__':

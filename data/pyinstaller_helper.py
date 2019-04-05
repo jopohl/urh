@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     os.makedirs("./pyinstaller")
     if sys.platform == "darwin":
-        run_pyinstaller(cmd)
+        run_pyinstaller(urh_cmd)
     else:
         with Pool(3) as p:
             p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])

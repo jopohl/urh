@@ -204,7 +204,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      brew install portaudio
+      brew install portaudio hackrf librtlsdr airspy
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"

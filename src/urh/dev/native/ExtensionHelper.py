@@ -98,10 +98,11 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
                 env["DYLD_FALLBACK_LIBRARY_PATH"] = os.pathsep.join(library_dirs)
                 print(check_api_program)
                 print(library_dirs[0])
+                cmd = "DYLD_FALLBACK_LIBRARY_PATH={0} {1}".format(library_dirs[0], check_api_program)
+                print(cmd)
                 print(check_output(
-                    "DYLD_FALLBACK_LIBRARY_PATH={0} otool -L {0}/libbladeRF.2.dylib".format(library_dirs[0]),
+                    cmd,
                     shell=True).decode())
-                print(check_output("DYLD_FALLBACK_LIBRARY_PATH={0} otool -L {1}".format(library_dirs[0], check_api_program), shell=True).decode())
 
             return float(check_output(check_api_program, env=env))
         except Exception as e:

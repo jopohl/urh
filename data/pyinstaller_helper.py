@@ -10,11 +10,12 @@ DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins
 EXCLUDE = ["matplotlib"]
 
 
-def run_pyinstaller(cmd_list: list, env: str = ""):
+def run_pyinstaller(cmd_list: list, env: list=None):
     cmd = " ".join(cmd_list)
     print(cmd)
     sys.stdout.flush()
-    os.system(env + cmd)
+    env = [] if env is None else env
+    os.system("".join(env) + cmd)
 
 
 if __name__ == '__main__':
@@ -45,7 +46,7 @@ if __name__ == '__main__':
 
     os.makedirs("./pyinstaller")
     if sys.platform == "darwin":
-        run_pyinstaller(urh_cmd, env="DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared")
+        run_pyinstaller(urh_cmd, env=["DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared"])
     else:
         with Pool(3) as p:
             p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])

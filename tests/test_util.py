@@ -1,9 +1,7 @@
+import copy
 import os
 import sys
-
-import copy
 import tempfile
-import platform
 
 from PyQt5.QtGui import QIcon
 
@@ -14,6 +12,7 @@ from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.util import util
+from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -72,11 +71,12 @@ class TestUtil(QtTestCase):
         pcap = PCAP()
         pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
 
-    def test_windows_native_backends_installed(self):
-        if sys.platform == "darwin" or sys.platform == "linux":
-            return
-
+    def test_native_backends_installed(self):
         from urh.util import util
+
+        if not util.get_shared_library_path():
+            logger.info("Shared library dir not found, skipping check of native device extensions")
+            return
 
         util.set_shared_library_path()
 

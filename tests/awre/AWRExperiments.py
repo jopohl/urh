@@ -4,16 +4,15 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
-from urh.signalprocessing.MessageType import MessageType
 
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class AWRExperiments(AWRETestCase):
@@ -56,31 +55,60 @@ class AWRExperiments(AWRETestCase):
 
         return pg
 
+    @staticmethod
+    def _prepare_protocol_3() -> ProtocolGenerator:
+        alice = Participant("Alice", address_hex="1337")
+        bob = Participant("Bob", address_hex="4711")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 16)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 16)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
+                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+                               participants=[alice, bob])
+
+        return pg
+
     def get_protocol(self, protocol_number: int, num_messages, num_broken_messages=0):
         if protocol_number == 1:
             pg = self._prepare_protocol_1()
         elif protocol_number == 2:
             pg = self._prepare_protocol_2()
+        elif protocol_number == 3:
+            pg = self._prepare_protocol_3()
         else:
             raise ValueError("Unknown protocol number")
 
         for i in range(num_messages):
             if i % 2 == 0:
                 source, destination = pg.participants[0], pg.participants[1]
-                data_length = 8
+                data_bytes = 4
             else:
                 source, destination = pg.participants[1], pg.participants[0]
-                data_length = 16
+                data_bytes = 16
 
-            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                source=source, destination=destination)
+            pg.generate_message(data="1" * (data_bytes * 8), source=source, destination=destination)
 
-            if num_broken_messages > 0:
-                msg = pg.protocol.messages[-1]
+            if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
+                pg.generate_message(message_type=1, data="", source=destination, destination=source)
+
+        for i in range(num_broken_messages):
+                msg = pg.protocol.messages[i]
                 pos = random.randint(0, len(msg.plain_bits) // 2)
                 msg.plain_bits[pos:] = array.array("B",
                                                    [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
-                num_broken_messages -= 1
 
         self.save_protocol("protocol_{}".format(protocol_number), pg)
 
@@ -117,7 +145,7 @@ class AWRExperiments(AWRETestCase):
                 if not found:
                     msg_accuracy -= 1 / len(expected)
 
-            accuracy += msg_accuracy * (1/len(messages))
+            accuracy += msg_accuracy * (1 / len(messages))
 
         return accuracy * 100
 
@@ -125,7 +153,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 24))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2]
+        protocols = [1, 2, 3]
 
         random.seed(0)
         np.random.seed(0)
@@ -147,7 +175,7 @@ class AWRExperiments(AWRETestCase):
         num_broken_messages = list(range(0, num_messages))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2]
+        protocols = [1, 2, 3]
 
         random.seed(0)
         np.random.seed(0)

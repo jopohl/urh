@@ -26,7 +26,7 @@ class SequenceNumberEngine(Engine):
         if already_labeled is None:
             self.already_labeled_cols = set()
         else:
-            self.already_labeled_cols = {e for rng in already_labeled for e in range(*rng)}
+            self.already_labeled_cols = {e // n_gram_length for rng in already_labeled for e in range(*rng)}
 
     def find(self):
         if len(self.bitvectors) <= 2:

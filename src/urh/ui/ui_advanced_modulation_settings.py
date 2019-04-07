@@ -37,6 +37,7 @@ class Ui_DialogAdvancedModSettings(object):
         self.verticalLayout_2.addWidget(self.label_2)
         self.spinBoxMessageLengthDivisor = QtWidgets.QSpinBox(self.groupBox_2)
         self.spinBoxMessageLengthDivisor.setMinimum(1)
+        self.spinBoxMessageLengthDivisor.setMaximum(999999999)
         self.spinBoxMessageLengthDivisor.setObjectName("spinBoxMessageLengthDivisor")
         self.verticalLayout_2.addWidget(self.spinBoxMessageLengthDivisor)
         self.verticalLayout_3.addWidget(self.groupBox_2)

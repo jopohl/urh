@@ -27,7 +27,7 @@ jobs:
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
       pip install twine pytest pytest-xvfb pytest-cov pytest-xdist
-      coverage --version
+      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace

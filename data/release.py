@@ -69,11 +69,6 @@ def release():
     call(["git", "tag", "v" + cur_version, "-m", "version " + cur_version])
     call(["git", "push", "origin", "--tags"])  # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
 
-    # region Publish to PyPi
-    call(["python", "setup.py", "sdist"])
-    call("twine upload dist/*", shell=True)
-    # endregion
-
     os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 
     # region Build docker image and push to DockerHub

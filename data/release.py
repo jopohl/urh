@@ -21,12 +21,6 @@ def cleanup():
 
 
 def release():
-    try:
-        import twine
-    except ImportError:
-        print("Twine is required for PyPi release!")
-        sys.exit(1)
-
     script_dir = os.path.dirname(__file__) if not os.path.islink(__file__) else os.path.dirname(os.readlink(__file__))
     script_dir = os.path.realpath(os.path.join(script_dir, ".."))
     os.chdir(script_dir)
@@ -68,11 +62,6 @@ def release():
     # Push new tag
     call(["git", "tag", "v" + cur_version, "-m", "version " + cur_version])
     call(["git", "push", "origin", "--tags"])  # Creates tar package on https://github.com/jopohl/urh/tarball/va.b.c.d
-
-    # region Publish to PyPi
-    call(["python", "setup.py", "sdist"])
-    call("twine upload dist/*", shell=True)
-    # endregion
 
     os.remove(os.path.join(tempfile.gettempdir(), "urh_releasing"))
 

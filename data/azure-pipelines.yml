@@ -26,12 +26,31 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      pip install pytest pytest-xvfb pytest-cov pytest-xdist
-      coverage --version
+      pip install twine setuptools wheel pytest pytest-xvfb pytest-cov pytest-xdist
+      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
   - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
+  
+  - script: python setup.py sdist
+    displayName: "Build sdist"
+    condition: eq(variables['python.version'], '3.7')
+
+  - script: twine upload --skip-existing dist/*.gz
+    displayName: "Upload sdist to PyPi"
+    condition: and(eq(variables['python.version'], '3.7'), contains(variables['Build.SourceBranch'], 'refs/tags/'))
+    env:
+      TWINE_USERNAME: $(twine.username)
+      TWINE_PASSWORD: $(twine.password)
+      TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+
+  - task: PublishBuildArtifacts@1
+    condition: eq(variables['python.version'], '3.7')
+    inputs:
+      pathtoPublish: dist/
+      artifactName: 'dist'
+    displayName: "Publish Build Artifacts"
 
   - script: |
       touch tests/show_gui

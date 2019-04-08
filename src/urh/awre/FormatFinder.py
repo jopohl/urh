@@ -139,7 +139,7 @@ class FormatFinder(object):
                     for rng in container:
                         self.add_range_to_message_type(rng, new_message_type)
 
-                    self.existing_message_types[new_message_type].extend(list(container.message_indices))
+                    self.existing_message_types[new_message_type].extend(sorted(container.message_indices))
 
         return new_field_found
 

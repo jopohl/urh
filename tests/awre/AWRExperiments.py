@@ -110,7 +110,7 @@ class AWRExperiments(AWRETestCase):
                 msg.plain_bits[pos:] = array.array("B",
                                                    [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
 
-        self.save_protocol("protocol_{}".format(protocol_number), pg)
+        self.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg)
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 

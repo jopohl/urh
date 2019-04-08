@@ -1,5 +1,6 @@
 import array
 import random
+import time
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -81,13 +82,14 @@ class AWRExperiments(AWRETestCase):
 
         return pg
 
-    def get_protocol(self, protocol_number: int, num_messages, num_broken_messages=0):
+    @classmethod
+    def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0):
         if protocol_number == 1:
-            pg = self._prepare_protocol_1()
+            pg = cls._prepare_protocol_1()
         elif protocol_number == 2:
-            pg = self._prepare_protocol_2()
+            pg = cls._prepare_protocol_2()
         elif protocol_number == 3:
-            pg = self._prepare_protocol_3()
+            pg = cls._prepare_protocol_3()
         else:
             raise ValueError("Unknown protocol number")
 
@@ -105,17 +107,17 @@ class AWRExperiments(AWRETestCase):
                 pg.generate_message(message_type=1, data="", source=destination, destination=source)
 
         for i in range(num_broken_messages):
-                msg = pg.protocol.messages[i]
-                pos = random.randint(0, len(msg.plain_bits) // 2)
-                msg.plain_bits[pos:] = array.array("B",
-                                                   [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
+            msg = pg.protocol.messages[i]
+            pos = random.randint(0, len(msg.plain_bits) // 2)
+            msg.plain_bits[pos:] = array.array("B",
+                                               [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
 
-        self.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg)
+        cls.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg)
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 
         # Delete message type information -> no prior knowledge
-        self.clear_message_types(pg.protocol.messages)
+        cls.clear_message_types(pg.protocol.messages)
 
         return pg.protocol, expected_message_types
 
@@ -160,7 +162,7 @@ class AWRExperiments(AWRETestCase):
         for protocol_nr in protocols:
             for n in num_messages:
                 protocol, expected_labels = self.get_protocol(protocol_nr, num_messages=n)
-                self.__run_format_finder_for_protocol(protocol)
+                self.run_format_finder_for_protocol(protocol)
 
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
@@ -188,7 +190,7 @@ class AWRExperiments(AWRETestCase):
                                                                   num_messages=num_messages,
                                                                   num_broken_messages=broken)
 
-                    self.__run_format_finder_for_protocol(protocol)
+                    self.run_format_finder_for_protocol(protocol)
                     accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                     tmp_accuracies[i] = accuracy
 
@@ -196,6 +198,25 @@ class AWRExperiments(AWRETestCase):
 
         self.__plot(num_broken_messages, accuracies, xlabel="Number of broken messages", ylabel="Accuracy in %")
         self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies)
+
+    def test_performance(self):
+        num_messages = list(range(5, 120, 5))
+        protocols = [1, 2, 3]
+
+        random.seed(0)
+        np.random.seed(0)
+
+        performances = defaultdict(list)
+
+        for protocol_nr in protocols:
+            for messages in num_messages:
+                protocol, _ = self.get_protocol(protocol_nr, messages)
+
+                t = time.time()
+                self.run_format_finder_for_protocol(protocol)
+                performances["protocol {}".format(protocol_nr)].append(time.time() - t)
+
+        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in milliseconds")
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict):
@@ -226,7 +247,7 @@ class AWRExperiments(AWRETestCase):
         plt.show()
 
     @staticmethod
-    def __run_format_finder_for_protocol(protocol: ProtocolAnalyzer):
+    def run_format_finder_for_protocol(protocol: ProtocolAnalyzer):
         ff = FormatFinder(protocol.messages)
         ff.known_participant_addresses.clear()
         ff.run()

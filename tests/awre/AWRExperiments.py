@@ -160,7 +160,7 @@ class AWRExperiments(AWRETestCase):
         for protocol_nr in protocols:
             for n in num_messages:
                 protocol, expected_labels = self.get_protocol(protocol_nr, num_messages=n)
-                self.__perform_iteration_for_protocol(protocol)
+                self.__run_format_finder_for_protocol(protocol)
 
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
@@ -188,7 +188,7 @@ class AWRExperiments(AWRETestCase):
                                                                   num_messages=num_messages,
                                                                   num_broken_messages=broken)
 
-                    self.__perform_iteration_for_protocol(protocol)
+                    self.__run_format_finder_for_protocol(protocol)
                     accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                     tmp_accuracies[i] = accuracy
 
@@ -226,10 +226,10 @@ class AWRExperiments(AWRETestCase):
         plt.show()
 
     @staticmethod
-    def __perform_iteration_for_protocol(protocol: ProtocolAnalyzer):
+    def __run_format_finder_for_protocol(protocol: ProtocolAnalyzer):
         ff = FormatFinder(protocol.messages)
         ff.known_participant_addresses.clear()
-        ff.perform_iteration()
+        ff.run()
 
         for msg_type, indices in ff.existing_message_types.items():
             for i in indices:

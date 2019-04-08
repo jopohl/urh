@@ -664,7 +664,7 @@ class ProtocolAnalyzer(object):
     def auto_assign_labels(self):
         from urh.awre.FormatFinder import FormatFinder
         format_finder = FormatFinder(self.messages)
-        format_finder.perform_iteration()
+        format_finder.run(max_iterations=10)
 
         self.message_types[:] = format_finder.message_types
         for msg_type, indices in format_finder.existing_message_types.items():

@@ -109,7 +109,9 @@ class FormatFinder(object):
             result.update(merged_ranges)
         return result
 
-    def perform_iteration(self):
+    def perform_iteration(self) -> bool:
+        new_field_found = False
+
         for message_type in self.existing_message_types.copy():
             new_fields_for_message_type = self.perform_iteration_for_message_type(message_type)
             new_fields_for_message_type.update(
@@ -119,6 +121,9 @@ class FormatFinder(object):
 
             self.remove_overlapping_fields(new_fields_for_message_type, message_type)
             containers = self.create_common_range_containers(new_fields_for_message_type)
+
+            new_field_found |= len(containers) > 0
+
             if len(containers) == 1:
                 for rng in containers[0]:
                     self.add_range_to_message_type(rng, message_type)
@@ -135,6 +140,13 @@ class FormatFinder(object):
                         self.add_range_to_message_type(rng, new_message_type)
 
                     self.existing_message_types[new_message_type].extend(list(container.message_indices))
+
+        return new_field_found
+
+    def run(self, max_iterations=10):
+        i = 0
+        while self.perform_iteration() and i < max_iterations:
+            i += 1
 
     def build_xor_matrix(self):
         return awre_util.build_xor_matrix(self.bitvectors)

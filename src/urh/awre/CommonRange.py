@@ -141,12 +141,15 @@ class CommonRange(object):
 
         return []
 
+
 class ChecksumRange(CommonRange):
-    def __init__(self, start, length, value: np.ndarray = None, score=0, field_type="Generic", message_indices=None,
-                 range_type="bit"):
+    def __init__(self, start, length, crc: GenericCRC, data_range_start, data_range_end, value: np.ndarray = None,
+                 score=0, field_type="Generic", message_indices=None, range_type="bit"):
         super().__init__(start, length, value, score, field_type, message_indices, range_type)
-        self.data_range = [0, length-4]
-        self.crc = GenericCRC()
+        self.data_range_start = data_range_start
+        self.data_range_end = data_range_end
+        self.crc = crc
+
 
 class EmptyCommonRange(CommonRange):
     """

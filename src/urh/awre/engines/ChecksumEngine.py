@@ -31,21 +31,30 @@ class ChecksumEngine(Engine):
 
         crc = GenericCRC()
         for length, message_indices in bitvectors_by_n_gram_length.items():
+            considered = set()
             for i, index in enumerate(message_indices):
+                if i in considered:
+                    continue
+
                 inpt = self.bitvectors[index]
-                crc_parameter, start, stop, crc_start, crc_stop = crc.guess_all(inpt)
-                if (crc_parameter, start, stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
+                crc_object, start, stop, crc_start, crc_stop = crc.guess_all(inpt)
+                if (crc_object, start, stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
                     result.append(ChecksumRange(start=crc_start,
                                                 length=crc_stop - crc_start,
+                                                data_range_start=start,
+                                                data_range_end=stop,
+                                                crc=crc_object,
                                                 score=1,
                                                 field_type="checksum",
                                                 message_indices={i}
                                                 ))
-                    crc.set_crc_parameters(crc_parameter)
+
                     for j in range(i + 1, len(message_indices)):
                         inpt = self.bitvectors[message_indices[j]]
-                        if crc.crc(inpt) == array.array("B", inpt[crc_start:crc_stop]):
+                        if crc_object.crc(inpt[:crc_start]) == array.array("B", inpt[crc_start:crc_stop]):
                             result[-1].message_indices.add(j)
+                            considered.add(j)
+
         return result
 
     @staticmethod

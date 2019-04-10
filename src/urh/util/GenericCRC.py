@@ -31,6 +31,16 @@ class GenericCRC(object):
                                       0, 0, 0, 0, 0, 1, 1, 1]))
     ])
 
+    STANDARD_CHECKSUMS = OrderedDict([
+        # name, polynomial, start_value, final_xor, reverse_polynomial: bool, reverse_all: bool, little_endian: bool, lsb_first: bool
+        # default: "start_value": 0, "final_xor": 0, "reverse_polynomial": False, "reverse_all": False, "little_endian": False, "lsb_first": False
+        ("CRC8 (default)",  {"polynomial": "0xD5"}),
+        ("CRC8 CCITT",      {"polynomial": "0x07"}),
+        ("CRC16 (default)", {"polynomial": "0x8005"}),
+        ("CRC16 CCITT",     {"polynomial": "0x1021"}),
+        ("CRC16 CC1101",    {"polynomial": "0x8005", "start_value": 1})
+    ])
+
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
         self.polynomial = self.choose_polynomial(polynomial)
@@ -172,6 +182,35 @@ class GenericCRC(object):
         array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] = \
             array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1 * 8 + 8]
 
+    def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, reverse_polynomial=False, reverse_all=False, little_endian=False, lsb_first=False):
+        # Set polynomial from hex or bit array
+        if isinstance(polynomial, str):
+            self.set_polynomial_from_hex(polynomial)
+        else:
+            self.polynomial = polynomial
+
+        # Set start value completely or 0000/FFFF
+        if isinstance(start_value, int):
+            self.start_value = [start_value] * (self.poly_order - 1)
+        elif isinstance(start_value, array.array) and len(start_value) == self.poly_order - 1:
+            self.start_value = start_value
+        else:
+            raise ValueError("Invalid start value length")
+
+        # Set final xor completely or 0000/FFFF
+        if isinstance(final_xor, int):
+            self.final_xor = [final_xor] * (self.poly_order - 1)
+        elif isinstance(final_xor, array.array) and len(final_xor) == self.poly_order - 1:
+            self.final_xor = final_xor
+        else:
+            raise ValueError("Invalid final xor length")
+
+        # Set boolean parameters
+        self.reverse_polynomial = reverse_polynomial
+        self.reverse_all = reverse_all
+        self.little_endian = little_endian
+        self.lsb_first = lsb_first
+
     def set_crc_parameters(self, i):
         # Bit 0,1 = Polynomial
         val = (i >> 0) & 3
@@ -214,13 +253,20 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
-    def guess_all(self, inpt, trash_max=7):
+    def guess_all(self, inpt, trash_max=7):     # returns CRC-Object, Data begin, Data End, CRC Begin, CRC End
+        for i in range(0, trash_max):
+            ret = self.guess_standard_parameters_and_datarange(inpt, i)
+            if ret != (0, 0, 0):
+                return ret[0], ret[1], ret[2], len(inpt)-i-ret[0].poly_order+1, len(inpt)-i
+        return 0, 0, 0, 0, 0
+
+    def bruteforce_all(self, inpt, trash_max=7):
         polynomial_sizes = [16, 8]
         len_input = len(inpt)
         for s in polynomial_sizes:
             for i in range(len_input - s - trash_max, len_input - s):
                 vrfy_crc = inpt[i:i + s]
-                ret = self.guess_standard_parameters_and_datarange(inpt, vrfy_crc)
+                ret = self.bruteforce_parameters_and_data_range(inpt, vrfy_crc)
                 if ret != (0, 0, 0):
                     return ret[0], ret[1], ret[2], i, i + s
         return 0, 0, 0, 0, 0
@@ -234,7 +280,19 @@ class GenericCRC(object):
                 return i
         return False
 
-    def guess_standard_parameters_and_datarange(self, inpt, vrfy_crc):
+    def guess_standard_parameters_and_datarange(self, inpt, trash):
+        # Tests standard parameters from dict and return polynomial object, if a valid CRC could be computed
+        # and determines start and end of crc datarange (end is set before crc)
+        # Note: vfry_crc is included inpt!
+        for name, parameters in self.STANDARD_CHECKSUMS.items():
+            self.set_individual_parameters(**parameters)
+            vrfy_crc = inpt[len(inpt) - trash - self.poly_order + 1: len(inpt) - trash]
+            data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc)
+            if (data_begin, data_end) != (0, 0):
+                return self, data_begin, data_end
+        return 0, 0, 0
+
+    def bruteforce_parameters_and_data_range(self, inpt, vrfy_crc):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed
         # and determines start and end of crc datarange (end is set before crc)
         # Note: vfry_crc is included inpt!

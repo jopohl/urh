@@ -82,8 +82,7 @@ class TestAWREPreprocessing(AWRETestCase):
         possible_syncs = preprocessor.find_possible_syncs()
 
         self.save_protocol("errored_preamble", pg)
-        print(possible_syncs)
-        self.assertEqual(preamble[-1] + sync[:-1], possible_syncs[0])
+        self.assertIn(preamble[-1] + sync[:-1], possible_syncs)
 
     def test_sync_word_finding_with_two_sync_words(self):
         preamble = "0xaaaa"
@@ -97,6 +96,32 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertGreaterEqual(len(possible_syncs), 2)
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
+
+    def test_sync_word_finding_varying_message_length(self):
+        hex_messages = [
+            "aaaa9a7d0f1337471100009a44ebdd13517bf9",
+            "aaaa9a7d4747111337000134a4473c002b909630b11df37e34728c79c60396176aff2b5384e82f31511581d0cbb4822ad1b6734e2372ad5cf4af4c9d6b067e5f7ec359ec443c3b5ddc7a9e",
+            "aaaa9a7d0f13374711000205ee081d26c86b8c",
+            "aaaa9a7d474711133700037cae4cda789885f88f5fb29adc9acf954cb2850b9d94e7f3b009347c466790e89f2bcd728987d4670690861bbaa120f71f14d4ef8dc738a6d7c30e7d2143c267",
+            "aaaa9a7d0f133747110004c2906142300427f3"
+        ]
+
+        messages = [Message.from_plain_hex_str(hex_msg) for hex_msg in hex_messages]
+        for i in range(1, len(messages)):
+            messages[i].message_type = messages[0].message_type
+
+        ff = FormatFinder(messages)
+        ff.run()
+
+        print(ff.existing_message_types)
+        self.assertEqual(len(ff.message_types), 1)
+        preamble = ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        self.assertEqual(preamble.start, 0)
+        self.assertEqual(preamble.length, 16)
+
+        sync = ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+        self.assertEqual(sync.start, 16)
+        self.assertEqual(sync.length, 16)
 
     def test_sync_word_finding_common_prefix(self):
         """
@@ -142,7 +167,7 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertEqual(len(possible_syncs), 1)
 
         # +0000 is okay, because this will get fixed by correction in FormatFinder
-        self.assertIn(possible_syncs[0], [ProtocolGenerator.to_bits(sync), ProtocolGenerator.to_bits(sync)+"0000"])
+        self.assertIn(possible_syncs[0], [ProtocolGenerator.to_bits(sync), ProtocolGenerator.to_bits(sync) + "0000"])
 
     def test_with_given_preamble_and_sync(self):
         preamble = "10101010"

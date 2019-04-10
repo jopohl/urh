@@ -131,7 +131,12 @@ class Preprocessor(object):
                     if sync_word not in ("", "10", "01"):
                         # Sync word must not be empty or just two bits long and "10" or "01" because
                         # that would be indistinguishable from the preamble
-                        possible_sync_words[sync_word] += 1
+
+                        if (start + sync_len) % n_gram_length == 0:
+                            # if sync end aligns nicely at n gram length give it a larger score
+                            possible_sync_words[sync_word] += 1
+                        else:
+                            possible_sync_words[sync_word] += 0.5
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
@@ -140,7 +145,7 @@ class Preprocessor(object):
         possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
         self.__debug("Merged sync words", possible_sync_words)
 
-        scores = self.__score_sync_lengths(possible_sync_words, n_gram_length)
+        scores = self.__score_sync_lengths(possible_sync_words)
         estimated_sync_length = max(scores, key=scores.get)
 
         # Now we look at all possible sync words with this length
@@ -188,29 +193,14 @@ class Preprocessor(object):
 
         return result
 
-    def __score_sync_lengths(self, possible_sync_words: dict, n_gram_length: int):
+    def __score_sync_lengths(self, possible_sync_words: dict):
         sync_lengths = defaultdict(int)
-        for sync_word, frequency in possible_sync_words.items():
-            # aggregate by n gram length
-            length = len(sync_word) - len(sync_word) % n_gram_length
-            sync_lengths[length] += frequency
+        for sync_word, score in possible_sync_words.items():
+            sync_lengths[len(sync_word)] += score
 
         self.__debug("Sync lengths", sync_lengths)
 
-        result = defaultdict(int)
-        # aggregate by byte if possible
-        # choose the smaller length when on same byte
-        for sync_length, frequency in sorted(sync_lengths.items()):
-            try:
-                sl_on_same_byte = next(
-                    sl for sl in result if sl in range(sync_length - n_gram_length, sync_length + n_gram_length))
-                result[sl_on_same_byte] += frequency
-            except StopIteration:
-                result[sync_length] = frequency
-
-        self.__debug("Sync length scores", result)
-
-        return result
+        return sync_lengths
 
     def __get_existing_sync_words(self) -> list:
         result = []

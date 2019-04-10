@@ -1,6 +1,7 @@
 import random
 
 from tests.awre.AWRETestCase import AWRETestCase
+from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator

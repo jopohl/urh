@@ -96,12 +96,14 @@ class AWRExperiments(AWRETestCase):
         for i in range(num_messages):
             if i % 2 == 0:
                 source, destination = pg.participants[0], pg.participants[1]
-                data_bytes = 4
+                data_bytes = 8
             else:
                 source, destination = pg.participants[1], pg.participants[0]
-                data_bytes = 16
+                #data_bytes = 16
+                data_bytes = 64
 
-            pg.generate_message(data="1" * (data_bytes * 8), source=source, destination=destination)
+            data = "".join(random.choice(["0","1"]) for _ in range(data_bytes * 8))
+            pg.generate_message(data=data, source=source, destination=destination)
 
             if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
                 pg.generate_message(message_type=1, data="", source=destination, destination=source)

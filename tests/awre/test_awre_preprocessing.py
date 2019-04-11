@@ -98,6 +98,37 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
+    def test_multiple_sync_words(self):
+        hex_messages = [
+            "aaS1234",
+            "aaScafe",
+            "aaSdead",
+            "aaSbeef",
+        ]
+
+        for i in range(1, 256):
+            messages = []
+            sync = "{0:02x}".format(i)
+
+            for msg in hex_messages:
+                messages.append(Message.from_plain_hex_str(msg.replace("S", sync)))
+
+            for i in range(1, len(messages)):
+                messages[i].message_type = messages[0].message_type
+
+            ff = FormatFinder(messages)
+            ff.run()
+
+            self.assertEqual(len(ff.message_types), 1, msg=sync)
+
+            preamble = ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+            self.assertEqual(preamble.start, 0, msg=sync)
+            self.assertEqual(preamble.length, 8, msg=sync)
+
+            sync = ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+            self.assertEqual(sync.start, 8, msg=sync)
+            self.assertEqual(sync.length, 8, msg=sync)
+
     def test_sync_word_finding_varying_message_length(self):
         hex_messages = [
             "aaaa9a7d0f1337471100009a44ebdd13517bf9",

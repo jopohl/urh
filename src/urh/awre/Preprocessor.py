@@ -49,33 +49,44 @@ class Preprocessor(object):
         # If there should be varying sync word lengths we need to return an array of sync lengths per message
         assert all(len(sync_word) == len(sync_words[0]) for sync_word in sync_words)
 
-        preamble_lengths = np.zeros(len(self.bitvectors), dtype=int)
+        result = np.zeros(len(self.bitvectors), dtype=int)
 
         for i, bitvector in enumerate(self.bitvectors):
+            preamble_lengths = []
             bits = "".join(map(str, bitvector))
-            indices = sorted(
-                bits.find(sync_word) - preamble_starts[i]
-                # There must be at least 2 bits preamble
-                for sync_word in sync_words if bits.find(sync_word) > 2 + preamble_starts[i]
-            )
 
-            if len(indices) == 0:
-                preamble_lengths[i] = 0
-            elif len(indices) == 1:
-                preamble_lengths[i] = indices[0]
+            for sync_word in sync_words:
+                sync_start = bits.find(sync_word)
+                if sync_start != -1:
+                    if sync_start - preamble_starts[i] >= 2:
+                        preamble_lengths.append(sync_start - preamble_starts[i])
+
+                    # Consider case where sync word starts with preamble pattern
+                    sync_start = bits.find(sync_word, sync_start + 1, sync_start + 2*len(sync_word))
+
+                    if sync_start != -1:
+                        if sync_start - preamble_starts[i] >= 2:
+                            preamble_lengths.append(sync_start - preamble_starts[i])
+
+            preamble_lengths.sort()
+
+            if len(preamble_lengths) == 0:
+                result[i] = 0
+            elif len(preamble_lengths) == 1:
+                result[i] = preamble_lengths[0]
             else:
                 # consider all indices not more than one byte before first one
-                indices = list(filter(lambda x: x < indices[0] + 7, indices))
+                preamble_lengths = list(filter(lambda x: x < preamble_lengths[0] + 7, preamble_lengths))
 
-                # take the smallest index, but prefer a greater one if it is divisible by 8 (or 4)
-                index = next((index for index in indices if index % 8 == 0), None)
-                if index is None:
-                    index = next((index for index in indices if index % 4 == 0), None)
-                if index is None:
-                    index = indices[0]
-                preamble_lengths[i] = index
+                # take the smallest preamble_length, but prefer a greater one if it is divisible by 8 (or 4)
+                preamble_length = next((pl for pl in preamble_lengths if pl % 8 == 0), None)
+                if preamble_length is None:
+                    preamble_length = next((pl for pl in preamble_lengths if pl % 4 == 0), None)
+                if preamble_length is None:
+                    preamble_length = preamble_lengths[0]
+                result[i] = preamble_length
 
-        return preamble_lengths
+        return result
 
     def find_possible_syncs(self, raw_preamble_positions=None):
         difference_matrix = self.get_difference_matrix()

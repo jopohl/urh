@@ -109,6 +109,8 @@ class TestAWREPreprocessing(AWRETestCase):
         for i in range(1, 256):
             messages = []
             sync = "{0:02x}".format(i)
+            if sync.startswith("a"):
+                continue
 
             for msg in hex_messages:
                 messages.append(Message.from_plain_hex_str(msg.replace("S", sync)))

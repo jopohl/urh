@@ -9,7 +9,9 @@ import numpy as np
 from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
+from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
+from urh.awre.engines.Engine import Engine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
@@ -83,7 +85,7 @@ class AWRExperiments(AWRETestCase):
         return pg
 
     @classmethod
-    def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0):
+    def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False):
         if protocol_number == 1:
             pg = cls._prepare_protocol_1()
         elif protocol_number == 2:
@@ -114,7 +116,7 @@ class AWRExperiments(AWRETestCase):
             msg.plain_bits[pos:] = array.array("B",
                                                [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
 
-        cls.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg)
+        cls.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 
@@ -173,6 +175,9 @@ class AWRExperiments(AWRETestCase):
         self.__export_to_csv("/tmp/accuray-vs-messages", num_messages, accuracies)
 
     def test_against_error(self):
+        Engine._DEBUG_ = False
+        Preprocessor._DEBUG_ = False
+
         num_runs = 100
 
         num_messages = 16
@@ -186,11 +191,13 @@ class AWRExperiments(AWRETestCase):
 
         for protocol_nr in protocols:
             for broken in num_broken_messages:
+                print("Test Protocol {0} with {1:02d} broken messages ({2} runs)".format(protocol_nr, broken, num_runs))
                 tmp_accuracies = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
                     protocol, expected_labels = self.get_protocol(protocol_nr,
                                                                   num_messages=num_messages,
-                                                                  num_broken_messages=broken)
+                                                                  num_broken_messages=broken,
+                                                                  silent=True)
 
                     self.run_format_finder_for_protocol(protocol)
                     accuracy = self.calculate_accuracy(protocol.messages, expected_labels)

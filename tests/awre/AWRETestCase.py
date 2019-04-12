@@ -31,14 +31,15 @@ class AWRETestCase(unittest.TestCase):
             msg.message_type = mt
 
     @staticmethod
-    def save_protocol(name, protocol_generator):
+    def save_protocol(name, protocol_generator, silent=False):
         filename = os.path.join(tempfile.gettempdir(), name + ".proto")
         if isinstance(protocol_generator, ProtocolGenerator):
             protocol_generator.to_file(filename)
         elif isinstance(protocol_generator, ProtocolAnalyzer):
             protocol_generator.to_xml_file(filename, [], [], write_bits=True)
         info = "Protocol written to " + filename
-        print()
-        print("-" * len(info))
-        print(info)
-        print("-" * len(info))
+        if not silent:
+            print()
+            print("-" * len(info))
+            print(info)
+            print("-" * len(info))

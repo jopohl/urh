@@ -95,7 +95,9 @@ class AWRExperiments(AWRETestCase):
         else:
             raise ValueError("Unknown protocol number")
 
-        for i in range(num_messages):
+        i = -1
+        while len(pg.protocol.messages) < num_messages:
+            i += 1
             if i % 2 == 0:
                 source, destination = pg.participants[0], pg.participants[1]
                 data_bytes = 8
@@ -209,7 +211,7 @@ class AWRExperiments(AWRETestCase):
         self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies)
 
     def test_performance(self):
-        num_messages = list(range(5, 120, 5))
+        num_messages = list(range(5, 50, 5))
         protocols = [1, 2, 3]
 
         random.seed(0)
@@ -225,7 +227,7 @@ class AWRExperiments(AWRETestCase):
                 self.run_format_finder_for_protocol(protocol)
                 performances["protocol {}".format(protocol_nr)].append(time.time() - t)
 
-        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in milliseconds")
+        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in milliseconds", grid=True)
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict):
@@ -245,12 +247,15 @@ class AWRExperiments(AWRETestCase):
                 f.write("\n")
 
     @staticmethod
-    def __plot(x: list, y: dict, xlabel: str, ylabel: str):
+    def __plot(x: list, y: dict, xlabel: str, ylabel: str, grid=False):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
         for y_cap, y_values in sorted(y.items()):
             plt.plot(x, y_values, label=y_cap)
+
+        if grid:
+            plt.grid()
 
         plt.legend()
         plt.show()

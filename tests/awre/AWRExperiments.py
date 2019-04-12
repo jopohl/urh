@@ -84,6 +84,33 @@ class AWRExperiments(AWRETestCase):
 
         return pg
 
+    @staticmethod
+    def _prepare_protocol_4() -> ProtocolGenerator:
+        alice = Participant("Alice", address_hex="1337")
+        bob = Participant("Bob", address_hex="4711")
+        carl = Participant("Carl", address_hex="cafe")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 16)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 16)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
+                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+                               participants=[alice, bob, carl])
+
+        return pg
+
     @classmethod
     def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False):
         if protocol_number == 1:
@@ -92,21 +119,23 @@ class AWRExperiments(AWRETestCase):
             pg = cls._prepare_protocol_2()
         elif protocol_number == 3:
             pg = cls._prepare_protocol_3()
+        elif protocol_number == 4:
+            pg = cls._prepare_protocol_4()
         else:
             raise ValueError("Unknown protocol number")
 
         i = -1
         while len(pg.protocol.messages) < num_messages:
             i += 1
+            source = pg.participants[i % len(pg.participants)]
+            destination = pg.participants[(i+1) % len(pg.participants)]
             if i % 2 == 0:
-                source, destination = pg.participants[0], pg.participants[1]
                 data_bytes = 8
             else:
-                source, destination = pg.participants[1], pg.participants[0]
                 #data_bytes = 16
                 data_bytes = 64
 
-            data = "".join(random.choice(["0","1"]) for _ in range(data_bytes * 8))
+            data = "".join(random.choice(["0", "1"]) for _ in range(data_bytes * 8))
             pg.generate_message(data=data, source=source, destination=destination)
 
             if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
@@ -161,7 +190,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 24))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3]
+        protocols = [1, 2, 3, 4]
 
         random.seed(0)
         np.random.seed(0)

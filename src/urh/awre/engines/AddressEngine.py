@@ -135,9 +135,10 @@ class AddressEngine(Engine):
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
         scored_participants_addresses = dict()
+        for participant in addresses_by_participant:
+            scored_participants_addresses[participant] = defaultdict(int)
 
         for participant, addresses in addresses_by_participant.items():
-            scored_participants_addresses[participant] = defaultdict(int)
             if participant in self.known_addresses_by_participant:
                 address = self.known_addresses_by_participant[participant].tostring()
                 scored_participants_addresses[participant][address] = 9999999999
@@ -148,8 +149,18 @@ class AddressEngine(Engine):
                             if i in rng.message_indices and rng.value.tostring() in addresses]
 
                 if len(matching) == 1:
+                    address = matching[0].value.tostring()
                     # only one address, so probably a destination and not a source
-                    scored_participants_addresses[participant][matching[0].value.tostring()] -= 1
+                    scored_participants_addresses[participant][address] -= 1
+
+                    # Since this is probably an ACK, the address is probably SRC of participant of previous message
+                    if i > 0 and self.participant_indices[i - 1] != participant:
+                        prev_participant = self.participant_indices[i - 1]
+                        prev_matching = [rng for rng in high_scored_ranges_by_participant[prev_participant]
+                                         if i - 1 in rng.message_indices and rng.value.tostring() in addresses]
+                        if len(prev_matching) > 1 and address in {rng.value.tostring() for rng in matching}:
+                            scored_participants_addresses[prev_participant][address] += 1
+
                 elif len(matching) > 1:
                     # more than one address, so there must be a source address included
                     for address in {rng.value.tostring() for rng in matching}:
@@ -196,7 +207,7 @@ class AddressEngine(Engine):
                 try:
                     matching_dst = next(dst for dst in dst_address_fields
                                         if all(i in dst.message_indices
-                                               for i in src_address_field.message_indices-msg_without_dst))
+                                               for i in src_address_field.message_indices - msg_without_dst))
                 except StopIteration:
                     continue
                 for msg in msg_without_dst:
@@ -208,7 +219,7 @@ class AddressEngine(Engine):
         broadcast_address = None
         for dst, messages in broadcast_bag.items():
             for msg_index in messages:
-                value = self.msg_vectors[msg_index][dst.start:dst.end+1]
+                value = self.msg_vectors[msg_index][dst.start:dst.end + 1]
                 if broadcast_address is None:
                     broadcast_address = value
                 elif value.tobytes() != broadcast_address.tobytes():

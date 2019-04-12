@@ -242,6 +242,58 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(dst_addr.start, 32)
         self.assertEqual(dst_addr.length, 16)
 
+    def test_three_participants_with_ack(self):
+        alice = Participant("Alice", address_hex="1337")
+        bob = Participant("Bob", address_hex="4711")
+        carl = Participant("Carl", address_hex="cafe")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 16)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 16)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
+                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+                               participants=[alice, bob, carl])
+
+        i = -1
+        while len(pg.protocol.messages) < 20:
+            i += 1
+            source = pg.participants[i % len(pg.participants)]
+            destination = pg.participants[(i+1) % len(pg.participants)]
+            if i % 2 == 0:
+                data_bytes = 8
+            else:
+                data_bytes = 16
+
+            data = "".join(random.choice(["0", "1"]) for _ in range(data_bytes * 8))
+            pg.generate_message(data=data, source=source, destination=destination)
+
+            if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
+                pg.generate_message(message_type=1, data="", source=destination, destination=source)
+
+        self.clear_message_types(pg.protocol.messages)
+        ff = FormatFinder(pg.protocol.messages)
+        ff.known_participant_addresses.clear()
+        self.assertEqual(len(ff.known_participant_addresses), 0)
+        ff.run()
+
+        # Since there are ACKS in this protocol, the engine must be able to assign the correct participant addresses
+        # IN CORRECT ORDER!
+        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]), "1337")
+        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]), "4711")
+        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[2]), "cafe")
+
     def test_paper_example(self):
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")

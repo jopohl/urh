@@ -26,7 +26,7 @@ class TestPartiallyLabeled(AWRETestCase):
         :return:
         """
         protocol = self.__prepare_example_protocol()
-        message_types = copy.deepcopy(protocol.message_types)
+        message_types = sorted(copy.deepcopy(protocol.message_types), key=lambda x: x.name)
         ff = FormatFinder(protocol.messages)
         ff.perform_iteration()
         self.assertEqual(len(message_types), len(ff.message_types))

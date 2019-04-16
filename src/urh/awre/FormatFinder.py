@@ -73,7 +73,7 @@ class FormatFinder(object):
 
         :rtype: list of MessageType
         """
-        return sorted(self.existing_message_types.keys())
+        return sorted(self.existing_message_types.keys(), key=lambda x: x.name)
 
     def perform_iteration_for_message_type(self, message_type: MessageType):
         """
@@ -136,8 +136,9 @@ class FormatFinder(object):
 
                 for i, container in enumerate(containers):
                     new_message_type = copy.deepcopy(message_type)  # type: MessageType
+
                     if i > 0:
-                        new_message_type.name += " #{}".format(i)
+                        new_message_type.name = "Inferred #{}".format(i)
                         new_message_type.give_new_id()
 
                     for rng in container:

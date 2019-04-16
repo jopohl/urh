@@ -104,7 +104,7 @@ class TestAWRERealProtocols(AWRETestCase):
         protocol.message_types = []
         protocol.from_xml_file(filename=proto_file, read_bits=True)
         # prevent interfering with preassinged labels
-        protocol.message_types = [MessageType("default")]
+        protocol.message_types = [MessageType("Default")]
 
         participants = sorted({msg.participant for msg in protocol.messages})
 

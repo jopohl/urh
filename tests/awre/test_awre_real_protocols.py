@@ -65,42 +65,38 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
-        self.assertEqual(len(ff.message_types), 2)
-        mt1 = ff.message_types[1]
-        mt2 = ff.message_types[0]
+        ack_messages = (3, 5, 7, 9, 11, 13, 15, 17, 20)
+        ack_message_type = next(mt for mt, messages in ff.existing_message_types.items() if ack_messages[0] in messages)
+        self.assertTrue(all(ack_msg in ff.existing_message_types[ack_message_type] for ack_msg in ack_messages))
 
-        preamble = mt1.get_first_label_with_type(FieldType.Function.PREAMBLE)
-        self.assertEqual(preamble.start, 0)
-        self.assertEqual(preamble.length, 32)
+        for mt in ff.message_types:
+            preamble = mt.get_first_label_with_type(FieldType.Function.PREAMBLE)
+            self.assertEqual(preamble.start, 0)
+            self.assertEqual(preamble.length, 32)
 
-        sync = mt1.get_first_label_with_type(FieldType.Function.SYNC)
-        self.assertEqual(sync.start, 32)
-        self.assertEqual(sync.length, 32)
+            sync = mt.get_first_label_with_type(FieldType.Function.SYNC)
+            self.assertEqual(sync.start, 32)
+            self.assertEqual(sync.length, 32)
 
-        length = mt1.get_first_label_with_type(FieldType.Function.LENGTH)
-        self.assertEqual(length.start, 64)
-        self.assertEqual(length.length, 8)
+            length = mt.get_first_label_with_type(FieldType.Function.LENGTH)
+            self.assertEqual(length.start, 64)
+            self.assertEqual(length.length, 8)
 
-        dst = mt1.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
-        self.assertEqual(dst.start, 88)
-        self.assertEqual(dst.length, 24)
+            dst = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
+            self.assertEqual(dst.length, 24)
 
-        src = mt1.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
-        self.assertEqual(src.start, 112)
-        self.assertEqual(src.length, 24)
-
-        ack = mt2.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
-        self.assertEqual(ack.start, 72)
-        self.assertEqual(ack.length, 24)
-
-        ack_messages = (1, 3, 5, 7, 9, 11, 13, 15, 17, 20)
-        for i, msg in enumerate(protocol.messages):
-            if i in ack_messages:
-                self.assertNotIn(i, ff.existing_message_types[mt1])
-                self.assertIn(i, ff.existing_message_types[mt2])
+            if mt == ack_message_type or 1 in ff.existing_message_types[mt]:
+                self.assertEqual(dst.start, 72)
             else:
-                self.assertIn(i, ff.existing_message_types[mt1])
-                self.assertNotIn(i, ff.existing_message_types[mt2])
+                self.assertEqual(dst.start, 88)
+
+            if mt != ack_message_type and 1 not in ff.existing_message_types[mt]:
+                src = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
+                self.assertEqual(src.start, 112)
+                self.assertEqual(src.length, 24)
+
+            crc = mt.get_first_label_with_type(FieldType.Function.CHECKSUM)
+            self.assertIsNotNone(crc)
 
     def test_homematic(self):
         proto_file = get_path_for_data_file("homematic.proto.xml")

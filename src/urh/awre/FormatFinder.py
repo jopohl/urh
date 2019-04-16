@@ -3,11 +3,13 @@ import math
 from collections import defaultdict
 
 import numpy as np
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 
 from urh.awre import AutoAssigner
-from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer
+from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer, ChecksumRange
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.engines.AddressEngine import AddressEngine
+from urh.awre.engines.ChecksumEngine import ChecksumEngine
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.cythonext import awre_util
@@ -100,6 +102,8 @@ class FormatFinder(object):
                                          already_labeled=already_labeled))
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
             engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
+        if not message_type.get_first_label_with_type(FieldType.Function.CHECKSUM):
+            engines.append(ChecksumEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
 
         result = set()
         for engine in engines:
@@ -191,11 +195,17 @@ class FormatFinder(object):
 
     @staticmethod
     def add_range_to_message_type(common_range: CommonRange, message_type: MessageType):
-        message_type.add_protocol_label(name=common_range.field_type,
-                                        start=common_range.bit_start, end=common_range.bit_end,
-                                        auto_created=True,
-                                        type=FieldType.from_caption(common_range.field_type)
-                                        )
+        field_type = FieldType.from_caption(common_range.field_type)
+        label = message_type.add_protocol_label(name=common_range.field_type,
+                                                start=common_range.bit_start, end=common_range.bit_end,
+                                                auto_created=True,
+                                                type=field_type
+                                                )
+        if field_type.function == FieldType.Function.CHECKSUM:
+            assert isinstance(label, ChecksumLabel)
+            assert isinstance(common_range, ChecksumRange)
+            label.data_ranges = [(common_range.data_range_bit_start, common_range.data_range_bit_end)]
+            label.checksum = copy.copy(common_range.crc)
 
     @staticmethod
     def get_hexvectors(bitvectors: list):

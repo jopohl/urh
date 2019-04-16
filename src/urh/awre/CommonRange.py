@@ -150,6 +150,19 @@ class ChecksumRange(CommonRange):
         self.data_range_end = data_range_end
         self.crc = crc
 
+    @property
+    def data_range_bit_start(self):
+        return self.data_range_start + self.sync_end
+
+    @property
+    def data_range_bit_end(self):
+        return self.data_range_end + self.sync_end
+
+    def __repr__(self):
+        return super().__repr__() + " \t" + \
+               "{}".format(self.crc.caption) + \
+               " Datarange: {}-{} ".format(self.data_range_start, self.data_range_end)
+
 
 class EmptyCommonRange(CommonRange):
     """

@@ -10,13 +10,14 @@ from urh.util.GenericCRC import GenericCRC
 
 
 class ChecksumEngine(Engine):
-    def __init__(self, bitvectors, n_gram_length=8, already_labeled: list = None):
+    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, already_labeled: list = None):
         """
         :type bitvectors: list of np.ndarray
         :param bitvectors: bitvectors behind the synchronization
         """
         self.bitvectors = bitvectors
         self.n_gram_length = n_gram_length
+        self.minimum_score = minimum_score
         if already_labeled is None:
             self.already_labeled_cols = set()
         else:
@@ -31,29 +32,43 @@ class ChecksumEngine(Engine):
 
         crc = GenericCRC()
         for length, message_indices in bitvectors_by_n_gram_length.items():
-            considered = set()
+            checksums_for_length = []
             for i, index in enumerate(message_indices):
-                if i in considered:
-                    continue
+                bits = self.bitvectors[index]
+                crc_object, start, stop, crc_start, crc_stop = crc.guess_all(bits,
+                                                                             ignore_positions=self.already_labeled_cols)
 
-                inpt = self.bitvectors[index]
-                crc_object, start, stop, crc_start, crc_stop = crc.guess_all(inpt)
                 if (crc_object, start, stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
-                    result.append(ChecksumRange(start=crc_start,
-                                                length=crc_stop - crc_start,
-                                                data_range_start=start,
-                                                data_range_end=stop,
-                                                crc=crc_object,
-                                                score=1,
-                                                field_type="checksum",
-                                                message_indices={i}
-                                                ))
+                    checksums_for_length.append(ChecksumRange(start=crc_start,
+                                                              length=crc_stop - crc_start,
+                                                              data_range_start=start,
+                                                              data_range_end=stop,
+                                                              crc=crc_object,
+                                                              score=1 / len(message_indices),
+                                                              field_type="checksum",
+                                                              message_indices={index}
+                                                              ))
 
                     for j in range(i + 1, len(message_indices)):
-                        inpt = self.bitvectors[message_indices[j]]
-                        if crc_object.crc(inpt[:crc_start]) == array.array("B", inpt[crc_start:crc_stop]):
-                            result[-1].message_indices.add(j)
-                            considered.add(j)
+                        bits = self.bitvectors[message_indices[j]]
+                        if crc_object.crc(bits[:crc_start]) == array.array("B", bits[crc_start:crc_stop]):
+                            checksums_for_length[-1].message_indices.add(message_indices[j])
+                            checksums_for_length[-1].score += 1 / len(message_indices)
+
+            try:
+                result.append(max(checksums_for_length, key=lambda x: x.score))
+            except ValueError:
+                pass  # no checksums found for this length
+
+        self._debug("Found Checksums", result)
+        try:
+            max_scored = max(filter(lambda x: len(x.message_indices) >= 2 and x.score >= self.minimum_score, result),
+                             key=lambda x: x.score)
+        except ValueError:
+            return []
+
+        result = list(filter(lambda x: x.crc == max_scored.crc, result))
+        self._debug("Filtered Checksums", result)
 
         return result
 

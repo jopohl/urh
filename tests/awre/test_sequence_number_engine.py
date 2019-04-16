@@ -70,6 +70,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
         ff.perform_iteration()
+
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
         self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)

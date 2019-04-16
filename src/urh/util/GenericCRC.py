@@ -52,6 +52,11 @@ class GenericCRC(object):
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
                  reverse_all=False, little_endian=False, lsb_first=False):
+        if isinstance(polynomial, str):
+            self.caption = polynomial
+        else:
+            self.caption = ""
+
         self.polynomial = self.choose_polynomial(polynomial)
         self.reverse_polynomial = reverse_polynomial
         self.reverse_all = reverse_all
@@ -263,11 +268,23 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
-    def guess_all(self, inpt, trash_max=7):  # returns CRC-Object, Data begin, Data End, CRC Begin, CRC End
+    def guess_all(self, bits, trash_max=7, ignore_positions: set = None):
+        """
+
+        :param bits:
+        :param trash_max:
+        :param ignore_positions: columns to ignore (e.g. if already another label on them)
+        :return: a CRC object, data_range_start, data_range_end, crc_start, crc_end
+        """
+        ignore_positions = set() if ignore_positions is None else ignore_positions
         for i in range(0, trash_max):
-            ret = self.guess_standard_parameters_and_datarange(inpt, i)
-            if ret != (0, 0, 0):
-                return ret[0], ret[1], ret[2], len(inpt) - i - ret[0].poly_order + 1, len(inpt) - i
+            ret = self.guess_standard_parameters_and_datarange(bits, i)
+            if ret == (0, 0, 0):
+                continue  # nothing found
+
+            crc_start, crc_end = len(bits) - i - ret[0].poly_order + 1, len(bits) - i
+            if not any(i in ignore_positions for i in range(crc_start, crc_end)):
+                return ret[0], ret[1], ret[2], crc_start, crc_end
         return 0, 0, 0, 0, 0
 
     def bruteforce_all(self, inpt, trash_max=7):
@@ -301,6 +318,7 @@ class GenericCRC(object):
                                        key=lambda x: len(x[1]["polynomial"]),
                                        reverse=True):
             self.set_individual_parameters(**parameters)
+            self.caption = name
             vrfy_crc = inpt[len(inpt) - trash - self.poly_order + 1: len(inpt) - trash]
             data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc)
             if (data_begin, data_end) != (0, 0):

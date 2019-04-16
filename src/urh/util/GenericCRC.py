@@ -32,13 +32,22 @@ class GenericCRC(object):
     ])
 
     STANDARD_CHECKSUMS = OrderedDict([
-        # name, polynomial, start_value, final_xor, reverse_polynomial: bool, reverse_all: bool, little_endian: bool, lsb_first: bool
-        # default: "start_value": 0, "final_xor": 0, "reverse_polynomial": False, "reverse_all": False, "little_endian": False, "lsb_first": False
-        ("CRC8 (default)",  {"polynomial": "0xD5"}),
-        ("CRC8 CCITT",      {"polynomial": "0x07"}),
-        ("CRC16 (default)", {"polynomial": "0x8005"}),
-        ("CRC16 CCITT",     {"polynomial": "0x1021"}),
-        ("CRC16 CC1101",    {"polynomial": "0x8005", "start_value": 1})
+        # see method guess_standard_parameters_and_datarange for default parameters
+        # Links:
+        #  - https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+        #  - http://reveng.sourceforge.net/crc-catalogue/1-15.htm
+        #  - https://crccalc.com/
+        ("CRC8 (default)", dict(polynomial="0xD5")),
+        ("CRC8 CCITT", dict(polynomial="0x07")),
+        ("CRC8 Bluetooth", dict(polynomial="0xA7", ref_in=True, ref_out=True)),
+        ("CRC8 DARC", dict(polynomial="0x39", ref_in=True, ref_out=True)),
+        ("CRC8 NRSC-5", dict(polynomial="0x31", start_value=1)),
+        ("CRC16 (default)", dict(polynomial="0x8005", ref_in=True, ref_out=True)),
+        ("CRC16 CCITT", dict(polynomial="0x1021", ref_in=True, ref_out=True)),
+        ("CRC16 NRSC-5", dict(polynomial="0x080B", start_value=1, ref_in=True, ref_out=True)),
+        ("CRC16 CC1101", dict(polynomial="0x8005", start_value=1)),
+        ("CRC16 CDMA2000", dict(polynomial="0xC867", start_value=1)),
+        ("CRC32 (default)", dict(polynomial="0x04C11DB7", start_value=1, final_xor=1, ref_in=True, ref_out=True)),
     ])
 
     def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
@@ -182,7 +191,8 @@ class GenericCRC(object):
         array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] = \
             array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1 * 8 + 8]
 
-    def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, reverse_polynomial=False, reverse_all=False, little_endian=False, lsb_first=False):
+    def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, ref_in=False, ref_out=False,
+                                  little_endian=False, reverse_polynomial=False):
         # Set polynomial from hex or bit array
         if isinstance(polynomial, str):
             self.set_polynomial_from_hex(polynomial)
@@ -207,9 +217,9 @@ class GenericCRC(object):
 
         # Set boolean parameters
         self.reverse_polynomial = reverse_polynomial
-        self.reverse_all = reverse_all
+        self.reverse_all = ref_out
         self.little_endian = little_endian
-        self.lsb_first = lsb_first
+        self.lsb_first = ref_in
 
     def set_crc_parameters(self, i):
         # Bit 0,1 = Polynomial
@@ -253,11 +263,11 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
-    def guess_all(self, inpt, trash_max=7):     # returns CRC-Object, Data begin, Data End, CRC Begin, CRC End
+    def guess_all(self, inpt, trash_max=7):  # returns CRC-Object, Data begin, Data End, CRC Begin, CRC End
         for i in range(0, trash_max):
             ret = self.guess_standard_parameters_and_datarange(inpt, i)
             if ret != (0, 0, 0):
-                return ret[0], ret[1], ret[2], len(inpt)-i-ret[0].poly_order+1, len(inpt)-i
+                return ret[0], ret[1], ret[2], len(inpt) - i - ret[0].poly_order + 1, len(inpt) - i
         return 0, 0, 0, 0, 0
 
     def bruteforce_all(self, inpt, trash_max=7):
@@ -281,10 +291,15 @@ class GenericCRC(object):
         return False
 
     def guess_standard_parameters_and_datarange(self, inpt, trash):
-        # Tests standard parameters from dict and return polynomial object, if a valid CRC could be computed
-        # and determines start and end of crc datarange (end is set before crc)
-        # Note: vfry_crc is included inpt!
-        for name, parameters in self.STANDARD_CHECKSUMS.items():
+        """
+        Tests standard parameters from dict and return polynomial object, if a valid CRC could be computed
+        and determines start and end of crc datarange (end is set before crc)
+        Note: vfry_crc is included inpt!
+        """
+        # Test longer polynomials first, because smaller polynomials have higher risk of false positive
+        for name, parameters in sorted(self.STANDARD_CHECKSUMS.items(),
+                                       key=lambda x: len(x[1]["polynomial"]),
+                                       reverse=True):
             self.set_individual_parameters(**parameters)
             vrfy_crc = inpt[len(inpt) - trash - self.poly_order + 1: len(inpt) - trash]
             data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc)

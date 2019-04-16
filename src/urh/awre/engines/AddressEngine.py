@@ -1,7 +1,7 @@
 import itertools
 import math
 from array import array
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 import numpy as np
 
@@ -100,8 +100,18 @@ class AddressEngine(Engine):
             # Sort by negative score so ranges with highest score appear first
             # Secondary sort by tuple to ensure order when ranges have same score
             sorted_ranges = sorted(filter(lambda cr: cr.score > 0.1, common_ranges), key=lambda cr: (-cr.score, cr))
+            if len(sorted_ranges) == 0:
+                addresses_by_participant[participant] = dict()
+                continue
 
-            addr_len = sorted_ranges[0].length if len(sorted_ranges) > 0 else 0
+            max_score = sorted_ranges[0].score
+            possible_address_lengths = [r.length for r in sorted_ranges if r.score == max_score]
+
+            # Count possible address lengths.
+            frequencies = Counter(possible_address_lengths)
+            # Take the most common one. On tie, take the shorter one
+            addr_len = max(frequencies, key=lambda x: (frequencies[x], -x))
+
             addresses_by_participant[participant] = {a for a in addresses_by_participant.get(participant, [])
                                                      if len(a) == addr_len}
 

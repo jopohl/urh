@@ -107,10 +107,14 @@ class ProtocolGenerator(object):
 
         start = 0
 
-        message_length = mt[-1].end - 1 + len(data)
-        checksum_labels = []
+        data_label_present = mt.get_first_label_with_type(FieldType.Function.DATA) is not None
 
-        data_processed = False  # if no DATA label present, append data to last
+        if data_label_present:
+            message_length = mt[-1].end - 1
+        else:
+            message_length = mt[-1].end - 1 + len(data)
+
+        checksum_labels = []
 
         for lbl in mt:  # type: ProtocolLabel
             bits.append("0"*(lbl.start - start))
@@ -155,15 +159,14 @@ class ProtocolGenerator(object):
                     raise ValueError("Length of src ({0} bits) != length src field ({1} bits)".format(len(src_bits), len_field))
 
                 bits.append(src_bits)
-            elif lbl.field_type.Function == FieldType.Function.DATA:
-                data_processed = True
+            elif lbl.field_type.function == FieldType.Function.DATA:
                 if len(data) != len_field:
                     raise ValueError("Length of data ({} bits) != length data field ({} bits)".format(len(data), len_field))
                 bits.append(data)
 
             start = lbl.end
 
-        if not data_processed:
+        if not data_label_present:
             bits.append(data)
 
         msg = Message.from_plain_bits_str("".join(bits))

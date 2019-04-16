@@ -16,6 +16,7 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+from urh.util.GenericCRC import GenericCRC
 
 
 class AWRExperiments(AWRETestCase):
@@ -88,6 +89,47 @@ class AWRExperiments(AWRETestCase):
     def _prepare_protocol_4() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="1337")
         bob = Participant("Bob", address_hex="4711")
+
+        checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 16)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb.add_label(FieldType.Function.DATA, 8 * 8)
+        mb.add_checksum_label(16, checksum)
+
+        mb2 = MessageTypeBuilder("data2")
+        mb2.add_label(FieldType.Function.PREAMBLE, 16)
+        mb2.add_label(FieldType.Function.SYNC, 16)
+        mb2.add_label(FieldType.Function.LENGTH, 8)
+        mb2.add_label(FieldType.Function.SRC_ADDRESS, 16)
+        mb2.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb2.add_label(FieldType.Function.DATA, 64 * 8)
+        mb2.add_checksum_label(16, checksum)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 16)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.LENGTH, 8)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb_ack.add_checksum_label(16, checksum)
+
+        mt1, mt2, mt3 = mb.message_type, mb2.message_type, mb_ack.message_type
+
+        pg = ProtocolGenerator([mt1, mt2, mt3],
+                               syncs_by_mt={mt1: "0x9a7d", mt2: "0x9a7d", mt3: "0x9a7d"},
+                               preambles_by_mt={mt1: "10" * 8, mt2: "10" * 8, mt3: "10" * 8},
+                               participants=[alice, bob])
+
+        return pg
+
+    @staticmethod
+    def _prepare_protocol_5() -> ProtocolGenerator:
+        alice = Participant("Alice", address_hex="1337")
+        bob = Participant("Bob", address_hex="4711")
         carl = Participant("Carl", address_hex="cafe")
 
         mb = MessageTypeBuilder("data")
@@ -121,25 +163,36 @@ class AWRExperiments(AWRETestCase):
             pg = cls._prepare_protocol_3()
         elif protocol_number == 4:
             pg = cls._prepare_protocol_4()
+        elif protocol_number == 5:
+            pg = cls._prepare_protocol_5()
         else:
             raise ValueError("Unknown protocol number")
 
+        messages_types_with_data_field = [mt for mt in pg.protocol.message_types
+                                          if mt.get_first_label_with_type(FieldType.Function.DATA)]
         i = -1
         while len(pg.protocol.messages) < num_messages:
             i += 1
             source = pg.participants[i % len(pg.participants)]
-            destination = pg.participants[(i+1) % len(pg.participants)]
+            destination = pg.participants[(i + 1) % len(pg.participants)]
             if i % 2 == 0:
                 data_bytes = 8
             else:
-                #data_bytes = 16
+                # data_bytes = 16
                 data_bytes = 64
-
             data = "".join(random.choice(["0", "1"]) for _ in range(data_bytes * 8))
-            pg.generate_message(data=data, source=source, destination=destination)
+            if len(messages_types_with_data_field) == 0:
+                # set data automatically
+                pg.generate_message(data=data, source=source, destination=destination)
+            else:
+                # search for message type with right data length
+                mt = next(mt for mt in messages_types_with_data_field
+                          if mt.get_first_label_with_type(FieldType.Function.DATA).length == data_bytes * 8)
+                pg.generate_message(message_type=mt, data=data, source=source, destination=destination)
 
-            if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
-                pg.generate_message(message_type=1, data="", source=destination, destination=source)
+            ack_message_type = next((mt for mt in pg.protocol.message_types if "ack" in mt.name), None)
+            if ack_message_type:
+                pg.generate_message(message_type=ack_message_type, data="", source=destination, destination=source)
 
         for i in range(num_broken_messages):
             msg = pg.protocol.messages[i]
@@ -147,12 +200,18 @@ class AWRExperiments(AWRETestCase):
             msg.plain_bits[pos:] = array.array("B",
                                                [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
 
-        cls.save_protocol("protocol-{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
+        cls.save_protocol("protocol{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 
         # Delete message type information -> no prior knowledge
         cls.clear_message_types(pg.protocol.messages)
+
+        # Delete data labels if present
+        for mt in expected_message_types:
+            data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
+            if data_lbl:
+                mt.remove(data_lbl)
 
         return pg.protocol, expected_message_types
 
@@ -170,6 +229,7 @@ class AWRExperiments(AWRETestCase):
         accuracy = 0
         for i, msg in enumerate(messages):
             expected = expected_labels[i]  # type: MessageType
+
             msg_accuracy = 1
             for lbl in expected:
                 try:
@@ -190,7 +250,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 24))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3, 4]
+        protocols = [1, 2, 3, 4, 5]
 
         random.seed(0)
         np.random.seed(0)

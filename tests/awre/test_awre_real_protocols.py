@@ -139,3 +139,12 @@ class TestAWRERealProtocols(AWRETestCase):
             dst = message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
             self.assertEqual(dst.start, 120)
             self.assertEqual(dst.length, 24)
+
+            checksum = message_type.get_first_label_with_type(FieldType.Function.CHECKSUM)
+            self.assertEqual(checksum.length, 16)
+            self.assertIn("CC1101", checksum.checksum.caption)
+
+            for msg_index in ff.existing_message_types[message_type]:
+                msg_len = len(protocol.messages[msg_index])
+                self.assertEqual(checksum.start, msg_len-16)
+                self.assertEqual(checksum.end, msg_len)

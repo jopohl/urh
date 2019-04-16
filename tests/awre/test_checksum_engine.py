@@ -69,8 +69,7 @@ class TestChecksumEngine(AWRETestCase):
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
         mb.add_label(FieldType.Function.DATA, 32)
-        mb.add_checksum_label(16, data_start=24, data_end=64,
-                              checksum=GenericCRC.from_standard_checksum("CRC16 CCITT"))
+        mb.add_checksum_label(16, GenericCRC.from_standard_checksum("CRC16 CCITT"))
 
         mb2 = MessageTypeBuilder("data2")
         mb2.add_label(FieldType.Function.PREAMBLE, 8)
@@ -78,8 +77,7 @@ class TestChecksumEngine(AWRETestCase):
         mb2.add_label(FieldType.Function.LENGTH, 8)
         mb2.add_label(FieldType.Function.DATA, 16)
 
-        mb2.add_checksum_label(16, data_start=24, data_end=48,
-                               checksum=GenericCRC.from_standard_checksum("CRC16 CCITT"))
+        mb2.add_checksum_label(16, GenericCRC.from_standard_checksum("CRC16 CCITT"))
 
         pg = ProtocolGenerator([mb.message_type, mb2.message_type], syncs_by_mt={mb.message_type: "0x1234", mb2.message_type: "0x1234"})
 

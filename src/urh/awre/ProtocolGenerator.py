@@ -3,6 +3,8 @@ from collections import defaultdict
 
 import math
 
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
+
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
@@ -106,10 +108,17 @@ class ProtocolGenerator(object):
         start = 0
 
         message_length = mt[-1].end - 1 + len(data)
+        checksum_labels = []
+
+        data_processed = False  # if no DATA label present, append data to last
 
         for lbl in mt:  # type: ProtocolLabel
             bits.append("0"*(lbl.start - start))
             len_field = lbl.end - lbl.start  # in bits
+
+            if isinstance(lbl, ChecksumLabel):
+                checksum_labels.append(lbl)
+                continue  # processed last
 
             if lbl.field_type.function == FieldType.Function.PREAMBLE:
                 preamble = self.preambles_by_message_type[mt]
@@ -146,15 +155,24 @@ class ProtocolGenerator(object):
                     raise ValueError("Length of src ({0} bits) != length src field ({1} bits)".format(len(src_bits), len_field))
 
                 bits.append(src_bits)
+            elif lbl.field_type.Function == FieldType.Function.DATA:
+                data_processed = True
+                if len(data) != len_field:
+                    raise ValueError("Length of data ({} bits) != length data field ({} bits)".format(len(data), len_field))
+                bits.append(data)
 
             start = lbl.end
 
-        bits.append(data)
+        if not data_processed:
+            bits.append(data)
 
         msg = Message.from_plain_bits_str("".join(bits))
         msg.message_type = mt
         msg.participant = source
         self.sequence_numbers[mt] += self.sequence_number_increment
+
+        for checksum_label in checksum_labels:
+            msg[checksum_label.start:checksum_label.end] = checksum_label.calculate_checksum_for_message(msg, False)
 
         self.protocol.messages.append(msg)
 

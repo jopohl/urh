@@ -17,6 +17,7 @@ class FieldType(object):
         DST_ADDRESS = "destination address"
         SEQUENCE_NUMBER = "sequence number"
         TYPE = "type"
+        DATA = "data"
         CHECKSUM = "checksum"
         CUSTOM = "custom"
 

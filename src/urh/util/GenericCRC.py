@@ -196,6 +196,13 @@ class GenericCRC(object):
         array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] = \
             array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1 * 8 + 8]
 
+    @staticmethod
+    def from_standard_checksum(name: str):
+        result = GenericCRC()
+        result.set_individual_parameters(**GenericCRC.STANDARD_CHECKSUMS[name])
+        result.caption = name
+        return result
+
     def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, ref_in=False, ref_out=False,
                                   little_endian=False, reverse_polynomial=False):
         # Set polynomial from hex or bit array
@@ -380,6 +387,8 @@ class GenericCRC(object):
         root.set("polynomial", util.convert_bits_to_string(self.polynomial, 0))
         root.set("start_value", util.convert_bits_to_string(self.start_value, 0))
         root.set("final_xor", util.convert_bits_to_string(self.final_xor, 0))
+        root.set("ref_in", str(int(self.lsb_first)))
+        root.set("ref_out", str(int(self.reverse_all)))
         return root
 
     @classmethod
@@ -387,8 +396,11 @@ class GenericCRC(object):
         polynomial = tag.get("polynomial", "1010")
         start_value = tag.get("start_value", "0000")
         final_xor = tag.get("final_xor", "0000")
+        ref_in = bool(int(tag.get("ref_in", "0")))
+        ref_out = bool(int(tag.get("ref_out", "0")))
         return GenericCRC(polynomial=util.string2bits(polynomial),
-                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor))
+                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor),
+                          lsb_first=ref_in, reverse_all=ref_out)
 
     @staticmethod
     def bit2str(inpt):

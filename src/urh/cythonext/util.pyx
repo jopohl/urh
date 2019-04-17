@@ -165,8 +165,8 @@ cpdef tuple get_crc_datarange(unsigned char[:] inpt, unsigned char[:] polynomial
         if reverse_all:
             temp = 0
             for j in range(0, poly_order - 1):
-                if steps[i] & (1ULL << j):
-                    temp |= (1ULL << (poly_order - 2 - j))
+                if steps[i] & (1 << j):
+                    temp |= (1 << (poly_order -2  - j))
             steps[j] = temp & crc_mask
 
         # little endian encoding, different for 16, 32, 64 bit

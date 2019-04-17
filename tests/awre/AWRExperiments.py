@@ -153,6 +153,63 @@ class AWRExperiments(AWRETestCase):
 
         return pg
 
+    @staticmethod
+    def _prepare_protocol_6() -> ProtocolGenerator:
+        alice = Participant("Alice", address_hex="24")
+        broadcast = Participant("Broadcast", address_hex="ff")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 8)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x8e88"},
+                               preambles_by_mt={mb.message_type: "10" * 8},
+                               participants=[alice, broadcast])
+
+        return pg
+
+    @staticmethod
+    def _prepare_protocol_7() -> ProtocolGenerator:
+        alice = Participant("Alice", address_hex="313370")
+        bob = Participant("Bob", address_hex="031337")
+        charly = Participant("Charly", address_hex="110000")
+        daniel = Participant("Daniel", address_hex="001100")
+        emy = Participant("Emy", address_hex="100100")
+        #broadcast = Participant("Broadcast", address_hex="ff")     #TODO: Sometimes messages to broadcast
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 16)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.DST_ADDRESS, 24)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 24)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 32)
+        mb.add_label(FieldType.Function.DATA, 8*8)
+        mb.add_label(FieldType.Function.CHECKSUM, 16)
+
+        mb_ack = MessageTypeBuilder("ack")
+        mb_ack.add_label(FieldType.Function.PREAMBLE, 8)
+        mb_ack.add_label(FieldType.Function.SYNC, 16)
+        mb_ack.add_label(FieldType.Function.DST_ADDRESS, 24)
+
+        mb_kex = MessageTypeBuilder("kex")
+        mb_kex.add_label(FieldType.Function.PREAMBLE, 24)
+        mb_kex.add_label(FieldType.Function.SYNC, 16)
+        mb_kex.add_label(FieldType.Function.DST_ADDRESS, 24)
+        mb_kex.add_label(FieldType.Function.SRC_ADDRESS, 24)
+        mb_kex.add_label(FieldType.Function.DATA, 64*8)
+        mb.add_label(FieldType.Function.CHECKSUM, 16)
+
+        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type, mb_kex.message_type],
+                               syncs_by_mt={mb.message_type: "0x0420", mb_ack.message_type: "0x2222", mb_kex.message_type: "0x6767"},
+                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 4, mb_kex.message_type: "10" * 12},
+                               participants=[alice, bob, charly, daniel, emy])
+
+        return pg
+
     @classmethod
     def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False):
         if protocol_number == 1:
@@ -165,6 +222,10 @@ class AWRExperiments(AWRETestCase):
             pg = cls._prepare_protocol_4()
         elif protocol_number == 5:
             pg = cls._prepare_protocol_5()
+        elif protocol_number == 6:
+            pg = cls._prepare_protocol_6()
+        elif protocol_number == 7:
+            pg = cls._prepare_protocol_7()
         else:
             raise ValueError("Unknown protocol number")
 
@@ -247,10 +308,10 @@ class AWRExperiments(AWRETestCase):
         return accuracy * 100
 
     def test_against_num_messages(self):
-        num_messages = list(range(1, 24))
+        num_messages = list(range(1, 25, 1))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3, 4, 5]
+        protocols = [1, 2, 3, 4, 5, 6, 7]
 
         random.seed(0)
         np.random.seed(0)
@@ -261,6 +322,7 @@ class AWRExperiments(AWRETestCase):
 
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
+
 
         self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %")
         self.__export_to_csv("/tmp/accuray-vs-messages", num_messages, accuracies)

@@ -329,7 +329,7 @@ class FormatFinder(object):
             best_solution = max(possible_solutions, key=lambda sol: sum(r.score for r in sol))
             result.extend(best_solution)
 
-        return CommonRangeContainer(result, message_indices=copy.copy(container.message_indices))
+        return CommonRangeContainer(result, message_indices=None)  # auto message indices
 
     @staticmethod
     def retransform_message_indices(common_ranges, message_type_indices: list, sync_ends) -> list:

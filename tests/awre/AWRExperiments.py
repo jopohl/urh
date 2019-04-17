@@ -311,7 +311,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 25, 1))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3, 4, 5, 6, 7]
+        protocols = [6, 7]
 
         random.seed(0)
         np.random.seed(0)
@@ -322,7 +322,6 @@ class AWRExperiments(AWRETestCase):
 
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
-
 
         self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %")
         self.__export_to_csv("/tmp/accuray-vs-messages", num_messages, accuracies)

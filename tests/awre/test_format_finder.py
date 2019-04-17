@@ -56,10 +56,6 @@ class TestFormatFinder(AWRETestCase):
         self.assertIn(expected1, retransformed_ranges)
         self.assertIn(expected2, retransformed_ranges)
 
-    def test_retransform_message_types(self):
-        # todo
-        pass
-
     def test_handle_no_overlapping_conflict(self):
         rng1 = CommonRange(0, 8, "1" * 8, score=1, field_type="Length")
         rng1.message_indices = {0, 1, 2}

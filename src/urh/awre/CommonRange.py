@@ -190,11 +190,15 @@ class CommonRangeContainer(object):
     A container of common ranges
     """
 
-    def __init__(self, ranges: list, message_indices=set()):
+    def __init__(self, ranges: list, message_indices: set = None):
+
         assert isinstance(ranges, list)
 
         self.__ranges = ranges  # type: list[CommonRange]
         self.__ranges.sort()
+
+        if message_indices is None:
+            message_indices = {i for rng in self for i in rng.message_indices}
 
         self.message_indices = message_indices
 

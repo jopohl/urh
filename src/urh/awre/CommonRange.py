@@ -237,4 +237,5 @@ class CommonRangeContainer(object):
     def __eq__(self, other):
         if not isinstance(other, CommonRangeContainer):
             return False
+
         return self.__ranges == other.__ranges and self.message_indices == other.message_indices

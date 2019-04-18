@@ -280,7 +280,10 @@ class FormatFinder(object):
                 result.append(container)
                 continue
 
-            result.append(FormatFinder.__handle_container_overlapping_conflict(container))
+            conflicted_handled = FormatFinder.__handle_container_overlapping_conflict(container)
+
+            if conflicted_handled not in result:
+                result.append(conflicted_handled)
 
         return result
 

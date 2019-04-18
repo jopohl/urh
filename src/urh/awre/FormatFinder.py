@@ -126,6 +126,21 @@ class FormatFinder(object):
             self.remove_overlapping_fields(new_fields_for_message_type, message_type)
             containers = self.create_common_range_containers(new_fields_for_message_type)
 
+            # Store addresses of participants if we found a SRC address field
+            participants_with_unknown_address = set(self.participant_indices) - set(self.known_participant_addresses)
+            participants_with_unknown_address.discard(-1)
+
+            if participants_with_unknown_address:
+                for container in containers:
+                    src_range = next((rng for rng in container if rng.field_type == "source address"), None)
+                    if src_range is None:
+                        continue
+                    for msg_index in src_range.message_indices:
+                        p = self.participant_indices[msg_index]
+                        if p not in self.known_participant_addresses:
+                            hex_vector = self.hexvectors[msg_index]
+                            self.known_participant_addresses[p] = hex_vector[src_range.start:src_range.end+1]
+
             new_field_found |= len(containers) > 0
 
             if len(containers) == 1:

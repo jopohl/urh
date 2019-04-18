@@ -1,14 +1,12 @@
+from tests.awre.AWRETestCase import AWRETestCase
 from urh.awre.FormatFinder import FormatFinder
-
+from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
-
-from tests.awre.AWRETestCase import AWRETestCase
-from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.signalprocessing.Participant import Participant
 
 
-class TestGeneratedProtocols( AWRETestCase):
+class TestGeneratedProtocols(AWRETestCase):
     def test_without_preamble(self):
         alice = Participant("Alice", address_hex="24")
         broadcast = Participant("Broadcast", address_hex="ff")
@@ -16,7 +14,7 @@ class TestGeneratedProtocols( AWRETestCase):
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
-        mb.add_label(FieldType.Function.DST_ADDRESS, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 8)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
         pg = ProtocolGenerator([mb.message_type],
@@ -26,9 +24,9 @@ class TestGeneratedProtocols( AWRETestCase):
 
         for i in range(20):
             data_bits = 16 if i % 2 == 0 else 32
-            source = pg.participants[i%2]
-            destination = pg.participants[(i+1)%2]
-            pg.generate_message(data="1010"*(data_bits//4), source=source, destination=destination)
+            source = pg.participants[i % 2]
+            destination = pg.participants[(i + 1) % 2]
+            pg.generate_message(data="1010" * (data_bits // 4), source=source, destination=destination)
 
         self.save_protocol("without_preamble", pg)
         self.clear_message_types(pg.messages)
@@ -36,7 +34,6 @@ class TestGeneratedProtocols( AWRETestCase):
         ff.known_participant_addresses.clear()
 
         ff.run()
-        print(ff.message_types)
         self.assertEqual(len(ff.message_types), 1)
 
         mt = ff.message_types[0]
@@ -48,7 +45,7 @@ class TestGeneratedProtocols( AWRETestCase):
         self.assertEqual(length.start, 16)
         self.assertEqual(length.length, 8)
 
-        dst = mt.get_first_label_with_type(FieldType.Function.DST_ADDRESS)
+        dst = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
         self.assertEqual(dst.start, 24)
         self.assertEqual(dst.length, 8)
 

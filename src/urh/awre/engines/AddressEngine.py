@@ -87,11 +87,12 @@ class AddressEngine(Engine):
             for rng1, rng2 in itertools.product(ranges_by_participant[p1], ranges_by_participant[p2]):
                 if rng1 in ranges_by_participant[p2] and rng2 in ranges_by_participant[p1]:
                     if self.cross_swap_check(rng1, rng2):
-                        rng1.score += len(rng1.message_indices) / num_messages_by_participant[p1]
-                        rng2.score += len(rng2.message_indices) / num_messages_by_participant[p2]
+                        rng1.score += len(rng2.message_indices) / num_messages_by_participant[p2]
+                        rng2.score += len(rng1.message_indices) / num_messages_by_participant[p1]
                     elif self.ack_check(rng1, rng2):
-                        rng1.score += len(rng1.message_indices) / num_messages_by_participant[p1]
-                        rng2.score += len(rng2.message_indices) / num_messages_by_participant[p2]
+                        # Add previous score in divisor to add bonus to ranges that apply to all messages
+                        rng1.score += len(rng2.message_indices) / (num_messages_by_participant[p2] + rng1.score)
+                        rng2.score += len(rng1.message_indices) / (num_messages_by_participant[p1] + rng2.score)
 
         high_scored_ranges_by_participant = defaultdict(list)
 
@@ -128,10 +129,6 @@ class AddressEngine(Engine):
                 del addresses_by_participant[participant]
                 if participant in high_scored_ranges_by_participant:
                     del high_scored_ranges_by_participant[participant]
-
-        # Write it back to the dict so future iterations can use it
-        self.known_addresses_by_participant.update({p: np.frombuffer(addr, dtype=np.uint8)
-                                                    for p, addr in addresses_by_participant.items()})
 
         # Now we can separate SRC and DST
         for participant, ranges in high_scored_ranges_by_participant.items():

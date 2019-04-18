@@ -125,11 +125,6 @@ class CommonRange(object):
         :param end:
         :rtype: list of CommonRange
         """
-        debug = hasattr(self, "debug")
-
-        if debug:
-            print(start, end, self.start, self.end, self.value_str)
-
         if end < self.start or start > self.end:
             # Other range is right or left of our range -> no overlapping
             return [copy.deepcopy(self)]

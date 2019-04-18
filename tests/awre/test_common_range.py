@@ -5,7 +5,7 @@ from urh.awre.CommonRange import CommonRange
 
 class TestCommonRange(unittest.TestCase):
     def test_ensure_not_overlaps(self):
-        test_range = CommonRange(start=4, length=8)
+        test_range = CommonRange(start=4, length=8, value="12345678")
         self.assertEqual(test_range.end, 11)
 
         # no overlapping
@@ -14,7 +14,7 @@ class TestCommonRange(unittest.TestCase):
 
         # overlapping on left
         result = test_range.ensure_not_overlaps(2, 6)[0]
-        self.assertEqual(result.start, 7)
+        self.assertEqual(result.start, 6)
         self.assertEqual(result.end, 11)
 
         # overlapping on right

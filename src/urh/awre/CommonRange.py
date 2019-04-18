@@ -48,11 +48,24 @@ class CommonRange(object):
         return self.__convert_number(self.start) + self.__convert_number(self.length) - 1 + self.sync_end
 
     @property
+    def length_in_bits(self):
+        return self.bit_end - self.bit_start - 1
+
+    @property
     def value(self):
         if len(self.values) == 0:
             return None
         elif len(self.values) == 1:
             return self.values[0]
+        else:
+            raise ValueError("This range has multiple values!")
+
+    @value.setter
+    def value(self, val):
+        if len(self.values) == 0:
+            self.values = [val]
+        elif len(self.values) == 1:
+            self.values[0] = val
         else:
             raise ValueError("This range has multiple values!")
 
@@ -116,17 +129,19 @@ class CommonRange(object):
             # Other range is right or left of our range -> no overlapping
             return [copy.deepcopy(self)]
 
-        if start < self.start < end < self.end:
+        if start <= self.start < end < self.end:
             # overlaps on the left
             result = copy.deepcopy(self)
-            result.length -= (end + 1) - result.start
-            result.start = end + 1
+            result.length -= end - result.start
+            result.start = end
+            result.value = result.value[result.start-self.start:(result.start-self.start)+result.length]
             return [result]
 
-        if self.start < start < self.end < end:
+        if self.start < start < self.end <= end:
             # overlaps on the right
             result = copy.deepcopy(self)
             result.length -= self.end + 1 - start
+            result.value = result.value[:result.length]
             return [result]
 
         if self.start < start and self.end > end:
@@ -135,8 +150,11 @@ class CommonRange(object):
             right = copy.deepcopy(self)
 
             left.length -= (left.end + 1 - start)
+            left.value = self.value[:left.length]
+
             right.start = end + 1
             right.length = self.end - end
+            right.value = self.value[right.start-self.start:(right.start-self.start)+right.length]
             return [left, right]
 
         return []

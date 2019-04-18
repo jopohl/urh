@@ -100,8 +100,6 @@ class LengthEngine(Engine):
                     max_score = max_start = -1
                     for start in range(0, len(bits) + 1 - window_length, n_gram_length):
                         score = LengthEngine.score_bits(bits[start:start + window_length], length, position=start)
-                        if window_length == 8:
-                            print("  ", score)
 
                         if score > max_score:
                             max_score = score
@@ -163,7 +161,11 @@ class LengthEngine(Engine):
         # Length field should be at front, so we give lower scores for large starts
         f = (1 / (1 + 0.25 * position))
 
-        return f * LengthEngine.gauss(value, target_length)
+        result = f * LengthEngine.gauss(value, target_length)
+
+        print("   ", bits, target_length, position, f, result)
+
+        return result
 
     @staticmethod
     def gauss(x, mu, sigma=2):

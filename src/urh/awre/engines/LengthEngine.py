@@ -26,10 +26,13 @@ class LengthEngine(Engine):
             bitvectors_by_n_gram_length[bin_num].append(i)
 
         common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
+        print(common_ranges_by_length)
+
         for length, ranges in common_ranges_by_length.items():
             common_ranges_by_length[length] = self.ignore_already_labeled(ranges, self.already_labeled)
 
-        print(self.already_labeled)
+        print(common_ranges_by_length)
+
         self.filter_common_ranges(common_ranges_by_length)
         self._debug("Common Ranges:", common_ranges_by_length)
 

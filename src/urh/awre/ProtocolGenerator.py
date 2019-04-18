@@ -94,15 +94,15 @@ class ProtocolGenerator(object):
                 self.participants.append(participant)
 
         if isinstance(message_type, MessageType):
-            index = self.protocol.message_types.index(message_type)
+            message_type_index = self.protocol.message_types.index(message_type)
         elif isinstance(message_type, int):
-            index = message_type
+            message_type_index = message_type
         else:
-            index = 0
+            message_type_index = 0
 
         data = self.to_bits(data)
 
-        mt = self.protocol.message_types[index]  # type: MessageType
+        mt = self.protocol.message_types[message_type_index]  # type: MessageType
         mt.sort()
 
         bits = []
@@ -144,7 +144,7 @@ class ProtocolGenerator(object):
 
                 bits.append(self.decimal_to_bits(value, len_field))
             elif lbl.field_type.function == FieldType.Function.TYPE:
-                bits.append(self.decimal_to_bits(hash(mt) % (2 ** len_field), len_field))
+                bits.append(self.decimal_to_bits((message_type_index+1) % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.SEQUENCE_NUMBER:
                 bits.append(self.decimal_to_bits(self.sequence_numbers[mt] % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.DST_ADDRESS:

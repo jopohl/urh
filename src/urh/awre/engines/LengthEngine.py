@@ -97,6 +97,11 @@ class LengthEngine(Engine):
             for length, common_ranges in common_ranges_by_length.items():
                 for common_range in filter(lambda cr: cr.length >= window_length, common_ranges):
                     bits = common_range.value_str
+                    if window_length == 8:
+                        print("   ", common_range)
+                        print("      ", common_range.value_str)
+                        print("      ", bits, window_length, n_gram_length)
+
                     max_score = max_start = -1
                     for start in range(0, len(bits) + 1 - window_length, n_gram_length):
                         score = LengthEngine.score_bits(bits[start:start + window_length], length, position=start)
@@ -161,11 +166,7 @@ class LengthEngine(Engine):
         # Length field should be at front, so we give lower scores for large starts
         f = (1 / (1 + 0.25 * position))
 
-        result = f * LengthEngine.gauss(value, target_length)
-
-        print("   ", bits, target_length, position, f, result)
-
-        return result
+        return f * LengthEngine.gauss(value, target_length)
 
     @staticmethod
     def gauss(x, mu, sigma=2):

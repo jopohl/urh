@@ -55,10 +55,14 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests &&
-      coverage xml &&
-      coverage html
+      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
     displayName: 'Run pytest with coverage'
+    condition: eq(variables['python.version'], '3.7')
+
+  - script: |
+      coverage xml
+      coverage html
+    displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
   - script: pytest --junitxml=junit/test-results.xml tests

@@ -135,6 +135,7 @@ class CommonRange(object):
             result.length -= end - result.start
             result.start = end
             result.value = result.value[result.start-self.start:(result.start-self.start)+result.length]
+            print(result.value_str, result.start-self.start, (result.start-self.start)+result.length)
             return [result]
 
         if self.start < start <= self.end <= end:

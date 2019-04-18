@@ -26,6 +26,7 @@ class LengthEngine(Engine):
             bitvectors_by_n_gram_length[bin_num].append(i)
 
         common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
+
         print(common_ranges_by_length)
 
         for length, ranges in common_ranges_by_length.items():

@@ -25,9 +25,11 @@ class LengthEngine(Engine):
             bin_num = int(math.ceil(len(bitvector) / n_gram_length))
             bitvectors_by_n_gram_length[bin_num].append(i)
 
-        # TODO: From here we should start a loop for subclustering
         common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
         for length, ranges in common_ranges_by_length.items():
+            for rng in ranges:
+                rng.debug = True
+
             common_ranges_by_length[length] = self.ignore_already_labeled(ranges, self.already_labeled)
 
         self.filter_common_ranges(common_ranges_by_length)
@@ -97,10 +99,6 @@ class LengthEngine(Engine):
             for length, common_ranges in common_ranges_by_length.items():
                 for common_range in filter(lambda cr: cr.length >= window_length, common_ranges):
                     bits = common_range.value_str
-                    if window_length == 8:
-                        print("   ", common_range)
-                        print("      ", common_range.value_str)
-                        print("      ", bits, window_length, n_gram_length)
 
                     max_score = max_start = -1
                     for start in range(0, len(bits) + 1 - window_length, n_gram_length):

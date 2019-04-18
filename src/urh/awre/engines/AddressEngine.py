@@ -133,8 +133,25 @@ class AddressEngine(Engine):
         # Now we can separate SRC and DST
         for participant, ranges in high_scored_ranges_by_participant.items():
             address = addresses_by_participant[participant]
-            for rng in ranges:
+            result = []
+            for rng in sorted(ranges, key=lambda r: r.score, reverse=True):
                 rng.field_type = "source address" if rng.value.tostring() == address else "destination address"
+                if len(result) == 0:
+                    result.append(rng)
+                else:
+                    subset = next((r for r in result if rng.message_indices.issubset(r.message_indices)), None)
+                    if subset is not None:
+                        if rng.field_type == subset.field_type:
+                            # Avoid adding same address type twice
+                            continue
+
+                        if rng.length != subset.length or (rng.start != subset.end + 1 and rng.end + 1 != subset.start):
+                            # Ensure addresses are next to each other
+                            continue
+
+                    result.append(rng)
+
+            high_scored_ranges_by_participant[participant] = result
 
         self.__find_broadcast_fields(high_scored_ranges_by_participant, addresses_by_participant)
 
@@ -158,28 +175,39 @@ class AddressEngine(Engine):
                 if len(matching) == 1:
                     address = matching[0].value.tostring()
                     # only one address, so probably a destination and not a source
-                    scored_participants_addresses[participant][address] -= 1
+                    scored_participants_addresses[participant][address] *= 0.9
 
                     # Since this is probably an ACK, the address is probably SRC of participant of previous message
                     if i > 0 and self.participant_indices[i - 1] != participant:
                         prev_participant = self.participant_indices[i - 1]
                         prev_matching = [rng for rng in high_scored_ranges_by_participant[prev_participant]
                                          if i - 1 in rng.message_indices and rng.value.tostring() in addresses]
-                        if len(prev_matching) > 1 and address in {rng.value.tostring() for rng in matching}:
-                            scored_participants_addresses[prev_participant][address] += 1
+                        if len(prev_matching) > 1:
+                            for prev_rng in filter(lambda r: r.value.tostring() == address, prev_matching):
+                                scored_participants_addresses[prev_participant][address] += prev_rng.score
 
                 elif len(matching) > 1:
                     # more than one address, so there must be a source address included
-                    for address in {rng.value.tostring() for rng in matching}:
-                        scored_participants_addresses[participant][address] += 1
+                    for rng in matching:
+                        scored_participants_addresses[participant][rng.value.tostring()] += rng.score
 
+        minimum_score = 0.5
         taken_addresses = set()
+        self._debug("Scored addresses", scored_participants_addresses)
+
         for participant, addresses in sorted(scored_participants_addresses.items()):
-            # sort filtered results to prevent randomness for equal scores
+
             try:
-                found_address = max(sorted(filter(lambda a: a not in taken_addresses, addresses), reverse=True),
-                                    key=addresses.get)
-            except ValueError:
+                if len(addresses) > 1:
+                    # sort filtered results to prevent randomness for equal scores
+                    found_address = max(sorted(
+                        filter(lambda a: a not in taken_addresses and addresses[a] >= minimum_score, addresses),
+                        reverse=True
+                    ),
+                        key=addresses.get)
+                else:
+                    found_address = list(addresses)[0]
+            except (ValueError, IndexError):
                 # Could not assign address for this participant
                 addresses_by_participant[participant] = None
                 continue

@@ -15,6 +15,7 @@ from urh.awre.engines.Engine import Engine
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util.GenericCRC import GenericCRC
 
@@ -161,7 +162,7 @@ class AWRExperiments(AWRETestCase):
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
-        mb.add_label(FieldType.Function.DST_ADDRESS, 8)
+        mb.add_label(FieldType.Function.SRC_ADDRESS, 8)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
         pg = ProtocolGenerator([mb.message_type],
@@ -178,7 +179,7 @@ class AWRExperiments(AWRETestCase):
         charly = Participant("Charly", address_hex="110000")
         daniel = Participant("Daniel", address_hex="001100")
         emy = Participant("Emy", address_hex="100100")
-        #broadcast = Participant("Broadcast", address_hex="ff")     #TODO: Sometimes messages to broadcast
+        # broadcast = Participant("Broadcast", address_hex="ff")     #TODO: Sometimes messages to broadcast
 
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
@@ -187,7 +188,7 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.DST_ADDRESS, 24)
         mb.add_label(FieldType.Function.SRC_ADDRESS, 24)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 32)
-        mb.add_label(FieldType.Function.DATA, 8*8)
+        mb.add_label(FieldType.Function.DATA, 8 * 8)
         mb.add_label(FieldType.Function.CHECKSUM, 16)
 
         mb_ack = MessageTypeBuilder("ack")
@@ -200,12 +201,14 @@ class AWRExperiments(AWRETestCase):
         mb_kex.add_label(FieldType.Function.SYNC, 16)
         mb_kex.add_label(FieldType.Function.DST_ADDRESS, 24)
         mb_kex.add_label(FieldType.Function.SRC_ADDRESS, 24)
-        mb_kex.add_label(FieldType.Function.DATA, 64*8)
+        mb_kex.add_label(FieldType.Function.DATA, 64 * 8)
         mb.add_label(FieldType.Function.CHECKSUM, 16)
 
         pg = ProtocolGenerator([mb.message_type, mb_ack.message_type, mb_kex.message_type],
-                               syncs_by_mt={mb.message_type: "0x0420", mb_ack.message_type: "0x2222", mb_kex.message_type: "0x6767"},
-                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 4, mb_kex.message_type: "10" * 12},
+                               syncs_by_mt={mb.message_type: "0x0420", mb_ack.message_type: "0x2222",
+                                            mb_kex.message_type: "0x6767"},
+                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 4,
+                                                mb_kex.message_type: "10" * 12},
                                participants=[alice, bob, charly, daniel, emy])
 
         return pg
@@ -288,6 +291,10 @@ class AWRExperiments(AWRETestCase):
         :return:
         """
         accuracy = 0
+
+        def label_functions_matches(lbl1: ProtocolLabel, lbl2: ProtocolLabel) -> bool:
+            return lbl1.field_type.function == lbl2.field_type.function
+
         for i, msg in enumerate(messages):
             expected = expected_labels[i]  # type: MessageType
 
@@ -295,7 +302,7 @@ class AWRExperiments(AWRETestCase):
             for lbl in expected:
                 try:
                     next(l for l in msg.message_type if
-                         l.start == lbl.start and l.end == lbl.end and l.field_type.function == lbl.field_type.function)
+                         l.start == lbl.start and l.end == lbl.end and label_functions_matches(l, lbl))
                     found = True
                 except StopIteration:
                     found = False
@@ -308,10 +315,10 @@ class AWRExperiments(AWRETestCase):
         return accuracy * 100
 
     def test_against_num_messages(self):
-        num_messages = list(range(1, 25, 1))
+        num_messages = list(range(1, 24, 1))
         accuracies = defaultdict(list)
 
-        protocols = [6, 7]
+        protocols = [1, 2, 3, 4, 5, 6, 7]
 
         random.seed(0)
         np.random.seed(0)
@@ -323,7 +330,7 @@ class AWRExperiments(AWRETestCase):
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
 
-        self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %")
+        self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %", grid=True)
         self.__export_to_csv("/tmp/accuray-vs-messages", num_messages, accuracies)
 
     def test_against_error(self):

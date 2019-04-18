@@ -137,7 +137,7 @@ class CommonRange(object):
             result.value = result.value[result.start-self.start:(result.start-self.start)+result.length]
             return [result]
 
-        if self.start < start < self.end <= end:
+        if self.start < start <= self.end <= end:
             # overlaps on the right
             result = copy.deepcopy(self)
             result.length -= self.end + 1 - start

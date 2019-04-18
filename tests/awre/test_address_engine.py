@@ -95,7 +95,6 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(len(ff.known_participant_addresses), 0)
 
         ff.perform_iteration()
-        print(ff.known_participant_addresses)
 
         self.assertEqual(len(ff.known_participant_addresses), 2)
         self.assertIn(bytes([int(h, 16) for h in self.alice.address_hex]),
@@ -309,7 +308,6 @@ class TestAddressEngine(AWRETestCase):
         self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]), "1337")
         self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]), "4711")
 
-        print(ff.known_participant_addresses)
         for mt in ff.message_types:
             preamble = mt.get_first_label_with_type(FieldType.Function.PREAMBLE)
             self.assertEqual(preamble.start, 0)
@@ -342,9 +340,6 @@ class TestAddressEngine(AWRETestCase):
         hexvectors = FormatFinder.get_hexvectors(bitvectors)
         address_engine = AddressEngine(hexvectors, participant_indices=[participants.index(msg.participant) for msg in
                                                                         protocol.messages])
-        print(address_engine.find_addresses())
-
-        print(address_engine.find())
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util

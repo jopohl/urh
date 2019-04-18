@@ -99,8 +99,6 @@ class TestGeneratedProtocols(AWRETestCase):
 
         ff.run()
 
-        print(ff.message_types)
-
         self.assertEqual(len(ff.message_types), 1)
 
         mt = ff.message_types[0]
@@ -119,3 +117,21 @@ class TestGeneratedProtocols(AWRETestCase):
         seq = mt.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
         self.assertEqual(seq.start, 32)
         self.assertEqual(seq.length, 8)
+
+    def test_with_checksum(self):
+        proto_file = get_path_for_data_file("with_checksum.proto.xml")
+        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
+        protocol.from_xml_file(filename=proto_file, read_bits=True)
+
+        self.clear_message_types(protocol.messages)
+
+        ff = FormatFinder(protocol.messages)
+        known_participant_addresses = list(ff.known_participant_addresses.values())
+        ff.known_participant_addresses.clear()
+
+        ff.run()
+
+        self.assertIn(known_participant_addresses[0].tostring(), list(map(bytes, ff.known_participant_addresses.values())))
+        self.assertIn(known_participant_addresses[1].tostring(), list(map(bytes, ff.known_participant_addresses.values())))
+
+        self.assertEqual(len(ff.message_types), 3)

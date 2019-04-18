@@ -105,8 +105,19 @@ class AddressEngine(Engine):
                 addresses_by_participant[participant] = dict()
                 continue
 
-            max_score = sorted_ranges[0].score
-            possible_address_lengths = [r.length for r in sorted_ranges if r.score == max_score]
+            max_scored = [r for r in sorted_ranges if r.score == sorted_ranges[0].score]
+
+            # Prevent overestimation of address length my looking for substrings
+            for rng in max_scored[:]:
+                same_message_rng = [r for r in sorted_ranges
+                                    if r not in max_scored and r.score > 0 and r.message_indices == rng.message_indices]
+
+                if len(same_message_rng) > 1 and all(r.value.tobytes() in rng.value.tobytes() for r in same_message_rng):
+                    # remove the longer range and add the smaller ones
+                    max_scored.remove(rng)
+                    max_scored.extend(same_message_rng)
+
+            possible_address_lengths = [r.length for r in max_scored]
 
             # Count possible address lengths.
             frequencies = Counter(possible_address_lengths)

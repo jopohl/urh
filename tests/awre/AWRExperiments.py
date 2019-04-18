@@ -63,7 +63,7 @@ class AWRExperiments(AWRETestCase):
     @staticmethod
     def _prepare_protocol_3() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="1337")
-        bob = Participant("Bob", address_hex="4711")
+        bob = Participant("Bob", address_hex="beef")
 
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
@@ -89,7 +89,7 @@ class AWRExperiments(AWRETestCase):
     @staticmethod
     def _prepare_protocol_4() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="1337")
-        bob = Participant("Bob", address_hex="4711")
+        bob = Participant("Bob", address_hex="beef")
 
         checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
 
@@ -130,7 +130,7 @@ class AWRExperiments(AWRETestCase):
     @staticmethod
     def _prepare_protocol_5() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="1337")
-        bob = Participant("Bob", address_hex="4711")
+        bob = Participant("Bob", address_hex="beef")
         carl = Participant("Carl", address_hex="cafe")
 
         mb = MessageTypeBuilder("data")
@@ -157,7 +157,7 @@ class AWRExperiments(AWRETestCase):
     @staticmethod
     def _prepare_protocol_6() -> ProtocolGenerator:
         alice = Participant("Alice", address_hex="24")
-        broadcast = Participant("Broadcast", address_hex="ff")
+        broadcast = Participant("Bob", address_hex="ff")
 
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.SYNC, 16)
@@ -315,7 +315,7 @@ class AWRExperiments(AWRETestCase):
         return accuracy * 100
 
     def test_against_num_messages(self):
-        num_messages = list(range(1, 24, 1))
+        num_messages = list(range(1, 30, 1))
         accuracies = defaultdict(list)
 
         protocols = [1, 2, 3, 4, 5, 6, 7]

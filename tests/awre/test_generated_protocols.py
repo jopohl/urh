@@ -147,6 +147,23 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertIn(known_participant_addresses[1].tostring(),
                       list(map(bytes, ff.known_participant_addresses.values())))
 
+    def test_without_preamble_24_messages(self):
+        ff, messages = self.get_format_finder_from_protocol_file("no_preamble24.proto.xml",
+                                                                 clear_participant_addresses=False,
+                                                                 return_messages=True)
+
+        known_participant_addresses = ff.known_participant_addresses.copy()
+        ff.known_participant_addresses.clear()
+
+        ff.run()
+
+        self.assertEqual(len(ff.message_types), 1)
+
+        self.assertIn(known_participant_addresses[0].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+        self.assertIn(known_participant_addresses[1].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+
     def test_with_three_syncs_different_preamble_lengths(self):
         ff, messages = self.get_format_finder_from_protocol_file("three_syncs.proto.xml", return_messages=True)
         preprocessor = Preprocessor(ff.get_bitvectors_from_messages(messages))

@@ -183,6 +183,9 @@ class FormatFinder(object):
         :param message_type:
         :return:
         """
+        if len(message_type) == 0:
+            return
+
         for rng in common_ranges.copy():
             for lbl in message_type:  # type: ProtocolLabel
                 if any(i in range(rng.bit_start, rng.bit_end) for i in range(lbl.start, lbl.end)):

@@ -167,7 +167,14 @@ class AddressEngine(Engine):
 
         self.__find_broadcast_fields(high_scored_ranges_by_participant, addresses_by_participant)
 
-        return [rng for ranges in high_scored_ranges_by_participant.values() for rng in ranges]
+        result = [rng for ranges in high_scored_ranges_by_participant.values() for rng in ranges]
+        # If we did not find a SRC address, lower the score a bit,
+        # so DST fields do not win later e.g. again length fields in case of tie
+        if not any(rng.field_type == "source address" for rng in result):
+            for rng in result:
+                rng.score *= 0.95
+
+        return result
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
         scored_participants_addresses = dict()

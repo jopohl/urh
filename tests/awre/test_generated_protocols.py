@@ -1,9 +1,7 @@
-from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
 from tests.awre.AWRETestCase import AWRETestCase
-from tests.utils_testing import get_path_for_data_file
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
+from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
@@ -57,15 +55,7 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertEqual(seq.length, 8)
 
     def test_without_preamble_random_data(self):
-        proto_file = get_path_for_data_file("without_ack_random_data.proto.xml")
-        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
-        protocol.from_xml_file(filename=proto_file, read_bits=True)
-
-        self.clear_message_types(protocol.messages)
-
-        ff = FormatFinder(protocol.messages)
-        ff.known_participant_addresses.clear()
-
+        ff = self.get_format_finder_from_protocol_file("without_ack_random_data.proto.xml")
         ff.run()
 
         self.assertEqual(len(ff.message_types), 1)
@@ -88,15 +78,7 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertEqual(seq.length, 8)
 
     def test_without_preamble_random_data2(self):
-        proto_file = get_path_for_data_file("without_ack_random_data2.proto.xml")
-        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
-        protocol.from_xml_file(filename=proto_file, read_bits=True)
-
-        self.clear_message_types(protocol.messages)
-
-        ff = FormatFinder(protocol.messages)
-        ff.known_participant_addresses.clear()
-
+        ff = self.get_format_finder_from_protocol_file("without_ack_random_data2.proto.xml")
         ff.run()
 
         self.assertEqual(len(ff.message_types), 1)
@@ -119,19 +101,40 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertEqual(seq.length, 8)
 
     def test_with_checksum(self):
-        proto_file = get_path_for_data_file("with_checksum.proto.xml")
-        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
-        protocol.from_xml_file(filename=proto_file, read_bits=True)
-
-        self.clear_message_types(protocol.messages)
-
-        ff = FormatFinder(protocol.messages)
-        known_participant_addresses = list(ff.known_participant_addresses.values())
+        ff = self.get_format_finder_from_protocol_file("with_checksum.proto.xml", clear_participant_addresses=False)
+        known_participant_addresses = ff.known_participant_addresses.copy()
         ff.known_participant_addresses.clear()
+        ff.run()
+
+        self.assertIn(known_participant_addresses[0].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+        self.assertIn(known_participant_addresses[1].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+
+        self.assertEqual(len(ff.message_types), 3)
+
+    def test_with_only_one_address(self):
+        ff = self.get_format_finder_from_protocol_file("only_one_address.proto.xml", clear_participant_addresses=False)
+        known_participant_addresses = ff.known_participant_addresses.copy()
+        ff.known_participant_addresses.clear()
+
+        print(known_participant_addresses)
+        self.assertIn(known_participant_addresses[0].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+        self.assertIn(known_participant_addresses[1].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+
+    def test_with_three_syncs_different_preamble_lengths(self):
+        ff, messages = self.get_format_finder_from_protocol_file("three_syncs.proto.xml", return_messages=True)
+        preprocessor = Preprocessor(ff.get_bitvectors_from_messages(messages))
+        sync_words = preprocessor.find_possible_syncs()
+        self.assertIn("0000010000100000", sync_words, msg="Sync 1")
+        self.assertIn("0010001000100010", sync_words, msg="Sync 2")
+        self.assertIn("0110011101100111", sync_words, msg="Sync 3")
 
         ff.run()
 
-        self.assertIn(known_participant_addresses[0].tostring(), list(map(bytes, ff.known_participant_addresses.values())))
-        self.assertIn(known_participant_addresses[1].tostring(), list(map(bytes, ff.known_participant_addresses.values())))
+        expected_sync_ends = [32, 24, 40, 24, 32, 24, 40, 24, 32, 24, 40, 24, 32, 24, 40, 24]
 
-        self.assertEqual(len(ff.message_types), 3)
+        for i, (s1, s2) in enumerate(zip(expected_sync_ends, ff.sync_ends)):
+            self.assertEqual(s1, s2, msg=str(i))

@@ -3,6 +3,9 @@ import tempfile
 import unittest
 
 import numpy
+from urh.awre.FormatFinder import FormatFinder
+
+from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 from urh.signalprocessing.MessageType import MessageType
@@ -16,6 +19,22 @@ class AWRETestCase(unittest.TestCase):
     def setUp(self):
         numpy.set_printoptions(linewidth=80)
         self.field_types = self.__init_field_types()
+
+    def get_format_finder_from_protocol_file(self, filename: str, clear_participant_addresses=True, return_messages=False):
+        proto_file = get_path_for_data_file(filename)
+        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
+        protocol.from_xml_file(filename=proto_file, read_bits=True)
+
+        self.clear_message_types(protocol.messages)
+
+        ff = FormatFinder(protocol.messages)
+        if clear_participant_addresses:
+            ff.known_participant_addresses.clear()
+
+        if return_messages:
+            return ff, protocol.messages
+        else:
+            return ff
 
     @staticmethod
     def __init_field_types():

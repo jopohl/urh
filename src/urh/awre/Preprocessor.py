@@ -62,7 +62,7 @@ class Preprocessor(object):
                         preamble_lengths.append(sync_start - preamble_starts[i])
 
                     # Consider case where sync word starts with preamble pattern
-                    sync_start = bits.find(sync_word, sync_start + 1, sync_start + 2*len(sync_word))
+                    sync_start = bits.find(sync_word, sync_start + 1, sync_start + 2 * len(sync_word))
 
                     if sync_start != -1:
                         if sync_start - preamble_starts[i] >= 2:
@@ -164,7 +164,52 @@ class Preprocessor(object):
                       if len(word) == estimated_sync_length}
         self.__debug("Sync words", sync_words)
 
+        additional_syncs = self.__find_additional_sync_words(estimated_sync_length, sync_words, possible_sync_words)
+
+        if additional_syncs:
+            self.__debug("Found addtional sync words", additional_syncs)
+            sync_words.update(additional_syncs)
+
         return sorted(sync_words, key=sync_words.get, reverse=True)
+
+    def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:
+        """
+        Look for additional sync words, in case we had varying preamble lengths and multiple sync words
+        (see test_with_three_syncs_different_preamble_lengths for an example)
+
+        :param sync_length:
+        :type present_sync_words: dict
+        :type possible_sync_words: dict
+        :return:
+        """
+        np_syn = [np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
+                  for sync_word in present_sync_words]
+        messages_without_sync = [i for i, bv in enumerate(self.bitvectors)
+                                 if not any(awre_util.find_occurrences(bv, s, return_after_first=True) for s in np_syn)]
+
+        result = dict()
+        if len(messages_without_sync) == 0:
+            return result
+
+        # Is there another sync word that applies to all messages without sync?
+        additional_candidates = {word: score for word, score in possible_sync_words.items()
+                                 if len(word) > sync_length and not any(s in word for s in present_sync_words)}
+
+        for sync in sorted(additional_candidates, key=additional_candidates.get, reverse=True):
+            if len(messages_without_sync) == 0:
+                break
+
+            score = additional_candidates[sync]
+            s = sync[:sync_length]
+            np_s = np.fromiter(s, dtype=np.uint8, count=len(s))
+            matching = [i for i in messages_without_sync
+                        if awre_util.find_occurrences(self.bitvectors[i], np_s, return_after_first=True)]
+            if matching:
+                result[s] = score
+                for m in matching:
+                    messages_without_sync.remove(m)
+
+        return result
 
     def get_raw_preamble_positions(self) -> np.ndarray:
         """

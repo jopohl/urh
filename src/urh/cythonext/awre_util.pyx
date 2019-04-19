@@ -67,7 +67,8 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
     return smaller_len
 
-cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b, unsigned long[:] ignore_indices=None):
+cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
+                            unsigned long[:] ignore_indices=None, return_after_first=False):
     """
     Find the indices of occurrences of b in a. 
     
@@ -93,5 +94,9 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b, unsigned long[
                 found = False
                 break
         if found:
-            result.append(i)
+            if return_after_first:
+                return [i]
+            else:
+                result.append(i)
+
     return result

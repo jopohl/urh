@@ -181,6 +181,8 @@ class AWRExperiments(AWRETestCase):
         emy = Participant("Emy", address_hex="100100")
         # broadcast = Participant("Broadcast", address_hex="ff")     #TODO: Sometimes messages to broadcast
 
+        checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
+
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
         mb.add_label(FieldType.Function.SYNC, 16)
@@ -189,12 +191,13 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.SRC_ADDRESS, 24)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 32)
         mb.add_label(FieldType.Function.DATA, 8 * 8)
-        mb.add_label(FieldType.Function.CHECKSUM, 16)
+        mb.add_checksum_label(16, checksum)
 
         mb_ack = MessageTypeBuilder("ack")
         mb_ack.add_label(FieldType.Function.PREAMBLE, 8)
         mb_ack.add_label(FieldType.Function.SYNC, 16)
         mb_ack.add_label(FieldType.Function.DST_ADDRESS, 24)
+        mb_ack.add_checksum_label(16, checksum)
 
         mb_kex = MessageTypeBuilder("kex")
         mb_kex.add_label(FieldType.Function.PREAMBLE, 24)
@@ -202,7 +205,7 @@ class AWRExperiments(AWRETestCase):
         mb_kex.add_label(FieldType.Function.DST_ADDRESS, 24)
         mb_kex.add_label(FieldType.Function.SRC_ADDRESS, 24)
         mb_kex.add_label(FieldType.Function.DATA, 64 * 8)
-        mb.add_label(FieldType.Function.CHECKSUM, 16)
+        mb_kex.add_checksum_label(16, checksum)
 
         pg = ProtocolGenerator([mb.message_type, mb_ack.message_type, mb_kex.message_type],
                                syncs_by_mt={mb.message_type: "0x0420", mb_ack.message_type: "0x2222",

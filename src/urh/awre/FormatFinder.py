@@ -352,9 +352,12 @@ class FormatFinder(object):
                 solution = [rng] + [r for r in partition[i + 1:] if not rng.overlaps_with(r)]
                 possible_solutions.append(solution)
 
-            # Take solution that maximizes score. In case of tie, choose solution with shorter total length
+            # Take solution that maximizes score. In case of tie, choose solution with shorter total length.
+            # if there is still a tie sort by start letters of field type names to prevent randomness
             best_solution = max(possible_solutions,
-                                key=lambda sol: (sum(r.score for r in sol), -sum(r.length_in_bits for r in sol)))
+                                key=lambda sol: (sum(r.score for r in sol),
+                                                 -sum(r.length_in_bits for r in sol),
+                                                 "".join(r.field_type[0] for r in sol)))
             result.extend(best_solution)
 
         return CommonRangeContainer(result, message_indices=None)  # auto message indices

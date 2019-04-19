@@ -24,6 +24,8 @@ class AddressEngine(Engine):
         """
         assert len(msg_vectors) == len(participant_indices)
 
+        self.minimum_score = 0.1
+
         self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
         self.already_labeled = []
@@ -96,39 +98,22 @@ class AddressEngine(Engine):
 
         high_scored_ranges_by_participant = defaultdict(list)
 
+        address_length = self.__estimate_address_length(ranges_by_participant)
+
         # Get highscored ranges by participant
         for participant, common_ranges in ranges_by_participant.items():
             # Sort by negative score so ranges with highest score appear first
             # Secondary sort by tuple to ensure order when ranges have same score
-            sorted_ranges = sorted(filter(lambda cr: cr.score > 0.1, common_ranges), key=lambda cr: (-cr.score, cr))
+            sorted_ranges = sorted(filter(lambda cr: cr.score > self.minimum_score, common_ranges),
+                                   key=lambda cr: (-cr.score, cr))
             if len(sorted_ranges) == 0:
                 addresses_by_participant[participant] = dict()
                 continue
 
-            max_scored = [r for r in sorted_ranges if r.score == sorted_ranges[0].score]
-
-            # Prevent overestimation of address length my looking for substrings
-            for rng in max_scored[:]:
-                same_message_rng = [r for r in sorted_ranges
-                                    if r not in max_scored and r.score > 0 and r.message_indices == rng.message_indices]
-
-                if len(same_message_rng) > 1 and all(
-                        r.value.tobytes() in rng.value.tobytes() for r in same_message_rng):
-                    # remove the longer range and add the smaller ones
-                    max_scored.remove(rng)
-                    max_scored.extend(same_message_rng)
-
-            possible_address_lengths = [r.length for r in max_scored]
-
-            # Count possible address lengths.
-            frequencies = Counter(possible_address_lengths)
-            # Take the most common one. On tie, take the shorter one
-            addr_len = max(frequencies, key=lambda x: (frequencies[x], -x))
-
             addresses_by_participant[participant] = {a for a in addresses_by_participant.get(participant, [])
-                                                     if len(a) == addr_len}
+                                                     if len(a) == address_length}
 
-            for rng in filter(lambda r: r.length == addr_len, sorted_ranges):
+            for rng in filter(lambda r: r.length == address_length, sorted_ranges):
                 rng.score = min(rng.score, 1.0)
                 high_scored_ranges_by_participant[participant].append(rng)
 
@@ -175,6 +160,50 @@ class AddressEngine(Engine):
                 rng.score *= 0.95
 
         return result
+
+    def __estimate_address_length(self, ranges_by_participant: dict):
+        """
+        Estimate the address length which is assumed to be the same for all participants
+
+        :param ranges_by_participant:
+        :return:
+        """
+        address_lengths = []
+        for participant, common_ranges in ranges_by_participant.items():
+            sorted_ranges = sorted(filter(lambda cr: cr.score > self.minimum_score, common_ranges),
+                                   key=lambda cr: (-cr.score, cr))
+
+            max_scored = [r for r in sorted_ranges if r.score == sorted_ranges[0].score]
+
+            # Prevent overestimation of address length by looking for substrings
+            for rng in max_scored[:]:
+                same_message_rng = [r for r in sorted_ranges
+                                    if r not in max_scored and r.score > 0 and r.message_indices == rng.message_indices]
+
+                if len(same_message_rng) > 1 and all(
+                        r.value.tobytes() in rng.value.tobytes() for r in same_message_rng):
+                    # remove the longer range and add the smaller ones
+                    max_scored.remove(rng)
+                    max_scored.extend(same_message_rng)
+
+            possible_address_lengths = [r.length for r in max_scored]
+
+            # Count possible address lengths.
+            frequencies = Counter(possible_address_lengths)
+            # Take the most common one. On tie, take the shorter one
+            try:
+                addr_len = max(frequencies, key=lambda x: (frequencies[x], -x))
+                address_lengths.append(addr_len)
+            except ValueError:  # max() arg is an empty sequence
+                pass
+
+        # Take most common address length of participants, to ensure they all have same address length
+        counted = Counter(address_lengths)
+        try:
+            address_length = max(counted, key=lambda x: (counted[x], -x))
+            return address_length
+        except ValueError:  # max() arg is an empty sequence
+            return 0
 
     def __assign_participant_addresses(self, addresses_by_participant, high_scored_ranges_by_participant):
         scored_participants_addresses = dict()

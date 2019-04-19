@@ -1,10 +1,12 @@
 from tests.awre.AWRETestCase import AWRETestCase
+from urh.awre import AutoAssigner
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Participant import Participant
+from urh.util import util
 
 
 class TestGeneratedProtocols(AWRETestCase):
@@ -159,3 +161,29 @@ class TestGeneratedProtocols(AWRETestCase):
 
         for i, (s1, s2) in enumerate(zip(expected_sync_ends, ff.sync_ends)):
             self.assertEqual(s1, s2, msg=str(i))
+
+    def test_with_four_participants(self):
+        ff, messages = self.get_format_finder_from_protocol_file("four_participants.proto.xml",
+                                                                 clear_participant_addresses=False,
+                                                                 return_messages=True)
+
+        known_participant_addresses = ff.known_participant_addresses.copy()
+        ff.known_participant_addresses.clear()
+
+        ff.run()
+
+        self.assertEqual(len(ff.message_types), 3)
+
+        # Use the AutoAssigner used also in main GUI to test assigned participant addresses to get same results
+        # as in main program and not rely on cache of FormatFinder, because values there might be false
+        # but SRC address labels still on right position which is the basis for Auto Assigner
+        for msg_type, indices in ff.existing_message_types.items():
+            for i in indices:
+                messages[i].message_type = msg_type
+
+        participants = list(set(m.participant for m in messages))
+        AutoAssigner.auto_assign_participant_addresses(messages, participants)
+
+        for i in range(4):
+            self.assertIn(participants[i].address_hex,
+                          list(map(util.convert_numbers_to_hex_string, known_participant_addresses.values())))

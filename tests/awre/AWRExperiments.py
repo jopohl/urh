@@ -178,7 +178,6 @@ class AWRExperiments(AWRETestCase):
         bob = Participant("Bob", address_hex="031337")
         charly = Participant("Charly", address_hex="110000")
         daniel = Participant("Daniel", address_hex="001100")
-        emy = Participant("Emy", address_hex="100100")
         # broadcast = Participant("Broadcast", address_hex="ff")     #TODO: Sometimes messages to broadcast
 
         checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
@@ -212,7 +211,7 @@ class AWRExperiments(AWRETestCase):
                                             mb_kex.message_type: "0x6767"},
                                preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 4,
                                                 mb_kex.message_type: "10" * 12},
-                               participants=[alice, bob, charly, daniel, emy])
+                               participants=[alice, bob, charly, daniel])
 
         return pg
 

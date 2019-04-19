@@ -317,7 +317,7 @@ class AWRExperiments(AWRETestCase):
         return accuracy * 100
 
     def test_against_num_messages(self):
-        num_messages = list(range(1, 30, 1))
+        num_messages = list(range(1, 24, 1))
         accuracies = defaultdict(list)
 
         protocols = [1, 2, 3, 4, 5, 6, 7]

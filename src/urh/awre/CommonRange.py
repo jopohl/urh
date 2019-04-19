@@ -235,6 +235,12 @@ class CommonRangeContainer(object):
     def has_same_ranges(self, ranges: list) -> bool:
         return self.__ranges == ranges
 
+    def has_same_ranges_as_container(self, container):
+        if not isinstance(container, CommonRangeContainer):
+            return False
+
+        return self.__ranges == container.__ranges
+
     @staticmethod
     def has_overlapping_ranges(ranges: list) -> bool:
         for rng1, rng2 in itertools.combinations(ranges, 2):
@@ -247,6 +253,9 @@ class CommonRangeContainer(object):
 
     def __iter__(self):
         return self.__ranges.__iter__()
+
+    def __getitem__(self, item):
+        return self.__ranges[item]
 
     def __repr__(self):
         from pprint import pformat

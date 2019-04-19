@@ -136,10 +136,13 @@ class FormatFinder(object):
                     if src_range is None:
                         continue
                     for msg_index in src_range.message_indices:
+                        if len(participants_with_unknown_address) == 0:
+                            break
                         p = self.participant_indices[msg_index]
                         if p not in self.known_participant_addresses:
                             hex_vector = self.hexvectors[msg_index]
                             self.known_participant_addresses[p] = hex_vector[src_range.start:src_range.end+1]
+                            participants_with_unknown_address.discard(p)
 
             new_field_found |= len(containers) > 0
 
@@ -291,13 +294,15 @@ class FormatFinder(object):
         """
         result = []
         for container in containers:
-            if not container.ranges_overlap:
-                result.append(container)
-                continue
+            if container.ranges_overlap:
+                conflicted_handled = FormatFinder.__handle_container_overlapping_conflict(container)
+            else:
+                conflicted_handled = container
 
-            conflicted_handled = FormatFinder.__handle_container_overlapping_conflict(container)
-
-            if conflicted_handled not in result:
+            try:
+                same_rng_container = next(c for c in result if c.has_same_ranges_as_container(conflicted_handled))
+                same_rng_container.message_indices.update(conflicted_handled.message_indices)
+            except StopIteration:
                 result.append(conflicted_handled)
 
         return result

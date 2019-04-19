@@ -112,7 +112,8 @@ class AddressEngine(Engine):
                 same_message_rng = [r for r in sorted_ranges
                                     if r not in max_scored and r.score > 0 and r.message_indices == rng.message_indices]
 
-                if len(same_message_rng) > 1 and all(r.value.tobytes() in rng.value.tobytes() for r in same_message_rng):
+                if len(same_message_rng) > 1 and all(
+                        r.value.tobytes() in rng.value.tobytes() for r in same_message_rng):
                     # remove the longer range and add the smaller ones
                     max_scored.remove(rng)
                     max_scored.extend(same_message_rng)
@@ -206,19 +207,22 @@ class AddressEngine(Engine):
         taken_addresses = set()
         self._debug("Scored addresses", scored_participants_addresses)
 
-        for participant, addresses in sorted(scored_participants_addresses.items()):
+        # If all participants have exactly one possible address and they all differ, we can assign them right away
+        if all(len(addresses) == 1 for addresses in scored_participants_addresses.values()):
+            all_addresses = [list(addresses)[0] for addresses in scored_participants_addresses.values()]
+            if len(all_addresses) == len(set(all_addresses)):  # ensure all addresses are different
+                for p, addresses in scored_participants_addresses.items():
+                    addresses_by_participant[p] = list(addresses)[0]
+                return
 
+        for participant, addresses in sorted(scored_participants_addresses.items()):
             try:
-                if len(addresses) > 1:
-                    # sort filtered results to prevent randomness for equal scores
-                    found_address = max(sorted(
-                        filter(lambda a: a not in taken_addresses and addresses[a] >= minimum_score, addresses),
-                        reverse=True
-                    ),
-                        key=addresses.get)
-                else:
-                    found_address = list(addresses)[0]
-            except (ValueError, IndexError):
+                # sort filtered results to prevent randomness for equal scores
+                found_address = max(sorted(
+                    filter(lambda a: a not in taken_addresses and addresses[a] >= minimum_score, addresses),
+                    reverse=True
+                ), key=addresses.get)
+            except ValueError:
                 # Could not assign address for this participant
                 addresses_by_participant[participant] = None
                 continue

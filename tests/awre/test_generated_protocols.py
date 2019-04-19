@@ -118,7 +118,28 @@ class TestGeneratedProtocols(AWRETestCase):
         known_participant_addresses = ff.known_participant_addresses.copy()
         ff.known_participant_addresses.clear()
 
-        print(known_participant_addresses)
+        ff.run()
+
+        self.assertIn(known_participant_addresses[0].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+        self.assertIn(known_participant_addresses[1].tostring(),
+                      list(map(bytes, ff.known_participant_addresses.values())))
+
+    def test_with_one_address_one_message_type(self):
+        ff, messages = self.get_format_finder_from_protocol_file("one_address_one_mt.proto.xml",
+                                                                 clear_participant_addresses=False,
+                                                                 return_messages=True)
+
+        self.assertEqual(len(messages), 17)
+        self.assertEqual(len(ff.hexvectors), 17)
+
+        known_participant_addresses = ff.known_participant_addresses.copy()
+        ff.known_participant_addresses.clear()
+
+        ff.run()
+
+        self.assertEqual(len(ff.message_types), 1)
+
         self.assertIn(known_participant_addresses[0].tostring(),
                       list(map(bytes, ff.known_participant_addresses.values())))
         self.assertIn(known_participant_addresses[1].tostring(),

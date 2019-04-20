@@ -285,7 +285,7 @@ class AWRExperiments(AWRETestCase):
         return pg.protocol, expected_message_types
 
     @staticmethod
-    def calculate_accuracy(messages, expected_labels):
+    def calculate_accuracy(messages, expected_labels, num_broken_messages=0):
         """
         Calculate the accuracy of labels compared to expected labels
         Accuracy is 100% when labels == expected labels
@@ -301,6 +301,9 @@ class AWRExperiments(AWRETestCase):
             return lbl1.field_type.function == lbl2.field_type.function
 
         for i, msg in enumerate(messages):
+            if i in range(num_broken_messages):
+                continue
+
             expected = expected_labels[i]  # type: MessageType
 
             msg_accuracy = 1
@@ -315,7 +318,7 @@ class AWRExperiments(AWRETestCase):
                 if not found:
                     msg_accuracy -= 1 / len(expected)
 
-            accuracy += msg_accuracy * (1 / len(messages))
+            accuracy += msg_accuracy * (1 / (len(messages) - num_broken_messages))
 
         return accuracy * 100
 
@@ -345,8 +348,9 @@ class AWRExperiments(AWRETestCase):
         num_runs = 10
 
         num_messages = 16
-        num_broken_messages = list(range(0, num_messages))
+        num_broken_messages = list(range(0, num_messages+1))
         accuracies = defaultdict(list)
+        accuracies_without_broken = defaultdict(list)
 
         protocols = [1, 2, 3, 4, 5, 6, 7]
 
@@ -355,8 +359,10 @@ class AWRExperiments(AWRETestCase):
 
         for protocol_nr in protocols:
             for broken in num_broken_messages:
-                print("Test Protocol {0} with {1:02d} broken messages ({2} runs)".format(protocol_nr, broken, num_runs))
+                print("Test Protocol {0} with {1:02d} broken messages ({2} runs)".format(protocol_nr, broken, num_runs),
+                      end=" ")
                 tmp_accuracies = np.empty(num_runs, dtype=np.float64)
+                tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
                     protocol, expected_labels = self.get_protocol(protocol_nr,
                                                                   num_messages=num_messages,
@@ -365,13 +371,27 @@ class AWRExperiments(AWRETestCase):
 
                     self.run_format_finder_for_protocol(protocol)
                     accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
+                    accuracy_without_broken = self.calculate_accuracy(protocol.messages, expected_labels, broken)
                     tmp_accuracies[i] = accuracy
+                    tmp_accuracies_without_broken[i] = accuracy_without_broken
 
-                accuracies["protocol {}".format(protocol_nr)].append(np.mean(tmp_accuracies))
+                avg_accuracy = np.mean(tmp_accuracies)
+                avg_accuracy_without_broken = np.mean(tmp_accuracies_without_broken)
+                accuracies["protocol {}".format(protocol_nr)].append(avg_accuracy)
+                accuracies_without_broken["protocol {}".format(protocol_nr)].append(avg_accuracy_without_broken)
 
-        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies, xlabel="Broken messages in %",
+                print("{:>3}% {:>3}%".format(int(avg_accuracy), int(avg_accuracy_without_broken)))
+
+        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies,
+                    title="Overall Accuracy vs percentage of broken messages",
+                    xlabel="Broken messages in %",
+                    ylabel="Accuracy in %", grid=True)
+        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies_without_broken,
+                    title=" Accuracy of unbroken vs percentage of broken messages",
+                    xlabel="Broken messages in %",
                     ylabel="Accuracy in %", grid=True)
         self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies)
+        self.__export_to_csv("/tmp/accuray-vs-error_without_broken", num_broken_messages, accuracies_without_broken)
 
     def test_performance(self):
         num_messages = list(range(5, 50, 5))
@@ -410,7 +430,7 @@ class AWRExperiments(AWRETestCase):
                 f.write("\n")
 
     @staticmethod
-    def __plot(x: list, y: dict, xlabel: str, ylabel: str, grid=False):
+    def __plot(x: list, y: dict, xlabel: str, ylabel: str, grid=False, title=None):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
@@ -419,6 +439,9 @@ class AWRExperiments(AWRETestCase):
 
         if grid:
             plt.grid()
+
+        if title:
+            plt.title(title)
 
         plt.legend()
         plt.show()

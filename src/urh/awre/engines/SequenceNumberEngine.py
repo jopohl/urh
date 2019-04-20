@@ -14,7 +14,7 @@ class SequenceNumberEngine(Engine):
 
     """
 
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, already_labeled: list = None):
+    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.75, already_labeled: list = None):
         """
 
         :type bitvectors: list of np.ndarray
@@ -29,8 +29,8 @@ class SequenceNumberEngine(Engine):
             self.already_labeled_cols = {e // n_gram_length for rng in already_labeled for e in range(*rng)}
 
     def find(self):
-        if len(self.bitvectors) <= 2:
-            # We need at least 3 bitvectors to properly find a sequence number
+        if len(self.bitvectors) <= 3:
+            # We need at least 4 bitvectors to properly find a sequence number
             return []
 
         diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)

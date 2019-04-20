@@ -362,7 +362,7 @@ class FormatFinder(object):
                                                  "".join(r.field_type[0] for r in sol)))
             result.extend(best_solution)
 
-        return CommonRangeContainer(result, message_indices=None)  # auto message indices
+        return CommonRangeContainer(result, message_indices=container.message_indices)
 
     @staticmethod
     def retransform_message_indices(common_ranges, message_type_indices: list, sync_ends) -> list:

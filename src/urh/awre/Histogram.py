@@ -57,7 +57,6 @@ class Histogram(object):
         :param alpha:
         :return:
         """
-
         data_indices = np.argwhere(self.data >= alpha).flatten()
 
         if len(data_indices) < 2:
@@ -74,15 +73,15 @@ class Histogram(object):
                 length += 1
             else:
                 if length >= 2:
-                    value, msg_indices = self.__get_value_for_common_range(start, length)
-                    result.append(CommonRange(start, length, value, message_indices=msg_indices,
+                    value = self.__get_value_for_common_range(start, length)
+                    result.append(CommonRange(start, length, value, message_indices=set(self.__active_indices),
                                               range_type=range_type))
 
                 start, length = None, 0
 
             if i == len(data_indices) - 1 and length >= 2:
-                value, msg_indices = self.__get_value_for_common_range(start, length)
-                result.append(CommonRange(start, length, value, message_indices=msg_indices,
+                value = self.__get_value_for_common_range(start, length)
+                result.append(CommonRange(start, length, value, message_indices=set(self.__active_indices),
                                           range_type=range_type))
 
         return result
@@ -101,7 +100,7 @@ class Histogram(object):
             values[vector[start:start + length].tostring()].append(i)
         value = max(values, key=lambda x: len(x))
         indices = values[value]
-        return self.__vectors[indices[0]][start:start + length], set(indices)
+        return self.__vectors[indices[0]][start:start + length]
 
     def __vector_to_string(self, data_vector) -> str:
         lut = {i: "{0:x}".format(i) for i in range(16)}

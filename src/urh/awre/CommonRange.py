@@ -216,13 +216,21 @@ class CommonRangeContainer(object):
         self.__ranges.sort()
 
         if message_indices is None:
-            message_indices = {i for rng in self for i in rng.message_indices}
-
-        self.message_indices = message_indices
+            self.update_message_indices()
+        else:
+            self.message_indices = message_indices
 
     @property
     def ranges_overlap(self) -> bool:
         return self.has_overlapping_ranges(self.__ranges)
+
+    def update_message_indices(self):
+        if len(self) == 0:
+            self.message_indices = set()
+        else:
+            self.message_indices = set(self[0].message_indices)
+            for i in range(1, len(self)):
+                self.message_indices.intersection_update(self[i].message_indices)
 
     def add_range(self, rng: CommonRange):
         self.__ranges.append(rng)

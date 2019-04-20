@@ -25,7 +25,9 @@ class LengthEngine(Engine):
             bin_num = int(math.ceil(len(bitvector) / n_gram_length))
             bitvectors_by_n_gram_length[bin_num].append(i)
 
-        common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors, bitvectors_by_n_gram_length)
+        common_ranges_by_length = self.find_common_ranges_by_cluster(self.bitvectors,
+                                                                     bitvectors_by_n_gram_length,
+                                                                     alpha=0.7)
 
         for length, ranges in common_ranges_by_length.items():
             common_ranges_by_length[length] = self.ignore_already_labeled(ranges, self.already_labeled)

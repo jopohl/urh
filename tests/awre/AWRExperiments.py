@@ -266,7 +266,10 @@ class AWRExperiments(AWRETestCase):
             msg.plain_bits[pos:] = array.array("B",
                                                [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
 
-        cls.save_protocol("protocol{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
+        if num_broken_messages == 0:
+            cls.save_protocol("protocol{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
+        else:
+            cls.save_protocol("protocol{}_{}_broken".format(protocol_number, num_broken_messages), pg, silent=silent)
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 
@@ -345,7 +348,7 @@ class AWRExperiments(AWRETestCase):
         num_broken_messages = list(range(0, num_messages))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3, 4, 5, 6, 7]
+        protocols = [6, 7]
 
         random.seed(0)
         np.random.seed(0)

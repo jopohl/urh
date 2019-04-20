@@ -124,13 +124,17 @@ class AddressEngine(Engine):
         for participant, address in addresses_by_participant.copy().items():
             if address is None:
                 del addresses_by_participant[participant]
-                if participant in high_scored_ranges_by_participant:
-                    del high_scored_ranges_by_participant[participant]
 
         # Now we can separate SRC and DST
         for participant, ranges in high_scored_ranges_by_participant.items():
-            address = addresses_by_participant[participant]
+            try:
+                address = addresses_by_participant[participant]
+            except KeyError:
+                high_scored_ranges_by_participant[participant] = []
+                continue
+
             result = []
+
             for rng in sorted(ranges, key=lambda r: r.score, reverse=True):
                 rng.field_type = "source address" if rng.value.tostring() == address else "destination address"
                 if len(result) == 0:

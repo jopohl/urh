@@ -348,7 +348,7 @@ class AWRExperiments(AWRETestCase):
         num_broken_messages = list(range(0, num_messages))
         accuracies = defaultdict(list)
 
-        protocols = [6, 7]
+        protocols = [1, 2, 3, 4, 5, 6, 7]
 
         random.seed(0)
         np.random.seed(0)
@@ -369,7 +369,8 @@ class AWRExperiments(AWRETestCase):
 
                 accuracies["protocol {}".format(protocol_nr)].append(np.mean(tmp_accuracies))
 
-        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies, xlabel="Broken messages in %", ylabel="Accuracy in %", grid=True)
+        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies, xlabel="Broken messages in %",
+                    ylabel="Accuracy in %", grid=True)
         self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies)
 
     def test_performance(self):

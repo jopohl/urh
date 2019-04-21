@@ -36,18 +36,21 @@ class ChecksumEngine(Engine):
             for i, index in enumerate(message_indices):
                 bits = self.bitvectors[index]
                 crc_object, data_start, data_stop, crc_start, crc_stop = crc.guess_all(bits,
-                                                                             ignore_positions=self.already_labeled_cols)
+                                                                                       ignore_positions=self.already_labeled_cols)
 
                 if (crc_object, data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
-                    checksums_for_length.append(ChecksumRange(start=crc_start,
-                                                              length=crc_stop - crc_start,
-                                                              data_range_start=data_start,
-                                                              data_range_end=data_stop,
-                                                              crc=crc_object,
-                                                              score=1 / len(message_indices),
-                                                              field_type="checksum",
-                                                              message_indices={index}
-                                                              ))
+                    checksum_range = ChecksumRange(start=crc_start, length=crc_stop - crc_start,
+                                                   data_range_start=data_start, data_range_end=data_stop,
+                                                   crc=crc_object, score=1 / len(message_indices),
+                                                   field_type="checksum", message_indices={index}
+                                                   )
+                    checksums_for_length.append(checksum_range)
+                    # try:
+                    #     present_range = next(c for c in checksums_for_length if c == checksum_range)
+                    #     present_range.score += 1/len(message_indices)
+                    #     present_range.message_indices.add(index)
+                    # except StopIteration:
+                    #     checksums_for_length.append(checksum_range)
 
                     for j in range(i + 1, len(message_indices)):
                         bits = self.bitvectors[message_indices[j]]

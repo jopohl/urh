@@ -176,6 +176,15 @@ class ChecksumRange(CommonRange):
     def data_range_bit_end(self):
         return self.data_range_end + self.sync_end
 
+    def __eq__(self, other):
+        return super().__eq__(other) \
+               and self.data_range_start == other.data_range_start \
+               and self.data_range_end == other.data_range_end \
+               and self.crc == other.crc
+
+    def __hash__(self):
+        return hash((self.start, self.length, self.data_range_start, self.data_range_end, self.crc))
+
     def __repr__(self):
         return super().__repr__() + " \t" + \
                "{}".format(self.crc.caption) + \

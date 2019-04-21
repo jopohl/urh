@@ -1,5 +1,6 @@
 import array
 import copy
+import time
 from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
@@ -82,6 +83,10 @@ class GenericCRC(object):
         return all(getattr(self, attrib) == getattr(other, attrib) for attrib in (
             "polynomial", "reverse_polynomial", "reverse_all", "little_endian", "lsb_first", "start_value",
             "final_xor"))
+
+    def __hash__(self):
+        return hash((self.polynomial.tobytes(), self.reverse_polynomial, self.reverse_all, self.little_endian,
+                     self.lsb_first, self.start_value.tobytes(), self.final_xor.tobytes()))
 
     @property
     def poly_order(self):
@@ -213,7 +218,7 @@ class GenericCRC(object):
 
         # Set start value completely or 0000/FFFF
         if isinstance(start_value, int):
-            self.start_value = [start_value] * (self.poly_order - 1)
+            self.start_value = array.array("B", [start_value] * (self.poly_order - 1))
         elif isinstance(start_value, array.array) and len(start_value) == self.poly_order - 1:
             self.start_value = start_value
         else:
@@ -221,7 +226,7 @@ class GenericCRC(object):
 
         # Set final xor completely or 0000/FFFF
         if isinstance(final_xor, int):
-            self.final_xor = [final_xor] * (self.poly_order - 1)
+            self.final_xor = array.array("B", [final_xor] * (self.poly_order - 1))
         elif isinstance(final_xor, array.array) and len(final_xor) == self.poly_order - 1:
             self.final_xor = final_xor
         else:

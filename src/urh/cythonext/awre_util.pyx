@@ -67,6 +67,36 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
     return smaller_len
 
+
+cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list active_indices):
+    """
+    Return a histogram of common ranges. E.g. [1, 1, 0.75, 0.8] means 75% of values at third column are equal
+    
+    :param vectors: Vectors over which differences the histogram will be created
+    :param active_indices: Active indices of vectors. Vectors with index not in this list will be ignored
+    :return: 
+    """
+    cdef unsigned long i,j,k,index_i,index_j, L = len(active_indices)
+    cdef unsigned long longest = 0
+    for i in active_indices:
+        if len(vectors[i]) > longest:
+            longest = len(vectors[i])
+
+    cdef np.ndarray[np.float64_t] histogram = np.zeros(longest, dtype=np.float64)
+    cdef double n = (len(active_indices) * (len(active_indices) - 1)) // 2
+
+    cdef np.ndarray[np.uint8_t] bitvector_i, bitvector_j
+
+    for i in range(0, L - 1):
+        index_i = active_indices[i]
+        for j in range(i+1, L):
+            index_j = active_indices[j]
+            bitvector_i, bitvector_j = vectors[index_i], vectors[index_j]
+            for k in range(0, min(len(bitvector_i), len(bitvector_j))):
+                if bitvector_i[k] == bitvector_j[k]:
+                    histogram[k] += 1 / n
+    return histogram
+
 cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
                             unsigned long[:] ignore_indices=None, return_after_first=False):
     """

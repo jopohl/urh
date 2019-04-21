@@ -3,6 +3,7 @@ from collections import defaultdict
 import numpy as np
 
 from urh.awre.CommonRange import CommonRange
+from urh.cythonext import awre_util
 
 
 class Histogram(object):
@@ -10,7 +11,7 @@ class Histogram(object):
     Create a histogram based on the equalness of vectors
     """
 
-    def __init__(self, vectors, indices=None, normalize=True):
+    def __init__(self, vectors, indices=None, normalize=True, debug=False):
         """
 
         :type vectors: list of np.ndarray
@@ -23,28 +24,11 @@ class Histogram(object):
         self.__vectors = vectors  # type: list[np.ndarray]
         self.__active_indices = list(range(len(vectors))) if indices is None else indices
 
-        self.__num_values = len(max((self.__vectors[i] for i in self.__active_indices), key=len))
-
         self.normalize = normalize
         self.data = self.__create_histogram()
 
     def __create_histogram(self):
-        histogram = np.zeros(self.__num_values, dtype=np.float64 if self.normalize else np.uint)
-        if self.normalize:
-            # 1+2+3+...+len(self.__vectors)-1
-            n = (len(self.__active_indices) * (len(self.__active_indices) - 1)) // 2
-        else:
-            n = 1
-
-        for i in range(0, len(self.__active_indices) - 1):
-            index_i = self.__active_indices[i]
-            for j in range(i+1, len(self.__active_indices)):
-                index_j = self.__active_indices[j]
-                bitvector_i, bitvector_j = self.__vectors[index_i], self.__vectors[index_j]
-                for k in range(0, min(len(bitvector_i), len(bitvector_j))):
-                    if bitvector_i[k] == bitvector_j[k]:
-                        histogram[k] += 1 / n
-        return histogram
+        return awre_util.create_difference_histogram(self.__vectors, self.__active_indices)
 
     def __repr__(self):
         return str(self.data.tolist())

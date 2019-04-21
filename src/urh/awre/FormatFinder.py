@@ -3,7 +3,6 @@ import math
 from collections import defaultdict
 
 import numpy as np
-from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 
 from urh.awre import AutoAssigner
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer, ChecksumRange
@@ -13,6 +12,7 @@ from urh.awre.engines.ChecksumEngine import ChecksumEngine
 from urh.awre.engines.LengthEngine import LengthEngine
 from urh.awre.engines.SequenceNumberEngine import SequenceNumberEngine
 from urh.cythonext import awre_util
+from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -141,7 +141,7 @@ class FormatFinder(object):
                         p = self.participant_indices[msg_index]
                         if p not in self.known_participant_addresses:
                             hex_vector = self.hexvectors[msg_index]
-                            self.known_participant_addresses[p] = hex_vector[src_range.start:src_range.end+1]
+                            self.known_participant_addresses[p] = hex_vector[src_range.start:src_range.end + 1]
                             participants_with_unknown_address.discard(p)
 
             new_field_found |= len(containers) > 0

@@ -330,14 +330,17 @@ class AddressEngine(Engine):
             return dict()
 
         common_ranges_by_participant = dict()
-        for participant, msg_indices in self.message_indices_by_participant.items():
-            if participant in already_assigned:
-                self._debug("Skipping participant {} with known address in address finding".format(participant))
-                continue
+        for participant, message_indices in self.message_indices_by_participant.items():
+            # Cluster by length
+            length_clusters = defaultdict(list)
+            for i in message_indices:
+                length_clusters[len(self.msg_vectors[i])].append(i)
 
-            common_ranges = self.find_common_ranges_exhaustive(self.msg_vectors, msg_indices, range_type="hex")
-            common_ranges = self.ignore_already_labeled(common_ranges, self.already_labeled)
-            common_ranges_by_participant[participant] = common_ranges
+            common_ranges_by_length = self.find_common_ranges_by_cluster(self.msg_vectors, length_clusters)
+            common_ranges_by_participant[participant] = []
+            for ranges in common_ranges_by_length.values():
+                common_ranges_by_participant[participant].extend(self.ignore_already_labeled(ranges,
+                                                                                             self.already_labeled))
 
         self._debug("Common ranges by participant:", common_ranges_by_participant)
 

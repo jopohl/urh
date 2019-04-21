@@ -1,5 +1,6 @@
 import array
 import random
+import sys
 import time
 from collections import defaultdict
 
@@ -394,8 +395,11 @@ class AWRExperiments(AWRETestCase):
         self.__export_to_csv("/tmp/accuray-vs-error_without_broken", num_broken_messages, accuracies_without_broken)
 
     def test_performance(self):
-        num_messages = list(range(5, 50, 5))
-        protocols = [1, 2, 3]
+        Engine._DEBUG_ = False
+        Preprocessor._DEBUG_ = False
+
+        num_messages = list(range(95, 100, 5))
+        protocols = [1]
 
         random.seed(0)
         np.random.seed(0)
@@ -403,14 +407,15 @@ class AWRExperiments(AWRETestCase):
         performances = defaultdict(list)
 
         for protocol_nr in protocols:
+            print("Running for protocol", protocol_nr)
             for messages in num_messages:
-                protocol, _ = self.get_protocol(protocol_nr, messages)
+                protocol, _ = self.get_protocol(protocol_nr, messages, silent=True)
 
                 t = time.time()
                 self.run_format_finder_for_protocol(protocol)
                 performances["protocol {}".format(protocol_nr)].append(time.time() - t)
 
-        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in milliseconds", grid=True)
+        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict):

@@ -1,5 +1,6 @@
 import copy
 import math
+import time
 from collections import defaultdict
 
 import numpy as np
@@ -59,6 +60,8 @@ class FormatFinder(object):
         self.bitvectors = self.get_bitvectors_from_messages(messages, self.sync_ends)
         self.hexvectors = self.get_hexvectors(self.bitvectors)
         self.xor_matrix = self.build_xor_matrix()
+        self.current_iteration = 0
+
         participants = list(sorted(set(msg.participant for msg in messages if msg.participant is not None)))
         self.participant_indices = [participants.index(msg.participant) if msg.participant is not None else -1
                                     for msg in messages]
@@ -103,7 +106,9 @@ class FormatFinder(object):
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
             engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
         if not message_type.get_first_label_with_type(FieldType.Function.CHECKSUM):
-            engines.append(ChecksumEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
+            # If checksum was not found in first iteration, it will also not be found in next one
+            if self.current_iteration == 0:
+                engines.append(ChecksumEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
 
         result = set()
         for engine in engines:
@@ -167,9 +172,9 @@ class FormatFinder(object):
         return new_field_found
 
     def run(self, max_iterations=10):
-        i = 0
-        while self.perform_iteration() and i < max_iterations:
-            i += 1
+        self.current_iteration = 0
+        while self.perform_iteration() and self.current_iteration < max_iterations:
+            self.current_iteration += 1
 
     def build_xor_matrix(self):
         return awre_util.build_xor_matrix(self.bitvectors)

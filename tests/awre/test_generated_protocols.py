@@ -27,11 +27,14 @@ class TestGeneratedProtocols(AWRETestCase):
                 messages[i].message_type = msg_type
 
         participants = list(set(m.participant for m in messages))
+        for p in participants:
+            p.address_hex = ""
         AutoAssigner.auto_assign_participant_addresses(messages, participants)
 
-        for i in range(2):
+        for i in range(len(participants)):
             self.assertIn(participants[i].address_hex,
-                          list(map(util.convert_numbers_to_hex_string, known_participant_addresses.values())))
+                          list(map(util.convert_numbers_to_hex_string, known_participant_addresses.values())),
+                          msg=" [ " + " ".join(p.address_hex for p in participants) + "]")
 
     def test_without_preamble(self):
         alice = Participant("Alice", address_hex="24")
@@ -229,6 +232,7 @@ class TestGeneratedProtocols(AWRETestCase):
 
         ff.run()
 
+        self.__check_addresses(messages, ff, known_participant_addresses)
         self.assertEqual(len(ff.message_types), 3)
 
-        self.__check_addresses(messages, ff, known_participant_addresses)
+

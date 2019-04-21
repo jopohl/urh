@@ -34,7 +34,7 @@ class TestGeneratedProtocols(AWRETestCase):
         for i in range(len(participants)):
             self.assertIn(participants[i].address_hex,
                           list(map(util.convert_numbers_to_hex_string, known_participant_addresses.values())),
-                          msg=" [ " + " ".join(p.address_hex for p in participants) + "]")
+                          msg=" [ " + " ".join(p.address_hex for p in participants) + " ]")
 
     def test_without_preamble(self):
         alice = Participant("Alice", address_hex="24")

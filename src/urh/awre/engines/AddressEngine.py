@@ -86,8 +86,10 @@ class AddressEngine(Engine):
 
         # Look for cross swapped values between participant clusters
         for p1, p2 in itertools.combinations(ranges_by_participant, 2):
+            ranges1_set, ranges2_set = set(ranges_by_participant[p1]), set(ranges_by_participant[p2])
+
             for rng1, rng2 in itertools.product(ranges_by_participant[p1], ranges_by_participant[p2]):
-                if rng1 in ranges_by_participant[p2] and rng2 in ranges_by_participant[p1]:
+                if rng1 in ranges2_set and rng2 in ranges1_set:
                     if self.cross_swap_check(rng1, rng2):
                         rng1.score += len(rng2.message_indices) / num_messages_by_participant[p2]
                         rng2.score += len(rng1.message_indices) / num_messages_by_participant[p1]

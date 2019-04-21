@@ -319,6 +319,12 @@ class TestAddressEngine(AWRETestCase):
             self.assertEqual(length.start, 32)
             self.assertEqual(length.length, 8)
 
+    def test_address_engine_performance(self):
+        ff, messages = self.get_format_finder_from_protocol_file("35_messages.proto.xml", return_messages=True)
+
+        engine = AddressEngine(ff.hexvectors, ff.participant_indices)
+        engine.find()
+
     def test_paper_example(self):
         alice = Participant("Alice", "A")
         bob = Participant("Bob", "B")

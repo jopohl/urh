@@ -35,14 +35,14 @@ class ChecksumEngine(Engine):
             checksums_for_length = []
             for i, index in enumerate(message_indices):
                 bits = self.bitvectors[index]
-                crc_object, start, stop, crc_start, crc_stop = crc.guess_all(bits,
+                crc_object, data_start, data_stop, crc_start, crc_stop = crc.guess_all(bits,
                                                                              ignore_positions=self.already_labeled_cols)
 
-                if (crc_object, start, stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
+                if (crc_object, data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
                     checksums_for_length.append(ChecksumRange(start=crc_start,
                                                               length=crc_stop - crc_start,
-                                                              data_range_start=start,
-                                                              data_range_end=stop,
+                                                              data_range_start=data_start,
+                                                              data_range_end=data_stop,
                                                               crc=crc_object,
                                                               score=1 / len(message_indices),
                                                               field_type="checksum",
@@ -51,7 +51,7 @@ class ChecksumEngine(Engine):
 
                     for j in range(i + 1, len(message_indices)):
                         bits = self.bitvectors[message_indices[j]]
-                        if crc_object.crc(bits[:crc_start]) == array.array("B", bits[crc_start:crc_stop]):
+                        if crc_object.crc(bits[data_start:data_stop]) == array.array("B", bits[crc_start:crc_stop]):
                             checksums_for_length[-1].message_indices.add(message_indices[j])
                             checksums_for_length[-1].score += 1 / len(message_indices)
 

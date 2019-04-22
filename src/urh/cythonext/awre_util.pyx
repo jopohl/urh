@@ -79,10 +79,11 @@ cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list ac
     :return: 
     """
     cdef unsigned long i,j,k,index_i,index_j, L = len(active_indices)
-    cdef unsigned long longest = 0
+    cdef unsigned long longest = 0, len_vector
     for i in active_indices:
-        if len(vectors[i]) > longest:
-            longest = len(vectors[i])
+        len_vector = len(vectors[i])
+        if len_vector > longest:
+            longest = len_vector
 
     cdef np.ndarray[np.float64_t] histogram = np.zeros(longest, dtype=np.float64)
     cdef double n = (len(active_indices) * (len(active_indices) - 1)) // 2
@@ -94,7 +95,7 @@ cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list ac
         for j in range(i+1, L):
             index_j = active_indices[j]
             bitvector_i, bitvector_j = vectors[index_i], vectors[index_j]
-            for k in range(0, min(len(bitvector_i), len(bitvector_j))):
+            for k in range(0, <unsigned long>min(len(bitvector_i), len(bitvector_j))):
                 if bitvector_i[k] == bitvector_j[k]:
                     histogram[k] += 1 / n
     return histogram
@@ -133,12 +134,12 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
 
     return result
 
-cdef unsigned long long bit_array_to_number(unsigned char[:] bits) nogil:
-    cdef unsigned long long num_bits = len(bits)
+cdef unsigned long long bit_array_to_number(unsigned char[:] bits, long long num_bits) nogil:
     if num_bits < 1:
         return 0
 
-    cdef unsigned long long i, acc = 1, result = 0
+    cdef long long i, acc = 1
+    cdef unsigned long long result = 0
 
     for i in range(0, num_bits):
         result += bits[num_bits-1-i] * acc
@@ -169,7 +170,7 @@ cpdef set check_crc_for_messages(unsigned long start, list message_indices, list
         bits = bitvectors[index]
         crc_input = bits[data_start:data_stop]
         #check = int("".join(map(str, bits[crc_start:crc_stop])), 2)
-        check = bit_array_to_number(bits[crc_start:crc_stop])
+        check = bit_array_to_number(bits[crc_start:crc_stop], crc_stop - crc_start)
         if crc(crc_input, crc_polynomial, crc_start_value, crc_final_xor,
                crc_lsb_first, crc_reverse_polynomial,
                crc_reverse_all, crc_little_endian) == check:

@@ -42,7 +42,7 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result
 
-cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start = 0) nogil:
+cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start = 0):
     cdef uint64_t result = 0
     cdef unsigned int i, len_inpt = len(inpt)
     for i in range(start, len_inpt):
@@ -54,7 +54,7 @@ cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start =
                 result |= (1 << (i-start))
     return result
 
-cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian) nogil:
+cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, poly_order = len(polynomial)
     cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)

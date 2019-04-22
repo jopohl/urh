@@ -1,6 +1,5 @@
 import array
 import random
-import sys
 import time
 from collections import defaultdict
 
@@ -349,7 +348,7 @@ class AWRExperiments(AWRETestCase):
         num_runs = 10
 
         num_messages = 16
-        num_broken_messages = list(range(0, num_messages+1))
+        num_broken_messages = list(range(0, num_messages + 1))
         accuracies = defaultdict(list)
         accuracies_without_broken = defaultdict(list)
 
@@ -415,6 +414,32 @@ class AWRExperiments(AWRETestCase):
                 self.run_format_finder_for_protocol(protocol)
                 performances["protocol {}".format(protocol_nr)].append(time.time() - t)
 
+        # self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
+
+    def test_performance_real_protocols(self):
+        Engine._DEBUG_ = False
+        Preprocessor._DEBUG_ = False
+
+        num_messages = list(range(8, 128, 4))
+        protocol_names = ["homematic"]
+
+        random.seed(0)
+        np.random.seed(0)
+
+        performances = defaultdict(list)
+
+        for protocol_name in protocol_names:
+            print("Running for protocol", protocol_name)
+            for messages in num_messages:
+                if protocol_name == "homematic":
+                    protocol = self.generate_homematic(messages)
+                else:
+                    raise ValueError("Unknown protocol name")
+
+                t = time.time()
+                self.run_format_finder_for_protocol(protocol)
+                performances["{}".format(protocol_name)].append(time.time() - t)
+
         self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
 
     @staticmethod
@@ -460,3 +485,54 @@ class AWRExperiments(AWRETestCase):
         for msg_type, indices in ff.existing_message_types.items():
             for i in indices:
                 protocol.messages[i].message_type = msg_type
+
+    def generate_homematic(self, num_messages: int):
+        mb_m_frame = MessageTypeBuilder("mframe")
+        mb_c_frame = MessageTypeBuilder("cframe")
+        mb_r_frame = MessageTypeBuilder("rframe")
+        mb_a_frame = MessageTypeBuilder("aframe")
+
+        participants = [Participant("CCU", address_hex="3927cc"), Participant("Switch", address_hex="3101cc")]
+
+        checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
+        for mb_builder in [mb_m_frame, mb_c_frame, mb_r_frame, mb_a_frame]:
+            mb_builder.add_label(FieldType.Function.PREAMBLE, 32)
+            mb_builder.add_label(FieldType.Function.SYNC, 32)
+            mb_builder.add_label(FieldType.Function.LENGTH, 8)
+            mb_builder.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+            mb_builder.add_label(FieldType.Function.TYPE, 16)
+            mb_builder.add_label(FieldType.Function.SRC_ADDRESS, 24)
+            mb_builder.add_label(FieldType.Function.DST_ADDRESS, 24)
+            if mb_builder.name == "mframe":
+                mb_builder.add_label(FieldType.Function.DATA, 16, name="command")
+            elif mb_builder.name == "cframe":
+                mb_builder.add_label(FieldType.Function.DATA, 16 * 4, name="command+challenge+magic")
+            elif mb_builder.name == "rframe":
+                mb_builder.add_label(FieldType.Function.DATA, 32 * 4, name="cipher")
+            elif mb_builder.name == "aframe":
+                mb_builder.add_label(FieldType.Function.DATA, 10 * 4, name="command + auth")
+            mb_builder.add_checksum_label(16, checksum)
+
+        message_types = [mb_m_frame.message_type, mb_c_frame.message_type, mb_r_frame.message_type,
+                         mb_a_frame.message_type]
+        preamble = "0xaaaaaaaa"
+        sync = "0xe9cae9ca"
+        initial_sequence_number = 36
+        pg = ProtocolGenerator(message_types, participants,
+                               preambles_by_mt={mt: preamble for mt in message_types},
+                               syncs_by_mt={mt: sync for mt in message_types},
+                               sequence_numbers={mt: initial_sequence_number for mt in message_types},
+                               message_type_codes={mb_m_frame.message_type: 42560,
+                                                   mb_c_frame.message_type: 40962,
+                                                   mb_r_frame.message_type: 40963,
+                                                   mb_a_frame.message_type: 32770})
+
+        for i in range(num_messages):
+            mt = pg.message_types[i % 4]
+            data_length = mt.get_first_label_with_type(FieldType.Function.DATA).length
+            data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
+            pg.generate_message(mt, data, source=pg.participants[i%2], destination=pg.participants[(i+1)%2])
+
+        self.save_protocol("homematic", pg)
+        self.clear_message_types(pg.messages)
+        return pg.protocol

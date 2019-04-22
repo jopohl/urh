@@ -7,6 +7,7 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 class MessageTypeBuilder(object):
     def __init__(self, name: str):
+        self.name = name
         self.message_type = MessageType(name)
 
     def add_label(self, label_type: FieldType.Function, length: int, name: str=None):

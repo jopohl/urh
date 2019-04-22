@@ -19,7 +19,7 @@ class ProtocolGenerator(object):
 
     def __init__(self, message_types: list, participants: list = None, preambles_by_mt=None,
                  syncs_by_mt=None, little_endian=False, length_in_bytes=True, sequence_numbers=None,
-                 sequence_number_increment=1):
+                 sequence_number_increment=1, message_type_codes=None):
         """
 
         :param message_types:
@@ -56,9 +56,20 @@ class ProtocolGenerator(object):
         for mt, seq in sequence_numbers.items():
             self.sequence_numbers[mt] = seq
 
+        if message_type_codes is None:
+            message_type_codes = dict()
+            for i, mt in enumerate(self.message_types):
+                message_type_codes[mt] = i
+        self.message_type_codes = message_type_codes
+
+
     @property
     def messages(self):
         return self.protocol.messages
+
+    @property
+    def message_types(self):
+        return self.protocol.message_types
 
     def __get_address_for_participant(self, participant: Participant):
         if participant is None:
@@ -144,7 +155,7 @@ class ProtocolGenerator(object):
 
                 bits.append(self.decimal_to_bits(value, len_field))
             elif lbl.field_type.function == FieldType.Function.TYPE:
-                bits.append(self.decimal_to_bits((message_type_index+1) % (2 ** len_field), len_field))
+                bits.append(self.decimal_to_bits(self.message_type_codes[mt] % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.SEQUENCE_NUMBER:
                 bits.append(self.decimal_to_bits(self.sequence_numbers[mt] % (2 ** len_field), len_field))
             elif lbl.field_type.function == FieldType.Function.DST_ADDRESS:

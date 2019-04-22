@@ -157,7 +157,13 @@ class Preprocessor(object):
         self.__debug("Merged sync words", possible_sync_words)
 
         scores = self.__score_sync_lengths(possible_sync_words)
-        estimated_sync_length = max(scores, key=scores.get)
+        sorted_scores = sorted(scores, reverse=True, key=scores.get)
+        estimated_sync_length = sorted_scores[0]
+        if estimated_sync_length % 8 != 0:
+            for other in filter(lambda x: 0 < estimated_sync_length-x < 7, sorted_scores):
+                if other % 8 == 0:
+                    estimated_sync_length = other
+                    break
 
         # Now we look at all possible sync words with this length
         sync_words = {word: frequency for word, frequency in possible_sync_words.items()

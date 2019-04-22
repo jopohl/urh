@@ -1,6 +1,5 @@
 import array
 import copy
-import time
 from collections import OrderedDict
 from xml.etree import ElementTree as ET
 
@@ -126,6 +125,10 @@ class GenericCRC(object):
             return list(self.DEFAULT_POLYNOMIALS.items())[polynomial][1]
         else:
             return polynomial
+
+    def get_parameters(self):
+        return array.array("B", self.polynomial), array.array("B", self.start_value), array.array("B", self.final_xor), \
+               self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian
 
     def crc(self, inpt):
         result = c_util.crc(array.array("B", inpt),

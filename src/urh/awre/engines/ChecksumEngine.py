@@ -1,4 +1,3 @@
-import array
 import math
 from collections import defaultdict
 
@@ -6,6 +5,7 @@ import numpy as np
 
 from urh.awre.CommonRange import ChecksumRange
 from urh.awre.engines.Engine import Engine
+from urh.cythonext import awre_util
 from urh.util.GenericCRC import GenericCRC
 
 
@@ -45,18 +45,15 @@ class ChecksumEngine(Engine):
                                                    field_type="checksum", message_indices={index}
                                                    )
                     checksums_for_length.append(checksum_range)
-                    # try:
-                    #     present_range = next(c for c in checksums_for_length if c == checksum_range)
-                    #     present_range.score += 1/len(message_indices)
-                    #     present_range.message_indices.add(index)
-                    # except StopIteration:
-                    #     checksums_for_length.append(checksum_range)
 
-                    for j in range(i + 1, len(message_indices)):
-                        bits = self.bitvectors[message_indices[j]]
-                        if crc_object.crc(bits[data_start:data_stop]) == array.array("B", bits[crc_start:crc_stop]):
-                            checksums_for_length[-1].message_indices.add(message_indices[j])
-                            checksums_for_length[-1].score += 1 / len(message_indices)
+                    matching = awre_util.check_crc_for_messages(i + 1, message_indices, self.bitvectors,
+                                                                data_start, data_stop,
+                                                                crc_start, crc_stop,
+                                                                *crc_object.get_parameters())
+
+                    if matching:
+                        checksums_for_length[-1].message_indices.update(matching)
+                        checksums_for_length[-1].score += len(matching) / len(message_indices)
 
             try:
                 result.append(max(checksums_for_length, key=lambda x: x.score))

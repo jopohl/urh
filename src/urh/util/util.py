@@ -8,17 +8,17 @@ import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
-
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QFont
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QSplitter
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
+
 from urh import constants
 from urh.util.Logger import logger
 
-PROJECT_PATH = None   # for referencing in external program calls
+PROJECT_PATH = None  # for referencing in external program calls
 
 BCD_ERROR_SYMBOL = "?"
 BCD_LUT = {"{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)}
@@ -53,7 +53,7 @@ def set_shared_library_path():
     if shared_lib_dir:
 
         if sys.platform == "win32":
-            current_path =  os.environ.get("PATH", '')
+            current_path = os.environ.get("PATH", '')
             if not current_path.startswith(shared_lib_dir):
                 os.environ["PATH"] = shared_lib_dir + os.pathsep + current_path
         else:
@@ -213,7 +213,7 @@ def convert_string_to_bits(value: str, display_format: int, target_num_bits: int
 
     if len(result) < target_num_bits:
         # pad with zeros
-        return result + array.array("B", [0] * (target_num_bits-len(result)))
+        return result + array.array("B", [0] * (target_num_bits - len(result)))
     else:
         return result[:target_num_bits]
 
@@ -242,8 +242,10 @@ def number_to_bits(n: int, length: int) -> array.array:
     fmt = "{0:0" + str(length) + "b}"
     return array.array("B", map(int, fmt.format(n)))
 
+
 def bits_to_number(bits: array.array) -> int:
     return int("".join(map(str, bits)), 2)
+
 
 def aggregate_bits(bits: array.array, size=4) -> array.array:
     result = array.array("B", [])

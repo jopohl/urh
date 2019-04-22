@@ -1,9 +1,11 @@
 # noinspection PyUnresolvedReferences
-from array import array
 cimport numpy as np
 import numpy as np
 
 from libcpp cimport bool
+from array import array
+
+from urh.cythonext.util import crc
 
 cpdef np.ndarray[np.uint8_t, ndim=3] build_xor_matrix(list bitvectors):
     cdef unsigned int maximum = 0
@@ -128,5 +130,49 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
                 return [i]
             else:
                 result.append(i)
+
+    return result
+
+cdef unsigned long long bit_array_to_number(unsigned char[:] bits) nogil:
+    cdef unsigned long long num_bits = len(bits)
+    if num_bits < 1:
+        return 0
+
+    cdef unsigned long long i, acc = 1, result = 0
+
+    for i in range(0, num_bits):
+        result += bits[num_bits-1-i] * acc
+        acc *= 2
+
+    return result
+
+cpdef set check_crc_for_messages(unsigned long start, list message_indices, list bitvectors,
+                                 unsigned long data_start, unsigned long data_stop,
+                                 unsigned long crc_start, unsigned long crc_stop,
+                                 unsigned char[:] crc_polynomial, unsigned char[:] crc_start_value,
+                                 unsigned char[:] crc_final_xor,
+                                 bool crc_lsb_first, bool crc_reverse_polynomial,
+                                 bool crc_reverse_all, bool crc_little_endian):
+    """
+    Check a configurable subset of bitvectors for a matching CRC and return the indices of the 
+    vectors who match the CRC with the given parameters
+    :return: 
+    """
+    result = set()
+    cdef unsigned long j, index, end = len(message_indices)
+    cdef np.ndarray[np.uint8_t] bits
+    cdef unsigned char[:] crc_input
+    cdef unsigned long long check
+
+    for j in range(start, end):
+        index = message_indices[j]
+        bits = bitvectors[index]
+        crc_input = bits[data_start:data_stop]
+        #check = int("".join(map(str, bits[crc_start:crc_stop])), 2)
+        check = bit_array_to_number(bits[crc_start:crc_stop])
+        if crc(crc_input, crc_polynomial, crc_start_value, crc_final_xor,
+               crc_lsb_first, crc_reverse_polynomial,
+               crc_reverse_all, crc_little_endian) == check:
+            result.add(index)
 
     return result

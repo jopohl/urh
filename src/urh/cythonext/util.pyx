@@ -6,6 +6,7 @@ import numpy as np
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
 # np.import_array()
 
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 cimport cython
 from cython.parallel import prange
 from libc.math cimport log10
@@ -41,11 +42,11 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result
 
-cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsigned int start = 0):
-    cdef unsigned long long result = 0
+cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start = 0) nogil:
+    cdef uint64_t result = 0
     cdef unsigned int i, len_inpt = len(inpt)
     for i in range(start, len_inpt):
-        if reverse == False:
+        if not reverse:
             if inpt[len_inpt - 1 - i + start]:
                 result |= (1 << (i-start))
         else:
@@ -53,16 +54,16 @@ cpdef unsigned long long arr_to_number(unsigned char[:] inpt, bool reverse, unsi
                 result |= (1 << (i-start))
     return result
 
-cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
+cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian) nogil:
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, poly_order = len(polynomial)
-    cdef unsigned long long crc_mask = (2**(poly_order - 1) - 1)
-    cdef unsigned long long poly_mask = (crc_mask + 1) >> 1
-    cdef unsigned long long poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
+    cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
+    cdef uint64_t poly_mask = (crc_mask + 1) >> 1
+    cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef unsigned short j, x
 
     # start value
-    cdef unsigned long long temp, crc = arr_to_number(start_value, False, 0) & crc_mask
+    cdef uint64_t temp, crc = arr_to_number(start_value, False, 0) & crc_mask
 
     for i in range(0, len_inpt+7, 8):
         for j in range(0, 8):
@@ -96,16 +97,16 @@ cpdef unsigned long long crc(unsigned char[:] inpt, unsigned char[:] polynomial,
     if poly_order - 1 == 16 and little_endian:
         crc = ((crc << 8) & 0xFF00) | (crc >> 8)
     elif poly_order - 1 == 32 and little_endian:
-        crc = ((crc << 24) & 0xFF000000) | ((crc << 8) & 0x00FF0000) | ((crc >> 8) & 0x0000FF00) | (crc >> 24)
+        crc = ((crc << 24) & <uint64_t>0xFF000000) | ((crc << 8) & 0x00FF0000) | ((crc >> 8) & 0x0000FF00) | (crc >> 24)
     elif poly_order - 1 == 64 and little_endian:
-        crc =   ((crc << 56) & 0xFF00000000000000) |  (crc >> 56) \
-              | ((crc >> 40) & 0x000000000000FF00) | ((crc << 40) & 0x00FF000000000000) \
-              | ((crc << 24) & 0x0000FF0000000000) | ((crc >> 24) & 0x0000000000FF0000) \
-              | ((crc << 8)  & 0x000000FF00000000) | ((crc >> 8)  & 0x00000000FF000000)
+        crc =   ((crc << 56) & <uint64_t>0xFF00000000000000) |  (crc >> 56) \
+              | ((crc >> 40) & <uint64_t>0x000000000000FF00) | ((crc << 40) & <uint64_t>0x00FF000000000000) \
+              | ((crc << 24) & <uint64_t>0x0000FF0000000000) | ((crc >> 24) & <uint64_t>0x0000000000FF0000) \
+              | ((crc << 8)  & <uint64_t>0x000000FF00000000) | ((crc >> 8)  & <uint64_t>0x00000000FF000000)
 
     return crc & crc_mask
 
-cpdef tuple get_crc_datarange(unsigned char[:] inpt, unsigned char[:] polynomial, unsigned char[:] vrfy_crc, unsigned char[:] start_value, unsigned char[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
+cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] vrfy_crc, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, offset, data_end = 0, poly_order = len(polynomial)
     cdef np.ndarray[np.uint64_t, ndim=1] steps = np.empty(len_inpt+2, dtype=np.uint64)

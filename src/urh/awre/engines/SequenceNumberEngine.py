@@ -29,8 +29,8 @@ class SequenceNumberEngine(Engine):
             self.already_labeled_cols = {e // n_gram_length for rng in already_labeled for e in range(*rng)}
 
     def find(self):
-        if len(self.bitvectors) <= 3:
-            # We need at least 4 bitvectors to properly find a sequence number
+        if len(self.bitvectors) < 3:
+            # We need at least 3 bitvectors to properly find a sequence number
             return []
 
         diff_matrix = self.create_difference_matrix(self.bitvectors, self.n_gram_length)
@@ -63,6 +63,9 @@ class SequenceNumberEngine(Engine):
 
             # For example, index 1 in diff matrix corresponds to index 1 and 2 of messages
             message_indices = set(message_indices) | set(message_indices + 1)
+            values = set()
+            for i in message_indices:
+                values.add(self.bitvectors[i][candidate_column*self.n_gram_length:candidate_column*self.n_gram_length+self.n_gram_length].tobytes())
 
             if len(result) > 0 \
                     and result[-1].start == (candidate_column - 1) * self.n_gram_length \
@@ -80,9 +83,16 @@ class SequenceNumberEngine(Engine):
                                           message_indices=message_indices
                                           )
                               )
+            result[-1].values.extend(list(values))
+
+        end_result = []
 
         # Now we expand the sequence number ranges when stuff left of it is constant
         for common_range in result:
+            if len(set(common_range.values)) <= 2:
+                # At least three different values needed to reliably identify a sequence number
+                continue
+
             rows = np.array(list(common_range.message_indices)[1:]) - 1
             column = (common_range.start // self.n_gram_length) - 1
 
@@ -92,7 +102,9 @@ class SequenceNumberEngine(Engine):
                 common_range.length += self.n_gram_length
                 column = (common_range.start // self.n_gram_length) - 1
 
-        return result
+            end_result.append(common_range)
+
+        return end_result
 
     @staticmethod
     def get_most_frequent(diff_frequencies: dict):

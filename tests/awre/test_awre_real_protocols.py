@@ -46,6 +46,7 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
+        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER))
 
     def test_format_finding_rwe(self):
         protocol = ProtocolAnalyzer(None)

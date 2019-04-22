@@ -7,12 +7,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tests.awre.AWRETestCase import AWRETestCase
+from tests.utils_testing import get_path_for_data_file
 from urh.awre.FormatFinder import FormatFinder
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.awre.Preprocessor import Preprocessor
 from urh.awre.ProtocolGenerator import ProtocolGenerator
 from urh.awre.engines.Engine import Engine
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -420,8 +422,8 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_messages = list(range(8, 128, 4))
-        protocol_names = ["homematic"]
+        num_messages = list(range(8, 256, 4))
+        protocol_names = ["enocean", "homematic", "rwe"]
 
         random.seed(0)
         np.random.seed(0)
@@ -432,7 +434,11 @@ class AWRExperiments(AWRETestCase):
             print("Running for protocol", protocol_name)
             for messages in num_messages:
                 if protocol_name == "homematic":
-                    protocol = self.generate_homematic(messages)
+                    protocol = self.generate_homematic(messages, save_protocol=False)
+                elif protocol_name == "enocean":
+                    protocol = self.generate_enocean(messages, save_protocol=False)
+                elif protocol_name == "rwe":
+                    protocol = self.generate_rwe(messages, save_protocol=False)
                 else:
                     raise ValueError("Unknown protocol name")
 
@@ -486,7 +492,7 @@ class AWRExperiments(AWRETestCase):
             for i in indices:
                 protocol.messages[i].message_type = msg_type
 
-    def generate_homematic(self, num_messages: int):
+    def generate_homematic(self, num_messages: int, save_protocol=True):
         mb_m_frame = MessageTypeBuilder("mframe")
         mb_c_frame = MessageTypeBuilder("cframe")
         mb_r_frame = MessageTypeBuilder("rframe")
@@ -533,6 +539,42 @@ class AWRExperiments(AWRETestCase):
             data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
             pg.generate_message(mt, data, source=pg.participants[i%2], destination=pg.participants[(i+1)%2])
 
-        self.save_protocol("homematic", pg)
+        if save_protocol:
+            self.save_protocol("homematic", pg)
+
         self.clear_message_types(pg.messages)
         return pg.protocol
+
+    def generate_enocean(self, num_messages: int, save_protocol=True):
+        filename = get_path_for_data_file("enocean_bits.txt")
+        enocean_bits = []
+        with open(filename, "r") as f:
+            for line in map(str.strip, f):
+                enocean_bits.append(line)
+
+        protocol = ProtocolAnalyzer(None)
+        message_type = MessageType("empty")
+        for i in range(num_messages):
+            msg = Message.from_plain_bits_str(enocean_bits[i % len(enocean_bits)])
+            msg.message_type = message_type
+            protocol.messages.append(msg)
+
+        if save_protocol:
+            self.save_protocol("enocean", protocol)
+
+        return protocol
+
+    def generate_rwe(self, num_messages: int, save_protocol=True):
+        ff, messages = self.get_format_finder_from_protocol_file("rwe.proto.xml", return_messages=True)
+
+        protocol = ProtocolAnalyzer(None)
+        message_type = MessageType("empty")
+        for i in range(num_messages):
+            msg = messages[i%len(messages)]  # type: Message
+            msg.message_type = message_type
+            protocol.messages.append(msg)
+
+        if save_protocol:
+            self.save_protocol("rwe", protocol)
+
+        return protocol

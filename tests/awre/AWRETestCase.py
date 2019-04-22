@@ -55,7 +55,8 @@ class AWRETestCase(unittest.TestCase):
         if isinstance(protocol_generator, ProtocolGenerator):
             protocol_generator.to_file(filename)
         elif isinstance(protocol_generator, ProtocolAnalyzer):
-            protocol_generator.to_xml_file(filename, [], [], write_bits=True)
+            participants = list(set(msg.participant for msg in protocol_generator.messages))
+            protocol_generator.to_xml_file(filename, [], participants=participants, write_bits=True)
         info = "Protocol written to " + filename
         if not silent:
             print()

@@ -2,6 +2,7 @@ import math
 from collections import defaultdict
 
 import numpy as np
+from urh.util.WSPChecksum import WSPChecksum
 
 from urh.awre.CommonRange import ChecksumRange
 from urh.awre.engines.Engine import Engine
@@ -35,6 +36,20 @@ class ChecksumEngine(Engine):
             checksums_for_length = []
             for i, index in enumerate(message_indices):
                 bits = self.bitvectors[index]
+                data_start, data_stop, crc_start, crc_stop = WSPChecksum.search_for_wsp_checksum(bits)
+                if (data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0):
+                    checksum_range = ChecksumRange(start=crc_start, length=crc_stop-crc_start,
+                                                   data_range_start=data_start, data_range_end=data_stop,
+                                                   crc=WSPChecksum(), score=1/len(message_indices),
+                                                   field_type="checksum", message_indices={index})
+                    try:
+                        present = next(c for c in checksums_for_length if c == checksum_range)
+                        present.message_indices.add(i)
+                        present.score += 1 / len(message_indices)
+                    except StopIteration:
+                        checksums_for_length.append(checksum_range)
+                    continue
+
                 crc_object, data_start, data_stop, crc_start, crc_stop = crc.guess_all(bits,
                                                                                        ignore_positions=self.already_labeled_cols)
 

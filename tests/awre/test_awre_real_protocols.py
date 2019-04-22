@@ -25,22 +25,27 @@ class TestAWRERealProtocols(AWRETestCase):
                 enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
                 enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type
 
-        ff = FormatFinder(enocean_protocol.messages, self.participants)
+        ff = FormatFinder(enocean_protocol.messages)
         ff.perform_iteration()
 
         message_types = ff.message_types
         self.assertEqual(len(message_types), 1)
 
         preamble = message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
-        self.assertEqual(preamble.start, 3)
+        self.assertEqual(preamble.start, 0)
         self.assertEqual(preamble.length, 8)
 
         sync = message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
-        self.assertEqual(sync.start, 11)
+        self.assertEqual(sync.start, 8)
         self.assertEqual(sync.length, 4)
+
+        checksum = message_types[0].get_first_label_with_type(FieldType.Function.CHECKSUM)
+        self.assertEqual(checksum.start, 56)
+        self.assertEqual(checksum.length, 4)
 
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
+        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
 
     def test_format_finding_rwe(self):
         protocol = ProtocolAnalyzer(None)

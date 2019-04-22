@@ -4,6 +4,7 @@ import time
 from collections import defaultdict
 
 import numpy as np
+from urh.util.WSPChecksum import WSPChecksum
 
 from urh.awre import AutoAssigner
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange, CommonRangeContainer, ChecksumRange
@@ -232,7 +233,11 @@ class FormatFinder(object):
             assert isinstance(label, ChecksumLabel)
             assert isinstance(common_range, ChecksumRange)
             label.data_ranges = [(common_range.data_range_bit_start, common_range.data_range_bit_end)]
-            label.checksum = copy.copy(common_range.crc)
+
+            if isinstance(common_range.crc, WSPChecksum):
+                label.category = ChecksumLabel.Category.wsp
+            else:
+                label.checksum = copy.copy(common_range.crc)
 
     @staticmethod
     def get_hexvectors(bitvectors: list):

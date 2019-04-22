@@ -13,7 +13,7 @@ from urh.util.Logger import logger
 
 class AddressEngine(Engine):
     def __init__(self, msg_vectors, participant_indices, known_participant_addresses: dict = None,
-                 already_labeled: list = None):
+                 already_labeled: list = None, src_field_present=False):
         """
 
         :param msg_vectors: Message data behind synchronization
@@ -29,6 +29,9 @@ class AddressEngine(Engine):
         self.msg_vectors = msg_vectors
         self.participant_indices = participant_indices
         self.already_labeled = []
+
+        self.src_field_present = src_field_present
+
         if already_labeled is not None:
             for start, end in already_labeled:
                 # convert it to hex
@@ -98,7 +101,7 @@ class AddressEngine(Engine):
                         rng1.score += len(rng2.message_indices) / (num_messages_by_participant[p2] + rng1.score)
                         rng2.score += len(rng1.message_indices) / (num_messages_by_participant[p1] + rng2.score)
 
-        if len(ranges_by_participant) == 1:
+        if len(ranges_by_participant) == 1 and not self.src_field_present:
             for p, ranges in ranges_by_participant.items():
                 for rng in sorted(ranges):
                     try:

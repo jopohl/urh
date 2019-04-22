@@ -98,11 +98,19 @@ class FormatFinder(object):
 
         if not message_type.get_first_label_with_type(FieldType.Function.LENGTH):
             engines.append(LengthEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
+
         if not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
             engines.append(AddressEngine([self.hexvectors[i] for i in indices],
                                          [self.participant_indices[i] for i in indices],
                                          self.known_participant_addresses,
                                          already_labeled=already_labeled))
+        elif not message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS):
+            engines.append(AddressEngine([self.hexvectors[i] for i in indices],
+                                         [self.participant_indices[i] for i in indices],
+                                         self.known_participant_addresses,
+                                         already_labeled=already_labeled,
+                                         src_field_present=True))
+
         if not message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER):
             engines.append(SequenceNumberEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
         if not message_type.get_first_label_with_type(FieldType.Function.CHECKSUM):
@@ -112,10 +120,12 @@ class FormatFinder(object):
 
         result = set()
         for engine in engines:
+            t = time.time()
             high_scored_ranges = engine.find()  # type: list[CommonRange]
             high_scored_ranges = self.retransform_message_indices(high_scored_ranges, indices, self.sync_ends)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             result.update(merged_ranges)
+            print(type(engine), time.time()-t)
         return result
 
     def perform_iteration(self) -> bool:

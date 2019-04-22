@@ -49,24 +49,12 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER))
 
     def test_format_finding_rwe(self):
-        protocol = ProtocolAnalyzer(None)
-        with open(get_path_for_data_file("awre_consistent_addresses.txt")) as f:
-            for line in f:
-                protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
-                protocol.messages[-1].message_type = protocol.default_message_type
-
-        alice_indices = {1, 2, 5, 6, 9, 10, 13, 14, 17, 18, 20, 22, 23, 26, 27, 30, 31, 34, 35, 38, 39, 41}
-        for i, message in enumerate(protocol.messages):
-            message.participant = self.participants[0] if i in alice_indices else self.participants[1]
-
-        ff = FormatFinder(messages=protocol.messages, participants=self.participants)
-        # a = next(e for e in ff.engines if isinstance(e, AddressEngine))
-        # a.known_addresses_by_participant[0] = np.array([1, 11,  6,  0,  3,  3], dtype=np.uint8)
-        ff.perform_iteration()
+        ff, messages = self.get_format_finder_from_protocol_file("rwe.proto.xml", return_messages=True)
+        ff.run()
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"
 
-        preprocessor = Preprocessor(protocol.decoded_bits)
+        preprocessor = Preprocessor([msg.plain_bits for msg in messages])
         possible_syncs = preprocessor.find_possible_syncs()
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)

@@ -27,6 +27,9 @@ class WSPChecksum(object):
         self.caption = str(mode)
 
     def __eq__(self, other):
+        if not isinstance(other, WSPChecksum):
+            return False
+
         return self.mode == other.mode
 
     def __hash__(self):

@@ -88,6 +88,11 @@ class TestAWRERealProtocols(AWRETestCase):
                 src = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
                 self.assertEqual(src.start, 112)
                 self.assertEqual(src.length, 24)
+            elif 1 in ff.existing_message_types[mt]:
+                # long ack
+                src = mt.get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
+                self.assertEqual(src.start, 96)
+                self.assertEqual(src.length, 24)
 
             crc = mt.get_first_label_with_type(FieldType.Function.CHECKSUM)
             self.assertIsNotNone(crc)

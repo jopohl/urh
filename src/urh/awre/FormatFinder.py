@@ -98,8 +98,7 @@ class FormatFinder(object):
 
         if not message_type.get_first_label_with_type(FieldType.Function.LENGTH):
             engines.append(LengthEngine([self.bitvectors[i] for i in indices], already_labeled=already_labeled))
-        if not message_type.get_first_label_with_type(FieldType.Function.DST_ADDRESS) \
-                and not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
+        if not message_type.get_first_label_with_type(FieldType.Function.SRC_ADDRESS):
             engines.append(AddressEngine([self.hexvectors[i] for i in indices],
                                          [self.participant_indices[i] for i in indices],
                                          self.known_participant_addresses,

@@ -98,6 +98,17 @@ class AddressEngine(Engine):
                         rng1.score += len(rng2.message_indices) / (num_messages_by_participant[p2] + rng1.score)
                         rng2.score += len(rng1.message_indices) / (num_messages_by_participant[p1] + rng2.score)
 
+        if len(ranges_by_participant) == 1:
+            for p, ranges in ranges_by_participant.items():
+                for rng in sorted(ranges):
+                    try:
+                        if np.array_equal(rng.value, self.known_addresses_by_participant[p]):
+                            # Only one participant in this iteration and address already known -> Highscore
+                            rng.score = 1
+                            break  # Take only the first (leftmost) range
+                    except KeyError:
+                        pass
+
         high_scored_ranges_by_participant = defaultdict(list)
 
         address_length = self.__estimate_address_length(ranges_by_participant)

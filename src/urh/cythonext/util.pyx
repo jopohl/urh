@@ -185,6 +185,7 @@ cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynom
 
     return crcv & crc_mask
 
+
 cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] vrfy_crc, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, offset, data_end = 0, poly_order = len(polynomial)

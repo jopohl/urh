@@ -349,7 +349,7 @@ class AWRExperiments(AWRETestCase):
 
         num_runs = 100
 
-        num_messages = 16
+        num_messages = 30
         num_broken_messages = list(range(0, num_messages + 1))
         accuracies = defaultdict(list)
         accuracies_without_broken = defaultdict(list)
@@ -361,11 +361,12 @@ class AWRExperiments(AWRETestCase):
 
         for protocol_nr in protocols:
             for broken in num_broken_messages:
-                print("Test Protocol {0} with {1:02d} broken messages ({2} runs)".format(protocol_nr, broken, num_runs),
-                      end=" ")
                 tmp_accuracies = np.empty(num_runs, dtype=np.float64)
                 tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
+                    print("\rProtocol {0} with {1:02d} broken messages ({2}/{3} runs)".format(protocol_nr, broken, i+1,
+                                                                                              num_runs), flush=True,
+                          end="")
                     protocol, expected_labels = self.get_protocol(protocol_nr,
                                                                   num_messages=num_messages,
                                                                   num_broken_messages=broken,
@@ -382,7 +383,7 @@ class AWRExperiments(AWRETestCase):
                 accuracies["protocol {}".format(protocol_nr)].append(avg_accuracy)
                 accuracies_without_broken["protocol {}".format(protocol_nr)].append(avg_accuracy_without_broken)
 
-                print("{:>3}% {:>3}%".format(int(avg_accuracy), int(avg_accuracy_without_broken)))
+                print(" {:>3}% {:>3}%".format(int(avg_accuracy), int(avg_accuracy_without_broken)))
 
         self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies,
                     title="Overall Accuracy vs percentage of broken messages",
@@ -392,8 +393,8 @@ class AWRExperiments(AWRETestCase):
                     title=" Accuracy of unbroken vs percentage of broken messages",
                     xlabel="Broken messages in %",
                     ylabel="Accuracy in %", grid=True)
-        self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies)
-        self.__export_to_csv("/tmp/accuray-vs-error_without_broken", num_broken_messages, accuracies_without_broken)
+        self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies, relative=num_messages)
+        self.__export_to_csv("/tmp/accuray-vs-error-without-broken", num_broken_messages, accuracies_without_broken, relative=num_messages)
 
     def test_performance(self):
         Engine._DEBUG_ = False
@@ -449,18 +450,23 @@ class AWRExperiments(AWRETestCase):
         self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
 
     @staticmethod
-    def __export_to_csv(filename: str, x: list, y: dict):
+    def __export_to_csv(filename: str, x: list, y: dict, relative=None):
         if not filename.endswith(".csv"):
             filename += ".csv"
 
         with open(filename, "w") as f:
             f.write("N,")
+            if relative is not None:
+                f.write("NRel,")
             for y_cap in sorted(y):
                 f.write(y_cap + ",")
             f.write("\n")
 
             for i, x_val in enumerate(x):
                 f.write("{},".format(x_val))
+                if relative is not None:
+                    f.write(100 * x_val / relative)
+
                 for y_cap in sorted(y):
                     f.write("{},".format(y[y_cap][i]))
                 f.write("\n")
@@ -537,7 +543,7 @@ class AWRExperiments(AWRETestCase):
             mt = pg.message_types[i % 4]
             data_length = mt.get_first_label_with_type(FieldType.Function.DATA).length
             data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
-            pg.generate_message(mt, data, source=pg.participants[i%2], destination=pg.participants[(i+1)%2])
+            pg.generate_message(mt, data, source=pg.participants[i % 2], destination=pg.participants[(i + 1) % 2])
 
         if save_protocol:
             self.save_protocol("homematic", pg)
@@ -570,7 +576,7 @@ class AWRExperiments(AWRETestCase):
         protocol = ProtocolAnalyzer(None)
         message_type = MessageType("empty")
         for i in range(num_messages):
-            msg = messages[i%len(messages)]  # type: Message
+            msg = messages[i % len(messages)]  # type: Message
             msg.message_type = message_type
             protocol.messages.append(msg)
 

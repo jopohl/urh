@@ -106,17 +106,17 @@ cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_valu
 
     return crc & crc_mask
 
-cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial):
-    cdef uint8_t poly_order = len(polynomial)
+cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial, uint8_t bits):
+    cdef uint8_t j, poly_order = len(polynomial)
     cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
     cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef uint64_t crcv, i
-    cdef np.ndarray[np.uint64_t, ndim=1] cache = np.zeros(256, dtype = np.uint64)
+    cdef np.ndarray[np.uint64_t, ndim=1] cache = np.zeros(2**bits, dtype = np.uint64)
     # Caching
-    for i in range(0, 256):
-        crcv = i << (poly_order - 1 - 8)
-        for j in range(0, 8):
+    for i in range(0, <uint32_t> len(cache)):
+        crcv = i << (poly_order - 1 - bits)
+        for _ in range(0, bits):
             if (crcv & poly_mask) > 0:
                 crcv = (crcv << 1) & crc_mask
                 crcv ^= poly_int
@@ -125,41 +125,41 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, boo
         cache[i] = crcv
     return cache
 
-cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
+cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t bits, uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
-    cdef unsigned int j, i, poly_order = len(polynomial)
+    cdef unsigned int i, poly_order = len(polynomial)
     cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
     cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
-    cdef uint8_t pos, eightbits
-    cdef uint64_t temp, crcv
+    cdef uint64_t temp, crcv, data, pos
+    cdef uint8_t j
 
     # For inputs smaller than 8 bits, call normal function
-    if len_inpt < 8:
+    if len_inpt < bits:
         return crc(inpt, polynomial, start_value, final_xor, lsb_first, reverse_polynomial, reverse_all, little_endian)
 
     # CRC
     crcv = arr_to_number(start_value, False, 0) & crc_mask
-    for i in range(0, len_inpt-7, 8):
-        eightbits = 0
-        for j in range(0, 8):
-            if not lsb_first:
-                if inpt[i + 8 - 1 - j]:
-                    eightbits |= (1 << j)
-            else:
+    for i in range(0, len_inpt - bits + 1, bits):
+        data = 0
+        if lsb_first:
+            for j in range(0, bits):
                 if inpt[i + j]:
-                    eightbits |= (1 << j)
-        pos = (crcv >> (poly_order - 8 - 1)) ^ eightbits
-        crcv = ((crcv << 8) ^ cache[pos]) & crc_mask
+                    data |= (1 << j)
+        else:
+            for j in range(0, bits):
+                if inpt[i + bits - 1 - j]:
+                    data |= (1 << j)
+        pos = (crcv >> (poly_order - bits - 1)) ^ data
+        crcv = ((crcv << bits) ^ cache[pos]) & crc_mask
 
     # Are we done?
-    if len_inpt % 8 > 0:
+    if len_inpt % bits > 0:
         # compute rest of crc inpt[-(len_inpt%8):] with normal function
         # Set start_value to current crc value
         for i in range(0, len(start_value)):
             start_value[len(start_value) - 1 - i] = True if (crcv & (1 << i)) > 0 else False
-
-        crcv = crc(inpt[len_inpt-(len_inpt%8):len_inpt], polynomial, start_value, final_xor, lsb_first, reverse_polynomial, reverse_all, little_endian)
+        crcv = crc(inpt[len_inpt-(len_inpt%bits):len_inpt], polynomial, start_value, final_xor, lsb_first, reverse_polynomial, reverse_all, little_endian)
     else:
         # final XOR
         crcv ^= arr_to_number(final_xor, False, 0) & crc_mask
@@ -182,9 +182,7 @@ cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynom
                   | ((crcv >> 40) & <uint64_t>0x000000000000FF00) | ((crcv << 40) & <uint64_t>0x00FF000000000000) \
                   | ((crcv << 24) & <uint64_t>0x0000FF0000000000) | ((crcv >> 24) & <uint64_t>0x0000000000FF0000) \
                   | ((crcv << 8)  & <uint64_t>0x000000FF00000000) | ((crcv >> 8)  & <uint64_t>0x00000000FF000000)
-
     return crcv & crc_mask
-
 
 cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] vrfy_crc, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)

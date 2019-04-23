@@ -66,6 +66,7 @@ class GenericCRC(object):
         self.start_value = self.__read_parameter(start_value)
         self.final_xor = self.__read_parameter(final_xor)
         self.cache = []
+        self.__cache_bits = 8
 
     def __read_parameter(self, value):
         if isinstance(value, bool) or isinstance(value, int):
@@ -121,6 +122,7 @@ class GenericCRC(object):
         self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
         if(self.polynomial != old):
             self.cache = []
+            self.__cache_bits = 8
 
     def choose_polynomial(self, polynomial):
         if isinstance(polynomial, str):
@@ -142,10 +144,11 @@ class GenericCRC(object):
                             self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
 
-    def cached_crc(self, inpt):
-        if len(self.cache) < 256:
-            self.calculate_cache()
+    def cached_crc(self, inpt, bits=8):
+        if len(self.cache) == 0:
+            self.calculate_cache(bits)
         result = c_util.cached_crc(self.cache,
+                                   self.__cache_bits,
                                    array.array("B", inpt),
                                    array.array("B", self.polynomial),
                                    array.array("B", self.start_value),
@@ -153,8 +156,12 @@ class GenericCRC(object):
                                    self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
 
-    def calculate_cache(self):
-        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial)
+    def calculate_cache(self, bits=8):
+        if(bits > 0 and bits < self.poly_order):
+            self.__cache_bits = bits
+        else:
+            self.__cache_bits = 8 if self.poly_order > 8 else self.poly_order - 1
+        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial, self.__cache_bits)
 
     def get_crc_datarange(self, inpt, vrfy_crc):
         return c_util.get_crc_datarange(array.array("B", inpt),
@@ -240,6 +247,7 @@ class GenericCRC(object):
         # Clear cache if polynomial changes
         if(self.polynomial != old):
             self.cache = []
+            self.__cache_bits = 8
 
         # Set start value completely or 0000/FFFF
         if isinstance(start_value, int):
@@ -262,6 +270,7 @@ class GenericCRC(object):
         self.reverse_polynomial = reverse_polynomial
         if(self.reverse_polynomial != old_reverse):
             self.cache = []
+            self.__cache_bits = 8
 
         self.reverse_all = ref_out
         self.little_endian = little_endian
@@ -275,6 +284,7 @@ class GenericCRC(object):
         poly_order = len(self.polynomial)
         if (self.polynomial != old):
             self.cache = []
+            self.__cache_bits = 8
 
         # Bit 2 = Start Value
         val = (i >> 2) & 1
@@ -293,6 +303,7 @@ class GenericCRC(object):
             self.reverse_polynomial = True
         if (self.reverse_polynomial != old_reverse):
             self.cache = []
+            self.__cache_bits = 8
 
         # Bit 5 = Reverse (all) Result
         val = (i >> 5) & 1

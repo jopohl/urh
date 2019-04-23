@@ -125,7 +125,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, boo
         cache[i] = crcv
     return cache
 
-cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian) nogil:
+cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, poly_order = len(polynomial)
     cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)

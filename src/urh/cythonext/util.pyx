@@ -137,7 +137,12 @@ cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t[:] inpt, uint8_t[:] polynom
 
     # CRC
     crcv = arr_to_number(start_value, False, 0) & crc_mask
-    for i in range(0, len_inpt-7, 8):
+
+    cdef unsigned loop_end = 0
+    if len_inpt > 7:
+        loop_end = len_inpt - 7
+
+    for i in range(0, loop_end, 8):
         pos = (crcv >> (poly_order - 8 - 1)) ^ arr_to_number(inpt[i:i+8], lsb_first, 0)
         crcv = ((crcv << 8) ^ cache[pos]) & crc_mask
 

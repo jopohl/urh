@@ -465,7 +465,7 @@ class AWRExperiments(AWRETestCase):
             for i, x_val in enumerate(x):
                 f.write("{},".format(x_val))
                 if relative is not None:
-                    f.write(100 * x_val / relative)
+                    f.write("{},".format(100 * x_val / relative))
 
                 for y_cap in sorted(y):
                     f.write("{},".format(y[y_cap][i]))

@@ -347,7 +347,7 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_runs = 10
+        num_runs = 100
 
         num_messages = 16
         num_broken_messages = list(range(0, num_messages + 1))

@@ -65,6 +65,7 @@ class GenericCRC(object):
 
         self.start_value = self.__read_parameter(start_value)
         self.final_xor = self.__read_parameter(final_xor)
+        self.cache = []
 
     def __read_parameter(self, value):
         if isinstance(value, bool) or isinstance(value, int):
@@ -116,7 +117,10 @@ class GenericCRC(object):
         return result
 
     def set_polynomial_from_hex(self, hex_str: str):
+        old = self.polynomial
         self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
+        if(self.polynomial != old):
+            self.cache = []
 
     def choose_polynomial(self, polynomial):
         if isinstance(polynomial, str):
@@ -137,6 +141,20 @@ class GenericCRC(object):
                             array.array("B", self.final_xor),
                             self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
         return util.number_to_bits(result, self.poly_order - 1)
+
+    def cached_crc(self, inpt):
+        if len(self.cache) < 256:
+            self.calculate_cache()
+        result = c_util.cached_crc(self.cache,
+                                   array.array("B", inpt),
+                                   array.array("B", self.polynomial),
+                                   array.array("B", self.start_value),
+                                   array.array("B", self.final_xor),
+                                   self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        return util.number_to_bits(result, self.poly_order - 1)
+
+    def calculate_cache(self):
+        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial)
 
     def get_crc_datarange(self, inpt, vrfy_crc):
         return c_util.get_crc_datarange(array.array("B", inpt),
@@ -214,10 +232,14 @@ class GenericCRC(object):
     def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, ref_in=False, ref_out=False,
                                   little_endian=False, reverse_polynomial=False):
         # Set polynomial from hex or bit array
+        old = self.polynomial
         if isinstance(polynomial, str):
             self.set_polynomial_from_hex(polynomial)
         else:
             self.polynomial = polynomial
+        # Clear cache if polynomial changes
+        if(self.polynomial != old):
+            self.cache = []
 
         # Set start value completely or 0000/FFFF
         if isinstance(start_value, int):
@@ -236,7 +258,11 @@ class GenericCRC(object):
             raise ValueError("Invalid final xor length")
 
         # Set boolean parameters
+        old_reverse = self.reverse_polynomial
         self.reverse_polynomial = reverse_polynomial
+        if(self.reverse_polynomial != old_reverse):
+            self.cache = []
+
         self.reverse_all = ref_out
         self.little_endian = little_endian
         self.lsb_first = ref_in
@@ -244,8 +270,11 @@ class GenericCRC(object):
     def set_crc_parameters(self, i):
         # Bit 0,1 = Polynomial
         val = (i >> 0) & 3
+        old = self.polynomial
         self.polynomial = self.choose_polynomial(val)
         poly_order = len(self.polynomial)
+        if (self.polynomial != old):
+            self.cache = []
 
         # Bit 2 = Start Value
         val = (i >> 2) & 1
@@ -257,10 +286,13 @@ class GenericCRC(object):
 
         # Bit 4 = Reverse Polynomial
         val = (i >> 4) & 1
+        old_reverse = self.reverse_polynomial
         if val == 0:
             self.reverse_polynomial = False
         else:
             self.reverse_polynomial = True
+        if (self.reverse_polynomial != old_reverse):
+            self.cache = []
 
         # Bit 5 = Reverse (all) Result
         val = (i >> 5) & 1
@@ -417,6 +449,10 @@ class GenericCRC(object):
     @staticmethod
     def str2bit(inpt):
         return [True if x == "1" else False for x in inpt]
+
+    @staticmethod
+    def int2bit(inpt):
+        return [True if x == "1" else False for x in '{0:08b}'.format(inpt)]
 
     @staticmethod
     def str2arr(inpt):

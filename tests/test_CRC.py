@@ -104,6 +104,85 @@ class TestCRC(unittest.TestCase):
                 self.assertEqual(crc_new, crc_old)
                 c.reverse_all = False
 
+    def test_cache(self):
+        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c.calculate_cache()
+        self.assertEqual(len(c.cache), 256)
+
+    def test_different_crcs_fast(self):
+        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
+                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        bitstring_set = [
+            "10101010",
+            "00000001",
+            "000000010",
+            "000000011",
+            "0000000100000001",
+            "101001001010101010101011101111111000000000000111101010011101011",
+            "101001001010101101111010110111101010010110111010",
+            "00000000000000000000000000000000100000000000000000000000000000000001111111111111",
+            "1111111111111111111111111111111110111111111111111111110111111111111111110000000000"
+            "1"]
+
+        for j in c.DEFAULT_POLYNOMIALS:
+            c.polynomial = c.choose_polynomial(j)
+            c.cache = []
+            for i in bitstring_set:
+                # Standard
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+
+                # Special final xor
+                c.final_xor = c.str2bit("0000111100001111")
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.final_xor = [False] * 16
+
+                # Special start value
+                c.start_value = c.str2bit("1010101010101010")
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.start_value = [False] * 16
+
+                # lsb_first
+                c.lsb_first = True
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.lsb_first = False
+
+                # little_endian
+                c.little_endian = True
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.little_endian = False
+
+                # reverse all
+                c.reverse_all = True
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.reverse_all = False
+
+                # reverse_polynomial
+                # We need to clear the cache before and after
+                c.cache = []
+                #
+                c.reverse_polynomial = True
+                crc_new = c.cached_crc((c.str2bit(i)))
+                crc_old = c.reference_crc(c.str2bit(i))
+                self.assertEqual(crc_new, crc_old)
+                c.reverse_polynomial = False
+                #
+                c.cache = []
+
+
+
     def test_reverse_engineering(self):
         c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
                        reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)

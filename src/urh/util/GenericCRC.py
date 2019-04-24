@@ -8,11 +8,6 @@ from urh.util import util
 
 
 class GenericCRC(object):
-    TOTAL_CONV_TIME = 0
-    TOTAL_START_VAL_TIME = 0
-    TOTAL_XOR_VAL_TIME = 0
-    TOTAL_SET_PARAMETERS_TIME = 0
-
     # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
     DEFAULT_POLYNOMIALS = OrderedDict([
         # x^8 + x^7 + x^6 + x^4 + x^2 + 1
@@ -125,7 +120,7 @@ class GenericCRC(object):
     def set_polynomial_from_hex(self, hex_str: str):
         old = self.polynomial
         self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
-        if (self.polynomial != old):
+        if self.polynomial != old:
             self.cache = []
             self.__cache_bits = 8
 
@@ -162,7 +157,7 @@ class GenericCRC(object):
         return util.number_to_bits(result, self.poly_order - 1)
 
     def calculate_cache(self, bits=8):
-        if (bits > 0 and bits < self.poly_order):
+        if 0 < bits < self.poly_order:
             self.__cache_bits = bits
         else:
             self.__cache_bits = 8 if self.poly_order > 8 else self.poly_order - 1

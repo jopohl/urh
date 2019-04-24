@@ -260,7 +260,7 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
         i = 0
         while i < data_end - 1:
             offset = 0
-            while (inpt[i + offset] == False and i+offset < data_end - 1):  # skip leading 0s in data (doesn't change crc...)
+            while inpt[i + offset] == False and i+offset < data_end - 1:  # skip leading 0s in data (doesn't change crc...)
                 offset += 1
             # XOR delta=crc(10000...) to last crc value to create next crc value
             crcvalue ^= steps[data_end-i-offset-1]

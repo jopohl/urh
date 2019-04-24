@@ -7,6 +7,7 @@ import numpy as np
 # np.import_array()
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdlib cimport malloc, calloc, free
 cimport cython
 from cython.parallel import prange
 from libc.math cimport log10,pow
@@ -191,7 +192,7 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
     if vrfy_crc_start-1+len_crc >= len_inpt or vrfy_crc_start < 2:
         return 0, 0
 
-    cdef np.ndarray[np.uint64_t, ndim=1] steps = np.empty(len_inpt+2, dtype=np.uint64)
+    cdef uint64_t* steps = <uint64_t*>calloc(len_inpt+2, sizeof(uint64_t))
     cdef uint64_t temp
     cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
@@ -201,7 +202,7 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
     cdef uint64_t crcvalue = arr_to_number(start_value, False, 0) & crc_mask
     cdef bool found
     cdef uint32_t i, idx, offset, data_end = vrfy_crc_start
-    cdef np.ndarray[np.uint8_t, ndim=1] step = np.zeros(len_inpt, dtype=np.uint8)
+    cdef uint8_t* step = <uint8_t*>calloc(len_inpt, sizeof(uint8_t))
     step[0] = 1
 
     # crcvalue is initialized with start_value
@@ -223,6 +224,8 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
                 crcvalue = (crcvalue << 1) & crc_mask
             # Save steps XORed with final_xor
             steps[idx] = crcvalue ^ final_xor_int
+
+    free(step)
 
     # Reverse and little endian
     if reverse_all or little_endian:
@@ -249,22 +252,25 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
     # Test data range from 0...start_crc until start_crc-1...start_crc
     # Compute start value
     crcvalue = crc(inpt[:data_end], polynomial, start_value, final_xor, lsb_first, reverse_polynomial, reverse_all, little_endian)
-    if vrfy_crc_int == crcvalue:
-        return 0, data_end
-    found = False
-
-    i = 0
-    while i < data_end - 1:
-        offset = 0
-        while (inpt[i + offset] == False and i+offset < data_end - 1):  # skip leading 0s in data (doesn't change crc...)
-            offset += 1
-        # XOR delta=crc(10000...) to last crc value to create next crc value
-        crcvalue ^= steps[data_end-i-offset-1]
-        if found:
-            return i, data_end  # Return start_data, end_data
+    try:
         if vrfy_crc_int == crcvalue:
-            found = True
-        i += 1 + offset
+            return 0, data_end
+        found = False
 
-    # No beginning found
-    return 0, 0
+        i = 0
+        while i < data_end - 1:
+            offset = 0
+            while (inpt[i + offset] == False and i+offset < data_end - 1):  # skip leading 0s in data (doesn't change crc...)
+                offset += 1
+            # XOR delta=crc(10000...) to last crc value to create next crc value
+            crcvalue ^= steps[data_end-i-offset-1]
+            if found:
+                return i, data_end  # Return start_data, end_data
+            if vrfy_crc_int == crcvalue:
+                found = True
+            i += 1 + offset
+
+        # No beginning found
+        return 0, 0
+    finally:
+        free(steps)

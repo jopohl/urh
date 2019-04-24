@@ -401,8 +401,6 @@ class GenericCRC(object):
         for name, parameters in sorted(self.STANDARD_CHECKSUMS.items(),
                                        key=lambda x: len(x[1]["polynomial"]),
                                        reverse=True):
-            t = time.time()
-            GenericCRC.TOTAL_SET_PARAMETERS_TIME += time.time()-t
             self.caption = name
             data_begin, data_end = c_util.get_crc_datarange(inpt,
                                      parameters["polynomial"],

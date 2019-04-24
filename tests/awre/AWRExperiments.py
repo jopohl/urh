@@ -400,7 +400,7 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_messages = list(range(95, 100, 5))
+        num_messages = list(range(200, 205, 5))
         protocols = [1]
 
         random.seed(0)

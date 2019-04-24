@@ -125,7 +125,7 @@ class GenericCRC(object):
     def set_polynomial_from_hex(self, hex_str: str):
         old = self.polynomial
         self.polynomial = array.array("B", [1]) + util.hex2bit(hex_str)
-        if(self.polynomial != old):
+        if (self.polynomial != old):
             self.cache = []
             self.__cache_bits = 8
 
@@ -162,11 +162,12 @@ class GenericCRC(object):
         return util.number_to_bits(result, self.poly_order - 1)
 
     def calculate_cache(self, bits=8):
-        if(bits > 0 and bits < self.poly_order):
+        if (bits > 0 and bits < self.poly_order):
             self.__cache_bits = bits
         else:
             self.__cache_bits = 8 if self.poly_order > 8 else self.poly_order - 1
-        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial, self.__cache_bits)
+        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial,
+                                            self.__cache_bits)
 
     def get_crc_datarange(self, inpt, vrfy_crc_start):
         return c_util.get_crc_datarange(array.array("B", inpt),
@@ -331,6 +332,31 @@ class GenericCRC(object):
         else:
             self.lsb_first = True
 
+    @classmethod
+    def __initialize_standard_checksums(cls):
+        for name in cls.STANDARD_CHECKSUMS:
+            polynomial = cls.STANDARD_CHECKSUMS[name]["polynomial"]
+            if isinstance(polynomial, str):
+                polynomial = array.array("B", [1]) + util.hex2bit(polynomial)
+                cls.STANDARD_CHECKSUMS[name]["polynomial"] = polynomial
+
+            n = len(polynomial) - 1
+            try:
+                start_val = cls.STANDARD_CHECKSUMS[name]["start_value"]
+            except KeyError:
+                start_val = 0
+
+            if isinstance(start_val, int):
+                cls.STANDARD_CHECKSUMS[name]["start_value"] = array.array("B", [start_val] * n)
+
+            try:
+                final_xor = cls.STANDARD_CHECKSUMS[name]["final_xor"]
+            except KeyError:
+                final_xor = 0
+
+            if isinstance(final_xor, int):
+                cls.STANDARD_CHECKSUMS[name]["final_xor"] = array.array("B", [final_xor] * n)
+
     def guess_all(self, bits, trash_max=7, ignore_positions: set = None):
         """
 
@@ -339,27 +365,7 @@ class GenericCRC(object):
         :param ignore_positions: columns to ignore (e.g. if already another label on them)
         :return: a CRC object, data_range_start, data_range_end, crc_start, crc_end
         """
-        for name in self.STANDARD_CHECKSUMS:
-            poly = self.STANDARD_CHECKSUMS[name]["polynomial"]
-            if isinstance(poly, str):
-                self.STANDARD_CHECKSUMS[name]["polynomial"] = array.array("B", [1]) + util.hex2bit(poly)
-
-            n = len(self.STANDARD_CHECKSUMS[name]["polynomial"]) - 1
-            try:
-                start_val = self.STANDARD_CHECKSUMS[name]["start_value"]
-            except KeyError:
-                start_val = 0
-
-            if isinstance(start_val, int):
-                self.STANDARD_CHECKSUMS[name]["start_value"] = array.array("B", [start_val] * n)
-
-            try:
-                final_xor = self.STANDARD_CHECKSUMS[name]["final_xor"]
-            except KeyError:
-                final_xor = 0
-
-            if isinstance(final_xor, int):
-                self.STANDARD_CHECKSUMS[name]["final_xor"] = array.array("B", [final_xor] * n)
+        self.__initialize_standard_checksums()
 
         ignore_positions = set() if ignore_positions is None else ignore_positions
         for i in range(0, trash_max):
@@ -403,11 +409,15 @@ class GenericCRC(object):
                                        reverse=True):
             self.caption = name
             data_begin, data_end = c_util.get_crc_datarange(inpt,
-                                     parameters["polynomial"],
-                                     max(0, len(inpt) - trash - len(parameters["polynomial"])) + 1,
-                                     parameters["start_value"],
-                                     parameters["final_xor"],
-                                     parameters.get("ref_in", False), parameters.get("reverse_polynomial", False), parameters.get("ref_out", False), parameters.get("little_endian", False))
+                                                            parameters["polynomial"],
+                                                            max(0,
+                                                                len(inpt) - trash - len(parameters["polynomial"])) + 1,
+                                                            parameters["start_value"],
+                                                            parameters["final_xor"],
+                                                            parameters.get("ref_in", False),
+                                                            parameters.get("reverse_polynomial", False),
+                                                            parameters.get("ref_out", False),
+                                                            parameters.get("little_endian", False))
             if (data_begin, data_end) != (0, 0):
                 self.set_individual_parameters(**parameters)
                 return self, data_begin, data_end

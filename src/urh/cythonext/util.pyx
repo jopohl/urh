@@ -107,7 +107,7 @@ cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_valu
 
     return crc & crc_mask
 
-cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial, uint8_t bits):
+cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial=False, uint8_t bits=8):
     cdef uint8_t j, poly_order = len(polynomial)
     cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1

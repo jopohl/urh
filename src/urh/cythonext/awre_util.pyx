@@ -5,7 +5,7 @@ import numpy as np
 from libcpp cimport bool
 from array import array
 
-from urh.cythonext.util import crc
+from urh.cythonext.util import crc, cached_crc, calculate_cache
 
 cpdef np.ndarray[np.uint8_t, ndim=3] build_xor_matrix(list bitvectors):
     cdef unsigned int maximum = 0
@@ -147,6 +147,7 @@ cdef unsigned long long bit_array_to_number(unsigned char[:] bits, long long num
 
     return result
 
+CRC_CACHE = dict()
 cpdef set check_crc_for_messages(unsigned long start, list message_indices, list bitvectors,
                                  unsigned long data_start, unsigned long data_stop,
                                  unsigned long crc_start, unsigned long crc_stop,
@@ -164,6 +165,14 @@ cpdef set check_crc_for_messages(unsigned long start, list message_indices, list
     cdef np.ndarray[np.uint8_t] bits
     cdef unsigned char[:] crc_input
     cdef unsigned long long check
+
+    cdef np.ndarray[np.uint64_t, ndim=1] cache
+
+    try:
+        cache = CRC_CACHE[bytes(crc_polynomial)]
+    except KeyError:
+        cache = calculate_cache(crc_polynomial, crc_reverse_polynomial, 8)
+        CRC_CACHE[bytes(crc_polynomial)] = cache
 
     for j in range(start, end):
         index = message_indices[j]

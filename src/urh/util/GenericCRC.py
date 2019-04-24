@@ -8,6 +8,11 @@ from urh.util import util
 
 
 class GenericCRC(object):
+    TOTAL_CONV_TIME = 0
+    TOTAL_START_VAL_TIME = 0
+    TOTAL_XOR_VAL_TIME = 0
+    TOTAL_SET_PARAMETERS_TIME = 0
+
     # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
     DEFAULT_POLYNOMIALS = OrderedDict([
         # x^8 + x^7 + x^6 + x^4 + x^2 + 1
@@ -133,7 +138,7 @@ class GenericCRC(object):
             return polynomial
 
     def get_parameters(self):
-        return array.array("B", self.polynomial), array.array("B", self.start_value), array.array("B", self.final_xor), \
+        return self.polynomial, self.start_value, self.final_xor, \
                self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian
 
     def crc(self, inpt):
@@ -163,10 +168,10 @@ class GenericCRC(object):
             self.__cache_bits = 8 if self.poly_order > 8 else self.poly_order - 1
         self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial, self.__cache_bits)
 
-    def get_crc_datarange(self, inpt, vrfy_crc):
+    def get_crc_datarange(self, inpt, vrfy_crc_start):
         return c_util.get_crc_datarange(array.array("B", inpt),
                                         array.array("B", self.polynomial),
-                                        array.array("B", vrfy_crc),
+                                        vrfy_crc_start,
                                         array.array("B", self.start_value),
                                         array.array("B", self.final_xor),
                                         self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
@@ -245,7 +250,7 @@ class GenericCRC(object):
         else:
             self.polynomial = polynomial
         # Clear cache if polynomial changes
-        if(self.polynomial != old):
+        if self.polynomial != old:
             self.cache = []
             self.__cache_bits = 8
 
@@ -268,7 +273,7 @@ class GenericCRC(object):
         # Set boolean parameters
         old_reverse = self.reverse_polynomial
         self.reverse_polynomial = reverse_polynomial
-        if(self.reverse_polynomial != old_reverse):
+        if self.reverse_polynomial != old_reverse:
             self.cache = []
             self.__cache_bits = 8
 
@@ -334,6 +339,28 @@ class GenericCRC(object):
         :param ignore_positions: columns to ignore (e.g. if already another label on them)
         :return: a CRC object, data_range_start, data_range_end, crc_start, crc_end
         """
+        for name in self.STANDARD_CHECKSUMS:
+            poly = self.STANDARD_CHECKSUMS[name]["polynomial"]
+            if isinstance(poly, str):
+                self.STANDARD_CHECKSUMS[name]["polynomial"] = array.array("B", [1]) + util.hex2bit(poly)
+
+            n = len(self.STANDARD_CHECKSUMS[name]["polynomial"]) - 1
+            try:
+                start_val = self.STANDARD_CHECKSUMS[name]["start_value"]
+            except KeyError:
+                start_val = 0
+
+            if isinstance(start_val, int):
+                self.STANDARD_CHECKSUMS[name]["start_value"] = array.array("B", [start_val] * n)
+
+            try:
+                final_xor = self.STANDARD_CHECKSUMS[name]["final_xor"]
+            except KeyError:
+                final_xor = 0
+
+            if isinstance(final_xor, int):
+                self.STANDARD_CHECKSUMS[name]["final_xor"] = array.array("B", [final_xor] * n)
+
         ignore_positions = set() if ignore_positions is None else ignore_positions
         for i in range(0, trash_max):
             ret = self.guess_standard_parameters_and_datarange(bits, i)
@@ -350,8 +377,7 @@ class GenericCRC(object):
         len_input = len(inpt)
         for s in polynomial_sizes:
             for i in range(len_input - s - trash_max, len_input - s):
-                vrfy_crc = inpt[i:i + s]
-                ret = self.bruteforce_parameters_and_data_range(inpt, vrfy_crc)
+                ret = self.bruteforce_parameters_and_data_range(inpt, i)
                 if ret != (0, 0, 0):
                     return ret[0], ret[1], ret[2], i, i + s
         return 0, 0, 0, 0, 0
@@ -375,21 +401,27 @@ class GenericCRC(object):
         for name, parameters in sorted(self.STANDARD_CHECKSUMS.items(),
                                        key=lambda x: len(x[1]["polynomial"]),
                                        reverse=True):
-            self.set_individual_parameters(**parameters)
+            t = time.time()
+            GenericCRC.TOTAL_SET_PARAMETERS_TIME += time.time()-t
             self.caption = name
-            vrfy_crc = inpt[len(inpt) - trash - self.poly_order + 1: len(inpt) - trash]
-            data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc)
+            data_begin, data_end = c_util.get_crc_datarange(inpt,
+                                     parameters["polynomial"],
+                                     max(0, len(inpt) - trash - len(parameters["polynomial"])) + 1,
+                                     parameters["start_value"],
+                                     parameters["final_xor"],
+                                     parameters.get("ref_in", False), parameters.get("reverse_polynomial", False), parameters.get("ref_out", False), parameters.get("little_endian", False))
             if (data_begin, data_end) != (0, 0):
+                self.set_individual_parameters(**parameters)
                 return self, data_begin, data_end
         return 0, 0, 0
 
-    def bruteforce_parameters_and_data_range(self, inpt, vrfy_crc):
+    def bruteforce_parameters_and_data_range(self, inpt, vrfy_crc_start):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed
         # and determines start and end of crc datarange (end is set before crc)
         # Note: vfry_crc is included inpt!
         for i in range(0, 2 ** 8):
             self.set_crc_parameters(i)
-            data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc)
+            data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc_start)
             if (data_begin, data_end) != (0, 0):
                 return i, data_begin, data_end
         return 0, 0, 0

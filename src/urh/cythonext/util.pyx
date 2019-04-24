@@ -9,7 +9,7 @@ import numpy as np
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 cimport cython
 from cython.parallel import prange
-from libc.math cimport log10
+from libc.math cimport log10,pow
 from libcpp cimport bool
 
 cpdef tuple minmax(float[:] arr):
@@ -57,7 +57,7 @@ cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start =
 cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, idx, poly_order = len(polynomial)
-    cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
+    cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
     cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef unsigned short j, x
@@ -108,11 +108,11 @@ cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_valu
 
 cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial, uint8_t bits):
     cdef uint8_t j, poly_order = len(polynomial)
-    cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
+    cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
     cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef uint64_t crcv, i
-    cdef np.ndarray[np.uint64_t, ndim=1] cache = np.zeros(2**bits, dtype = np.uint64)
+    cdef np.ndarray[np.uint64_t, ndim=1] cache = np.zeros(<uint64_t> pow(2, bits), dtype = np.uint64)
     # Caching
     for i in range(0, <uint32_t> len(cache)):
         crcv = i << (poly_order - 1 - bits)
@@ -128,7 +128,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, boo
 cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t bits, uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
     cdef unsigned int len_inpt = len(inpt)
     cdef unsigned int i, poly_order = len(polynomial)
-    cdef uint64_t crc_mask = (2**(poly_order - 1) - 1)
+    cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
     cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef uint64_t temp, crcv, data, pos
@@ -189,7 +189,7 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:]
     cdef unsigned int i, idx, offset, data_end = 0, poly_order = len(polynomial)
     cdef np.ndarray[np.uint64_t, ndim=1] steps = np.empty(len_inpt+2, dtype=np.uint64)
     cdef unsigned long long temp
-    cdef unsigned long long crc_mask = (2**(poly_order - 1) - 1)
+    cdef unsigned long long crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef unsigned long long poly_mask = (crc_mask + 1) >> 1
     cdef unsigned long long poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
     cdef unsigned long long final_xor_int = arr_to_number(final_xor, False, 0) & crc_mask

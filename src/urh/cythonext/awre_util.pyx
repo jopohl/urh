@@ -159,7 +159,7 @@ cpdef set check_crc_for_messages(unsigned long start, list message_indices, list
     vectors who match the CRC with the given parameters
     :return: 
     """
-    result = set()
+    cdef set result = set()
     cdef unsigned long j, index, end = len(message_indices)
     cdef np.ndarray[np.uint8_t] bits
     cdef unsigned char[:] crc_input

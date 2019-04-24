@@ -191,7 +191,7 @@ class TestPartiallyLabeled(AWRETestCase):
                                participants=[alice, bob])
 
         for i in range(10):
-            pg.generate_message(data="0xffff", source=alice, destination=bob)
-            pg.generate_message(data="0xfffffff", source=bob, destination=alice)
+            pg.generate_message(data="0xfffffffff", source=alice, destination=bob)
+            pg.generate_message(data="0xfffffffffffff", source=bob, destination=alice)
 
         return pg.protocol

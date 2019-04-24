@@ -1,5 +1,6 @@
 import copy
 import math
+import time
 from collections import defaultdict
 
 import numpy as np
@@ -119,10 +120,12 @@ class FormatFinder(object):
 
         result = set()
         for engine in engines:
+            t = time.time()
             high_scored_ranges = engine.find()  # type: list[CommonRange]
             high_scored_ranges = self.retransform_message_indices(high_scored_ranges, indices, self.sync_ends)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             result.update(merged_ranges)
+            print(type(engine), time.time()-t)
         return result
 
     def perform_iteration(self) -> bool:

@@ -7,6 +7,7 @@ import numpy as np
 # np.import_array()
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdlib cimport malloc, calloc, free
 cimport cython
 from cython.parallel import prange
 from libc.math cimport log10,pow
@@ -42,7 +43,7 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
     return result
 
-cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse, unsigned int start = 0):
+cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse = False, unsigned int start = 0):
     cdef uint64_t result = 0
     cdef unsigned int i, len_inpt = len(inpt)
     for i in range(start, len_inpt):
@@ -106,7 +107,7 @@ cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_valu
 
     return crc & crc_mask
 
-cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial, uint8_t bits):
+cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial=False, uint8_t bits=8):
     cdef uint8_t j, poly_order = len(polynomial)
     cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
     cdef uint64_t poly_mask = (crc_mask + 1) >> 1
@@ -184,38 +185,24 @@ cpdef uint64_t cached_crc(uint64_t[:] cache, uint8_t bits, uint8_t[:] inpt, uint
                   | ((crcv << 8)  & <uint64_t>0x000000FF00000000) | ((crcv >> 8)  & <uint64_t>0x00000000FF000000)
     return crcv & crc_mask
 
-cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] vrfy_crc, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
-    cdef unsigned int len_inpt = len(inpt)
-    cdef unsigned int i, idx, offset, data_end = 0, poly_order = len(polynomial)
-    cdef np.ndarray[np.uint64_t, ndim=1] steps = np.empty(len_inpt+2, dtype=np.uint64)
-    cdef unsigned long long temp
-    cdef unsigned long long crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
-    cdef unsigned long long poly_mask = (crc_mask + 1) >> 1
-    cdef unsigned long long poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
-    cdef unsigned long long final_xor_int = arr_to_number(final_xor, False, 0) & crc_mask
-    cdef unsigned long long vrfy_crc_int = arr_to_number(vrfy_crc, False, 0) & crc_mask
-    cdef unsigned long long crcvalue = arr_to_number(start_value, False, 0) & crc_mask
-    cdef unsigned short j = 0, len_crc = poly_order - 1
+cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t vrfy_crc_start, uint8_t[:] start_value, uint8_t[:] final_xor, bool lsb_first, bool reverse_polynomial, bool reverse_all, bool little_endian):
+    cdef uint32_t len_inpt = len(inpt), poly_order = len(polynomial)
+    cdef uint8_t j = 0, len_crc = poly_order - 1
+
+    if vrfy_crc_start-1+len_crc >= len_inpt or vrfy_crc_start < 2:
+        return 0, 0
+
+    cdef uint64_t* steps = <uint64_t*>calloc(len_inpt+2, sizeof(uint64_t))
+    cdef uint64_t temp
+    cdef uint64_t crc_mask = <uint64_t> pow(2, poly_order - 1) - 1
+    cdef uint64_t poly_mask = (crc_mask + 1) >> 1
+    cdef uint64_t poly_int = arr_to_number(polynomial, reverse_polynomial, 1) & crc_mask
+    cdef uint64_t final_xor_int = arr_to_number(final_xor, False, 0) & crc_mask
+    cdef uint64_t vrfy_crc_int = arr_to_number(inpt[vrfy_crc_start:vrfy_crc_start+len_crc], False, 0) & crc_mask
+    cdef uint64_t crcvalue = arr_to_number(start_value, False, 0) & crc_mask
     cdef bool found
-
-    # Find data_end (beginning of crc)
-    if len_inpt <= len_crc or len_crc != len(vrfy_crc):
-        return 0, 0
-    for data_end in range(len_inpt - len_crc, -1, -1):
-        i = 0
-        for j in range(0, len_crc):
-            if vrfy_crc[j] == inpt[data_end+j]:
-                i += 1
-            else:
-                continue
-        if i == len_crc:
-            break
-    if data_end <= 0:  # Could not find crc position
-        return 0, 0
-
-    # leads to https://github.com/jopohl/urh/issues/463
-    #step = [1] + [0] * (len_inpt - 1)
-    step = [0] * len_inpt
+    cdef uint32_t i, idx, offset, data_end = vrfy_crc_start
+    cdef uint8_t* step = <uint8_t*>calloc(len_inpt, sizeof(uint8_t))
     step[0] = 1
 
     # crcvalue is initialized with start_value
@@ -238,45 +225,52 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:]
             # Save steps XORed with final_xor
             steps[idx] = crcvalue ^ final_xor_int
 
-    # Reverse and little endian
-    for i in range(0, data_end):
-        # reverse all bits
-        if reverse_all:
-            temp = 0
-            for j in range(0, poly_order - 1):
-                if steps[i] & (1 << j):
-                    temp |= (1 << (poly_order -2  - j))
-            steps[j] = temp & crc_mask
+    free(step)
 
-        # little endian encoding, different for 16, 32, 64 bit
-        if poly_order - 1 == 16 and little_endian:
-            steps[i] = ((steps[i] << 8) & 0xFF00) | (steps[i] >> 8)
-        elif poly_order - 1 == 32 and little_endian:
-            steps[i] = ((steps[i] << 24) & 0xFF000000) | ((steps[i] << 8) & 0x00FF0000) | ((steps[i] >> 8) & 0x0000FF00) | (steps[i] >> 24)
-        elif poly_order - 1 == 64 and little_endian:
-            steps[i] =  ((steps[i] << 56) & 0xFF00000000000000) |  (steps[i] >> 56) \
-                      | ((steps[i] >> 40) & 0x000000000000FF00) | ((steps[i] << 40) & 0x00FF000000000000) \
-                      | ((steps[i] << 24) & 0x0000FF0000000000) | ((steps[i] >> 24) & 0x0000000000FF0000) \
-                      | ((steps[i] << 8)  & 0x000000FF00000000) | ((steps[i] >> 8)  & 0x00000000FF000000)
+    # Reverse and little endian
+    if reverse_all or little_endian:
+        for i in range(0, data_end):
+            # reverse all bits
+            if reverse_all:
+                temp = 0
+                for j in range(0, poly_order - 1):
+                    if steps[i] & (1 << j):
+                        temp |= (1 << (poly_order -2  - j))
+                steps[j] = temp & crc_mask
+
+            # little endian encoding, different for 16, 32, 64 bit
+            if poly_order - 1 == 16 and little_endian:
+                steps[i] = ((steps[i] << 8) & <uint64_t> 0xFF00) | (steps[i] >> 8)
+            elif poly_order - 1 == 32 and little_endian:
+                steps[i] = ((steps[i] << 24) & <uint64_t> 0xFF000000) | ((steps[i] << 8) & <uint64_t> 0x00FF0000) | ((steps[i] >> 8) &  <uint64_t> 0x0000FF00) | (steps[i] >> 24)
+            elif poly_order - 1 == 64 and little_endian:
+                steps[i] =  ((steps[i] << 56) & <uint64_t> 0xFF00000000000000) |  (steps[i] >> 56) \
+                          | ((steps[i] >> 40) & <uint64_t> 0x000000000000FF00) | ((steps[i] << 40) & <uint64_t> 0x00FF000000000000) \
+                          | ((steps[i] << 24) & <uint64_t> 0x0000FF0000000000) | ((steps[i] >> 24) & <uint64_t> 0x0000000000FF0000) \
+                          | ((steps[i] << 8)  & <uint64_t> 0x000000FF00000000) | ((steps[i] >> 8)  & <uint64_t> 0x00000000FF000000)
 
     # Test data range from 0...start_crc until start_crc-1...start_crc
     # Compute start value
     crcvalue = crc(inpt[:data_end], polynomial, start_value, final_xor, lsb_first, reverse_polynomial, reverse_all, little_endian)
-    if vrfy_crc_int == crcvalue:
-        return 0, data_end
-    found = False
-    i = 0
-    while i < data_end - 1:
-        offset = 0
-        while (inpt[i + offset] == False and i+offset < data_end - 1):  # skip leading 0s in data (doesn't change crc...)
-            offset += 1
-        # XOR delta=crc(10000...) to last crc value to create next crc value
-        crcvalue ^= steps[data_end-i-offset-1]
-        if found:
-            return i, data_end  # Return start_data, end_data
+    try:
         if vrfy_crc_int == crcvalue:
-            found = True
-        i += 1 + offset
+            return 0, data_end
+        found = False
 
-    # No beginning found
-    return 0, 0
+        i = 0
+        while i < data_end - 1:
+            offset = 0
+            while inpt[i + offset] == False and i+offset < data_end - 1:  # skip leading 0s in data (doesn't change crc...)
+                offset += 1
+            # XOR delta=crc(10000...) to last crc value to create next crc value
+            crcvalue ^= steps[data_end-i-offset-1]
+            if found:
+                return i, data_end  # Return start_data, end_data
+            if vrfy_crc_int == crcvalue:
+                found = True
+            i += 1 + offset
+
+        # No beginning found
+        return 0, 0
+    finally:
+        free(steps)

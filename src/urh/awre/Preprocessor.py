@@ -197,7 +197,14 @@ class Preprocessor(object):
             sync_words.update(additional_syncs)
 
         print("  Rest:", time.time()-t)
-        return sorted(sync_words, key=sync_words.get, reverse=True)
+        t = time.time()
+        result = []
+        for sync_word in sorted(sync_words, key=sync_words.get, reverse=True):
+            # Convert bytes back to string
+            result.append("".join(str(c) for c in sync_word))
+
+        print("  Conversion time", time.time()-t)
+        return result
 
     def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:
         """

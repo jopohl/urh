@@ -2,6 +2,10 @@
 cimport numpy as np
 import numpy as np
 
+
+from libc.math cimport floor
+from libc.stdlib cimport malloc, free
+
 from libcpp cimport bool
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t
 
@@ -72,26 +76,22 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
     return smaller_len
 
-
-from collections import defaultdict
-from libc.math cimport floor
-
 cdef int lower_multiple_of_n(int number, int n) nogil:
         return n * <int>floor(number / n)
 
-from libc.stdlib cimport malloc, free
+
 
 cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_matrix,
                                np.ndarray[np.int32_t, ndim=2] raw_preamble_positions,
                                list bitvectors, int n_gram_length):
-    possible_sync_words = defaultdict(int)
+    cdef dict possible_sync_words = dict()
 
     cdef int32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
     cdef int32_t sync_len, sync_end, start, index, k
 
-    cdef str sync_word
+    cdef bytes sync_word
 
-    cdef uint8_t[:] bitvector
+    cdef np.ndarray[np.uint8_t] bitvector
 
     cdef int8_t ij_ctr = 0
     cdef int32_t* ij_arr = <int32_t*>malloc(2 * sizeof(int32_t))
@@ -118,12 +118,14 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
                     sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
 
                     bitvector = bitvectors[index]
-                    sync_word = "".join(map(str, bitvector[start:start + sync_len]))
+                    sync_word = bytes(bitvector[start:start + sync_len])
 
-                    if sync_word not in ("", "10", "01"):
+                    if sync_word not in {b"", b"\x00\x01", b"\x01\x00"}:
                         # Sync word must not be empty or just two bits long and "10" or "01" because
                         # that would be indistinguishable from the preamble
 
+
+                        possible_sync_words.setdefault(sync_word, 0)
                         if (start + sync_len) % n_gram_length == 0:
                             # if sync end aligns nicely at n gram length give it a larger score
                             possible_sync_words[sync_word] += 1
@@ -132,7 +134,7 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
 
     free(ij_arr)
 
-    return dict(possible_sync_words)
+    return possible_sync_words
 
 
 cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list active_indices):

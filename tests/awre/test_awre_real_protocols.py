@@ -9,7 +9,7 @@ from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-
+import numpy as np
 
 class TestAWRERealProtocols(AWRETestCase):
     def setUp(self):
@@ -54,7 +54,7 @@ class TestAWRERealProtocols(AWRETestCase):
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"
 
-        preprocessor = Preprocessor([msg.plain_bits for msg in messages])
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in messages])
         possible_syncs = preprocessor.find_possible_syncs()
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)

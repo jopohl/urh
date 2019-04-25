@@ -38,9 +38,11 @@ class FormatFinder(object):
         for i, message_type in existing_message_types_by_msg.items():
             self.existing_message_types[message_type].append(i)
 
+        t = time.time()
         preprocessor = Preprocessor(self.get_bitvectors_from_messages(messages), existing_message_types_by_msg)
         self.preamble_starts, self.preamble_lengths, sync_len = preprocessor.preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
+        print("Total preprocessing time", time.time()- t)
 
         n = shortest_field_length
         if n is None:

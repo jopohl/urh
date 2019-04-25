@@ -423,8 +423,8 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_messages = list(range(8, 256, 4))
-        protocol_names = ["enocean", "homematic", "rwe"]
+        num_messages = list(range(252, 256, 4))
+        protocol_names = ["rwe"]
 
         random.seed(0)
         np.random.seed(0)
@@ -447,7 +447,7 @@ class AWRExperiments(AWRETestCase):
                 self.run_format_finder_for_protocol(protocol)
                 performances["{}".format(protocol_name)].append(time.time() - t)
 
-        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
+        #self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict, relative=None):
@@ -571,16 +571,19 @@ class AWRExperiments(AWRETestCase):
         return protocol
 
     def generate_rwe(self, num_messages: int, save_protocol=True):
-        ff, messages = self.get_format_finder_from_protocol_file("rwe.proto.xml", return_messages=True)
+        proto_file = get_path_for_data_file("rwe.proto.xml")
+        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
+        protocol.from_xml_file(filename=proto_file, read_bits=True)
+        messages = protocol.messages
 
-        protocol = ProtocolAnalyzer(None)
+        result = ProtocolAnalyzer(None)
         message_type = MessageType("empty")
         for i in range(num_messages):
             msg = messages[i % len(messages)]  # type: Message
             msg.message_type = message_type
-            protocol.messages.append(msg)
+            result.messages.append(msg)
 
         if save_protocol:
-            self.save_protocol("rwe", protocol)
+            self.save_protocol("rwe", result)
 
-        return protocol
+        return result

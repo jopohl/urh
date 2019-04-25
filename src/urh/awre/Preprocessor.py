@@ -1,6 +1,7 @@
 import itertools
 import math
 import os
+import time
 from collections import defaultdict
 
 import numpy as np
@@ -24,16 +25,24 @@ class Preprocessor(object):
         self.existing_message_types = existing_message_types if existing_message_types is not None else dict()
 
     def preprocess(self) -> (np.ndarray, int):
+        t = time.time()
         raw_preamble_positions = self.get_raw_preamble_positions()
+        print("Time raw preamble positions", time.time()-t)
+        t = time.time()
         existing_sync_words = self.__get_existing_sync_words()
+        print("Get exisiting sync words", time.time()-t)
         if len(existing_sync_words) == 0:
+            t = time.time()
             sync_words = self.find_possible_syncs(raw_preamble_positions)
+            print("Find possible syncs", time.time()-t)
         else:
             # NOTE: This does not cover the case if protocol has multiple sync words and not all of them were labeled
             sync_words = existing_sync_words
 
         preamble_starts = raw_preamble_positions[:, 0]
+        t = time.time()
         preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
+        print("Get raw preamble lengths", time.time()-t)
         sync_len = len(sync_words[0]) if len(sync_words) > 0 else 0
         return preamble_starts, preamble_lengths, sync_len
 
@@ -121,6 +130,7 @@ class Preprocessor(object):
                                   n_gram_length=4) -> list:
         possible_sync_words = defaultdict(int)
 
+        t = time.time()
         for i in range(difference_matrix.shape[0]):
             for j in range(i + 1, difference_matrix.shape[1]):
                 # position of first difference between message i and j
@@ -149,14 +159,22 @@ class Preprocessor(object):
                         else:
                             possible_sync_words[sync_word] += 0.5
 
+        print("  First loop", time.time()-t)
+
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
             return []
 
+        t = time.time()
         possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
+        print("  Merge sync words", time.time()-t)
         self.__debug("Merged sync words", possible_sync_words)
 
+        t  = time.time()
         scores = self.__score_sync_lengths(possible_sync_words)
+        print("  Score sync lengths", time.time()-t)
+
+        t = time.time()
         sorted_scores = sorted(scores, reverse=True, key=scores.get)
         estimated_sync_length = sorted_scores[0]
         if estimated_sync_length % 8 != 0:
@@ -176,6 +194,7 @@ class Preprocessor(object):
             self.__debug("Found addtional sync words", additional_syncs)
             sync_words.update(additional_syncs)
 
+        print("  Rest:", time.time()-t)
         return sorted(sync_words, key=sync_words.get, reverse=True)
 
     def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:

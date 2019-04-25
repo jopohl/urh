@@ -25,9 +25,7 @@ class Preprocessor(object):
         self.existing_message_types = existing_message_types if existing_message_types is not None else dict()
 
     def preprocess(self) -> (np.ndarray, int):
-        t = time.time()
         raw_preamble_positions = self.get_raw_preamble_positions()
-        print("Time raw preamble positions", time.time()-t)
         existing_sync_words = self.__get_existing_sync_words()
         if len(existing_sync_words) == 0:
             sync_words = self.find_possible_syncs(raw_preamble_positions)

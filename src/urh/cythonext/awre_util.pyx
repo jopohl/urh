@@ -66,8 +66,8 @@ cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint
 
     return result
 
-cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2):
-    cdef uint32_t i, smaller_len = min(len(bits1), len(bits2))
+cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2, uint32_t len_bits1, uint32_t len_bits2) nogil:
+    cdef uint32_t i, smaller_len = min(len_bits1, len_bits2)
 
     for i in range(0, smaller_len):
         if bits1[i] != bits2[i]:
@@ -75,13 +75,18 @@ cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2):
 
     return smaller_len
 
-cpdef np.ndarray[np.uint32_t] get_difference_matrix(list bitvectors):
+cpdef np.ndarray[np.uint32_t, ndim=2] get_difference_matrix(list bitvectors):
     cdef uint32_t i, j, N = len(bitvectors)
     cdef np.ndarray[np.uint32_t, ndim=2] result = np.zeros((N, N), dtype=np.uint32)
 
+    cdef uint8_t[:] bitvector_i
+    cdef uint32_t len_bitvector_i
+
     for i in range(N):
+        bitvector_i = bitvectors[i]
+        len_bitvector_i = len(bitvector_i)
         for j in range(i + 1, N):
-            result[i, j] = find_first_difference(bitvectors[i], bitvectors[j])
+            result[i, j] = find_first_difference(bitvector_i, bitvectors[j], len_bitvector_i, len(bitvectors[j]))
 
     return result
 

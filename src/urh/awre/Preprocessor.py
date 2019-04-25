@@ -128,36 +128,38 @@ class Preprocessor(object):
                                   raw_preamble_positions: np.ndarray,
                                   difference_matrix: np.ndarray,
                                   n_gram_length=4) -> list:
-        possible_sync_words = defaultdict(int)
 
         t = time.time()
-        for i in range(difference_matrix.shape[0]):
-            for j in range(i + 1, difference_matrix.shape[1]):
-                # position of first difference between message i and j
-                sync_end = difference_matrix[i, j]
-
-                if sync_end == 0:
-                    continue
-
-                for index, k in itertools.product([i, j], range(2)):
-                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
-
-                    # We take the next lower multiple of n for the sync len
-                    # In doubt, it is better to under estimate the sync len to prevent it from
-                    # taking needed values from other fields e.g. leading zeros for a length field
-                    sync_len = max(0, self.lower_multiple_of_n(sync_end - start, n_gram_length))
-
-                    sync_word = "".join(map(str, self.bitvectors[index][start:start + sync_len]))
-
-                    if sync_word not in ("", "10", "01"):
-                        # Sync word must not be empty or just two bits long and "10" or "01" because
-                        # that would be indistinguishable from the preamble
-
-                        if (start + sync_len) % n_gram_length == 0:
-                            # if sync end aligns nicely at n gram length give it a larger score
-                            possible_sync_words[sync_word] += 1
-                        else:
-                            possible_sync_words[sync_word] += 0.5
+        possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
+                                                                 self.bitvectors, n_gram_length)
+        # possible_sync_words = defaultdict(int)
+        # for i in range(difference_matrix.shape[0]):
+        #     for j in range(i + 1, difference_matrix.shape[1]):
+        #         # position of first difference between message i and j
+        #         sync_end = difference_matrix[i, j]
+        #
+        #         if sync_end == 0:
+        #             continue
+        #
+        #         for index, k in itertools.product([i, j], range(2)):
+        #             start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
+        #
+        #             # We take the next lower multiple of n for the sync len
+        #             # In doubt, it is better to under estimate the sync len to prevent it from
+        #             # taking needed values from other fields e.g. leading zeros for a length field
+        #             sync_len = max(0, self.lower_multiple_of_n(sync_end - start, n_gram_length))
+        #
+        #             sync_word = "".join(map(str, self.bitvectors[index][start:start + sync_len]))
+        #
+        #             if sync_word not in ("", "10", "01"):
+        #                 # Sync word must not be empty or just two bits long and "10" or "01" because
+        #                 # that would be indistinguishable from the preamble
+        #
+        #                 if (start + sync_len) % n_gram_length == 0:
+        #                     # if sync end aligns nicely at n gram length give it a larger score
+        #                     possible_sync_words[sync_word] += 1
+        #                 else:
+        #                     possible_sync_words[sync_word] += 0.5
 
         print("  First loop", time.time()-t)
 
@@ -241,7 +243,7 @@ class Preprocessor(object):
         Return a 2D numpy array where first column is the start of preamble
         second and third columns are lower and upper bound for preamble length by message, respectively
         """
-        result = np.zeros((len(self.bitvectors), 3), dtype=int)
+        result = np.zeros((len(self.bitvectors), 3), dtype=np.int32)
 
         for i, bitvector in enumerate(self.bitvectors):
             if i in self.existing_message_types:
@@ -266,7 +268,7 @@ class Preprocessor(object):
         Return a matrix of the first difference index between all messages
         :return:
         """
-        result = np.zeros((len(self.bitvectors), len(self.bitvectors)), dtype=int)
+        result = np.zeros((len(self.bitvectors), len(self.bitvectors)), dtype=np.int32)
 
         for i in range(len(self.bitvectors)):
             for j in range(i + 1, len(self.bitvectors)):

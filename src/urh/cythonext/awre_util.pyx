@@ -3,7 +3,10 @@ cimport numpy as np
 import numpy as np
 
 from libcpp cimport bool
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t
+
 from array import array
+
 
 from urh.cythonext.util import crc
 
@@ -68,6 +71,57 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
             return i
 
     return smaller_len
+
+
+from collections import defaultdict
+import itertools
+import math
+
+cpdef lower_multiple_of_n(int number, int n):
+        return n * int(math.floor(number / n))
+
+cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_matrix,
+                               np.ndarray[np.int32_t, ndim=2] raw_preamble_positions,
+                               list bitvectors, int n_gram_length):
+    possible_sync_words = defaultdict(int)
+
+    cdef int32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
+    cdef int32_t sync_len, start, index, k
+
+    cdef str sync_word
+
+    cdef uint8_t[:] bitvector
+
+    for i in range(0, num_rows):
+        for j in range(i + 1, num_cols):
+            # position of first difference between message i and j
+            sync_end = difference_matrix[i, j]
+
+            if sync_end == 0:
+                continue
+
+            for index, k in itertools.product([i, j], range(2)):
+                start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
+
+                # We take the next lower multiple of n for the sync len
+                # In doubt, it is better to under estimate the sync len to prevent it from
+                # taking needed values from other fields e.g. leading zeros for a length field
+                sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
+
+                bitvector = bitvectors[index]
+                sync_word = "".join(map(str, bitvector[start:start + sync_len]))
+
+                if sync_word not in ("", "10", "01"):
+                    # Sync word must not be empty or just two bits long and "10" or "01" because
+                    # that would be indistinguishable from the preamble
+
+                    if (start + sync_len) % n_gram_length == 0:
+                        # if sync end aligns nicely at n gram length give it a larger score
+                        possible_sync_words[sync_word] += 1
+                    else:
+                        possible_sync_words[sync_word] += 0.5
+
+    return dict(possible_sync_words)
 
 
 cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list active_indices):

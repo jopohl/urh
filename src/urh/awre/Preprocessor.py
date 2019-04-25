@@ -98,7 +98,9 @@ class Preprocessor(object):
         return result
 
     def find_possible_syncs(self, raw_preamble_positions=None):
+        t = time.time()
         difference_matrix = self.get_difference_matrix()
+        print("  Difference matrix", time.time()-t)
         if raw_preamble_positions is None:
             raw_preamble_positions = self.get_raw_preamble_positions()
         return self.determine_sync_candidates(raw_preamble_positions, difference_matrix, n_gram_length=4)
@@ -132,36 +134,8 @@ class Preprocessor(object):
         t = time.time()
         possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
                                                                  self.bitvectors, n_gram_length)
-        # possible_sync_words = defaultdict(int)
-        # for i in range(difference_matrix.shape[0]):
-        #     for j in range(i + 1, difference_matrix.shape[1]):
-        #         # position of first difference between message i and j
-        #         sync_end = difference_matrix[i, j]
-        #
-        #         if sync_end == 0:
-        #             continue
-        #
-        #         for index, k in itertools.product([i, j], range(2)):
-        #             start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
-        #
-        #             # We take the next lower multiple of n for the sync len
-        #             # In doubt, it is better to under estimate the sync len to prevent it from
-        #             # taking needed values from other fields e.g. leading zeros for a length field
-        #             sync_len = max(0, self.lower_multiple_of_n(sync_end - start, n_gram_length))
-        #
-        #             sync_word = "".join(map(str, self.bitvectors[index][start:start + sync_len]))
-        #
-        #             if sync_word not in ("", "10", "01"):
-        #                 # Sync word must not be empty or just two bits long and "10" or "01" because
-        #                 # that would be indistinguishable from the preamble
-        #
-        #                 if (start + sync_len) % n_gram_length == 0:
-        #                     # if sync end aligns nicely at n gram length give it a larger score
-        #                     possible_sync_words[sync_word] += 1
-        #                 else:
-        #                     possible_sync_words[sync_word] += 0.5
 
-        print("  First loop", time.time()-t)
+        print("  Find possible sync words", time.time()-t)
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
@@ -190,7 +164,9 @@ class Preprocessor(object):
                       if len(word) == estimated_sync_length}
         self.__debug("Sync words", sync_words)
 
+        t1 = time.time()
         additional_syncs = self.__find_additional_sync_words(estimated_sync_length, sync_words, possible_sync_words)
+        print("    Find additional syncs", time.time()-t1)
 
         if additional_syncs:
             self.__debug("Found addtional sync words", additional_syncs)
@@ -216,10 +192,15 @@ class Preprocessor(object):
         :type possible_sync_words: dict
         :return:
         """
+        t = time.time()
         np_syn = [np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
                   for sync_word in present_sync_words]
+        print("    Fromiter", time.time()-t)
+
+        t = time.time()
         messages_without_sync = [i for i, bv in enumerate(self.bitvectors)
                                  if not any(awre_util.find_occurrences(bv, s, return_after_first=True) for s in np_syn)]
+        print("   Without sync", time.time()-t)
 
         result = dict()
         if len(messages_without_sync) == 0:

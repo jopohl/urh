@@ -172,7 +172,7 @@ cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list ac
     return histogram
 
 cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
-                            unsigned long[:] ignore_indices=None, return_after_first=False):
+                            unsigned long[:] ignore_indices=None, bool return_after_first=False):
     """
     Find the indices of occurrences of b in a. 
     
@@ -183,8 +183,7 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
     cdef unsigned long i, j
     cdef unsigned long len_a = len(a), len_b = len(b)
 
-    if ignore_indices is None:
-        ignore_indices = array("L", [])
+    cdef bool ignore_indices_present = ignore_indices is not None
 
     if len_b > len_a:
         return []
@@ -194,7 +193,12 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
     for i in range(0, (len_a-len_b) + 1):
         found = True
         for j in range(0, len_b):
-            if a[i+j] != b[j] or i+j in ignore_indices:
+            if ignore_indices_present:
+                if i+j in ignore_indices:
+                    found = False
+                    break
+
+            if a[i+j] != b[j]:
                 found = False
                 break
         if found:

@@ -60,7 +60,6 @@ class FormatFinder(object):
 
         self.bitvectors = self.get_bitvectors_from_messages(messages, self.sync_ends)
         self.hexvectors = self.get_hexvectors(self.bitvectors)
-        self.xor_matrix = self.build_xor_matrix()
         self.current_iteration = 0
 
         participants = list(sorted(set(msg.participant for msg in messages if msg.participant is not None)))
@@ -185,9 +184,6 @@ class FormatFinder(object):
         self.current_iteration = 0
         while self.perform_iteration() and self.current_iteration < max_iterations:
             self.current_iteration += 1
-
-    def build_xor_matrix(self):
-        return awre_util.build_xor_matrix(self.bitvectors)
 
     @staticmethod
     def remove_overlapping_fields(common_ranges, message_type: MessageType):

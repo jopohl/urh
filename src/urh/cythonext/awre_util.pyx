@@ -7,27 +7,6 @@ from array import array
 
 from urh.cythonext.util import crc
 
-cpdef np.ndarray[np.uint8_t, ndim=3] build_xor_matrix(list bitvectors):
-    cdef unsigned int maximum = 0
-    cdef np.uint8_t[:] bitvector_i, bitvector_j
-    cdef int i, j, l
-    for i in range(0, len(bitvectors)):
-        bitvector_i = bitvectors[i]
-        if maximum < len(bitvector_i):
-            maximum = len(bitvector_i)
-
-    cdef np.ndarray[np.uint8_t, ndim=3] result = np.full((len(bitvectors), len(bitvectors), maximum), -1, dtype=np.uint8, order="C")
-
-    for i in range(len(bitvectors)):
-        bitvector_i = bitvectors[i]
-        for j in range(i+1, len(bitvectors)):
-            bitvector_j = bitvectors[j]
-            l = min(len(bitvector_i), len(bitvector_j))
-            for k in range(0, l):
-                result[i,j,k] = bitvector_i[k] ^ bitvector_j[k]
-
-    return result
-
 cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
     cdef unsigned int i, j, longest = 0, counter = 0, len_bits1 = len(seq1), len_bits2 = len(seq2)
     cdef unsigned short max_results = 10, current_result = 0

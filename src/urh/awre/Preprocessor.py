@@ -28,13 +28,9 @@ class Preprocessor(object):
         t = time.time()
         raw_preamble_positions = self.get_raw_preamble_positions()
         print("Time raw preamble positions", time.time()-t)
-        t = time.time()
         existing_sync_words = self.__get_existing_sync_words()
-        print("Get exisiting sync words", time.time()-t)
         if len(existing_sync_words) == 0:
-            t = time.time()
             sync_words = self.find_possible_syncs(raw_preamble_positions)
-            print("Find possible syncs", time.time()-t)
         else:
             # NOTE: This does not cover the case if protocol has multiple sync words and not all of them were labeled
             sync_words = existing_sync_words
@@ -42,7 +38,7 @@ class Preprocessor(object):
         preamble_starts = raw_preamble_positions[:, 0]
         t = time.time()
         preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
-        print("Get raw preamble lengths", time.time()-t)
+        print("Get preamble lengths from sync words", time.time()-t)
         sync_len = len(sync_words[0]) if len(sync_words) > 0 else 0
         return preamble_starts, preamble_lengths, sync_len
 
@@ -100,7 +96,7 @@ class Preprocessor(object):
     def find_possible_syncs(self, raw_preamble_positions=None):
         t = time.time()
         difference_matrix = self.get_difference_matrix()
-        print("  Difference matrix", time.time()-t)
+        print("Difference matrix", time.time()-t)
         if raw_preamble_positions is None:
             raw_preamble_positions = self.get_raw_preamble_positions()
         return self.determine_sync_candidates(raw_preamble_positions, difference_matrix, n_gram_length=4)
@@ -135,22 +131,17 @@ class Preprocessor(object):
         possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
                                                                  self.bitvectors, n_gram_length)
 
-        print("  Find possible sync words", time.time()-t)
+        print("Find possible sync words", time.time()-t)
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
             return []
 
-        t = time.time()
         possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
-        print("  Merge sync words", time.time()-t)
         self.__debug("Merged sync words", possible_sync_words)
 
-        t  = time.time()
         scores = self.__score_sync_lengths(possible_sync_words)
-        print("  Score sync lengths", time.time()-t)
 
-        t = time.time()
         sorted_scores = sorted(scores, reverse=True, key=scores.get)
         estimated_sync_length = sorted_scores[0]
         if estimated_sync_length % 8 != 0:
@@ -164,22 +155,17 @@ class Preprocessor(object):
                       if len(word) == estimated_sync_length}
         self.__debug("Sync words", sync_words)
 
-        t1 = time.time()
         additional_syncs = self.__find_additional_sync_words(estimated_sync_length, sync_words, possible_sync_words)
-        print("    Find additional syncs", time.time()-t1)
 
         if additional_syncs:
             self.__debug("Found addtional sync words", additional_syncs)
             sync_words.update(additional_syncs)
 
-        print("  Rest:", time.time()-t)
-        t = time.time()
         result = []
         for sync_word in sorted(sync_words, key=sync_words.get, reverse=True):
             # Convert bytes back to string
             result.append("".join(str(c) for c in sync_word))
 
-        print("  Conversion time", time.time()-t)
         return result
 
     def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:
@@ -192,15 +178,11 @@ class Preprocessor(object):
         :type possible_sync_words: dict
         :return:
         """
-        t = time.time()
         np_syn = [np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
                   for sync_word in present_sync_words]
-        print("    Fromiter", time.time()-t)
 
-        t = time.time()
         messages_without_sync = [i for i, bv in enumerate(self.bitvectors)
                                  if not any(awre_util.find_occurrences(bv, s, return_after_first=True) for s in np_syn)]
-        print("   Without sync", time.time()-t)
 
         result = dict()
         if len(messages_without_sync) == 0:

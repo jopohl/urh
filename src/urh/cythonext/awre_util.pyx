@@ -128,7 +128,7 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
                             if bitvector[start] == 1 and bitvector[start+1] == 0:
                                 continue
 
-                        sync_word = bytes(bitvector[start:start + sync_len])
+                        sync_word = bitvector[start:start + sync_len].tobytes()
                         possible_sync_words.setdefault(sync_word, 0)
                         if (start + sync_len) % n_gram_length == 0:
                             # if sync end aligns nicely at n gram length give it a larger score

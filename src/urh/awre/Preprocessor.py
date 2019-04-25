@@ -222,7 +222,7 @@ class Preprocessor(object):
                 preamble_label = None
 
             if preamble_label is None:
-                start, lower, upper = self.get_raw_preamble_position(bitvector)
+                start, lower, upper = awre_util.get_raw_preamble_position(bitvector)
             else:
                 # If this message is already labeled with a preamble we just use it's values
                 start, lower, upper = preamble_label.start, preamble_label.end, preamble_label.end
@@ -276,53 +276,3 @@ class Preprocessor(object):
     @staticmethod
     def get_next_lower_multiple_of_two(number: int):
         return number if number % 2 == 0 else number - 1
-
-    @staticmethod
-    def get_raw_preamble_position(bitvector: np.ndarray) -> tuple:
-        """
-        Get the raw preamble length of a message by simply finding the first index of at least two equal bits
-        The method ensures that the returned length is a multiple of 2.
-
-        This method returns a tuple representing the upper and lower bound of the preamble because we cannot tell it
-        for sure e.g. for sync words 1001 or 0110
-        """
-        bits = "".join(map(str, bitvector))
-
-        lower = upper = 0
-
-        if len(bits) == 0:
-            return lower, upper
-
-        start = -1
-        k = 0
-        while k < 2 and start < len(bits):
-            start += 1
-
-            a = bits[start]
-            b = "1" if a == "0" else "0"
-
-            # now we search for the pattern a^n b^m
-            try:
-                n = bits.index(b, start) - start
-                m = bits.index(a, start + n) - n - start
-            except ValueError:
-                return 0, 0, 0
-
-            preamble_pattern = a * n + b * m
-            i = start
-            for i in range(start, len(bits), len(preamble_pattern)):
-                try:
-                    bits.index(preamble_pattern, i, i + len(preamble_pattern))
-                except ValueError:
-                    break
-
-            lower = upper = start + Preprocessor.lower_multiple_of_n(i + 1 - start, n + m)
-            lower -= (n + m)
-
-            k = (upper - start) / (n + m)
-
-        if k > 2:
-            return start, lower, upper
-        else:
-            # no preamble found
-            return 0, 0, 0

@@ -7,7 +7,7 @@ from libc.math cimport floor
 from libc.stdlib cimport malloc, free
 
 from libcpp cimport bool
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t, int64_t
 
 from array import array
 
@@ -87,6 +87,79 @@ cpdef np.ndarray[np.uint32_t] get_difference_matrix(list bitvectors):
 
 cdef int lower_multiple_of_n(int number, int n) nogil:
         return n * <int>floor(number / n)
+
+cdef int64_t find(uint8_t[:] data, int64_t len_data, uint8_t element, int64_t start=0) nogil:
+    cdef int64_t i
+    for i in range(start, len_data):
+        if data[i] == element:
+            return i
+    return -1
+
+cpdef tuple get_raw_preamble_position(uint8_t[:] bitvector):
+    cdef int64_t N = len(bitvector)
+    cdef int64_t i, j, n, m, start = -1
+    cdef double k = 0
+
+    cdef int64_t lower = 0, upper = 0
+    cdef uint8_t a, b
+
+    cdef uint8_t* preamble_pattern
+    cdef int64_t len_preamble_pattern, preamble_end
+
+    cdef bool preamble_end_reached
+
+    if N == 0:
+        return lower, upper
+
+    while k < 2 and start < N:
+        start += 1
+
+        a = bitvector[start]
+        b = 1 if a == 0 else 0
+
+        # now we search for the pattern a^n b^m
+        n = find(bitvector, N, b, start) - start
+
+        if n <= 0:
+            return 0, 0, 0
+
+        m = find(bitvector, N, a, start+n) - n - start
+
+        if m <= 0:
+            return 0, 0, 0
+
+        #preamble_pattern = a * n + b * m
+        len_preamble_pattern = n + m
+        preamble_pattern = <uint8_t*> malloc(len_preamble_pattern * sizeof(uint8_t))
+        for j in range(0, n):
+            preamble_pattern[j] = a
+        for j in range(n, len_preamble_pattern):
+            preamble_pattern[j] = b
+
+        preamble_end = start
+        preamble_end_reached = False
+        for i in range(start, N, len_preamble_pattern):
+            if preamble_end_reached:
+                break
+            for j in range(0, len_preamble_pattern):
+                if bitvector[i+j] != preamble_pattern[j]:
+                    preamble_end_reached = True
+                    preamble_end = i
+                    break
+
+        free(preamble_pattern)
+
+        upper = start + lower_multiple_of_n(preamble_end + 1 - start, len_preamble_pattern)
+        lower = upper - len_preamble_pattern
+
+        k = (upper - start) / len_preamble_pattern
+
+    if k > 2:
+        return start, lower, upper
+    else:
+        # no preamble found
+        return 0, 0, 0
+
 
 cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_matrix,
                                np.ndarray[np.uint32_t, ndim=2] raw_preamble_positions,

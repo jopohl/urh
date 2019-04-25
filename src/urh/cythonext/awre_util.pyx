@@ -3,7 +3,7 @@ cimport numpy as np
 import numpy as np
 
 from libcpp cimport bool
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t
 
 from array import array
 
@@ -74,11 +74,12 @@ cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
 
 
 from collections import defaultdict
-import itertools
-import math
+from libc.math cimport floor
 
-cpdef lower_multiple_of_n(int number, int n):
-        return n * int(math.floor(number / n))
+cdef int lower_multiple_of_n(int number, int n) nogil:
+        return n * <int>floor(number / n)
+
+from libc.stdlib cimport malloc, free
 
 cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_matrix,
                                np.ndarray[np.int32_t, ndim=2] raw_preamble_positions,
@@ -86,11 +87,14 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
     possible_sync_words = defaultdict(int)
 
     cdef int32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
-    cdef int32_t sync_len, start, index, k
+    cdef int32_t sync_len, sync_end, start, index, k
 
     cdef str sync_word
 
     cdef uint8_t[:] bitvector
+
+    cdef int8_t ij_ctr = 0
+    cdef int32_t* ij_arr = <int32_t*>malloc(2 * sizeof(int32_t))
 
     for i in range(0, num_rows):
         for j in range(i + 1, num_cols):
@@ -100,26 +104,33 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
             if sync_end == 0:
                 continue
 
-            for index, k in itertools.product([i, j], range(2)):
-                start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
+            ij_arr[0] = i
+            ij_arr[1] = j
 
-                # We take the next lower multiple of n for the sync len
-                # In doubt, it is better to under estimate the sync len to prevent it from
-                # taking needed values from other fields e.g. leading zeros for a length field
-                sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
+            for k in range(0, 2):
+                for ij_ctr in range(0, 2):
+                    index = ij_arr[ij_ctr]
+                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
 
-                bitvector = bitvectors[index]
-                sync_word = "".join(map(str, bitvector[start:start + sync_len]))
+                    # We take the next lower multiple of n for the sync len
+                    # In doubt, it is better to under estimate the sync len to prevent it from
+                    # taking needed values from other fields e.g. leading zeros for a length field
+                    sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
 
-                if sync_word not in ("", "10", "01"):
-                    # Sync word must not be empty or just two bits long and "10" or "01" because
-                    # that would be indistinguishable from the preamble
+                    bitvector = bitvectors[index]
+                    sync_word = "".join(map(str, bitvector[start:start + sync_len]))
 
-                    if (start + sync_len) % n_gram_length == 0:
-                        # if sync end aligns nicely at n gram length give it a larger score
-                        possible_sync_words[sync_word] += 1
-                    else:
-                        possible_sync_words[sync_word] += 0.5
+                    if sync_word not in ("", "10", "01"):
+                        # Sync word must not be empty or just two bits long and "10" or "01" because
+                        # that would be indistinguishable from the preamble
+
+                        if (start + sync_len) % n_gram_length == 0:
+                            # if sync end aligns nicely at n gram length give it a larger score
+                            possible_sync_words[sync_word] += 1
+                        else:
+                            possible_sync_words[sync_word] += 0.5
+
+    free(ij_arr)
 
     return dict(possible_sync_words)
 

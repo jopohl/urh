@@ -118,13 +118,17 @@ cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_ma
                     sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
 
                     bitvector = bitvectors[index]
-                    sync_word = bytes(bitvector[start:start + sync_len])
 
-                    if sync_word not in {b"", b"\x00\x01", b"\x01\x00"}:
-                        # Sync word must not be empty or just two bits long and "10" or "01" because
-                        # that would be indistinguishable from the preamble
+                    if sync_len >= 2:
+                        if sync_len == 2:
+                            # Sync word must not be empty or just two bits long and "10" or "01" because
+                            # that would be indistinguishable from the preamble
+                            if bitvector[start] == 0 and bitvector[start+1] == 1:
+                                continue
+                            if bitvector[start] == 1 and bitvector[start+1] == 0:
+                                continue
 
-
+                        sync_word = bytes(bitvector[start:start + sync_len])
                         possible_sync_words.setdefault(sync_word, 0)
                         if (start + sync_len) % n_gram_length == 0:
                             # if sync end aligns nicely at n gram length give it a larger score

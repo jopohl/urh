@@ -223,15 +223,6 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertTrue(all(preamble_length == len(preamble) for preamble_length in preamble_lengths))
         self.assertEqual(sync_len, len(sync))
 
-    def test_paper_examples(self):
-        pa = ProtocolAnalyzer(None)
-        pa.messages.append(Message.from_plain_bits_str("101010101001"))
-        pa.messages.append(Message.from_plain_bits_str("101010100110"))
-        pa.messages.append(Message.from_plain_bits_str("10101010101001"))
-
-        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pa.messages])
-        #print(preprocessor.get_difference_matrix())
-
     @staticmethod
     def build_protocol_generator(preamble_syncs: list, num_messages: tuple, data: tuple) -> ProtocolGenerator:
         message_types = []

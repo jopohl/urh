@@ -36,9 +36,7 @@ class Preprocessor(object):
             sync_words = existing_sync_words
 
         preamble_starts = raw_preamble_positions[:, 0]
-        t = time.time()
         preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
-        print("Get preamble lengths from sync words", time.time()-t)
         sync_len = len(sync_words[0]) if len(sync_words) > 0 else 0
         return preamble_starts, preamble_lengths, sync_len
 
@@ -54,13 +52,15 @@ class Preprocessor(object):
         # If there should be varying sync word lengths we need to return an array of sync lengths per message
         assert all(len(sync_word) == len(sync_words[0]) for sync_word in sync_words)
 
-        result = np.zeros(len(self.bitvectors), dtype=int)
+        byte_sync_words = [bytes(map(int, sync_word)) for sync_word in sync_words]
+
+        result = np.zeros(len(self.bitvectors), dtype=np.uint32)
 
         for i, bitvector in enumerate(self.bitvectors):
             preamble_lengths = []
-            bits = "".join(map(str, bitvector))
+            bits = bitvector.tobytes()
 
-            for sync_word in sync_words:
+            for sync_word in byte_sync_words:
                 sync_start = bits.find(sync_word)
                 if sync_start != -1:
                     if sync_start - preamble_starts[i] >= 2:
@@ -213,7 +213,7 @@ class Preprocessor(object):
         Return a 2D numpy array where first column is the start of preamble
         second and third columns are lower and upper bound for preamble length by message, respectively
         """
-        result = np.zeros((len(self.bitvectors), 3), dtype=np.int32)
+        result = np.zeros((len(self.bitvectors), 3), dtype=np.uint32)
 
         for i, bitvector in enumerate(self.bitvectors):
             if i in self.existing_message_types:
@@ -238,13 +238,7 @@ class Preprocessor(object):
         Return a matrix of the first difference index between all messages
         :return:
         """
-        result = np.zeros((len(self.bitvectors), len(self.bitvectors)), dtype=np.int32)
-
-        for i in range(len(self.bitvectors)):
-            for j in range(i + 1, len(self.bitvectors)):
-                result[i, j] = awre_util.find_first_difference(self.bitvectors[i], self.bitvectors[j])
-
-        return result
+        return awre_util.get_difference_matrix(self.bitvectors)
 
     def __score_sync_lengths(self, possible_sync_words: dict):
         sync_lengths = defaultdict(int)

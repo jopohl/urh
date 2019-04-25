@@ -66,35 +66,42 @@ cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint
 
     return result
 
-cpdef int find_first_difference(unsigned char[:] bits1, unsigned char[:] bits2):
-    cdef int i
-    cdef int smaller_len = min(len(bits1), len(bits2))
+cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2):
+    cdef uint32_t i, smaller_len = min(len(bits1), len(bits2))
 
-    for i in range(smaller_len):
+    for i in range(0, smaller_len):
         if bits1[i] != bits2[i]:
             return i
 
     return smaller_len
 
+cpdef np.ndarray[np.uint32_t] get_difference_matrix(list bitvectors):
+    cdef uint32_t i, j, N = len(bitvectors)
+    cdef np.ndarray[np.uint32_t, ndim=2] result = np.zeros((N, N), dtype=np.uint32)
+
+    for i in range(N):
+        for j in range(i + 1, N):
+            result[i, j] = find_first_difference(bitvectors[i], bitvectors[j])
+
+    return result
+
 cdef int lower_multiple_of_n(int number, int n) nogil:
         return n * <int>floor(number / n)
 
-
-
-cpdef dict find_possible_sync_words(np.ndarray[np.int32_t, ndim=2] difference_matrix,
-                               np.ndarray[np.int32_t, ndim=2] raw_preamble_positions,
+cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_matrix,
+                               np.ndarray[np.uint32_t, ndim=2] raw_preamble_positions,
                                list bitvectors, int n_gram_length):
     cdef dict possible_sync_words = dict()
 
-    cdef int32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
-    cdef int32_t sync_len, sync_end, start, index, k
+    cdef uint32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
+    cdef uint32_t sync_len, sync_end, start, index, k
 
     cdef bytes sync_word
 
     cdef np.ndarray[np.uint8_t] bitvector
 
-    cdef int8_t ij_ctr = 0
-    cdef int32_t* ij_arr = <int32_t*>malloc(2 * sizeof(int32_t))
+    cdef uint8_t ij_ctr = 0
+    cdef uint32_t* ij_arr = <uint32_t*>malloc(2 * sizeof(uint32_t))
 
     for i in range(0, num_rows):
         for j in range(i + 1, num_cols):

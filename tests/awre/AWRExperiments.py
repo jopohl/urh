@@ -423,8 +423,8 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_messages = list(range(252, 256, 4))
-        protocol_names = ["rwe"]
+        num_messages = list(range(8, 256, 4))
+        protocol_names = ["enocean", "homematic", "rwe"]
 
         random.seed(0)
         np.random.seed(0)
@@ -447,7 +447,7 @@ class AWRExperiments(AWRETestCase):
                 self.run_format_finder_for_protocol(protocol)
                 performances["{}".format(protocol_name)].append(time.time() - t)
 
-        #self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
+        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict, relative=None):

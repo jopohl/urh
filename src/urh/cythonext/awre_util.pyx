@@ -241,7 +241,7 @@ cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list ac
     :return: 
     """
     cdef unsigned long i,j,k,index_i,index_j, L = len(active_indices)
-    cdef unsigned long longest = 0, len_vector
+    cdef unsigned long longest = 0, len_vector, len_vector_i
     for i in active_indices:
         len_vector = len(vectors[i])
         if len_vector > longest:
@@ -254,10 +254,12 @@ cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list ac
 
     for i in range(0, L - 1):
         index_i = active_indices[i]
+        bitvector_i = vectors[index_i]
+        len_vector_i = len(bitvector_i)
         for j in range(i+1, L):
             index_j = active_indices[j]
-            bitvector_i, bitvector_j = vectors[index_i], vectors[index_j]
-            for k in range(0, <unsigned long>min(len(bitvector_i), len(bitvector_j))):
+            bitvector_j = vectors[index_j]
+            for k in range(0, <size_t>min(len_vector_i, <size_t>len(bitvector_j))):
                 if bitvector_i[k] == bitvector_j[k]:
                     histogram[k] += 1 / n
     return histogram

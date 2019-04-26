@@ -3,7 +3,7 @@ cimport numpy as np
 import numpy as np
 
 
-from libc.math cimport floor, ceil
+from libc.math cimport floor, ceil, pow
 from libc.stdlib cimport malloc, free
 
 from libcpp cimport bool
@@ -125,19 +125,19 @@ cdef int64_t find(uint8_t[:] data, int64_t len_data, uint8_t element, int64_t st
 
 cpdef tuple get_raw_preamble_position(uint8_t[:] bitvector):
     cdef int64_t N = len(bitvector)
+    if N == 0:
+        return 0, 0
+
     cdef int64_t i, j, n, m, start = -1
     cdef double k = 0
 
     cdef int64_t lower = 0, upper = 0
     cdef uint8_t a, b
 
-    cdef uint8_t* preamble_pattern
+    cdef uint8_t* preamble_pattern = NULL
     cdef int64_t len_preamble_pattern, preamble_end
 
     cdef bool preamble_end_reached
-
-    if N == 0:
-        return lower, upper
 
     while k < 2 and start < N:
         start += 1
@@ -159,6 +159,7 @@ cpdef tuple get_raw_preamble_position(uint8_t[:] bitvector):
         #preamble_pattern = a * n + b * m
         len_preamble_pattern = n + m
         preamble_pattern = <uint8_t*> malloc(len_preamble_pattern * sizeof(uint8_t))
+
         for j in range(0, n):
             preamble_pattern[j] = a
         for j in range(n, len_preamble_pattern):
@@ -189,9 +190,9 @@ cpdef tuple get_raw_preamble_position(uint8_t[:] bitvector):
         return 0, 0, 0
 
 
-cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_matrix,
-                               np.ndarray[np.uint32_t, ndim=2] raw_preamble_positions,
-                               list bitvectors, int n_gram_length):
+cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2, mode="c"] difference_matrix,
+                                    np.ndarray[np.uint32_t, ndim=2, mode="c"] raw_preamble_positions,
+                                    list bitvectors, int n_gram_length):
     cdef dict possible_sync_words = dict()
 
     cdef uint32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
@@ -199,12 +200,11 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
 
     cdef bytes sync_word
 
-    cdef np.ndarray[np.uint8_t] bitvector
+    cdef np.ndarray[np.uint8_t, mode="c"] bitvector
 
     cdef uint8_t ij_ctr = 0
     cdef uint32_t* ij_arr = <uint32_t*>malloc(2 * sizeof(uint32_t))
-
-    cdef uint8_t* temp
+    cdef uint8_t* temp = NULL
 
     for i in range(0, num_rows):
         for j in range(i + 1, num_cols):
@@ -251,9 +251,7 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
                             possible_sync_words[sync_word] += 0.5
 
     free(ij_arr)
-
     return possible_sync_words
-
 
 cpdef np.ndarray[np.float64_t] create_difference_histogram(list vectors, list active_indices):
     """
@@ -333,6 +331,42 @@ cdef unsigned long long bit_array_to_number(uint8_t[::1] bits, int64_t end, int6
     for i in range(start, end):
         result += bits[end-1-i+start] * acc
         acc *= 2
+
+    return result
+
+cpdef np.ndarray[np.int32_t, ndim=2, mode="c"] create_seq_number_difference_matrix(list bitvectors, int n_gram_length):
+    """
+    Create the difference matrix e.g.
+    10 20 0
+    1  2  3
+    4  5  6
+
+    means first eight bits of messages 1 and 2 (row 1) differ by 10 if they are considered as decimal number
+
+    :type bitvectors: list of np.ndarray
+    :type n_gram_length: int
+    :rtype: np.ndarray
+    """
+    cdef size_t max_len = len(max(bitvectors, key=len))
+    cdef size_t i, j, k, index, N = len(bitvectors), M = <size_t>ceil(max_len / n_gram_length)
+    cdef uint8_t[::1] bv1, bv2
+    cdef size_t len_bv1, len_bv2
+    cdef int32_t diff
+    cdef int32_t n_gram_power_two = <int32_t>pow(2, n_gram_length)
+
+    cdef np.ndarray[np.int32_t, ndim=2, mode="c"] result = np.full((N - 1, M), -1, dtype=np.int32)
+    for i in range(1, N):
+        bv1 = bitvectors[i - 1]
+        bv2 = bitvectors[i]
+        len_bv1 = len(bv1)
+        len_bv2 = len(bv2)
+        k = min(len_bv1, len_bv2)
+        for j in range(0, k, n_gram_length):
+            index = j / n_gram_length
+            if index < M:
+                diff = bit_array_to_number(bv2, min(len_bv2, j + n_gram_length), j) -\
+                       bit_array_to_number(bv1, min(len_bv1, j+n_gram_length), j)
+                result[i - 1, index] = diff % n_gram_power_two
 
     return result
 

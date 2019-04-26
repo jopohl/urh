@@ -92,9 +92,7 @@ class Preprocessor(object):
         return result
 
     def find_possible_syncs(self, raw_preamble_positions=None):
-        t = time.time()
         difference_matrix = self.get_difference_matrix()
-        print("Difference matrix", time.time()-t)
         if raw_preamble_positions is None:
             raw_preamble_positions = self.get_raw_preamble_positions()
         return self.determine_sync_candidates(raw_preamble_positions, difference_matrix, n_gram_length=4)
@@ -125,11 +123,8 @@ class Preprocessor(object):
                                   difference_matrix: np.ndarray,
                                   n_gram_length=4) -> list:
 
-        t = time.time()
         possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
                                                                  self.bitvectors, n_gram_length)
-
-        print("Find possible sync words", time.time()-t)
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:

@@ -1,11 +1,8 @@
-import math
-
 import numpy as np
 
 from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
-from urh.util import util
-
+from urh.cythonext import awre_util
 
 class SequenceNumberEngine(Engine):
     """
@@ -147,13 +144,4 @@ class SequenceNumberEngine(Engine):
         :type n_gram_length: int
         :rtype: np.ndarray
         """
-        max_len = len(max(bitvectors, key=len))
-
-        result = np.full((len(bitvectors) - 1, int(math.ceil(max_len / n_gram_length))), -1, dtype=np.long)
-        for i in range(1, len(bitvectors)):
-            bv1, bv2 = bitvectors[i - 1], bitvectors[i]
-            for j in range(0, min(len(bv1), len(bv2)), n_gram_length):
-                diff = util.bits_to_number(bv2[j:j + n_gram_length]) - util.bits_to_number(bv1[j:j + n_gram_length])
-                result[i - 1, j // n_gram_length] = diff % (2 ** n_gram_length)
-
-        return result
+        return awre_util.create_seq_number_difference_matrix(bitvectors, n_gram_length)

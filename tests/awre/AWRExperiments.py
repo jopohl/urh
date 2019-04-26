@@ -571,16 +571,19 @@ class AWRExperiments(AWRETestCase):
         return protocol
 
     def generate_rwe(self, num_messages: int, save_protocol=True):
-        ff, messages = self.get_format_finder_from_protocol_file("rwe.proto.xml", return_messages=True)
+        proto_file = get_path_for_data_file("rwe.proto.xml")
+        protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
+        protocol.from_xml_file(filename=proto_file, read_bits=True)
+        messages = protocol.messages
 
-        protocol = ProtocolAnalyzer(None)
+        result = ProtocolAnalyzer(None)
         message_type = MessageType("empty")
         for i in range(num_messages):
             msg = messages[i % len(messages)]  # type: Message
             msg.message_type = message_type
-            protocol.messages.append(msg)
+            result.messages.append(msg)
 
         if save_protocol:
-            self.save_protocol("rwe", protocol)
+            self.save_protocol("rwe", result)
 
-        return protocol
+        return result

@@ -112,13 +112,20 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol.messages).items())):
+                sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())):
             plt.subplot(2, 2, i + 3)
             plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
             Histogram(bitvectors).subplot_on(plt)
 
         if SHOW_PLOTS:
             plt.show()
+
+    def get_bitvectors_by_participant(self, messages):
+        import numpy as np
+        result = defaultdict(list)
+        for msg in messages:  # type: Message
+            result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.uint8, order="C"))
+        return result
 
     def test_ack_protocol(self):
         """
@@ -163,7 +170,7 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(FormatFinder.get_bitvectors_by_participant(pg.protocol.messages).items())):
+                sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())):
             plt.subplot(2, 2, i + 3)
             plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
             Histogram(bitvectors).subplot_on(plt)

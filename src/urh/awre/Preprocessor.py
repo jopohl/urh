@@ -1,6 +1,7 @@
 import itertools
 import math
 import os
+import time
 from collections import defaultdict
 
 import numpy as np
@@ -49,13 +50,15 @@ class Preprocessor(object):
         # If there should be varying sync word lengths we need to return an array of sync lengths per message
         assert all(len(sync_word) == len(sync_words[0]) for sync_word in sync_words)
 
-        result = np.zeros(len(self.bitvectors), dtype=int)
+        byte_sync_words = [bytes(map(int, sync_word)) for sync_word in sync_words]
+
+        result = np.zeros(len(self.bitvectors), dtype=np.uint32)
 
         for i, bitvector in enumerate(self.bitvectors):
             preamble_lengths = []
-            bits = "".join(map(str, bitvector))
+            bits = bitvector.tobytes()
 
-            for sync_word in sync_words:
+            for sync_word in byte_sync_words:
                 sync_start = bits.find(sync_word)
                 if sync_start != -1:
                     if sync_start - preamble_starts[i] >= 2:
@@ -119,35 +122,9 @@ class Preprocessor(object):
                                   raw_preamble_positions: np.ndarray,
                                   difference_matrix: np.ndarray,
                                   n_gram_length=4) -> list:
-        possible_sync_words = defaultdict(int)
 
-        for i in range(difference_matrix.shape[0]):
-            for j in range(i + 1, difference_matrix.shape[1]):
-                # position of first difference between message i and j
-                sync_end = difference_matrix[i, j]
-
-                if sync_end == 0:
-                    continue
-
-                for index, k in itertools.product([i, j], range(2)):
-                    start = raw_preamble_positions[index, 0] + raw_preamble_positions[index, k + 1]
-
-                    # We take the next lower multiple of n for the sync len
-                    # In doubt, it is better to under estimate the sync len to prevent it from
-                    # taking needed values from other fields e.g. leading zeros for a length field
-                    sync_len = max(0, self.lower_multiple_of_n(sync_end - start, n_gram_length))
-
-                    sync_word = "".join(map(str, self.bitvectors[index][start:start + sync_len]))
-
-                    if sync_word not in ("", "10", "01"):
-                        # Sync word must not be empty or just two bits long and "10" or "01" because
-                        # that would be indistinguishable from the preamble
-
-                        if (start + sync_len) % n_gram_length == 0:
-                            # if sync end aligns nicely at n gram length give it a larger score
-                            possible_sync_words[sync_word] += 1
-                        else:
-                            possible_sync_words[sync_word] += 0.5
+        possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
+                                                                 self.bitvectors, n_gram_length)
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
@@ -157,6 +134,7 @@ class Preprocessor(object):
         self.__debug("Merged sync words", possible_sync_words)
 
         scores = self.__score_sync_lengths(possible_sync_words)
+
         sorted_scores = sorted(scores, reverse=True, key=scores.get)
         estimated_sync_length = sorted_scores[0]
         if estimated_sync_length % 8 != 0:
@@ -176,7 +154,12 @@ class Preprocessor(object):
             self.__debug("Found addtional sync words", additional_syncs)
             sync_words.update(additional_syncs)
 
-        return sorted(sync_words, key=sync_words.get, reverse=True)
+        result = []
+        for sync_word in sorted(sync_words, key=sync_words.get, reverse=True):
+            # Convert bytes back to string
+            result.append("".join(str(c) for c in sync_word))
+
+        return result
 
     def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:
         """
@@ -190,6 +173,7 @@ class Preprocessor(object):
         """
         np_syn = [np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
                   for sync_word in present_sync_words]
+
         messages_without_sync = [i for i, bv in enumerate(self.bitvectors)
                                  if not any(awre_util.find_occurrences(bv, s, return_after_first=True) for s in np_syn)]
 
@@ -222,7 +206,7 @@ class Preprocessor(object):
         Return a 2D numpy array where first column is the start of preamble
         second and third columns are lower and upper bound for preamble length by message, respectively
         """
-        result = np.zeros((len(self.bitvectors), 3), dtype=int)
+        result = np.zeros((len(self.bitvectors), 3), dtype=np.uint32)
 
         for i, bitvector in enumerate(self.bitvectors):
             if i in self.existing_message_types:
@@ -231,7 +215,7 @@ class Preprocessor(object):
                 preamble_label = None
 
             if preamble_label is None:
-                start, lower, upper = self.get_raw_preamble_position(bitvector)
+                start, lower, upper = awre_util.get_raw_preamble_position(bitvector)
             else:
                 # If this message is already labeled with a preamble we just use it's values
                 start, lower, upper = preamble_label.start, preamble_label.end, preamble_label.end
@@ -247,13 +231,7 @@ class Preprocessor(object):
         Return a matrix of the first difference index between all messages
         :return:
         """
-        result = np.zeros((len(self.bitvectors), len(self.bitvectors)), dtype=int)
-
-        for i in range(len(self.bitvectors)):
-            for j in range(i + 1, len(self.bitvectors)):
-                result[i, j] = awre_util.find_first_difference(self.bitvectors[i], self.bitvectors[j])
-
-        return result
+        return awre_util.get_difference_matrix(self.bitvectors)
 
     def __score_sync_lengths(self, possible_sync_words: dict):
         sync_lengths = defaultdict(int)
@@ -291,53 +269,3 @@ class Preprocessor(object):
     @staticmethod
     def get_next_lower_multiple_of_two(number: int):
         return number if number % 2 == 0 else number - 1
-
-    @staticmethod
-    def get_raw_preamble_position(bitvector: np.ndarray) -> tuple:
-        """
-        Get the raw preamble length of a message by simply finding the first index of at least two equal bits
-        The method ensures that the returned length is a multiple of 2.
-
-        This method returns a tuple representing the upper and lower bound of the preamble because we cannot tell it
-        for sure e.g. for sync words 1001 or 0110
-        """
-        bits = "".join(map(str, bitvector))
-
-        lower = upper = 0
-
-        if len(bits) == 0:
-            return lower, upper
-
-        start = -1
-        k = 0
-        while k < 2 and start < len(bits):
-            start += 1
-
-            a = bits[start]
-            b = "1" if a == "0" else "0"
-
-            # now we search for the pattern a^n b^m
-            try:
-                n = bits.index(b, start) - start
-                m = bits.index(a, start + n) - n - start
-            except ValueError:
-                return 0, 0, 0
-
-            preamble_pattern = a * n + b * m
-            i = start
-            for i in range(start, len(bits), len(preamble_pattern)):
-                try:
-                    bits.index(preamble_pattern, i, i + len(preamble_pattern))
-                except ValueError:
-                    break
-
-            lower = upper = start + Preprocessor.lower_multiple_of_n(i + 1 - start, n + m)
-            lower -= (n + m)
-
-            k = (upper - start) / (n + m)
-
-        if k > 2:
-            return start, lower, upper
-        else:
-            # no preamble found
-            return 0, 0, 0

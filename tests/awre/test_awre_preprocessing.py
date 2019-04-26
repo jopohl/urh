@@ -9,6 +9,7 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
+import numpy as np
 
 
 class TestAWREPreprocessing(AWRETestCase):
@@ -20,7 +21,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            num_messages=(20,),
                                            data=(lambda i: 10 * i,))
 
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
 
         possible_syncs = preprocessor.find_possible_syncs()
         self.save_protocol("very_simple_sync_test", pg)
@@ -35,7 +36,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            num_messages=(20, 5),
                                            data=(lambda i: 10 * i, lambda i: 22 * i))
 
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
 
         possible_syncs = preprocessor.find_possible_syncs()
         self.save_protocol("simple_sync_test", pg)
@@ -50,7 +51,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            data=(lambda i: 10 * i, lambda i: i))
 
         # If we have a odd preamble length, the last bit of the preamble is counted to the sync
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
         self.save_protocol("odd_preamble", pg)
@@ -64,7 +65,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            data=(lambda i: 10 * i, lambda i: i))
 
         # If we have a odd preamble length, the last bit of the preamble is counted to the sync
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
         self.save_protocol("special_preamble", pg)
@@ -79,7 +80,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            data=(lambda i: 10 * i, lambda i: i))
 
         # If we have a odd preamble length, the last bit of the preamble is counted to the sync
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
         self.save_protocol("errored_preamble", pg)
@@ -91,7 +92,7 @@ class TestAWREPreprocessing(AWRETestCase):
         pg = self.build_protocol_generator(preamble_syncs=[(preamble, sync1), (preamble, sync2)],
                                            num_messages=(15, 10),
                                            data=(lambda i: 12 * i, lambda i: 16 * i))
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
         self.save_protocol("two_syncs", pg)
         self.assertGreaterEqual(len(possible_syncs), 2)
@@ -195,7 +196,7 @@ class TestAWREPreprocessing(AWRETestCase):
             pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
                                 source=source, destination=destination)
 
-        preprocessor = Preprocessor(pg.protocol.decoded_bits)
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
         self.save_protocol("sync_by_common_prefix", pg)
         self.assertEqual(len(possible_syncs), 1)
@@ -211,7 +212,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            data=(lambda i: 10 * i,))
 
         # If we have a odd preamble length, the last bit of the preamble is counted to the sync
-        preprocessor = Preprocessor(pg.protocol.decoded_bits,
+        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages],
                                     existing_message_types={i: msg.message_type for i, msg in
                                                             enumerate(pg.protocol.messages)})
         preamble_starts, preamble_lengths, sync_len = preprocessor.preprocess()
@@ -221,15 +222,6 @@ class TestAWREPreprocessing(AWRETestCase):
         self.assertTrue(all(preamble_start == 0 for preamble_start in preamble_starts))
         self.assertTrue(all(preamble_length == len(preamble) for preamble_length in preamble_lengths))
         self.assertEqual(sync_len, len(sync))
-
-    def test_paper_examples(self):
-        pa = ProtocolAnalyzer(None)
-        pa.messages.append(Message.from_plain_bits_str("101010101001"))
-        pa.messages.append(Message.from_plain_bits_str("101010100110"))
-        pa.messages.append(Message.from_plain_bits_str("10101010101001"))
-
-        preprocessor = Preprocessor(pa.decoded_bits)
-        print(preprocessor.get_difference_matrix())
 
     @staticmethod
     def build_protocol_generator(preamble_syncs: list, num_messages: tuple, data: tuple) -> ProtocolGenerator:

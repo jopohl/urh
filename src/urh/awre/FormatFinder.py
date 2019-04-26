@@ -252,15 +252,7 @@ class FormatFinder(object):
 
     @staticmethod
     def get_hexvectors(bitvectors: list):
-        result = []
-
-        for bitvector in bitvectors:
-            hexvector = np.empty(int(math.ceil(len(bitvector) / 4)), dtype=np.uint8)
-            for i in range(0, len(hexvector)):
-                bits = bitvector[4 * i:4 * (i + 1)]
-                hexvector[i] = int("".join(map(str, bits)), 2)
-            result.append(hexvector)
-
+        result = awre_util.get_hexvectors(bitvectors)
         return result
 
     @staticmethod
@@ -268,14 +260,7 @@ class FormatFinder(object):
         if sync_ends is None:
             sync_ends = defaultdict(lambda: None)
 
-        return [np.array(msg.decoded_bits[sync_ends[i]:], dtype=np.uint8) for i, msg in enumerate(messages)]
-
-    @staticmethod
-    def get_bitvectors_by_participant(messages: list) -> dict:
-        result = defaultdict(list)
-        for msg in messages:  # type: Message
-            result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.uint8))
-        return result
+        return [np.array(msg.decoded_bits[sync_ends[i]:], dtype=np.uint8, order="C") for i, msg in enumerate(messages)]
 
     @staticmethod
     def create_common_range_containers(label_set: set, num_messages: int = None):

@@ -3,7 +3,7 @@ cimport numpy as np
 import numpy as np
 
 
-from libc.math cimport floor
+from libc.math cimport floor, ceil
 from libc.stdlib cimport malloc, free
 
 from libcpp cimport bool
@@ -66,7 +66,7 @@ cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint
 
     return result
 
-cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2, uint32_t len_bits1, uint32_t len_bits2) nogil:
+cpdef uint32_t find_first_difference(uint8_t[::1] bits1, uint8_t[::1] bits2, uint32_t len_bits1, uint32_t len_bits2) nogil:
     cdef uint32_t i, smaller_len = min(len_bits1, len_bits2)
 
     for i in range(0, smaller_len):
@@ -75,11 +75,11 @@ cpdef uint32_t find_first_difference(uint8_t[:] bits1, uint8_t[:] bits2, uint32_
 
     return smaller_len
 
-cpdef np.ndarray[np.uint32_t, ndim=2] get_difference_matrix(list bitvectors):
+cpdef np.ndarray[np.uint32_t, ndim=2, mode="c"] get_difference_matrix(list bitvectors):
     cdef uint32_t i, j, N = len(bitvectors)
-    cdef np.ndarray[np.uint32_t, ndim=2] result = np.zeros((N, N), dtype=np.uint32)
+    cdef np.ndarray[np.uint32_t, ndim=2, mode="c"] result = np.zeros((N, N), dtype=np.uint32, order="C")
 
-    cdef uint8_t[:] bitvector_i
+    cdef uint8_t[::1] bitvector_i
     cdef uint32_t len_bitvector_i
 
     for i in range(N):
@@ -89,6 +89,29 @@ cpdef np.ndarray[np.uint32_t, ndim=2] get_difference_matrix(list bitvectors):
             result[i, j] = find_first_difference(bitvector_i, bitvectors[j], len_bitvector_i, len(bitvectors[j]))
 
     return result
+
+cpdef list get_hexvectors(list bitvectors):
+    cdef list result = []
+    cdef uint8_t[::1] bitvector
+    cdef size_t i, j, M, N = len(bitvectors)
+
+    cdef np.ndarray[np.uint8_t, mode="c"] hexvector
+    cdef size_t len_bitvector
+
+    for i in range(0, N):
+        bitvector = bitvectors[i]
+        len_bitvector = len(bitvector)
+
+        M = <size_t>ceil(len_bitvector / 4)
+        hexvector = np.zeros(M, dtype=np.uint8, order="C")
+
+        for j in range(0, M):
+            hexvector[j] = bit_array_to_number(bitvector, min(len_bitvector, 4*j+4), 4*j)
+
+        result.append(hexvector)
+
+    return result
+
 
 cdef int lower_multiple_of_n(int number, int n) nogil:
         return n * <int>floor(number / n)
@@ -172,7 +195,7 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
     cdef dict possible_sync_words = dict()
 
     cdef uint32_t i, j, num_rows = difference_matrix.shape[0], num_cols = difference_matrix.shape[1]
-    cdef uint32_t sync_len, sync_end, start, index, k
+    cdef uint32_t sync_len, sync_end, start, index, k, n
 
     cdef bytes sync_word
 
@@ -180,6 +203,8 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
 
     cdef uint8_t ij_ctr = 0
     cdef uint32_t* ij_arr = <uint32_t*>malloc(2 * sizeof(uint32_t))
+
+    cdef uint8_t* temp
 
     for i in range(0, num_rows):
         for j in range(i + 1, num_cols):
@@ -202,9 +227,8 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
                     # taking needed values from other fields e.g. leading zeros for a length field
                     sync_len = max(0, lower_multiple_of_n(sync_end - start, n_gram_length))
 
-                    bitvector = bitvectors[index]
-
                     if sync_len >= 2:
+                        bitvector = bitvectors[index]
                         if sync_len == 2:
                             # Sync word must not be empty or just two bits long and "10" or "01" because
                             # that would be indistinguishable from the preamble
@@ -213,7 +237,12 @@ cpdef dict find_possible_sync_words(np.ndarray[np.uint32_t, ndim=2] difference_m
                             if bitvector[start] == 1 and bitvector[start+1] == 0:
                                 continue
 
-                        sync_word = bitvector[start:start + sync_len].tobytes()
+                        temp = <uint8_t*>malloc(sync_len * sizeof(uint8_t))
+                        for n in range(0, sync_len):
+                            temp[n] = bitvector[start+n]
+                        sync_word = <bytes> temp[:sync_len]
+                        free(temp)
+
                         possible_sync_words.setdefault(sync_word, 0)
                         if (start + sync_len) % n_gram_length == 0:
                             # if sync end aligns nicely at n gram length give it a larger score
@@ -294,15 +323,15 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
 
     return result
 
-cdef unsigned long long bit_array_to_number(unsigned char[:] bits, long long num_bits) nogil:
-    if num_bits < 1:
+cdef unsigned long long bit_array_to_number(uint8_t[::1] bits, int64_t end, int64_t start=0) nogil:
+    if end < 1:
         return 0
 
     cdef long long i, acc = 1
     cdef unsigned long long result = 0
 
-    for i in range(0, num_bits):
-        result += bits[num_bits-1-i] * acc
+    for i in range(start, end):
+        result += bits[end-1-i+start] * acc
         acc *= 2
 
     return result

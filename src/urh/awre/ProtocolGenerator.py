@@ -1,6 +1,9 @@
 import math
 import struct
+from array import array
 from collections import defaultdict
+
+from urh.util import util
 
 from urh.awre.MessageTypeBuilder import MessageTypeBuilder
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -197,6 +200,42 @@ class ProtocolGenerator(object):
 
     def to_file(self, filename: str):
         self.protocol.to_xml_file(filename, [], self.participants, write_bits=True)
+
+    def export_to_latex(self, filename: str, number: int):
+        def export_message_type_to_latex(message_type, f):
+            f.write("  \\begin{itemize}\n")
+            for lbl in message_type:  # type: ProtocolLabel
+                if lbl.field_type.function == FieldType.Function.SYNC:
+                    sync = array("B", map(int, self.syncs_by_message_type[message_type]))
+                    f.write("    \\item {}: \\texttt{{0x{}}}\n".format(lbl.name, util.bit2hex(sync)))
+                elif lbl.field_type.function == FieldType.Function.PREAMBLE:
+                    preamble = array("B", map(int, self.preambles_by_message_type[message_type]))
+                    f.write("    \\item {}: \\texttt{{0x{}}}\n".format(lbl.name, util.bit2hex(preamble)))
+                elif lbl.field_type.function == FieldType.Function.CHECKSUM:
+                    f.write("    \\item {}: {}\n".format(lbl.name, lbl.checksum.caption))
+                else:
+                    f.write("    \\item {}: {} bit\n".format(lbl.name, lbl.length))
+            f.write("  \\end{itemize}\n")
+
+        with open(filename, "a") as f:
+            f.write("\\subsection{{Protocol {}}}\n".format(number))
+            f.write("There were {} participants involved in communication: ".format(len(self.participants)))
+            f.write(", ".join("{} (\\texttt{{0x{}}})".format(p.name, p.address_hex) for p in self.participants[:-1]))
+            f.write(" and {} (\\texttt{{0x{}}})".format(self.participants[-1].name, self.participants[-1].address_hex))
+            f.write(".\n")
+
+            if len(self.message_types) == 1:
+                f.write("The protocol has one message type with the following fields:\n")
+                export_message_type_to_latex(self.message_types[0], f)
+            else:
+                f.write("The protocol has {} message types with the following fields:\n".format(len(self.message_types)))
+                f.write("\\begin{itemize}\n")
+                for mt in self.message_types:
+                    f.write("  \\item \\textbf{{{}}}\n".format(mt.name))
+                    export_message_type_to_latex(mt, f)
+                f.write("\\end{itemize}\n")
+
+            f.write("\n")
 
 
 if __name__ == '__main__':

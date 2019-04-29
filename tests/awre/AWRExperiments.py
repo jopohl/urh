@@ -1,4 +1,5 @@
 import array
+import os
 import random
 import time
 from collections import defaultdict
@@ -28,7 +29,7 @@ class AWRExperiments(AWRETestCase):
         alice = Participant("Alice", address_hex="dead")
         bob = Participant("Bob", address_hex="beef")
 
-        mb = MessageTypeBuilder("protocol_with_one_message_type")
+        mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 8)
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
@@ -39,7 +40,6 @@ class AWRExperiments(AWRETestCase):
         pg = ProtocolGenerator([mb.message_type],
                                syncs_by_mt={mb.message_type: "0x1337"},
                                participants=[alice, bob])
-
         return pg
 
     @staticmethod
@@ -47,7 +47,7 @@ class AWRExperiments(AWRETestCase):
         alice = Participant("Alice", address_hex="dead01")
         bob = Participant("Bob", address_hex="beef24")
 
-        mb = MessageTypeBuilder("protocol_with_one_message_type")
+        mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 72)
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
@@ -216,6 +216,15 @@ class AWRExperiments(AWRETestCase):
                                participants=[alice, bob, charly, daniel])
 
         return pg
+
+    def test_export_to_latex(self):
+        filename = os.path.expanduser("~/GIT/publications/awre/USENIX/protocols.tex")
+        if os.path.isfile(filename):
+            os.remove(filename)
+
+        for i in range(1, 8):
+            pg = getattr(self, "_prepare_protocol_" + str(i))()
+            pg.export_to_latex(filename, i)
 
     @classmethod
     def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False):

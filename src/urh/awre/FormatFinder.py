@@ -1,6 +1,5 @@
 import copy
 import math
-import time
 from collections import defaultdict
 
 import numpy as np
@@ -38,11 +37,9 @@ class FormatFinder(object):
         for i, message_type in existing_message_types_by_msg.items():
             self.existing_message_types[message_type].append(i)
 
-        t = time.time()
         preprocessor = Preprocessor(self.get_bitvectors_from_messages(messages), existing_message_types_by_msg)
         self.preamble_starts, self.preamble_lengths, sync_len = preprocessor.preprocess()
         self.sync_ends = self.preamble_starts + self.preamble_lengths + sync_len
-        print("Total preprocessing time", time.time()- t)
 
         n = shortest_field_length
         if n is None:
@@ -121,12 +118,10 @@ class FormatFinder(object):
 
         result = set()
         for engine in engines:
-            t = time.time()
             high_scored_ranges = engine.find()  # type: list[CommonRange]
             high_scored_ranges = self.retransform_message_indices(high_scored_ranges, indices, self.sync_ends)
             merged_ranges = self.merge_common_ranges(high_scored_ranges)
             result.update(merged_ranges)
-            print(type(engine), time.time()-t)
         return result
 
     def perform_iteration(self) -> bool:

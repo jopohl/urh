@@ -306,30 +306,12 @@ class AWRExperiments(AWRETestCase):
         :type expected_labels: list of MessageType
         :return:
         """
-        accuracy = 0
-
-        def label_functions_matches(lbl1: ProtocolLabel, lbl2: ProtocolLabel) -> bool:
-            return lbl1.field_type.function == lbl2.field_type.function
-
-        for i, msg in enumerate(messages):
-            if i in range(num_broken_messages):
-                continue
-
-            expected = expected_labels[i]  # type: MessageType
-
-            msg_accuracy = 1
-            for lbl in expected:
-                try:
-                    next(l for l in msg.message_type if
-                         l.start == lbl.start and l.end == lbl.end and label_functions_matches(l, lbl))
-                    found = True
-                except StopIteration:
-                    found = False
-
-                if not found:
-                    msg_accuracy -= 1 / len(expected)
-
-            accuracy += msg_accuracy * (1 / (len(messages) - num_broken_messages))
+        accuracy = sum(len(set(expected_labels[i]) & set(messages[i].message_type))/len(expected_labels[i])
+                       for i in range(num_broken_messages, len(messages)))
+        try:
+            accuracy /= (len(messages) - num_broken_messages)
+        except ZeroDivisionError:
+            accuracy = 0
 
         return accuracy * 100
 
@@ -432,7 +414,9 @@ class AWRExperiments(AWRETestCase):
         Engine._DEBUG_ = False
         Preprocessor._DEBUG_ = False
 
-        num_messages = list(range(8, 256, 4))
+        num_runs = 100
+
+        num_messages = list(range(8, 512, 4))
         protocol_names = ["enocean", "homematic", "rwe"]
 
         random.seed(0)
@@ -441,8 +425,8 @@ class AWRExperiments(AWRETestCase):
         performances = defaultdict(list)
 
         for protocol_name in protocol_names:
-            print("Running for protocol", protocol_name)
             for messages in num_messages:
+                print()
                 if protocol_name == "homematic":
                     protocol = self.generate_homematic(messages, save_protocol=False)
                 elif protocol_name == "enocean":
@@ -452,11 +436,20 @@ class AWRExperiments(AWRETestCase):
                 else:
                     raise ValueError("Unknown protocol name")
 
-                t = time.time()
-                self.run_format_finder_for_protocol(protocol)
-                performances["{}".format(protocol_name)].append(time.time() - t)
+                tmp_performances = np.empty(num_runs, dtype=np.float64)
+                for i in range(num_runs):
+                    print("\r{0} with {1:02d} messages ({2}/{3} runs)".format(protocol_name, messages, i+1, num_runs),
+                          flush=True, end="")
+
+                    t = time.time()
+                    self.run_format_finder_for_protocol(protocol)
+                    tmp_performances[i] = time.time()-t
+                    self.clear_message_types(protocol.messages)
+
+                performances["{}".format(protocol_name)].append(tmp_performances.mean())
 
         self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
+        self.__export_to_csv("/tmp/performance.csv", num_messages, performances)
 
     @staticmethod
     def __export_to_csv(filename: str, x: list, y: dict, relative=None):
@@ -507,7 +500,8 @@ class AWRExperiments(AWRETestCase):
             for i in indices:
                 protocol.messages[i].message_type = msg_type
 
-    def generate_homematic(self, num_messages: int, save_protocol=True):
+    @classmethod
+    def generate_homematic(cls, num_messages: int, save_protocol=True):
         mb_m_frame = MessageTypeBuilder("mframe")
         mb_c_frame = MessageTypeBuilder("cframe")
         mb_r_frame = MessageTypeBuilder("rframe")
@@ -555,12 +549,13 @@ class AWRExperiments(AWRETestCase):
             pg.generate_message(mt, data, source=pg.participants[i % 2], destination=pg.participants[(i + 1) % 2])
 
         if save_protocol:
-            self.save_protocol("homematic", pg)
+            cls.save_protocol("homematic", pg)
 
-        self.clear_message_types(pg.messages)
+        cls.clear_message_types(pg.messages)
         return pg.protocol
 
-    def generate_enocean(self, num_messages: int, save_protocol=True):
+    @classmethod
+    def generate_enocean(cls, num_messages: int, save_protocol=True):
         filename = get_path_for_data_file("enocean_bits.txt")
         enocean_bits = []
         with open(filename, "r") as f:
@@ -575,11 +570,12 @@ class AWRExperiments(AWRETestCase):
             protocol.messages.append(msg)
 
         if save_protocol:
-            self.save_protocol("enocean", protocol)
+            cls.save_protocol("enocean", protocol)
 
         return protocol
 
-    def generate_rwe(self, num_messages: int, save_protocol=True):
+    @classmethod
+    def generate_rwe(cls, num_messages: int, save_protocol=True):
         proto_file = get_path_for_data_file("rwe.proto.xml")
         protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
         protocol.from_xml_file(filename=proto_file, read_bits=True)
@@ -593,6 +589,6 @@ class AWRExperiments(AWRETestCase):
             result.messages.append(msg)
 
         if save_protocol:
-            self.save_protocol("rwe", result)
+            cls.save_protocol("rwe", result)
 
         return result

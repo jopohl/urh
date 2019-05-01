@@ -1,6 +1,6 @@
+import copy
 import xml.etree.ElementTree as ET
 
-import copy
 from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
@@ -88,6 +88,13 @@ class ProtocolLabel(object):
                 self.display_format_index = value.display_format_index
 
     @property
+    def field_type_function(self):
+        if self.field_type is not None:
+            return self.field_type.function
+        else:
+            return None
+
+    @property
     def name(self):
         if not self.__name:
             self.__name = "No name"
@@ -159,10 +166,10 @@ class ProtocolLabel(object):
         return self.start == other.start and \
                self.end == other.end and \
                self.name == other.name and \
-               self.field_type.function == other.field_type.function
+               self.field_type_function == other.field_type_function
 
     def __hash__(self):
-        return hash((self.start, self.end, self.name, self.field_type.function))
+        return hash((self.start, self.end, self.name, self.field_type_function))
 
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)

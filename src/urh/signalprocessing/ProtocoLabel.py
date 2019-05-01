@@ -156,10 +156,13 @@ class ProtocolLabel(object):
             return False
 
     def __eq__(self, other):
-        return self.start == other.start and self.end == other.end and self.name == other.name and self.field_type == other.field_type
+        return self.start == other.start and \
+               self.end == other.end and \
+               self.name == other.name and \
+               self.field_type.function == other.field_type.function
 
     def __hash__(self):
-        return hash("{}/{}/{}".format(self.start, self.end, self.name))
+        return hash((self.start, self.end, self.name, self.field_type.function))
 
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)

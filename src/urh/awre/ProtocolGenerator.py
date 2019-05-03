@@ -219,10 +219,12 @@ class ProtocolGenerator(object):
 
         with open(filename, "a") as f:
             f.write("\\subsection{{Protocol {}}}\n".format(number))
-            f.write("There were {} participants involved in communication: ".format(len(self.participants)))
-            f.write(", ".join("{} (\\texttt{{0x{}}})".format(p.name, p.address_hex) for p in self.participants[:-1]))
-            f.write(" and {} (\\texttt{{0x{}}})".format(self.participants[-1].name, self.participants[-1].address_hex))
-            f.write(".\n")
+
+            if len(self.participants) > 1:
+                f.write("There were {} participants involved in communication: ".format(len(self.participants)))
+                f.write(", ".join("{} (\\texttt{{0x{}}})".format(p.name, p.address_hex) for p in self.participants[:-1]))
+                f.write(" and {} (\\texttt{{0x{}}})".format(self.participants[-1].name, self.participants[-1].address_hex))
+                f.write(".\n")
 
             if len(self.message_types) == 1:
                 f.write("The protocol has one message type with the following fields:\n")

@@ -87,7 +87,7 @@ class CompareFrameController(QWidget):
         self.assign_message_type_action.setChecked(True)
         self.assign_labels_action = self.analyze_menu.addAction(self.tr("Assign labels"))
         self.assign_labels_action.setCheckable(True)
-        self.assign_labels_action.setChecked(False)
+        self.assign_labels_action.setChecked(True)
         self.assign_participant_address_action = self.analyze_menu.addAction(self.tr("Assign participant addresses"))
         self.assign_participant_address_action.setCheckable(True)
         self.assign_participant_address_action.setChecked(True)

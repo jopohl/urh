@@ -1,4 +1,5 @@
 import array
+import multiprocessing
 import os
 import random
 import time
@@ -22,6 +23,34 @@ from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util.GenericCRC import GenericCRC
 
+
+def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_runs: int) -> list:
+    random.seed(0)
+    np.random.seed(0)
+
+    result = []
+    for broken in num_broken:
+        tmp_accuracies = np.empty(num_runs, dtype=np.float64)
+        tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
+        for i in range(num_runs):
+            protocol, expected_labels = AWRExperiments.get_protocol(protocol_nr,
+                                                          num_messages=num_messages,
+                                                          num_broken_messages=broken,
+                                                          silent=True)
+
+            AWRExperiments.run_format_finder_for_protocol(protocol)
+            accuracy = AWRExperiments.calculate_accuracy(protocol.messages, expected_labels)
+            accuracy_without_broken = AWRExperiments.calculate_accuracy(protocol.messages, expected_labels, broken)
+            tmp_accuracies[i] = accuracy
+            tmp_accuracies_without_broken[i] = accuracy_without_broken
+
+        avg_accuracy = np.mean(tmp_accuracies)
+        avg_accuracy_without_broken = np.mean(tmp_accuracies_without_broken)
+
+        result.append((avg_accuracy, avg_accuracy_without_broken))
+        print("Protocol {} with {} broken: {:>3}% {:>3}%".format(protocol_nr, broken, int(avg_accuracy), int(avg_accuracy_without_broken)))
+
+    return result
 
 class AWRExperiments(AWRETestCase):
     @staticmethod
@@ -360,7 +389,7 @@ class AWRExperiments(AWRETestCase):
         num_runs = 100
 
         num_messages = 30
-        num_broken_messages = list(range(0, num_messages + 1))
+        num_broken_messages = list(range(0, num_messages+1))
         accuracies = defaultdict(list)
         accuracies_without_broken = defaultdict(list)
 
@@ -369,31 +398,11 @@ class AWRExperiments(AWRETestCase):
         random.seed(0)
         np.random.seed(0)
 
-        for protocol_nr in protocols:
-            for broken in num_broken_messages:
-                tmp_accuracies = np.empty(num_runs, dtype=np.float64)
-                tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
-                for i in range(num_runs):
-                    print("\rProtocol {0} with {1:02d} broken messages ({2}/{3} runs)".format(protocol_nr, broken, i+1,
-                                                                                              num_runs), flush=True,
-                          end="")
-                    protocol, expected_labels = self.get_protocol(protocol_nr,
-                                                                  num_messages=num_messages,
-                                                                  num_broken_messages=broken,
-                                                                  silent=True)
-
-                    self.run_format_finder_for_protocol(protocol)
-                    accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
-                    accuracy_without_broken = self.calculate_accuracy(protocol.messages, expected_labels, broken)
-                    tmp_accuracies[i] = accuracy
-                    tmp_accuracies_without_broken[i] = accuracy_without_broken
-
-                avg_accuracy = np.mean(tmp_accuracies)
-                avg_accuracy_without_broken = np.mean(tmp_accuracies_without_broken)
-                accuracies["protocol {}".format(protocol_nr)].append(avg_accuracy)
-                accuracies_without_broken["protocol {}".format(protocol_nr)].append(avg_accuracy_without_broken)
-
-                print(" {:>3}% {:>3}%".format(int(avg_accuracy), int(avg_accuracy_without_broken)))
+        with multiprocessing.Pool() as p:
+            result = p.starmap(run_for_num_broken, [(i, num_broken_messages, num_messages, num_runs) for i in protocols])
+            for i, acc in enumerate(result):
+                accuracies["protocol {}".format(i+1)] = [a[0] for a in acc]
+                accuracies_without_broken["protocol {}".format(i+1)] =[a[1] for a in acc]
 
         self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies,
                     title="Overall Accuracy vs percentage of broken messages",

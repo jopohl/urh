@@ -350,7 +350,7 @@ class AddressEngine(Engine):
             for i in message_indices:
                 length_clusters[len(self.msg_vectors[i])].append(i)
 
-            common_ranges_by_length = self.find_common_ranges_by_cluster(self.msg_vectors, length_clusters)
+            common_ranges_by_length = self.find_common_ranges_by_cluster(self.msg_vectors, length_clusters, range_type="hex")
             common_ranges_by_participant[participant] = []
             for ranges in common_ranges_by_length.values():
                 common_ranges_by_participant[participant].extend(self.ignore_already_labeled(ranges,

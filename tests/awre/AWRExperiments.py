@@ -217,6 +217,23 @@ class AWRExperiments(AWRETestCase):
 
         return pg
 
+    @staticmethod
+    def _prepare_protocol_8() -> ProtocolGenerator:
+        alice = Participant("Alice")
+
+        mb = MessageTypeBuilder("data")
+        mb.add_label(FieldType.Function.PREAMBLE, 4)
+        mb.add_label(FieldType.Function.SYNC, 4)
+        mb.add_label(FieldType.Function.LENGTH, 8)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 64)
+
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x9"},
+                               preambles_by_mt={mb.message_type: "10" * 2},
+                               participants=[alice])
+
+        return pg
+
     def test_export_to_latex(self):
         filename = os.path.expanduser("~/GIT/publications/awre/USENIX/protocols.tex")
         if os.path.isfile(filename):
@@ -242,6 +259,8 @@ class AWRExperiments(AWRETestCase):
             pg = cls._prepare_protocol_6()
         elif protocol_number == 7:
             pg = cls._prepare_protocol_7()
+        elif protocol_number == 8:
+            pg = cls._prepare_protocol_8()
         else:
             raise ValueError("Unknown protocol number")
 
@@ -319,7 +338,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 24, 1))
         accuracies = defaultdict(list)
 
-        protocols = [1, 2, 3, 4, 5, 6, 7]
+        protocols = [8]
 
         random.seed(0)
         np.random.seed(0)

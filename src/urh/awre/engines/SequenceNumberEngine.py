@@ -4,13 +4,8 @@ from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
 from urh.cythonext import awre_util
 
+
 class SequenceNumberEngine(Engine):
-    """
-    Current constraint: This class works only for messages of the same message type.
-    Therefore, this engine should run AFTER message type inferring.
-
-    """
-
     def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.75, already_labeled: list = None):
         """
 
@@ -62,7 +57,8 @@ class SequenceNumberEngine(Engine):
             message_indices = set(message_indices) | set(message_indices + 1)
             values = set()
             for i in message_indices:
-                values.add(self.bitvectors[i][candidate_column*self.n_gram_length:candidate_column*self.n_gram_length+self.n_gram_length].tobytes())
+                values.add(self.bitvectors[i][
+                           candidate_column * self.n_gram_length:candidate_column * self.n_gram_length + self.n_gram_length].tobytes())
 
             if len(result) > 0 \
                     and result[-1].start == (candidate_column - 1) * self.n_gram_length \

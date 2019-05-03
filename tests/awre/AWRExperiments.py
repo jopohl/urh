@@ -93,7 +93,7 @@ class AWRExperiments(AWRETestCase):
         alice = Participant("Alice", address_hex="1337")
         bob = Participant("Bob", address_hex="beef")
 
-        checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
+        checksum = GenericCRC.from_standard_checksum("CRC16 CCITT")
 
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
@@ -364,7 +364,7 @@ class AWRExperiments(AWRETestCase):
         accuracies = defaultdict(list)
         accuracies_without_broken = defaultdict(list)
 
-        protocols = [1, 2, 3, 4, 5, 6, 7]
+        protocols = [1, 2, 3, 4, 5, 6, 7, 8]
 
         random.seed(0)
         np.random.seed(0)

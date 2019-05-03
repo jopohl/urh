@@ -268,7 +268,7 @@ class AWRExperiments(AWRETestCase):
         if os.path.isfile(filename):
             os.remove(filename)
 
-        for i in range(1, 8):
+        for i in range(1, 9):
             pg = getattr(self, "_prepare_protocol_" + str(i))()
             pg.export_to_latex(filename, i)
 

@@ -148,7 +148,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
     var_filtered_mag = np.var(c_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
     var_filtered_norm_mag = np.var(c_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
 
-    if all(v < 0.1 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
+    if all(v < 0.15 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
         return "OOK"
 
     if var_mag > 1.5 * var_norm_mag:
@@ -157,7 +157,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
         return "ASK"
     else:
         # FSK or PSK
-        if var_mag > 10 * var_filtered_mag:
+        if var_mag > 5 * var_filtered_mag:
             return "PSK"
         else:
             # Now we either have a FSK signal or we a have OOK single pulse

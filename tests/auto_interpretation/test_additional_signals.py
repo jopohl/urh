@@ -29,7 +29,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
         self.assertEqual(mod_type, "ASK")
         self.assertGreaterEqual(bit_length, 400)
-        self.assertLessEqual(bit_length, 500)
+        self.assertLessEqual(bit_length, 600)
 
         print("noise", noise, "center", center, "bit length", bit_length, "tolerance", tolerance)
         demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance)

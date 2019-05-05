@@ -213,7 +213,7 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
     num_values = 2
     most_common_levels = []
 
-    window_size = max(2, int(0.05*len(y)))
+    window_size = max(2, int(0.05*len(y)) + 1)
 
     def get_elem(arr, index: int, default):
         if 0 <= index < len(arr):
@@ -225,7 +225,7 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
         # check if we have a local maximum in histogram, if yes, append the value
         if all(y[index] > get_elem(y, index+i, 0) and
                y[index] > get_elem(y, index-i, 0)
-               for i in range(1, window_size+1)):
+               for i in range(1, window_size)):
             most_common_levels.append(x[index])
 
         if len(most_common_levels) == num_values:

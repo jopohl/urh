@@ -148,7 +148,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
     var_filtered_mag = np.var(c_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
     var_filtered_norm_mag = np.var(c_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
 
-    if all(v < 0.1 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
+    if all(v < 0.15 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
         return "OOK"
 
     if var_mag > 1.5 * var_norm_mag:
@@ -157,7 +157,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
         return "ASK"
     else:
         # FSK or PSK
-        if var_mag > 10 * var_filtered_mag:
+        if var_mag > 5 * var_filtered_mag:
             return "PSK"
         else:
             # Now we either have a FSK signal or we a have OOK single pulse
@@ -206,14 +206,14 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
 
     try:
         y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
-    except ZeroDivisionError:
+    except (ZeroDivisionError, ValueError):
         # For a segment with zero variance (constant line) it is not possible to find a center
         return None
 
     num_values = 2
     most_common_levels = []
 
-    window_size = max(2, int(0.05*len(y)))
+    window_size = max(2, int(0.05*len(y)) + 1)
 
     def get_elem(arr, index: int, default):
         if 0 <= index < len(arr):
@@ -225,7 +225,7 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
         # check if we have a local maximum in histogram, if yes, append the value
         if all(y[index] > get_elem(y, index+i, 0) and
                y[index] > get_elem(y, index-i, 0)
-               for i in range(1, window_size+1)):
+               for i in range(1, window_size)):
             most_common_levels.append(x[index])
 
         if len(most_common_levels) == num_values:

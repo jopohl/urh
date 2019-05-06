@@ -89,7 +89,7 @@ class SequenceNumberEngine(Engine):
             rows = np.array(list(common_range.message_indices)[1:]) - 1
             column = (common_range.start // self.n_gram_length) - 1
 
-            while column >= 0 and not np.any(diff_matrix[rows, column]):
+            while column >= 0 and column not in self.already_labeled_cols and not np.any(diff_matrix[rows, column]):
                 # all elements are zero in diff matrix, so we have a constant
                 common_range.start -= self.n_gram_length
                 common_range.length += self.n_gram_length

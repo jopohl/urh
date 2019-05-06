@@ -5,7 +5,7 @@ import numpy as np
 
 from urh.awre.CommonRange import CommonRange, EmptyCommonRange
 from urh.awre.engines.Engine import Engine
-from urh.util import util
+from urh.cythonext import awre_util
 
 
 class LengthEngine(Engine):
@@ -95,43 +95,62 @@ class LengthEngine(Engine):
             for window_length in window_lengths:
                 scored_ranges[length][window_length] = []
 
+        byteorders = ["big", "little"] if n_gram_length == 8 else ["big"]
         for window_length in window_lengths:
             for length, common_ranges in common_ranges_by_length.items():
                 for common_range in filter(lambda cr: cr.length >= window_length, common_ranges):
-                    bits = common_range.value_str
+                    bits = common_range.value
+                    rng_byte_order = "big"
 
                     max_score = max_start = -1
                     for start in range(0, len(bits) + 1 - window_length, n_gram_length):
-                        score = LengthEngine.score_bits(bits[start:start + window_length], length, position=start)
+                        for byteorder in byteorders:
+                            score = LengthEngine.score_bits(bits[start:start + window_length],
+                                                            length, position=start, byteorder=byteorder)
 
-                        if score > max_score:
-                            max_score = score
-                            max_start = start
+                            if score > max_score:
+                                max_score = score
+                                max_start = start
+                                rng_byte_order = byteorder
 
                     rng = CommonRange(common_range.start + max_start, window_length,
                                       common_range.value[max_start:max_start + window_length],
                                       score=max_score, field_type="length",
                                       message_indices=common_range.message_indices,
-                                      range_type=common_range.range_type)
+                                      range_type=common_range.range_type,
+                                      byte_order=rng_byte_order)
                     scored_ranges[length][window_length].append(rng)
 
         return scored_ranges
 
     def choose_high_scored_ranges(self, scored_ranges: dict, bitvectors_by_n_gram_length: dict, minimum_score: float):
+
+        # Set for every window length the highest scored range as candidate
+        possible_window_lengths = defaultdict(int)
+        for length, ranges_by_window_length in scored_ranges.items():
+            for window_length, ranges in ranges_by_window_length.items():
+                try:
+                    ranges_by_window_length[window_length] = max(filter(lambda x: x.score >= minimum_score, ranges),
+                                                                 key=lambda x: x.score)
+                    possible_window_lengths[window_length] += 1
+                except ValueError:
+                    ranges_by_window_length[window_length] = None
+
+        try:
+            # Choose window length -> window length that has a result most often and choose greater on tie
+            chosen_window_length = max(possible_window_lengths, key=lambda x: (possible_window_lengths[x], x))
+        except ValueError:
+            return dict()
+
         high_scores_by_length = dict()
 
         # Choose all ranges with highest score per cluster if score surpasses the minimum score
         for length, ranges_by_window_length in scored_ranges.items():
-            for window_length, ranges in ranges_by_window_length.items():
-                high_score_range = max(ranges, key=lambda x: x.score, default=None)  # type: CommonRange
-
-                if high_score_range is None or high_score_range.score < minimum_score:
-                    high_score_range = EmptyCommonRange(field_type="length")
-
-                if length not in high_scores_by_length or high_scores_by_length[length].score < high_score_range.score:
-                    high_scores_by_length[length] = high_score_range
-
-        found_ranges = list(filter(lambda x: not isinstance(x, EmptyCommonRange), high_scores_by_length.values()))
+            try:
+                if ranges_by_window_length[chosen_window_length]:
+                    high_scores_by_length[length] = ranges_by_window_length[chosen_window_length]
+            except KeyError:
+                continue
 
         # If there are length clusters with only one message see if we can assign a range from other clusters
         for length, msg_indices in bitvectors_by_n_gram_length.items():
@@ -142,9 +161,9 @@ class LengthEngine(Engine):
             bitvector = self.bitvectors[msg_index]
             max_score, best_match = 0, None
 
-            for rng in found_ranges:
-                bits = util.convert_numbers_to_hex_string(bitvector[rng.start:rng.end + 1])
-                if bits:
+            for rng in high_scores_by_length.values():
+                bits = bitvector[rng.start:rng.end + 1]
+                if len(bits) > 0:
                     score = self.score_bits(bits, length, rng.start)
                     if score > max_score:
                         best_match, max_score = rng, score
@@ -158,8 +177,12 @@ class LengthEngine(Engine):
         return high_scores_by_length
 
     @staticmethod
-    def score_bits(bits: str, target_length: int, position: int):
-        value = int(bits, 2)
+    def score_bits(bits: np.ndarray, target_length: int, position: int, byteorder="big"):
+        value = awre_util.bit_array_to_number(bits, len(bits))
+        if byteorder == "little":
+            if len(bits) > 8 and len(bits) % 8 == 0:
+                n = len(bits) // 8
+                value = int.from_bytes(value.to_bytes(n, byteorder="big"), byteorder="little", signed=False)
 
         # Length field should be at front, so we give lower scores for large starts
         f = (1 / (1 + 0.25 * position))

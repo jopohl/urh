@@ -302,7 +302,7 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
 
     return result
 
-cdef unsigned long long bit_array_to_number(uint8_t[::1] bits, int64_t end, int64_t start=0) nogil:
+cpdef unsigned long long bit_array_to_number(uint8_t[::1] bits, int64_t end, int64_t start=0) nogil:
     if end < 1:
         return 0
 

@@ -231,6 +231,8 @@ class FormatFinder(object):
                                                 auto_created=True,
                                                 type=field_type
                                                 )
+        label.display_endianness = common_range.byte_order
+
         if field_type.function == FieldType.Function.CHECKSUM:
             assert isinstance(label, ChecksumLabel)
             assert isinstance(common_range, ChecksumRange)

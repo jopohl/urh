@@ -9,7 +9,7 @@ from urh.util.GenericCRC import GenericCRC
 
 class CommonRange(object):
     def __init__(self, start, length, value: np.ndarray = None, score=0, field_type="Generic", message_indices=None,
-                 range_type="bit"):
+                 range_type="bit", byte_order="big"):
         """
 
         :param start:
@@ -19,6 +19,7 @@ class CommonRange(object):
         self.start = start
         self.length = length
 
+        self.__byte_order = byte_order
         self.sync_end = 0
 
         if isinstance(value, str):
@@ -72,6 +73,10 @@ class CommonRange(object):
     @property
     def value_str(self):
         return util.convert_numbers_to_hex_string(self.value)
+
+    @property
+    def byte_order(self):
+        return self.__byte_order
 
     def matches(self, start: int, value: np.ndarray):
         return self.start == start and \

@@ -19,7 +19,6 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util.GenericCRC import GenericCRC
 
@@ -34,9 +33,9 @@ def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_run
         tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
         for i in range(num_runs):
             protocol, expected_labels = AWRExperiments.get_protocol(protocol_nr,
-                                                          num_messages=num_messages,
-                                                          num_broken_messages=broken,
-                                                          silent=True)
+                                                                    num_messages=num_messages,
+                                                                    num_broken_messages=broken,
+                                                                    silent=True)
 
             AWRExperiments.run_format_finder_for_protocol(protocol)
             accuracy = AWRExperiments.calculate_accuracy(protocol.messages, expected_labels)
@@ -48,9 +47,11 @@ def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_run
         avg_accuracy_without_broken = np.mean(tmp_accuracies_without_broken)
 
         result.append((avg_accuracy, avg_accuracy_without_broken))
-        print("Protocol {} with {} broken: {:>3}% {:>3}%".format(protocol_nr, broken, int(avg_accuracy), int(avg_accuracy_without_broken)))
+        print("Protocol {} with {} broken: {:>3}% {:>3}%".format(protocol_nr, broken, int(avg_accuracy),
+                                                                 int(avg_accuracy_without_broken)))
 
     return result
+
 
 class AWRExperiments(AWRETestCase):
     @staticmethod
@@ -354,7 +355,7 @@ class AWRExperiments(AWRETestCase):
         :type expected_labels: list of MessageType
         :return:
         """
-        accuracy = sum(len(set(expected_labels[i]) & set(messages[i].message_type))/len(expected_labels[i])
+        accuracy = sum(len(set(expected_labels[i]) & set(messages[i].message_type)) / len(expected_labels[i])
                        for i in range(num_broken_messages, len(messages)))
         try:
             accuracy /= (len(messages) - num_broken_messages)
@@ -367,7 +368,7 @@ class AWRExperiments(AWRETestCase):
         num_messages = list(range(1, 24, 1))
         accuracies = defaultdict(list)
 
-        protocols = [8]
+        protocols = [1, 2, 3, 4, 5, 6, 7, 8]
 
         random.seed(0)
         np.random.seed(0)
@@ -389,7 +390,7 @@ class AWRExperiments(AWRETestCase):
         num_runs = 100
 
         num_messages = 30
-        num_broken_messages = list(range(0, num_messages+1))
+        num_broken_messages = list(range(0, num_messages + 1))
         accuracies = defaultdict(list)
         accuracies_without_broken = defaultdict(list)
 
@@ -399,10 +400,11 @@ class AWRExperiments(AWRETestCase):
         np.random.seed(0)
 
         with multiprocessing.Pool() as p:
-            result = p.starmap(run_for_num_broken, [(i, num_broken_messages, num_messages, num_runs) for i in protocols])
+            result = p.starmap(run_for_num_broken,
+                               [(i, num_broken_messages, num_messages, num_runs) for i in protocols])
             for i, acc in enumerate(result):
-                accuracies["protocol {}".format(i+1)] = [a[0] for a in acc]
-                accuracies_without_broken["protocol {}".format(i+1)] =[a[1] for a in acc]
+                accuracies["protocol {}".format(i + 1)] = [a[0] for a in acc]
+                accuracies_without_broken["protocol {}".format(i + 1)] = [a[1] for a in acc]
 
         self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies,
                     title="Overall Accuracy vs percentage of broken messages",
@@ -413,7 +415,8 @@ class AWRExperiments(AWRETestCase):
                     xlabel="Broken messages in %",
                     ylabel="Accuracy in %", grid=True)
         self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies, relative=num_messages)
-        self.__export_to_csv("/tmp/accuray-vs-error-without-broken", num_broken_messages, accuracies_without_broken, relative=num_messages)
+        self.__export_to_csv("/tmp/accuray-vs-error-without-broken", num_broken_messages, accuracies_without_broken,
+                             relative=num_messages)
 
     def test_performance(self):
         Engine._DEBUG_ = False
@@ -466,12 +469,12 @@ class AWRExperiments(AWRETestCase):
 
                 tmp_performances = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
-                    print("\r{0} with {1:02d} messages ({2}/{3} runs)".format(protocol_name, messages, i+1, num_runs),
+                    print("\r{0} with {1:02d} messages ({2}/{3} runs)".format(protocol_name, messages, i + 1, num_runs),
                           flush=True, end="")
 
                     t = time.time()
                     self.run_format_finder_for_protocol(protocol)
-                    tmp_performances[i] = time.time()-t
+                    tmp_performances[i] = time.time() - t
                     self.clear_message_types(protocol.messages)
 
                 performances["{}".format(protocol_name)].append(tmp_performances.mean())

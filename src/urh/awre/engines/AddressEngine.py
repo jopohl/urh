@@ -49,11 +49,11 @@ class AddressEngine(Engine):
     @staticmethod
     def cross_swap_check(rng1: CommonRange, rng2: CommonRange):
         return (rng1.start == rng2.start + rng1.length or rng1.start == rng2.start - rng1.length) \
-               and rng1.value_str == rng2.value_str
+               and rng1.value.tobytes() == rng2.value.tobytes()
 
     @staticmethod
     def ack_check(rng1: CommonRange, rng2: CommonRange):
-        return (rng1.start == rng2.start and rng1.length == rng2.length) and rng1.value_str != rng2.value_str
+        return rng1.start == rng2.start and rng1.length == rng2.length and rng1.value.tobytes() != rng2.value.tobytes()
 
     def find(self):
         addresses_by_participant = {p: [addr.tostring()] for p, addr in self.known_addresses_by_participant.items()}

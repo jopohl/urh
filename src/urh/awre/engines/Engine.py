@@ -42,7 +42,7 @@ class Engine(object):
         for i, j in itertools.combinations(msg_indices, 2):
             for rng in Histogram(msg_vectors, indices=[i, j]).find_common_ranges(alpha=1, range_type=range_type):
                 try:
-                    common_range = next(cr for cr in result if cr.start == rng.start and cr.value_str == rng.value_str)
+                    common_range = next(cr for cr in result if cr.start == rng.start and cr.value.tobytes() == rng.value.tobytes())
                     common_range.message_indices.update({i, j})
                 except StopIteration:
                     result.append(rng)

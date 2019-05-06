@@ -71,10 +71,6 @@ class CommonRange(object):
             raise ValueError("This range has multiple values!")
 
     @property
-    def value_str(self):
-        return util.convert_numbers_to_hex_string(self.value)
-
-    @property
     def byte_order(self):
         return self.__byte_order
 

@@ -60,7 +60,7 @@ class LengthEngine(Engine):
         for rng in ranges:
             count = len([r for r in ranges if rng.start == r.start
                          and rng.length == r.length
-                         and rng.value_str == r.value_str]
+                         and rng.value.tobytes() == r.value.tobytes()]
                         )
             if count < 2:
                 continue

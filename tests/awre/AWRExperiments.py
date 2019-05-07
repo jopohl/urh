@@ -251,15 +251,23 @@ class AWRExperiments(AWRETestCase):
     def _prepare_protocol_8() -> ProtocolGenerator:
         alice = Participant("Alice")
 
-        mb = MessageTypeBuilder("data")
+        mb = MessageTypeBuilder("data1")
         mb.add_label(FieldType.Function.PREAMBLE, 4)
         mb.add_label(FieldType.Function.SYNC, 4)
         mb.add_label(FieldType.Function.LENGTH, 16)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+        mb.add_label(FieldType.Function.DATA, 8 * 542)
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9"},
-                               preambles_by_mt={mb.message_type: "10" * 2},
+        mb2 = MessageTypeBuilder("data2")
+        mb2.add_label(FieldType.Function.PREAMBLE, 4)
+        mb2.add_label(FieldType.Function.SYNC, 4)
+        mb2.add_label(FieldType.Function.LENGTH, 16)
+        mb2.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
+        mb2.add_label(FieldType.Function.DATA, 8 * 260)
+
+        pg = ProtocolGenerator([mb.message_type, mb2.message_type],
+                               syncs_by_mt={mb.message_type: "0x9", mb2.message_type: "0x9"},
+                               preambles_by_mt={mb.message_type: "10" * 2, mb2.message_type: "10" * 2},
                                sequence_number_increment=32,
                                participants=[alice],
                                little_endian=True)
@@ -308,14 +316,16 @@ class AWRExperiments(AWRETestCase):
             else:
                 # data_bytes = 16
                 data_bytes = 64
-            data = "".join(random.choice(["0", "1"]) for _ in range(data_bytes * 8))
+
             if len(messages_types_with_data_field) == 0:
                 # set data automatically
+                data = "".join(random.choice(["0", "1"]) for _ in range(data_bytes * 8))
                 pg.generate_message(data=data, source=source, destination=destination)
             else:
                 # search for message type with right data length
-                mt = next(mt for mt in messages_types_with_data_field
-                          if mt.get_first_label_with_type(FieldType.Function.DATA).length == data_bytes * 8)
+                mt = messages_types_with_data_field[i % len(messages_types_with_data_field)]
+                data_length = mt.get_first_label_with_type(FieldType.Function.DATA).length
+                data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
                 pg.generate_message(message_type=mt, data=data, source=source, destination=destination)
 
             ack_message_type = next((mt for mt in pg.protocol.message_types if "ack" in mt.name), None)

@@ -213,6 +213,10 @@ class ProtocolGenerator(object):
                     f.write("    \\item {}: \\texttt{{0x{}}}\n".format(lbl.name, util.bit2hex(preamble)))
                 elif lbl.field_type.function == FieldType.Function.CHECKSUM:
                     f.write("    \\item {}: {}\n".format(lbl.name, lbl.checksum.caption))
+                elif lbl.field_type.function in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER) and lbl.length > 8:
+                    f.write("    \\item {}: {} bit (\\textbf{{{} endian}})\n".format(lbl.name, lbl.length, "little" if self.little_endian else "big"))
+                elif lbl.field_type.function == FieldType.Function.DATA:
+                    f.write("    \\item payload: {} byte\n".format(lbl.length // 8))
                 else:
                     f.write("    \\item {}: {} bit\n".format(lbl.name, lbl.length))
             f.write("  \\end{itemize}\n")

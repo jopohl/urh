@@ -35,7 +35,6 @@ class LengthEngine(Engine):
         self.filter_common_ranges(common_ranges_by_length)
         self._debug("Common Ranges:", common_ranges_by_length)
 
-        # TODO: Try different endianess
         scored_ranges = self.score_ranges(common_ranges_by_length, n_gram_length)
         self._debug("Scored Ranges", scored_ranges)
 

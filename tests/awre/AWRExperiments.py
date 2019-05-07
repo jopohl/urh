@@ -153,9 +153,12 @@ class AWRExperiments(AWRETestCase):
 
         mt1, mt2, mt3 = mb.message_type, mb2.message_type, mb_ack.message_type
 
+
+        preamble = "10001000" * 2
+
         pg = ProtocolGenerator([mt1, mt2, mt3],
                                syncs_by_mt={mt1: "0x9a7d", mt2: "0x9a7d", mt3: "0x9a7d"},
-                               preambles_by_mt={mt1: "10" * 8, mt2: "10" * 8, mt3: "10" * 8},
+                               preambles_by_mt={mt1: preamble, mt2: preamble, mt3: preamble},
                                participants=[alice, bob])
 
         return pg

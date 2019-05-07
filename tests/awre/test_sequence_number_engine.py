@@ -107,8 +107,10 @@ class TestSequenceNumberEngine(AWRETestCase):
         self.assertGreater(len(ff.message_types[0]), 0)
         self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
         label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
-        self.assertEqual(label.start, 32)
-        self.assertEqual(label.length, 16)
+
+        # Not consider constants as part of SEQ Nr!
+        self.assertEqual(label.start, 40)
+        self.assertEqual(label.length, 8)
 
     def test_no_sequence_number(self):
         """
@@ -152,38 +154,29 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 0)
 
-    def test_multiple_sequence_numbers(self):
-        """
-        Two message types with sequence number on different positions
+    def test_sequence_number_little_endian_16_bit(self):
+        mb = MessageTypeBuilder("16bit_seq_test")
+        mb.add_label(FieldType.Function.PREAMBLE, 8)
+        mb.add_label(FieldType.Function.SYNC, 16)
+        mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
 
-        :return:
-        """
-        mb1 = MessageTypeBuilder("longer")
-        mb1.add_label(FieldType.Function.PREAMBLE, 8)
-        mb1.add_label(FieldType.Function.SYNC, 16)
-        mb1.add_label(FieldType.Function.LENGTH, 16)
-        mb1.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+        num_messages = 8
 
-        mb2 = MessageTypeBuilder("shorter")
-        mb2.add_label(FieldType.Function.PREAMBLE, 8)
-        mb2.add_label(FieldType.Function.SYNC, 16)
-        mb2.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
-
-        pg = ProtocolGenerator([mb1.message_type, mb2.message_type],
-                               syncs_by_mt={mb1.message_type: "0x9a9d", mb2.message_type: "0x9a9d"},
-                               sequence_number_increment=1)
-
-        num_messages = 32
+        pg = ProtocolGenerator([mb.message_type],
+                               syncs_by_mt={mb.message_type: "0x9a9d"},
+                               little_endian=True, sequence_number_increment=64)
 
         for i in range(num_messages):
-            pg.generate_message(data="0x00", message_type=i % 2)
+            pg.generate_message(data="0xcafe")
 
-        self.save_protocol("two_sequence_numbers", pg)
+        self.save_protocol("16bit_litte_endian_seq", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
+        ff.perform_iteration()
 
-        seq_engine = SequenceNumberEngine(ff.bitvectors, n_gram_length=8)
-        highscored_ranges = seq_engine.find()
-        # TODO: Implement message type consideration in format finder and call format finder here
-        #self.assertEqual(len(highscored_ranges), 2)
+        self.assertEqual(len(ff.message_types), 1)
+        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
+        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(label.start, 24)
+        self.assertEqual(label.length, 16)

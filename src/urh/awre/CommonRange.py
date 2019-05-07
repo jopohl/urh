@@ -72,7 +72,17 @@ class CommonRange(object):
 
     @property
     def byte_order(self):
+        if self.byte_order_is_unknown:
+            return "big"
         return self.__byte_order
+
+    @byte_order.setter
+    def byte_order(self, val: str):
+        self.__byte_order = val
+
+    @property
+    def byte_order_is_unknown(self) -> bool:
+        return self.__byte_order is None
 
     def matches(self, start: int, value: np.ndarray):
         return self.start == start and \

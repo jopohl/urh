@@ -21,6 +21,8 @@ class SequenceNumberEngine(Engine):
             self.already_labeled_cols = {e // n_gram_length for rng in already_labeled for e in range(*rng)}
 
     def find(self):
+        n = self.n_gram_length
+
         if len(self.bitvectors) < 3:
             # We need at least 3 bitvectors to properly find a sequence number
             return []
@@ -57,47 +59,39 @@ class SequenceNumberEngine(Engine):
             message_indices = set(message_indices) | set(message_indices + 1)
             values = set()
             for i in message_indices:
-                values.add(self.bitvectors[i][
-                           candidate_column * self.n_gram_length:candidate_column * self.n_gram_length + self.n_gram_length].tobytes())
+                values.add(self.bitvectors[i][candidate_column * n:(candidate_column + 1) * n].tobytes())
 
-            if len(result) > 0 \
-                    and result[-1].start == (candidate_column - 1) * self.n_gram_length \
-                    and result[-1].message_indices == message_indices:
-                # Since the scoring neglects zeros, the score for leading sequence number parts will also be high
-                # and match the same indices as the lower parts, therefore we implicitly consider big AND little endian
-                # by starting with the lowest index and increase the length of the sequence number as long as
-                # message indices match
-                result[-1].length += self.n_gram_length
-            else:
-                result.append(CommonRange(start=candidate_column * self.n_gram_length,
-                                          length=self.n_gram_length,
-                                          score=score,
-                                          field_type="sequence number",
-                                          message_indices=message_indices
-                                          )
-                              )
-            result[-1].values.extend(list(values))
+            matching_ranges = [r for r in result if r.message_indices == message_indices]
 
-        end_result = []
-
-        # Now we expand the sequence number ranges when stuff left of it is constant
-        for common_range in result:
-            if len(set(common_range.values)) <= 2:
-                # At least three different values needed to reliably identify a sequence number
+            try:
+                matching_range = next(r for r in matching_ranges if r.start == (candidate_column - 1) * n
+                                      and (r.byte_order_is_unknown or r.byte_order == "big"))
+                matching_range.length += n
+                matching_range.byte_order = "big"
+                matching_range.values.extend(list(values))
                 continue
+            except StopIteration:
+                pass
 
-            rows = np.array(list(common_range.message_indices)[1:]) - 1
-            column = (common_range.start // self.n_gram_length) - 1
+            try:
+                matching_range = next(r for r in matching_ranges if r.start == (candidate_column + 1) * n
+                                      and (r.byte_order_is_unknown or r.byte_order == "little"))
+                matching_range.start -= n
+                matching_range.length += n
+                matching_range.byte_order = "little"
+                matching_range.values.extend(list(values))
+                continue
+            except StopIteration:
+                pass
 
-            while column >= 0 and column not in self.already_labeled_cols and not np.any(diff_matrix[rows, column]):
-                # all elements are zero in diff matrix, so we have a constant
-                common_range.start -= self.n_gram_length
-                common_range.length += self.n_gram_length
-                column = (common_range.start // self.n_gram_length) - 1
+            new_range = CommonRange(start=candidate_column * n, length=n, score=score,
+                                    field_type="sequence number", message_indices=message_indices,
+                                    byte_order=None)
+            new_range.values.extend(list(values))
+            result.append(new_range)
 
-            end_result.append(common_range)
-
-        return end_result
+        # At least three different values needed to reliably identify a sequence number
+        return [rng for rng in result if len(set(rng.values)) > 2]
 
     @staticmethod
     def get_most_frequent(diff_frequencies: dict):
@@ -111,7 +105,7 @@ class SequenceNumberEngine(Engine):
           2. Other constants (!= zero) should lower the score, zero means sequence number stays same for some messages
 
         :param diff_frequencies: Frequencies of decimal differences between columns of subsequent messages
-                                 e.g. {-255: 3, 1: 1020} means -255 appeared 3 times and 1 appeared 1020 times
+                                 e.g. {0: 3, 1: 1020} means 0 appeared 3 times and 1 appeared 1020 times
         :return: a score between 0 and 1
         """
         total = sum(diff_frequencies.values())

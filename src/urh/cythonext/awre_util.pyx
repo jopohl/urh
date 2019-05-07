@@ -347,7 +347,8 @@ cpdef np.ndarray[np.int32_t, ndim=2, mode="c"] create_seq_number_difference_matr
             if index < M:
                 diff = bit_array_to_number(bv2, min(len_bv2, j + n_gram_length), j) -\
                        bit_array_to_number(bv1, min(len_bv1, j+n_gram_length), j)
-                result[i - 1, index] = diff % n_gram_power_two
+                # add + n_gram_power_two because in C modulo can be negative
+                result[i - 1, index] = (diff + n_gram_power_two) % n_gram_power_two
 
     return result
 

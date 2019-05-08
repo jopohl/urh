@@ -234,9 +234,3 @@ class TestGeneratedProtocols(AWRETestCase):
 
         self.__check_addresses(messages, ff, known_participant_addresses)
         self.assertEqual(len(ff.message_types), 3)
-
-    def test_with_crc8(self):
-        ff = self.get_format_finder_from_protocol_file("crc8.proto.xml")#
-
-        ff.run()
-        self.assertEqual(len(ff.message_types), 2)

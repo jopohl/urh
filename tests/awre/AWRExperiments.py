@@ -477,7 +477,6 @@ class AWRExperiments(AWRETestCase):
 
         for protocol_name in protocol_names:
             for messages in num_messages:
-                print()
                 if protocol_name == "homematic":
                     protocol = self.generate_homematic(messages, save_protocol=False)
                 elif protocol_name == "enocean":
@@ -497,7 +496,9 @@ class AWRExperiments(AWRETestCase):
                     tmp_performances[i] = time.time() - t
                     self.clear_message_types(protocol.messages)
 
-                performances["{}".format(protocol_name)].append(tmp_performances.mean())
+                mean_performance = tmp_performances.mean()
+                print(" {:.2f}s".format(mean_performance))
+                performances["{}".format(protocol_name)].append(mean_performance)
 
         self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
         self.__export_to_csv("/tmp/performance.csv", num_messages, performances)

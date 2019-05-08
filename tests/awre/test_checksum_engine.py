@@ -1,3 +1,5 @@
+import array
+
 import numpy as np
 
 from tests.awre.AWRETestCase import AWRETestCase
@@ -9,7 +11,7 @@ from urh.awre.engines.ChecksumEngine import ChecksumEngine
 from urh.signalprocessing.FieldType import FieldType
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
-
+from urh.cythonext import util as c_util
 
 class TestChecksumEngine(AWRETestCase):
     def test_find_crc8(self):
@@ -87,7 +89,7 @@ class TestChecksumEngine(AWRETestCase):
             pg.generate_message(data="{0:032b}".format(i), message_type=mb.message_type)
             pg.generate_message(data="{0:016b}".format(i), message_type=mb2.message_type)
 
-        self.save_protocol("crc16_test", pg)
+        #self.save_protocol("crc16_test", pg)
         self.clear_message_types(pg.protocol.messages)
 
         ff = FormatFinder(pg.protocol.messages)

@@ -57,7 +57,7 @@ class TestGeneratedProtocols(AWRETestCase):
             destination = pg.participants[(i + 1) % 2]
             pg.generate_message(data="1010" * (data_bits // 4), source=source, destination=destination)
 
-        self.save_protocol("without_preamble", pg)
+        #self.save_protocol("without_preamble", pg)
         self.clear_message_types(pg.messages)
         ff = FormatFinder(pg.messages)
         ff.known_participant_addresses.clear()
@@ -235,4 +235,8 @@ class TestGeneratedProtocols(AWRETestCase):
         self.__check_addresses(messages, ff, known_participant_addresses)
         self.assertEqual(len(ff.message_types), 3)
 
+    def test_with_crc8(self):
+        ff = self.get_format_finder_from_protocol_file("crc8.proto.xml")#
 
+        ff.run()
+        self.assertEqual(len(ff.message_types), 2)

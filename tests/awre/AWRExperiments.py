@@ -98,6 +98,8 @@ class AWRExperiments(AWRETestCase):
         alice = Participant("Alice", address_hex="1337")
         bob = Participant("Bob", address_hex="beef")
 
+        checksum = GenericCRC.from_standard_checksum("CRC8 CCITT")
+
         mb = MessageTypeBuilder("data")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
         mb.add_label(FieldType.Function.SYNC, 16)
@@ -105,12 +107,15 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
         mb.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
+        mb.add_label(FieldType.Function.DATA, 10*8)
+        mb.add_checksum_label(8, checksum)
 
         mb_ack = MessageTypeBuilder("ack")
         mb_ack.add_label(FieldType.Function.PREAMBLE, 16)
         mb_ack.add_label(FieldType.Function.SYNC, 16)
         mb_ack.add_label(FieldType.Function.LENGTH, 8)
         mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
+        mb_ack.add_checksum_label(8, checksum)
 
         pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
                                syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},

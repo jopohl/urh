@@ -29,7 +29,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        self.save_protocol("simple_sequence_number", pg)
+        #self.save_protocol("simple_sequence_number", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -60,7 +60,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        self.save_protocol("16bit_seq", pg)
+        #self.save_protocol("16bit_seq", pg)
 
         bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
         seq_engine = SequenceNumberEngine(bitvectors, n_gram_length=8)
@@ -93,7 +93,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         for i in range(num_messages):
             pg.generate_message(data="0xcafe" + "abc" * i)
 
-        self.save_protocol("16bit_seq_first_byte_zero_test", pg)
+        #self.save_protocol("16bit_seq_first_byte_zero_test", pg)
 
         bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
         seq_engine = SequenceNumberEngine(bitvectors, n_gram_length=8)
@@ -141,7 +141,7 @@ class TestSequenceNumberEngine(AWRETestCase):
                 source, destination = bob, alice
             pg.generate_message(data="", source=source, destination=destination)
 
-        self.save_protocol("protocol_1", pg)
+        #self.save_protocol("protocol_1", pg)
 
         # Delete message type information -> no prior knowledge
         self.clear_message_types(pg.protocol.messages)
@@ -169,7 +169,7 @@ class TestSequenceNumberEngine(AWRETestCase):
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        self.save_protocol("16bit_litte_endian_seq", pg)
+        #self.save_protocol("16bit_litte_endian_seq", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)

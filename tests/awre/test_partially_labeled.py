@@ -170,11 +170,12 @@ class TestPartiallyLabeled(AWRETestCase):
                                 source=source, destination=destination)
             pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
 
-        self.save_protocol("labeled_protocol", pg)
+        #self.save_protocol("labeled_protocol", pg)
 
         return pg.protocol
 
     def __prepare_simple_example_protocol(self):
+        random.seed(0)
         alice = Participant("Alice", "A", address_hex="1234")
         bob = Participant("Bob", "B", address_hex="cafe")
 
@@ -191,7 +192,7 @@ class TestPartiallyLabeled(AWRETestCase):
                                participants=[alice, bob])
 
         for i in range(10):
-            pg.generate_message(data="0xfffffffff", source=alice, destination=bob)
-            pg.generate_message(data="0xfffffffffffff", source=bob, destination=alice)
+            pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(16)]), source=alice, destination=bob)
+            pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(8)]), source=bob, destination=alice)
 
         return pg.protocol

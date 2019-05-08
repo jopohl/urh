@@ -18,7 +18,7 @@ class Preprocessor(object):
     3) Align all given messages on the identified preamble information
     """
 
-    _DEBUG_ = True
+    _DEBUG_ = False
 
     def __init__(self, bitvectors: list, existing_message_types: dict = None):
         self.bitvectors = bitvectors  # type: list[np.ndarray]

@@ -24,7 +24,7 @@ class TestAWREPreprocessing(AWRETestCase):
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
 
         possible_syncs = preprocessor.find_possible_syncs()
-        self.save_protocol("very_simple_sync_test", pg)
+        #self.save_protocol("very_simple_sync_test", pg)
         self.assertGreaterEqual(len(possible_syncs), 1)
         self.assertEqual(preprocessor.find_possible_syncs()[0], sync)
 
@@ -39,7 +39,7 @@ class TestAWREPreprocessing(AWRETestCase):
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
 
         possible_syncs = preprocessor.find_possible_syncs()
-        self.save_protocol("simple_sync_test", pg)
+        #self.save_protocol("simple_sync_test", pg)
         self.assertGreaterEqual(len(possible_syncs), 1)
         self.assertEqual(preprocessor.find_possible_syncs()[0], sync)
 
@@ -54,7 +54,7 @@ class TestAWREPreprocessing(AWRETestCase):
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
-        self.save_protocol("odd_preamble", pg)
+        #self.save_protocol("odd_preamble", pg)
         self.assertEqual(preamble[-1] + sync[:-1], possible_syncs[0])
 
     def test_sync_word_finding_special_preamble(self):
@@ -68,8 +68,7 @@ class TestAWREPreprocessing(AWRETestCase):
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
-        self.save_protocol("special_preamble", pg)
-        print(possible_syncs)
+        #self.save_protocol("special_preamble", pg)
         self.assertEqual(sync, possible_syncs[0])
 
     def test_sync_word_finding_errored_preamble(self):
@@ -83,7 +82,7 @@ class TestAWREPreprocessing(AWRETestCase):
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
 
-        self.save_protocol("errored_preamble", pg)
+        #self.save_protocol("errored_preamble", pg)
         self.assertIn(preamble[-1] + sync[:-1], possible_syncs)
 
     def test_sync_word_finding_with_two_sync_words(self):
@@ -94,7 +93,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                            data=(lambda i: 12 * i, lambda i: 16 * i))
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
-        self.save_protocol("two_syncs", pg)
+        #self.save_protocol("two_syncs", pg)
         self.assertGreaterEqual(len(possible_syncs), 2)
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
@@ -148,7 +147,6 @@ class TestAWREPreprocessing(AWRETestCase):
         ff = FormatFinder(messages)
         ff.run()
 
-        print(ff.existing_message_types)
         self.assertEqual(len(ff.message_types), 1)
         preamble = ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
         self.assertEqual(preamble.start, 0)
@@ -198,7 +196,7 @@ class TestAWREPreprocessing(AWRETestCase):
 
         preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in pg.protocol.messages])
         possible_syncs = preprocessor.find_possible_syncs()
-        self.save_protocol("sync_by_common_prefix", pg)
+        #self.save_protocol("sync_by_common_prefix", pg)
         self.assertEqual(len(possible_syncs), 1)
 
         # +0000 is okay, because this will get fixed by correction in FormatFinder
@@ -217,7 +215,7 @@ class TestAWREPreprocessing(AWRETestCase):
                                                             enumerate(pg.protocol.messages)})
         preamble_starts, preamble_lengths, sync_len = preprocessor.preprocess()
 
-        self.save_protocol("given_preamble", pg)
+        #self.save_protocol("given_preamble", pg)
 
         self.assertTrue(all(preamble_start == 0 for preamble_start in preamble_starts))
         self.assertTrue(all(preamble_length == len(preamble) for preamble_length in preamble_lengths))

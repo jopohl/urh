@@ -43,7 +43,7 @@ class TestAddressEngine(AWRETestCase):
             for i in range(num_messages):
                 pg.generate_message(data=pg.decimal_to_bits(22 * i, data_length), source=self.alice)
 
-        self.save_protocol("address_one_participant", pg)
+        #self.save_protocol("address_one_participant", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -76,7 +76,7 @@ class TestAddressEngine(AWRETestCase):
                 data_length = 16
             pg.generate_message(data=pg.decimal_to_bits(4 * i, data_length), source=source, destination=destination)
 
-        self.save_protocol("address_two_participants", pg)
+        #self.save_protocol("address_two_participants", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -144,7 +144,7 @@ class TestAddressEngine(AWRETestCase):
                                 source=source, destination=destination)
             pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
 
-        self.save_protocol("address_two_participants_with_acks", pg)
+        #self.save_protocol("address_two_participants_with_acks", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -209,7 +209,7 @@ class TestAddressEngine(AWRETestCase):
                                 source=source, destination=destination)
             pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
 
-        self.save_protocol("address_two_participants_with_acks_and_types", pg)
+        #self.save_protocol("address_two_participants_with_acks_and_types", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -340,7 +340,7 @@ class TestAddressEngine(AWRETestCase):
 
         protocol = ProtocolAnalyzer(None)
         protocol.messages.extend([msg1, msg2, msg3, msg4])
-        self.save_protocol("paper_example", protocol)
+        #self.save_protocol("paper_example", protocol)
 
         bitvectors = FormatFinder.get_bitvectors_from_messages(protocol.messages)
         hexvectors = FormatFinder.get_hexvectors(bitvectors)

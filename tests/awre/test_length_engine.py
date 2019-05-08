@@ -25,11 +25,12 @@ class TestLengthEngine(AWRETestCase):
         num_messages_by_data_length = {8: 5, 16: 10, 32: 15}
         pg = ProtocolGenerator([mb.message_type],
                                syncs_by_mt={mb.message_type: "0x9a9d"})
+        random.seed(0)
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(5 * i, data_length))
+                pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(data_length)]))
 
-        self.save_protocol("simple_length", pg)
+        #self.save_protocol("simple_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -74,7 +75,7 @@ class TestLengthEngine(AWRETestCase):
 
                 pg.generate_message(data=data)
 
-        self.save_protocol("easy_length", pg)
+        #self.save_protocol("easy_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -86,7 +87,6 @@ class TestLengthEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        print(ff.message_types[0])
         label = ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
         self.assertIsInstance(label, ProtocolLabel)
         self.assertEqual(label.start, 32)
@@ -117,7 +117,7 @@ class TestLengthEngine(AWRETestCase):
                 pg.generate_message(data=pg.decimal_to_bits(10 * i, data_length), message_type=mb1.message_type)
                 pg.generate_message(message_type=mb2.message_type, data="0xaf")
 
-        self.save_protocol("medium_length", pg)
+        #self.save_protocol("medium_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -150,7 +150,7 @@ class TestLengthEngine(AWRETestCase):
             for i in range(num_messages):
                 pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(data_length)]))
 
-        self.save_protocol("little_endian_16_length_test", pg)
+        #self.save_protocol("little_endian_16_length_test", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)

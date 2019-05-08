@@ -33,10 +33,8 @@ class TestEstimateTolerance(unittest.TestCase):
                 [1, 9, 3, 3, 2, 9, 1, 4, 2, 4, 2, 8, 1, 4, 2, 4, 2, 4, 2, 2, 1, 5, 2, 3, 3, 3, 2, 2, 106, 104, 104, 103, 105, 104, 104, 105, 104, 104, 104, 104, 105, 103, 104, 106, 103, 105, 104, 103, 105, 103, 105, 105, 104, 104, 104, 103, 105, 104, 104, 105, 104, 104, 104, 104, 105, 104, 103, 106, 207, 104, 105],]
 
         found_tolerances = []
-        print()
         for i, plateau_lengths in enumerate(data):
             found_tolerances.append(AutoInterpretation.estimate_tolerance_from_plateau_lengths(plateau_lengths))
 
-        print(found_tolerances)
         estimated_tolerance = AutoInterpretation.get_most_frequent_value(found_tolerances)
         self.assertIn(estimated_tolerance, range(4, 7))

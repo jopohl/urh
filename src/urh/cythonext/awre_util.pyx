@@ -352,7 +352,7 @@ cpdef np.ndarray[np.int32_t, ndim=2, mode="c"] create_seq_number_difference_matr
 
     return result
 
-cpdef set check_crc_for_messages(unsigned long start, list message_indices, list bitvectors,
+cpdef set check_crc_for_messages(list message_indices, list bitvectors,
                                  unsigned long data_start, unsigned long data_stop,
                                  unsigned long crc_start, unsigned long crc_stop,
                                  unsigned char[:] crc_polynomial, unsigned char[:] crc_start_value,
@@ -370,7 +370,7 @@ cpdef set check_crc_for_messages(unsigned long start, list message_indices, list
     cdef unsigned char[:] crc_input
     cdef unsigned long long check
 
-    for j in range(start, end):
+    for j in range(0, end):
         index = message_indices[j]
         bits = bitvectors[index]
         crc_input = bits[data_start:data_stop]

@@ -1,3 +1,4 @@
+import copy
 import math
 from collections import defaultdict
 
@@ -34,7 +35,7 @@ class ChecksumEngine(Engine):
         crc = GenericCRC()
         for length, message_indices in bitvectors_by_n_gram_length.items():
             checksums_for_length = []
-            for i, index in enumerate(message_indices):
+            for index in message_indices:
                 bits = self.bitvectors[index]
                 data_start, data_stop, crc_start, crc_stop = WSPChecksum.search_for_wsp_checksum(bits)
                 if (data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0):
@@ -44,8 +45,7 @@ class ChecksumEngine(Engine):
                                                    field_type="checksum", message_indices={index})
                     try:
                         present = next(c for c in checksums_for_length if c == checksum_range)
-                        present.message_indices.add(i)
-                        present.score += 1 / len(message_indices)
+                        present.message_indices.add(index)
                     except StopIteration:
                         checksums_for_length.append(checksum_range)
                     continue
@@ -56,19 +56,29 @@ class ChecksumEngine(Engine):
                 if (crc_object, data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
                     checksum_range = ChecksumRange(start=crc_start, length=crc_stop - crc_start,
                                                    data_range_start=data_start, data_range_end=data_stop,
-                                                   crc=crc_object, score=1 / len(message_indices),
+                                                   crc=copy.copy(crc_object), score=1 / len(message_indices),
                                                    field_type="checksum", message_indices={index}
                                                    )
+
+                    try:
+                        present = next(rng for rng in checksums_for_length if rng == checksum_range)
+                        present.message_indices.add(index)
+                        continue
+                    except StopIteration:
+                        pass
+
                     checksums_for_length.append(checksum_range)
 
-                    matching = awre_util.check_crc_for_messages(i + 1, message_indices, self.bitvectors,
+                    matching = awre_util.check_crc_for_messages(message_indices, self.bitvectors,
                                                                 data_start, data_stop,
                                                                 crc_start, crc_stop,
                                                                 *crc_object.get_parameters())
 
-                    if matching:
-                        checksums_for_length[-1].message_indices.update(matching)
-                        checksums_for_length[-1].score += len(matching) / len(message_indices)
+                    checksum_range.message_indices.update(matching)
+
+            # Score ranges
+            for rng in checksums_for_length:
+                rng.score = len(rng.message_indices) / len(message_indices)
 
             try:
                 result.append(max(checksums_for_length, key=lambda x: x.score))

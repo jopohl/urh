@@ -646,26 +646,60 @@ class AWRExperiments(AWRETestCase):
         return result
 
     def test_export_latex_table(self):
+        def bold_latex(s):
+            return r"\textbf{" + str(s) + r"}"
+
+        comments = {
+            1: "common protocol",
+            2: "unusual field sizes",
+            3: "contains ack and CRC8 CCITT",
+            4: "contains ack and CRC16 CCITT",
+            5: "three participants with ack frame",
+            6: "short address",
+            7: "four participants, varying preamble size, varying sync words",
+            8: "short preamble/sync, LE"
+        }
+
+        bold = {i: defaultdict(bool) for i in range(1, 9)}
+        bold[2][FieldType.Function.PREAMBLE] = True
+        bold[2][FieldType.Function.SRC_ADDRESS] = True
+        bold[2][FieldType.Function.DST_ADDRESS] = True
+
+        bold[3][FieldType.Function.CHECKSUM] = True
+
+        bold[4][FieldType.Function.CHECKSUM] = True
+
+        bold[6][FieldType.Function.SRC_ADDRESS] = True
+
+        bold[7][FieldType.Function.PREAMBLE] = True
+        bold[7][FieldType.Function.SYNC] = True
+        bold[7][FieldType.Function.SRC_ADDRESS] = True
+        bold[7][FieldType.Function.DST_ADDRESS] = True
+
+        bold[8][FieldType.Function.PREAMBLE] = True
+        bold[8][FieldType.Function.SYNC] = True
+
         filename = os.path.expanduser("~/GIT/publications/awre/USENIX/protocol_table.tex")
         rowcolors = [r"\rowcolor{black!10}", r"\rowcolor{black!20}"]
 
         with open(filename, "w") as f:
             f.write(r"\begin{table*}[!h]" + "\n")
-            f.write("\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present.}" + "\n")
+            f.write("\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present and $N_P$ is the number of participants.}" + "\n")
             f.write("\t" + r"\label{tab:protocols}" + "\n")
             f.write("\t" + r"\centering" + "\n")
-            f.write("\t" + r"\begin{tabularx}{\linewidth}{ccXcccccccc}" + "\n")
+            f.write("\t" + r"\begin{tabularx}{\linewidth}{cp{2.5cm}llcccccccc}" + "\n")
             f.write("\t\t" + r"\hline" + "\n")
             f.write("\t\t" + r"\rowcolor{black!90}" + "\n")
-            f.write("\t\t" + r"\textcolor{white}{\textbf{Protocol}} & "
-                             r"\textcolor{white}{\textbf{Participants}} & "
+            f.write("\t\t" + r"\textcolor{white}{\textbf{\#}} & "
+                             r"\textcolor{white}{\textbf{Comment}} & "
+                             r"\textcolor{white}{$\mathbf{ N_P }$} & "
                              r"\textcolor{white}{\textbf{Message}} & "
-                             r"\textcolor{white}{\textbf{Payload (byte) for}} & "
+                             r"\textcolor{white}{\textbf{Even/odd}} & "
                              r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
                              "\n\t\t"
                              r"\rowcolor{black!90}"
                              "\n\t\t"
-                             r"& & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{even/odd message}} &"
+                             r"& & & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{message data}} &"
                              r"\textcolor{white}{Preamble} & "
                              r"\textcolor{white}{Sync} & "
                              r"\textcolor{white}{Length}  & "
@@ -691,26 +725,35 @@ class AWRExperiments(AWRETestCase):
                     data1_len, data2_len = 8, 64
 
                 rowcolor = rowcolors[rowcolor_index % len(rowcolors)]
+                rowcount = 0
                 for j, mt in enumerate(pg.message_types):
                     if mt.name == "data2":
                         continue
 
+                    rowcount += 1
                     if j == 0:
                         protocol_nr, participants = str(i), len(pg.participants)
+                        if participants > 2:
+                            participants = bold_latex(participants)
                     else:
                         protocol_nr, participants = " ", " "
 
                     f.write("\t\t" + rowcolor + "\n")
-                    f.write("\t\t{} & {} & {} &".format(protocol_nr, participants, mt.name.replace("1", "")))
+
+                    if len(pg.message_types) == 1 or (mt.name == "data1" and "ack" not in {m.name for m in pg.message_types}):
+                        f.write("\t\t{} & {} & {} & {} &".format(protocol_nr, comments[i], participants, mt.name.replace("1", "")))
+                    elif j == len(pg.message_types) - 1:
+                        f.write("\t\t{} & \\multirow{{{}}}{{\\linewidth}}{{{}}} & {} & {} &".format(protocol_nr, -rowcount, comments[i], participants, mt.name.replace("1", "")))
+                    else:
+                        f.write("\t\t{} & & {} & {} &".format(protocol_nr, participants, mt.name.replace("1", "")))
                     data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
 
                     if mt.name == "data1" or mt.name == "data2":
-                        f.write("{}/{} &".format(data1_len, data2_len))
-
+                        f.write("{}/{} byte &".format(data1_len, data2_len))
                     elif mt.name == "data" and data_lbl is None:
-                        f.write("{}/{} &".format(data1_len, data2_len))
+                        f.write("{}/{} byte &".format(data1_len, data2_len))
                     elif data_lbl is not None:
-                        f.write("{0}/{0} & ".format(data_lbl.length // 8))
+                        f.write("{0}/{0} byte & ".format(data_lbl.length // 8))
                     else:
                         f.write(r"$ \times $ & ")
 
@@ -719,9 +762,12 @@ class AWRExperiments(AWRETestCase):
                               FieldType.Function.CHECKSUM):
                         lbl = mt.get_first_label_with_type(t)
                         if lbl is not None:
-                            f.write("{}".format(lbl.length))
+                            if bold[i][lbl.field_type.function]:
+                                f.write(bold_latex(lbl.length))
+                            else:
+                                f.write(str(lbl.length))
                             if lbl.length > 8 and t in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER):
-                                f.write(" ({})".format("LE" if pg.little_endian else "BE"))
+                                f.write(" ({})".format(bold_latex("LE") if pg.little_endian else "BE"))
                         else:
                             f.write(r"$ \times $")
 

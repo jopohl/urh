@@ -659,12 +659,13 @@ class AWRExperiments(AWRETestCase):
             f.write("\t\t" + r"\rowcolor{black!90}" + "\n")
             f.write("\t\t" + r"\textcolor{white}{\textbf{Protocol}} & "
                              r"\textcolor{white}{\textbf{Participants}} & "
-                             r"\textcolor{white}{\textbf{Message Type}} & "
+                             r"\textcolor{white}{\textbf{Message}} & "
+                             r"\textcolor{white}{\textbf{Payload}} & "
                              r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
                              "\n\t\t"
                              r"\rowcolor{black!90}"
                              "\n\t\t"
-                             r"& & &"
+                             r"& & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{in byte}} &"
                              r"\textcolor{white}{Preamble} & "
                              r"\textcolor{white}{Sync} & "
                              r"\textcolor{white}{Length}  & "
@@ -676,7 +677,7 @@ class AWRExperiments(AWRETestCase):
 
             rowcolor_index = 0
             for i in range(1, 9):
-                pg = pg = getattr(self, "_prepare_protocol_" + str(i))()
+                pg = getattr(self, "_prepare_protocol_" + str(i))()
                 assert isinstance(pg, ProtocolGenerator)
 
                 rowcolor = rowcolors[rowcolor_index % len(rowcolors)]
@@ -688,6 +689,14 @@ class AWRExperiments(AWRETestCase):
 
                     f.write("\t\t" + rowcolor + "\n")
                     f.write("\t\t{} & {} & {} &".format(protocol_nr, participants, mt.name))
+                    data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
+                    if mt.name.startswith("data") and data_lbl is None:
+                        f.write("8 or 64 &")
+                    elif data_lbl is not None:
+                        f.write("{} & ".format(data_lbl.length // 8))
+                    else:
+                        f.write("- & ")
+
                     for t in (FieldType.Function.PREAMBLE, FieldType.Function.SYNC, FieldType.Function.LENGTH,
                               FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS, FieldType.Function.SEQUENCE_NUMBER,
                               FieldType.Function.CHECKSUM):
@@ -705,9 +714,6 @@ class AWRExperiments(AWRETestCase):
                             f.write(r"\\" + "\n")
 
                 rowcolor_index += 1
-
-
-
 
             f.write("\t" + r"\end{tabularx}" + "\n")
 

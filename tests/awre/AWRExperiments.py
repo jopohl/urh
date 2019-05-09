@@ -644,3 +644,71 @@ class AWRExperiments(AWRETestCase):
             cls.save_protocol("rwe", result)
 
         return result
+
+    def test_export_latex_table(self):
+        filename = os.path.expanduser("~/GIT/publications/awre/USENIX/protocol_table.tex")
+        rowcolors = [r"\rowcolor{black!10}", r"\rowcolor{black!20}"]
+
+        with open(filename, "w") as f:
+            f.write(r"\begin{table*}[!h]" + "\n")
+            f.write("\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present.}" + "\n")
+            f.write("\t" + r"\label{tab:protocols}" + "\n")
+            f.write("\t" + r"\centering" + "\n")
+            f.write("\t" + r"\begin{tabularx}{\linewidth}{ccXcccccccc}" + "\n")
+            f.write("\t\t" + r"\hline" + "\n")
+            f.write("\t\t" + r"\rowcolor{black!90}" + "\n")
+            f.write("\t\t" + r"\textcolor{white}{\textbf{Protocol}} & "
+                             r"\textcolor{white}{\textbf{Participants}} & "
+                             r"\textcolor{white}{\textbf{Message Type}} & "
+                             r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
+                             "\n\t\t"
+                             r"\rowcolor{black!90}"
+                             "\n\t\t"
+                             r"& & &"
+                             r"\textcolor{white}{Preamble} & "
+                             r"\textcolor{white}{Sync} & "
+                             r"\textcolor{white}{Length}  & "
+                             r"\textcolor{white}{SRC} & "
+                             r"\textcolor{white}{DST} & "
+                             r"\textcolor{white}{SEQ Nr} & "
+                             r"\textcolor{white}{CRC}  \\" + "\n")
+            f.write("\t\t" + r"\hline" + "\n")
+
+            rowcolor_index = 0
+            for i in range(1, 9):
+                pg = pg = getattr(self, "_prepare_protocol_" + str(i))()
+                assert isinstance(pg, ProtocolGenerator)
+
+                rowcolor = rowcolors[rowcolor_index % len(rowcolors)]
+                for j, mt in enumerate(pg.message_types):
+                    if j == 0:
+                        protocol_nr, participants = str(i), len(pg.participants)
+                    else:
+                        protocol_nr, participants = " ", " "
+
+                    f.write("\t\t" + rowcolor + "\n")
+                    f.write("\t\t{} & {} & {} &".format(protocol_nr, participants, mt.name))
+                    for t in (FieldType.Function.PREAMBLE, FieldType.Function.SYNC, FieldType.Function.LENGTH,
+                              FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS, FieldType.Function.SEQUENCE_NUMBER,
+                              FieldType.Function.CHECKSUM):
+                        lbl = mt.get_first_label_with_type(t)
+                        if lbl is not None:
+                            f.write("{}".format(lbl.length))
+                            if lbl.length > 8 and t in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER):
+                                f.write(" ({})".format("LE" if pg.little_endian else "BE"))
+                        else:
+                            f.write(r"$ \times $")
+
+                        if t != FieldType.Function.CHECKSUM:
+                            f.write(" & ")
+                        else:
+                            f.write(r"\\" + "\n")
+
+                rowcolor_index += 1
+
+
+
+
+            f.write("\t" + r"\end{tabularx}" + "\n")
+
+            f.write(r"\end{table*}[!h]" + "\n")

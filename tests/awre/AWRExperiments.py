@@ -695,7 +695,7 @@ class AWRExperiments(AWRETestCase):
                     elif data_lbl is not None:
                         f.write("{} & ".format(data_lbl.length // 8))
                     else:
-                        f.write("- & ")
+                        f.write(r"$ \times $ & ")
 
                     for t in (FieldType.Function.PREAMBLE, FieldType.Function.SYNC, FieldType.Function.LENGTH,
                               FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS, FieldType.Function.SEQUENCE_NUMBER,

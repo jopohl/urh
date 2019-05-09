@@ -131,7 +131,7 @@ class AWRExperiments(AWRETestCase):
 
         checksum = GenericCRC.from_standard_checksum("CRC16 CCITT")
 
-        mb = MessageTypeBuilder("data")
+        mb = MessageTypeBuilder("data1")
         mb.add_label(FieldType.Function.PREAMBLE, 16)
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 8)
@@ -660,12 +660,12 @@ class AWRExperiments(AWRETestCase):
             f.write("\t\t" + r"\textcolor{white}{\textbf{Protocol}} & "
                              r"\textcolor{white}{\textbf{Participants}} & "
                              r"\textcolor{white}{\textbf{Message}} & "
-                             r"\textcolor{white}{\textbf{Payload}} & "
+                             r"\textcolor{white}{\textbf{Payload (byte) for}} & "
                              r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
                              "\n\t\t"
                              r"\rowcolor{black!90}"
                              "\n\t\t"
-                             r"& & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{in byte}} &"
+                             r"& & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{even/odd message}} &"
                              r"\textcolor{white}{Preamble} & "
                              r"\textcolor{white}{Sync} & "
                              r"\textcolor{white}{Length}  & "
@@ -680,20 +680,37 @@ class AWRExperiments(AWRETestCase):
                 pg = getattr(self, "_prepare_protocol_" + str(i))()
                 assert isinstance(pg, ProtocolGenerator)
 
+                try:
+                    data1 = next(mt for mt in pg.message_types if mt.name == "data1")
+                    data2 = next(mt for mt in pg.message_types if mt.name == "data2")
+
+                    data1_len = data1.get_first_label_with_type(FieldType.Function.DATA).length // 8
+                    data2_len = data2.get_first_label_with_type(FieldType.Function.DATA).length // 8
+
+                except StopIteration:
+                    data1_len, data2_len = 8, 64
+
                 rowcolor = rowcolors[rowcolor_index % len(rowcolors)]
                 for j, mt in enumerate(pg.message_types):
+                    if mt.name == "data2":
+                        continue
+
                     if j == 0:
                         protocol_nr, participants = str(i), len(pg.participants)
                     else:
                         protocol_nr, participants = " ", " "
 
                     f.write("\t\t" + rowcolor + "\n")
-                    f.write("\t\t{} & {} & {} &".format(protocol_nr, participants, mt.name))
+                    f.write("\t\t{} & {} & {} &".format(protocol_nr, participants, mt.name.replace("1", "")))
                     data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
-                    if mt.name.startswith("data") and data_lbl is None:
-                        f.write("8 or 64 &")
+
+                    if mt.name == "data1" or mt.name == "data2":
+                        f.write("{}/{} &".format(data1_len, data2_len))
+
+                    elif mt.name == "data" and data_lbl is None:
+                        f.write("{}/{} &".format(data1_len, data2_len))
                     elif data_lbl is not None:
-                        f.write("{} & ".format(data_lbl.length // 8))
+                        f.write("{0}/{0} & ".format(data_lbl.length // 8))
                     else:
                         f.write(r"$ \times $ & ")
 

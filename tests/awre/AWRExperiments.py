@@ -717,4 +717,4 @@ class AWRExperiments(AWRETestCase):
 
             f.write("\t" + r"\end{tabularx}" + "\n")
 
-            f.write(r"\end{table*}[!h]" + "\n")
+            f.write(r"\end{table*}" + "\n")

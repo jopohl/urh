@@ -657,7 +657,7 @@ class AWRExperiments(AWRETestCase):
             5: "three participants with ack frame",
             6: "short address",
             7: "four participants, varying preamble size, varying sync words",
-            8: "short preamble/sync, LE"
+            8: "nibble fields + LE"
         }
 
         bold = {i: defaultdict(bool) for i in range(1, 9)}

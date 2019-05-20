@@ -107,7 +107,7 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
         mb.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
-        mb.add_label(FieldType.Function.DATA, 10*8)
+        mb.add_label(FieldType.Function.DATA, 10 * 8)
         mb.add_checksum_label(8, checksum)
 
         mb_ack = MessageTypeBuilder("ack")
@@ -157,7 +157,6 @@ class AWRExperiments(AWRETestCase):
         mb_ack.add_checksum_label(16, checksum)
 
         mt1, mt2, mt3 = mb.message_type, mb2.message_type, mb_ack.message_type
-
 
         preamble = "10001000" * 2
 
@@ -684,7 +683,8 @@ class AWRExperiments(AWRETestCase):
 
         with open(filename, "w") as f:
             f.write(r"\begin{table*}[!h]" + "\n")
-            f.write("\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present and $N_P$ is the number of participants.}" + "\n")
+            f.write(
+                "\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present and $N_P$ is the number of participants.}" + "\n")
             f.write("\t" + r"\label{tab:protocols}" + "\n")
             f.write("\t" + r"\centering" + "\n")
             f.write("\t" + r"\begin{tabularx}{\linewidth}{cp{2.5cm}llcccccccc}" + "\n")
@@ -740,10 +740,17 @@ class AWRExperiments(AWRETestCase):
 
                     f.write("\t\t" + rowcolor + "\n")
 
-                    if len(pg.message_types) == 1 or (mt.name == "data1" and "ack" not in {m.name for m in pg.message_types}):
-                        f.write("\t\t{} & {} & {} & {} &".format(protocol_nr, comments[i], participants, mt.name.replace("1", "")))
+                    if len(pg.message_types) == 1 or (
+                            mt.name == "data1" and "ack" not in {m.name for m in pg.message_types}):
+                        f.write("\t\t{} & {} & {} & {} &".format(protocol_nr, comments[i], participants,
+                                                                 mt.name.replace("1", "")))
                     elif j == len(pg.message_types) - 1:
-                        f.write("\t\t{} & \\multirow{{{}}}{{\\linewidth}}{{{}}} & {} & {} &".format(protocol_nr, -rowcount, comments[i], participants, mt.name.replace("1", "")))
+                        f.write(
+                            "\t\t{} & \\multirow{{{}}}{{\\linewidth}}{{{}}} & {} & {} &".format(protocol_nr, -rowcount,
+                                                                                                comments[i],
+                                                                                                participants,
+                                                                                                mt.name.replace("1",
+                                                                                                                "")))
                     else:
                         f.write("\t\t{} & & {} & {} &".format(protocol_nr, participants, mt.name.replace("1", "")))
                     data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
@@ -758,7 +765,8 @@ class AWRExperiments(AWRETestCase):
                         f.write(r"$ \times $ & ")
 
                     for t in (FieldType.Function.PREAMBLE, FieldType.Function.SYNC, FieldType.Function.LENGTH,
-                              FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS, FieldType.Function.SEQUENCE_NUMBER,
+                              FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS,
+                              FieldType.Function.SEQUENCE_NUMBER,
                               FieldType.Function.CHECKSUM):
                         lbl = mt.get_first_label_with_type(t)
                         if lbl is not None:

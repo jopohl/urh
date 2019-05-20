@@ -58,11 +58,8 @@ class TestMessageSegmentation(unittest.TestCase):
         data = np.concatenate((msg1, msg2, msg3))
 
         segments = segment_messages_from_magnitudes(np.abs(data), noise_threshold=0)
-        print(segments)
         self.assertEqual(len(segments), 3)
         self.assertEqual(segments, [(0, 999), (10999, 12599), (32599, 34199)])
-
-        print(merge_message_segments_for_ook(segments))
 
     def test_segmentation_elektromaten(self):
         signal = Signal(get_path_for_data_file("elektromaten.coco"), "")

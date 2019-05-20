@@ -37,7 +37,7 @@ class ParticipantTableModel(QAbstractTableModel):
         return super().headerData(section, orientation, role)
 
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole:
+        if role == Qt.DisplayRole or role == Qt.EditRole:
             i = index.row()
             j = index.column()
             part = self.participants[i]

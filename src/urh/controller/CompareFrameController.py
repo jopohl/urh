@@ -1,6 +1,7 @@
 import locale
 import math
 import os
+import traceback
 from collections import defaultdict
 from datetime import datetime
 
@@ -9,8 +10,10 @@ from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItem
     QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
+from urh.util.Errors import Errors
 
 from urh import constants
+from urh.awre import AutoAssigner
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 from urh.models.LabelValueTableModel import LabelValueTableModel
@@ -84,7 +87,7 @@ class CompareFrameController(QWidget):
         self.assign_message_type_action.setChecked(True)
         self.assign_labels_action = self.analyze_menu.addAction(self.tr("Assign labels"))
         self.assign_labels_action.setCheckable(True)
-        self.assign_labels_action.setChecked(False)
+        self.assign_labels_action.setChecked(True)
         self.assign_participant_address_action = self.analyze_menu.addAction(self.tr("Assign participant addresses"))
         self.assign_participant_address_action.setCheckable(True)
         self.assign_participant_address_action.setChecked(True)
@@ -439,6 +442,15 @@ class CompareFrameController(QWidget):
                     if messsage_type.name in (mt.name for mt in self.proto_analyzer.message_types):
                         messsage_type.name += " (" + os.path.split(filename)[1].rstrip(".xml").rstrip(".proto") + ")"
                     self.proto_analyzer.message_types.append(messsage_type)
+
+        update_project = False
+        for msg in pa.messages:
+            if msg.participant is not None and msg.participant not in self.project_manager.participants:
+                self.project_manager.participants.append(msg.participant)
+                update_project = True
+
+        if update_project:
+            self.project_manager.project_updated.emit()
 
         self.message_type_table_model.update()
         self.add_protocol(protocol=pa)
@@ -1011,7 +1023,7 @@ class CompareFrameController(QWidget):
 
         if self.assign_participants_action.isChecked():
             for protocol in self.protocol_list:
-                protocol.auto_assign_participants(self.protocol_model.participants)
+                AutoAssigner.auto_assign_participants(protocol.messages, self.protocol_model.participants)
             self.refresh_assigned_participants_ui()
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Assign message type by rules)")
@@ -1024,16 +1036,23 @@ class CompareFrameController(QWidget):
         self.ui.progressBarLogicAnalyzer.setValue(75)
 
         if self.assign_labels_action.isChecked():
-            self.proto_analyzer.auto_assign_labels()
-            self.protocol_model.update()
-            self.label_value_model.update()
-            self.message_type_table_model.update()
-            self.ui.tblViewMessageTypes.clearSelection()
+            try:
+                self.proto_analyzer.auto_assign_labels()
+                self.protocol_model.update()
+                self.label_value_model.update()
+                self.message_type_table_model.update()
+                self.ui.tblViewMessageTypes.clearSelection()
+            except Exception as e:
+                logger.exception(e)
+                Errors.generic_error("Failed to assign labels",
+                                     "An error occurred during automatic label assignment",
+                                     traceback.format_exc())
 
         self.ui.progressBarLogicAnalyzer.setValue(90)
 
         if self.assign_participant_address_action.isChecked():
-            self.proto_analyzer.auto_assign_participant_addresses(self.protocol_model.participants)
+            AutoAssigner.auto_assign_participant_addresses(self.proto_analyzer.messages,
+                                                           self.protocol_model.participants)
 
         self.ui.progressBarLogicAnalyzer.setValue(100)
         self.unsetCursor()

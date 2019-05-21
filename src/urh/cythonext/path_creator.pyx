@@ -10,15 +10,17 @@ from PyQt5.QtGui import QPainterPath
 # np.import_array()
 
 from cython.parallel import prange
+from urh.cythonext.util cimport IQ, iq
 
 from urh import constants
 import math
 
-cpdef create_path(float[:] samples, long long start, long long end, list subpath_ranges=None):
-    cdef float[:] values
+cpdef create_path(IQ samples, long long start, long long end, list subpath_ranges=None):
+    cdef IQ values
     cdef long long[::1] sample_rng
     cdef np.int64_t[::1] x
-    cdef float sample, minimum, maximum, tmp, scale_factor
+    cdef iq sample, minimum, maximum, tmp
+    cdef float scale_factor
     cdef long long i,j,index, chunk_end, num_samples, pixels_on_path, samples_per_pixel
     num_samples = end - start
 
@@ -75,10 +77,10 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
     return result
 
 
-cpdef create_live_path(float[:] samples, unsigned int start, unsigned int end):
+cpdef create_live_path(IQ samples, unsigned int start, unsigned int end):
     return array_to_QPath(np.arange(start, end).astype(np.int64), samples)
 
-cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
+cpdef array_to_QPath(np.int64_t[:] x, y):
     """
     Convert an array of x,y coordinates to QPainterPath as efficiently as possible.
 

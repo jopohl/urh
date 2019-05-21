@@ -3,6 +3,7 @@ cimport numpy as np
 import numpy as np
 from cpython cimport array
 import array
+import cython
 
 cpdef tuple k_means(float[:] data, unsigned int k=2):
     cdef float[:] centers = np.empty(k, dtype=np.float32)
@@ -46,7 +47,7 @@ cpdef tuple k_means(float[:] data, unsigned int k=2):
     return centers, clusters
 
 
-def segment_messages_from_magnitudes(float[:] magnitudes, float noise_threshold):
+def segment_messages_from_magnitudes(cython.floating[:] magnitudes, float noise_threshold):
     """
     Get the list of start, end indices of messages
 

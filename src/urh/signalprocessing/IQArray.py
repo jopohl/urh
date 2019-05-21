@@ -12,6 +12,15 @@ class IQArray(object):
         self.maximum = maximum
         self.num_samples = len(self.__data) // 2
 
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.__data[2*item:2*(item+1)]
+        elif isinstance(item, slice):
+            start = 2 * item.start if item.start is not None else None
+            stop = 2 * item.stop if item.stop is not None else None
+            step = 2 * item.step if item.step is not None else None
+            return self.__data[start:stop:step]
+
     @property
     def data(self):
         return self.__data

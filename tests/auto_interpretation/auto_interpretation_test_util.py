@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -10,7 +11,10 @@ from urh.signalprocessing.Signal import Signal
 
 def demodulate(signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None, pause_threshold=8):
     signal = Signal("", "")
-    signal._fulldata = signal_data
+    if isinstance(signal_data, IQArray):
+        signal.iq_array = signal_data
+    else:
+        signal.iq_array = IQArray(-1, signal_data.dtype, -1, 1, signal_data)
     signal.modulation_type = signal.MODULATION_TYPES.index(mod_type)
     signal.bit_len = bit_length
     signal.qad_center = center

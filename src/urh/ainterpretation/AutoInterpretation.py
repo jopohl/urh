@@ -128,6 +128,9 @@ def merge_message_segments_for_ook(segments: list):
 
 
 def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11) -> str:
+    if data.dtype != np.complex64:
+        data = data.astype(np.float32).view(np.complex64)
+
     n_data = len(data)
     data = data[np.abs(data) > 0]
     if len(data) == 0:
@@ -176,7 +179,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "OOK"
 
 
-def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) -> str:
+def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> str:
     modulations_for_messages = []
     for start, end in message_indices:
         mod = detect_modulation(signal[start:end])
@@ -350,8 +353,11 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
 
 
 def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> dict:
-    if isinstance(iq_array, np.ndarray) and iq_array.dtype == np.complex64:
-        iq_array = IQArray.from_array(iq_array.astype(np.float32))
+    if isinstance(iq_array, np.ndarray):
+        if iq_array.dtype == np.complex64:
+            iq_array = IQArray.from_array(iq_array.view(np.float32))
+        else:
+            iq_array = IQArray.from_array(iq_array.view(np.float32))
 
     magnitudes = iq_array.magnitudes
     # find noise threshold
@@ -361,7 +367,7 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
     # detect modulation
-    modulation = detect_modulation_for_messages(iq_array.data, message_indices) if modulation is None else modulation
+    modulation = detect_modulation_for_messages(iq_array, message_indices) if modulation is None else modulation
     if modulation is None:
         return None
 

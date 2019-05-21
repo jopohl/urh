@@ -12,7 +12,7 @@ from urh.signalprocessing.Signal import Signal
 
 class TestAutoInterpretationIntegration(unittest.TestCase):
     def test_auto_interpretation_fsk(self):
-        fsk_signal = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)
+        fsk_signal = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.float32)
         result = AutoInterpretation.estimate(fsk_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
@@ -25,7 +25,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
                          "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18")
 
     def test_auto_interpretation_ask(self):
-        ask_signal = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
+        ask_signal = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.float32)
         result = AutoInterpretation.estimate(ask_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
@@ -37,13 +37,13 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0], "b25b6db6c80")
 
     def test_auto_interpretation_overshoot_ook(self):
-        data = Signal(get_path_for_data_file("ook_overshoot.coco"), "").data
+        data = Signal(get_path_for_data_file("ook_overshoot.coco"), "").iq_array
         result = AutoInterpretation.estimate(data)
         self.assertEqual(result["modulation_type"], "ASK")
         self.assertEqual(result["bit_length"], 500)
 
     def test_auto_interpretation_enocean(self):
-        enocean_signal = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
+        enocean_signal = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.float32)
         result = AutoInterpretation.estimate(enocean_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
@@ -74,7 +74,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             self.assertTrue(demod[i].startswith("aaaaaaaa"))
 
     def test_auto_interpretation_elektromaten(self):
-        data = Signal(get_path_for_data_file("elektromaten.coco"), "").data
+        data = Signal(get_path_for_data_file("elektromaten.coco"), "").iq_array
         result = AutoInterpretation.estimate(data)
 
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -106,7 +106,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             self.assertTrue(demodulated[i].startswith("8"))
 
     def test_auto_interpretation_homematic(self):
-        data = Signal(get_path_for_data_file("homematic.coco"), "").data
+        data = Signal(get_path_for_data_file("homematic.coco"), "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]

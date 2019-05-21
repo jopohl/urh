@@ -223,7 +223,7 @@ cdef void costa_demod(util.IQ samples, float[::1] result, float noise_sqrd,
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_mag, int mod_type):
     if len(samples) <= 2:
-        return np.zeros(len(samples), dtype=np.float32)
+        return np.zeros(len(samples) // 2, dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
     cdef float arg = 0

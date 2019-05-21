@@ -123,7 +123,7 @@ class Signal(QObject):
         members = obj.getmembers()
         obj.extract(members[0], QDir.tempPath())
         extracted_filename = os.path.join(QDir.tempPath(), obj.getnames()[0])
-        self._fulldata = np.fromfile(extracted_filename, dtype=np.complex64)
+        self.__load_complex_file(extracted_filename)
         os.remove(extracted_filename)
 
     @property

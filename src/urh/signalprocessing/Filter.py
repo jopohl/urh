@@ -36,7 +36,10 @@ class Filter(object):
 
     def apply_fir_filter(self, input_signal: np.ndarray) -> np.ndarray:
         if input_signal.dtype != np.complex64:
-            input_signal = np.array(input_signal, dtype=np.complex64)
+            tmp = np.empty(len(input_signal)//2, dtype=np.complex64)
+            tmp.real = input_signal[0::2]
+            tmp.imag = input_signal[1::2]
+            input_signal = tmp
 
         return signal_functions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
 

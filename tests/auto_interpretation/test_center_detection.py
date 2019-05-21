@@ -25,7 +25,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.6)
 
     def test_noisy_rect(self):
-        data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.complex64)
+        data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.float32)
         rect = afp_demod(data, 0.008, 1)[5:15000]
 
         center = detect_center(rect)
@@ -33,7 +33,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.02)
 
     def test_ask_center_detection(self):
-        data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.complex64)
+        data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.float32)
         rect = afp_demod(data, 0.01111, 0)
 
         center = detect_center(rect)
@@ -41,7 +41,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.06)
 
     def test_enocean_center_detection(self):
-        data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.complex64)
+        data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.float32)
         rect = afp_demod(data, 0.05, 0)
         messages = [rect[2107:5432], rect[20428:23758], rect[44216:47546]]
 
@@ -53,7 +53,7 @@ class TestCenterDetection(unittest.TestCase):
     def test_ask_50_center_detection(self):
         message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
 
-        data = np.fromfile(get_path_for_data_file("ask50.complex"), dtype=np.complex64)
+        data = np.fromfile(get_path_for_data_file("ask50.complex"), dtype=np.float32)
         rect = afp_demod(data, 0.0509, 0)
 
         for start, end in message_indices:
@@ -62,7 +62,7 @@ class TestCenterDetection(unittest.TestCase):
             self.assertLessEqual(center, 0.9482, msg="{}/{}".format(start, end))
 
     def test_homematic_center_detection(self):
-        data = Signal(get_path_for_data_file("homematic.coco"), "").data
+        data = Signal(get_path_for_data_file("homematic.coco"), "").iq_array.data
         rect = afp_demod(data, 0.0012, 1)
 
         msg1 = rect[17719:37861]
@@ -77,7 +77,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center2, -0.0367)
 
     def test_noised_homematic_center_detection(self):
-        data = Signal(get_path_for_data_file("noised_homematic.complex"), "").data
+        data = Signal(get_path_for_data_file("noised_homematic.complex"), "").iq_array.data
         rect = afp_demod(data, 0.0,  1)
 
         center = detect_center(rect)
@@ -86,25 +86,25 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLess(center, 0.0024)
 
     def test_fsk_15db_center_detection(self):
-        data = Signal(get_path_for_data_file("FSK15.complex"), "").data
+        data = Signal(get_path_for_data_file("FSK15.complex"), "").iq_array.data
         rect = afp_demod(data, 0, 1)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1979)
         self.assertLessEqual(center, 0.1131)
 
     def test_fsk_10db_center_detection(self):
-        data = Signal(get_path_for_data_file("FSK10.complex"), "").data
+        data = Signal(get_path_for_data_file("FSK10.complex"), "").iq_array.data
         rect = afp_demod(data, 0, 1)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1413)
         self.assertLessEqual(center, 0.05)
 
     def test_fsk_live_capture(self):
-        data = Signal(get_path_for_data_file("fsk_live.coco"), "").data
+        data = Signal(get_path_for_data_file("fsk_live.coco"), "").iq_array.data
 
         n = 10
         moving_average_filter = Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
-        filtered_data = moving_average_filter.apply_fir_filter(data)
+        filtered_data = moving_average_filter.apply_fir_filter(data).view(np.float32)
 
         rect = afp_demod(filtered_data, 0.0175, 1)
         center = detect_center(rect)

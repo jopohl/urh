@@ -61,13 +61,13 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
     def test_auto_interpretation_xavax(self):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")
-        result = AutoInterpretation.estimate(signal.data)
+        result = AutoInterpretation.estimate(signal.iq_array.data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
 
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
-        demod = demodulate(signal.data, mod_type, bit_length, center, noise, tolerance)
+        demod = demodulate(signal.iq_array.data, mod_type, bit_length, center, noise, tolerance)
         self.assertGreaterEqual(len(demod), 5)
 
         for i in range(1, len(demod)):

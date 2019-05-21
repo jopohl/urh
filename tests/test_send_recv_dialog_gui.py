@@ -70,7 +70,7 @@ class TestSendRecvDialog(QtTestCase):
         return receive_dialog
 
     def __get_send_dialog(self):
-        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.data,
+        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.iq_array.data,
                                  modulation_msg_indices=None,
                                  testing_mode=True, parent=self.form)
         if self.SHOW:
@@ -217,7 +217,7 @@ class TestSendRecvDialog(QtTestCase):
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
-                                       self.signal.data))
+                                       self.signal.iq_array.data))
 
         self.assertEqual(send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished")
         self.assertFalse(send_dialog.ui.btnStop.isEnabled())

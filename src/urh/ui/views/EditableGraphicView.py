@@ -221,7 +221,7 @@ class EditableGraphicView(ZoomableGraphicView):
         else:
             num_samples = None
 
-        original_data = self.signal.data if self.signal is not None else None
+        original_data = self.signal.iq_array.data if self.signal is not None else None
         dialog = self.insert_sine_plugin.get_insert_sine_dialog(original_data=original_data,
                                                                 position=self.paste_position,
                                                                 sample_rate=self.sample_rate,

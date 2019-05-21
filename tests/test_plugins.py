@@ -85,7 +85,7 @@ class TestPlugins(QtTestCase):
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         num_samples = 10000
-        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.sframe.signal.data,
+        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.sframe.signal.iq_array.data,
                                                            position=2000,
                                                            sample_rate=self.sframe.signal.sample_rate,
                                                            num_samples=num_samples)

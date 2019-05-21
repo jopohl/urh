@@ -12,6 +12,7 @@ from urh.ainterpretation import AutoInterpretation
 
 from urh import constants
 from urh.signalprocessing.Filter import Filter
+from urh.signalprocessing.IQArray import IQArray
 from urh.util import FileOperator
 from urh.util.Logger import logger
 
@@ -68,26 +69,12 @@ class Signal(QObject):
                 self.__load_complex_file(filename)
 
             self.filename = filename
-            self.noise_threshold = AutoInterpretation.detect_noise_level(np.abs(self.data))
+            self.noise_threshold = AutoInterpretation.detect_noise_level(self.iq_array.magnitudes)
         else:
             self.filename = ""
 
     def __load_complex_file(self, filename: str):
-        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
-            # two 8 bit unsigned integers
-            raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
-            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-            self._fulldata.real = (raw['r'] / 127.5) - 1.0
-            self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
-            # two 8 bit signed integers
-            raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
-            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-            self._fulldata.real = (raw['r'] + 0.5) / 127.5
-            self._fulldata.imag = (raw['i'] + 0.5) / 127.5
-        else:
-            # Uncompressed
-            self._fulldata = np.fromfile(filename, dtype=np.complex64)
+        self.iq_array = IQArray.from_file(filename)
 
     def __load_wav_file(self, filename: str):
         wav = wave.open(filename, "r")
@@ -261,7 +248,7 @@ class Signal(QObject):
 
     @property
     def num_samples(self):
-        return len(self.data)
+        return self.iq_array.num_samples
 
     @property
     def noise_threshold(self):
@@ -287,19 +274,15 @@ class Signal(QObject):
         return self._qad
 
     @property
-    def data(self) -> np.ndarray:
-        return self._fulldata
-
-    @property
     def real_plot_data(self):
         try:
-            return self.data.real
+            return self.iq_array.real
         except AttributeError:
             return np.zeros(0, dtype=np.float32)
 
     @property
     def wave_data(self):
-        return (self.data.view(np.float32) * 32767).astype(np.int16)
+        return (self.iq_array.data.view(np.float32) * 32767).astype(np.int16)
 
     @property
     def changed(self) -> bool:
@@ -339,7 +322,7 @@ class Signal(QObject):
         return signal_functions.find_signal_end(self.qad, self.modulation_type)
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.data, self.noise_threshold, self.modulation_type)
+        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
 
     def calc_noise_threshold(self, noise_start: int, noise_end: int):
         num_digits = 4
@@ -378,7 +361,7 @@ class Signal(QObject):
                   else "OOK" if self.__modulation_order == 2 and self.__modulation_type == 0
                   else self.modulation_type_str}
 
-        estimated_params = AutoInterpretation.estimate(self.data, **kwargs)
+        estimated_params = AutoInterpretation.estimate(self.iq_array, **kwargs)
         if estimated_params is None:
             return False
 

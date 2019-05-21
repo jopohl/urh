@@ -2,15 +2,19 @@ import numpy as np
 
 
 class IQArray(object):
-    def __init__(self, n: int, dtype: np.dtype, minimum: int, maximum: int):
-        self.__data = np.zeros(2 * n, dtype)
+    def __init__(self, n: int, dtype, minimum: int, maximum: int, data: np.ndarray = None):
+        if data is None:
+            self.__data = np.zeros(2 * n, dtype)
+        else:
+            self.__data = data
+
         self.minimum = minimum
         self.maximum = maximum
-        self.__current_index = 0
+        self.num_samples = len(self.__data) // 2
 
     @property
     def data(self):
-        return self.__data[0:self.__current_index]
+        return self.__data
 
     @property
     def real(self):
@@ -24,12 +28,25 @@ class IQArray(object):
     def magnitudes_squared(self):
         return (self.real / self.maximum)**2 + (self.imag / self.maximum)**2
 
-    def reset(self):
-        self.__current_index = 0
+    @property
+    def magnitudes(self):
+        return np.sqrt(self.magnitudes_squared)
 
-    def write(self, new_data: np.ndarray):
-        if self.__current_index + len(new_data) > len(self.__data):
-            raise ValueError("Array is full")
+    @staticmethod
+    def from_file(filename: str):
+        if filename.endswith(".complex16u"):
+            # two 8 bit unsigned integers
+            data = np.fromfile(filename, dtype=np.uint8)
+            return IQArray(-1, np.uint8, minimum=0, maximum=255, data=data)
+        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
+            # two 8 bit signed integers
+            data = np.fromfile(filename, dtype=np.int8)
+            return IQArray(-1, np.int8, minimum=-128, maximum=127, data=data)
+        else:
+            # Uncompressed
+            data = np.fromfile(filename, dtype=np.float32)
+            return IQArray(-1, np.float32, minimum=-1, maximum=1, data=data)
 
-        self.__data[self.__current_index:self.__current_index + len(new_data)] = new_data
-        self.__current_index += len(new_data)
+    @staticmethod
+    def from_array(arr: np.ndarray, minimum=-1, maximum=1):
+        return IQArray(-1, arr.dtype, minimum=minimum, maximum=maximum, data=arr)

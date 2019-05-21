@@ -4,7 +4,7 @@ import cython
 import numpy as np
 from libcpp cimport bool
 
-from urh.cythonext import util
+from urh.cythonext cimport util
 
 from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI, sin, cos
@@ -192,17 +192,17 @@ cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
     cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
     return beta
 
-cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise_sqrd,
+cdef void costa_demod(util.IQ samples, float[::1] result, float noise_sqrd,
                           float costa_alpha, float costa_beta, bool qam, long long num_samples):
     cdef float phase_error = 0
     cdef long long i = 0
     cdef float costa_freq = 0, costa_phase = 0
-    cdef float complex nco_out = 0, nco_times_sample = 0, c = 0
+    cdef float complex nco_out = 0, nco_times_sample = 0
     cdef float real = 0, imag = 0, magnitude = 0
 
-    for i in range(0, num_samples):
-        c = samples[i]
-        real, imag = c.real, c.imag
+    for i in range(0, num_samples, 2):
+        real = samples[i]
+        imag = samples[i+1]
         magnitude = real * real + imag * imag
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK
@@ -212,7 +212,7 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise
         #nco_out = np.exp(-costa_phase * 1j)
         nco_out = cos(-costa_phase) + imag_unit * sin(-costa_phase)
 
-        nco_times_sample = nco_out * c
+        nco_times_sample = nco_out * (real + imag_unit * imag)
         phase_error = nco_times_sample.imag * nco_times_sample.real
         costa_freq += costa_beta * phase_error
         costa_phase += costa_freq + costa_alpha * phase_error
@@ -221,12 +221,11 @@ cdef void costa_demod(float complex[::1] samples, float[::1] result, float noise
         else:
             result[i] = nco_times_sample.real
 
-cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, float noise_mag, int mod_type):
+cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_mag, int mod_type):
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
-    cdef float complex tmp = 0, c = 0
     cdef float arg = 0
     cdef float noise_sqrd = 0
     cdef float complex_phase = 0
@@ -235,10 +234,11 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
     cdef float real = 0
     cdef float imag = 0
 
-    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
+    cdef float[::1] result = np.zeros(ns // 2, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
+    cdef float complex tmp
     cdef float phase_error = 0
     cdef float costa_alpha = 0
     cdef float costa_beta = 0
@@ -262,9 +262,9 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
 
     else:
-        for i in prange(1, ns, nogil=True, schedule='static'):
-            c = samples[i]
-            real, imag = c.real, c.imag
+        for i in prange(1, ns // 2, nogil=True, schedule="static"):
+            real = samples[2*i]
+            imag = samples[2*i+1]
             magnitude = real * real + imag * imag
             if magnitude <= noise_sqrd:  # |c| <= mag_treshold
                 result[i] = NOISE
@@ -273,7 +273,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(float complex[::1] samples, flo
             if mod_type == 0:  # ASK
                 result[i] = sqrt(magnitude)
             elif mod_type == 1:  # FSK
-                tmp = samples[i - 1].conjugate() * c
+                #tmp = samples[i - 1].conjugate() * c
+                tmp = (samples[2*(i-1)] - imag_unit * samples[2*(i-1)+1]) * (real + imag_unit * imag)
                 result[i] = atan2(tmp.imag, tmp.real)  # Freq
 
     return np.asarray(result)

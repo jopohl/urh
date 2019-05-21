@@ -33,7 +33,7 @@ class TestMessageSegmentation(unittest.TestCase):
 
     def test_message_segmentation_fsk_xavax(self):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")
-        segments = segment_messages_from_magnitudes(np.abs(signal.data), noise_threshold=0.002)
+        segments = segment_messages_from_magnitudes(np.abs(signal.iq_array.data), noise_threshold=0.002)
 
         # Signal starts with overdrive, so one message more
         self.assertTrue(len(segments) == 6 or len(segments) == 7)
@@ -63,7 +63,7 @@ class TestMessageSegmentation(unittest.TestCase):
 
     def test_segmentation_elektromaten(self):
         signal = Signal(get_path_for_data_file("elektromaten.coco"), "")
-        segments = segment_messages_from_magnitudes(np.abs(signal.data), noise_threshold=0.0167)
+        segments = segment_messages_from_magnitudes(np.abs(signal.iq_array.data), noise_threshold=0.0167)
         segments = merge_message_segments_for_ook(segments)
 
         self.assertEqual(len(segments), 11)

@@ -107,7 +107,7 @@ class SendDialog(SendRecvDialog):
     def on_signal_data_edited(self):
         signal = self.scene_manager.signal
         self.ui.progressBarSample.setMaximum(signal.num_samples)
-        self.device.samples_to_send = signal.data
+        self.device.samples_to_send = signal.iq_array.data
         self.scene_manager.init_scene()
         self.ui.graphicsViewSend.redraw_view()
 

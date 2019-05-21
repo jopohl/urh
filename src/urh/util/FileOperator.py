@@ -190,7 +190,7 @@ def convert_data_to_format(data: np.ndarray, filename: str):
 
 
 def save_signal(signal):
-    data = convert_data_to_format(signal.data, signal.filename)
+    data = convert_data_to_format(signal.iq_array.data, signal.filename)
     save_data(data, signal.filename, sample_rate=signal.sample_rate)
 
 

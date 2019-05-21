@@ -286,7 +286,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(np.abs(self.signal.data[start:end:step_size]))
+                power = np.mean(self.signal.iq_array.magnitudes[start:end:step_size])
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 
@@ -574,7 +574,8 @@ class SignalFrame(QFrame):
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
         data_min, data_max = self.ui.sliderSpectrogramMin.value(), self.ui.sliderSpectrogramMax.value()
 
-        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size,
+        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.iq_array.data,
+                                                                           window_size=window_size,
                                                                            data_min=data_min, data_max=data_max)
         self.ui.gvSpectrogram.scene_manager.update_scene_rect()
 
@@ -765,7 +766,7 @@ class SignalFrame(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialog(project_manager, modulated_data=self.signal.data, parent=self)
+            dialog = SendDialog(project_manager, modulated_data=self.signal.iq_array.data, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -1205,7 +1206,7 @@ class SignalFrame(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
+        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.data, f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 

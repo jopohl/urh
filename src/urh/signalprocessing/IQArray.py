@@ -19,6 +19,26 @@ class IQArray(object):
             step = 2 * item.step if item.step is not None else None
             return self.__data[start:stop:step]
 
+    def __setitem__(self, key, value: np.ndarray):
+        if isinstance(key, int):
+            if value.dtype == np.complex64:
+                self.__data[2*key] = value[0].real
+                self.__data[2*key+1] = value[0].imag
+            else:
+                self.__data[2*key] = value[0]
+                self.__data[2*key+1] = value[1]
+        elif isinstance(key, slice):
+            start = 2 * key.start if key.start is not None else None
+            stop = 2 * key.stop if key.stop is not None else None
+            if key.step is not None:
+                raise NotImplementedError("Step not implemented")
+
+            if value.dtype == np.complex64:
+                self.__data[start:stop:2] = value.real
+                self.__data[start+1:stop:2] = value.imag
+            else:
+                self.__data[start:stop] = value
+
     def __len__(self):
         return len(self.__data) // 2
 
@@ -76,6 +96,9 @@ class IQArray(object):
 
     def as_complex64(self):
         return self.__data.astype(np.float32).view(np.complex64)
+
+    def insert_subarray(self, pos, subarray: np.ndarray):
+        self.__data = np.insert(self.__data, pos, subarray)
 
     @staticmethod
     def from_file(filename: str):

@@ -449,14 +449,14 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def crop_to_range(self, start: int, end: int):
-        self._fulldata = self._fulldata[start:end]
+        self.iq_array = IQArray.from_array(self.iq_array[start:end])
         self._qad = self._qad[start:end] if self._qad is not None else None
 
         self.__invalidate_after_edit()
 
     def filter_range(self, start: int, end: int, fir_filter: Filter):
-        self._fulldata[start:end] = fir_filter.work(self._fulldata[start:end])
-        self._qad[start:end] = signal_functions.afp_demod(self.data[start:end],
+        self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
+        self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
                                                           self.noise_threshold, self.modulation_type)
         self.__invalidate_after_edit()
 

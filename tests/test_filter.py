@@ -54,17 +54,19 @@ class TestFilter(QtTestCase):
         self.sig_frame.ui.spinBoxSelectionEnd.setValue(selection_end)
         self.sig_frame.ui.spinBoxSelectionEnd.editingFinished.emit()
 
-        old_signal = self.sig_frame.signal._fulldata.copy()
+        old_signal = self.sig_frame.signal.iq_array.data.copy()
 
         self.assertFalse(self.sig_frame.undo_stack.canUndo())
         self.sig_frame.ui.btnFilter.click()
         self.assertTrue(self.sig_frame.undo_stack.canUndo())
 
-        filtered_signal = self.sig_frame.signal._fulldata
+        filtered_signal = self.sig_frame.signal.iq_array.data
         self.assertEqual(len(old_signal), len(filtered_signal))
 
-        for i, (old_sample, filtered_sample) in enumerate(zip(old_signal, filtered_signal)):
-            if i in range(selection_start, selection_end):
+        for i in range(0, len(old_signal), 2):
+            old_sample = complex(old_signal[i], old_signal[i+1])
+            filtered_sample = complex(filtered_signal[i], filtered_signal[i+1])
+            if i in range(2*selection_start, 2*selection_end):
                 self.assertNotEqual(old_sample, filtered_sample, msg=str(i))
             else:
                 self.assertEqual(old_sample, filtered_sample, msg=str(i))

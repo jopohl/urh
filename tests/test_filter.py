@@ -73,7 +73,7 @@ class TestFilter(QtTestCase):
         self.assertTrue(np.array_equal(old_signal, self.sig_frame.signal.iq_array.data))
 
         self.sig_frame.undo_stack.command(0).redo()
-        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.iq_array..data))
+        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.iq_array.data))
 
     def test_filter_caption(self):
         self.assertIn("moving average", self.sig_frame.ui.btnFilter.text())

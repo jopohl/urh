@@ -200,9 +200,9 @@ cdef void costa_demod(util.IQ samples, float[::1] result, float noise_sqrd,
     cdef float complex nco_out = 0, nco_times_sample = 0
     cdef float real = 0, imag = 0, magnitude = 0
 
-    for i in range(0, num_samples, 2):
-        real = samples[i]
-        imag = samples[i+1]
+    for i in range(0, num_samples//2):
+        real = samples[2*i]
+        imag = samples[2*i+1]
         magnitude = real * real + imag * imag
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK

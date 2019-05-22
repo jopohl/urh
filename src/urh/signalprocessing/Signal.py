@@ -401,7 +401,7 @@ class Signal(QObject):
         """
         # ensure power of 2 for faster fft
         length = 2 ** int(math.log2(end - start))
-        data = self.data[start:start + length]
+        data = self.iq_array.as_complex64()[start:start + length]
 
         try:
             w = np.fft.fft(data)
@@ -416,7 +416,7 @@ class Signal(QObject):
         return freq_in_hertz
 
     def eliminate(self):
-        self._fulldata = None
+        self.iq_array = None
         self._qad = None
         self.parameter_cache.clear()
 

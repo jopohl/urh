@@ -43,7 +43,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         if not path:
             return
 
-        data = Signal(path, "").data
+        data = Signal(path, "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -67,7 +67,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         if not path:
             return
 
-        data = Signal(path, "").data
+        data = Signal(path, "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -89,7 +89,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         if not path:
             return
 
-        data = Signal(path, "").data
+        data = Signal(path, "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -111,7 +111,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         if not path:
             return
 
-        data = Signal(path, "").data
+        data = Signal(path, "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -133,7 +133,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         if not path:
             return
 
-        data = Signal(path, "").data
+        data = Signal(path, "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]

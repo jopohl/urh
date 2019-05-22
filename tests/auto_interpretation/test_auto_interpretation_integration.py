@@ -91,7 +91,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         # Test with added 20% noise
         np.random.seed(5)
         noise = np.random.normal(loc=0, scale=1, size=2 * len(data)).astype(np.float32).view(np.complex64)
-        noised_data = data + 0.2 * np.mean(np.abs(data)) * noise
+        noised_data = data.as_complex64() + 0.2 * np.mean(data.magnitudes) * noise
         result = AutoInterpretation.estimate(noised_data)
 
         mod_type, bit_length = result["modulation_type"], result["bit_length"]

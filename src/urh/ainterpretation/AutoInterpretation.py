@@ -357,7 +357,7 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
         if iq_array.dtype == np.complex64:
             iq_array = IQArray.from_array(iq_array.view(np.float32))
         else:
-            iq_array = IQArray.from_array(iq_array.view(np.float32))
+            iq_array = IQArray.from_array(iq_array)
 
     magnitudes = iq_array.magnitudes
     # find noise threshold

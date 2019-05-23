@@ -21,7 +21,7 @@ class TestFilter(QtTestCase):
 
         fir_filter = Filter(filter_taps)
 
-        filtered_signal = fir_filter.apply_fir_filter(input_signal)
+        filtered_signal = fir_filter.apply_fir_filter(input_signal.flatten())
         expected_filtered_signal = np.array([0.25, 0.75, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 16.5], dtype=np.complex64)
 
         self.assertTrue(np.array_equal(filtered_signal, expected_filtered_signal))

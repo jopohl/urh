@@ -36,7 +36,7 @@ class Signal(QObject):
     protocol_needs_update = pyqtSignal()
     data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
-    def __init__(self, filename: str, name: str, modulation: str = None, sample_rate: float = 1e6, parent=None):
+    def __init__(self, filename: str, name="Signal", modulation: str = None, sample_rate: float = 1e6, parent=None):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5

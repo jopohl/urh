@@ -10,6 +10,7 @@ from PyQt5.QtTest import QTest, QSignalSpy
 
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
+from urh.signalprocessing.IQArray import IQArray
 
 from urh.util.Logger import logger
 
@@ -93,7 +94,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg1), 1)
         time.sleep(self.TIMEOUT)
-        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
         while not any("Sending message 2" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 2")
@@ -113,7 +114,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg2), 1)
         time.sleep(self.TIMEOUT)
-        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
         while not any("Sending message 4" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 4")
@@ -133,7 +134,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate(msg3), 1)
         time.sleep(self.TIMEOUT)
-        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
         while not any("Sending message 6" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 6")
@@ -241,7 +242,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
         time.sleep(self.TIMEOUT)
-        self.alice.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        self.alice.send_raw_data(IQArray(None, np.float32, 2*self.num_zeros_for_pause), 1)
 
         while not any("Sending message" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message")

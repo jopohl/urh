@@ -25,7 +25,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.6)
 
     def test_noisy_rect(self):
-        data = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.float32)
+        data = Signal(get_path_for_data_file("fsk.complex")).iq_array.data
         rect = afp_demod(data, 0.008, 1)[5:15000]
 
         center = detect_center(rect)
@@ -33,7 +33,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.02)
 
     def test_ask_center_detection(self):
-        data = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.float32)
+        data = Signal(get_path_for_data_file("ask.complex")).iq_array.data
         rect = afp_demod(data, 0.01111, 0)
 
         center = detect_center(rect)
@@ -41,7 +41,7 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center, 0.06)
 
     def test_enocean_center_detection(self):
-        data = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.float32)
+        data = Signal(get_path_for_data_file("enocean.complex")).iq_array.data
         rect = afp_demod(data, 0.05, 0)
         messages = [rect[2107:5432], rect[20428:23758], rect[44216:47546]]
 
@@ -53,7 +53,7 @@ class TestCenterDetection(unittest.TestCase):
     def test_ask_50_center_detection(self):
         message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
 
-        data = np.fromfile(get_path_for_data_file("ask50.complex"), dtype=np.float32)
+        data = Signal(get_path_for_data_file("ask50.complex")).iq_array.data
         rect = afp_demod(data, 0.0509, 0)
 
         for start, end in message_indices:
@@ -104,7 +104,8 @@ class TestCenterDetection(unittest.TestCase):
 
         n = 10
         moving_average_filter = Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
-        filtered_data = moving_average_filter.apply_fir_filter(data).view(np.float32)
+        filtered_data = moving_average_filter.apply_fir_filter(data.flatten()).view(np.float32)
+        filtered_data = filtered_data.reshape((len(filtered_data)//2, 2))
 
         rect = afp_demod(filtered_data, 0.0175, 1)
         center = detect_center(rect)

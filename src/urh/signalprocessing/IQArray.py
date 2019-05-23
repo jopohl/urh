@@ -14,6 +14,10 @@ class IQArray(object):
         return self.__data[item]
 
     def __setitem__(self, key, value: np.ndarray):
+        if isinstance(value, int) or isinstance(value, float):
+            self.__data[key] = value
+            return
+
         if isinstance(value, IQArray):
             value = value.data
         if value.dtype == np.complex64 or value.dtype == np.complex128:

@@ -10,6 +10,7 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
 from tests.QtTestCase import QtTestCase
+from urh.signalprocessing.IQArray import IQArray
 from urh.util import FileOperator
 
 
@@ -44,7 +45,7 @@ class TestFileOperator(QtTestCase):
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 5)
 
         tar_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.tar.gz"), 'rb').read()).hexdigest()
-        self.form.signal_tab_controller.signal_frames[0].signal._fulldata = np.ones(5, dtype=np.complex64)
+        self.form.signal_tab_controller.signal_frames[0].signal.iq_array = IQArray(np.ones(5, dtype=np.complex64))
         self.form.signal_tab_controller.signal_frames[0].signal.changed = True
         self.form.signal_tab_controller.signal_frames[0].ui.btnSaveSignal.click()
 
@@ -52,7 +53,7 @@ class TestFileOperator(QtTestCase):
         self.assertNotEqual(tar_md5, tar_md5_after_save)
 
         zip_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
-        self.form.signal_tab_controller.signal_frames[4].signal._fulldata = np.ones(5, dtype=np.complex64)
+        self.form.signal_tab_controller.signal_frames[4].signal.iq_array = IQArray(np.ones(5, dtype=np.complex64))
         self.form.signal_tab_controller.signal_frames[4].signal.changed = True
         self.form.signal_tab_controller.signal_frames[4].ui.btnSaveSignal.click()
 

@@ -440,7 +440,7 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def mute_range(self, start: int, end: int):
-        self._fulldata[start:end] = 0
+        self.iq_array[start:end] = 0
         if self._qad is not None:
             self._qad[start:end] = 0
 

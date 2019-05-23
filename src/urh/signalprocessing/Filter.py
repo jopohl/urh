@@ -30,9 +30,9 @@ class Filter(object):
 
     def work(self, input_signal: np.ndarray) -> np.ndarray:
         if self.filter_type == FilterType.dc_correction:
-            return input_signal - np.mean(input_signal)
+            return input_signal - np.mean(input_signal, axis=0)
         else:
-            return self.apply_fir_filter(input_signal)
+            return self.apply_fir_filter(input_signal.flatten())
 
     def apply_fir_filter(self, input_signal: np.ndarray) -> np.ndarray:
         if input_signal.dtype != np.complex64:

@@ -5,4 +5,4 @@ ctypedef fused iq:
     unsigned short
     float
 
-ctypedef iq[:] IQ
+ctypedef iq[:, ::1] IQ

@@ -12,12 +12,12 @@ from cython.parallel import prange
 from libc.math cimport log10,pow
 from libcpp cimport bool
 
-from urh.cythonext.util cimport IQ, iq
+from urh.cythonext.util cimport iq
 
-cpdef tuple minmax(IQ arr):
+cpdef tuple minmax(iq[:] arr):
     cdef long long i, ns = len(arr)
     if ns == 0:
-        return 0,0
+        return 0, 0
 
     cdef iq maximum = arr[0]
     cdef iq minimum = arr[0]

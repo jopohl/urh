@@ -200,9 +200,9 @@ cdef void costa_demod(util.IQ samples, float[::1] result, float noise_sqrd,
     cdef float complex nco_out = 0, nco_times_sample = 0
     cdef float real = 0, imag = 0, magnitude = 0
 
-    for i in range(0, num_samples//2):
-        real = samples[2*i]
-        imag = samples[2*i+1]
+    for i in range(0, num_samples):
+        real = samples[i, 0]
+        imag = samples[i, 1]
         magnitude = real * real + imag * imag
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK
@@ -223,7 +223,7 @@ cdef void costa_demod(util.IQ samples, float[::1] result, float noise_sqrd,
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_mag, int mod_type):
     if len(samples) <= 2:
-        return np.zeros(len(samples) // 2, dtype=np.float32)
+        return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
     cdef float arg = 0
@@ -234,7 +234,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_ma
     cdef float real = 0
     cdef float imag = 0
 
-    cdef float[::1] result = np.zeros(ns // 2, dtype=np.float32, order="C")
+    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     cdef float costa_freq = 0
     cdef float costa_phase = 0
     cdef complex nco_out = 0
@@ -262,9 +262,9 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_ma
         costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
 
     else:
-        for i in prange(1, ns // 2, nogil=True, schedule="static"):
-            real = samples[2*i]
-            imag = samples[2*i+1]
+        for i in prange(1, ns, nogil=True, schedule="static"):
+            real = samples[i, 0]
+            imag = samples[i, 1]
             magnitude = real * real + imag * imag
             if magnitude <= noise_sqrd:  # |c| <= mag_treshold
                 result[i] = NOISE
@@ -274,7 +274,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_ma
                 result[i] = sqrt(magnitude)
             elif mod_type == 1:  # FSK
                 #tmp = samples[i - 1].conjugate() * c
-                tmp = (samples[2*(i-1)] - imag_unit * samples[2*(i-1)+1]) * (real + imag_unit * imag)
+                tmp = (samples[i-1, 0] - imag_unit * samples[i-1, 1]) * (real + imag_unit * imag)
                 result[i] = atan2(tmp.imag, tmp.real)  # Freq
 
     return np.asarray(result)

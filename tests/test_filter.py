@@ -64,9 +64,9 @@ class TestFilter(QtTestCase):
         self.assertEqual(len(old_signal), len(filtered_signal))
 
         for i in range(0, len(old_signal), 2):
-            old_sample = complex(old_signal[i], old_signal[i+1])
-            filtered_sample = complex(filtered_signal[i], filtered_signal[i+1])
-            if i in range(2*selection_start, 2*selection_end):
+            old_sample = complex(old_signal[i, 0], old_signal[i, 1])
+            filtered_sample = complex(filtered_signal[i, 0], filtered_signal[i, 1])
+            if i in range(selection_start, selection_end):
                 self.assertNotEqual(old_sample, filtered_sample, msg=str(i))
             else:
                 self.assertEqual(old_sample, filtered_sample, msg=str(i))

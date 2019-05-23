@@ -138,7 +138,7 @@ class EditSignalAction(QUndoCommand):
 
     def undo(self):
         if self.mode == EditAction.delete:
-            self.signal.iq_array.insert_subarray(2*self.start, self.orig_data_part)
+            self.signal.iq_array.insert_subarray(self.start, self.orig_data_part)
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
                     self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)

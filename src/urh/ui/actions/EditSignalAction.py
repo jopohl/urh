@@ -156,7 +156,7 @@ class EditSignalAction(QUndoCommand):
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.crop:
-            self.signal.iq_array = IQArray.from_array(
+            self.signal.iq_array = IQArray(
                 np.concatenate((self.pre_crop_data, self.signal.iq_array.data, self.post_crop_data))
             )
             if self.cache_qad:

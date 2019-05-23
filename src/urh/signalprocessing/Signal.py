@@ -332,8 +332,7 @@ class Signal(QObject):
             noise_start, noise_end = noise_end, noise_start
 
         try:
-            magnitudes = np.absolute(self.data[noise_start:noise_end])
-            maximum = np.max(magnitudes)
+            maximum = np.max(self.iq_array.magnitudes)
             return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
@@ -343,9 +342,9 @@ class Signal(QObject):
         new_signal = Signal("", "New " + self.name)
 
         if new_data is None:
-            new_signal._fulldata = self.data[start:end]
+            new_signal.iq_array = IQArray(self.iq_array[start:end])
         else:
-            new_signal._fulldata = new_data
+            new_signal.iq_array = IQArray(new_data)
 
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
@@ -449,7 +448,7 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def crop_to_range(self, start: int, end: int):
-        self.iq_array = IQArray.from_array(self.iq_array[start:end])
+        self.iq_array = IQArray(self.iq_array[start:end])
         self._qad = self._qad[start:end] if self._qad is not None else None
 
         self.__invalidate_after_edit()

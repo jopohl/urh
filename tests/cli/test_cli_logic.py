@@ -29,7 +29,7 @@ class TestCLILogic(unittest.TestCase):
         s = Signal("", "", modulation="ASK", sample_rate=2e6)
         s.bit_len = 100
         s.noise_threshold = 0
-        s.iq_array = IQArray.from_array(modulated.view(np.float32))
+        s.iq_array = IQArray(modulated.view(np.float32))
 
         pa = ProtocolAnalyzer(s)
         pa.get_protocol_from_signal()

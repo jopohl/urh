@@ -116,8 +116,8 @@ class TestMaincontrollerGUI(QtTestCase):
         sig_frame = self.form.signal_tab_controller.signal_frames[0]
         self.assertEqual(sig_frame.signal.sample_rate, 2e6)
         self.assertEqual(sig_frame.signal.num_samples, 4)
-        self.assertNotEqual(sig_frame.signal.iq_array.data.real.sum(), 0)
-        self.assertEqual(sig_frame.signal.iq_array.data.imag.sum(), 0)
+        self.assertNotEqual(sig_frame.signal.iq_array.real.sum(), 0)
+        self.assertEqual(sig_frame.signal.iq_array.imag.sum(), 0)
 
     def test_load_stereo_wav(self):
         filename = os.path.join(tempfile.gettempdir(), "test_stereo.wav")
@@ -132,8 +132,8 @@ class TestMaincontrollerGUI(QtTestCase):
         sig_frame = self.form.signal_tab_controller.signal_frames[0]
         self.assertEqual(sig_frame.signal.sample_rate, 10e6)
         self.assertEqual(sig_frame.signal.num_samples, 3)
-        self.assertNotEqual(sig_frame.signal.iq_array.data.real.sum(), 0)
-        self.assertNotEqual(sig_frame.signal.iq_array.data.imag.sum(), 0)
+        self.assertNotEqual(sig_frame.signal.iq_array.real.sum(), 0)
+        self.assertNotEqual(sig_frame.signal.iq_array.imag.sum(), 0)
 
     def test_remove_file_from_directory_tree_view(self):
         assert isinstance(self.form, MainController)

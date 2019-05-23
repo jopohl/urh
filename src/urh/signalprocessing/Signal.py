@@ -104,13 +104,12 @@ class Signal(QObject):
         else:
             data = np.frombuffer(byte_frames, dtype=params["fmt"])
 
+        self.iq_array = IQArray(None, np.float32, n=num_frames)
         if num_channels == 1:
-            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
-            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
         elif num_channels == 2:
-            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
-            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
-            self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
+            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
+            self.iq_array.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
         else:
             raise ValueError("Can't handle {0} channels. Only 1 and 2 are supported.".format(num_channels))
 

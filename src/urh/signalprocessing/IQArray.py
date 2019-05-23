@@ -46,9 +46,17 @@ class IQArray(object):
     def real(self):
         return self.__data[:, 0]
 
+    @real.setter
+    def real(self, value):
+        self.__data[:, 0] = value
+
     @property
     def imag(self):
         return self.__data[:, 1]
+
+    @imag.setter
+    def imag(self, value):
+        self.__data[:, 1] = value
 
     @property
     def magnitudes_squared(self):

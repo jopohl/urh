@@ -128,6 +128,8 @@ def merge_message_segments_for_ook(segments: list):
 
 
 def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11) -> str:
+    if isinstance(data, IQArray):
+        data = data.data
     if data.dtype != np.complex64:
         data = data.flatten().astype(np.float32).view(np.complex64)
 

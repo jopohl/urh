@@ -4,6 +4,7 @@ import numpy as np
 
 from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import segment_messages_from_magnitudes, merge_message_segments_for_ook
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Signal import Signal
 
@@ -55,15 +56,15 @@ class TestMessageSegmentation(unittest.TestCase):
         msg2 = modulator.modulate("1010101110010101", pause=20000)
         msg3 = modulator.modulate("1010101010101111", pause=30000)
 
-        data = np.concatenate((msg1, msg2, msg3))
+        data = IQArray.concatenate((msg1, msg2, msg3))
 
-        segments = segment_messages_from_magnitudes(np.abs(data), noise_threshold=0)
+        segments = segment_messages_from_magnitudes(data.magnitudes, noise_threshold=0)
         self.assertEqual(len(segments), 3)
         self.assertEqual(segments, [(0, 999), (10999, 12599), (32599, 34199)])
 
     def test_segmentation_elektromaten(self):
         signal = Signal(get_path_for_data_file("elektromaten.coco"), "")
-        segments = segment_messages_from_magnitudes(np.abs(signal.iq_array.data), noise_threshold=0.0167)
+        segments = segment_messages_from_magnitudes(signal.iq_array.magnitudes, noise_threshold=0.0167)
         segments = merge_message_segments_for_ook(segments)
 
         self.assertEqual(len(segments), 11)

@@ -126,3 +126,7 @@ class IQArray(object):
             return -1, 1
         else:
             return np.iinfo(dtype).min, np.iinfo(dtype).max
+
+    @staticmethod
+    def concatenate(*args):
+        return IQArray(data=np.concatenate([arr.data if isinstance(arr, IQArray) else arr for arr in args[0]]))

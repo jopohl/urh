@@ -8,6 +8,8 @@ from collections import defaultdict
 
 import numpy as np
 
+from urh.signalprocessing.IQArray import IQArray
+
 DEFAULT_CARRIER_FREQUENCY = 1e3
 DEFAULT_CARRIER_AMPLITUDE = 1
 DEFAULT_CARRIER_PHASE = 0
@@ -221,7 +223,7 @@ def modulate_messages(messages, modulator):
 
     cli_progress_bar(0, len(messages), title="Modulating")
     nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_bit + msg.pause) for msg in messages)
-    buffer = np.zeros(nsamples, dtype=np.complex64)
+    buffer = IQArray(None, dtype=np.float32, n=nsamples)
     pos = 0
     for i, msg in enumerate(messages):
         # We do not need to modulate the pause extra, as result is already initialized with zeros

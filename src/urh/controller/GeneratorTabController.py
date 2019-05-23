@@ -397,21 +397,21 @@ class GeneratorTabController(QWidget):
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> np.ndarray:
+    def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> IQArray:
         memory_size_for_buffer = total_samples * 8
         logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024 ** 2)))
         try:
             # allocate it three times as we need the same amount for the sending process
-            np.zeros(3*total_samples, dtype=np.complex64)
+            IQArray(None, dtype=np.float32, n=3*total_samples)
         except MemoryError:
             # will go into continuous mode in this case
             if show_error:
                 Errors.not_enough_ram_for_sending_precache(3*memory_size_for_buffer)
             return None
 
-        return np.zeros(total_samples, dtype=np.complex64)
+        return IQArray(None, dtype=np.float32, n=total_samples)
 
-    def modulate_data(self, buffer: np.ndarray) -> IQArray:
+    def modulate_data(self, buffer: IQArray) -> IQArray:
         """
         
         :param buffer: Buffer in which the modulated data shall be written, initialized with zeros
@@ -435,7 +435,7 @@ class GeneratorTabController(QWidget):
             QApplication.instance().processEvents()
 
         self.ui.prBarGeneration.hide()
-        return IQArray(buffer)
+        return buffer
 
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):

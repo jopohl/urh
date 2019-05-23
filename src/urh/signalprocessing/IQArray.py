@@ -14,6 +14,8 @@ class IQArray(object):
         return self.__data[item]
 
     def __setitem__(self, key, value: np.ndarray):
+        if isinstance(value, IQArray):
+            value = value.data
         if value.dtype == np.complex64 or value.dtype == np.complex128:
             self.real[key] = value.real
             self.imag[key] = value.imag
@@ -87,7 +89,7 @@ class IQArray(object):
     def apply_mask(self, mask: np.ndarray):
         self.__data = self.__data[mask]
 
-    def to_file(self, filename: str):
+    def tofile(self, filename: str):
         self.__data.tofile(filename)
 
     @staticmethod

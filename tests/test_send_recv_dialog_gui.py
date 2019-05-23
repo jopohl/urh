@@ -8,6 +8,8 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
@@ -234,7 +236,7 @@ class TestSendRecvDialog(QtTestCase):
         port = self.get_free_port()
 
         gframe = self.form.generator_tab_controller
-        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
+        expected = IQArray(None, np.float32, gframe.total_modulated_sample)
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
         buffer = Array("f", 4 * len(expected))

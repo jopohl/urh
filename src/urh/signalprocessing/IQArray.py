@@ -8,6 +8,8 @@ class IQArray(object):
         else:
             self.__data = self.convert_array_to_iq(data)
 
+        assert self.__data.dtype not in (np.complex64, np.complex128)
+
     def __getitem__(self, item):
         return self.__data[item]
 
@@ -30,35 +32,11 @@ class IQArray(object):
 
     @property
     def minimum(self):
-        dtype = self.__data.dtype
-        if dtype == np.int8:
-            return -128
-        elif dtype == np.uint8:
-            return 0
-        elif dtype == np.int16:
-            return -32768
-        elif dtype == np.uint16:
-            return 0
-        elif dtype == np.float32 or dtype == np.float64:
-            return -1
-        else:
-            raise ValueError("Unsupported dtype")
+        return self.min_max_for_dtype(self.__data.dtype)[0]
 
     @property
     def maximum(self):
-        dtype = self.__data.dtype
-        if dtype == np.int8:
-            return 127
-        elif dtype == np.uint8:
-            return 255
-        elif dtype == np.int16:
-            return 32767
-        elif dtype == np.uint16:
-            return 65535
-        elif dtype == np.float32 or dtype == np.float64:
-            return 1
-        else:
-            raise ValueError("Unsupported dtype")
+        return self.min_max_for_dtype(self.__data.dtype)[1]
 
     @property
     def data(self):
@@ -84,7 +62,16 @@ class IQArray(object):
         return self.__data.flatten(order="C").astype(np.float32).view(np.complex64)
 
     def insert_subarray(self, pos, subarray: np.ndarray):
-        self.__data = np.insert(self.__data, pos, subarray)
+        if subarray.ndim == 1:
+            n = len(subarray)
+            if subarray.dtype == np.complex64:
+                subarray = subarray.view(np.float32).reshape((n, 2), order="C")
+            elif subarray.dtype == np.complex128:
+                subarray = subarray.view(np.float64).reshape((n, 2), order="C")
+            else:
+                subarray = subarray.reshape((n//2, 2), order="C")
+
+        self.__data = np.insert(self.__data, pos, subarray, axis=0)
 
     @staticmethod
     def from_file(filename: str):
@@ -113,3 +100,10 @@ class IQArray(object):
             return arr
         else:
             raise ValueError("Too many dimensions")
+
+    @staticmethod
+    def min_max_for_dtype(dtype) -> tuple:
+        if dtype == np.float32 or dtype == np.float64:
+            return -1, 1
+        else:
+            return np.iinfo(dtype).min, np.iinfo(dtype).max

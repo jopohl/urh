@@ -423,7 +423,7 @@ class Signal(QObject):
         self.__modulation_type = mod_type
 
     def insert_data(self, index: int, data: np.ndarray):
-        self._fulldata = np.insert(self._fulldata, index, data)
+        self.iq_array.insert_subarray(index, data)
         self._qad = None
 
         self.__invalidate_after_edit()

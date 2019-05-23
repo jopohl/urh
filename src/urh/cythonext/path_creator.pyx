@@ -14,6 +14,7 @@ from urh.cythonext.util cimport iq
 
 from urh import constants
 import math
+import cython
 
 cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ranges=None):
     cdef iq[:] values
@@ -23,6 +24,10 @@ cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ra
     cdef float scale_factor
     cdef long long i,j,index, chunk_end, num_samples, pixels_on_path, samples_per_pixel
     num_samples = end - start
+
+    cdef dict type_lookup = {"char[:]": np.int8, "unsigned char[:]": np.uint8,
+                             "short[:]": np.int16, "unsigned short[:]": np.uint16,
+                             "float[:]": np.float32, "double[:]": np.float64}
 
     subpath_ranges = [(start, end)] if subpath_ranges is None else subpath_ranges
     pixels_on_path = constants.PIXELS_PER_PATH
@@ -35,7 +40,7 @@ cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ra
 
     if samples_per_pixel > 1:
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
-        values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
+        values = np.zeros(2 * len(sample_rng), dtype=type_lookup[cython.typeof(samples)], order="C")
         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static', num_threads=num_threads):
             chunk_end = i + samples_per_pixel

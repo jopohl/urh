@@ -279,9 +279,9 @@ class TestSimulator(QtTestCase):
         if len(total_data) == 0:
             logger.error("Did not receive any data from socket.")
 
-        arr = np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64))
+        arr = IQArray(np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64)))
         signal = Signal("", "")
-        signal._fulldata = arr
+        signal.iq_array = arr
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
         return pa.plain_bits_str

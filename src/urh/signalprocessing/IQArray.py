@@ -28,6 +28,9 @@ class IQArray(object):
     def __len__(self):
         return len(self.__data)
 
+    def __eq__(self, other):
+        return np.array_equal(self.data, other.data)
+
     @property
     def num_samples(self):
         return self.__data.shape[0]

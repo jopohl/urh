@@ -1206,7 +1206,7 @@ class SignalFrame(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.data, f_low, f_high, filter_bw))
+        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 

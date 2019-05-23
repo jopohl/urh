@@ -1,13 +1,19 @@
 import numpy as np
 from multiprocessing import Value, Array
 
+from urh.signalprocessing.IQArray import IQArray
+
 
 class RingBuffer(object):
     """
     A RingBuffer containing complex values.
     """
-    def __init__(self, size: int):
-        self.__data = Array("f", 2*size)
+    def __init__(self, size: int, dtype=np.float32):
+        self.dtype = dtype
+
+        types = {np.uint8: "B", np.int8: "b", np.int16: "h", np.uint16: "H", np.float32: "f", np.float64: "d"}
+        self.__data = Array(types[self.dtype], 2*size)
+
         self.size = size
         self.__left_index = Value("L", 0)
         self.__right_index = Value("L", 0)
@@ -42,7 +48,7 @@ class RingBuffer(object):
 
     @property
     def data(self):
-        return np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+        return np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
 
     @property
     def view_data(self):
@@ -54,7 +60,7 @@ class RingBuffer(object):
         if left > right:
             left, right = right, left
 
-        data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+        data = self.data.flatten()
         return np.concatenate((data[left:right], data[right:], data[:left]))
 
     def clear(self):
@@ -64,7 +70,7 @@ class RingBuffer(object):
     def will_fit(self, number_values: int) -> bool:
         return number_values <= self.space_left
 
-    def push(self, values: np.ndarray):
+    def push(self, values: IQArray):
         """
         Push values to buffer. If buffer can't store all values a ValueError is raised
         """
@@ -75,14 +81,14 @@ class RingBuffer(object):
         slide_1 = np.s_[self.right_index:min(self.right_index + n, self.size)]
         slide_2 = np.s_[:max(self.right_index + n - self.size, 0)]
         with self.__data.get_lock():
-            data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
+            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
             data[slide_1] = values[:slide_1.stop - slide_1.start]
             data[slide_2] = values[slide_1.stop - slide_1.start:]
             self.right_index += n
 
         self.__length.value += n
 
-    def pop(self, number: int, ensure_even_length=False):
+    def pop(self, number: int, ensure_even_length=False) -> np.ndarray:
         """
         Pop number of elements. If there are not enough elements, all remaining elements are returned and the
         buffer is cleared afterwards. If buffer is empty, an empty numpy array is returned.
@@ -93,7 +99,7 @@ class RingBuffer(object):
             number -= number % 2
 
         if len(self) == 0 or number == 0:
-            return np.array([], dtype=np.complex64)
+            return np.array([], dtype=self.dtype)
 
         if number < 0:
             # take everything
@@ -102,9 +108,8 @@ class RingBuffer(object):
             number = min(number, len(self))
 
         with self.__data.get_lock():
-            data = np.frombuffer(self.__data.get_obj(), dtype=np.complex64)
-
-            result = np.empty(number, dtype=np.complex64)
+            result = np.ones(2*number, dtype=self.dtype).reshape(number, 2)
+            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
 
             if self.left_index + number > len(data):
                 end = len(data) - self.left_index

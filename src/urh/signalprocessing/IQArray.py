@@ -87,6 +87,9 @@ class IQArray(object):
     def apply_mask(self, mask: np.ndarray):
         self.__data = self.__data[mask]
 
+    def to_file(self, filename: str):
+        self.__data.tofile(filename)
+
     @staticmethod
     def from_file(filename: str):
         if filename.endswith(".complex16u"):

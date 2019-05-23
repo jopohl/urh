@@ -159,6 +159,13 @@ class VirtualDevice(QObject):
             self.__dev.is_in_spectrum_mode = True
 
     @property
+    def data_type(self):
+        if self.backend == Backends.native:
+            return self.__dev.DATA_TYPE
+        else:
+            return np.float32
+
+    @property
     def has_multi_device_support(self):
         return hasattr(self.__dev, "has_multi_device_support") and self.__dev.has_multi_device_support
 

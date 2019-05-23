@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QGraphicsScene
 
 from urh import constants
 from urh.cythonext import path_creator, signal_functions
+from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util.Formatter import Formatter
 
@@ -142,7 +143,7 @@ class Modulator(object):
 
         return scene
 
-    def modulate(self, data=None, pause=0, start=0):
+    def modulate(self, data=None, pause=0, start=0) -> IQArray:
         assert pause >= 0
         if data is None:
             data = self.data
@@ -155,7 +156,7 @@ class Modulator(object):
             data = array.array("B", data)
 
         if len(data) == 0:
-            return np.array([], dtype=np.complex64)
+            return IQArray(None, np.float32, 0)
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
 
@@ -187,7 +188,7 @@ class Modulator(object):
                                                    self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                    self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
 
-        return result
+        return IQArray(result)
 
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")

@@ -236,7 +236,7 @@ class TestSendRecvDialog(QtTestCase):
         port = self.get_free_port()
 
         gframe = self.form.generator_tab_controller
-        expected = IQArray(None, np.float32, gframe.total_modulated_sample)
+        expected = IQArray(None, np.float32, gframe.total_modulated_samples)
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
         buffer = Array("f", 4 * len(expected))

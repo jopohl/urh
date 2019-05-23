@@ -60,6 +60,7 @@ class QtTestCase(unittest.TestCase):
             self.form.close_all_files()
             self.form.close()
 
+            sip.delete(self.form)
             self.form = None
 
         gc.collect()

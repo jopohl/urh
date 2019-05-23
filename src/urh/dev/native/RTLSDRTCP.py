@@ -14,6 +14,8 @@ class RTLSDRTCP(Device):
                       "testMode", "agcMode", "directSampling", "offsetTuning", "rtlXtalFreq", "tunerXtalFreq",
                       "gainByIndex", "bandwidth", "biasTee"]
 
+    DATA_TYPE = np.uint8
+
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
                      bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str,

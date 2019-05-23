@@ -23,6 +23,8 @@ class SoundCard(Device):
     pyaudio_handle = None
     pyaudio_stream = None
 
+    DATA_TYPE = np.float32
+
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
         try:

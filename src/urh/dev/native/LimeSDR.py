@@ -30,6 +30,8 @@ class LimeSDR(Device):
         Device.Command.SET_ANTENNA_INDEX.name: "set_antenna"
     })
 
+    DATA_TYPE = np.float32
+
     @classmethod
     def get_device_list(cls):
         return limesdr.get_device_list()

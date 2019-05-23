@@ -16,6 +16,8 @@ class AirSpy(Device):
     })
     del DEVICE_METHODS[Device.Command.SET_BANDWIDTH.name]
 
+    DATA_TYPE = np.float32
+
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = airspy.open()

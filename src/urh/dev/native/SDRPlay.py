@@ -16,6 +16,8 @@ class SDRPlay(Device):
     DEVICE_METHODS[Device.Command.SET_IF_GAIN.name]["rx"] = "set_if_gain"
     DEVICE_METHODS[Device.Command.SET_ANTENNA_INDEX.name] = "set_antenna"
 
+    DATA_TYPE = np.int16
+
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,

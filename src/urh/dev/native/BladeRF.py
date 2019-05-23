@@ -20,6 +20,8 @@ class BladeRF(Device):
         Device.Command.SET_CHANNEL_INDEX.name: "set_channel"
     })
 
+    DATA_TYPE = np.int16
+
     @classmethod
     def get_device_list(cls):
         return bladerf.get_device_list()

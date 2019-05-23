@@ -16,6 +16,8 @@ class PlutoSDR(Device):
     DEVICE_LIB = plutosdr
     ASYNCHRONOUS = False
 
+    DATA_TYPE = np.int16
+
     @classmethod
     def get_device_list(cls):
         descs, uris = plutosdr.scan_devices()

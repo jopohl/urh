@@ -23,6 +23,8 @@ class Device(object):
     SYNC_TX_CHUNK_SIZE = 0
     CONTINUOUS_TX_CHUNK_SIZE = 0
 
+    DATA_TYPE = None
+
     class Command(Enum):
         STOP = 0
         SET_FREQUENCY = 1
@@ -349,7 +351,7 @@ class Device(object):
         if self.receive_buffer is None:
             num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                 self.is_in_spectrum_mode)
-            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
+            self.receive_buffer = np.zeros((int(num_samples), 2), dtype=self.DATA_TYPE, order='C')
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)

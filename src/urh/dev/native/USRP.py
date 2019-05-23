@@ -16,6 +16,8 @@ class USRP(Device):
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
 
+    DATA_TYPE = np.float32
+
     @classmethod
     def get_device_list(cls):
         return usrp.find_devices("")

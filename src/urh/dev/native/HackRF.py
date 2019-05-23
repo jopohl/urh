@@ -16,6 +16,8 @@ class HackRF(Device):
         Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth"
     })
 
+    DATA_TYPE = np.int8
+
     @classmethod
     def get_device_list(cls):
         result = hackrf.get_device_list()

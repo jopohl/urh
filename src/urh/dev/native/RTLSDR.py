@@ -21,6 +21,8 @@ class RTLSDR(Device):
         Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
     })
 
+    DATA_TYPE = np.uint8
+
     @classmethod
     def get_device_list(cls):
         return rtlsdr.get_device_list()

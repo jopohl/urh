@@ -241,7 +241,7 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_copy_action_triggered(self):
         if self.something_is_selected:
-            self.stored_item = self.signal._fulldata[int(self.selection_area.start):int(self.selection_area.end)]
+            self.stored_item = self.signal.iq_array[int(self.selection_area.start):int(self.selection_area.end)]
 
     @pyqtSlot()
     def on_paste_action_triggered(self):

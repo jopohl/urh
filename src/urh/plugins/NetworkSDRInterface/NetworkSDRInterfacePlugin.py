@@ -191,8 +191,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         except Exception as e:
             return str(e)
 
-    def send_raw_data(self, data: np.ndarray, num_repeats: int):
-        byte_data = data.tostring()
+    def send_raw_data(self, data: IQArray, num_repeats: int):
+        byte_data = data.to_bytes()
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
         sock = self.prepare_send_connection()

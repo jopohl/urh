@@ -69,6 +69,9 @@ class IQArray(object):
     def as_complex64(self):
         return self.__data.flatten(order="C").astype(np.float32).view(np.complex64)
 
+    def to_bytes(self):
+        return self.__data.tostring()
+
     def insert_subarray(self, pos, subarray: np.ndarray):
         if subarray.ndim == 1:
             n = len(subarray)
@@ -80,6 +83,9 @@ class IQArray(object):
                 subarray = subarray.reshape((n//2, 2), order="C")
 
         self.__data = np.insert(self.__data, pos, subarray, axis=0)
+
+    def apply_mask(self, mask: np.ndarray):
+        self.__data = self.__data[mask]
 
     @staticmethod
     def from_file(filename: str):

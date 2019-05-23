@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QMessageBox
 from urh import constants
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Signal import Signal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
@@ -36,10 +37,12 @@ class SendDialog(SendRecvDialog):
             self.ui.labelCurrentMessage.hide()
 
         if modulated_data is not None:
+            assert isinstance(modulated_data, IQArray)
             # modulated_data is none in continuous send mode
             self.ui.progressBarSample.setMaximum(len(modulated_data))
             samp_rate = self.device_settings_widget.ui.spinBoxSampleRate.value()
-            signal = Signal.from_samples(modulated_data, "Modulated Preview", samp_rate)
+            signal = Signal("", "Modulated Preview", sample_rate=samp_rate)
+            signal.iq_array = modulated_data
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
                                                                    QPen(QColor(Qt.transparent), 0),
@@ -83,7 +86,7 @@ class SendDialog(SendRecvDialog):
     def init_device(self):
         device_name = self.selected_device_name
         num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
-        sts = self.scene_manager.signal._fulldata
+        sts = self.scene_manager.signal.iq_array
 
         self.device = VirtualDevice(self.backend_handler, device_name, Mode.send, samples_to_send=sts,
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)

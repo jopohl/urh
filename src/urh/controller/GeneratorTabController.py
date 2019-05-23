@@ -19,6 +19,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -410,7 +411,7 @@ class GeneratorTabController(QWidget):
 
         return np.zeros(total_samples, dtype=np.complex64)
 
-    def modulate_data(self, buffer: np.ndarray) -> np.ndarray:
+    def modulate_data(self, buffer: np.ndarray) -> IQArray:
         """
         
         :param buffer: Buffer in which the modulated data shall be written, initialized with zeros
@@ -434,7 +435,7 @@ class GeneratorTabController(QWidget):
             QApplication.instance().processEvents()
 
         self.ui.prBarGeneration.hide()
-        return buffer
+        return IQArray(buffer)
 
     @pyqtSlot(int)
     def show_fuzzing_dialog(self, label_index: int):

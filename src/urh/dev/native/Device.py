@@ -9,6 +9,7 @@ from pickle import UnpicklingError
 import numpy as np
 
 from urh.dev.native.SendConfig import SendConfig
+from urh.signalprocessing.IQArray import IQArray
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
@@ -692,7 +693,7 @@ class Device(object):
 
         logger.debug("Exiting read_receive_queue thread.")
 
-    def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, resume=False):
+    def init_send_parameters(self, samples_to_send: IQArray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:
             self.samples_to_send = samples_to_send
             self.send_buffer = None

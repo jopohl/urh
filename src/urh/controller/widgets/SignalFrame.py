@@ -766,7 +766,7 @@ class SignalFrame(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialog(project_manager, modulated_data=self.signal.iq_array.data, parent=self)
+            dialog = SendDialog(project_manager, modulated_data=self.signal.iq_array, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return

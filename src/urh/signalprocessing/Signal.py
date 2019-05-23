@@ -432,7 +432,7 @@ class Signal(QObject):
         mask[start:end] = False
 
         try:
-            self._fulldata = self._fulldata[mask]
+            self.iq_array.apply_mask(mask)
             self._qad = self._qad[mask] if self._qad is not None else None
         except IndexError as e:
             logger.warning("Could not delete data: " + str(e))
@@ -467,6 +467,6 @@ class Signal(QObject):
     @staticmethod
     def from_samples(samples: np.ndarray, name: str, sample_rate: float):
         signal = Signal("", name, sample_rate=sample_rate)
-        signal._fulldata = samples
+        signal.iq_array = IQArray(samples)
 
         return signal

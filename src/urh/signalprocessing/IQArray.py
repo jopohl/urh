@@ -126,7 +126,7 @@ class IQArray(object):
             scaled += 1.0  # signed -> unsigned
 
         factor = ((target_max-target_min) / 2)
-        if target_dtype == np.float32 or np.float64:
+        if target_dtype in (np.float32, np.float64):
             return scaled.astype(target_dtype)
         else:
             # use np.floor + 0.5 to avoid surprising rounding when casting to integers

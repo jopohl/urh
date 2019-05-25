@@ -123,11 +123,32 @@ class IQArray(object):
             elif target_dtype == np.float32:
                 return np.multiply(self.__data, 1/128, dtype=np.float32)
 
-        if self.__data.dtype == np.uint16 and target_dtype == np.int16:
-            return np.add(self.__data, -32768, dtype=np.int16, casting="unsafe")
+        if self.__data.dtype == np.uint16:
+            if target_dtype == np.int8:
+                return (np.add(self.__data, -32768, dtype=np.int16, casting="unsafe") >> 8).astype(np.int8)
+            elif target_dtype == np.uint8:
+                return (self.__data >> 8).astype(np.uint8)
+            elif target_dtype == np.int16:
+                return np.add(self.__data, -32768, dtype=np.int16, casting="unsafe")
+            elif target_dtype == np.float32:
+                return np.add(np.multiply(self.__data, 1/32768, dtype=np.float32), -1.0, dtype=np.float32)
 
-        if self.__data.dtype == np.int16 and target_dtype == np.uint16:
-            return np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe")
+        if self.__data.dtype == np.int16:
+            if target_dtype == np.int8:
+                return (self.__data >> 8).astype(np.int8)
+            elif target_dtype == np.uint8:
+                return (np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe") >> 8).astype(np.uint8)
+            elif target_dtype == np.uint16:
+                return np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe")
+            elif target_dtype == np.float32:
+                return np.multiply(self.__data, 1/32768, dtype=np.float32)
+
+        if self.__data.dtype == np.float32:
+            if target_dtype == np.int8:
+                return np.multiply(self.__data, 127, dtype=np.int8)
+            elif target_dtype == np.uint8:
+                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.uint8)
+            elif target_dtype == np.#todo
 
         if target_dtype not in (np.uint8, np.int8, np.uint16, np.int16, np.float32):
             raise ValueError("Data type {} not supported".format(target_dtype))

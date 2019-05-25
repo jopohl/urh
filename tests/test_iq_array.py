@@ -35,3 +35,17 @@ class TestIQArray(unittest.TestCase):
         self.assertEqual(iq_array[0][1], 42)
         self.assertEqual(iq_array[1][0], 47)
         self.assertEqual(iq_array[1][1], 11)
+
+    def test_conversion_iq16s(self):
+        iq16s = IQArray(np.array([-128, 0, 0, 127], dtype=np.int8))
+        self.assertTrue(np.array_equal(iq16s.convert_to(np.int8).flatten(), np.array([-128, 0, 0, 127], dtype=np.int8)))
+        self.assertTrue(np.array_equal(iq16s.convert_to(np.uint8).flatten(), np.array([0, 128, 128, 255], dtype=np.uint8)))
+
+        c32s = iq16s.convert_to(np.int16).flatten()
+        self.assertTrue(np.array_equal(c32s, np.array([-32768, 0, 0, 32512], dtype=np.int16)), msg=c32s)
+
+        c32u = iq16s.convert_to(np.uint16).flatten()
+        self.assertTrue(np.array_equal(c32u, np.array([0, 32768, 32768, 65280], dtype=np.uint16)), msg=c32u)
+
+        c64f = iq16s.convert_to(np.float32).flatten()
+        self.assertTrue(np.array_equal(c64f, np.array([-1, 0, 0, 1], dtype=np.uint16)), msg=c64f)

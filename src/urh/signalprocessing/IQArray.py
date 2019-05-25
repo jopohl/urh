@@ -106,8 +106,15 @@ class IQArray(object):
         if self.__data.dtype == np.uint8 and target_dtype == np.int8:
             return np.add(self.__data, -128, dtype=np.int8, casting="unsafe")
 
-        if self.__data.dtype == np.int8 and target_dtype == np.uint8:
-            return np.add(self.__data, 128, dtype=np.uint8, casting="unsafe")
+        if self.__data.dtype == np.int8:
+            if target_dtype == np.uint8:
+                return np.add(self.__data, 128, dtype=np.uint8, casting="unsafe")
+            elif target_dtype == np.int16:
+                return self.__data.astype(np.int16) << 8
+            elif target_dtype == np.uint16:
+                return np.add(self.__data, 128, dtype=np.uint16, casting="unsafe") << 8
+            elif target_dtype == np.float32:
+                return np.multiply(self.__data, 1/127.5, dtype=np.float32)
 
         if self.__data.dtype == np.uint16 and target_dtype == np.int16:
             return np.add(self.__data, -32768, dtype=np.int16, casting="unsafe")
@@ -117,7 +124,7 @@ class IQArray(object):
 
         # Scale to 0 2 (unsigned) or -1 1 (signed)
         minimum, maximum = self.min_max_for_dtype(self.__data.dtype)
-        scaled = self.__data / ((maximum-minimum)/2)
+        scaled = self.__data / max(abs(minimum), abs(maximum))
 
         target_min, target_max = self.min_max_for_dtype(target_dtype)
         if minimum == 0 and target_min != 0:

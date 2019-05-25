@@ -103,8 +103,15 @@ class IQArray(object):
         if target_dtype == self.__data.dtype:
             return self.__data
 
-        if self.__data.dtype == np.uint8 and target_dtype == np.int8:
-            return np.add(self.__data, -128, dtype=np.int8, casting="unsafe")
+        if self.__data.dtype == np.uint8:
+            if target_dtype == np.int8:
+                return np.add(self.__data, -128, dtype=np.int8, casting="unsafe")
+            elif target_dtype == np.int16:
+                return np.add(self.__data, -128, dtype=np.int16, casting="unsafe") << 8
+            elif target_dtype == np.uint16:
+                return self.__data.astype(np.uint16) << 8
+            elif target_dtype == np.float32:
+                return np.add(np.multiply(self.__data, 1/128, dtype=np.float32), -1.0, dtype=np.float32)
 
         if self.__data.dtype == np.int8:
             if target_dtype == np.uint8:
@@ -114,7 +121,7 @@ class IQArray(object):
             elif target_dtype == np.uint16:
                 return np.add(self.__data, 128, dtype=np.uint16, casting="unsafe") << 8
             elif target_dtype == np.float32:
-                return np.multiply(self.__data, 1/127.5, dtype=np.float32)
+                return np.multiply(self.__data, 1/128, dtype=np.float32)
 
         if self.__data.dtype == np.uint16 and target_dtype == np.int16:
             return np.add(self.__data, -32768, dtype=np.int16, casting="unsafe")
@@ -122,23 +129,10 @@ class IQArray(object):
         if self.__data.dtype == np.int16 and target_dtype == np.uint16:
             return np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe")
 
-        # Scale to 0 2 (unsigned) or -1 1 (signed)
-        minimum, maximum = self.min_max_for_dtype(self.__data.dtype)
-        scaled = self.__data / max(abs(minimum), abs(maximum))
+        if target_dtype not in (np.uint8, np.int8, np.uint16, np.int16, np.float32):
+            raise ValueError("Data type {} not supported".format(target_dtype))
 
-        target_min, target_max = self.min_max_for_dtype(target_dtype)
-        if minimum == 0 and target_min != 0:
-            scaled -= 1.0  # unsigned -> signed
-        elif minimum != 0 and target_min == 0:
-            scaled += 1.0  # signed -> unsigned
-
-        factor = ((target_max-target_min) / 2)
-        if target_dtype in (np.float32, np.float64):
-            return scaled.astype(target_dtype)
-        else:
-            # use np.floor + 0.5 to avoid surprising rounding when casting to integers
-            # see https://stackoverflow.com/questions/46877403/numpy-rint-weird-behavior
-            return np.floor(scaled * factor + 0.5).astype(target_dtype)
+        raise NotImplementedError("Conversion from {} to {} not supported", self.__data.dtype, target_dtype)
 
     @staticmethod
     def from_file(filename: str):

@@ -102,13 +102,13 @@ class TestIQArray(unittest.TestCase):
         self.assertTrue(np.array_equal(iq64f.convert_to(np.float32).flatten(), np.array([-1, 0, 0, 1], dtype=np.float32)))
 
         iq16u = iq64f.convert_to(np.uint8).flatten()
-        self.assertTrue(np.array_equal(iq16u, np.array([0, 128, 128, 255], dtype=np.uint8)), msg=iq16u)
+        self.assertTrue(np.array_equal(iq16u, np.array([0, 127, 127, 254], dtype=np.uint8)), msg=iq16u)
 
         iq16s = iq64f.convert_to(np.int8).flatten()
-        self.assertTrue(np.array_equal(iq16s, np.array([-128, 0, 0, 127], dtype=np.int8)), msg=iq16s)
+        self.assertTrue(np.array_equal(iq16s, np.array([-127, 0, 0, 127], dtype=np.int8)), msg=iq16s)
 
         iq32s = iq64f.convert_to(np.int16).flatten()
-        self.assertTrue(np.array_equal(iq32s, np.array([-32768, 0, 0, 32767], dtype=np.int16)), msg=iq32s)
+        self.assertTrue(np.array_equal(iq32s, np.array([-32767, 0, 0, 32767], dtype=np.int16)), msg=iq32s)
 
         iq32u = iq64f.convert_to(np.uint16).flatten()
-        self.assertTrue(np.array_equal(iq32u, np.array([0, 32768, 32768, 65535], dtype=np.uint16)), msg=iq32u)
+        self.assertTrue(np.array_equal(iq32u, np.array([0, 32767, 32767, 65534], dtype=np.uint16)), msg=iq32u)

@@ -145,10 +145,13 @@ class IQArray(object):
 
         if self.__data.dtype == np.float32:
             if target_dtype == np.int8:
-                return np.multiply(self.__data, 127, dtype=np.int8)
+                return np.multiply(self.__data, 127, dtype=np.int8, casting="unsafe")
             elif target_dtype == np.uint8:
-                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.uint8)
-            elif target_dtype == np.#todo
+                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.uint8, casting="unsafe")
+            elif target_dtype == np.int16:
+                return np.multiply(self.__data, 32767, dtype=np.int16, casting="unsafe")
+            elif target_dtype == np.uint16:
+                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 32767, dtype=np.uint16, casting="unsafe")
 
         if target_dtype not in (np.uint8, np.int8, np.uint16, np.int16, np.float32):
             raise ValueError("Data type {} not supported".format(target_dtype))

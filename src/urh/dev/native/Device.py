@@ -668,7 +668,7 @@ class Device(object):
                     continue
 
                 if self.apply_dc_correction:
-                    samples -= np.mean(samples)
+                    samples -= np.mean(samples, axis=0)
 
             except OSError as e:
                 logger.exception(e)

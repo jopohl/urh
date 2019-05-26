@@ -42,10 +42,6 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.create_connects()
         self.device_settings_widget.update_for_new_device(overwrite_settings=False)
 
-
-
-
-
     @property
     def view_type(self) -> int:
         return self.sniff_settings_widget.ui.comboBox_sniff_viewtype.currentIndex()
@@ -73,7 +69,7 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.device = self.sniffer.rcv_device
 
         self._create_device_connects()
-        self.scene_manager = SniffSceneManager(np.array([]), parent=self)
+        self.scene_manager = SniffSceneManager(np.array([], dtype=self.device.data_type), parent=self)
 
     def emit_editing_finished_signals(self):
         super().emit_editing_finished_signals()

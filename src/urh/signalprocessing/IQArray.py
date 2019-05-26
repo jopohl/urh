@@ -217,7 +217,7 @@ class IQArray(object):
 
     @staticmethod
     def min_max_for_dtype(dtype) -> tuple:
-        if dtype == np.float32 or dtype == np.float64:
+        if dtype in (np.float32, np.float64, np.complex64, np.complex128):
             return -1, 1
         else:
             return np.iinfo(dtype).min, np.iinfo(dtype).max

@@ -44,6 +44,8 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
+        signal.iq_array = IQArray(None, self.rcv_device.data_type, 0)
+
         self.sniff_thread = Thread(target=self.check_for_data, daemon=True)
 
         self.rcv_device.started.connect(self.__emit_started)
@@ -120,6 +122,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                                             resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
+
+            self.signal.iq_array = IQArray(None, self.rcv_device.data_type, 0)
+
             self.__init_buffer()
 
     def sniff(self):
@@ -168,7 +173,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if len(data) == 0:
             return
 
-        power_spectrum = data.real ** 2 + data.imag ** 2
+        power_spectrum = data.real ** 2.0 + data.imag ** 2.0
         is_above_noise = np.sqrt(np.mean(power_spectrum)) > self.signal.noise_threshold
 
         if self.adaptive_noise and not is_above_noise:

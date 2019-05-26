@@ -1,5 +1,6 @@
 import math
 import time
+import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
@@ -415,12 +416,10 @@ class SignalFrame(QFrame):
             self.save_signal_as()
 
     def save_signal_as(self):
-        filename = FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
-        if filename:
-            try:
-                self.signal.save_as(filename)
-            except Exception as e:
-                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+        try:
+            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
+        except Exception as e:
+            Errors.generic_error("Error saving file", str(e), traceback.format_exc())
 
     def export_demodulated(self):
         try:
@@ -1265,6 +1264,6 @@ class SignalFrame(QFrame):
                                                                           include_amplitude=filename.endswith(".fta"))
         except Exception as e:
             logger.exception(e)
-            Errors.generic_error("Failed to export spectrogram", str(e))
+            Errors.generic_error("Failed to export spectrogram", str(e), traceback.format_exc())
         finally:
             QApplication.restoreOverrideCursor()

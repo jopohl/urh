@@ -245,6 +245,20 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_ma
     cdef complex nco_times_sample = 0
     cdef float magnitude = 0
 
+    cdef float max_magnitude   # ensure all magnitudes of ASK demod between 0 and 1
+    if str(cython.typeof(samples)) == "char[:, ::1]":
+        max_magnitude = sqrt(127*127 + 128*128)
+    elif str(cython.typeof(samples)) == "unsigned char[:, ::1]":
+        max_magnitude = sqrt(255*255)
+    elif str(cython.typeof(samples)) == "short[:, ::1]":
+        max_magnitude = sqrt(32768*32768 + 32767*32767)
+    elif str(cython.typeof(samples)) == "unsigned short[:, ::1]":
+        max_magnitude = sqrt(65535*65535)
+    elif str(cython.typeof(samples)) == "float[:, ::1]":
+        max_magnitude = sqrt(2)
+    else:
+        raise ValueError("Unsupported dtype")
+
     # Atan2 liefert Werte im Bereich von -Pi bis Pi
     # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
     noise_sqrd = noise_mag * noise_mag
@@ -271,7 +285,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(util.IQ samples, float noise_ma
                 continue
 
             if mod_type == 0:  # ASK
-                result[i] = sqrt(magnitude)
+                result[i] = sqrt(magnitude) / max_magnitude
             elif mod_type == 1:  # FSK
                 #tmp = samples[i - 1].conjugate() * c
                 tmp = (samples[i-1, 0] - imag_unit * samples[i-1, 1]) * (real + imag_unit * imag)

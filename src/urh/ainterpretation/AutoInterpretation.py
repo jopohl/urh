@@ -60,7 +60,7 @@ def detect_noise_level(magnitudes):
 
     mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
     minimum, maximum = util.minmax(mean_values)
-    if minimum / maximum > 0.9:
+    if maximum == 0 or minimum / maximum > 0.9:
         # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 

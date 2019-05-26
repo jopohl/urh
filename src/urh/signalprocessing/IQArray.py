@@ -112,7 +112,16 @@ class IQArray(object):
         self.__data = self.__data[mask]
 
     def tofile(self, filename: str):
-        self.__data.tofile(filename)
+        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
+            self.convert_to(np.uint8).tofile(filename)
+        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
+            self.convert_to(np.int8).tofile(filename)
+        elif filename.endswith(".complex32u") or filename.endswith(".cu16"):
+            self.convert_to(np.uint16).tofile(filename)
+        elif filename.endswith(".complex32s") or filename.endswith(".cs16"):
+            self.convert_to(np.int16).tofile(filename)
+        else:
+            self.convert_to(np.float32).tofile(filename)
 
     def convert_to(self, target_dtype) -> np.ndarray:
         if target_dtype == self.__data.dtype:
@@ -160,13 +169,13 @@ class IQArray(object):
 
         if self.__data.dtype == np.float32:
             if target_dtype == np.int8:
-                return np.multiply(self.__data, 127, dtype=np.int8, casting="unsafe")
+                return np.multiply(self.__data, 127, dtype=np.float32).astype(np.int8)
             elif target_dtype == np.uint8:
-                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.uint8, casting="unsafe")
+                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.float32).astype(np.uint8)
             elif target_dtype == np.int16:
-                return np.multiply(self.__data, 32767, dtype=np.int16, casting="unsafe")
+                return np.multiply(self.__data, 32767, dtype=np.float32).astype(np.int16)
             elif target_dtype == np.uint16:
-                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 32767, dtype=np.uint16, casting="unsafe")
+                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 32767, dtype=np.float32).astype(np.uint16)
 
         if target_dtype not in (np.uint8, np.int8, np.uint16, np.int16, np.float32):
             raise ValueError("Data type {} not supported".format(target_dtype))

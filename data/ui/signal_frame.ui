@@ -174,13 +174,13 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="suffix">
-        <string>%</string>
+        <string/>
        </property>
        <property name="decimals">
-        <number>2</number>
+        <number>4</number>
        </property>
        <property name="maximum">
-        <double>100.000000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.000100000000000</double>

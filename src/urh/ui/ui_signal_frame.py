@@ -69,8 +69,9 @@ class Ui_SignalFrame(object):
         self.sliderSpectrogramMin.setObjectName("sliderSpectrogramMin")
         self.gridLayout_2.addWidget(self.sliderSpectrogramMin, 19, 1, 1, 1)
         self.spinBoxNoiseTreshold = QtWidgets.QDoubleSpinBox(SignalFrame)
-        self.spinBoxNoiseTreshold.setDecimals(2)
-        self.spinBoxNoiseTreshold.setMaximum(100.0)
+        self.spinBoxNoiseTreshold.setSuffix("")
+        self.spinBoxNoiseTreshold.setDecimals(4)
+        self.spinBoxNoiseTreshold.setMaximum(1.0)
         self.spinBoxNoiseTreshold.setSingleStep(0.0001)
         self.spinBoxNoiseTreshold.setObjectName("spinBoxNoiseTreshold")
         self.gridLayout_2.addWidget(self.spinBoxNoiseTreshold, 2, 1, 1, 1)
@@ -551,7 +552,6 @@ class Ui_SignalFrame(object):
         self.chkBoxSyncSelection.setToolTip(_translate("SignalFrame", "If this is set to true, your selected protocol bits will show up in the signal view, and vice versa."))
         self.chkBoxSyncSelection.setText(_translate("SignalFrame", "Sync Selection"))
         self.spinBoxNoiseTreshold.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Set the <span style=\" font-weight:600;\">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>"))
-        self.spinBoxNoiseTreshold.setSuffix(_translate("SignalFrame", "%"))
         self.chkBoxShowProtocol.setToolTip(_translate("SignalFrame", "Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).\n"
 "\n"
 "If you want your protocol to be better seperated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView."))

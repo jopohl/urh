@@ -251,7 +251,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
+        self.ui.spinBoxNoiseTreshold.setValue(100*self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
@@ -287,7 +287,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(self.signal.iq_array.magnitudes[start:end:step_size])
+                power = np.mean(self.signal.iq_array.magnitudes_normalized[start:end:step_size])
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 
@@ -642,14 +642,14 @@ class SignalFrame(QFrame):
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
-        new_thresh = self.signal.calc_noise_threshold(start, end)
-        self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
+        new_thresh = self.signal.calc_relative_noise_threshold_from_range(start, end)
+        self.ui.spinBoxNoiseTreshold.setValue(100*new_thresh)
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
     @pyqtSlot()
     def on_noise_threshold_changed(self):
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
+        self.ui.spinBoxNoiseTreshold.setValue(100*self.signal.noise_threshold_relative)
         minimum = self.signal.noise_min_plot
         maximum = self.signal.noise_max_plot
         if self.ui.cbSignalView.currentIndex() == 0:
@@ -1008,10 +1008,10 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
-        if self.signal is not None and self.signal.noise_threshold != self.ui.spinBoxNoiseTreshold.value():
+        if self.signal is not None and 100*self.signal.noise_threshold_relative != self.ui.spinBoxNoiseTreshold.value():
             noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                 parameter_name="noise_threshold",
-                                                 parameter_value=self.ui.spinBoxNoiseTreshold.value())
+                                                 parameter_name="noise_threshold_relative",
+                                                 parameter_value=self.ui.spinBoxNoiseTreshold.value()/100)
             self.undo_stack.push(noise_action)
 
     def set_qad_tooltip(self, noise_threshold):

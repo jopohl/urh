@@ -6,10 +6,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SignalFrame(object):
     def setupUi(self, SignalFrame):
         SignalFrame.setObjectName("SignalFrame")
-        SignalFrame.resize(1057, 539)
+        SignalFrame.resize(1057, 566)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -68,8 +69,8 @@ class Ui_SignalFrame(object):
         self.sliderSpectrogramMin.setObjectName("sliderSpectrogramMin")
         self.gridLayout_2.addWidget(self.sliderSpectrogramMin, 19, 1, 1, 1)
         self.spinBoxNoiseTreshold = QtWidgets.QDoubleSpinBox(SignalFrame)
-        self.spinBoxNoiseTreshold.setDecimals(4)
-        self.spinBoxNoiseTreshold.setMaximum(1.0)
+        self.spinBoxNoiseTreshold.setDecimals(2)
+        self.spinBoxNoiseTreshold.setMaximum(100.0)
         self.spinBoxNoiseTreshold.setSingleStep(0.0001)
         self.spinBoxNoiseTreshold.setObjectName("spinBoxNoiseTreshold")
         self.gridLayout_2.addWidget(self.spinBoxNoiseTreshold, 2, 1, 1, 1)
@@ -550,6 +551,7 @@ class Ui_SignalFrame(object):
         self.chkBoxSyncSelection.setToolTip(_translate("SignalFrame", "If this is set to true, your selected protocol bits will show up in the signal view, and vice versa."))
         self.chkBoxSyncSelection.setText(_translate("SignalFrame", "Sync Selection"))
         self.spinBoxNoiseTreshold.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Set the <span style=\" font-weight:600;\">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>"))
+        self.spinBoxNoiseTreshold.setSuffix(_translate("SignalFrame", "%"))
         self.chkBoxShowProtocol.setToolTip(_translate("SignalFrame", "Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).\n"
 "\n"
 "If you want your protocol to be better seperated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView."))
@@ -606,6 +608,7 @@ class Ui_SignalFrame(object):
         self.lStrich.setText(_translate("SignalFrame", "/"))
         self.lSamplesTotal.setText(_translate("SignalFrame", "0"))
         self.lSamplesViewText.setText(_translate("SignalFrame", "Samples in view"))
+
 
 from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.LegendGraphicView import LegendGraphicView

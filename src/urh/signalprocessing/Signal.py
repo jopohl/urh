@@ -9,8 +9,6 @@ from PyQt5.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
 from urh.ainterpretation import AutoInterpretation
-
-from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.IQArray import IQArray
 from urh.util import FileOperator
@@ -266,6 +264,14 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
+    def noise_threshold_relative(self):
+        return self.noise_threshold / (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+
+    @noise_threshold_relative.setter
+    def noise_threshold_relative(self, value: float):
+        self.noise_threshold = value * (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+
+    @property
     def qad(self):
         if self._qad is None:
             self._qad = self.quad_demod()
@@ -319,7 +325,7 @@ class Signal(QObject):
     def quad_demod(self):
         return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
 
-    def calc_noise_threshold(self, noise_start: int, noise_end: int):
+    def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4
         noise_start, noise_end = int(noise_start), int(noise_end)
 
@@ -327,11 +333,11 @@ class Signal(QObject):
             noise_start, noise_end = noise_end, noise_start
 
         try:
-            maximum = np.max(self.iq_array.magnitudes)
+            maximum = np.max(self.iq_array.magnitudes_normalized)
             return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
-            return self.noise_threshold
+            return self.noise_threshold_relative
 
     def create_new(self, start=0, end=0, new_data=None):
         new_signal = Signal("", "New " + self.name)

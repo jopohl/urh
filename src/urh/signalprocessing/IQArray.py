@@ -77,11 +77,15 @@ class IQArray(object):
 
     @property
     def magnitudes_squared(self):
-        return (self.real / self.maximum)**2 + (self.imag / self.maximum)**2
+        return self.real**2.0 + self.imag**2.0
 
     @property
     def magnitudes(self):
         return np.sqrt(self.magnitudes_squared)
+
+    @property
+    def magnitudes_normalized(self):
+        return self.magnitudes / np.sqrt(self.maximum**2.0 + self.minimum**2.0)
 
     @property
     def dtype(self):

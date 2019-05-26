@@ -695,6 +695,11 @@ class Device(object):
 
     def init_send_parameters(self, samples_to_send: IQArray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:
+            if isinstance(samples_to_send, IQArray):
+                samples_to_send = samples_to_send.convert_to(self.DATA_TYPE)
+            else:
+                samples_to_send = IQArray(samples_to_send).convert_to(self.DATA_TYPE)
+
             self.samples_to_send = samples_to_send
             self.send_buffer = None
 

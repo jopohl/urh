@@ -237,7 +237,7 @@ class ProtocolAnalyzer(object):
         for bits, pause in zip(bit_data, pauses):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
             start, end = middle_bit_pos, middle_bit_pos + bit_len
-            rssi = np.mean(signal.iq_array.magnitudes_normalized[start:end])
+            rssi = np.mean(signal.iq_array.subarray(start, end).magnitudes_normalized)
             message = Message(bits, pause, message_type=self.default_message_type,
                               bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.messages.append(message)

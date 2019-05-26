@@ -287,7 +287,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(self.signal.iq_array.magnitudes_normalized[start:end:step_size])
+                power = np.mean(self.signal.iq_array.subarray(start,end,step_size).magnitudes_normalized)
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 

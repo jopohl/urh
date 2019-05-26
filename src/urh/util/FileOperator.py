@@ -20,10 +20,10 @@ archives = {}
 RECENT_PATH = QDir.homePath()
 
 EXT = {np.int8: ".complex16s", np.uint8: ".complex16u", np.int16: ".complex32s", np.uint16: ".complex32u",
-       np.float32: ".complex"}
+       np.float32: ".complex", np.complex64: ".complex"}
 FILTER = {np.int8: "Complex16 signed (*.complex16s *.cs8)", np.uint8: "Complex16 unsigned (*.complex16u *.cu8)",
           np.uint16: "Complex32 unsigned (*.complex32u *.cu16)", np.int16: "Complex32 signed (*.complex32s *.cs16)",
-          np.float32: "Complex (*.complex)"}
+          np.float32: "Complex (*.complex)", np.complex64: "Complex (*.complex)"}
 
 
 def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QFileDialog:
@@ -154,9 +154,12 @@ def save_data_dialog(signal_name: str, data, sample_rate=1e6, wav_only=False, pa
         name_filter = "WAV (*.wav)"
     else:
         if not any(signal_name.endswith(e) for e in FILTER.values()):
-            dtype = next(d for d in EXT.keys() if d == data.dtype)
-            signal_name += EXT[dtype]
-            name_filter = FILTER[dtype]
+            try:
+                dtype = next(d for d in EXT.keys() if d == data.dtype)
+                signal_name += EXT[dtype]
+                name_filter = FILTER[dtype]
+            except StopIteration:
+                name_filter = None
         else:
             name_filter = None
 

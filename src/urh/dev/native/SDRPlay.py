@@ -118,10 +118,4 @@ class SDRPlay(Device):
 
     @staticmethod
     def bytes_to_iq(buffer):
-        """
-        Conversion from short to float happens in c callback
-        :param buffer:
-        :param nvalues:
-        :return:
-        """
-        return np.frombuffer(buffer, dtype=np.complex64)
+        return np.frombuffer(buffer, dtype=np.int16).reshape((-1, 2), order="C")

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>860</width>
-    <height>668</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -500,6 +500,9 @@ QGroupBox::indicator:checked {
            </property>
            <property name="text">
             <string>Apply DC correction</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

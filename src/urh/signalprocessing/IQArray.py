@@ -35,7 +35,7 @@ class IQArray(object):
             if value.ndim == 2:
                 self.__data[key] = value
             else:
-                self.__data[key] = value.reshape(-1, 2)
+                self.__data[key] = value.reshape((-1, 2), order="C")
 
     def __len__(self):
         return len(self.__data)

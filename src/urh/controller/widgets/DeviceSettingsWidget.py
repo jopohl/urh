@@ -12,7 +12,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv_device_settings import Ui_FormDeviceSettings
 from urh.util.ProjectManager import ProjectManager
-
+import numpy as np
 
 class DeviceSettingsWidget(QWidget):
     selected_device_changed = pyqtSignal()
@@ -99,7 +99,7 @@ class DeviceSettingsWidget(QWidget):
             self.set_default_bb_gain()
 
         if self.is_rx:
-            checked = conf_dict.get("apply_dc_correction", False)
+            checked = conf_dict.get("apply_dc_correction", True)
             if isinstance(checked, str):
                 checked = True if checked == "True" else False
             self.ui.checkBoxDCCorrection.setChecked(checked)
@@ -187,7 +187,7 @@ class DeviceSettingsWidget(QWidget):
         prefix = self.rx_tx_prefix
         if prefix + "baseband_gain" in conf:
             key = prefix + "baseband_gain"
-            baseband_gain = conf[key][int(median(range(len(conf[key]))))]
+            baseband_gain = conf[key][int(np.percentile(list(range(len(conf[key]))), 25))]
             self.ui.spinBoxBasebandGain.setValue(baseband_gain)
 
     def sync_gain_sliders(self):

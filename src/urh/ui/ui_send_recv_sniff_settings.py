@@ -6,10 +6,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
         SniffSettings.setObjectName("SniffSettings")
-        SniffSettings.resize(482, 388)
+        SniffSettings.resize(482, 424)
         self.verticalLayout = QtWidgets.QVBoxLayout(SniffSettings)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -205,5 +206,6 @@ class Ui_SniffSettings(object):
         self.label_sniff_OutputFile.setText(_translate("SniffSettings", "Write bitstream to file:"))
         self.lineEdit_sniff_OutputFile.setPlaceholderText(_translate("SniffSettings", "None"))
         self.checkBoxAutoCenter.setText(_translate("SniffSettings", "Automatic"))
+
 
 from . import urh_rc

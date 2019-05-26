@@ -333,7 +333,7 @@ class Signal(QObject):
             noise_start, noise_end = noise_end, noise_start
 
         try:
-            maximum = np.max(self.iq_array.magnitudes_normalized)
+            maximum = np.max(self.iq_array.magnitudes_normalized[noise_start:noise_end])
             return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))

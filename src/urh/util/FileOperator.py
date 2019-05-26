@@ -21,7 +21,7 @@ RECENT_PATH = QDir.homePath()
 
 EXT = {np.int8: ".complex16s", np.uint8: ".complex16u", np.int16: ".complex32s", np.uint16: ".complex32u",
        np.float32: ".complex"}
-FILTER = {np.int8: "Complex16 unsigned (*.complex16u *.cu8)", np.uint8: "Complex16 signed (*.complex16s *.cs8)",
+FILTER = {np.int8: "Complex16 signed (*.complex16s *.cs8)", np.uint8: "Complex16 unsigned (*.complex16u *.cu8)",
           np.uint16: "Complex32 unsigned (*.complex32u *.cu16)", np.int16: "Complex32 signed (*.complex32s *.cs16)",
           np.float32: "Complex (*.complex)"}
 
@@ -194,7 +194,7 @@ def save_data(data, filename: str, sample_rate=1e6, num_channels=2):
 
 
 def save_signal(signal):
-    save_data_dialog(signal.filename, signal.iq_array.data, sample_rate=signal.sample_rate)
+    save_data(signal.iq_array.data, signal.filename, signal.sample_rate)
 
 
 def rewrite_zip(zip_name):

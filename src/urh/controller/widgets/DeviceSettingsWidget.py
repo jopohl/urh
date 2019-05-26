@@ -171,7 +171,7 @@ class DeviceSettingsWidget(QWidget):
         prefix = self.rx_tx_prefix
         if prefix + "rf_gain" in conf:
             key = prefix + "rf_gain"
-            gain = conf[key][int(median(range(len(conf[key]))))]
+            gain = conf[key][int(np.percentile(range(len(conf[key])), 25))]
             self.ui.spinBoxGain.setValue(gain)
 
     def set_default_if_gain(self):

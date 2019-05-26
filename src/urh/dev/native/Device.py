@@ -24,7 +24,7 @@ class Device(object):
     SYNC_TX_CHUNK_SIZE = 0
     CONTINUOUS_TX_CHUNK_SIZE = 0
 
-    DATA_TYPE = None
+    DATA_TYPE = np.float32
 
     class Command(Enum):
         STOP = 0

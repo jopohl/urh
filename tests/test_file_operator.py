@@ -19,7 +19,7 @@ class TestFileOperator(QtTestCase):
         temp_dir = tempfile.gettempdir()
         os.chdir(temp_dir)
         self.assertFalse(os.path.isfile("test.wav"))
-        FileOperator.save_data(bytearray([1, 2]), "test.wav")
+        FileOperator.save_data(np.array([1, 2], dtype=np.int16), "test.wav")
         self.assertTrue(os.path.isfile("test.wav"))
         os.remove("test.wav")
 

@@ -58,8 +58,8 @@ class TestCenterDetection(unittest.TestCase):
 
         for start, end in message_indices:
             center = detect_center(rect[start:end])
-            self.assertGreaterEqual(center, 0.5326, msg="{}/{}".format(start, end))
-            self.assertLessEqual(center, 0.9482, msg="{}/{}".format(start, end))
+            self.assertGreaterEqual(center, 0.4, msg="{}/{}".format(start, end))
+            self.assertLessEqual(center, 0.65, msg="{}/{}".format(start, end))
 
     def test_homematic_center_detection(self):
         data = Signal(get_path_for_data_file("homematic.coco"), "").iq_array.data

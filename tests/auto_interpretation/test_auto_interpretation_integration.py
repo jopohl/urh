@@ -48,8 +48,8 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
         center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
         self.assertEqual(mod_type, "ASK")
-        self.assertGreaterEqual(center, 0.04)
-        self.assertLessEqual(center, 0.066)
+        self.assertGreaterEqual(center, 0.0077)
+        self.assertLessEqual(center, 0.0465)
         self.assertLessEqual(tolerance, 5)
         self.assertEqual(bit_length, 40)
 

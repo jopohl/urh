@@ -69,6 +69,7 @@ class TestSignalTabGUI(QtTestCase):
 
         self.assertEqual(frame.ui.lNumSelectedSamples.text(), "4000")
 
+        frame.ui.spinBoxNoiseTreshold.setValue(1)
         noise_val = frame.ui.spinBoxNoiseTreshold.value()
         frame.ui.gvSignal.set_noise_clicked.emit()
         self.assertNotEqual(noise_val, frame.ui.spinBoxNoiseTreshold.value())

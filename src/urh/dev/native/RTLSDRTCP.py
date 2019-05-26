@@ -189,13 +189,4 @@ class RTLSDRTCP(Device):
 
     @staticmethod
     def bytes_to_iq(buffer):
-        """
-        The raw, captured IQ data is 8 bit unsigned data.
-
-        :return:
-        """
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        result = np.empty(len(unpacked), dtype=np.complex64)
-        result.real = (unpacked['r'] / 127.5) - 1.0
-        result.imag = (unpacked['i'] / 127.5) - 1.0
-        return result
+        return np.subtract(np.frombuffer(buffer, dtype=np.int8), 127).reshape((-1, 2), order="C")

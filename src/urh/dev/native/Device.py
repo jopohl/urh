@@ -272,7 +272,7 @@ class Device(object):
         self.device_serial = None
         self.device_number = 0
 
-        self.samples_to_send = np.array([], dtype=np.complex64)
+        self.samples_to_send = np.array([], dtype=self.DATA_TYPE)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
@@ -699,7 +699,10 @@ class Device(object):
             self.send_buffer = None
 
         if self.send_buffer is None:
-            self.send_buffer = self.iq_to_bytes(self.samples_to_send.data)
+            if isinstance(self.samples_to_send, IQArray):
+                self.send_buffer = self.iq_to_bytes(self.samples_to_send.data)
+            else:
+                self.send_buffer = self.iq_to_bytes(self.samples_to_send)
         elif not resume:
             self.current_sending_repeat = 0
 

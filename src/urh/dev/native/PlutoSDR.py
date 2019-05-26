@@ -107,7 +107,7 @@ class PlutoSDR(Device):
         return result
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
+    def iq_to_bytes(complex_samples: np.ndarray):
         arr = Array("h", 2 * len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.int16)
         # https://wiki.analog.com/resources/eval/user-guides/ad-fmcomms2-ebz/software/basic_iq_datafiles#binary_format

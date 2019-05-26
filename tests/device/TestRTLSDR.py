@@ -76,7 +76,7 @@ class TestRTLSDR(unittest.TestCase):
         self.assertAlmostEqual(unpacked[1], complex(0, 0), places=1)
         self.assertEqual(unpacked[2], complex(1, 1))
 
-        packed = RTLSDR.pack_complex(unpacked)
+        packed = RTLSDR.iq_to_bytes(unpacked)
         self.assertEqual(received, packed)
 
 

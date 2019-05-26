@@ -100,7 +100,7 @@ class HackRF(Device):
         return result
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
+    def iq_to_bytes(complex_samples: np.ndarray):
         assert complex_samples.dtype == np.complex64
         arr = Array("B", 2*len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.int8)

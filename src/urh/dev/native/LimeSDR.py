@@ -138,7 +138,7 @@ class LimeSDR(Device):
         return np.frombuffer(buffer, dtype=np.complex64)
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
+    def iq_to_bytes(complex_samples: np.ndarray):
         # We can pass the complex samples directly to the LimeSDR Send API
         arr = Array("f", 2 * len(complex_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.float32)

@@ -337,7 +337,7 @@ class Device(object):
             total_samples = 2 * self.num_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          pack_complex_method=self.pack_complex,
+                          iq_to_bytes_method=self.iq_to_bytes,
                           continuous_send_ring_buffer=self.continuous_send_ring_buffer)
 
     @property
@@ -637,7 +637,7 @@ class Device(object):
         pass
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
+    def iq_to_bytes(complex_samples: np.ndarray):
         pass
 
     def read_device_messages(self):
@@ -699,7 +699,7 @@ class Device(object):
             self.send_buffer = None
 
         if self.send_buffer is None:
-            self.send_buffer = self.pack_complex(self.samples_to_send)
+            self.send_buffer = self.iq_to_bytes(self.samples_to_send.data)
         elif not resume:
             self.current_sending_repeat = 0
 

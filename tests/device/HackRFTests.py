@@ -103,7 +103,7 @@ class TestHackRF(unittest.TestCase):
         self.assertAlmostEqual(unpacked[2], complex(0, 0), places=1)
         self.assertEqual(unpacked[3], complex(1, 1))
 
-        packed = HackRF.pack_complex(unpacked)
+        packed = HackRF.iq_to_bytes(unpacked)
         self.assertEqual(received, packed)
 
     def test_c_api(self):

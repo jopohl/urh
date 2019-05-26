@@ -99,12 +99,8 @@ class BladeRF(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def bytes_to_iq(buffer):
-        unpacked = np.frombuffer(buffer, dtype=np.int16)
-        result = np.empty(len(unpacked)//2, dtype=np.complex64)
-        result.real = unpacked[::2] / 2048
-        result.imag = unpacked[1::2] / 2048
-        return result
+    def bytes_to_iq(buffer) -> np.ndarray:
+        return np.frombuffer(buffer, dtype=np.int16).reshape((-1, 2), order="C") << 4
 
     @staticmethod
     def pack_complex(complex_samples: np.ndarray):

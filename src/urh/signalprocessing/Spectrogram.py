@@ -5,6 +5,7 @@ from PyQt5.QtGui import QImage
 
 from urh import colormaps
 from urh.cythonext import util
+from urh.signalprocessing.IQArray import IQArray
 from urh.util.Logger import logger
 
 
@@ -21,6 +22,9 @@ class Spectrogram(object):
         :param overlap_factor: Value between 0 (= No Overlapping) and 1 (= Full overlapping) of windows
         :param window_function: Function for DFT window
         """
+        if isinstance(samples, IQArray):
+            samples = samples.as_complex64()
+
         self.__samples = samples
         self.__window_size = window_size
         self.__overlap_factor = overlap_factor

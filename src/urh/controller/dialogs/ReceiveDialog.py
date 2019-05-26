@@ -66,7 +66,7 @@ class ReceiveDialog(SendRecvDialog):
         self.device = VirtualDevice(self.backend_handler, self.selected_device_name, Mode.receive,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
-        self.scene_manager = LiveSceneManager(np.array([]), parent=self)
+        self.scene_manager = LiveSceneManager(np.array([], dtype=self.device.data_type), parent=self)
 
     @pyqtSlot()
     def on_start_clicked(self):

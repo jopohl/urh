@@ -76,7 +76,7 @@ class IQArray(object):
         return np.sqrt(self.magnitudes_squared)
 
     def as_complex64(self):
-        return self.__data.flatten(order="C").astype(np.float32).view(np.complex64)
+        return self.convert_to(np.float32).flatten(order="C").view(np.complex64)
 
     def to_bytes(self):
         return self.__data.tostring()

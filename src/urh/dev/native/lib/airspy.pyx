@@ -20,7 +20,7 @@ cdef object f
 cdef int _c_callback_recv(cairspy.airspy_transfer*transfer) with gil:
     global f
     try:
-        (<object> f)(<float complex[:transfer.sample_count]>transfer.samples)
+        (<object> f)(<float [:2*transfer.sample_count]>transfer.samples)
     except OSError as e:
         logger.warning("Cython-AirSpy:" + str(e))
     return 0

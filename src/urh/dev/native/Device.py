@@ -352,7 +352,7 @@ class Device(object):
         if self.receive_buffer is None:
             num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                 self.is_in_spectrum_mode)
-            self.receive_buffer = np.zeros((int(num_samples), 2), dtype=self.DATA_TYPE, order='C')
+            self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=int(num_samples))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -633,7 +633,7 @@ class Device(object):
             logger.exception(e)
 
     @staticmethod
-    def unpack_complex(buffer) -> np.ndarray:
+    def bytes_to_iq(buffer) -> np.ndarray:
         pass
 
     @staticmethod
@@ -662,13 +662,13 @@ class Device(object):
         while self.is_receiving:
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
-                samples = self.unpack_complex(byte_buffer)
+                samples = self.bytes_to_iq(byte_buffer)
                 n_samples = len(samples)
                 if n_samples == 0:
                     continue
 
                 if self.apply_dc_correction:
-                    samples -= np.mean(samples, axis=0)
+                    samples = samples - np.mean(samples, axis=0)
 
             except OSError as e:
                 logger.exception(e)

@@ -112,7 +112,7 @@ class SoundCard(Device):
                             ("identifier", None)])
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         return np.frombuffer(buffer, dtype=np.complex64)
 
     @staticmethod

@@ -98,7 +98,7 @@ class PlutoSDR(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         unpacked = np.frombuffer(buffer, dtype=np.int16)
         result = np.empty(len(unpacked)//2, dtype=np.complex64)
         result.real = unpacked[::2] / 2048

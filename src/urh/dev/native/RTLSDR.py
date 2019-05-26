@@ -90,7 +90,7 @@ class RTLSDR(Device):
             logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         """
         The raw, captured IQ data is 8 bit unsigned data.
 

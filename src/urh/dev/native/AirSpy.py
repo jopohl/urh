@@ -51,9 +51,5 @@ class AirSpy(Device):
         self.bandwidth_is_adjustable = False
 
     @staticmethod
-    def unpack_complex(buffer):
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.float32), ('i', np.float32)])
-        result = np.empty(len(unpacked), dtype=np.complex64)
-        result.real = unpacked["r"]
-        result.imag = unpacked["i"]
-        return result
+    def bytes_to_iq(buffer) -> np.ndarray:
+        return np.frombuffer(buffer, dtype=np.float32).reshape((-1, 2), order="C")

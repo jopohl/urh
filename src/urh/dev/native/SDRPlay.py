@@ -117,7 +117,7 @@ class SDRPlay(Device):
             ctrl_connection.send("RELEASE DEVICE:" + str(ret))
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         """
         Conversion from short to float happens in c callback
         :param buffer:

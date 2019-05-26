@@ -134,7 +134,7 @@ class LimeSDR(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         return np.frombuffer(buffer, dtype=np.complex64)
 
     @staticmethod

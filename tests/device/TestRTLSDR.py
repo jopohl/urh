@@ -60,7 +60,7 @@ class TestRTLSDR(unittest.TestCase):
         time.sleep(1)
         self.assertGreater(rtlsdr_class.current_recv_index, index)
 
-    def test_pack_unpack_complex(self):
+    def test_bytes_to_iq(self):
         arr = np.array([0, 0, 127.5, 127.5, 255, 255], dtype=np.uint8)
         self.assertEqual(arr[0], 0)
         self.assertEqual(arr[1], 0)
@@ -70,7 +70,7 @@ class TestRTLSDR(unittest.TestCase):
         self.assertEqual(len(received), len(arr))
         self.assertEqual(np.int8(received[0]), 0)
         self.assertEqual(np.int8(received[1]), 0)
-        unpacked = RTLSDR.unpack_complex(received, len(received) // 2)
+        unpacked = RTLSDR.bytes_to_iq(received, len(received) // 2)
 
         self.assertEqual(unpacked[0], complex(-1, -1))
         self.assertAlmostEqual(unpacked[1], complex(0, 0), places=1)

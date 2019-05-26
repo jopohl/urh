@@ -17,7 +17,7 @@ from urh.dev.native.lib import sdrplay
 def recv(conn: Connection):
     while True:
         t = time.time()
-        result = SDRPlay.unpack_complex(conn.recv_bytes())
+        result = SDRPlay.bytes_to_iq(conn.recv_bytes())
         print("UNPACK", time.time()-t)
 
 class TestSDRPlay(unittest.TestCase):

@@ -188,7 +188,7 @@ class RTLSDRTCP(Device):
             return b''
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         """
         The raw, captured IQ data is 8 bit unsigned data.
 

@@ -27,7 +27,7 @@ class IQArray(object):
             if value.ndim == 2:
                 self.__data[key] = value
             else:
-                self.__data[key] = value.reshape(len(value)//2, 2)
+                self.__data[key] = value.reshape(-1, 2)
 
     def __len__(self):
         return len(self.__data)
@@ -83,13 +83,12 @@ class IQArray(object):
 
     def insert_subarray(self, pos, subarray: np.ndarray):
         if subarray.ndim == 1:
-            n = len(subarray)
             if subarray.dtype == np.complex64:
-                subarray = subarray.view(np.float32).reshape((n, 2), order="C")
+                subarray = subarray.view(np.float32).reshape((-1, 2), order="C")
             elif subarray.dtype == np.complex128:
-                subarray = subarray.view(np.float64).reshape((n, 2), order="C")
+                subarray = subarray.view(np.float64).reshape((-1, 2), order="C")
             else:
-                subarray = subarray.reshape((n//2, 2), order="C")
+                subarray = subarray.reshape((-1, 2), order="C")
 
         self.__data = np.insert(self.__data, pos, subarray, axis=0)
 
@@ -174,13 +173,13 @@ class IQArray(object):
             return IQArray(data=data)
 
     @staticmethod
-    def convert_array_to_iq(arr: np.ndarray):
+    def convert_array_to_iq(arr: np.ndarray) -> np.ndarray:
         if arr.ndim == 1:
             if arr.dtype == np.complex64:
                 arr = arr.view(np.float32)
             elif arr.dtype == np.complex128:
                 arr = arr.view(np.float64)
-            return arr.reshape((len(arr) // 2, 2), order="C")
+            return arr.reshape((-1, 2), order="C")
         elif arr.ndim == 2:
             return arr
         else:

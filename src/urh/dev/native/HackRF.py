@@ -92,7 +92,7 @@ class HackRF(Device):
         return hackrf.has_multi_device_support()
 
     @staticmethod
-    def unpack_complex(buffer):
+    def bytes_to_iq(buffer):
         unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
         result = np.empty(len(unpacked), dtype=np.complex64)
         result.real = (unpacked['r'] + 0.5) / 127.5

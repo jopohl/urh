@@ -97,7 +97,7 @@ class TestHackRF(unittest.TestCase):
         self.assertEqual(len(received), len(arr))
         self.assertEqual(np.int8(received[0]), -128)
         self.assertEqual(np.int8(received[1]), -128)
-        unpacked = HackRF.unpack_complex(received, len(received) // 2)
+        unpacked = HackRF.bytes_to_iq(received, len(received) // 2)
         self.assertEqual(unpacked[0], complex(-1, -1))
         self.assertAlmostEqual(unpacked[1], complex(0, 0), places=1)
         self.assertAlmostEqual(unpacked[2], complex(0, 0), places=1)

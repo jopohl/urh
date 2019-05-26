@@ -14,6 +14,7 @@ from urh.controller.dialogs.FilterDialog import FilterDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
 from urh.signalprocessing.Filter import Filter, FilterType
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
@@ -415,12 +416,7 @@ class SignalFrame(QFrame):
             self.save_signal_as()
 
     def save_signal_as(self):
-        if self.signal.filename:
-            initial_name = self.signal.filename
-        else:
-            initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".complex"
-
-        filename = FileOperator.get_save_file_name(initial_name, wav_only=self.signal.wav_mode)
+        filename = FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
         if filename:
             try:
                 self.signal.save_as(filename)
@@ -442,8 +438,7 @@ class SignalFrame(QFrame):
                 if filename.endswith(".wav"):
                     data = self.signal.qad.astype(np.float32)
                     data /= np.max(np.abs(data))
-                data = FileOperator.convert_data_to_format(data, filename)
-                FileOperator.save_data(data, filename, self.signal.sample_rate, num_channels=1)
+                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate, num_channels=1)
                 self.unsetCursor()
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])

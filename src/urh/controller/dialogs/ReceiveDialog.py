@@ -101,7 +101,7 @@ class ReceiveDialog(SendRecvDialog):
 
         initial_name = initial_name.replace(Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
-        filename = FileOperator.save_data_dialog(initial_name + ".complex", data,
+        filename = FileOperator.save_data_dialog(initial_name, data,
                                                  sample_rate=dev.sample_rate, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:

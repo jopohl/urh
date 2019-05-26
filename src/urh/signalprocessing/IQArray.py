@@ -1,12 +1,20 @@
+import os
+import tarfile
+import tempfile
+import wave
+
 import numpy as np
 
 
 class IQArray(object):
-    def __init__(self, data: np.ndarray, dtype=None, n=None):
+    def __init__(self, data: np.ndarray, dtype=None, n=None, skip_conversion=False):
         if data is None:
             self.__data = np.zeros((n, 2), dtype, order="C")
         else:
-            self.__data = self.convert_array_to_iq(data)
+            if skip_conversion:
+                self.__data = data
+            else:
+                self.__data = self.convert_array_to_iq(data)
 
         assert self.__data.dtype not in (np.complex64, np.complex128)
 
@@ -74,6 +82,10 @@ class IQArray(object):
     @property
     def magnitudes(self):
         return np.sqrt(self.magnitudes_squared)
+
+    @property
+    def dtype(self):
+        return self.__data.dtype
 
     def as_complex64(self):
         return self.convert_to(np.float32).flatten(order="C").view(np.complex64)
@@ -159,18 +171,20 @@ class IQArray(object):
 
     @staticmethod
     def from_file(filename: str):
-        if filename.endswith(".complex16u"):
+        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
-            data = np.fromfile(filename, dtype=np.uint8)
-            return IQArray(data=data)
+            return IQArray(data=np.fromfile(filename, dtype=np.uint8))
         elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
-            data = np.fromfile(filename, dtype=np.int8)
-            return IQArray(data=data)
+            return IQArray(data=np.fromfile(filename, dtype=np.int8))
+        elif filename.endswith(".complex32u") or filename.endswith(".cu16"):
+            # two 16 bit unsigned integers
+            return IQArray(data=np.fromfile(filename, dtype=np.uint16))
+        elif filename.endswith(".complex32s") or filename.endswith(".cs16"):
+            # two 16 bit signed integers
+            return IQArray(data=np.fromfile(filename, dtype=np.int16))
         else:
-            # Uncompressed
-            data = np.fromfile(filename, dtype=np.float32)
-            return IQArray(data=data)
+            return IQArray(data=np.fromfile(filename, dtype=np.float32))
 
     @staticmethod
     def convert_array_to_iq(arr: np.ndarray) -> np.ndarray:
@@ -195,3 +209,18 @@ class IQArray(object):
     @staticmethod
     def concatenate(*args):
         return IQArray(data=np.concatenate([arr.data if isinstance(arr, IQArray) else arr for arr in args[0]]))
+
+    def save_compressed(self, filename):
+        with tarfile.open(filename, 'w:bz2') as tar_write:
+            tmp_name = tempfile.mkstemp()[1]
+            self.tofile(tmp_name)
+            tar_write.add(tmp_name)
+            os.remove(tmp_name)
+
+    def export_to_wav(self, filename, num_channels, sample_rate):
+        f = wave.open(filename, "w")
+        f.setnchannels(num_channels)
+        f.setsampwidth(2)
+        f.setframerate(sample_rate)
+        f.writeframes(self.convert_to(np.int16))
+        f.close()

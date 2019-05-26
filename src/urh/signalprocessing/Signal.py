@@ -280,10 +280,6 @@ class Signal(QObject):
             return np.zeros(0, dtype=np.float32)
 
     @property
-    def wave_data(self):
-        return (self.iq_array.data.view(np.float32) * 32767).astype(np.int16)
-
-    @property
     def changed(self) -> bool:
         """
         Determines whether the signal was changed (e.g. cropped/muted) and not saved yet

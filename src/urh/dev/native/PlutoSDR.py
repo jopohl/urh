@@ -98,18 +98,12 @@ class PlutoSDR(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def bytes_to_iq(buffer):
-        unpacked = np.frombuffer(buffer, dtype=np.int16)
-        result = np.empty(len(unpacked)//2, dtype=np.complex64)
-        result.real = unpacked[::2] / 2048
-        result.imag = unpacked[1::2] / 2048
-
-        return result
+    def bytes_to_iq(buffer) -> np.ndarray:
+        return np.frombuffer(buffer, dtype=np.int16).reshape((-1, 2), order="C") << 4
 
     @staticmethod
-    def iq_to_bytes(complex_samples: np.ndarray):
-        arr = Array("h", 2 * len(complex_samples), lock=False)
+    def iq_to_bytes(iq_samples: np.ndarray):
+        arr = Array("h", 2 * len(iq_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.int16)
-        # https://wiki.analog.com/resources/eval/user-guides/ad-fmcomms2-ebz/software/basic_iq_datafiles#binary_format
-        numpy_view[:] = np.left_shift((2048 * complex_samples.view(np.float32)).astype(np.int16), 4)
+        numpy_view[:] = iq_samples.flatten(order="C") >> 4
         return arr

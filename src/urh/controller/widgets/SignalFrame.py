@@ -143,7 +143,6 @@ class SignalFrame(QFrame):
             self.set_protocol_visibility()
 
             self.ui.chkBoxShowProtocol.setChecked(True)
-            self.set_qad_tooltip(self.signal.noise_threshold)
             self.ui.btnSaveSignal.hide()
 
             self.show_protocol(refresh=False)
@@ -990,10 +989,7 @@ class SignalFrame(QFrame):
         self.draw_signal(draw_full_signal)
 
         self.__set_samples_in_view()
-
         self.update_number_selected_samples()
-
-        self.set_qad_tooltip(self.signal.noise_threshold)
         self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
@@ -1013,15 +1009,6 @@ class SignalFrame(QFrame):
                                                  parameter_name="noise_threshold_relative",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value()/100)
             self.undo_stack.push(noise_action)
-
-    def set_qad_tooltip(self, noise_threshold):
-        self.ui.cbSignalView.setToolTip(
-            "<html><head/><body><p>Choose the view of your signal: Analog, Demodulated or Spectrogram.</p>"
-            "<p>The quadrature demodulation uses a <b>threshold of magnitude,</b> to <b>supress noise</b>. "
-            "All samples with a magnitude lower than this threshold will be eliminated "
-            "(set to <i>-127</i>) after demodulation.</p>"
-            "<p>Tune this value by selecting a <i>noisy area</i> and mark it as noise using <b>context menu</b>.</p>"
-            "<p>Current noise threshold is: <b>" + str(noise_threshold) + "</b></p></body></html>")
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         if self.signal is None:

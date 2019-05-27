@@ -81,7 +81,7 @@ class SimulatorDialog(QDialog):
 
             sniffer = self.sniff_settings_widget.sniffer
 
-            self.scene_manager = SniffSceneManager(np.array([]), parent=self)
+            self.scene_manager = SniffSceneManager(np.array([], dtype=sniffer.rcv_device.data_type), parent=self)
             self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
         else:
             self.device_settings_rx_widget = self.sniff_settings_widget = self.scene_manager = None
@@ -269,9 +269,9 @@ class SimulatorDialog(QDialog):
         else:
             self.ui.graphicsViewPreview.setEnabled(False)
             if self.ui.checkBoxCaptureFullRX.isChecked():
-                self.scene_manager.plot_data = np.array([])
+                self.scene_manager.plot_data = np.array([], dtype=rx_device.data_type)
             else:
-                self.scene_manager.data_array = np.array([])
+                self.scene_manager.data_array = np.array([], dtype=rx_device.data_type)
             self.scene_manager.scene.addText("Could not generate RX preview.")
 
     @pyqtSlot()
@@ -355,6 +355,7 @@ class SimulatorDialog(QDialog):
         dev_name = self.device_settings_rx_widget.ui.cbDevice.currentText()
         self.simulator.sniffer.device_name = dev_name
         self.device_settings_rx_widget.device = self.simulator.sniffer.rcv_device
+        self.__set_rx_scene()
 
     @pyqtSlot()
     def on_selected_tx_device_changed(self):
@@ -392,16 +393,24 @@ class SimulatorDialog(QDialog):
     def on_radio_button_transcript_bit_clicked(self):
         self.update_transcript_view()
 
+    def __set_rx_scene(self):
+        if not self.rx_needed:
+            return
+
+        if self.ui.checkBoxCaptureFullRX.isChecked():
+            self.scene_manager = LiveSceneManager(np.array([], dtype=self.simulator.sniffer.rcv_device.data_type),
+                                                  parent=self)
+            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+        else:
+            self.scene_manager = SniffSceneManager(np.array([], dtype=self.simulator.sniffer.rcv_device.data_type),
+                                                   parent=self)
+
+            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+
     @pyqtSlot()
     def on_checkbox_capture_full_rx_clicked(self):
         self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
-        if self.ui.checkBoxCaptureFullRX.isChecked():
-            self.scene_manager = LiveSceneManager(np.array([]), parent=self)
-            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
-        else:
-            self.scene_manager = SniffSceneManager(np.array([]), parent=self)
-
-            self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
+        self.__set_rx_scene()
 
     @pyqtSlot()
     def on_btn_save_rx_clicked(self):

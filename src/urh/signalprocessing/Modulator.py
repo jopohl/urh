@@ -51,6 +51,16 @@ class Modulator(object):
                self.param_for_one == other.param_for_one and \
                self.param_for_zero == other.param_for_zero
 
+    @staticmethod
+    def get_dtype():
+        dtype_str = constants.SETTINGS.value("modulation_dtype", "float32", str)
+        if dtype_str == "int8":
+            return np.int8
+        elif dtype_str == "int16":
+            return np.int16
+        else:
+            return np.float32
+
     @property
     def sample_rate(self):
         if self.__sample_rate is not None:
@@ -160,33 +170,40 @@ class Modulator(object):
 
         mod_type = self.MODULATION_TYPES[self.modulation_type]
 
+        dtype = self.get_dtype()
+        a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
+
         # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)
-        result = np.zeros(0, dtype=np.complex64)
+        result = np.zeros(0, dtype=dtype)
+
+        type_code = "b" if dtype == np.int8 else "h" if dtype == np.int16 else "f"
+        type_val = array.array(type_code, [0])[0]
 
         if mod_type == "FSK":
-            result = signal_functions.modulate_fsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_fsk(data, pause, start, a,
                                                   self.param_for_zero, self.param_for_one,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                  self.samples_per_bit)
+                                                  self.samples_per_bit, type_val)
         elif mod_type == "ASK":
-            a0 = self.carrier_amplitude * (self.param_for_zero / 100)
-            a1 = self.carrier_amplitude * (self.param_for_one / 100)
+            a0 = a * (self.param_for_zero / 100)
+            a1 = a * (self.param_for_one / 100)
             result = signal_functions.modulate_ask(data, pause, start, a0, a1,
                                                   self.carrier_freq_hz,
                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                  self.samples_per_bit)
+                                                  self.samples_per_bit, type_val)
         elif mod_type == "PSK":
             phi0 = self.param_for_zero * (np.pi / 180)
             phi1 = self.param_for_one * (np.pi / 180)
-            result = signal_functions.modulate_psk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_psk(data, pause, start, a,
                                                   self.carrier_freq_hz,
                                                   phi0, phi1, self.sample_rate,
-                                                  self.samples_per_bit)
+                                                  self.samples_per_bit, type_val)
         elif mod_type == "GFSK":
-            result = signal_functions.modulate_gfsk(data, pause, start, self.carrier_amplitude,
+            result = signal_functions.modulate_gfsk(data, pause, start, a,
                                                    self.param_for_zero, self.param_for_one,
                                                    self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                   self.samples_per_bit, self.gauss_bt, self.gauss_filter_width)
+                                                   self.samples_per_bit, self.gauss_bt, self.gauss_filter_width,
+                                                   type_val)
 
         return IQArray(result)
 

@@ -4,6 +4,7 @@ from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from urh import constants
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
@@ -36,10 +37,15 @@ class ModulatorDialog(QDialog):
 
         self.modulators = modulators
 
-        for graphic_view in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated):
+        for graphic_view in (self.ui.gVCarrier, self.ui.gVData):
             graphic_view.scene_y_min = -1
             graphic_view.scene_y_max = 1
             graphic_view.scene_x_zoom_stretch = 1.1
+
+        min_max_mod = IQArray.min_max_for_dtype(self.current_modulator.get_dtype())
+        self.ui.gVModulated.scene_y_min = min_max_mod[0]
+        self.ui.gVModulated.scene_y_max = min_max_mod[1]
+        self.ui.gVModulated.scene_x_zoom_stretch = 1.1
 
         self.set_ui_for_current_modulator()
 

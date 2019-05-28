@@ -13,7 +13,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && add-apt-repository -y ppa:myriadrf/drivers && apt-get -qq update \
  && apt-get -qq install wget gcc g++ git \
                        python-pip python-zmq \
-                       python3 python3-pip python3-pyaudio python3-pyqt5 python3-numpy python3-zmq python3-psutil \
+                       python3 python3-pip python3-pyaudio python3-pyside2 python3-numpy python3-zmq python3-psutil \
                        fonts-dejavu-core libgles2-mesa libusb-1.0-0 \
                        gr-osmosdr libgnuradio-zeromq* \
                        libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev \

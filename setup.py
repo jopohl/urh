@@ -115,12 +115,12 @@ def read_long_description():
 
 install_requires = ["numpy", "psutil", "pyzmq", "cython"]
 if IS_RELEASE:
-    install_requires.append("pyqt5")
+    install_requires.append("pyside2")
 else:
     try:
         import PyQt5
     except ImportError:
-        install_requires.append("pyqt5")
+        install_requires.append("pyside2")
 
 if sys.version_info < (3, 4):
     install_requires.append('enum34')

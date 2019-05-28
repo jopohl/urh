@@ -6,23 +6,21 @@ import time
 
 import numpy as np
 # import yappi
-from PyQt5.QtTest import QTest, QSignalSpy
-
-from urh.controller.SimulatorTabController import SimulatorTabController
-from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
-from urh.signalprocessing.IQArray import IQArray
-
-from urh.util.Logger import logger
+from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
+from urh.signalprocessing.IQArray import IQArray
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.IQSignal import IQSignal
 from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem, CounterActionItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -205,7 +203,8 @@ class TestSimulator(QtTestCase):
             os.remove(file_name)
 
         self.assertFalse(os.path.isfile(file_name))
-        external_command = "cmd.exe /C copy NUL {}".format(file_name) if os.name == "nt" else "touch {}".format(file_name)
+        external_command = "cmd.exe /C copy NUL {}".format(file_name) if os.name == "nt" else "touch {}".format(
+            file_name)
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
@@ -242,7 +241,7 @@ class TestSimulator(QtTestCase):
 
         self.alice.send_raw_data(modulator.modulate("100" + "10101010" * 42), 1)
         time.sleep(self.TIMEOUT)
-        self.alice.send_raw_data(IQArray(None, np.float32, 2*self.num_zeros_for_pause), 1)
+        self.alice.send_raw_data(IQArray(None, np.float32, 2 * self.num_zeros_for_pause), 1)
 
         while not any("Sending message" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message")

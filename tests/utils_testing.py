@@ -1,10 +1,6 @@
 import os
-import sys
-
-from PyQt5.QtTest import QSignalSpy
 
 from urh import constants
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 
 def trace_calls(frame, event, arg):

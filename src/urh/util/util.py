@@ -9,7 +9,7 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
 import numpy as np
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QEventLoop, QTimer
 from PySide2.QtGui import QFontDatabase, QFont
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QSplitter
@@ -433,6 +433,15 @@ def read_setting(key: str, default_value=None, type=str):
             return True if str(val).lower() == "true" else False
     else:
         return type(val)
+
+
+def wait_for_signal(signal, timeout=10000):
+    loop = QEventLoop()
+    signal.connect(loop.quit)
+
+    if timeout is not None:
+        QTimer.singleShot(timeout, loop.quit)
+    loop.exec_()
 
 
 def validate_command(command: str):

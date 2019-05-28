@@ -6,14 +6,12 @@ import time
 
 import numpy
 from PySide2.QtCore import Signal, QObject, Slot
-from PyQt5.QtTest import QSignalSpy
 
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
@@ -461,15 +459,11 @@ class Simulator(QObject):
         if len(sniffer.messages) > 0:
             return sniffer.messages.pop(0)
 
-        spy = QSignalSpy(sniffer.message_sniffed)
-        if spy.wait(self.project_manager.simulator_timeout_ms):
-            try:
-                return sniffer.messages.pop(0)
-            except IndexError:
-                self.log_message("Could not receive message")
-                return None
-        else:
-            self.log_message("Receive timeout")
+        util.wait_for_signal(sniffer.message_sniffed, timeout=self.project_manager.simulator_timeout_ms)
+        try:
+            return sniffer.messages.pop(0)
+        except IndexError:
+            self.log_message("Could not receive message within time")
             return None
 
     def get_full_transcript(self, start=0, use_bit=True):

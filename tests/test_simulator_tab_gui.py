@@ -4,19 +4,17 @@ import time
 from array import array
 
 import numpy as np
+from PyQt5.QtTest import QTest
 from PySide2.QtCore import Qt, QTimer, QPoint
 from PySide2.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest, QSignalSpy
 from PySide2.QtWidgets import QApplication, QMenu, QCompleter
-
-from urh.signalprocessing.IQArray import IQArray
-from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.MessageItem import MessageItem
@@ -25,6 +23,7 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
 

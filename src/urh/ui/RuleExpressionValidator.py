@@ -1,8 +1,8 @@
 from PySide2.QtGui import QValidator
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 
 class RuleExpressionValidator(QValidator):
-    validation_status_changed = pyqtSignal(QValidator.State, str)
+    validation_status_changed = Signal(QValidator.State, str)
 
     def __init__(self, sim_expression_parser, is_formula=True, parent=None):
         super().__init__(parent)

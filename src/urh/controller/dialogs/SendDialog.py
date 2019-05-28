@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QBrush, QColor, QIcon, QPen
 from PySide2.QtWidgets import QMessageBox
 
@@ -92,7 +92,7 @@ class SendDialog(SendRecvDialog):
                                     device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)
         self._create_device_connects()
 
-    @pyqtSlot()
+    @Slot()
     def on_graphics_view_save_as_clicked(self):
         filename = FileOperator.get_save_file_name("signal.complex")
         if filename:
@@ -106,7 +106,7 @@ class SendDialog(SendRecvDialog):
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
 
-    @pyqtSlot()
+    @Slot()
     def on_signal_data_edited(self):
         signal = self.scene_manager.signal
         self.ui.progressBarSample.setMaximum(signal.num_samples)
@@ -114,7 +114,7 @@ class SendDialog(SendRecvDialog):
         self.scene_manager.init_scene()
         self.ui.graphicsViewSend.redraw_view()
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         super().on_start_clicked()
         if self.ui.progressBarSample.value() >= self.ui.progressBarSample.maximum() - 1:
@@ -125,12 +125,12 @@ class SendDialog(SendRecvDialog):
         else:
             self.device.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_stop_clicked(self):
         super().on_stop_clicked()
         self.on_clear_clicked()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_stopped(self):
         super().on_device_stopped()
         self.ui.btnStart.setIcon(QIcon.fromTheme("media-playback-start"))
@@ -138,7 +138,7 @@ class SendDialog(SendRecvDialog):
         self.ui.btnStart.setToolTip("Start sending")
         self.device_is_sending = False
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         super().on_device_started()
         self.device_is_sending = True
@@ -147,7 +147,7 @@ class SendDialog(SendRecvDialog):
         self.ui.btnStart.setText("Pause")
         self.set_device_ui_items_enabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         self._update_send_indicator(0)
         self.reset()

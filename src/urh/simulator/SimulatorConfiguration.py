@@ -18,19 +18,19 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 from urh.util.ProjectManager import ProjectManager
 
-from PySide2.QtCore import pyqtSignal, QObject
+from PySide2.QtCore import Signal, QObject
 import xml.etree.ElementTree as ET
 
 
 class SimulatorConfiguration(QObject):
-    participants_changed = pyqtSignal()
-    item_dict_updated = pyqtSignal()
-    active_participants_updated = pyqtSignal()
+    participants_changed = Signal()
+    item_dict_updated = Signal()
+    active_participants_updated = Signal()
 
-    items_deleted = pyqtSignal(list)
-    items_updated = pyqtSignal(list)
-    items_moved = pyqtSignal(list)
-    items_added = pyqtSignal(list)
+    items_deleted = Signal(list)
+    items_updated = Signal(list)
+    items_moved = Signal(list)
+    items_added = Signal(list)
 
     def __init__(self, project_manager: ProjectManager):
         super().__init__()

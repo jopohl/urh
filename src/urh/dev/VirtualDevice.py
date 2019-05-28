@@ -2,7 +2,7 @@ import time
 from enum import Enum
 
 import numpy as np
-from PySide2.QtCore import pyqtSignal, QObject
+from PySide2.QtCore import Signal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler
@@ -22,12 +22,12 @@ class VirtualDevice(QObject):
     Wrapper class for providing sending methods for grc and native devices
 
     """
-    started = pyqtSignal()
-    stopped = pyqtSignal()
-    sender_needs_restart = pyqtSignal()
+    started = Signal()
+    stopped = Signal()
+    sender_needs_restart = Signal()
 
-    fatal_error_occurred = pyqtSignal(str)
-    ready_for_action = pyqtSignal()
+    fatal_error_occurred = Signal(str)
+    ready_for_action = Signal()
 
     continuous_send_msg = "Continuous send mode is not supported for GNU Radio backend. " \
                           "You can change the configured device backend in options."

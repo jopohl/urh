@@ -1,6 +1,6 @@
 import os
 
-from PySide2.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
+from PySide2.QtCore import QModelIndex, Slot, QFileInfo, Signal, QUrl
 from PySide2.QtGui import QContextMenuEvent, QIcon, QDesktopServices
 from PySide2.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
@@ -9,7 +9,7 @@ from urh.util import util
 
 
 class DirectoryTreeView(QTreeView):
-    directory_open_wanted = pyqtSignal(str)
+    directory_open_wanted = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -76,11 +76,11 @@ class DirectoryTreeView(QTreeView):
         menu = self.create_context_menu()
         menu.exec_(self.mapToGlobal(event.pos()))
 
-    @pyqtSlot()
+    @Slot()
     def on_open_action_triggered(self):
         self.directory_open_wanted.emit(self.model().get_file_path(self.currentIndex()))
 
-    @pyqtSlot(QModelIndex)
+    @Slot(QModelIndex)
     def on_double_clicked(self, index: QModelIndex):
         file_path = self.model().get_file_path(index)  # type: str
 
@@ -92,7 +92,7 @@ class DirectoryTreeView(QTreeView):
             d = util.create_textbox_dialog(content, file_path, self)
             d.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_open_explorer_action_triggered(self):
         file_path = self.model().get_file_path(self.rootIndex())
         QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))

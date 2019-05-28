@@ -10,6 +10,7 @@ from urh import constants
 from urh.cythonext import path_creator, signal_functions
 from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.ZoomableScene import ZoomableScene
+from urh.util import util
 from urh.util.Formatter import Formatter
 
 
@@ -53,7 +54,7 @@ class Modulator(object):
 
     @staticmethod
     def get_dtype():
-        dtype_str = constants.SETTINGS.value("modulation_dtype", "float32", str)
+        dtype_str = util.read_setting("modulation_dtype", "float32", str)
         if dtype_str == "int8":
             return np.int8
         elif dtype_str == "int16":

@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
+from PySide2.QtCore import Qt, QRect, Signal, Slot
 from PySide2.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
     QContextMenuEvent, QIcon
 from PySide2.QtWidgets import QActionGroup, QInputDialog
@@ -10,7 +10,7 @@ from urh.ui.views.TableView import TableView
 
 
 class GeneratorTableView(TableView):
-    encodings_updated = pyqtSignal()
+    encodings_updated = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -186,21 +186,21 @@ class GeneratorTableView(TableView):
 
         return menu
 
-    @pyqtSlot()
+    @Slot()
     def on_duplicate_action_triggered(self):
         self.model().duplicate_rows(self.selected_rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_action_triggered(self):
         self.model().clear()
 
-    @pyqtSlot()
+    @Slot()
     def on_encoding_action_triggered(self):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.encoding_actions[self.sender()]
         self.encodings_updated.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_add_message_action_triggered(self):
         row = self.rowAt(self.context_menu_pos.y())
         num_bits, ok = QInputDialog.getInt(self, self.tr("How many bits shall the new message have?"),

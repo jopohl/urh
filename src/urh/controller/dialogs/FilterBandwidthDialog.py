@@ -1,9 +1,10 @@
-from PySide2.QtCore import pyqtSlot, Qt
+from PySide2.QtCore import Slot, Qt
 from PySide2.QtWidgets import QDialog, QLabel, QRadioButton
 
 from urh import constants
 from urh.signalprocessing.Filter import Filter
 from urh.ui.ui_filter_bandwidth_dialog import Ui_DialogFilterBandwidth
+from urh.util import util
 
 
 class FilterBandwidthDialog(QDialog):
@@ -13,8 +14,8 @@ class FilterBandwidthDialog(QDialog):
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.Window)
 
-        bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
-        custom_bw = constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)
+        bw_type = util.read_setting("bandpass_filter_bw_type", "Medium", str)
+        custom_bw = util.read_setting("bandpass_filter_custom_bw", 0.1, float)
 
         for item in dir(self.ui):
             item = getattr(self.ui, item)
@@ -46,19 +47,19 @@ class FilterBandwidthDialog(QDialog):
                 return radio_button
         return None
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_spin_box_custom_bandwidth_value_changed(self, bw: float):
         self.ui.spinBoxCustomKernelLength.blockSignals(True)
         self.ui.spinBoxCustomKernelLength.setValue(Filter.get_filter_length_from_bandwidth(bw))
         self.ui.spinBoxCustomKernelLength.blockSignals(False)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spin_box_custom_kernel_length_value_changed(self, filter_len: int):
         self.ui.doubleSpinBoxCustomBandwidth.blockSignals(True)
         self.ui.doubleSpinBoxCustomBandwidth.setValue(Filter.get_bandwidth_from_filter_length(filter_len))
         self.ui.doubleSpinBoxCustomBandwidth.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_accepted(self):
         if self.checked_radiobutton is not None:
             bw_type = self.checked_radiobutton.objectName().replace("radioButton", "").replace("_", " ")

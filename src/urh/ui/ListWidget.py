@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
+from PySide2.QtCore import Qt, QEvent, Signal, Slot
 from PySide2.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
 from PySide2.QtWidgets import QListWidget, QMenu
 
@@ -6,8 +6,8 @@ from urh import constants
 
 
 class ListWidget(QListWidget):
-    internalMove = pyqtSignal()
-    deleteElement = pyqtSignal()
+    internalMove = Signal()
+    deleteElement = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -72,7 +72,7 @@ class ListWidget(QListWidget):
         menu.exec_(self.mapToGlobal(event.pos()))
         self.context_menu_pos = None
 
-    @pyqtSlot()
+    @Slot()
     def on_rm_action_triggered(self):
         item = self.indexAt(self.context_menu_pos).row()
         item_name = self.item(item).text()
@@ -80,7 +80,7 @@ class ListWidget(QListWidget):
         self.takeItem(item)
         self.deleteElement.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_disable_function_triggered(self):
         item = self.indexAt(self.context_menu_pos).row()
         item_name = self.item(item).text()
@@ -92,7 +92,7 @@ class ListWidget(QListWidget):
         self.insertItem(item, item_name)
         self.internalMove.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_all_action_triggered(self):
         while self.count() > 0:
             self.takeItem(0)

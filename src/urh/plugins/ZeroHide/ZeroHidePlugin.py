@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import QAction, QUndoStack
 
+from urh.util import util
 from ..Plugin import ProtocolPlugin
 from ..ZeroHide.ZeroHideAction import ZeroHideAction
 
@@ -8,7 +9,7 @@ class ZeroHidePlugin(ProtocolPlugin):
     def __init__(self):
         super().__init__(name="ZeroHide")
 
-        self.following_zeros = 5 if 'following_zeros' not in self.qsettings.allKeys() else self.qsettings.value('following_zeros', type=int)
+        self.following_zeros = 5 if 'following_zeros' not in self.qsettings.allKeys() else util.read_setting('following_zeros', 0, type=int)
         self.undo_stack = None
         self.command = None
         self.zero_hide_offsets = dict()

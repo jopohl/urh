@@ -4,7 +4,7 @@ import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
-from PySide2.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
+from PySide2.QtCore import Signal, QPoint, Qt, QMimeData, Slot, QTimer
 from PySide2.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
 from PySide2.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
@@ -36,15 +36,15 @@ def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
 
 
 class SignalFrame(QFrame):
-    closed = pyqtSignal(QWidget)
-    signal_created = pyqtSignal(IQSignal)
-    drag_started = pyqtSignal(QPoint)
-    frame_dropped = pyqtSignal(QPoint)
-    files_dropped = pyqtSignal(list)
-    not_show_again_changed = pyqtSignal()
-    signal_drawing_finished = pyqtSignal()
-    apply_to_all_clicked = pyqtSignal(IQSignal)
-    sort_action_clicked = pyqtSignal()
+    closed = Signal(QWidget)
+    signal_created = Signal(IQSignal)
+    drag_started = Signal(QPoint)
+    frame_dropped = Signal(QPoint)
+    files_dropped = Signal(list)
+    not_show_again_changed = Signal()
+    signal_drawing_finished = Signal()
+    apply_to_all_clicked = Signal(IQSignal)
+    sort_action_clicked = Signal()
 
     @property
     def proto_view(self):
@@ -339,15 +339,15 @@ class SignalFrame(QFrame):
         except ZeroDivisionError:
             pass
 
-    @pyqtSlot()
+    @Slot()
     def on_slider_fft_window_size_value_changed(self):
         self.spectrogram_update_timer.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_slider_spectrogram_min_value_changed(self):
         self.spectrogram_update_timer.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_slider_spectrogram_max_value_changed(self):
         self.spectrogram_update_timer.start()
 
@@ -388,8 +388,7 @@ class SignalFrame(QFrame):
             Errors.empty_selection()
 
     def my_close(self):
-        settings = constants.SETTINGS
-        not_show = settings.value('not_show_close_dialog', False, type=bool)
+        not_show = util.read_setting('not_show_close_dialog', False, type=bool)
 
         if not not_show:
             cb = QCheckBox("Do not show this again.")
@@ -402,7 +401,7 @@ class SignalFrame(QFrame):
             reply = msgbox.exec()
 
             not_show_again = bool(cb.isChecked())
-            settings.setValue("not_show_close_dialog", not_show_again)
+            constants.SETTINGS.setValue("not_show_close_dialog", not_show_again)
             self.not_show_again_changed.emit()
             if reply != QMessageBox.Yes:
                 return
@@ -615,26 +614,26 @@ class SignalFrame(QFrame):
         self.ui.spinBoxXZoom.setValue(int(graphic_view.sceneRect().width() / graphic_view.view_rect().width() * 100))
         self.ui.spinBoxXZoom.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_signal_zoomed(self):
         self.__handle_graphic_view_zoomed(self.ui.gvSignal)
 
-    @pyqtSlot()
+    @Slot()
     def on_spectrum_zoomed(self):
         self.__handle_graphic_view_zoomed(self.ui.gvSpectrogram)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_x_zoom_value_changed(self, value: int):
         graphic_view = self.ui.gvSpectrogram if self.spectrogram_is_active else self.ui.gvSignal
         zoom_factor = value / 100
         current_factor = graphic_view.sceneRect().width() / graphic_view.view_rect().width()
         graphic_view.zoom(zoom_factor / current_factor)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_close_signal_clicked(self):
         self.my_close()
 
-    @pyqtSlot()
+    @Slot()
     def on_set_noise_in_graphic_view_clicked(self):
         self.setCursor(Qt.WaitCursor)
         start = self.ui.gvSignal.selection_area.x
@@ -645,7 +644,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
-    @pyqtSlot()
+    @Slot()
     def on_noise_threshold_changed(self):
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         minimum = self.signal.noise_min_plot
@@ -654,7 +653,7 @@ class SignalFrame(QFrame):
             # Draw Noise only in Analog View
             self.ui.gvSignal.scene().draw_noise_area(minimum, maximum - minimum)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_selection_start_value_changed(self, value: int):
         if self.spectrogram_is_active:
             self.ui.gvSpectrogram.set_vertical_selection(y=self.ui.gvSpectrogram.sceneRect().height() - value)
@@ -665,7 +664,7 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_selection_size_changed()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_selection_end_value_changed(self, value: int):
         if self.spectrogram_is_active:
             self.ui.gvSpectrogram.set_vertical_selection(h=self.ui.spinBoxSelectionStart.value() - value)
@@ -676,13 +675,13 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.selection_area.finished = True
             self.ui.gvSignal.emit_selection_size_changed()
 
-    @pyqtSlot()
+    @Slot()
     def on_protocol_updated(self):
         self.ui.gvSignal.redraw_view()  # Participants may have changed
         self.ui.txtEdProto.setEnabled(True)
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
 
-    @pyqtSlot(float)
+    @Slot(float)
     def update_legend(self, y_sep):
         if self.ui.gvLegend.isVisible():
             self.ui.gvLegend.y_sep = y_sep
@@ -691,11 +690,11 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.setValue(-y_sep)
         self.ui.spinBoxCenterOffset.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def handle_protocol_sync_changed(self):
         self.sync_protocol = self.ui.chkBoxSyncSelection.isChecked()
 
-    @pyqtSlot()
+    @Slot()
     def set_protocol_visibility(self):
         checked = self.ui.chkBoxShowProtocol.isChecked()
 
@@ -710,7 +709,7 @@ class SignalFrame(QFrame):
             self.ui.chkBoxSyncSelection.hide()
             self.ui.cbProtoView.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_cb_signal_view_index_changed(self):
         self.setCursor(Qt.WaitCursor)
 
@@ -743,7 +742,7 @@ class SignalFrame(QFrame):
 
         self.unsetCursor()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_autodetect_clicked(self):
         self.ui.btnAutoDetect.setEnabled(False)
         self.setCursor(Qt.WaitCursor)
@@ -755,7 +754,7 @@ class SignalFrame(QFrame):
             Errors.generic_error(self.tr("Autodetection failed"),
                                  self.tr("Failed to autodetect parameters for this signal."))
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
@@ -773,7 +772,7 @@ class SignalFrame(QFrame):
         dialog.show()
         dialog.graphics_view.show_full_scene(reinitialize=True)
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def update_selection_area(self, start, end):
         self.update_number_selected_samples()
         self.ui.spinBoxSelectionStart.blockSignals(True)
@@ -783,17 +782,17 @@ class SignalFrame(QFrame):
         self.ui.spinBoxSelectionEnd.setValue(end)
         self.ui.spinBoxSelectionEnd.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def refresh_protocol(self):
         self.show_protocol(refresh=True)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combo_box_proto_view_index_changed(self, index: int):
         old_view = self.ui.txtEdProto.cur_view
         self.ui.txtEdProto.cur_view = index
         self.show_protocol(old_view=old_view)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def set_qad_center(self, th):
         self.ui.spinBoxCenterOffset.setValue(th)
         self.ui.spinBoxCenterOffset.editingFinished.emit()
@@ -836,7 +835,7 @@ class SignalFrame(QFrame):
         self.protocol_selection_is_updateable = True
         self.update_protocol_selection_from_roi()
 
-    @pyqtSlot()
+    @Slot()
     def update_roi_from_protocol_selection(self):
         text_edit = self.ui.txtEdProto
         start_pos, end_pos = text_edit.textCursor().selectionStart(), text_edit.textCursor().selectionEnd()
@@ -914,11 +913,11 @@ class SignalFrame(QFrame):
         start, end = roi.x, roi.x + roi.width
         self.ui.gvSignal.zoom_to_selection(start, end)
 
-    @pyqtSlot()
+    @Slot()
     def start_proto_selection_timer(self):
         self.proto_selection_timer.start()
 
-    @pyqtSlot()
+    @Slot()
     def update_protocol_selection_from_roi(self):
         protocol = self.proto_analyzer
 
@@ -991,7 +990,7 @@ class SignalFrame(QFrame):
         self.update_number_selected_samples()
         self.on_slider_y_scale_value_changed()
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_signal_qad_center_changed(self, qad_center):
         self.ui.gvSignal.y_sep = -qad_center
         self.ui.gvLegend.y_sep = -qad_center
@@ -1045,12 +1044,12 @@ class SignalFrame(QFrame):
         if not self.spectrogram_is_active:
             self.ui.gvSignal.zoom(new_width / old_width, zoom_to_mouse_cursor=False)
 
-    @pyqtSlot()
+    @Slot()
     def on_info_btn_clicked(self):
         sdc = SignalDetailsDialog(self.signal, self)
         sdc.show()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_modulation_type_index_changed(self, index: int):
         if index != self.signal.modulation_type:
             modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
@@ -1068,7 +1067,7 @@ class SignalFrame(QFrame):
 
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
-    @pyqtSlot()
+    @Slot()
     def on_signal_data_changed_before_save(self):
         font = self.ui.lineEditSignalName.font()
         self.ui.gvSignal.auto_fit_on_resize_is_blocked = True
@@ -1090,14 +1089,14 @@ class SignalFrame(QFrame):
 
         self.ui.lineEditSignalName.setFont(font)
 
-    @pyqtSlot()
+    @Slot()
     def on_gv_legend_resized(self):
         if self.ui.gvLegend.isVisible():
             self.ui.gvLegend.y_zoom_factor = self.ui.gvSignal.transform().m22()
             self.ui.gvLegend.refresh()
             self.ui.gvLegend.translate(0, 1)  # Resize verschiebt sonst Pfeile
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_show_hide_start_end_clicked(self):
         show = self.ui.btnShowHideStartEnd.isChecked()
         if show:
@@ -1113,7 +1112,7 @@ class SignalFrame(QFrame):
             except AttributeError:
                 pass
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_tolerance_editing_finished(self):
         if self.signal.tolerance != self.ui.spinBoxTolerance.value():
             self.ui.spinBoxTolerance.blockSignals(True)
@@ -1123,7 +1122,7 @@ class SignalFrame(QFrame):
             self.undo_stack.push(tolerance_action)
             self.ui.spinBoxTolerance.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_infolen_editing_finished(self):
         if self.signal.bit_len != self.ui.spinBoxInfoLen.value():
             self.ui.spinBoxInfoLen.blockSignals(True)
@@ -1133,7 +1132,7 @@ class SignalFrame(QFrame):
             self.undo_stack.push(bitlen_action)
             self.ui.spinBoxInfoLen.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_center_editing_finished(self):
         if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
             self.ui.spinBoxCenterOffset.blockSignals(True)
@@ -1142,13 +1141,13 @@ class SignalFrame(QFrame):
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
 
-    @pyqtSlot()
+    @Slot()
     def refresh(self, draw_full_signal=False):
         self.refresh_signal(draw_full_signal=draw_full_signal)
         self.refresh_signal_information(block=True)
         self.show_protocol(refresh=True)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_filter_clicked(self):
         if self.apply_filter_to_selection_only.isChecked():
             start, end = self.ui.gvSignal.selection_area.start, self.ui.gvSignal.selection_area.end
@@ -1159,28 +1158,28 @@ class SignalFrame(QFrame):
                                          dsp_filter=self.dsp_filter, protocol=self.proto_analyzer)
         self.undo_stack.push(filter_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_configure_filter_action_triggered(self):
         self.filter_dialog.set_dsp_filter_status(self.dsp_filter.filter_type)
         self.filter_dialog.exec()
 
-    @pyqtSlot(Filter)
+    @Slot(Filter)
     def on_filter_dialog_filter_accepted(self, dsp_filter: Filter):
         if dsp_filter is not None:
             self.dsp_filter = dsp_filter
             self.set_filter_button_caption()
 
-    @pyqtSlot()
+    @Slot()
     def on_spectrogram_update_timer_timeout(self):
         self.draw_spectrogram(show_full_scene=True)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_gv_spectrogram_y_scale_changed(self, scale: float):
         self.ui.sliderYScale.blockSignals(True)
         self.ui.sliderYScale.setValue(self.ui.sliderYScale.value() * scale)
         self.ui.sliderYScale.blockSignals(False)
 
-    @pyqtSlot(float, float)
+    @Slot(float, float)
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
         self.filter_abort_wanted = False
 
@@ -1213,7 +1212,7 @@ class SignalFrame(QFrame):
         self.refresh_signal()
         self.ui.gvSpectrogram.scene_manager.samples_need_update = True
 
-    @pyqtSlot()
+    @Slot()
     def on_signal_sample_rate_changed(self):
         if self.spectrogram_is_active:
             self.__set_selected_bandwidth()
@@ -1222,7 +1221,7 @@ class SignalFrame(QFrame):
 
         self.show_protocol()  # update times
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_pause_threshold_edited(self, pause_threshold: int):
         if self.signal.pause_threshold != pause_threshold:
             pause_threshold_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
@@ -1230,7 +1229,7 @@ class SignalFrame(QFrame):
                                                            parameter_value=pause_threshold)
             self.undo_stack.push(pause_threshold_action)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_message_length_divisor_edited(self, message_length_divisor: int):
         if self.signal.message_length_divisor != message_length_divisor:
             message_length_divisor_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
@@ -1238,7 +1237,7 @@ class SignalFrame(QFrame):
                                                                   parameter_value=message_length_divisor)
             self.undo_stack.push(message_length_divisor_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_advanced_modulation_settings_clicked(self):
         dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor,
                                                  parent=self)
@@ -1246,7 +1245,7 @@ class SignalFrame(QFrame):
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         dialog.exec_()
 
-    @pyqtSlot()
+    @Slot()
     def on_export_fta_wanted(self):
         try:
             initial_name = self.signal.name + "-spectrogram.ft"

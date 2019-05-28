@@ -4,11 +4,12 @@ import threading
 import time
 
 import numpy as np
-from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtCore import Slot, Signal
 
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
+from urh.util import util
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
@@ -19,14 +20,14 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
     DATA_TYPE = np.float32
 
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
-    show_proto_sniff_dialog_clicked = pyqtSignal()
-    sending_status_changed = pyqtSignal(bool)
-    sending_stop_requested = pyqtSignal()
-    current_send_message_changed = pyqtSignal(int)
+    show_proto_sniff_dialog_clicked = Signal()
+    sending_status_changed = Signal(bool)
+    sending_stop_requested = Signal()
+    current_send_message_changed = Signal(int)
 
-    send_connection_established = pyqtSignal()
-    receive_server_started = pyqtSignal()
-    error_occurred = pyqtSignal(str)
+    send_connection_established = Signal()
+    receive_server_started = Signal()
+    error_occurred = Signal(str)
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
@@ -64,13 +65,13 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         :param raw_mode: If true, sending and receiving raw samples if false bits are received/sent
         """
         super().__init__(name="NetworkSDRInterface")
-        self.client_ip = self.qsettings.value("client_ip", defaultValue="127.0.0.1", type=str)
+        self.client_ip = util.read_setting("client_ip", "127.0.0.1", type=str)
         self.server_ip = ""
 
         self.samples_to_send = None  # set in virtual device constructor
 
-        self.client_port = self.qsettings.value("client_port", defaultValue=2222, type=int)
-        self.server_port = self.qsettings.value("server_port", defaultValue=4444, type=int)
+        self.client_port = util.read_setting("client_port", 2222, type=int)
+        self.server_port = util.read_setting("server_port", 4444, type=int)
 
         self.is_in_spectrum_mode = spectrum
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer
@@ -369,7 +370,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.server_port = self.settings_frame.spinBoxServerPort.value()
         self.qsettings.setValue('server_port', str(self.server_port))
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_lopenprotosniffer_link_activated(self, link: str):
         if link == "open_proto_sniffer":
             self.show_proto_sniff_dialog_clicked.emit()

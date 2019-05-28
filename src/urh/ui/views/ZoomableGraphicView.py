@@ -1,4 +1,4 @@
-from PySide2.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
+from PySide2.QtCore import QTimer, Slot, Qt, Signal
 from PySide2.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent
 from PySide2.QtWidgets import QAction, QMenu
 
@@ -12,7 +12,7 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     # argument is x zoom factor
     # if argument is -1, then show_full_scene was triggered during zoom
-    zoomed = pyqtSignal(float)
+    zoomed = Signal(float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -187,23 +187,23 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.redraw_timer.stop()
         super().eliminate()
 
-    @pyqtSlot()
+    @Slot()
     def on_signal_zoomed(self):
         self.redraw_timer.start(30)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_in_action_triggered(self):
         self.zoom(1.1)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_out_action_triggered(self):
         self.zoom(0.9)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_original_action_triggered(self):
         self.show_full_scene(reinitialize=False)
         self.zoomed.emit(-1)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_action_triggered(self):
         self.zoom_to_selection(self.selection_area.start, self.selection_area.end)

@@ -102,7 +102,7 @@ def main():
     from urh.controller.MainController import MainController
     from urh import constants
 
-    if constants.SETTINGS.value("theme_index", 0, int) > 0:
+    if util.read_setting("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(["URH"] + sys.argv[1:])
@@ -110,7 +110,7 @@ def main():
 
     util.set_icon_theme()
 
-    font_size = constants.SETTINGS.value("font_size", 0, int)
+    font_size = util.read_setting("font_size", 0, int)
     if font_size > 0:
         font = app.font()
         font.setPointSize(font_size)
@@ -118,10 +118,10 @@ def main():
 
     constants.SETTINGS.setValue("default_theme", app.style().objectName())
 
-    if constants.SETTINGS.value("theme_index", 0, int) > 0:
+    if util.read_setting("theme_index", 0, int) > 0:
         app.setStyle(QStyleFactory.create("Fusion"))
 
-        if constants.SETTINGS.value("theme_index", 0, int) == 2:
+        if util.read_setting("theme_index", 0, int) == 2:
             palette = QPalette()
             background_color = QColor(56, 60, 74)
             text_color = QColor(211, 218, 227).lighter()

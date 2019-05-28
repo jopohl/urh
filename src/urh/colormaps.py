@@ -1,6 +1,7 @@
 import numpy as np
 
 from urh import constants
+from urh.util import util
 
 magma = [[0.001462, 0.000466, 0.013866],
          [0.002258, 0.001295, 0.018331],
@@ -1039,7 +1040,7 @@ chosen_colormap_numpy_bgra = None
 
 
 def read_selected_colormap_name_from_settings() -> str:
-    selected = constants.SETTINGS.value("spectrogram_colormap", defaultValue=default_colormap, type=str)
+    selected = util.read_setting("spectrogram_colormap", default_colormap)
     if selected not in maps.keys():
         selected = default_colormap
     return selected

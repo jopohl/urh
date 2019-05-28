@@ -1,12 +1,12 @@
 from PySide2.QtGui import QMouseEvent
-from PySide2.QtCore import Qt, pyqtSlot, QModelIndex, pyqtSignal
+from PySide2.QtCore import Qt, Slot, QModelIndex, Signal
 
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
 
 
 class SimulatorLabelTableView(ProtocolLabelTableView):
-    item_link_clicked = pyqtSignal(int, int)
+    item_link_clicked = Signal(int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -24,7 +24,7 @@ class SimulatorLabelTableView(ProtocolLabelTableView):
         else:
             self.unsetCursor()
 
-    @pyqtSlot(QModelIndex)
+    @Slot(QModelIndex)
     def on_clicked(self, index: QModelIndex):
         if self.model().link_index(index):
             self.item_link_clicked.emit(index.row(), index.column())

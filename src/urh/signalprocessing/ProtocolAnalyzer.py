@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 import numpy as np
-from PySide2.QtCore import QObject, pyqtSignal, Qt
+from PySide2.QtCore import QObject, Signal, Qt
 
 from urh import constants
 from urh.cythonext import signal_functions
@@ -16,18 +16,18 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.IQSignal import IQSignal
-from urh.util import util as urh_util
+from urh.util import util as urh_util, util
 from urh.util.Logger import logger
 
 
 class ProtocolAnalyzerSignals(QObject):
-    protocol_updated = pyqtSignal()
-    show_state_changed = pyqtSignal()
-    sniff_device_errors_changed = pyqtSignal(str)
-    line_duplicated = pyqtSignal()
-    fuzzing_started = pyqtSignal(int)
-    current_fuzzing_message_changed = pyqtSignal(int)
-    fuzzing_finished = pyqtSignal()
+    protocol_updated = Signal()
+    show_state_changed = Signal()
+    sniff_device_errors_changed = Signal(str)
+    line_duplicated = Signal()
+    fuzzing_started = Signal(int)
+    current_fuzzing_message_changed = Signal(int)
+    fuzzing_finished = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -167,7 +167,7 @@ class ProtocolAnalyzer(object):
 
         :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
         """
-        time = constants.SETTINGS.value('show_pause_as_time', type=bool)
+        time = util.read_setting('show_pause_as_time', type=bool)
         if show_pauses and time and self.signal:
             srate = self.signal.sample_rate
         else:
@@ -178,7 +178,7 @@ class ProtocolAnalyzer(object):
                                             ) for msg in self.messages)
 
     def plain_to_html(self, view, show_pauses=True) -> str:
-        time = constants.SETTINGS.value('show_pause_as_time', type=bool)
+        time = util.read_setting('show_pause_as_time', type=bool)
         if show_pauses and time and self.signal:
             srate = self.signal.sample_rate
         else:

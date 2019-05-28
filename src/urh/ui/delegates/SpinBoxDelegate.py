@@ -1,4 +1,4 @@
-from PySide2.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PySide2.QtCore import QModelIndex, Slot, QAbstractItemModel, Qt
 from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
 
 
@@ -26,6 +26,6 @@ class SpinBoxDelegate(QStyledItemDelegate):
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         model.setData(index, editor.value(), Qt.EditRole)
 
-    @pyqtSlot()
+    @Slot()
     def valueChanged(self):
         self.commitData.emit(self.sender())

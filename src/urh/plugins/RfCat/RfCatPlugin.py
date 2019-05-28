@@ -3,9 +3,10 @@ from subprocess import PIPE, Popen
 from threading import Thread
 import time
 import numpy as np
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
+from urh.util import util
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh import constants
@@ -34,15 +35,15 @@ from urh import constants
 # cmd_showconfig = "print d.reprRadioConfig()"
 
 class RfCatPlugin(SDRPlugin):
-    rcv_index_changed = pyqtSignal(int, int) # int arguments are just for compatibility with native and grc backend
-    show_proto_sniff_dialog_clicked = pyqtSignal()
-    sending_status_changed = pyqtSignal(bool)
-    sending_stop_requested = pyqtSignal()
-    current_send_message_changed = pyqtSignal(int)
+    rcv_index_changed = Signal(int, int) # int arguments are just for compatibility with native and grc backend
+    show_proto_sniff_dialog_clicked = Signal()
+    sending_status_changed = Signal(bool)
+    sending_stop_requested = Signal()
+    current_send_message_changed = Signal(int)
 
     def __init__(self):
         super().__init__(name="RfCat")
-        self.rfcat_executable = self.qsettings.value("rfcat_executable", defaultValue="rfcat", type=str)
+        self.rfcat_executable = util.read_setting("rfcat_executable", "rfcat", type=str)
         self.rfcat_is_open = False
         self.initialized = False
         self.ready = True
@@ -180,7 +181,7 @@ class RfCatPlugin(SDRPlugin):
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
 
-        repeats_from_settings = constants.SETTINGS.value('num_sending_repeats', type=int)
+        repeats_from_settings = util.read_setting('num_sending_repeats', 0, type=int)
         repeats = repeats_from_settings if repeats_from_settings > 0 else -1
         while (repeats > 0 or repeats == -1) and self.__sending_interrupt_requested == False:
             logger.debug("Start iteration ({} left)".format(repeats if repeats > 0 else "infinite"))

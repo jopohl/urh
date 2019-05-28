@@ -1,6 +1,6 @@
 import array
 
-from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, Signal
 from PySide2.QtGui import QFont
 
 from urh import constants
@@ -12,10 +12,10 @@ from urh.util import util
 
 
 class LabelValueTableModel(QAbstractTableModel):
-    protolabel_visibility_changed = pyqtSignal(ProtocolLabel)
-    protocol_label_name_edited = pyqtSignal()
-    label_removed = pyqtSignal(ProtocolLabel)
-    label_color_changed = pyqtSignal(ProtocolLabel)
+    protolabel_visibility_changed = Signal(ProtocolLabel)
+    protocol_label_name_edited = Signal()
+    label_removed = Signal(ProtocolLabel)
+    label_color_changed = Signal(ProtocolLabel)
 
     header_labels = ["Name", "Color ", "Display format", "Order [Bit/Byte]", "Value"]
 

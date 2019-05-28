@@ -1,7 +1,7 @@
 import os
 
 from PySide2.QtCore import QRegExp, Qt
-from PySide2.QtCore import pyqtSlot
+from PySide2.QtCore import Slot
 from PySide2.QtGui import QRegExpValidator, QCloseEvent
 from PySide2.QtWidgets import QDialog, QCompleter, QDirModel
 
@@ -11,7 +11,7 @@ from urh.dev import config
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.signalprocessing.Participant import Participant
 from urh.ui.ui_project import Ui_ProjectDialog
-from urh.util import FileOperator
+from urh.util import FileOperator, util
 from urh.util.Errors import Errors
 from urh.util.ProjectManager import ProjectManager
 
@@ -77,7 +77,7 @@ class ProjectDialog(QDialog):
         self.on_line_edit_path_text_edited()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -120,31 +120,31 @@ class ProjectDialog(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_spin_box_sample_rate_value_changed(self, value: float):
         self.sample_rate = value
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_spin_box_frequency_value_changed(self, value: float):
         self.freq = value
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_spin_box_bandwidth_value_changed(self, value: float):
         self.bandwidth = value
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spin_box_gain_value_changed(self, value: int):
         self.gain = value
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_path_text_edited(self):
         self.set_path(self.ui.lineEdit_Path.text())
 
-    @pyqtSlot()
+    @Slot()
     def on_txt_edit_description_text_changed(self):
         self.description = self.ui.txtEdDescription.toPlainText()
 
-    @pyqtSlot()
+    @Slot()
     def on_button_box_accepted(self):
         self.path = os.path.realpath(self.path)
         if not os.path.exists(self.path):
@@ -161,24 +161,24 @@ class ProjectDialog(QDialog):
         self.committed = True
         self.accept()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_line_edit_broadcast_address_text_edited(self, value: str):
         self.broadcast_address_hex = value
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_select_path_clicked(self):
         directory = FileOperator.get_directory()
         if directory:
             self.set_path(directory)
 
-    @pyqtSlot(dict)
+    @Slot(dict)
     def set_recording_params_from_spectrum_analyzer_link(self, args: dict):
         self.ui.spinBoxFreq.setValue(args["frequency"])
         self.ui.spinBoxSampleRate.setValue(args["sample_rate"])
         self.ui.spinBoxBandwidth.setValue(args["bandwidth"])
         self.ui.spinBoxGain.setValue(args.get("gain", config.DEFAULT_GAIN))
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_spectrum_analyzer_link_activated(self, link: str):
         if link == "open_spectrum_analyzer":
             r = SpectrumDialogController(ProjectManager(None), parent=self)

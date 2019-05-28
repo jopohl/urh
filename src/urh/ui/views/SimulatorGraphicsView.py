@@ -1,6 +1,6 @@
 import copy
 
-from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtGui import QKeySequence, QIcon
 from PySide2.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
 
@@ -15,8 +15,8 @@ from urh.ui.SimulatorScene import SimulatorScene
 
 
 class SimulatorGraphicsView(QGraphicsView):
-    message_updated = pyqtSignal(SimulatorMessage)
-    consolidate_messages_clicked = pyqtSignal()
+    message_updated = Signal(SimulatorMessage)
+    consolidate_messages_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -57,7 +57,7 @@ class SimulatorGraphicsView(QGraphicsView):
     def scene(self) -> SimulatorScene:
         return super().scene()
 
-    @pyqtSlot()
+    @Slot()
     def on_add_message_action_triggered(self):
         num_bits, ok = QInputDialog.getInt(self,
                                            self.tr("How many bits shall the new message have?"),
@@ -84,65 +84,65 @@ class SimulatorGraphicsView(QGraphicsView):
                                            position=position)
         self.jump_to_item(message)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_rule_action_triggered(self):
         rule = self.scene().add_rule(self.context_menu_item, QAbstractItemView.BelowItem)
         if_cond = rule.children[0]
         self.jump_to_item(if_cond)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_goto_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
         ga = self.scene().add_goto_action(ref_item, position)
         self.jump_to_item(ga)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_sleep_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
         sa = self.scene().add_sleep_action(ref_item, position)
         self.jump_to_item(sa)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_counter_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
         ca = self.scene().add_counter_action(ref_item, position)
         self.jump_to_item(ca)
 
-    @pyqtSlot()
+    @Slot()
     def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
         position = QAbstractItemView.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.BelowItem
         pa = self.scene().add_trigger_command_action(ref_item, position)
         self.jump_to_item(pa)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_else_if_cond_action_triggered(self):
         rule = self.context_menu_item.parentItem().model_item
         cond = self.scene().add_rule_condition(rule, ConditionType.ELSE_IF)
         self.jump_to_item(cond)
 
-    @pyqtSlot()
+    @Slot()
     def on_add_else_cond_action_triggered(self):
         rule = self.context_menu_item.parentItem().model_item
         cond = self.scene().add_rule_condition(rule, ConditionType.ELSE)
         self.jump_to_item(cond)
 
-    @pyqtSlot()
+    @Slot()
     def on_delete_action_triggered(self):
         self.scene().delete_selected_items()
 
-    @pyqtSlot()
+    @Slot()
     def on_select_all_action_triggered(self):
         self.scene().select_all_items()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_all_action_triggered(self):
         self.scene().clear_all()
 
-    @pyqtSlot()
+    @Slot()
     def on_set_value_type_action_triggered(self):
         value_type_index = self.sender().data()
         for msg in self.scene().get_selected_messages():
@@ -151,28 +151,28 @@ class SimulatorGraphicsView(QGraphicsView):
                     lbl.value_type_index = value_type_index
             self.message_updated.emit(msg)
 
-    @pyqtSlot()
+    @Slot()
     def on_source_action_triggered(self):
         for msg in self.scene().get_selected_messages():
             if msg.destination != self.sender().data():
                 msg.source = self.sender().data()
                 self.message_updated.emit(msg)
 
-    @pyqtSlot()
+    @Slot()
     def on_destination_action_triggered(self):
         for msg in self.scene().get_selected_messages():
             if msg.source != self.sender().data():
                 msg.destination = self.sender().data()
                 self.message_updated.emit(msg)
 
-    @pyqtSlot()
+    @Slot()
     def on_swap_part_action_triggered(self):
         for msg in self.scene().get_selected_messages():
             if msg.destination != self.scene().simulator_config.broadcast_part:
                 msg.participant, msg.destination = msg.destination, msg.participant
                 self.message_updated.emit(msg)
 
-    @pyqtSlot()
+    @Slot()
     def on_consolidate_messages_action_triggered(self):
         self.consolidate_messages_clicked.emit()
 
@@ -347,7 +347,7 @@ class SimulatorGraphicsView(QGraphicsView):
         else:
             super().keyPressEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_pause_action_triggered(self):
         p = self.context_menu_item.model_item.pause if isinstance(self.context_menu_item, MessageItem) else 0
         pause, ok = QInputDialog.getInt(self, self.tr("Enter new pause"),
@@ -377,11 +377,11 @@ class SimulatorGraphicsView(QGraphicsView):
             vpa.setData(vp)
             vpa.triggered.connect(select_to_trigger)
 
-    @pyqtSlot()
+    @Slot()
     def on_copy_action_triggered(self):
         self.copied_items = self.scene().selectedItems()
 
-    @pyqtSlot()
+    @Slot()
     def on_paste_action_triggered(self):
         for item in self.copied_items:
             assert isinstance(item, GraphicsItem)

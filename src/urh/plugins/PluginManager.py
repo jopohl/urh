@@ -3,6 +3,7 @@ import os
 
 from urh import constants
 from urh.plugins.Plugin import Plugin, ProtocolPlugin
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -19,7 +20,6 @@ class PluginManager(object):
         """ :rtype: list of Plugin """
         result = []
         plugin_dirs = [d for d in os.listdir(self.plugin_path) if os.path.isdir(os.path.join(self.plugin_path, d))]
-        settings = constants.SETTINGS
 
         for d in plugin_dirs:
             if d == "__pycache__":
@@ -29,7 +29,10 @@ class PluginManager(object):
                 plugin = class_module()
                 plugin.plugin_path = os.path.join(self.plugin_path, plugin.name)
                 plugin.load_description()
-                plugin.enabled = settings.value(plugin.name, type=bool) if plugin.name in settings.allKeys() else False
+                if plugin.name in constants.SETTINGS.allKeys():
+                    plugin.enabled = util.read_setting(plugin.name, False, type=bool)
+                else:
+                    plugin.enabled = False
                 result.append(plugin)
             except ImportError as e:
                 logger.warning("Could not load plugin {0} ({1})".format(d, e))

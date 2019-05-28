@@ -1,6 +1,6 @@
 import numpy
-from PySide2.QtCore import QItemSelection, pyqtSlot
-from PySide2.QtCore import pyqtSignal, Qt
+from PySide2.QtCore import QItemSelection, Slot
+from PySide2.QtCore import Signal, Qt
 from PySide2.QtGui import QKeySequence, QDropEvent, QIcon
 from PySide2.QtWidgets import QHeaderView, QAction, QActionGroup
 
@@ -11,17 +11,17 @@ from urh.ui.views.TableView import TableView
 
 
 class ProtocolTableView(TableView):
-    show_interpretation_clicked = pyqtSignal(int, int, int, int)
-    selection_changed = pyqtSignal()
-    protocol_view_change_clicked = pyqtSignal(int)
-    row_visibility_changed = pyqtSignal()
-    writeable_changed = pyqtSignal(bool)
-    crop_sync_clicked = pyqtSignal()
-    revert_sync_cropping_wanted = pyqtSignal()
-    files_dropped = pyqtSignal(list)
-    participant_changed = pyqtSignal()
-    new_messagetype_clicked = pyqtSignal(list)  # list of protocol messages
-    messagetype_selected = pyqtSignal(MessageType, list)
+    show_interpretation_clicked = Signal(int, int, int, int)
+    selection_changed = Signal()
+    protocol_view_change_clicked = Signal(int)
+    row_visibility_changed = Signal()
+    writeable_changed = Signal(bool)
+    crop_sync_clicked = Signal()
+    revert_sync_cropping_wanted = Signal()
+    files_dropped = Signal(list)
+    participant_changed = Signal()
+    new_messagetype_clicked = Signal(list)  # list of protocol messages
+    messagetype_selected = Signal(MessageType, list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -190,7 +190,7 @@ class ProtocolTableView(TableView):
 
         return menu
 
-    @pyqtSlot()
+    @Slot()
     def set_ref_message(self):
         if self.model().refindex == -1:
             return
@@ -227,43 +227,43 @@ class ProtocolTableView(TableView):
     def show_rows(self, rows=None):
         self.set_row_visibility_status(show=True, rows=rows)
 
-    @pyqtSlot()
+    @Slot()
     def hide_rows(self, row=None):
         self.set_row_visibility_status(show=False, rows=row)
 
-    @pyqtSlot()
+    @Slot()
     def on_bit_action_triggered(self):
         self.protocol_view_change_clicked.emit(0)
 
-    @pyqtSlot()
+    @Slot()
     def on_hex_action_triggered(self):
         self.protocol_view_change_clicked.emit(1)
 
-    @pyqtSlot()
+    @Slot()
     def on_ascii_action_triggered(self):
         self.protocol_view_change_clicked.emit(2)
 
-    @pyqtSlot()
+    @Slot()
     def on_none_participant_action_triggered(self):
         for message in self.selected_messages:
             message.participant = None
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_action_triggered(self):
         for message in self.selected_messages:
             message.participant = self.participant_actions[self.sender()]
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_message_type_action_triggered(self):
         self.messagetype_selected.emit(self.message_type_actions[self.sender()], self.selected_messages)
 
-    @pyqtSlot()
+    @Slot()
     def on_new_message_type_action_triggered(self):
         self.new_messagetype_clicked.emit(self.selected_messages)
 
-    @pyqtSlot()
+    @Slot()
     def on_show_in_interpretation_action_triggered(self):
         min_row, max_row, start, end = self.selection_range()
 
@@ -273,7 +273,7 @@ class ProtocolTableView(TableView):
 
         self.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
 
-    @pyqtSlot()
+    @Slot()
     def on_show_row_action_triggered(self):
         for i in self.model().hidden_rows:
             self.showRow(i)
@@ -281,6 +281,6 @@ class ProtocolTableView(TableView):
         self.model().update()
         self.row_visibility_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_writeable_action_triggered(self):
         self.writeable_changed.emit(self.sender().isChecked())

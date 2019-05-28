@@ -1,11 +1,11 @@
-from PySide2.QtCore import Qt, pyqtSignal
+from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import QTableView, QApplication
 from PySide2.QtGui import QKeyEvent
 import numpy
 
 
 class FuzzingTableView(QTableView):
-    deletion_wanted = pyqtSignal(int, int)
+    deletion_wanted = Signal(int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)

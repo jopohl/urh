@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from PySide2.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
+from PySide2.QtCore import QTimer, Slot, Signal, Qt
 from PySide2.QtGui import QIcon, QCloseEvent
 from PySide2.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
@@ -24,11 +24,11 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorDialog(QDialog):
-    rx_parameters_changed = pyqtSignal(dict)
-    tx_parameters_changed = pyqtSignal(dict)
-    sniff_parameters_changed = pyqtSignal(dict)
-    open_in_analysis_requested = pyqtSignal(str)
-    rx_file_saved = pyqtSignal(str)
+    rx_parameters_changed = Signal(dict)
+    tx_parameters_changed = Signal(dict)
+    sniff_parameters_changed = Signal(dict)
+    open_in_analysis_requested = Signal(str)
+    rx_file_saved = Signal(str)
 
     def __init__(self, simulator_config, modulators,
                  expression_parser, project_manager: ProjectManager, signals: list = None,
@@ -129,7 +129,7 @@ class SimulatorDialog(QDialog):
 
         self.ui.textEditTranscript.setFont(util.get_monospace_font())
 
-        if constants.SETTINGS.value('default_view', 0, int) == 1:
+        if util.read_setting('default_view', 0, int) == 1:
             self.ui.radioButtonTranscriptHex.setChecked(True)
 
     def create_connects(self):
@@ -242,7 +242,7 @@ class SimulatorDialog(QDialog):
 
         super().closeEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_simulation_started(self):
         for i in range(3):
             self.ui.tabWidgetSimulatorSettings.setTabEnabled(i, False)
@@ -274,7 +274,7 @@ class SimulatorDialog(QDialog):
                 self.scene_manager.data_array = np.array([], dtype=rx_device.data_type)
             self.scene_manager.scene.addText("Could not generate RX preview.")
 
-    @pyqtSlot()
+    @Slot()
     def on_simulation_stopped(self):
         self.ui.tabWidgetSimulatorSettings.setTabEnabled(0, True)
         self.ui.tabWidgetSimulatorSettings.setTabEnabled(1, self.rx_needed)
@@ -286,19 +286,19 @@ class SimulatorDialog(QDialog):
         self.ui.btnStartStop.setText("Start")
         self.ui.checkBoxCaptureFullRX.setEnabled(True)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_log_all_clicked(self):
         self.simulator_scene.log_all_items(True)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_log_none_clicked(self):
         self.simulator_scene.log_all_items(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_toggle_clicked(self):
         self.simulator_scene.log_toggle_selected_items()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_log_clicked(self):
         file_path = QFileDialog.getSaveFileName(self, "Save log", "", "Log file (*.log)")
 
@@ -313,7 +313,7 @@ class SimulatorDialog(QDialog):
         except Exception as e:
             QMessageBox.critical(self, "Error saving log", e.args[0])
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_transcript_clicked(self):
         file_path = QFileDialog.getSaveFileName(self, "Save transcript", "", "Text file (*.txt)")
 
@@ -328,7 +328,7 @@ class SimulatorDialog(QDialog):
         except Exception as e:
             QMessageBox.critical(self, "Error saving transcript", e.args[0])
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_start_stop_clicked(self):
         if self.simulator.is_simulating:
             self.simulator.stop()
@@ -345,19 +345,19 @@ class SimulatorDialog(QDialog):
 
             self.simulator.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_timer_timeout(self):
         self.update_view()
         self.update_rx_graphics_view()
 
-    @pyqtSlot()
+    @Slot()
     def on_selected_rx_device_changed(self):
         dev_name = self.device_settings_rx_widget.ui.cbDevice.currentText()
         self.simulator.sniffer.device_name = dev_name
         self.device_settings_rx_widget.device = self.simulator.sniffer.rcv_device
         self.__set_rx_scene()
 
-    @pyqtSlot()
+    @Slot()
     def on_selected_tx_device_changed(self):
         old_name = self.simulator.sender.device_name
         try:
@@ -368,7 +368,7 @@ class SimulatorDialog(QDialog):
             self.device_settings_tx_widget.ui.cbDevice.setCurrentText(old_name)
             Errors.generic_error("Error occurred", str(e))
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_test_sniff_settings_clicked(self):
         def on_dialog_finished():
             self.device_settings_rx_widget.bootstrap(self.project_manager.simulator_rx_conf)
@@ -385,11 +385,11 @@ class SimulatorDialog(QDialog):
         psd.ui.btnAccept.hide()
         psd.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_radio_button_transcript_hex_clicked(self):
         self.update_transcript_view()
 
-    @pyqtSlot()
+    @Slot()
     def on_radio_button_transcript_bit_clicked(self):
         self.update_transcript_view()
 
@@ -407,12 +407,12 @@ class SimulatorDialog(QDialog):
 
             self.ui.graphicsViewPreview.setScene(self.scene_manager.scene)
 
-    @pyqtSlot()
+    @Slot()
     def on_checkbox_capture_full_rx_clicked(self):
         self.simulator.sniffer.rcv_device.resume_on_full_receive_buffer = not self.ui.checkBoxCaptureFullRX.isChecked()
         self.__set_rx_scene()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_rx_clicked(self):
         rx_device = self.simulator.sniffer.rcv_device
         if isinstance(rx_device.data, np.ndarray):
@@ -421,7 +421,7 @@ class SimulatorDialog(QDialog):
                 rx_device.data[:rx_device.current_index].tofile(filename)
                 self.rx_file_saved.emit(filename)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_open_in_analysis_clicked(self):
         text = self.ui.textEditTranscript.toPlainText()
         if len(text) > 0:

@@ -2,7 +2,7 @@ import csv
 
 import os
 import numpy as np
-from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtWidgets import QDialog, QInputDialog, QApplication, QCompleter, QDirModel, QFileDialog
 
 from urh.ui.ui_csv_wizard import Ui_DialogCSVImport
@@ -11,7 +11,7 @@ from urh.util.Errors import Errors
 
 
 class CSVImportDialog(QDialog):
-    data_imported = pyqtSignal(str, float)  # Complex Filename + Sample Rate
+    data_imported = Signal(str, float)  # Complex Filename + Sample Rate
 
 
     PREVIEW_ROWS = 100
@@ -164,12 +164,12 @@ class CSVImportDialog(QDialog):
 
         return 1 / (sum(durations) / len(durations))
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_filename_editing_finished(self):
         self.update_file()
         self.update_preview()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_choose_file_clicked(self):
         filename, _ = QFileDialog.getOpenFileName(self, self.tr("Choose file"), directory=FileOperator.RECENT_PATH,
                                                   filter="CSV files (*.csv);;All files (*.*)")
@@ -178,7 +178,7 @@ class CSVImportDialog(QDialog):
             self.ui.lineEditFilename.setText(filename)
             self.ui.lineEditFilename.editingFinished.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_separator_clicked(self):
         sep, ok = QInputDialog.getText(self, "Enter Separator", "Separator:", text=",")
         if ok and sep not in (self.ui.comboBoxCSVSeparator.itemText(i) for i in
@@ -188,24 +188,24 @@ class CSVImportDialog(QDialog):
             else:
                 Errors.generic_error("Invalid Separator", "Separator must be exactly one character.")
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_csv_separator_current_index_changed(self, index: int):
         self.update_preview()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_i_data_column_value_changed(self, value: int):
         self.update_preview()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_q_data_column_value_changed(self, value: int):
         self.update_preview()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_timestamp_value_changed(self, value: int):
         self.ui.tableWidgetPreview.setColumnHidden(self.COLUMNS["T"], value == 0)
         self.update_preview()
 
-    @pyqtSlot()
+    @Slot()
     def on_accepted(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
 

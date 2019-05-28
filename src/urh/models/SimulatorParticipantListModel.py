@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, QModelIndex, QAbstractListModel, pyqtSignal
+from PySide2.QtCore import Qt, QModelIndex, QAbstractListModel, Signal
 
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
@@ -6,7 +6,7 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 class SimulatorParticipantListModel(QAbstractListModel):
 
-    participant_simulate_changed = pyqtSignal(Participant)
+    participant_simulate_changed = Signal(Participant)
 
     def __init__(self, config: SimulatorConfiguration, parent=None):
         super().__init__(parent)

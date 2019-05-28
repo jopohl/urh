@@ -3,7 +3,7 @@ import traceback
 
 import numpy
 import numpy as np
-from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QFontMetrics
 from PySide2.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
@@ -157,13 +157,13 @@ class GeneratorTabController(QWidget):
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
 
-    @pyqtSlot()
+    @Slot()
     def refresh_tree(self):
         self.tree_model.beginResetModel()
         self.tree_model.endResetModel()
         self.ui.treeProtocols.expandAll()
 
-    @pyqtSlot()
+    @Slot()
     def refresh_table(self):
         self.table_model.update()
         self.ui.tableMessages.resize_columns()
@@ -171,7 +171,7 @@ class GeneratorTabController(QWidget):
         self.ui.btnSend.setEnabled(is_data_there)
         self.ui.btnGenerate.setEnabled(is_data_there)
 
-    @pyqtSlot()
+    @Slot()
     def refresh_label_list(self):
         self.label_list_model.message = self.selected_message
         self.label_list_model.update()
@@ -180,7 +180,7 @@ class GeneratorTabController(QWidget):
     def generator_undo_stack(self) -> QUndoStack:
         return self.table_model.undo_stack
 
-    @pyqtSlot()
+    @Slot()
     def on_selected_modulation_changed(self):
         cur_ind = self.ui.cBoxModulations.currentIndex()
         min_row, max_row, _, _ = self.ui.tableMessages.selection_range()
@@ -274,7 +274,7 @@ class GeneratorTabController(QWidget):
         return modulator_dialog, selected_message
 
     def set_modulation_profile_status(self):
-        visible = constants.SETTINGS.value("multiple_modulations", False, bool)
+        visible = util.read_setting("multiple_modulations", False, bool)
         self.ui.cBoxModulations.setVisible(visible)
 
     def init_rfcat_plugin(self):
@@ -283,7 +283,7 @@ class GeneratorTabController(QWidget):
         self.rfcat_plugin.current_send_message_changed.connect(self.on_send_message_changed)
         self.ui.btnRfCatSend.setEnabled(self.rfcat_plugin.rfcat_is_found)
 
-    @pyqtSlot()
+    @Slot()
     def on_undo_stack_index_changed(self):
         self.refresh_table()
         self.refresh_pause_list()
@@ -291,7 +291,7 @@ class GeneratorTabController(QWidget):
         self.refresh_estimated_time()
         self.set_fuzzing_ui_status()
 
-    @pyqtSlot()
+    @Slot()
     def show_modulation_dialog(self):
         modulator_dialog, message = self.prepare_modulation_dialog()
         modulator_dialog.showMaximized()
@@ -299,7 +299,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog.initialize(message.encoded_bits_str[0:10])
         self.project_manager.modulation_was_edited = True
 
-    @pyqtSlot()
+    @Slot()
     def on_table_selection_changed(self):
         min_row, max_row, start, end = self.ui.tableMessages.selection_range()
 
@@ -322,7 +322,7 @@ class GeneratorTabController(QWidget):
         self.show_modulation_info()
         self.ui.cBoxModulations.blockSignals(False)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def edit_pause_item(self, index: int):
         message = self.table_model.protocol.messages[index]
         cur_len = message.pause
@@ -332,7 +332,7 @@ class GeneratorTabController(QWidget):
             message.pause = new_len
             self.refresh_pause_list()
 
-    @pyqtSlot()
+    @Slot()
     def edit_all_pause_items(self):
         message = self.table_model.protocol.messages[0]
         cur_len = message.pause
@@ -344,13 +344,13 @@ class GeneratorTabController(QWidget):
 
             self.refresh_pause_list()
 
-    @pyqtSlot()
+    @Slot()
     def on_lWPauses_double_clicked(self):
         sel_indexes = [index.row() for index in self.ui.lWPauses.selectedIndexes()]
         if len(sel_indexes) > 0:
             self.edit_pause_item(sel_indexes[0])
 
-    @pyqtSlot()
+    @Slot()
     def refresh_pause_list(self):
         self.ui.lWPauses.clear()
 
@@ -362,7 +362,7 @@ class GeneratorTabController(QWidget):
 
         self.refresh_estimated_time()
 
-    @pyqtSlot()
+    @Slot()
     def on_lWpauses_selection_changed(self):
         rows = [index.row() for index in self.ui.lWPauses.selectedIndexes()]
         if len(rows) == 0:
@@ -372,12 +372,12 @@ class GeneratorTabController(QWidget):
         self.ui.tableMessages.viewport().update()
         self.ui.tableMessages.scrollTo(self.table_model.index(rows[0], 0))
 
-    @pyqtSlot()
+    @Slot()
     def on_lWPauses_lost_focus(self):
         self.ui.tableMessages.show_pause_active = False
         self.ui.tableMessages.viewport().update()
 
-    @pyqtSlot()
+    @Slot()
     def generate_file(self):
         try:
             total_samples = self.total_modulated_samples
@@ -440,7 +440,7 @@ class GeneratorTabController(QWidget):
         self.ui.prBarGeneration.hide()
         return buffer
 
-    @pyqtSlot(int)
+    @Slot(int)
     def show_fuzzing_dialog(self, label_index: int):
         view = self.ui.cbViewType.currentIndex()
 
@@ -453,18 +453,18 @@ class GeneratorTabController(QWidget):
             fdc.finished.connect(self.refresh_table)
             fdc.finished.connect(self.set_fuzzing_ui_status)
 
-    @pyqtSlot()
+    @Slot()
     def handle_plabel_fuzzing_state_changed(self):
         self.refresh_table()
         self.label_list_model.update()
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def handle_proto_label_removed(self, plabel: ProtocolLabel):
         self.refresh_label_list()
         self.refresh_table()
         self.set_fuzzing_ui_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_fuzzing_clicked(self):
         fuz_mode = "Successive"
         if self.ui.rbConcurrent.isChecked():
@@ -480,7 +480,7 @@ class GeneratorTabController(QWidget):
         self.unsetCursor()
         self.ui.tableMessages.setFocus()
 
-    @pyqtSlot()
+    @Slot()
     def set_fuzzing_ui_status(self):
         btn_was_enabled = self.ui.btnFuzz.isEnabled()
         fuzz_active = any(lbl.active_fuzzing for msg in self.table_model.protocol.messages for lbl in msg.message_type)
@@ -520,7 +520,7 @@ class GeneratorTabController(QWidget):
             self.refresh_table()
             self.refresh_estimated_time()
 
-    @pyqtSlot()
+    @Slot()
     def refresh_estimated_time(self):
         c = self.table_model.protocol
         if c.num_messages == 0:
@@ -536,14 +536,14 @@ class GeneratorTabController(QWidget):
         self.ui.lEstimatedTime.setText(
             locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))
 
-    @pyqtSlot(int, int, int)
+    @Slot(int, int, int)
     def create_fuzzing_label(self, msg_index: int, start: int, end: int):
         con = self.table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
         lbl = con.create_fuzzing_label(start, end, msg_index)
         self.show_fuzzing_dialog(con.protocol_labels.index(lbl))
 
-    @pyqtSlot()
+    @Slot()
     def handle_label_selection_changed(self):
         rows = [index.row() for index in self.ui.listViewProtoLabels.selectedIndexes()]
         if len(rows) == 0:
@@ -561,14 +561,14 @@ class GeneratorTabController(QWidget):
             indx = self.table_model.index(0, int((start + end) / 2))
             self.ui.tableMessages.scrollTo(indx)
 
-    @pyqtSlot()
+    @Slot()
     def on_view_type_changed(self):
         self.setCursor(Qt.WaitCursor)
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.ui.tableMessages.resize_columns()
         self.unsetCursor()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_send_clicked(self):
         try:
             total_samples = self.total_modulated_samples
@@ -609,7 +609,7 @@ class GeneratorTabController(QWidget):
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_clicked(self):
         filename = FileOperator.get_save_file_name("profile.fuzz.xml", caption="Save fuzz profile")
         if filename:
@@ -618,7 +618,7 @@ class GeneratorTabController(QWidget):
                                                   participants=self.project_manager.participants,
                                                   modulators=self.modulators)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_open_clicked(self):
         dialog = FileOperator.get_open_dialog(directory_mode=False, parent=self, name_filter="fuzz")
         if dialog.exec_():
@@ -638,7 +638,7 @@ class GeneratorTabController(QWidget):
         except:
             logger.error("You done something wrong to the xml fuzzing profile.")
 
-    @pyqtSlot()
+    @Slot()
     def on_project_updated(self):
         self.table_model.refresh_vertical_header()
 
@@ -650,7 +650,7 @@ class GeneratorTabController(QWidget):
         is_plugin_enabled = PluginManager().is_plugin_enabled("RfCat")
         self.ui.btnRfCatSend.setVisible(is_plugin_enabled)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_network_sdr_clicked(self):
         if not self.network_sdr_plugin.is_sending:
             messages = self.table_model.protocol.messages
@@ -659,7 +659,7 @@ class GeneratorTabController(QWidget):
         else:
             self.network_sdr_plugin.stop_sending_thread()
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_network_sdr_sending_status_changed(self, is_sending: bool):
         self.ui.btnNetworkSDRSend.setChecked(is_sending)
         self.ui.btnNetworkSDRSend.setEnabled(True)
@@ -668,16 +668,16 @@ class GeneratorTabController(QWidget):
         if not is_sending:
             self.ui.tableMessages.clearSelection()
 
-    @pyqtSlot()
+    @Slot()
     def on_network_sdr_sending_stop_requested(self):
         self.ui.btnNetworkSDRSend.setToolTip("Stopping sending")
         self.ui.btnNetworkSDRSend.setEnabled(False)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_send_message_changed(self, message_index: int):
         self.ui.tableMessages.selectRow(message_index)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_rfcat_clicked(self):
         if not self.rfcat_plugin.is_sending:
             messages = self.table_model.protocol.messages
@@ -687,14 +687,14 @@ class GeneratorTabController(QWidget):
         else:
             self.rfcat_plugin.stop_sending_thread()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzzing_started(self, num_values: int):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingProgressBar)
         self.ui.progressBarFuzzing.setMaximum(num_values)
         self.ui.progressBarFuzzing.setValue(0)
         QApplication.instance().processEvents()
 
-    @pyqtSlot()
+    @Slot()
     def on_fuzzing_finished(self):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingUI)
         # Calculate Checksums for Fuzzed Messages
@@ -702,12 +702,12 @@ class GeneratorTabController(QWidget):
 
         self.unsetCursor()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_current_fuzzing_message_changed(self, current_message: int):
         self.ui.progressBarFuzzing.setValue(current_message)
         QApplication.instance().processEvents()
 
-    @pyqtSlot(ProtocolAnalyzer)
+    @Slot(ProtocolAnalyzer)
     def on_first_protocol_added(self, protocol: ProtocolAnalyzer):
         if not self.project_manager.modulation_was_edited:
             self.bootstrap_modulator(protocol)

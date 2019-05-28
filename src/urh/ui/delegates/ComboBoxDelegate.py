@@ -1,6 +1,6 @@
 import sys
 
-from PySide2.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
+from PySide2.QtCore import QModelIndex, Qt, QAbstractItemModel, Slot, QRectF
 from PySide2.QtGui import QImage, QPainter, QColor, QPixmap
 from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
@@ -93,10 +93,10 @@ class ComboBoxDelegate(QStyledItemDelegate):
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
 
-    @pyqtSlot()
+    @Slot()
     def currentIndexChanged(self):
         self.commitData.emit(self.sender())
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_edit_text_changed(self, text: str):
         self.current_edit_text = text

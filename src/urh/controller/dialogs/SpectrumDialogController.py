@@ -1,4 +1,4 @@
-from PySide2.QtCore import QTimer, pyqtSlot
+from PySide2.QtCore import QTimer, Slot
 from PySide2.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
 from PySide2.QtWidgets import QGraphicsScene
 
@@ -110,16 +110,16 @@ class SpectrumDialogController(SendRecvDialog):
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
 
-    @pyqtSlot(QWheelEvent)
+    @Slot(QWheelEvent)
     def on_graphics_view_wheel_event_triggered(self, event: QWheelEvent):
         self.ui.sliderYscale.wheelEvent(event)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_graphics_view_freq_clicked(self, freq: float):
         self.device_settings_widget.ui.spinBoxFreq.setValue(freq)
         self.device_settings_widget.ui.spinBoxFreq.editingFinished.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_frequency_editing_finished(self):
         frequency = self.device_settings_widget.ui.spinBoxFreq.value()
         self.device.frequency = frequency
@@ -127,12 +127,12 @@ class SpectrumDialogController(SendRecvDialog):
         self.scene_manager.clear_path()
         self.scene_manager.clear_peak()
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         super().on_start_clicked()
         self.device.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         self.ui.graphicsViewSpectrogram.fitInView(self.ui.graphicsViewSpectrogram.scene().sceneRect())
         super().on_device_started()
@@ -141,7 +141,7 @@ class SpectrumDialogController(SendRecvDialog):
         self.device_settings_widget.ui.cbDevice.setEnabled(False)
         self.ui.btnStart.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_device_stopped(self):
         self.device_settings_widget.ui.spinBoxPort.setEnabled(True)
         self.device_settings_widget.ui.lineEditIP.setEnabled(True)
@@ -149,20 +149,20 @@ class SpectrumDialogController(SendRecvDialog):
 
         super().on_device_stopped()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         self.__clear_spectrogram()
         self.scene_manager.clear_path()
         self.scene_manager.clear_peak()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_gain_value_changed(self, value: int):
         self.gain_timer.start(250)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_if_gain_value_changed(self, value: int):
         self.if_gain_timer.start(250)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_baseband_gain_value_changed(self, value: int):
         self.bb_gain_timer.start(250)

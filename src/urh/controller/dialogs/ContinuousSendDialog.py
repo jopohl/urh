@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSlot
+from PySide2.QtCore import Slot
 from PySide2.QtGui import QCloseEvent
 
 from urh.controller.dialogs.SendDialog import SendDialog
@@ -53,37 +53,37 @@ class ContinuousSendDialog(SendDialog):
         self.continuous_modulator.stop()
         super().closeEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         super().on_device_started()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_stopped(self):
         super().on_device_stopped()
         self.continuous_modulator.stop(clear_buffer=False)
 
-    @pyqtSlot()
+    @Slot()
     def on_stop_clicked(self):
         super().on_stop_clicked()
         self.continuous_modulator.stop()
         self.continuous_modulator.current_message_index.value = 0
         self.scene_manager.clear_path()
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         self.device_settings_widget.ui.spinBoxNRepeat.editingFinished.emit()  # inform continuous modulator
         if not self.continuous_modulator.is_running:
             self.continuous_modulator.start()
         super().on_start_clicked()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         self.continuous_modulator.stop()
         self.continuous_modulator.current_message_index.value = 0
         self.scene_manager.clear_path()
         self.reset()
 
-    @pyqtSlot()
+    @Slot()
     def on_num_repeats_changed(self):
         super().on_num_repeats_changed()
         self.continuous_modulator.num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()

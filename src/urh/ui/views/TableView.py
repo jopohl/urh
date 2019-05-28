@@ -1,12 +1,12 @@
 import numpy as np
-from PySide2.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, QItemSelectionModel, QItemSelection, Slot, Signal
 from PySide2.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon, QContextMenuEvent
 from PySide2.QtWidgets import QTableView, QApplication, QAction, QStyleFactory, QMenu
 
 
 class TableView(QTableView):
-    create_label_triggered = pyqtSignal(int, int, int)
-    edit_label_triggered = pyqtSignal(int)
+    create_label_triggered = Signal(int, int, int)
+    edit_label_triggered = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -91,15 +91,15 @@ class TableView(QTableView):
 
         return sorted(rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_in_action_triggered(self):
         self.set_font_size(self.font().pointSize() + 1)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_out_action_triggered(self):
         self.set_font_size(self.font().pointSize() - 1)
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_original_action_triggered(self):
         self.set_font_size(self.original_font_size)
 
@@ -273,7 +273,7 @@ class TableView(QTableView):
         else:
             self.scrollTo(end)
 
-    @pyqtSlot()
+    @Slot()
     def on_copy_action_triggered(self):
         cells = self.selectedIndexes()
         cells.sort()
@@ -290,7 +290,7 @@ class TableView(QTableView):
 
         QApplication.instance().clipboard().setText(text)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_vertical_header_color_status_changed(self, use_colors: bool):
         if use_colors == self.use_header_colors:
             return
@@ -304,15 +304,15 @@ class TableView(QTableView):
 
         self.setVerticalHeader(header)
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_column_left_action_triggered(self):
         self.model().insert_column(self.selection_range()[2], self.selected_rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_column_right_action_triggered(self):
         self.model().insert_column(self.selection_range()[3], self.selected_rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_create_or_edit_label_action_triggered(self):
         selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
                                                                      column=self.columnAt(self.context_menu_pos.x()))

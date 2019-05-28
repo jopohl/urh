@@ -1,5 +1,5 @@
-from PySide2.QtCore import QItemSelection, pyqtSlot
-from PySide2.QtCore import pyqtSignal, QItemSelectionModel, Qt
+from PySide2.QtCore import QItemSelection, Slot
+from PySide2.QtCore import Signal, QItemSelectionModel, Qt
 from PySide2.QtGui import QContextMenuEvent, QDropEvent, QIcon
 from PySide2.QtWidgets import  QTreeView, QAbstractItemView, QMenu
 
@@ -7,10 +7,10 @@ from urh.models.ProtocolTreeModel import ProtocolTreeModel
 
 
 class ProtocolTreeView(QTreeView):
-    create_new_group_clicked = pyqtSignal()
-    selection_changed = pyqtSignal()
-    files_dropped_on_group = pyqtSignal(list, int)
-    close_wanted = pyqtSignal(list)
+    create_new_group_clicked = Signal()
+    selection_changed = Signal()
+    files_dropped_on_group = Signal(list, int)
+    close_wanted = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -86,29 +86,29 @@ class ProtocolTreeView(QTreeView):
         else:
             super().dropEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_new_group_action_triggered(self):
         self.model().addGroup()
         self.model().update()
 
-    @pyqtSlot()
+    @Slot()
     def on_move_to_group_action_triggered(self):
         selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
         i = self.move_to_group_actions[self.sender()]
         self.model().move_to_group(selected_items, i)
 
-    @pyqtSlot()
+    @Slot()
     def on_close_action_triggered(self):
         selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
         selected_protocols = [item.protocol for item in selected_items if not item.is_group]
         self.close_wanted.emit(selected_protocols)
 
-    @pyqtSlot()
+    @Slot()
     def on_delete_group_action_triggered(self):
         item = self.model().getItem(self.indexAt(self.context_menu_pos))
         self.model().delete_group(item)
 
-    @pyqtSlot()
+    @Slot()
     def on_sort_group_elements_action_triggered(self):
         item = self.model().getItem(self.indexAt(self.context_menu_pos))
         if item.is_group:

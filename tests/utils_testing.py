@@ -47,11 +47,10 @@ def write_settings():
         settings_written
     except NameError:
         settings_written = True
-        settings = constants.SETTINGS
-        settings.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        settings.setValue("not_show_save_dialog", True)
-        settings.setValue("NetworkSDRInterface", True)
-        settings.setValue("align_labels", True)
+        constants.SETTINGS.setValue("not_show_close_dialog", True)  # prevent interactive close questions
+        constants.SETTINGS.setValue("not_show_save_dialog", True)
+        constants.SETTINGS.setValue("NetworkSDRInterface", True)
+        constants.SETTINGS.setValue("align_labels", True)
 
 
 # sys.settrace(trace_calls)

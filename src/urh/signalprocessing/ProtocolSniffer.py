@@ -4,7 +4,7 @@ from datetime import datetime
 from threading import Thread
 
 import numpy as np
-from PySide2.QtCore import pyqtSignal, QObject
+from PySide2.QtCore import Signal, QObject
 from urh.cythonext.signal_functions import grab_pulse_lens
 
 from urh.ainterpretation import AutoInterpretation
@@ -22,9 +22,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     This class is used for live sniffing a protocol
     with certain signal parameters.
     """
-    started = pyqtSignal()
-    stopped = pyqtSignal()
-    message_sniffed = pyqtSignal(int)
+    started = Signal()
+    stopped = Signal()
+    message_sniffed = Signal(int)
 
     BUFFER_SIZE_MB = 100
 

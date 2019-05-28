@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from PySide2.QtCore import pyqtSignal, QModelIndex, Qt
+from PySide2.QtCore import Signal, QModelIndex, Qt
 
 from urh import constants
 from urh.models.TableModel import TableModel
@@ -9,7 +9,7 @@ from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 
 
 class ProtocolTableModel(TableModel):
-    ref_index_changed = pyqtSignal(int)
+    ref_index_changed = Signal(int)
 
     def __init__(self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None):
         super().__init__(participants=participants, parent=parent)

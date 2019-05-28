@@ -2,7 +2,7 @@ import array
 import copy
 from collections import defaultdict
 
-from PySide2.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, QModelIndex, Slot, Signal
 from PySide2.QtGui import QColor
 
 from urh import constants
@@ -22,7 +22,7 @@ from urh.util.Logger import logger
 
 
 class GeneratorTableModel(TableModel):
-    first_protocol_added = pyqtSignal(ProtocolAnalyzer)
+    first_protocol_added = Signal(ProtocolAnalyzer)
 
     def __init__(self, tree_root_item: ProtocolTreeItem, decodings, parent = None):
         super().__init__(participants=[], parent=parent)
@@ -134,7 +134,7 @@ class GeneratorTableModel(TableModel):
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):
         message = Message(plain_bits=[0]*num_bits,
-                          pause=constants.SETTINGS.value("default_fuzzing_pause", 10**6, int),
+                          pause=util.read_setting("default_fuzzing_pause", 10**6, int),
                           message_type=self.protocol.default_message_type)
 
         tmp_protocol = ProtocolAnalyzer(None)
@@ -174,7 +174,7 @@ class GeneratorTableModel(TableModel):
 
             self.display_data[row][start:end] = data + array.array("B", [0] * ((end - start) - len(data)))
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def on_data_edited(self, row: int, column: int):
         edited_range = range(column, column+1)
         message = self.protocol.messages[row]

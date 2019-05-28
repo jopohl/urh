@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtCore import Slot, Signal, Qt
 from PySide2.QtWidgets import QDialog
 
 from urh.signalprocessing.Filter import Filter, FilterType
@@ -6,7 +6,7 @@ from urh.ui.ui_filter_dialog import Ui_FilterDialog
 
 
 class FilterDialog(QDialog):
-    filter_accepted = pyqtSignal(Filter)
+    filter_accepted = Signal(Filter)
 
     def __init__(self, dsp_filter: Filter, parent=None):
         super().__init__(parent)
@@ -77,23 +77,23 @@ class FilterDialog(QDialog):
             self.ui.lineEditCustomTaps.setStyleSheet("")
             self.ui.lineEditCustomTaps.setToolTip("")
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_moving_average_clicked(self, checked: bool):
         if checked:
             self.set_dsp_filter_status(FilterType.moving_average)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_custom_taps_clicked(self, checked: bool):
         if checked:
             self.set_dsp_filter_status(FilterType.custom)
             self.set_error_status()
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_dc_correction_clicked(self, checked: bool):
         if checked:
             self.set_dsp_filter_status(FilterType.dc_correction)
 
-    @pyqtSlot()
+    @Slot()
     def on_accept_clicked(self):
         dsp_filter = self.build_filter()
         self.filter_accepted.emit(dsp_filter)

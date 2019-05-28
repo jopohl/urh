@@ -1,5 +1,5 @@
 import numpy as np
-from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtCore import Slot, Signal
 from PySide2.QtGui import QIcon, QCloseEvent
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
@@ -10,7 +10,7 @@ from urh.util import util
 
 
 class ProtocolSniffDialog(SendRecvDialog):
-    protocol_accepted = pyqtSignal(list)
+    protocol_accepted = Signal(list)
 
     def __init__(self, project_manager, signal=None, signals=None, parent=None, testing_mode=False):
         super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
@@ -82,7 +82,7 @@ class ProtocolSniffDialog(SendRecvDialog):
             self.scene_manager.show_full_scene()
             self.graphics_view.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         self.scene_manager.data_array = self.device.data.real if hasattr(self.device.data, "real") else None
 
@@ -91,28 +91,28 @@ class ProtocolSniffDialog(SendRecvDialog):
         self.ui.btnStart.setEnabled(False)
         self.set_device_ui_items_enabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_sniff_setting_edited(self):
         self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
                                                                                 include_timestamps=self.show_timestamp))
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         super().on_start_clicked()
         self.sniffer.sniff()
 
-    @pyqtSlot()
+    @Slot()
     def on_stop_clicked(self):
         self.sniffer.stop()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         self.ui.txtEd_sniff_Preview.clear()
         self.scene_manager.clear_path()
         self.device.current_index = 0
         self.sniffer.clear()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_message_sniffed(self, index: int):
         try:
             msg = self.sniffer.messages[index]
@@ -124,15 +124,15 @@ class ProtocolSniffDialog(SendRecvDialog):
             self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(
                 self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_accept_clicked(self):
         self.protocol_accepted.emit(self.sniffer.messages)
         self.close()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_device_errors_changed(self, txt: str):
         self.ui.txtEditErrors.append(txt)
 
-    @pyqtSlot()
+    @Slot()
     def on_sniff_file_edited(self):
         self.ui.btnAccept.setDisabled(bool(self.sniffer.sniff_file))

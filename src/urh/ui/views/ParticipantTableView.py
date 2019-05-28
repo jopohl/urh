@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
+from PySide2.QtCore import Slot, Qt, QItemSelection, QItemSelectionModel
 from PySide2.QtGui import QKeySequence, QIcon, QContextMenuEvent
 from PySide2.QtWidgets import QTableView, QAction, QMenu
 
@@ -81,22 +81,22 @@ class ParticipantTableView(QTableView):
             self.openPersistentEditor(self.model().index(row, 2))
             self.openPersistentEditor(self.model().index(row, 3))
 
-    @pyqtSlot()
+    @Slot()
     def on_remove_action_triggered(self):
         self.model().remove_participants(self.selectionModel().selection())
 
-    @pyqtSlot()
+    @Slot()
     def on_add_action_triggered(self):
         self.model().add_participant()
 
-    @pyqtSlot()
+    @Slot()
     def on_move_up_action_triggered(self):
         col_start, col_end = self.selected_columns
         start, end = self.model().move_up(self.selectionModel().selection())
         if start is not None and end is not None:
             self.select(start-1, col_start, end-1, col_end)
 
-    @pyqtSlot()
+    @Slot()
     def on_move_down_action_triggered(self):
         col_start, col_end = self.selected_columns
         start, end = self.model().move_down(self.selectionModel().selection())

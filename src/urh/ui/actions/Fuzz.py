@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QUndoCommand
 
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh.util import util
 
 
 class Fuzz(QUndoCommand):
@@ -17,8 +18,8 @@ class Fuzz(QUndoCommand):
         self.added_message_indices = []
 
     def redo(self):
-        if constants.SETTINGS.value('use_default_fuzzing_pause', True, bool):
-            default_pause = constants.SETTINGS.value("default_fuzzing_pause", 10**6, int)
+        if util.read_setting('use_default_fuzzing_pause', True, bool):
+            default_pause = util.read_setting("default_fuzzing_pause", 10**6, int)
         else:
             default_pause = None
 

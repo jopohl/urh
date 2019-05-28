@@ -1,13 +1,13 @@
 import os
 
 from PyQt5 import uic
-from PySide2.QtCore import QObject, pyqtSignal, Qt, QSettings
+from PySide2.QtCore import QObject, Signal, Qt, QSettings
 from PySide2.QtWidgets import QApplication
 from PySide2.QtWidgets import QUndoCommand, QUndoStack
 
 
 class Plugin(QObject):
-    enabled_changed = pyqtSignal()
+    enabled_changed = Signal()
 
     def __init__(self, name: str):
         super().__init__()

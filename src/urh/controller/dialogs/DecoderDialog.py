@@ -1,7 +1,7 @@
 import copy
 import os
 
-from PySide2.QtCore import QDir, Qt, pyqtSlot
+from PySide2.QtCore import QDir, Qt, Slot
 from PySide2.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
 from PySide2.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
     QLineEdit, QMessageBox
@@ -12,6 +12,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_decoding import Ui_Decoder
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
 
@@ -89,7 +90,7 @@ class DecoderDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -397,7 +398,7 @@ class DecoderDialog(QDialog):
             self.ui.graphicsView_decoded.setScene(temp_decoded)
             self.ui.graphicsView_decoded.update()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_base_functions_current_row_changed(self, index: int):
         if self.ui.basefunctions.currentItem().text() is not None:
             self.ui.decoderchain.setCurrentRow(-1)
@@ -406,7 +407,7 @@ class DecoderDialog(QDialog):
             self.ui.optionWidget.setCurrentIndex(0)
             self.ui.info.clear()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_additional_functions_current_row_changed(self, index: int):
         if self.ui.additionalfunctions.currentItem() is not None:
             self.ui.decoderchain.setCurrentRow(-1)
@@ -415,7 +416,7 @@ class DecoderDialog(QDialog):
             self.ui.optionWidget.setCurrentIndex(0)
             self.ui.info.clear()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_decoder_chain_current_row_changed(self, index: int):
         if self.ui.decoderchain.currentItem() is not None:
             self.set_information(2)
@@ -714,7 +715,7 @@ class DecoderDialog(QDialog):
 
         self.ui.info.setText(txt)
 
-    @pyqtSlot()
+    @Slot()
     def handle_datawhitening(self):
         datawhiteningstr = self.ui.datawhitening_sync.text() + ";" + self.ui.datawhitening_polynomial.text() + ";" + \
                            ("1" if self.ui.datawhitening_overwrite_crc.isChecked() else "0")
@@ -722,14 +723,14 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = datawhiteningstr
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_external(self):
         externalstr = self.ui.external_decoder.text() + ";" + self.ui.external_encoder.text()
         if constants.DECODING_EXTERNAL in self.active_message:
             self.chainoptions[self.active_message] = externalstr
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_substitution_changed(self):
         subststr = ""
         for i in range(0, self.ui.substitution_rows.value()):
@@ -739,13 +740,13 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = subststr
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_substitution_rows_changed(self):
         # Substitution Row Spinbox
         self.ui.substitution.setRowCount(self.ui.substitution_rows.value())
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_multiple_changed(self):
         # Multiple Spinbox
         val = self.ui.multiple.value()
@@ -753,7 +754,7 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = val
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_morse_changed(self):
         # Multiple Spinbox
         val_low = self.ui.morse_low.value()
@@ -771,7 +772,7 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = "{};{};{}".format(val_low, val_high, val_wait)
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_carrier_changed(self):
         # Only allow {0, 1}
         carrier_txt = self.ui.carrier.text()
@@ -786,7 +787,7 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = carrier_txt
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def handle_cut(self):
         cmode = 0
         cmark = ""

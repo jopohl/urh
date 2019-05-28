@@ -1,6 +1,6 @@
 import copy
 
-from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QCloseEvent
 from PySide2.QtWidgets import QDialog
 
@@ -11,6 +11,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Ruleset import Rule, OPERATION_DESCRIPTION
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_messagetype_options import Ui_DialogMessageType
+from urh.util import util
 
 
 class MessageTypeDialog(QDialog):
@@ -49,7 +50,7 @@ class MessageTypeDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -79,13 +80,13 @@ class MessageTypeDialog(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_rejected(self):
         self.message_type.ruleset = self.original_ruleset
         self.message_type.assigned_by_ruleset = self.original_assigned_status
         self.reject()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_rule_clicked(self):
         self.ui.btnRemoveRule.setEnabled(True)
         self.message_type.ruleset.append(Rule(start=0, end=0, operator="=", target_value="1", value_type=0))
@@ -94,22 +95,22 @@ class MessageTypeDialog(QDialog):
         for i in range(len(self.message_type.ruleset)):
             self.open_editors(i)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_remove_rule_clicked(self):
         self.ruleset_table_model.ruleset.remove(self.message_type.ruleset[-1])
         self.ruleset_table_model.update()
         self.ui.btnRemoveRule.setEnabled(len(self.message_type.ruleset) > 0)
 
-    @pyqtSlot()
+    @Slot()
     def on_rb_assign_automatically_clicked(self):
         self.message_type.assigned_by_ruleset = True
         self.set_ruleset_ui_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_rb_assign_manually_clicked(self):
         self.message_type.assigned_by_ruleset = False
         self.set_ruleset_ui_status()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_cb_rulesetmode_current_index_changed(self, index: int):
         self.message_type.ruleset.mode = Ruleset.Mode(index)

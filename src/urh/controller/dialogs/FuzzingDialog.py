@@ -1,7 +1,7 @@
 import copy
 import math
 
-from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QCloseEvent
 from PySide2.QtWidgets import QDialog, QInputDialog
 
@@ -10,6 +10,7 @@ from urh.models.FuzzingTableModel import FuzzingTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
 from urh.ui.ui_fuzzing import Ui_FuzzingDialog
+from urh.util import util
 
 
 class FuzzingDialog(QDialog):
@@ -46,7 +47,7 @@ class FuzzingDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -151,7 +152,7 @@ class FuzzingDialog(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzzing_start_changed(self, value: int):
         self.ui.spinBoxFuzzingEnd.setMinimum(self.ui.spinBoxFuzzingStart.value())
         new_start = self.message.convert_index(value - 1, self.proto_view, 0, False)[0]
@@ -161,7 +162,7 @@ class FuzzingDialog(QDialog):
         self.fuzz_table_model.update()
         self.ui.tblFuzzingValues.resize_me()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzzing_end_changed(self, value: int):
         self.ui.spinBoxFuzzingStart.setMaximum(self.ui.spinBoxFuzzingEnd.value())
         new_end = self.message.convert_index(value - 1, self.proto_view, 0, False)[1] + 1
@@ -171,7 +172,7 @@ class FuzzingDialog(QDialog):
         self.fuzz_table_model.update()
         self.ui.tblFuzzingValues.resize_me()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combo_box_fuzzing_label_current_index_changed(self, index: int):
         self.fuzz_table_model.fuzzing_label = self.current_label
         self.fuzz_table_model.update()
@@ -186,17 +187,17 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxFuzzingEnd.setValue(self.current_label_end)
         self.ui.spinBoxFuzzingEnd.blockSignals(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_row_clicked(self):
         self.current_label.add_fuzz_value()
         self.fuzz_table_model.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_del_row_clicked(self):
         min_row, max_row, _, _ = self.ui.tblFuzzingValues.selection_range()
         self.delete_lines(min_row, max_row)
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def delete_lines(self, min_row, max_row):
         if min_row == -1:
             self.current_label.fuzz_values = self.current_label.fuzz_values[:-1]
@@ -208,13 +209,13 @@ class FuzzingDialog(QDialog):
 
         self.fuzz_table_model.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_remove_duplicates_state_changed(self):
         self.fuzz_table_model.remove_duplicates = self.ui.chkBRemoveDuplicates.isChecked()
         self.fuzz_table_model.update()
         self.remove_duplicates()
 
-    @pyqtSlot()
+    @Slot()
     def set_add_spinboxes_maximum_on_label_change(self):
         nbits = self.current_label.end - self.current_label.start  # Use Bit Start/End for maximum calc.
         if nbits >= 32:
@@ -232,17 +233,17 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxRandomMaximum.setMaximum(max_val)
         self.ui.spinBoxRandomMaximum.setValue(max_val)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzzing_range_start_changed(self, value: int):
         self.ui.sBAddRangeEnd.setMinimum(value)
         self.ui.sBAddRangeStep.setMaximum(self.ui.sBAddRangeEnd.value() - value)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzzing_range_end_changed(self, value: int):
         self.ui.sBAddRangeStart.setMaximum(value - 1)
         self.ui.sBAddRangeStep.setMaximum(value - self.ui.sBAddRangeStart.value())
 
-    @pyqtSlot()
+    @Slot()
     def on_lower_bound_checked_changed(self):
         if self.ui.checkBoxLowerBound.isChecked():
             self.ui.spinBoxLowerBound.setEnabled(True)
@@ -255,7 +256,7 @@ class FuzzingDialog(QDialog):
         else:
             self.ui.spinBoxLowerBound.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_upper_bound_checked_changed(self):
         if self.ui.checkBoxUpperBound.isChecked():
             self.ui.spinBoxUpperBound.setEnabled(True)
@@ -268,34 +269,34 @@ class FuzzingDialog(QDialog):
         else:
             self.ui.spinBoxUpperBound.setEnabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_lower_bound_changed(self):
         self.ui.spinBoxUpperBound.setMinimum(self.ui.spinBoxLowerBound.value())
         self.ui.spinBoxBoundaryNumber.setMaximum(math.ceil((self.ui.spinBoxUpperBound.value()
                                                             - self.ui.spinBoxLowerBound.value()) / 2))
 
-    @pyqtSlot()
+    @Slot()
     def on_upper_bound_changed(self):
         self.ui.spinBoxLowerBound.setMaximum(self.ui.spinBoxUpperBound.value() - 1)
         self.ui.spinBoxBoundaryNumber.setMaximum(math.ceil((self.ui.spinBoxUpperBound.value()
                                                             - self.ui.spinBoxLowerBound.value()) / 2))
 
-    @pyqtSlot()
+    @Slot()
     def on_random_range_min_changed(self):
         self.ui.spinBoxRandomMaximum.setMinimum(self.ui.spinBoxRandomMinimum.value())
 
-    @pyqtSlot()
+    @Slot()
     def on_random_range_max_changed(self):
         self.ui.spinBoxRandomMinimum.setMaximum(self.ui.spinBoxRandomMaximum.value() - 1)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_range_clicked(self):
         start = self.ui.sBAddRangeStart.value()
         end = self.ui.sBAddRangeEnd.value()
         step = self.ui.sBAddRangeStep.value()
         self.fuzz_table_model.add_range(start, end + 1, step)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_boundaries_clicked(self):
         lower_bound = -1
         if self.ui.spinBoxLowerBound.isEnabled():
@@ -308,7 +309,7 @@ class FuzzingDialog(QDialog):
         num_vals = self.ui.spinBoxBoundaryNumber.value()
         self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_random_clicked(self):
         n = self.ui.spinBoxNumberRandom.value()
         minimum = self.ui.spinBoxRandomMinimum.value()
@@ -323,12 +324,12 @@ class FuzzingDialog(QDialog):
                 add_seen = seen.add
                 lbl.fuzz_values = [l for l in seq if not (l in seen or add_seen(l))]
 
-    @pyqtSlot()
+    @Slot()
     def set_current_label_name(self):
         self.current_label.name = self.ui.comboBoxFuzzingLabel.currentText()
         self.ui.comboBoxFuzzingLabel.setItemText(self.ui.comboBoxFuzzingLabel.currentIndex(), self.current_label.name)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_fuzz_msg_changed(self, index: int):
         self.ui.comboBoxFuzzingLabel.setDisabled(False)
 
@@ -352,7 +353,7 @@ class FuzzingDialog(QDialog):
         self.fuzz_table_model.update()
         self.update_message_data_string()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_repeat_values_clicked(self):
         num_repeats, ok = QInputDialog.getInt(self, self.tr("How many times shall values be repeated?"),
                                                     self.tr("Number of repeats:"), 1, 1)

@@ -1,12 +1,12 @@
-from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtCore import Slot, Signal, Qt
 from PySide2.QtWidgets import QDialog
 
 from urh.ui.ui_advanced_modulation_settings import Ui_DialogAdvancedModSettings
 
 
 class AdvancedModulationOptionsDialog(QDialog):
-    pause_threshold_edited = pyqtSignal(int)
-    message_length_divisor_edited = pyqtSignal(int)
+    pause_threshold_edited = Signal(int)
+    message_length_divisor_edited = Signal(int)
 
     def __init__(self, pause_threshold: int, message_length_divisor: int, parent=None):
         super().__init__(parent)
@@ -27,7 +27,7 @@ class AdvancedModulationOptionsDialog(QDialog):
         self.ui.buttonBox.accepted.connect(self.on_accept_clicked)
         self.ui.buttonBox.rejected.connect(self.reject)
 
-    @pyqtSlot()
+    @Slot()
     def on_accept_clicked(self):
         if self.pause_threshold != self.ui.spinBoxPauseThreshold.value():
             self.pause_threshold_edited.emit(self.ui.spinBoxPauseThreshold.value())

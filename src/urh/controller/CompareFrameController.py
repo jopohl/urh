@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import numpy
-from PySide2.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
+from PySide2.QtCore import Slot, QTimer, Qt, Signal, QItemSelection, QItemSelectionModel, QLocale, \
     QModelIndex
 from PySide2.QtGui import QContextMenuEvent, QIcon
 from PySide2.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
@@ -38,12 +38,12 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class CompareFrameController(QWidget):
-    show_interpretation_clicked = pyqtSignal(int, int, int, int)
-    show_decoding_clicked = pyqtSignal()
-    files_dropped = pyqtSignal(list)
-    participant_changed = pyqtSignal()
-    show_config_field_types_triggered = pyqtSignal()
-    load_protocol_clicked = pyqtSignal()
+    show_interpretation_clicked = Signal(int, int, int, int)
+    show_decoding_clicked = Signal()
+    files_dropped = Signal(list)
+    participant_changed = Signal()
+    show_config_field_types_triggered = Signal()
+    load_protocol_clicked = Signal()
 
     def __init__(self, plugin_manager: PluginManager, project_manager: ProjectManager, parent):
 
@@ -524,7 +524,7 @@ class CompareFrameController(QWidget):
         # self.protocol_undo_stack.clear()
         self.proto_analyzer.messages[:] = []
         self.rows_for_protocols.clear()
-        align_labels = constants.SETTINGS.value("align_labels", True, bool)
+        align_labels = util.read_setting("align_labels", True, bool)
         line = 0
         first_msg_indices = []
         prev_line = 0
@@ -1001,7 +1001,7 @@ class CompareFrameController(QWidget):
     def contextMenuEvent(self, event: QContextMenuEvent):
         pass
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_protocol_label_dialog_finished(self, dialog_result: int):
         self.message_type_table_model.update()
         self.update_field_type_combobox()
@@ -1013,7 +1013,7 @@ class CompareFrameController(QWidget):
         self.protocol_model.update()
         self.ui.tblViewProtocol.resize_columns()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_analyze_clicked(self):
         self.setCursor(Qt.WaitCursor)
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(1)
@@ -1060,45 +1060,45 @@ class CompareFrameController(QWidget):
 
         self.message_type_table_model.update()  # in case message types were added by logic analyzer
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_protocol_clicked(self):
         self.save_protocol()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_load_proto_clicked(self):
         self.load_protocol_clicked.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_next_search_clicked(self):
         self.next_search_result()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_prev_search_clicked(self):
         self.prev_search_result()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_search_clicked(self):
         self.search()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_configure_message_type_rules_triggered(self, message_type_index: int):
         dialog = MessageTypeDialog(self.proto_analyzer.message_types[message_type_index], parent=self)
         dialog.show()
         dialog.accepted.connect(self.on_message_type_dialog_accepted)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_new_message_type_clicked(self):
         self.add_message_type()
 
-    @pyqtSlot(list)
+    @Slot(list)
     def on_table_new_message_type_clicked(self, selected_messages: list):
         self.add_message_type(selected_messages)
 
-    @pyqtSlot()
+    @Slot()
     def on_table_selection_changed(self):
         self.selection_timer.start(0)
 
-    @pyqtSlot()
+    @Slot()
     def on_combobox_decoding_current_index_changed(self):
         new_index = self.ui.cbDecoding.currentIndex()
         if new_index == -1:
@@ -1110,7 +1110,7 @@ class CompareFrameController(QWidget):
             self.set_decoding(self.decodings[new_index],
                               messages=self.selected_messages if self.selected_messages else None)
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_show_state_changed(self):
         for i, msg in enumerate(self.proto_analyzer.messages):
             hide = not msg.participant.show if msg.participant is not None else not self.participant_list_model.show_unassigned
@@ -1118,7 +1118,7 @@ class CompareFrameController(QWidget):
 
         self.set_shown_protocols()
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def on_group_deleted(self, deleted_group_id: int, new_group_id_of_childs: int):
         try:
             self.active_group_ids.remove(deleted_group_id)
@@ -1127,7 +1127,7 @@ class CompareFrameController(QWidget):
 
         self.updateUI()
 
-    @pyqtSlot()
+    @Slot()
     def on_tbl_view_protocol_row_visibility_changed(self):
         self.__set_shown_rows_status_label()
         self.set_shown_protocols()
@@ -1143,32 +1143,32 @@ class CompareFrameController(QWidget):
 
         self.message_type_table_model.update()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_check_box_show_only_labels_state_changed(self, new_state: int):
         self.set_show_only_status()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_check_box_show_only_diffs_state_changed(self, new_state: int):
         self.set_show_only_status()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_proto_to_group_added(self, group_id: int):
         self.expand_group_node(group_id)
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def on_protolabel_visibility_changed(self, proto_label: ProtocolLabel):
         self.set_protocol_label_visibility(proto_label)
         self.label_value_model.update()
 
-    @pyqtSlot(list)
+    @Slot(list)
     def on_files_dropped(self, files: list):
         self.files_dropped.emit(files)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_chkbox_show_differences_clicked(self, checked: bool):
         self.show_differences(checked)
 
-    @pyqtSlot()
+    @Slot()
     def on_search_action_triggered(self):
         self.ui.btnSearchSelectFilter.setText("Search")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-find"))
@@ -1176,7 +1176,7 @@ class CompareFrameController(QWidget):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.on_btn_search_clicked)
 
-    @pyqtSlot()
+    @Slot()
     def on_select_action_triggered(self):
         self.ui.btnSearchSelectFilter.setText("Select all")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("edit-select-all"))
@@ -1184,7 +1184,7 @@ class CompareFrameController(QWidget):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.select_all_search_results)
 
-    @pyqtSlot()
+    @Slot()
     def on_filter_action_triggered(self):
         self.ui.btnSearchSelectFilter.setText("Filter")
         self.ui.btnSearchSelectFilter.setIcon(QIcon.fromTheme("view-filter"))
@@ -1192,7 +1192,7 @@ class CompareFrameController(QWidget):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(self.filter_search_results)
 
-    @pyqtSlot()
+    @Slot()
     def on_align_action_triggered(self):
         def on_btn_search_select_filter_clicked():
             self.align_messages()
@@ -1203,7 +1203,7 @@ class CompareFrameController(QWidget):
         self.ui.btnSearchSelectFilter.clicked.disconnect()
         self.ui.btnSearchSelectFilter.clicked.connect(on_btn_search_select_filter_clicked)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_writeable_changed(self, writeable_status: bool):
         hidden_rows = {i for i in range(self.protocol_model.row_count) if self.ui.tblViewProtocol.isRowHidden(i)}
         self.protocol_model.is_writeable = writeable_status
@@ -1212,13 +1212,13 @@ class CompareFrameController(QWidget):
         self.refresh()
         self.ui.tblViewProtocol.hide_rows(hidden_rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_project_updated(self):
         self.participant_list_model.update()
         self.protocol_model.refresh_vertical_header()
         self.active_message_type = self.proto_analyzer.default_message_type
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def on_label_removed(self, plabel: ProtocolLabel):
         if not plabel.show:
             self.show_all_cols()
@@ -1230,37 +1230,37 @@ class CompareFrameController(QWidget):
         self.protocol_model.update()
         self.label_value_model.update()
 
-    @pyqtSlot(ProtocolLabel, MessageType)
+    @Slot(ProtocolLabel, MessageType)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel, message_type: MessageType):
         for msg in self.proto_analyzer.messages:
             if msg.message_type == message_type:
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_undo_stack_index_changed(self, index: int):
         self.protocol_model.update()
         self.message_type_table_model.update()
         self.search()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_edit_label_clicked_in_table(self, proto_label_index: int):
         try:
             self.show_protocol_label_dialog(proto_label_index)
         except AttributeError:
             self.show_protocol_label_dialog(None)
 
-    @pyqtSlot(int, int, int)
+    @Slot(int, int, int)
     def on_create_label_triggered(self, msg_index, start, end):
         a = self.protocol_model.get_alignment_offset_at(msg_index)
         self.add_protocol_label(start=start - a, end=end - a - 1,
                                 messagenr=msg_index, proto_view=self.ui.cbProtoView.currentIndex())
 
-    @pyqtSlot()
+    @Slot()
     def on_edit_label_action_triggered(self):
         self.show_protocol_label_dialog()
 
-    @pyqtSlot()
+    @Slot()
     def on_protocol_view_changed(self):
         old_view = self.protocol_model.proto_view
         selected_indexes = self.ui.tblViewProtocol.selectionModel().selectedIndexes()
@@ -1278,13 +1278,13 @@ class CompareFrameController(QWidget):
 
         self.restore_selection(old_view, sel_cols, sel_rows)
 
-    @pyqtSlot()
+    @Slot()
     def on_item_in_proto_tree_dropped(self):
         self.__protocols = None
         self.set_shown_protocols()
         self.ui.treeViewProtocols.clearSelection()
 
-    @pyqtSlot()
+    @Slot()
     def on_tree_view_selection_changed(self):
         indexes = self.ui.treeViewProtocols.selectedIndexes()
 
@@ -1315,7 +1315,7 @@ class CompareFrameController(QWidget):
 
         self.updateUI(ignore_table_model=ignore_table_model_on_update)
 
-    @pyqtSlot()
+    @Slot()
     def on_table_selection_timer_timeout(self):
         self.label_value_model.show_label_values = True
         min_row, max_row, start, end = self.ui.tblViewProtocol.selection_range()
@@ -1403,7 +1403,7 @@ class CompareFrameController(QWidget):
 
         self.updateUI(ignore_table_model=True, resize_table=False)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_ref_index_changed(self, new_ref_index: int):
         if new_ref_index != -1 and self.protocol_model.row_count:
             hide_correction = 0
@@ -1418,7 +1418,7 @@ class CompareFrameController(QWidget):
 
         self.set_show_only_status()
 
-    @pyqtSlot(QModelIndex, QModelIndex)
+    @Slot(QModelIndex, QModelIndex)
     def on_tbl_view_message_current_row_changed(self, current: QModelIndex, previous: QModelIndex):
         row = current.row()
         if row == -1:
@@ -1429,42 +1429,42 @@ class CompareFrameController(QWidget):
         self.label_value_model.show_label_values = False
         self.label_value_model.update()
 
-    @pyqtSlot(MessageType, list)
+    @Slot(MessageType, list)
     def on_message_type_selected(self, message_type: MessageType, selected_messages: list):
         for msg in selected_messages:
             msg.message_type = message_type
         self.active_message_type = message_type
         self.protocol_model.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_message_type_dialog_accepted(self):
         self.update_automatic_assigned_message_types()
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_edited(self):
         self.refresh_assigned_participants_ui()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_label_shown_link_activated(self, link: str):
         if link == "reset_filter":
             self.ui.lineEditSearch.clear()
             self.show_all_rows()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_label_clear_alignment_link_activated(self, link: str):
         if link == "reset_alignment":
             self.align_messages(pattern="")
 
-    @pyqtSlot()
+    @Slot()
     def on_protocol_updated(self):
         self.set_shown_protocols()
         self.ui.tblViewProtocol.zero_hide_offsets.clear()
 
-    @pyqtSlot()
+    @Slot()
     def on_message_type_table_model_updated(self):
         self.ui.tblViewMessageTypes.open_persistent_editor(column=1)
 
-    @pyqtSlot(MessageType)
+    @Slot(MessageType)
     def on_message_type_removed(self, message_type: MessageType):
         for msg in self.proto_analyzer.messages:
             if msg.message_type == message_type:
@@ -1474,15 +1474,15 @@ class CompareFrameController(QWidget):
         self.protocol_model.update()
         self.label_value_model.update()
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def on_label_color_changed(self, lbl: ProtocolLabel):
         self.protocol_model.update()
 
-    @pyqtSlot(MessageType)
+    @Slot(MessageType)
     def on_message_type_visibility_changed(self, message_type: MessageType):
         self.set_message_type_visibility(message_type)
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_message_type_name_edited(self, new_name: str):
         if self.ui.lblLabelValues.text().startswith("Labels of"):
             self.ui.lblLabelValues.setText("Labels of {}".format(new_name))

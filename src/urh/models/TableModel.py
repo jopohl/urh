@@ -2,7 +2,7 @@ import array
 import math
 from collections import defaultdict
 
-from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
+from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt, Signal
 from PySide2.QtGui import QFont, QColor
 from PySide2.QtWidgets import QUndoStack
 from urh.util.Logger import logger
@@ -17,8 +17,8 @@ from urh.util import util
 class TableModel(QAbstractTableModel):
     ALIGNMENT_CHAR = " "
 
-    data_edited = pyqtSignal(int, int)
-    vertical_header_color_status_changed = pyqtSignal(bool)
+    data_edited = Signal(int, int)
+    vertical_header_color_status_changed = Signal(bool)
 
     def __init__(self, participants, parent=None):
         super().__init__(parent)

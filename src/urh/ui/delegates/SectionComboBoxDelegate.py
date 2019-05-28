@@ -1,7 +1,7 @@
 import sys
 from collections import OrderedDict
 
-from PySide2.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PySide2.QtCore import QModelIndex, Slot, QAbstractItemModel, Qt
 from PySide2.QtGui import QPainter, QStandardItem
 from PySide2.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
 
@@ -83,6 +83,6 @@ class SectionComboBoxDelegate(QStyledItemDelegate):
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
 
-    @pyqtSlot()
+    @Slot()
     def current_index_changed(self):
         self.commitData.emit(self.sender())

@@ -1,7 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 
-from PySide2.QtCore import QDir, Qt, QObject, pyqtSignal
+from PySide2.QtCore import QDir, Qt, QObject, Signal
 from PySide2.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
@@ -21,8 +21,8 @@ class ProjectManager(QObject):
     NEWLINE_CODE = "###~~~***~~~###_--:;;-__***~~~###"  # Newlines don't get loaded from xml properly
     AUTOSAVE_INTERVAL_MINUTES = 5
 
-    project_loaded_status_changed = pyqtSignal(bool)
-    project_updated = pyqtSignal()
+    project_loaded_status_changed = Signal(bool)
+    project_updated = Signal()
 
     def __init__(self, main_controller):
         super().__init__()

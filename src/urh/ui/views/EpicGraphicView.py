@@ -1,5 +1,5 @@
 import math
-from PySide2.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
+from PySide2.QtCore import Qt, QPoint, Signal, Slot
 from PySide2.QtGui import QIcon, QKeySequence
 from PySide2.QtWidgets import QAction
 
@@ -11,7 +11,7 @@ class EpicGraphicView(EditableGraphicView):
     """
     Tied to Signal Frame (Interpretation)
     """
-    save_clicked = pyqtSignal()
+    save_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -99,7 +99,7 @@ class EpicGraphicView(EditableGraphicView):
         colors = colors if colors else None
         return sub_path_ranges, colors
 
-    @pyqtSlot()
+    @Slot()
     def on_save_action_triggered(self):
         self.save_clicked.emit()
 

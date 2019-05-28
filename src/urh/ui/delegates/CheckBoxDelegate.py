@@ -1,4 +1,4 @@
-from PySide2.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
+from PySide2.QtCore import QModelIndex, QAbstractItemModel, Qt, Slot
 from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
 
 
@@ -21,6 +21,6 @@ class CheckBoxDelegate(QStyledItemDelegate):
     def setModelData(self, editor: QCheckBox, model: QAbstractItemModel, index: QModelIndex):
         model.setData(index, editor.isChecked(), Qt.EditRole)
 
-    @pyqtSlot()
+    @Slot()
     def stateChanged(self):
         self.commitData.emit(self.sender())

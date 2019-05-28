@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from PySide2.QtGui import QDragEnterEvent, QDropEvent
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -8,7 +8,7 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
 class ZoomAndDropableGraphicView(ZoomableGraphicView):
-    signal_loaded = pyqtSignal(ProtocolAnalyzer)
+    signal_loaded = Signal(ProtocolAnalyzer)
 
     def __init__(self, parent=None):
         self.signal_tree_root = None  # type: ProtocolTreeItem

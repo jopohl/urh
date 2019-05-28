@@ -1,9 +1,9 @@
-from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, Signal
 from urh.signalprocessing.Participant import Participant
 
 
 class ParticipantListModel(QAbstractListModel):
-    show_state_changed = pyqtSignal()
+    show_state_changed = Signal()
 
     def __init__(self, participants, parent=None):
         """

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtCore import Slot, Signal, Qt
 from PySide2.QtGui import QIcon, QContextMenuEvent, QKeySequence
 from PySide2.QtWidgets import QTableView, QMenu, QAction
 
@@ -12,8 +12,8 @@ from urh.ui.delegates.SectionComboBoxDelegate import SectionComboBoxDelegate
 
 
 class LabelValueTableView(QTableView):
-    edit_label_action_triggered = pyqtSignal()
-    configure_field_types_action_triggered = pyqtSignal()
+    edit_label_action_triggered = Signal()
+    configure_field_types_action_triggered = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -79,11 +79,11 @@ class LabelValueTableView(QTableView):
         if min_row > -1:
             self.model().delete_labels_at(min_row, max_row)
 
-    @pyqtSlot()
+    @Slot()
     def on_edit_label_action_triggered(self):
         self.edit_label_action_triggered.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_copy_to_msg_type_action_triggered(self):
         min_row, max_row = self.selected_min_max_row
         self.model().add_labels_to_message_type(min_row, max_row, int(self.sender().data()))

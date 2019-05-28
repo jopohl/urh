@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 from PyQt5 import uic
-from PySide2.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
+from PySide2.QtCore import QRegExp, Qt, Signal, Slot
 from PySide2.QtGui import QBrush, QColor, QPen, QRegExpValidator
 from PySide2.QtWidgets import QApplication, QDialog
 
@@ -13,7 +13,7 @@ from urh.util.Formatter import Formatter
 
 
 class InsertSinePlugin(SignalEditorPlugin):
-    insert_sine_wave_clicked = pyqtSignal()
+    insert_sine_wave_clicked = Signal()
 
     INSERT_INDICATOR_COLOR = QColor(0, 255, 0, 80)
 
@@ -175,27 +175,27 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3,
                                                                    append_seconds=False, remove_spaces=True))
 
-    @pyqtSlot()
+    @Slot()
     def on_double_spin_box_amplitude_editing_finished(self):
         self.amplitude = self.dialog_ui.doubleSpinBoxAmplitude.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_double_spin_box_frequency_editing_finished(self):
         self.frequency = self.dialog_ui.doubleSpinBoxFrequency.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_double_spin_box_phase_editing_finished(self):
         self.phase = self.dialog_ui.doubleSpinBoxPhase.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_double_spin_box_sample_rate_editing_finished(self):
         self.sample_rate = self.dialog_ui.doubleSpinBoxSampleRate.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_spin_box_n_samples_editing_finished(self):
         self.num_samples = self.dialog_ui.doubleSpinBoxNSamples.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_time_editing_finished(self):
         time_str = self.dialog_ui.lineEditTime.text().replace(",", ".")
         suffix = ""
@@ -217,16 +217,16 @@ class InsertSinePlugin(SignalEditorPlugin):
         else:
             self.set_time()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_abort_clicked(self):
         self.dialog_ui.close()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_ok_clicked(self):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
 
-    @pyqtSlot()
+    @Slot()
     def on_dialog_finished(self):
         self.sender().graphicsViewSineWave.eliminate()
         self.__dialog_ui = None

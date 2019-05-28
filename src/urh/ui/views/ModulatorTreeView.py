@@ -1,11 +1,11 @@
 from PySide2.QtWidgets import QTreeView
-from PySide2.QtCore import pyqtSignal, QItemSelectionModel
+from PySide2.QtCore import Signal, QItemSelectionModel
 
 from urh.models import GeneratorTreeModel
 
 
 class ModulatorTreeView(QTreeView):
-    selection_changed = pyqtSignal()
+    selection_changed = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)

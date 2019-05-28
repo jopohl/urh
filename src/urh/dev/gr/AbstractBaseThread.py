@@ -8,18 +8,19 @@ from threading import Thread
 import time
 
 import zmq
-from PySide2.QtCore import QThread, pyqtSignal
+from PySide2.QtCore import QThread, Signal
 
 from urh import constants
+from urh.util import util
 from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
 
 
 class AbstractBaseThread(QThread):
-    started = pyqtSignal()
-    stopped = pyqtSignal()
-    sender_needs_restart = pyqtSignal()
+    started = Signal()
+    stopped = Signal()
+    sender_needs_restart = Signal()
 
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
                  ip='127.0.0.1', parent=None):
@@ -46,8 +47,8 @@ class AbstractBaseThread(QThread):
         self.socket = None
 
         gnuradio_path_file = os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")
-        if constants.SETTINGS.value("use_gnuradio_install_dir", False, bool):
-            gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
+        if util.read_setting("use_gnuradio_install_dir", False, bool):
+            gnuradio_dir = util.read_setting("gnuradio_install_dir", "")
             with open(gnuradio_path_file, "w") as f:
                 f.write(gnuradio_dir)
             if os.path.isfile(os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")):
@@ -59,7 +60,7 @@ class AbstractBaseThread(QThread):
                 os.remove(gnuradio_path_file)
             except OSError:
                 pass
-            self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
+            self.python2_interpreter = util.read_setting("python2_exe", "")
 
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread

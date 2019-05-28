@@ -1,4 +1,4 @@
-from PySide2.QtCore import QRectF, pyqtSignal, Qt, QPoint
+from PySide2.QtCore import QRectF, Signal, Qt, QPoint
 from PySide2.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
 from PySide2.QtWidgets import QGraphicsView, QAction
 
@@ -10,11 +10,11 @@ from urh.util import util
 
 
 class SelectableGraphicView(QGraphicsView):
-    sep_area_moving = pyqtSignal(float)
-    sep_area_changed = pyqtSignal(float)
-    selection_width_changed = pyqtSignal(int)
-    selection_height_changed = pyqtSignal(int)
-    sel_area_start_end_changed = pyqtSignal(int, int)
+    sep_area_moving = Signal(float)
+    sep_area_changed = Signal(float)
+    selection_width_changed = Signal(int)
+    selection_height_changed = Signal(int)
+    sel_area_start_end_changed = Signal(int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -60,7 +60,7 @@ class SelectableGraphicView(QGraphicsView):
 
     @property
     def hold_shift_to_drag(self) -> bool:
-        return constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
+        return util.read_setting('hold_shift_to_drag', True, type=bool)
 
     @property
     def something_is_selected(self) -> bool:

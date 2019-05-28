@@ -4,7 +4,7 @@ import tarfile
 import wave
 
 import numpy as np
-from PySide2.QtCore import pyqtSignal, QObject, QDir, Qt
+from PySide2.QtCore import Signal, QObject, QDir, Qt
 from PySide2.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
@@ -22,17 +22,17 @@ class IQSignal(QObject):
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "QAM"]
 
-    bit_len_changed = pyqtSignal(int)
-    tolerance_changed = pyqtSignal(int)
-    noise_threshold_changed = pyqtSignal()
-    qad_center_changed = pyqtSignal(float)
-    name_changed = pyqtSignal(str)
-    sample_rate_changed = pyqtSignal(float)
-    modulation_type_changed = pyqtSignal(int)
+    bit_len_changed = Signal(int)
+    tolerance_changed = Signal(int)
+    noise_threshold_changed = Signal()
+    qad_center_changed = Signal(float)
+    name_changed = Signal(str)
+    sample_rate_changed = Signal(float)
+    modulation_type_changed = Signal(int)
 
-    saved_status_changed = pyqtSignal()
-    protocol_needs_update = pyqtSignal()
-    data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
+    saved_status_changed = Signal()
+    protocol_needs_update = Signal()
+    data_edited = Signal()  # On Crop/Mute/Delete etc.
 
     def __init__(self, filename: str, name="Signal", modulation: str = None, sample_rate: float = 1e6, parent=None):
         super().__init__(parent)

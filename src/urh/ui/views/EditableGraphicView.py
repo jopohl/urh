@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtGui import QIcon, QKeySequence
 from PySide2.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
@@ -11,11 +11,11 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
 class EditableGraphicView(ZoomableGraphicView):
-    save_as_clicked = pyqtSignal()
-    export_demodulated_clicked = pyqtSignal()
-    create_clicked = pyqtSignal(int, int)
-    set_noise_clicked = pyqtSignal()
-    participant_changed = pyqtSignal()
+    save_as_clicked = Signal()
+    export_demodulated_clicked = Signal()
+    create_clicked = Signal(int, int)
+    set_noise_clicked = Signal()
+    participant_changed = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -214,7 +214,7 @@ class EditableGraphicView(ZoomableGraphicView):
     def clear_horizontal_selection(self):
         self.set_horizontal_selection(0, 0)
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_sine_action_triggered(self):
         if self.something_is_selected:
             num_samples = self.selection_area.width
@@ -228,7 +228,7 @@ class EditableGraphicView(ZoomableGraphicView):
                                                                 num_samples=num_samples)
         dialog.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_sine_wave_clicked(self):
         if self.insert_sine_plugin.complex_wave is not None:
             self.clear_horizontal_selection()
@@ -238,12 +238,12 @@ class EditableGraphicView(ZoomableGraphicView):
                                              mode=EditAction.insert, cache_qad=self.cache_qad)
             self.undo_stack.push(insert_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_copy_action_triggered(self):
         if self.something_is_selected:
             self.stored_item = self.signal.iq_array[int(self.selection_area.start):int(self.selection_area.end)]
 
-    @pyqtSlot()
+    @Slot()
     def on_paste_action_triggered(self):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
@@ -254,7 +254,7 @@ class EditableGraphicView(ZoomableGraphicView):
                                             mode=EditAction.paste, cache_qad=self.cache_qad)
             self.undo_stack.push(paste_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_delete_action_triggered(self):
         if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
@@ -264,7 +264,7 @@ class EditableGraphicView(ZoomableGraphicView):
                                           mode=EditAction.delete, cache_qad=self.cache_qad)
             self.undo_stack.push(del_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_crop_action_triggered(self):
         if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
@@ -274,34 +274,34 @@ class EditableGraphicView(ZoomableGraphicView):
                                            mode=EditAction.crop, cache_qad=self.cache_qad)
             self.undo_stack.push(crop_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_mute_action_triggered(self):
         mute_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                        start=self.selection_area.start, end=self.selection_area.end,
                                        mode=EditAction.mute, cache_qad=self.cache_qad)
         self.undo_stack.push(mute_action)
 
-    @pyqtSlot()
+    @Slot()
     def on_create_action_triggered(self):
         self.create_clicked.emit(self.selection_area.start, self.selection_area.end)
 
-    @pyqtSlot()
+    @Slot()
     def on_none_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = None
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = self.participant_actions[self.sender()]
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_noise_action_triggered(self):
         self.set_noise_clicked.emit()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_undo_stack_index_changed(self, index: int):
         view_width, scene_width = self.view_rect().width(), self.sceneRect().width()
         if view_width > scene_width:

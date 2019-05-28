@@ -1,4 +1,4 @@
-from PySide2.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PySide2.QtCore import QPoint, Signal, Slot
 from PySide2.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
@@ -10,11 +10,11 @@ from urh.util import util
 
 
 class SignalTabController(QWidget):
-    frame_closed = pyqtSignal(SignalFrame)
-    not_show_again_changed = pyqtSignal()
-    signal_created = pyqtSignal(int, IQSignal)
-    files_dropped = pyqtSignal(list)
-    frame_was_dropped = pyqtSignal(int, int)
+    frame_closed = Signal(SignalFrame)
+    not_show_again_changed = Signal()
+    signal_created = Signal(int, IQSignal)
+    files_dropped = Signal(list)
+    frame_was_dropped = Signal(int, int)
 
     @property
     def num_frames(self):
@@ -81,7 +81,7 @@ class SignalTabController(QWidget):
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
-        default_view = constants.SETTINGS.value('default_view', 0, int)
+        default_view = util.read_setting('default_view', 0, int)
         sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
 
         return sig_frame
@@ -111,7 +111,7 @@ class SignalTabController(QWidget):
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):
-        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
+        signal_frame.hold_shift = util.read_setting('hold_shift_to_drag', True, type=bool)
         signal_frame.drag_started.connect(self.frame_dragged)
         signal_frame.frame_dropped.connect(self.frame_dropped)
         signal_frame.files_dropped.connect(self.on_files_dropped)
@@ -121,14 +121,13 @@ class SignalTabController(QWidget):
         for i, f in enumerate(self.signal_frames):
             f.ui.lSignalNr.setText("{0:d}:".format(i + 1))
 
-    @pyqtSlot()
+    @Slot()
     def save_all(self):
         if self.num_frames == 0:
             return
 
-        settings = constants.SETTINGS
         try:
-            not_show = settings.value('not_show_save_dialog', type=bool, defaultValue=False)
+            not_show = util.read_setting('not_show_save_dialog', False, type=bool)
         except TypeError:
             not_show = False
 
@@ -142,7 +141,7 @@ class SignalTabController(QWidget):
 
             reply = msg_box.exec()
             not_show_again = cb.isChecked()
-            settings.setValue("not_show_save_dialog", not_show_again)
+            constants.SETTINGS.setValue("not_show_save_dialog", not_show_again)
             self.not_show_again_changed.emit()
 
             if reply != QMessageBox.Yes:
@@ -153,12 +152,12 @@ class SignalTabController(QWidget):
                 continue
             f.signal.save()
 
-    @pyqtSlot()
+    @Slot()
     def close_all(self):
         for f in self.signal_frames:
             f.my_close()
 
-    @pyqtSlot(IQSignal)
+    @Slot(IQSignal)
     def on_apply_to_all_clicked(self, signal: IQSignal):
         for frame in self.signal_frames:
             if frame.signal is not None:
@@ -201,11 +200,11 @@ class SignalTabController(QWidget):
                 if proto_needs_update:
                     frame.signal.protocol_needs_update.emit()
 
-    @pyqtSlot(QPoint)
+    @Slot(QPoint)
     def frame_dragged(self, pos: QPoint):
         self.drag_pos = pos
 
-    @pyqtSlot(QPoint)
+    @Slot(QPoint)
     def frame_dropped(self, pos: QPoint):
         start = self.drag_pos
         if start is None:
@@ -225,13 +224,13 @@ class SignalTabController(QWidget):
         self.swap_frames(start_index, end_index)
         self.frame_was_dropped.emit(start_index, end_index)
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def swap_frames(self, from_index: int, to_index: int):
         if from_index != to_index:
             start_sig_widget = self.ui.splitter.widget(from_index)
             self.ui.splitter.insertWidget(to_index, start_sig_widget)
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_changed(self):
         for sframe in self.signal_frames:
             sframe.on_participant_changed()
@@ -241,7 +240,7 @@ class SignalTabController(QWidget):
             if frame.ui.gvSpectrogram.width_spectrogram > 0:
                 frame.draw_spectrogram(force_redraw=True)
 
-    @pyqtSlot(IQSignal)
+    @Slot(IQSignal)
     def emit_signal_created(self, signal):
         try:
             index = self.signal_frames.index(self.sender()) + 1

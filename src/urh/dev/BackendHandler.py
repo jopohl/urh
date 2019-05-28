@@ -4,6 +4,7 @@ from enum import Enum
 from subprocess import call, DEVNULL
 
 from urh import constants
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -18,8 +19,7 @@ class BackendContainer(object):
     def __init__(self, name, avail_backends: set, supports_rx: bool, supports_tx: bool):
         self.name = name
         self.avail_backends = avail_backends
-        settings = constants.SETTINGS
-        self.selected_backend = Backends[settings.value(name + "_selected_backend", "none")]
+        self.selected_backend = Backends[util.read_setting(name + "_selected_backend", "none")]
         if self.selected_backend not in self.avail_backends:
             self.selected_backend = Backends.none
 
@@ -29,7 +29,7 @@ class BackendContainer(object):
             elif Backends.grc in self.avail_backends:
                 self.selected_backend = Backends.grc
 
-        self.is_enabled = settings.value(name + "_is_enabled", True, bool)
+        self.is_enabled = util.read_setting(name + "_is_enabled", True, bool)
         self.__supports_rx = supports_rx
         self.__supports_tx = supports_tx
         if len(self.avail_backends) == 0:
@@ -63,8 +63,7 @@ class BackendContainer(object):
         self.write_settings()
 
     def write_settings(self):
-        settings = constants.SETTINGS
-        settings.setValue(self.name + "_is_enabled", self.is_enabled)
+        constants.SETTINGS.setValue(self.name + "_is_enabled", self.is_enabled)
 
         if self.selected_backend == Backends.grc and len(self.avail_backends) == 1:
             # if GNU Radio is the only backend available we do not save it to ini,
@@ -72,7 +71,7 @@ class BackendContainer(object):
             # see: https://github.com/jopohl/urh/issues/270
             pass
         else:
-            settings.setValue(self.name + "_selected_backend", self.selected_backend.name)
+            constants.SETTINGS.setValue(self.name + "_selected_backend", self.selected_backend.name)
 
 
 class BackendHandler(object):
@@ -88,7 +87,7 @@ class BackendHandler(object):
 
     def __init__(self):
 
-        python2_exe = constants.SETTINGS.value('python2_exe', '')
+        python2_exe = util.read_setting('python2_exe', '')
         if not python2_exe:
             self.__python2_exe = self.__get_python2_interpreter()
             constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
@@ -97,10 +96,10 @@ class BackendHandler(object):
 
         constants.SETTINGS.setValue("python2_exe", self.__python2_exe)
 
-        self.gnuradio_install_dir = constants.SETTINGS.value('gnuradio_install_dir', "")
-        self.use_gnuradio_install_dir = constants.SETTINGS.value('use_gnuradio_install_dir', os.name == "nt", bool)
+        self.gnuradio_install_dir = util.read_setting('gnuradio_install_dir', "")
+        self.use_gnuradio_install_dir = util.read_setting('use_gnuradio_install_dir', os.name == "nt", bool)
 
-        self.gnuradio_is_installed = constants.SETTINGS.value('gnuradio_is_installed', -1, int)
+        self.gnuradio_is_installed = util.read_setting('gnuradio_is_installed', -1, int)
         if self.gnuradio_is_installed == -1:
             self.set_gnuradio_installed_status()
         else:

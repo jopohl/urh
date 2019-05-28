@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtGui import QKeyEvent, QCloseEvent
 from PySide2.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
@@ -20,7 +20,7 @@ from urh.util.Logger import logger
 
 
 class ProtocolLabelDialog(QDialog):
-    apply_decoding_changed = pyqtSignal(ProtocolLabel, MessageType)
+    apply_decoding_changed = Signal(ProtocolLabel, MessageType)
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
@@ -65,7 +65,7 @@ class ProtocolLabelDialog(QDialog):
         self.setWindowFlags(Qt.Window)
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -110,11 +110,11 @@ class ProtocolLabelDialog(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def confirm(self):
         self.close()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def set_view_index(self, ind):
         self.model.proto_view = ind
         self.model.update()
@@ -122,10 +122,10 @@ class ProtocolLabelDialog(QDialog):
         for i in range(self.ui.tabWidgetAdvancedSettings.count()):
             self.ui.tabWidgetAdvancedSettings.widget(i).proto_view = ind
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def on_apply_decoding_changed(self, lbl: ProtocolLabel):
         self.apply_decoding_changed.emit(lbl, self.model.message_type)
 
-    @pyqtSlot(ProtocolLabel)
+    @Slot(ProtocolLabel)
     def on_label_special_status_changed(self, lbl: ProtocolLabel):
         self.configure_special_config_tabs()

@@ -1,4 +1,4 @@
-from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex, Signal
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import qApp
 
@@ -13,7 +13,7 @@ from urh.util import util
 class SimulatorMessageFieldModel(QAbstractTableModel):
     header_labels = ['Name', 'Display format', 'Value type', 'Value']
 
-    protocol_label_updated = pyqtSignal(SimulatorProtocolLabel)
+    protocol_label_updated = Signal(SimulatorProtocolLabel)
 
     def __init__(self, controller, parent=None):
         super().__init__(parent)

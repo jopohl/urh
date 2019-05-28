@@ -1,4 +1,4 @@
-from PySide2.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
+from PySide2.QtCore import QAbstractTableModel, Signal, Qt, QModelIndex
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -9,9 +9,9 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 class PLabelTableModel(QAbstractTableModel):
     header_labels = ["Name", "Start", "End", "Color", "Apply decoding"]
 
-    label_removed = pyqtSignal(ProtocolLabel)
-    special_status_label_changed = pyqtSignal(ProtocolLabel)
-    apply_decoding_changed = pyqtSignal(ProtocolLabel)
+    label_removed = Signal(ProtocolLabel)
+    special_status_label_changed = Signal(ProtocolLabel)
+    apply_decoding_changed = Signal(ProtocolLabel)
 
     def __init__(self, message: Message, field_types, parent=None):
         """

@@ -5,7 +5,7 @@ import threading
 import time
 
 import numpy
-from PySide2.QtCore import pyqtSignal, QObject, pyqtSlot
+from PySide2.QtCore import Signal, QObject, Slot
 from PyQt5.QtTest import QSignalSpy
 
 from urh.dev.BackendHandler import BackendHandler, Backends
@@ -31,8 +31,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class Simulator(QObject):
-    simulation_started = pyqtSignal()
-    simulation_stopped = pyqtSignal()
+    simulation_started = Signal()
+    simulation_stopped = Signal()
 
     def __init__(self, simulator_config: SimulatorConfiguration, modulators,
                  expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
@@ -93,19 +93,19 @@ class Simulator(QObject):
         # Ensure all ongoing qt signals can be processed
         time.sleep(0.1)
 
-    @pyqtSlot(str)
+    @Slot(str)
     def stop_on_error(self, msg: str):
         self.fatal_device_error_occurred = True
         if self.is_simulating:
             self.stop(msg=msg)
 
-    @pyqtSlot()
+    @Slot()
     def on_sniffer_ready(self):
         if not self.sniffer_ready:
             self.log_message("RX is ready to operate")
             self.sniffer_ready = True
 
-    @pyqtSlot()
+    @Slot()
     def on_sender_ready(self):
         if not self.sender_ready:
             self.log_message("TX is ready to operate")

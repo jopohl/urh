@@ -2,7 +2,7 @@ import random
 import string
 
 import itertools
-from PySide2.QtCore import QAbstractTableModel, pyqtSignal, QModelIndex, Qt, QItemSelection
+from PySide2.QtCore import QAbstractTableModel, Signal, QModelIndex, Qt, QItemSelection
 
 from urh import constants
 from urh.signalprocessing.Participant import Participant
@@ -12,8 +12,8 @@ class ParticipantTableModel(QAbstractTableModel):
     INITIAL_NAMES = ["Alice", "Bob", "Carl", "Dave", "Eve", "Frank", "Grace", "Heidi", "Judy", "Mallory", "Oscar",
                      "Peggy", "Sybil", "Trudy", "Victor", "Walter"]
 
-    updated = pyqtSignal()
-    participant_edited = pyqtSignal()
+    updated = Signal()
+    participant_edited = Signal()
 
     def __init__(self, participants):
         super().__init__()

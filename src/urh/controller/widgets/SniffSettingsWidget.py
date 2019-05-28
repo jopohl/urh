@@ -1,19 +1,20 @@
 import os
 
-from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtCore import Slot, Signal
 from PySide2.QtWidgets import QWidget, QCompleter, QDirModel
 
 from urh import constants
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_send_recv_sniff_settings import Ui_SniffSettings
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
 
 class SniffSettingsWidget(QWidget):
-    sniff_setting_edited = pyqtSignal()
-    sniff_file_edited = pyqtSignal()
-    sniff_parameters_changed = pyqtSignal(dict)
+    sniff_setting_edited = Signal()
+    sniff_file_edited = Signal()
+    sniff_parameters_changed = Signal(dict)
 
     def __init__(self, device_name: str, project_manager: ProjectManager, signal=None, backend_handler=None,
                  network_raw_mode=False, signals=None, parent=None):
@@ -43,7 +44,7 @@ class SniffSettingsWidget(QWidget):
 
         self.create_connects()
         self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())
-        self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
+        self.ui.comboBox_sniff_viewtype.setCurrentIndex(util.read_setting('default_view', 0, int))
 
         # Auto Complete like a Boss
         completer = QCompleter()
@@ -117,43 +118,43 @@ class SniffSettingsWidget(QWidget):
                                                 adaptive_noise=self.sniffer.adaptive_noise,
                                                 automatic_center=self.sniffer.automatic_center))
 
-    @pyqtSlot()
+    @Slot()
     def on_noise_edited(self):
         self.sniffer.signal.noise_threshold_relative = self.ui.spinbox_sniff_Noise.value()
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_center_edited(self):
         self.sniffer.signal.qad_center = self.ui.spinbox_sniff_Center.value()
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_bit_len_edited(self):
         self.sniffer.signal.bit_len = self.ui.spinbox_sniff_BitLen.value()
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_tolerance_edited(self):
         self.sniffer.signal.tolerance = self.ui.spinbox_sniff_ErrorTolerance.value()
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_modulation_changed(self, new_index: int):
         self.sniffer.signal.silent_set_modulation_type(new_index)
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_view_type_changed(self):
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_sniff_encoding_index_changed(self, index: int):
         if self.sniffer.decoder != self.project_manager.decodings[index]:
             self.sniffer.set_decoder_for_messages(self.project_manager.decodings[index])
             self.sniffer.decoder = self.project_manager.decodings[index]
             self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_output_file_editing_finished(self):
         self.ui.lineEdit_sniff_OutputFile.setStyleSheet("")
         text = self.ui.lineEdit_sniff_OutputFile.text()
@@ -171,11 +172,11 @@ class SniffSettingsWidget(QWidget):
         self.sniffer.sniff_file = text
         self.sniff_file_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_checkbox_sniff_timestamp_clicked(self):
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_sniff_use_signal_clicked(self):
         try:
             signal = self.signals[self.ui.comboBox_sniff_signal.currentIndex()]
@@ -190,11 +191,11 @@ class SniffSettingsWidget(QWidget):
 
         self.emit_editing_finished_signals()
 
-    @pyqtSlot()
+    @Slot()
     def on_check_box_adaptive_noise_clicked(self):
         self.sniffer.adaptive_noise = self.ui.checkBoxAdaptiveNoise.isChecked()
 
-    @pyqtSlot()
+    @Slot()
     def on_check_box_auto_center_clicked(self):
         self.sniffer.automatic_center = self.ui.checkBoxAutoCenter.isChecked()
         self.ui.spinbox_sniff_Center.setDisabled(self.ui.checkBoxAutoCenter.isChecked())

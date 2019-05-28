@@ -1,6 +1,6 @@
 from statistics import median
 
-from PySide2.QtCore import QRegExp, pyqtSlot, pyqtSignal
+from PySide2.QtCore import QRegExp, Slot, Signal
 from PySide2.QtGui import QRegExpValidator, QIcon
 from PySide2.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
 
@@ -11,13 +11,14 @@ from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv_device_settings import Ui_FormDeviceSettings
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 import numpy as np
 
 class DeviceSettingsWidget(QWidget):
-    selected_device_changed = pyqtSignal()
-    gain_edited = pyqtSignal()
-    device_parameters_changed = pyqtSignal(dict)
+    selected_device_changed = Signal()
+    gain_edited = Signal()
+    device_parameters_changed = Signal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler = None,
                  continuous_send_mode=False, parent=None):
@@ -41,7 +42,7 @@ class DeviceSettingsWidget(QWidget):
             self.ui.labelDCCorrection.hide()
             self.ui.checkBoxDCCorrection.hide()
 
-        self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
+        self.bw_sr_are_locked = util.read_setting("lock_bandwidth_sample_rate", True, bool)
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox(continuous_send_mode)
         self.ui.cbDevice.addItems(items)
@@ -83,8 +84,7 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix + "if_gain", config.DEFAULT_IF_GAIN)
         set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix + "baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
-        set_val(self.ui.spinBoxNRepeat, "num_sending_repeats",
-                constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+        set_val(self.ui.spinBoxNRepeat, "num_sending_repeats", util.read_setting('num_sending_repeats', 1, type=int))
 
         if self.rx_tx_prefix + "antenna_index" in conf_dict:
             self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix + "antenna_index"])
@@ -359,7 +359,7 @@ class DeviceSettingsWidget(QWidget):
 
         self.device_parameters_changed.emit(settings)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
         constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
@@ -370,53 +370,53 @@ class DeviceSettingsWidget(QWidget):
         else:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/icons/unlock.svg"))
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_sample_rate_editing_finished(self):
         self.device.sample_rate = self.ui.spinBoxSampleRate.value()
         if self.bw_sr_are_locked:
             self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())
             self.device.bandwidth = self.ui.spinBoxBandwidth.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_frequency_editing_finished(self):
         self.device.frequency = self.ui.spinBoxFreq.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_bandwidth_editing_finished(self):
         self.device.bandwidth = self.ui.spinBoxBandwidth.value()
         if self.bw_sr_are_locked:
             self.ui.spinBoxSampleRate.setValue(self.ui.spinBoxBandwidth.value())
             self.device.sample_rate = self.ui.spinBoxSampleRate.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_port_editing_finished(self):
         self.device.port = self.ui.spinBoxPort.value()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_antenna_current_index_changed(self, index: int):
         self.device.antenna_index = index
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_channel_current_index_changed(self, index: int):
         self.device.channel_index = index
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_freq_correction_editing_finished(self):
         self.device.freq_correction = self.ui.spinBoxFreqCorrection.value()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_direct_sampling_index_changed(self, index: int):
         self.device.direct_sampling_mode = index
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_gain_editing_finished(self):
         self.device.gain = self.ui.spinBoxGain.value()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         try:
@@ -424,21 +424,21 @@ class DeviceSettingsWidget(QWidget):
         except (ValueError, KeyError):
             pass
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         self.ui.spinBoxGain.setValue(dev_conf[self.rx_tx_prefix + "rf_gain"][value])
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_if_gain_editing_finished(self):
         self.device.if_gain = self.ui.spinBoxIFGain.value()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_if_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         self.ui.spinBoxIFGain.setValue(dev_conf[self.rx_tx_prefix + "if_gain"][value])
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_if_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         try:
@@ -446,20 +446,20 @@ class DeviceSettingsWidget(QWidget):
         except (ValueError, KeyError):
             pass
 
-    @pyqtSlot()
+    @Slot()
     def on_num_repeats_changed(self):
         self.device.num_sending_repeats = self.ui.spinBoxNRepeat.value()
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_baseband_gain_editing_finished(self):
         self.device.baseband_gain = self.ui.spinBoxBasebandGain.value()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_baseband_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         self.ui.spinBoxBasebandGain.setValue(dev_conf[self.rx_tx_prefix + "baseband_gain"][value])
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_baseband_gain_value_changed(self, value: int):
         dev_conf = self.selected_device_conf
         try:
@@ -485,22 +485,22 @@ class DeviceSettingsWidget(QWidget):
 
         self.ui.comboBoxDeviceIdentifier.clear()
 
-    @pyqtSlot()
+    @Slot()
     def on_cb_device_current_index_changed(self):
         self.update_for_new_device(overwrite_settings=True)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_refresh_device_identifier_clicked(self):
         if self.device is None:
             return
         self.ui.comboBoxDeviceIdentifier.clear()
         self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_check_box_dc_correction_clicked(self, checked: bool):
         self.device.apply_dc_correction = bool(checked)
 
-    @pyqtSlot()
+    @Slot()
     def on_combo_box_device_identifier_current_index_changed(self):
         if self.device is not None:
             self.device.device_serial = self.ui.comboBoxDeviceIdentifier.currentText()

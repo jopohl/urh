@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 import numpy
-from PySide2.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
+from PySide2.QtCore import Slot, Qt, QDir, QStringListModel, Signal
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout, QToolButton, QDialog
@@ -40,8 +40,8 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SimulatorTabController(QWidget):
-    open_in_analysis_requested = pyqtSignal(str)
-    rx_file_saved = pyqtSignal(str)
+    open_in_analysis_requested = Signal(str)
+    rx_file_saved = Signal(str)
 
     def __init__(self, compare_frame_controller: CompareFrameController,
                  generator_tab_controller: GeneratorTabController,
@@ -256,7 +256,7 @@ class SimulatorTabController(QWidget):
     def close_all(self):
         self.simulator_scene.clear_all()
 
-    @pyqtSlot(int, int, int)
+    @Slot(int, int, int)
     def create_simulator_label(self, msg_index: int, start: int, end: int):
         con = self.simulator_message_table_model.protocol
         start, end = con.convert_range(start, end - 1, self.ui.cbViewType.currentIndex(), 0, False, msg_index)
@@ -268,7 +268,7 @@ class SimulatorTabController(QWidget):
         except ValueError:
             pass
 
-    @pyqtSlot()
+    @Slot()
     def open_modulator_dialog(self):
         selected_message = self.simulator_message_table_model.protocol.messages[self.ui.tblViewMessage.selected_rows[0]]
         preselected_index = selected_message.modulator_index
@@ -281,7 +281,7 @@ class SimulatorTabController(QWidget):
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
 
-    @pyqtSlot()
+    @Slot()
     def refresh_modulators(self):
         # update Generator tab ...
         cBoxModulations = self.generator_tab_controller.ui.cBoxModulations
@@ -334,18 +334,18 @@ class SimulatorTabController(QWidget):
         self.simulator_message_table_model.refresh_vertical_header()
         self.ui.tblViewMessage.resize_vertical_header()
 
-    @pyqtSlot()
+    @Slot()
     def on_rule_cond_line_edit_text_changed(self):
         self.active_item.condition = self.ui.ruleCondLineEdit.text()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_view_type_changed(self):
         self.simulator_message_table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.simulator_message_table_model.update()
         self.ui.tblViewMessage.resize_columns()
 
-    @pyqtSlot()
+    @Slot()
     def on_goto_combobox_index_changed(self):
         if not isinstance(self.active_item, SimulatorGotoAction):
             return
@@ -353,14 +353,14 @@ class SimulatorTabController(QWidget):
         self.active_item.goto_target = None if self.ui.goto_combobox.currentIndex() == 0 else self.ui.goto_combobox.currentText()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_simulator_scene_selection_changed(self):
         selected_items = self.simulator_scene.selectedItems()
         self.active_item = selected_items[0].model_item if selected_items else None
 
         self.update_ui()
 
-    @pyqtSlot()
+    @Slot()
     def on_table_selection_changed(self):
         selection = self.ui.tblViewMessage.selectionModel().selection()
 
@@ -413,7 +413,7 @@ class SimulatorTabController(QWidget):
 
         self.update_ui()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_simulate_clicked(self):
         if not self.simulator_config.protocol_valid():
             QMessageBox.critical(self, self.tr("Invalid protocol configuration"),
@@ -460,39 +460,39 @@ class SimulatorTabController(QWidget):
 
         return s
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_choose_command_clicked(self):
         file_name, ok = QFileDialog.getOpenFileName(self, self.tr("Choose program"), QDir.homePath())
 
         if file_name is not None and ok:
             self.ui.lineEditTriggerCommand.setText(file_name)
 
-    @pyqtSlot()
+    @Slot()
     def on_line_edit_trigger_command_text_changed(self):
         self.active_item.command = self.ui.lineEditTriggerCommand.text()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_check_box_pass_transcript_STDIN_clicked(self):
         self.active_item.pass_transcript = self.ui.checkBoxPassTranscriptSTDIN.isChecked()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_counter_start_editing_finished(self):
         self.active_item.start = self.ui.spinBoxCounterStart.value()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_counter_step_editing_finished(self):
         self.active_item.step = self.ui.spinBoxCounterStep.value()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_spinbox_sleep_editing_finished(self):
         self.active_item.sleep_time = self.ui.doubleSpinBoxSleep.value()
         self.item_updated(self.active_item)
 
-    @pyqtSlot()
+    @Slot()
     def on_participants_changed(self):
         self.update_vertical_table_header()
         self.participant_table_model.update()
@@ -501,47 +501,47 @@ class SimulatorTabController(QWidget):
     def item_updated(self, item: SimulatorItem):
         self.simulator_config.items_updated.emit([item])
 
-    @pyqtSlot()
+    @Slot()
     def refresh_tree(self):
         self.ui.treeProtocols.expandAll()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_save_clicked(self):
         filename = FileOperator.get_save_file_name(initial_name="myprofile.sim.xml", caption="Save simulator profile")
         if filename:
             self.save_simulator_file(filename)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_load_clicked(self):
         dialog = FileOperator.get_open_dialog(False, parent=self, name_filter="simulator")
         if dialog.exec_():
             self.load_simulator_file(dialog.selectedFiles()[0])
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_edited(self):
         self.project_manager.project_updated.emit()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_num_repeat_value_changed(self, value):
         self.project_manager.simulator_num_repeat = value
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_timeout_value_changed(self, value):
         self.project_manager.simulator_timeout_ms = value
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_spinbox_retries_value_changed(self, value):
         self.project_manager.simulator_retries = value
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_error_handling_index_changed(self, index: int):
         self.project_manager.simulator_error_handling_index = index
 
-    @pyqtSlot()
+    @Slot()
     def on_message_source_or_destination_updated(self):
         self.simulator_config.update_active_participants()
 
-    @pyqtSlot(int, int)
+    @Slot(int, int)
     def on_table_item_link_clicked(self, row: int, column: int):
         try:
             lbl = self.simulator_message_field_model.message_type[row]  # type: SimulatorProtocolLabel
@@ -556,15 +556,15 @@ class SimulatorTabController(QWidget):
         d.setLayout(layout)
         d.show()
 
-    @pyqtSlot(Participant)
+    @Slot(Participant)
     def on_participant_simulate_changed(self, participant: Participant):
         self.simulator_scene.refresh_participant(participant)
 
-    @pyqtSlot()
+    @Slot()
     def on_active_participants_updated(self):
         self.ui.listViewSimulate.model().update()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_edit_label_triggered(self, label_index: int):
         view_type = self.ui.cbViewType.currentIndex()
         protocol_label_dialog = ProtocolLabelDialog(message=self.ui.tblViewMessage.selected_message,
@@ -572,13 +572,13 @@ class SimulatorTabController(QWidget):
         protocol_label_dialog.finished.connect(self.on_protocol_label_dialog_finished)
         protocol_label_dialog.showMaximized()
 
-    @pyqtSlot()
+    @Slot()
     def on_protocol_label_dialog_finished(self):
         self.simulator_message_field_model.update()
         self.simulator_message_table_model.update()
         self.update_ui()
 
-    @pyqtSlot(list)
+    @Slot(list)
     def on_files_dropped(self, file_urls: list):
         for filename in (file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()):
             self.load_simulator_file(filename)

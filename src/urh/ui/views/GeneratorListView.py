@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtCore import Signal, Qt, Slot
 from PySide2.QtGui import QContextMenuEvent, QKeyEvent, QIcon
 from PySide2.QtWidgets import QListView, QMenu
 
@@ -6,8 +6,8 @@ from urh.models.GeneratorListModel import GeneratorListModel
 
 
 class GeneratorListView(QListView):
-    selection_changed = pyqtSignal()
-    edit_on_item_triggered = pyqtSignal(int)
+    selection_changed = Signal()
+    edit_on_item_triggered = Signal(int)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -60,11 +60,11 @@ class GeneratorListView(QListView):
         if len(selected) > 0:
             self.edit_on_item_triggered.emit(min(selected))
 
-    @pyqtSlot()
+    @Slot()
     def on_delete_action_triggered(self):
         index = self.indexAt(self.context_menu_pos)
         self.model().delete_label_at(index.row())
 
-    @pyqtSlot()
+    @Slot()
     def on_edit_action_triggered(self):
         self.edit_on_item_triggered.emit(self.indexAt(self.context_menu_pos).row())

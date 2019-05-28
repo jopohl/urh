@@ -1,5 +1,5 @@
 import numpy as np
-from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtCore import Slot, Signal
 from PySide2.QtGui import QIcon, QKeySequence
 from PySide2.QtWidgets import QMenu
 
@@ -13,9 +13,9 @@ from urh.util.Logger import logger
 
 class SpectrogramGraphicView(ZoomableGraphicView):
     MINIMUM_VIEW_WIDTH = 10
-    y_scale_changed = pyqtSignal(float)
-    bandpass_filter_triggered = pyqtSignal(float, float)
-    export_fta_wanted = pyqtSignal()
+    y_scale_changed = Signal(float)
+    bandpass_filter_triggered = Signal(float, float)
+    export_fta_wanted = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -93,7 +93,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         h = self.sceneRect().height()
         self.sel_area_start_end_changed.emit(h - self.selection_area.end, h - self.selection_area.start)
 
-    @pyqtSlot()
+    @Slot()
     def on_create_from_frequency_selection_triggered(self):
         self.bandpass_filter_triggered.emit(*self.__get_freqs())
 
@@ -103,12 +103,12 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         f_low, f_high = y1 / self.sceneRect().height(), y2 / self.sceneRect().height()
         return f_low, f_high
 
-    @pyqtSlot()
+    @Slot()
     def on_configure_filter_bw_triggered(self):
         dialog = FilterBandwidthDialog(parent=self)
         dialog.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_export_fta_action_triggered(self):
         if not(self.scene_manager and self.scene_manager.spectrogram):
             return

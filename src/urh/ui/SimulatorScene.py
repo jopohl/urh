@@ -1,6 +1,6 @@
 import copy
 
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from PySide2.QtGui import QDropEvent
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
@@ -27,7 +27,7 @@ from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandA
 
 
 class SimulatorScene(QGraphicsScene):
-    files_dropped = pyqtSignal(list)
+    files_dropped = Signal(list)
 
     model_to_scene_class_mapping = {
         SimulatorRule: RuleItem,

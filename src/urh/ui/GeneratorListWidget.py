@@ -1,12 +1,12 @@
-from PySide2.QtCore import pyqtSignal, pyqtSlot
+from PySide2.QtCore import Signal, Slot
 from PySide2.QtGui import QContextMenuEvent, QFocusEvent
 from PySide2.QtWidgets import QListWidget, QMenu, QAction
 
 
 class GeneratorListWidget(QListWidget):
-    item_edit_clicked = pyqtSignal(int)
-    edit_all_items_clicked = pyqtSignal()
-    lost_focus = pyqtSignal()
+    item_edit_clicked = Signal(int)
+    edit_all_items_clicked = Signal()
+    lost_focus = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -36,12 +36,12 @@ class GeneratorListWidget(QListWidget):
         self.lost_focus.emit()
         super().focusOutEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_edit_action_triggered(self):
         if len(self.selectedIndexes()) > 0:
             selected_indx = self.selectedIndexes()[0].row()
             self.item_edit_clicked.emit(selected_indx)
 
-    @pyqtSlot()
+    @Slot()
     def on_edit_all_action_triggered(self):
         self.edit_all_items_clicked.emit()

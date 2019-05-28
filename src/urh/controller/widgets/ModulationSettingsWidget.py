@@ -1,10 +1,11 @@
-from PySide2.QtCore import pyqtSlot
+from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QWidget
 
 from urh import constants
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.signalprocessing.Modulator import Modulator
 from urh.ui.ui_modulation_settings_widget import Ui_ModulationSettings
+from urh.util import util
 
 
 class ModulationSettingsWidget(QWidget):
@@ -18,8 +19,8 @@ class ModulationSettingsWidget(QWidget):
         self.ui = Ui_ModulationSettings()
         self.ui.setupUi(self)
 
-        self.ui.labelModulationProfile.setVisible(constants.SETTINGS.value("multiple_modulations", False, bool))
-        self.ui.comboBoxModulationProfiles.setVisible(constants.SETTINGS.value("multiple_modulations", False, bool))
+        self.ui.labelModulationProfile.setVisible(util.read_setting("multiple_modulations", False, bool))
+        self.ui.comboBoxModulationProfiles.setVisible(util.read_setting("multiple_modulations", False, bool))
 
         self.signal_tree_model = signal_tree_model
         self.modulators = modulators  # type: list[Modulator]
@@ -57,11 +58,11 @@ class ModulationSettingsWidget(QWidget):
         self.ui.labelParamZeroValue.setText(modulator.param_for_zero_str)
         self.ui.labelParamOneValue.setText(modulator.param_for_one_str)
 
-    @pyqtSlot()
+    @Slot()
     def on_cb_modulation_type_current_index_changed(self):
         self.show_selected_modulation_infos()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_configuration_dialog_clicked(self):
         dialog = ModulatorDialog(self.modulators, tree_model=self.signal_tree_model, parent=self)
         dialog.ui.comboBoxCustomModulations.setCurrentIndex(self.ui.comboBoxModulationProfiles.currentIndex())
@@ -69,7 +70,7 @@ class ModulationSettingsWidget(QWidget):
         dialog.show()
         dialog.initialize("101010")
 
-    @pyqtSlot()
+    @Slot()
     def refresh_modulators_from_dialog(self):
         current_index = 0
         if type(self.sender()) == ModulatorDialog:

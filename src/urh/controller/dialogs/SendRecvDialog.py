@@ -1,7 +1,7 @@
 import locale
 import time
 
-from PySide2.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
+from PySide2.QtCore import Slot, QTimer, Signal, Qt
 from PySide2.QtGui import QCloseEvent, QTransform
 from PySide2.QtWidgets import QDialog, QGraphicsView
 
@@ -19,7 +19,7 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class SendRecvDialog(QDialog):
-    device_parameters_changed = pyqtSignal(dict)
+    device_parameters_changed = Signal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, continuous_send_mode=False, parent=None, testing_mode=False):
         super().__init__(parent)
@@ -56,7 +56,7 @@ class SendRecvDialog(QDialog):
         self.timer = QTimer(self)
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -137,7 +137,7 @@ class SendRecvDialog(QDialog):
     def emit_editing_finished_signals(self):
         self.device_settings_widget.emit_editing_finished_signals()
 
-    @pyqtSlot()
+    @Slot()
     def on_selected_device_changed(self):
         if hasattr(self.scene_manager, "plot_data"):
             self.scene_manager.plot_data = None
@@ -147,15 +147,15 @@ class SendRecvDialog(QDialog):
         self.graphics_view.scene_manager = self.scene_manager
         self.graphics_view.setScene(self.scene_manager.scene)
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         self.emit_editing_finished_signals()
 
-    @pyqtSlot()
+    @Slot()
     def on_stop_clicked(self):
         self.device.stop("Stopped receiving: Stop button clicked")
 
-    @pyqtSlot()
+    @Slot()
     def on_device_stopped(self):
         if self.graphics_view is not None:
             self.graphics_view.capturing_data = False
@@ -170,7 +170,7 @@ class SendRecvDialog(QDialog):
         self.timer.stop()
         self.update_view()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         self.ui.txtEditErrors.clear()
         if self.graphics_view is not None:
@@ -248,7 +248,7 @@ class SendRecvDialog(QDialog):
 
         self.device.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         pass
 
@@ -285,7 +285,7 @@ class SendRecvDialog(QDialog):
 
         super().closeEvent(event)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_slider_y_scale_value_changed(self, new_value: int):
         # Scale Up = Top Half, Scale Down = Lower Half
         transform = self.graphics_view.transform()

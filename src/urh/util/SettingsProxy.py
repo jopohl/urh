@@ -3,6 +3,7 @@ import sys
 import psutil
 
 from urh import constants
+from urh.util import util
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
@@ -26,7 +27,7 @@ class SettingsProxy(object):
                 num_samples = constants.SNIFF_BUFFER_SIZE
         else:
             # Take 60% of avail memory
-            threshold = constants.SETTINGS.value('ram_threshold', 0.6, float)
+            threshold = util.read_setting('ram_threshold', 0.6, float)
             num_samples = threshold * (psutil.virtual_memory().available / 8)
 
         # Do not let it allocate too much memory on 32 bit

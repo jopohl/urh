@@ -1,4 +1,4 @@
-from PySide2.QtCore import QAbstractItemModel, pyqtSignal, QModelIndex, Qt, QMimeData
+from PySide2.QtCore import QAbstractItemModel, Signal, QModelIndex, Qt, QMimeData
 from PySide2.QtGui import QIcon, QFont
 from PySide2.QtWidgets import QMessageBox, QWidget
 
@@ -9,10 +9,10 @@ from urh.util.Logger import logger
 
 
 class ProtocolTreeModel(QAbstractItemModel):
-    item_dropped = pyqtSignal()
-    group_deleted = pyqtSignal(int, int)
-    proto_to_group_added = pyqtSignal(int)
-    group_added = pyqtSignal(QModelIndex)
+    item_dropped = Signal()
+    group_deleted = Signal(int, int)
+    proto_to_group_added = Signal(int)
+    group_added = Signal(QModelIndex)
 
     def __init__(self, controller, parent=None):
         self.rootItem = ProtocolTreeItem(None, None)

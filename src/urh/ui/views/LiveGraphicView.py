@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSignal, QEvent
+from PySide2.QtCore import Signal, QEvent
 from PySide2.QtGui import QWheelEvent, QMouseEvent
 
 from urh.ui.painting.GridScene import GridScene
@@ -6,8 +6,8 @@ from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
 
 class LiveGraphicView(ZoomableGraphicView):
-    freq_clicked = pyqtSignal(float)
-    wheel_event_triggered = pyqtSignal(QWheelEvent)
+    freq_clicked = Signal(float)
+    wheel_event_triggered = Signal(QWheelEvent)
 
     def __init__(self, parent=None):
         super().__init__(parent)

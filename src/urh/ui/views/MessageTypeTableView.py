@@ -1,4 +1,4 @@
-from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtCore import Signal, Qt, Slot
 from PySide2.QtGui import QContextMenuEvent, QKeySequence, QIcon
 from PySide2.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
@@ -6,8 +6,8 @@ from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
 
 class MessageTypeTableView(QTableView):
-    auto_message_type_update_triggered = pyqtSignal()
-    configure_message_type_rules_triggered = pyqtSignal(int)
+    auto_message_type_update_triggered = Signal()
+    configure_message_type_rules_triggered = Signal(int)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -74,12 +74,12 @@ class MessageTypeTableView(QTableView):
             min_row = max(1, min_row)
             self.model().delete_message_types_at(min_row, max_row)
 
-    @pyqtSlot()
+    @Slot()
     def on_show_all_action_triggered(self):
         for i in range(self.model().rowCount()):
             self.model().setData(self.model().index(i, 0), Qt.Checked, role=Qt.CheckStateRole)
 
-    @pyqtSlot()
+    @Slot()
     def on_hide_all_action_triggered(self):
         for i in range(self.model().rowCount()):
             self.model().setData(self.model().index(i, 0), Qt.Unchecked, role=Qt.CheckStateRole)

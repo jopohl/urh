@@ -1,13 +1,13 @@
-from PySide2.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
+from PySide2.QtCore import Qt, QModelIndex, QAbstractTableModel, Signal
 from PySide2.QtGui import QFont
 
 from urh.signalprocessing.MessageType import MessageType
 
 
 class MessageTypeTableModel(QAbstractTableModel):
-    message_type_visibility_changed = pyqtSignal(MessageType)
-    message_type_removed = pyqtSignal(MessageType)
-    message_type_name_edited = pyqtSignal(str)
+    message_type_visibility_changed = Signal(MessageType)
+    message_type_removed = Signal(MessageType)
+    message_type_name_edited = Signal(str)
     header_labels = ["Name", "Edit"]
 
     def __init__(self, message_types: list, parent=None):

@@ -1,5 +1,5 @@
 from PySide2.QtGui import QContextMenuEvent, QIcon
-from PySide2.QtCore import pyqtSlot
+from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QMenu, QActionGroup
 
 from urh import constants
@@ -10,12 +10,14 @@ from urh.simulator.SimulatorItem import SimulatorItem
 
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QHeaderView
+
+from urh.util import util
 
 
 class SimulatorMessageTableView(TableView):
-    open_modulator_dialog_clicked = pyqtSignal()
+    open_modulator_dialog_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -75,7 +77,7 @@ class SimulatorMessageTableView(TableView):
             ea.setData(decoding)
             ea.triggered.connect(self.on_encoding_action_triggered)
 
-        if constants.SETTINGS.value("multiple_modulations", False, bool):
+        if util.read_setting("multiple_modulations", False, bool):
             selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
             if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
@@ -101,7 +103,7 @@ class SimulatorMessageTableView(TableView):
 
         return menu
 
-    @pyqtSlot()
+    @Slot()
     def on_encoding_action_triggered(self):
         updated_messages = []
 
@@ -110,19 +112,19 @@ class SimulatorMessageTableView(TableView):
             updated_messages.append(self.model().protocol.messages[row])
         SimulatorItem.simulator_config.items_updated.emit(updated_messages)
 
-    @pyqtSlot()
+    @Slot()
     def on_modulation_action_triggered(self):
         for row in self.selected_rows:
             self.model().protocol.messages[row].modulator_index = self.sender().data()
 
-    @pyqtSlot()
+    @Slot()
     def on_open_modulator_dialog_action_triggered(self):
         self.open_modulator_dialog_clicked.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_column_left_action_triggered(self):
         self._insert_column(self.selection_range()[2])
 
-    @pyqtSlot()
+    @Slot()
     def on_insert_column_right_action_triggered(self):
         self._insert_column(self.selection_range()[3])

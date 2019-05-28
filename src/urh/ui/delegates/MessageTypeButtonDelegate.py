@@ -1,6 +1,6 @@
 import math
 
-from PySide2.QtCore import pyqtSlot
+from PySide2.QtCore import Slot
 from PySide2.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
 from PySide2.QtWidgets import QStyledItemDelegate, QPushButton
 
@@ -56,7 +56,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         painter.end()
         return QIcon(pixmap)
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_clicked(self):
         button = self.sender()
         index = self.parent().indexAt(button.pos())

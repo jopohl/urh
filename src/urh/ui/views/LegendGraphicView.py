@@ -1,10 +1,10 @@
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from PySide2.QtGui import QWheelEvent
 from PySide2.QtWidgets import QGraphicsView
 
 
 class LegendGraphicView(QGraphicsView):
-    resized = pyqtSignal()
+    resized = Signal()
 
     def __init__(self, parent=None):
         self.y_sep = 0

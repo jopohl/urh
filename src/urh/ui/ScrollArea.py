@@ -1,9 +1,9 @@
-from PySide2.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 from PySide2.QtGui import QDropEvent, QDragEnterEvent, QWheelEvent
 from PySide2.QtWidgets import QScrollArea
 
 class ScrollArea(QScrollArea):
-    files_dropped = pyqtSignal(list)
+    files_dropped = Signal(list)
 
     def __init__(self, parent=None):
         super().__init__(parent)

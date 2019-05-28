@@ -2,12 +2,13 @@ import locale
 import os
 import time
 
-from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtCore import Qt, Slot
 from PySide2.QtGui import QCloseEvent
 from PySide2.QtWidgets import QDialog
 
 from urh import constants
 from urh.ui.ui_signal_details import Ui_SignalDetails
+from urh.util import util
 from urh.util.Formatter import Formatter
 
 
@@ -40,7 +41,7 @@ class SignalDetailsDialog(QDialog):
         self.ui.dsb_sample_rate.valueChanged.connect(self.on_dsb_sample_rate_value_changed)
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -48,7 +49,7 @@ class SignalDetailsDialog(QDialog):
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_dsb_sample_rate_value_changed(self, value: float):
         self.signal.sample_rate = value
         self.set_duration()

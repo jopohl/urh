@@ -4,7 +4,7 @@ import sys
 import tempfile
 import time
 
-from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
+from PySide2.QtCore import Qt, Slot, Signal, QSize, QAbstractTableModel, QModelIndex
 from PySide2.QtGui import QCloseEvent, QIcon, QPixmap
 from PySide2.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
     QFileDialog, qApp
@@ -138,7 +138,7 @@ class DeviceOptionsTableModel(QAbstractTableModel):
 
 
 class OptionsDialog(QDialog):
-    values_changed = pyqtSignal(dict)
+    values_changed = Signal(dict)
 
     def __init__(self, installed_plugins, highlighted_plugins=None, parent=None):
         super().__init__(parent)
@@ -171,17 +171,15 @@ class OptionsDialog(QDialog):
         self.ui.labelIconTheme.setVisible(sys.platform == "linux")
         self.ui.comboBoxIconTheme.setVisible(sys.platform == "linux")
 
-        self.ui.comboBoxTheme.setCurrentIndex(constants.SETTINGS.value("theme_index", 0, int))
-        self.ui.comboBoxIconTheme.setCurrentIndex(constants.SETTINGS.value("icon_theme_index", 0, int))
-        self.ui.checkBoxShowConfirmCloseDialog.setChecked(
-            not constants.SETTINGS.value('not_show_close_dialog', False, bool))
-        self.ui.checkBoxHoldShiftToDrag.setChecked(constants.SETTINGS.value('hold_shift_to_drag', True, bool))
-        self.ui.checkBoxDefaultFuzzingPause.setChecked(
-            constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
+        self.ui.comboBoxTheme.setCurrentIndex(util.read_setting("theme_index", 0, int))
+        self.ui.comboBoxIconTheme.setCurrentIndex(util.read_setting("icon_theme_index", 0, int))
+        self.ui.checkBoxShowConfirmCloseDialog.setChecked(not util.read_setting('not_show_close_dialog', False, bool))
+        self.ui.checkBoxHoldShiftToDrag.setChecked(util.read_setting('hold_shift_to_drag', True, bool))
+        self.ui.checkBoxDefaultFuzzingPause.setChecked(util.read_setting('use_default_fuzzing_pause', True, bool))
 
-        self.ui.checkBoxAlignLabels.setChecked(constants.SETTINGS.value('align_labels', True, bool))
+        self.ui.checkBoxAlignLabels.setChecked(util.read_setting('align_labels', True, bool))
 
-        self.ui.doubleSpinBoxRAMThreshold.setValue(100 * constants.SETTINGS.value('ram_threshold', 0.6, float))
+        self.ui.doubleSpinBoxRAMThreshold.setValue(100 * util.read_setting('ram_threshold', 0.6, float))
 
         self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
         self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
@@ -190,10 +188,10 @@ class OptionsDialog(QDialog):
         if self.backend_handler.python2_exe:
             self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
 
-        self.ui.doubleSpinBoxFuzzingPause.setValue(constants.SETTINGS.value("default_fuzzing_pause", 10 ** 6, int))
-        self.ui.doubleSpinBoxFuzzingPause.setEnabled(constants.SETTINGS.value('use_default_fuzzing_pause', True, bool))
+        self.ui.doubleSpinBoxFuzzingPause.setValue(util.read_setting("default_fuzzing_pause", 10 ** 6, int))
+        self.ui.doubleSpinBoxFuzzingPause.setEnabled(util.read_setting('use_default_fuzzing_pause', True, bool))
 
-        self.ui.checkBoxMultipleModulations.setChecked(constants.SETTINGS.value("multiple_modulations", False, bool))
+        self.ui.checkBoxMultipleModulations.setChecked(util.read_setting("multiple_modulations", False, bool))
 
         self.ui.radioButtonLowModulationAccuracy.setChecked(Modulator.get_dtype() == np.int8)
         self.ui.radioButtonMediumModulationAccuracy.setChecked(Modulator.get_dtype() == np.int16)
@@ -228,7 +226,7 @@ class OptionsDialog(QDialog):
         self.show_available_colormaps()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(util.read_setting("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -272,11 +270,9 @@ class OptionsDialog(QDialog):
                 self.tr("Gnuradio is not installed or incompatible with python2 interpreter."))
 
     def read_options(self):
-        settings = constants.SETTINGS
-
-        self.ui.comboBoxDefaultView.setCurrentIndex(settings.value('default_view', type=int))
-        self.ui.spinBoxNumSendingRepeats.setValue(settings.value('num_sending_repeats', type=int))
-        self.ui.checkBoxPauseTime.setChecked(settings.value('show_pause_as_time', type=bool))
+        self.ui.comboBoxDefaultView.setCurrentIndex(util.read_setting('default_view', 0, type=int))
+        self.ui.spinBoxNumSendingRepeats.setValue(util.read_setting('num_sending_repeats', 0, type=int))
+        self.ui.checkBoxPauseTime.setChecked(util.read_setting('show_pause_as_time', False, type=bool))
 
         self.old_show_pause_as_time = bool(self.ui.checkBoxPauseTime.isChecked())
 
@@ -313,10 +309,9 @@ class OptionsDialog(QDialog):
         if self.old_num_sending_repeats != self.ui.spinBoxNumSendingRepeats.value():
             changed_values["num_sending_repeats"] = self.ui.spinBoxNumSendingRepeats.value()
 
-        settings = constants.SETTINGS
-        settings.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())
-        settings.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
-        settings.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
+        constants.SETTINGS.setValue('default_view', self.ui.comboBoxDefaultView.currentIndex())
+        constants.SETTINGS.setValue('num_sending_repeats', self.ui.spinBoxNumSendingRepeats.value())
+        constants.SETTINGS.setValue('show_pause_as_time', self.ui.checkBoxPauseTime.isChecked())
 
         FieldType.save_to_xml(self.field_type_table_model.field_types)
         self.plugin_controller.save_enabled_states()
@@ -350,7 +345,7 @@ class OptionsDialog(QDialog):
 
         self.refresh_device_tab()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_label_type_clicked(self):
         suffix = 1
         field_type_names = {ft.caption for ft in self.field_type_table_model.field_types}
@@ -361,7 +356,7 @@ class OptionsDialog(QDialog):
         self.field_type_table_model.field_types.append(FieldType(caption, FieldType.Function.CUSTOM))
         self.field_type_table_model.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_remove_label_type_clicked(self):
         if self.field_type_table_model.field_types:
             selected_indices = {i.row() for i in self.ui.tblLabeltypes.selectedIndexes()}
@@ -374,42 +369,42 @@ class OptionsDialog(QDialog):
 
             self.field_type_table_model.update()
 
-    @pyqtSlot()
+    @Slot()
     def on_double_spinbox_ram_threshold_value_changed(self):
         val = self.ui.doubleSpinBoxRAMThreshold.value()
         constants.SETTINGS.setValue("ram_threshold", val / 100)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_checkbox_confirm_close_dialog_clicked(self, checked: bool):
         constants.SETTINGS.setValue("not_show_close_dialog", not checked)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combo_box_theme_index_changed(self, index: int):
         constants.SETTINGS.setValue('theme_index', index)
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_combobox_icon_theme_index_changed(self, index: int):
         constants.SETTINGS.setValue('icon_theme_index', index)
         util.set_icon_theme()
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_checkbox_hold_shift_to_drag_clicked(self, checked: bool):
         constants.SETTINGS.setValue("hold_shift_to_drag", checked)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_checkbox_default_fuzzing_pause_clicked(self, checked: bool):
         constants.SETTINGS.setValue('use_default_fuzzing_pause', checked)
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(checked)
 
-    @pyqtSlot(float)
+    @Slot(float)
     def on_spinbox_fuzzing_pause_value_changed(self, value: float):
         constants.SETTINGS.setValue("default_fuzzing_pause", int(value))
 
-    @pyqtSlot()
+    @Slot()
     def on_python2_exe_path_edited(self):
         self.set_gnuradio_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_choose_python2_interpreter_clicked(self):
         if sys.platform == "win32":
             dialog_filter = "Executable (*.exe);;All files (*.*)"
@@ -420,30 +415,30 @@ class OptionsDialog(QDialog):
             self.ui.lineEditPython2Interpreter.setText(filename)
             self.set_gnuradio_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_choose_gnuradio_directory_clicked(self):
         directory = QFileDialog.getExistingDirectory(self, "Choose GNU Radio directory")
         if directory:
             self.ui.lineEditGnuradioDirectory.setText(directory)
             self.set_gnuradio_status()
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
         constants.SETTINGS.setValue("align_labels", checked)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_gnuradio_directory_clicked(self, checked: bool):
         self.set_gnuradio_status()
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_python2_interpreter_clicked(self, checked: bool):
         self.set_gnuradio_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_gnuradio_install_dir_edited(self):
         self.set_gnuradio_status()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
@@ -483,11 +478,11 @@ class OptionsDialog(QDialog):
         self.build_log = p.stdout.read().decode()
         self.ui.btnViewBuildLog.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_checkbox_multiple_modulations_clicked(self):
         constants.SETTINGS.setValue("multiple_modulations", self.ui.checkBoxMultipleModulations.isChecked())
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_view_build_log_clicked(self):
         if not self.build_log:
             return
@@ -495,7 +490,7 @@ class OptionsDialog(QDialog):
         dialog = util.create_textbox_dialog(self.build_log, "Build log", parent=self)
         dialog.show()
 
-    @pyqtSlot(str)
+    @Slot(str)
     def on_label_device_missing_info_link_activated(self, link: str):
         if link == "health_check":
             info = ExtensionHelper.perform_health_check()
@@ -510,43 +505,42 @@ class OptionsDialog(QDialog):
             d = util.create_textbox_dialog(info, "Health check for native extensions", self)
             d.show()
 
-    @pyqtSlot()
+    @Slot()
     def on_spin_box_font_size_editing_finished(self):
         constants.SETTINGS.setValue("font_size", self.ui.spinBoxFontSize.value())
         font = qApp.font()
         font.setPointSize(self.ui.spinBoxFontSize.value())
         qApp.setFont(font)
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_high_modulation_accuracy_clicked(self, checked):
         if checked:
             constants.SETTINGS.setValue("modulation_dtype", "float32")
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_medium_modulation_accuracy_clicked(self, checked):
         if checked:
             constants.SETTINGS.setValue("modulation_dtype", "int16")
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def on_radio_button_low_modulation_accuracy_clicked(self, checked):
         if checked:
             constants.SETTINGS.setValue("modulation_dtype", "int8")
 
     @staticmethod
     def write_default_options():
-        settings = constants.SETTINGS
-        keys = settings.allKeys()
+        keys = constants.SETTINGS.allKeys()
 
         if 'default_view' not in keys:
-            settings.setValue('default_view', 0)
+            constants.SETTINGS.setValue('default_view', 0)
 
         if 'num_sending_repeats' not in keys:
-            settings.setValue('num_sending_repeats', 0)
+            constants.SETTINGS.setValue('num_sending_repeats', 0)
 
         if 'show_pause_as_time' not in keys:
-            settings.setValue('show_pause_as_time', False)
+            constants.SETTINGS.setValue('show_pause_as_time', False)
 
-        settings.sync()  # Ensure conf dir is created to have field types in place
+        constants.SETTINGS.sync()  # Ensure conf dir is created to have field types in place
 
         if not os.path.isfile(constants.FIELD_TYPE_SETTINGS):
             FieldType.save_to_xml(FieldType.default_field_types())

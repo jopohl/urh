@@ -1,5 +1,5 @@
 import numpy as np
-from PySide2.QtCore import pyqtSignal, pyqtSlot
+from PySide2.QtCore import Signal, Slot
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMessageBox
 
@@ -11,7 +11,7 @@ from urh.util.Formatter import Formatter
 
 
 class ReceiveDialog(SendRecvDialog):
-    files_recorded = pyqtSignal(list, float)
+    files_recorded = Signal(list, float)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):
         try:
@@ -68,12 +68,12 @@ class ReceiveDialog(SendRecvDialog):
         self._create_device_connects()
         self.scene_manager = LiveSceneManager(np.array([], dtype=self.device.data_type), parent=self)
 
-    @pyqtSlot()
+    @Slot()
     def on_start_clicked(self):
         super().on_start_clicked()
         self.device.start()
 
-    @pyqtSlot()
+    @Slot()
     def on_device_started(self):
         self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
 
@@ -83,12 +83,12 @@ class ReceiveDialog(SendRecvDialog):
         self.ui.btnStart.setEnabled(False)
         self.set_device_ui_items_enabled(False)
 
-    @pyqtSlot()
+    @Slot()
     def on_clear_clicked(self):
         self.scene_manager.clear_path()
         self.reset()
 
-    @pyqtSlot()
+    @Slot()
     def on_save_clicked(self):
         data = self.device.data[:self.device.current_index]
 

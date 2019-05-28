@@ -1,4 +1,4 @@
-from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, Signal
 from PySide2.QtGui import QColor
 
 from urh import constants
@@ -8,8 +8,8 @@ from urh.signalprocessing.Message import Message
 
 
 class GeneratorListModel(QAbstractListModel):
-    protolabel_fuzzing_status_changed = pyqtSignal(ProtocolLabel)
-    protolabel_removed = pyqtSignal(ProtocolLabel)
+    protolabel_fuzzing_status_changed = Signal(ProtocolLabel)
+    protolabel_removed = Signal(ProtocolLabel)
 
     def __init__(self, message: Message, parent=None):
         super().__init__(parent)

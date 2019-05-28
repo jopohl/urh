@@ -1,13 +1,13 @@
-from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtCore import Signal, Qt, Slot
 from PySide2.QtGui import QIcon, QKeyEvent, QContextMenuEvent, QTextCursor
 from PySide2.QtWidgets import QTextEdit, QMenu, QActionGroup
 
 
 class TextEditProtocolView(QTextEdit):
-    proto_view_changed = pyqtSignal()
-    deletion_wanted = pyqtSignal()
-    show_proto_clicked = pyqtSignal()
-    participant_changed = pyqtSignal()
+    proto_view_changed = Signal()
+    deletion_wanted = Signal()
+    show_proto_clicked = Signal()
+    participant_changed = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -26,38 +26,38 @@ class TextEditProtocolView(QTextEdit):
         else:
             super().keyPressEvent(event)
 
-    @pyqtSlot()
+    @Slot()
     def on_bit_action_triggered(self):
         self.cur_view = 0
         self.proto_view_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_hex_action_triggered(self):
         self.cur_view = 1
         self.proto_view_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_ascii_action_triggered(self):
         self.cur_view = 2
         self.proto_view_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_none_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = None
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = self.participant_actions[self.sender()]
         self.participant_changed.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_zoom_to_bits_action_triggered(self):
         self.show_proto_clicked.emit()
 
-    @pyqtSlot()
+    @Slot()
     def on_line_wrap_action_triggered(self):
         line_wrap = self.sender().isChecked()
 

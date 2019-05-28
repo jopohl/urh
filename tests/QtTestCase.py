@@ -1,19 +1,28 @@
+import datetime
 import faulthandler
 import gc
 import os
-import time
 import unittest
 
+# from PySide2 import shiboken2
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QDropEvent
 from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
+
+def qWait(t):
+    end = datetime.datetime.now() + datetime.timedelta(milliseconds=t)
+    while datetime.datetime.now() < end:
+        QApplication.processEvents()
+QTest.qWait = qWait
+
+app = QApplication(["urh test"])
 
 
 class QtTestCase(unittest.TestCase):
@@ -31,15 +40,6 @@ class QtTestCase(unittest.TestCase):
         assert mp.get_start_method() == "spawn"
 
         write_settings()
-        cls.app = QApplication([cls.__name__])
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.app.quit()
-
-        cls.app = None
-        QTest.qWait(10)
-        time.sleep(0.1)
 
     def setUp(self):
         ProtocolSniffer.BUFFER_SIZE_MB = 0.5
@@ -50,11 +50,15 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
+
+            #shiboken2.delete(self.dialog)
             self.dialog = None
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
+
+            #shiboken2.delete(self.form)
             self.form = None
 
         gc.collect()

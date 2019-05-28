@@ -525,6 +525,9 @@ class MainController(QMainWindow):
             return
 
         for i, file_path in enumerate(recent_file_paths):
+            if i >= len(self.recentFileActionList):
+                continue
+
             if os.path.isfile(file_path):
                 display_text = os.path.basename(file_path)
                 self.recentFileActionList[i].setIcon(QIcon())

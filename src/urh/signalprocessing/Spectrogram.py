@@ -180,7 +180,7 @@ class Spectrogram(object):
 
         try:
             # QImage constructor needs inverted row/column order
-            image = QImage(image_data.ctypes.data, image_data.shape[1], image_data.shape[0], QImage.Format_ARGB32)
+            image = QImage(image_data, image_data.shape[1], image_data.shape[0], QImage.Format_ARGB32)
         except Exception as e:
             logger.error("could not create image " + str(e))
             return QImage()

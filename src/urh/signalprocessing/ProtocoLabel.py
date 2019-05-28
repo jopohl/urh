@@ -21,7 +21,7 @@ class ProtocolLabel(object):
 
     SEARCH_TYPES = ["Number", "Bits", "Hex", "ASCII"]
 
-    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "show", "__fuzz_me", "fuzz_values",
+    __slots__ = ("__name", "start", "end", "apply_decoding", "color_index", "__show", "__fuzz_me", "fuzz_values",
                  "fuzz_created", "__field_type", "display_format_index", "display_bit_order_index",
                  "display_endianness", "auto_created", "copied")
 
@@ -33,9 +33,9 @@ class ProtocolLabel(object):
 
         self.apply_decoding = True
         self.color_index = color_index
-        self.show = Qt.Checked
+        self.__show = True
 
-        self.__fuzz_me = Qt.Checked
+        self.__fuzz_me = True
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
@@ -54,14 +54,20 @@ class ProtocolLabel(object):
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
 
     @property
+    def show(self):
+        return Qt.Checked if self.__show else Qt.Unchecked
+
+    @show.setter
+    def show(self, value):
+        self.__show = bool(value)
+
+    @property
     def fuzz_me(self) -> int:
-        return self.__fuzz_me
+        return Qt.Checked if self.__fuzz_me else Qt.Unchecked
 
     @fuzz_me.setter
     def fuzz_me(self, value):
-        if isinstance(value, bool):
-            value = Qt.Checked if value else Qt.Unchecked
-        self.__fuzz_me = value
+        self.__fuzz_me = bool(value)
 
     @property
     def is_preamble(self) -> bool:
@@ -193,11 +199,11 @@ class ProtocolLabel(object):
     def to_xml(self) -> ET.Element:
         return ET.Element("label", attrib={"name": self.__name, "start": str(self.start), "end": str(self.end),
                                            "color_index": str(self.color_index),
-                                           "apply_decoding": str(self.apply_decoding), "show": str(self.show),
+                                           "apply_decoding": str(self.apply_decoding), "show": str(int(self.__show)),
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
                                            "display_endianness": str(self.display_endianness),
-                                           "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
+                                           "fuzz_me": str(int(self.__fuzz_me)), "fuzz_values": ",".join(self.fuzz_values),
                                            "auto_created": str(self.auto_created)})
 
     @classmethod

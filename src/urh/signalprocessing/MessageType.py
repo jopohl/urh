@@ -18,14 +18,14 @@ class MessageType(list):
 
     """
 
-    __slots__ = ["name", "show", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
+    __slots__ = ["name", "__show", "__id", "assigned_by_ruleset", "ruleset", "assigned_by_logic_analyzer"]
 
     def __init__(self, name: str, iterable=None, id=None, ruleset=None):
         iterable = iterable if iterable else []
         super().__init__(iterable)
 
         self.name = name
-        self.show = Qt.Checked
+        self.__show = True
         self.__id = str(uuid.uuid4()) if id is None else id
 
         self.assigned_by_logic_analyzer = False
@@ -46,6 +46,14 @@ class MessageType(list):
             return self.id == other.id
         else:
             return super().__eq__(other)
+
+    @property
+    def show(self):
+        return Qt.Checked if self.show else Qt.Unchecked
+
+    @show.setter
+    def show(self, value):
+        self.__show = bool(value)
 
     @property
     def assign_manually(self):

@@ -1,7 +1,7 @@
 import numpy as np
-from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon, QContextMenuEvent
-from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory, QMenu
+from PySide2.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon, QContextMenuEvent
+from PySide2.QtWidgets import QTableView, QApplication, QAction, QStyleFactory, QMenu
 
 
 class TableView(QTableView):

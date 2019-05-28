@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, Qt, QLineF
-from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
+from PySide2.QtCore import QRectF, Qt, QLineF
+from PySide2.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
+from PySide2.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
     QAbstractItemView
 
 from urh import constants

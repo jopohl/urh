@@ -1,9 +1,9 @@
 import copy
 import math
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QInputDialog
+from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtGui import QCloseEvent
+from PySide2.QtWidgets import QDialog, QInputDialog
 
 from urh import constants
 from urh.models.FuzzingTableModel import FuzzingTableModel

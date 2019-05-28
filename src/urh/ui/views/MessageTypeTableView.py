@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
-from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
+from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtGui import QContextMenuEvent, QKeySequence, QIcon
+from PySide2.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
 
 from urh.models.MessageTypeTableModel import MessageTypeTableModel
 

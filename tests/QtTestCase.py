@@ -6,10 +6,10 @@ import sys
 import time
 import unittest
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDropEvent
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.utils_testing import write_settings, get_path_for_data_file

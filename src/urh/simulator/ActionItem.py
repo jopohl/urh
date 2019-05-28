@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QRectF
-from PyQt5.QtWidgets import QGraphicsTextItem
+from PySide2.QtCore import QRectF
+from PySide2.QtWidgets import QGraphicsTextItem
 
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction

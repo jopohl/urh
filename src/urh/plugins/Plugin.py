@@ -1,9 +1,9 @@
 import os
 
 from PyQt5 import uic
-from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QUndoCommand, QUndoStack
+from PySide2.QtCore import QObject, pyqtSignal, Qt, QSettings
+from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QUndoCommand, QUndoStack
 
 
 class Plugin(QObject):

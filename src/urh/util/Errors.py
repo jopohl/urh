@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QMessageBox, QWidget
+from PySide2.QtWidgets import QMessageBox, QWidget
 
 from urh.util.Formatter import Formatter
 

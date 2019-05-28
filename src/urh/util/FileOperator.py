@@ -5,8 +5,8 @@ import tempfile
 import zipfile
 
 import numpy as np
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PySide2.QtCore import QDir
+from PySide2.QtWidgets import QFileDialog, QMessageBox
 
 from urh.models.FileIconProvider import FileIconProvider
 from urh.signalprocessing.IQArray import IQArray

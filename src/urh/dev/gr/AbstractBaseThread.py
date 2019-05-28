@@ -8,7 +8,7 @@ from threading import Thread
 import time
 
 import zmq
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide2.QtCore import QThread, pyqtSignal
 
 from urh import constants
 from urh.util.Logger import logger

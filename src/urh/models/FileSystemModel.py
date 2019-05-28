@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QDir
-from PyQt5.QtWidgets import QFileSystemModel
+from PySide2.QtCore import QDir
+from PySide2.QtWidgets import QFileSystemModel
 
 
 class FileSystemModel(QFileSystemModel):

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QFrame, QVBoxLayout
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtGui import QCloseEvent
+from PySide2.QtWidgets import QFrame, QVBoxLayout
 
 from urh import constants
 from urh.models.PluginListModel import PluginListModel

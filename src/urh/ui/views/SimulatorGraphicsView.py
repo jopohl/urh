@@ -1,8 +1,8 @@
 import copy
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
+from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QKeySequence, QIcon
+from PySide2.QtWidgets import QGraphicsView, QAction, QActionGroup, QMenu, QAbstractItemView, QInputDialog
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.simulator.GraphicsItem import GraphicsItem

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtWidgets import QTableView, QApplication
-from PyQt5.QtGui import QKeyEvent
+from PySide2.QtCore import Qt, pyqtSignal
+from PySide2.QtWidgets import QTableView, QApplication
+from PySide2.QtGui import QKeyEvent
 import numpy
 
 

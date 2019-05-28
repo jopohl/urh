@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtWidgets import QDialog
+from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtWidgets import QDialog
 
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.ui.ui_filter_dialog import Ui_FilterDialog

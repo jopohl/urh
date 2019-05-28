@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QUndoCommand
+from PySide2.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
-from PyQt5.QtGui import QKeySequence, QIcon, QContextMenuEvent
-from PyQt5.QtWidgets import QTableView, QAction, QMenu
+from PySide2.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
+from PySide2.QtGui import QKeySequence, QIcon, QContextMenuEvent
+from PySide2.QtWidgets import QTableView, QAction, QMenu
 
 from urh import constants
 from urh.models.ParticipantTableModel import ParticipantTableModel

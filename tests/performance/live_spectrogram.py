@@ -3,8 +3,8 @@ from multiprocessing import Process, Pipe
 from multiprocessing.connection import Connection
 
 import numpy as np
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsView, QPushButton, QGraphicsScene, QLabel
+from PySide2.QtGui import QPixmap
+from PySide2.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsView, QPushButton, QGraphicsScene, QLabel
 
 from urh.signalprocessing.Spectrogram import Spectrogram
 

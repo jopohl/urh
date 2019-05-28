@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
+from PySide2.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
 
 
 class SpinBoxDelegate(QStyledItemDelegate):

@@ -1,7 +1,7 @@
 import socket
 
 import numpy as np
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 from multiprocessing import Process
 
 from urh import constants

@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QLineEdit, QHBoxLayout, \
+from PySide2.QtCore import QModelIndex, QAbstractItemModel, Qt
+from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QLineEdit, QHBoxLayout, \
     QCompleter, QLabel, QSpinBox, QDirModel
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit

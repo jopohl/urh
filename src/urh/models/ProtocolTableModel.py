@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from PyQt5.QtCore import pyqtSignal, QModelIndex, Qt
+from PySide2.QtCore import pyqtSignal, QModelIndex, Qt
 
 from urh import constants
 from urh.models.TableModel import TableModel

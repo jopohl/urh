@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
 from urh.signalprocessing.Participant import Participant
 
 

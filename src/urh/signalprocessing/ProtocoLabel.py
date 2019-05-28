@@ -1,7 +1,7 @@
 import copy
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PySide2.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval

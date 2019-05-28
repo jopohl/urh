@@ -1,7 +1,7 @@
 import math
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QAction
+from PySide2.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
+from PySide2.QtGui import QIcon, QKeySequence
+from PySide2.QtWidgets import QAction
 
 from urh import constants
 from urh.ui.views.EditableGraphicView import EditableGraphicView

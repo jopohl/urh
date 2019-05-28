@@ -1,8 +1,8 @@
 from statistics import median
 
-from PyQt5.QtCore import QRegExp, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator, QIcon
-from PyQt5.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
+from PySide2.QtCore import QRegExp, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QRegExpValidator, QIcon
+from PySide2.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
 
 from urh import constants
 from urh.dev import config
@@ -508,7 +508,7 @@ class DeviceSettingsWidget(QWidget):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PySide2.QtWidgets import QApplication
     from urh.controller.MainController import MainController
 
     app = QApplication([])

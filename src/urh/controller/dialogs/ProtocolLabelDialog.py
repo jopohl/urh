@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView
+from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QKeyEvent, QCloseEvent
+from PySide2.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
 from urh import constants
 from urh.controller.widgets.ChecksumWidget import ChecksumWidget

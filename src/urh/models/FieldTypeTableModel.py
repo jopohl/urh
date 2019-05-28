@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PySide2.QtCore import QAbstractTableModel, Qt, QModelIndex
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.FieldType import FieldType

@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
-from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+from PySide2.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
+from PySide2.QtGui import QImage, QPainter, QColor, QPixmap
+from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
 
 class ComboBoxDelegate(QStyledItemDelegate):

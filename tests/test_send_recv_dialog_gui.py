@@ -4,10 +4,10 @@ import time
 from multiprocessing import Process, Value, Array
 
 import numpy as np
-from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
-from PyQt5.QtGui import QMouseEvent
+from PySide2.QtCore import QDir, QEvent, QPoint, Qt
+from PySide2.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer

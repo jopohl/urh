@@ -5,7 +5,7 @@ import time
 import unittest
 
 import numpy as np
-from PyQt5.QtCore import QDir
+from PySide2.QtCore import QDir
 
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer

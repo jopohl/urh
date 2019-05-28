@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QPen
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
+from PySide2.QtGui import QPen
+from PySide2.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
 
 from urh import constants
 from urh.ui.painting.HorizontalSelection import HorizontalSelection

@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
-from PyQt5.QtGui import QPen, QFont
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
+from PySide2.QtGui import QPen, QFont
+from PySide2.QtCore import Qt
 
 from urh import constants
 from urh.signalprocessing.Participant import Participant

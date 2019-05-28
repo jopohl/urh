@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QFileInfo
-from PyQt5.QtWidgets import QFileIconProvider
+from PySide2.QtGui import QIcon
+from PySide2.QtCore import QFileInfo
+from PySide2.QtWidgets import QFileIconProvider
 
 from urh import constants
 

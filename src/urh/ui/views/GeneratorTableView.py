@@ -1,9 +1,9 @@
-from PyQt5.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
+from PySide2.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
+from PySide2.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
     QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QActionGroup, QInputDialog
+from PySide2.QtWidgets import QActionGroup, QInputDialog
 
-from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
+from PySide2.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
 
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.ui.views.TableView import TableView

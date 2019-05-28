@@ -4,7 +4,7 @@ from datetime import datetime
 from threading import Thread
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QObject
+from PySide2.QtCore import pyqtSignal, QObject
 from urh.cythonext.signal_functions import grab_pulse_lens
 
 from urh.ainterpretation import AutoInterpretation

@@ -1,9 +1,9 @@
 import sys
 from collections import OrderedDict
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtGui import QPainter, QStandardItem
-from PyQt5.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
+from PySide2.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PySide2.QtGui import QPainter, QStandardItem
+from PySide2.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
 
 
 class SectionItemDelegate(QItemDelegate):

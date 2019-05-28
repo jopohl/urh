@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtGui import QValidator
+from PySide2.QtWidgets import QLineEdit
+from PySide2.QtGui import QValidator
 
 from urh import constants
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator

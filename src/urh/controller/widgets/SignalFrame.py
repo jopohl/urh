@@ -4,10 +4,10 @@ import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
-from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
+from PySide2.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
+from PySide2.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
     QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
+from PySide2.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
 
 from urh import constants
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog

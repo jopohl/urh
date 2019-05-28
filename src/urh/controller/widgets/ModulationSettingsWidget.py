@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtWidgets import QWidget
 
 from urh import constants
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
@@ -83,7 +83,7 @@ class ModulationSettingsWidget(QWidget):
         self.show_selected_modulation_infos()
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PySide2.QtWidgets import QApplication
     app = QApplication([""])
     w = ModulationSettingsWidget([Modulator("test")])
     w.show()

@@ -1,8 +1,8 @@
 import os
 import tempfile
 
-from PyQt5.QtCore import QPoint, QTimer
-from PyQt5.QtWidgets import qApp, QInputDialog, QMessageBox
+from PySide2.QtCore import QPoint, QTimer
+from PySide2.QtWidgets import qApp, QInputDialog, QMessageBox
 
 from tests.QtTestCase import QtTestCase
 from urh import constants

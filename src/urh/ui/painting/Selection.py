@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QColor, QPen, QTransform
-from PyQt5.QtWidgets import QGraphicsRectItem
+from PySide2.QtCore import Qt, QPointF
+from PySide2.QtGui import QColor, QPen, QTransform
+from PySide2.QtWidgets import QGraphicsRectItem
 
 
 class Selection(QGraphicsRectItem):

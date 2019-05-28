@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QImage, QPixmap
+from PySide2.QtCore import QRectF
+from PySide2.QtGui import QImage, QPixmap
 
 from urh import constants
 from urh.ui.painting.VerticalSelection import VerticalSelection

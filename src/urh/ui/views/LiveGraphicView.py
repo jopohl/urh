@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSignal, QEvent
-from PyQt5.QtGui import QWheelEvent, QMouseEvent
+from PySide2.QtCore import pyqtSignal, QEvent
+from PySide2.QtGui import QWheelEvent, QMouseEvent
 
 from urh.ui.painting.GridScene import GridScene
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView

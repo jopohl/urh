@@ -1,7 +1,7 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDropEvent
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.util.Logger import logger

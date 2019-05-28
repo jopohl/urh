@@ -4,9 +4,9 @@ import sys
 import tempfile
 import time
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
-from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
+from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
+from PySide2.QtGui import QCloseEvent, QIcon, QPixmap
+from PySide2.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
     QFileDialog, qApp
 
 from urh import constants, colormaps

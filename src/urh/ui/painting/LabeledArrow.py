@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, QSizeF, QPointF
-from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QGraphicsLineItem
+from PySide2.QtCore import QRectF, QSizeF, QPointF
+from PySide2.QtGui import QPainter, QPen
+from PySide2.QtWidgets import QGraphicsLineItem
 
 from urh import constants
 

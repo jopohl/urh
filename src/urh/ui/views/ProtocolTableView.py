@@ -1,8 +1,8 @@
 import numpy
-from PyQt5.QtCore import QItemSelection, pyqtSlot
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QKeySequence, QDropEvent, QIcon
-from PyQt5.QtWidgets import QHeaderView, QAction, QActionGroup
+from PySide2.QtCore import QItemSelection, pyqtSlot
+from PySide2.QtCore import pyqtSignal, Qt
+from PySide2.QtGui import QKeySequence, QDropEvent, QIcon
+from PySide2.QtWidgets import QHeaderView, QAction, QActionGroup
 
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.signalprocessing.MessageType import MessageType

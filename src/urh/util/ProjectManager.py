@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox, QApplication
+from PySide2.QtCore import QDir, Qt, QObject, pyqtSignal
+from PySide2.QtWidgets import QMessageBox, QApplication
 
 from urh import constants
 from urh.dev import config

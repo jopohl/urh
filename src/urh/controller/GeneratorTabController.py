@@ -3,9 +3,9 @@ import traceback
 
 import numpy
 import numpy as np
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
+from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtGui import QFontMetrics
+from PySide2.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
 from urh import constants
 from urh.controller.CompareFrameController import CompareFrameController

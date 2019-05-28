@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
-from PyQt5.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
-from PyQt5.QtWidgets import QGraphicsView, QAction
+from PySide2.QtCore import QRectF, pyqtSignal, Qt, QPoint
+from PySide2.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
+from PySide2.QtWidgets import QGraphicsView, QAction
 
 from urh import constants
 from urh.ui.painting.HorizontalSelection import HorizontalSelection

@@ -1,7 +1,7 @@
 import math
 
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin

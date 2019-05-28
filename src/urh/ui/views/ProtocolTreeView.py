@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QItemSelection, pyqtSlot
-from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, Qt
-from PyQt5.QtGui import QContextMenuEvent, QDropEvent, QIcon
-from PyQt5.QtWidgets import  QTreeView, QAbstractItemView, QMenu
+from PySide2.QtCore import QItemSelection, pyqtSlot
+from PySide2.QtCore import pyqtSignal, QItemSelectionModel, Qt
+from PySide2.QtGui import QContextMenuEvent, QDropEvent, QIcon
+from PySide2.QtWidgets import  QTreeView, QAbstractItemView, QMenu
 
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 

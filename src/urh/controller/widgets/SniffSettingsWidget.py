@@ -1,7 +1,7 @@
 import os
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QCompleter, QDirModel
+from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtWidgets import QWidget, QCompleter, QDirModel
 
 from urh import constants
 from urh.dev.BackendHandler import BackendHandler

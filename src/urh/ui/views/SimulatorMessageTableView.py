@@ -1,6 +1,6 @@
-from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QMenu, QActionGroup
+from PySide2.QtGui import QContextMenuEvent, QIcon
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtWidgets import QMenu, QActionGroup
 
 from urh import constants
 from urh.simulator.SimulatorMessage import SimulatorMessage
@@ -10,8 +10,8 @@ from urh.simulator.SimulatorItem import SimulatorItem
 
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QHeaderView
+from PySide2.QtCore import pyqtSignal
+from PySide2.QtWidgets import QHeaderView
 
 
 class SimulatorMessageTableView(TableView):

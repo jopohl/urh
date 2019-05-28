@@ -3,8 +3,8 @@ import locale
 import xml.etree.ElementTree as ET
 
 import numpy as np
-from PyQt5.QtGui import QPen
-from PyQt5.QtWidgets import QGraphicsScene
+from PySide2.QtGui import QPen
+from PySide2.QtWidgets import QGraphicsScene
 
 from urh import constants
 from urh.cythonext import path_creator, signal_functions

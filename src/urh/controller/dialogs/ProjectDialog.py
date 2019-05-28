@@ -1,9 +1,9 @@
 import os
 
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QRegExpValidator, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
+from PySide2.QtCore import QRegExp, Qt
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtGui import QRegExpValidator, QCloseEvent
+from PySide2.QtWidgets import QDialog, QCompleter, QDirModel
 
 from urh import constants
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController

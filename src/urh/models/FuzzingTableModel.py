@@ -1,7 +1,7 @@
 import math
 
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
-from PyQt5.QtGui import QFont
+from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PySide2.QtGui import QFont
 import numpy
 
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel

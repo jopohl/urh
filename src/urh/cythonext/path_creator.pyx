@@ -2,8 +2,8 @@ import struct
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
-from PyQt5.QtCore import QByteArray, QDataStream
-from PyQt5.QtGui import QPainterPath
+from PySide2.QtCore import QByteArray, QDataStream
+from PySide2.QtGui import QPainterPath
 
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273

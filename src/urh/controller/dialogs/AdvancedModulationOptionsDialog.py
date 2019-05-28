@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtWidgets import QDialog
+from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtWidgets import QDialog
 
 from urh.ui.ui_advanced_modulation_settings import Ui_DialogAdvancedModSettings
 

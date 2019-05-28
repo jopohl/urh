@@ -2,7 +2,7 @@ import array
 import os
 import tempfile
 
-from PyQt5.QtCore import QDir, QPoint, Qt
+from PySide2.QtCore import QDir, QPoint, Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase

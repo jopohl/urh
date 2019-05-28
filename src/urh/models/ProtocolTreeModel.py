@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QAbstractItemModel, pyqtSignal, QModelIndex, Qt, QMimeData
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QMessageBox, QWidget
+from PySide2.QtCore import QAbstractItemModel, pyqtSignal, QModelIndex, Qt, QMimeData
+from PySide2.QtGui import QIcon, QFont
+from PySide2.QtWidgets import QMessageBox, QWidget
 
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer

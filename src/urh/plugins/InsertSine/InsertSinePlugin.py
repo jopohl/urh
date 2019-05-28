@@ -2,9 +2,9 @@ import os
 
 import numpy as np
 from PyQt5 import uic
-from PyQt5.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QDialog
+from PySide2.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
+from PySide2.QtGui import QBrush, QColor, QPen, QRegExpValidator
+from PySide2.QtWidgets import QApplication, QDialog
 
 from urh.plugins.Plugin import SignalEditorPlugin
 from urh.signalprocessing.IQArray import IQArray

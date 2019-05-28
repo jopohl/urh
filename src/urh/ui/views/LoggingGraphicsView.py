@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QGraphicsView, QMenu, QAction
+from PySide2.QtGui import QKeySequence
+from PySide2.QtWidgets import QGraphicsView, QMenu, QAction
 
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 

@@ -1,9 +1,9 @@
 import time
 
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
+from PySide2.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
+from PySide2.QtGui import QIcon, QCloseEvent
+from PySide2.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
 from urh import constants
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog

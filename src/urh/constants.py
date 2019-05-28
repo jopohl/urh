@@ -1,8 +1,8 @@
 # QT5 = True
 import os
 
-from PyQt5.QtCore import Qt, QSettings
-from PyQt5.QtGui import QColor
+from PySide2.QtCore import Qt, QSettings
+from PySide2.QtGui import QColor
 
 
 class color:

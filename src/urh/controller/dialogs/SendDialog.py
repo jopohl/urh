@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
-from PyQt5.QtWidgets import QMessageBox
+from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtGui import QBrush, QColor, QIcon, QPen
+from PySide2.QtWidgets import QMessageBox
 
 from urh import constants
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog

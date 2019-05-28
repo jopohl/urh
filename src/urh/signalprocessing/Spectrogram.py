@@ -1,7 +1,7 @@
 import math
 
 import numpy as np
-from PyQt5.QtGui import QImage
+from PySide2.QtGui import QImage
 
 from urh import colormaps
 from urh.cythonext import util

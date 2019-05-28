@@ -4,10 +4,10 @@ import time
 from array import array
 
 import numpy as np
-from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QContextMenuEvent
+from PySide2.QtCore import Qt, QTimer, QPoint
+from PySide2.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest, QSignalSpy
-from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from PySide2.QtWidgets import QApplication, QMenu, QCompleter
 
 from urh.signalprocessing.IQArray import IQArray
 from urh.util.Logger import logger

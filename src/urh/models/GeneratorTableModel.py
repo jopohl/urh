@@ -2,8 +2,8 @@ import array
 import copy
 from collections import defaultdict
 
-from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QColor
+from PySide2.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QColor
 
 from urh import constants
 from urh.models.ProtocolTreeItem import ProtocolTreeItem

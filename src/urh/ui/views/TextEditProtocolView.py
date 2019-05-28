@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QIcon, QKeyEvent, QContextMenuEvent, QTextCursor
-from PyQt5.QtWidgets import QTextEdit, QMenu, QActionGroup
+from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtGui import QIcon, QKeyEvent, QContextMenuEvent, QTextCursor
+from PySide2.QtWidgets import QTextEdit, QMenu, QActionGroup
 
 
 class TextEditProtocolView(QTextEdit):

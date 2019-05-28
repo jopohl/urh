@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
-from PyQt5.QtGui import QContextMenuEvent, QIcon, QDesktopServices
-from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
+from PySide2.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
+from PySide2.QtGui import QContextMenuEvent, QIcon, QDesktopServices
+from PySide2.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
 from urh import constants
 from urh.util import util

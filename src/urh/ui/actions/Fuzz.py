@@ -1,7 +1,7 @@
 import copy
 
 import time
-from PyQt5.QtWidgets import QUndoCommand
+from PySide2.QtWidgets import QUndoCommand
 
 from urh import constants
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer

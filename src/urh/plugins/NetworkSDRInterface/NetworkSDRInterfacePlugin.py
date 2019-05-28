@@ -4,7 +4,7 @@ import threading
 import time
 
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtCore import pyqtSlot, pyqtSignal
 
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.IQArray import IQArray

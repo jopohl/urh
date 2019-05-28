@@ -9,11 +9,11 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
 import numpy as np
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QFont
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QSplitter
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QFontDatabase, QFont
+from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QApplication, QSplitter
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 
 from urh import constants
 from urh.util.Logger import logger

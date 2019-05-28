@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
+from PySide2.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
+from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout, QToolButton, QDialog
 
 from urh.controller.CompareFrameController import CompareFrameController

@@ -3,7 +3,7 @@ from subprocess import PIPE, Popen
 from threading import Thread
 import time
 import numpy as np
-from PyQt5.QtCore import pyqtSignal
+from PySide2.QtCore import pyqtSignal
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors

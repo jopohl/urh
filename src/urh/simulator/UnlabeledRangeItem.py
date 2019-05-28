@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QGraphicsTextItem
-from PyQt5.QtGui import QFontDatabase
+from PySide2.QtWidgets import QGraphicsTextItem
+from PySide2.QtGui import QFontDatabase
 
 class UnlabeledRangeItem(QGraphicsTextItem):
     def __init__(self, parent):

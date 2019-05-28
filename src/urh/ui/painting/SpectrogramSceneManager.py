@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QApplication
+from PySide2.QtGui import QPixmap
+from PySide2.QtWidgets import QGraphicsPixmapItem, QApplication
 
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.painting.SceneManager import SceneManager

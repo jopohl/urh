@@ -7,9 +7,9 @@ import sys
 import multiprocessing
 
 
-from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QPalette, QIcon, QColor
-from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
+from PySide2.QtCore import QTimer, Qt
+from PySide2.QtGui import QPalette, QIcon, QColor
+from PySide2.QtWidgets import QApplication, QWidget, QStyleFactory
 
 
 try:

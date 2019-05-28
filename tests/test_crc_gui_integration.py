@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PySide2.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
 from urh import constants

@@ -2,9 +2,9 @@ import os
 import random
 import tempfile
 
-from PyQt5.QtCore import QDir, Qt
+from PySide2.QtCore import QDir, Qt
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file

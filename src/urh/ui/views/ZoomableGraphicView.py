@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent
-from PyQt5.QtWidgets import QAction, QMenu
+from PySide2.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
+from PySide2.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent
+from PySide2.QtWidgets import QAction, QMenu
 
 from urh.ui.painting.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView

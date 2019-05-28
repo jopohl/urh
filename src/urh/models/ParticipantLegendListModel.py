@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
-from PyQt5.QtGui import QColor
+from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex
+from PySide2.QtGui import QColor
 
 from urh import constants
 

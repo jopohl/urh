@@ -1,10 +1,10 @@
 import copy
 
-from PyQt5.QtCore import QPoint, Qt, QModelIndex
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QContextMenuEvent
+from PySide2.QtCore import QPoint, Qt, QModelIndex
+from PySide2.QtCore import QTimer
+from PySide2.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu
+from PySide2.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController

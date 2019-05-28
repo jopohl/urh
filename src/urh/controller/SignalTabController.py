@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
+from PySide2.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PySide2.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
 from urh import constants
 

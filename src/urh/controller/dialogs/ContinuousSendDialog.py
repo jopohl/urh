@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QCloseEvent
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtGui import QCloseEvent
 
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog

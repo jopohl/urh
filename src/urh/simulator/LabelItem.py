@@ -1,12 +1,12 @@
-from PyQt5.QtGui import QPainter, QPen
+from PySide2.QtGui import QPainter, QPen
 
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 
 from urh import constants
 
-from PyQt5.QtWidgets import QGraphicsTextItem
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QGraphicsTextItem
+from PySide2.QtCore import Qt
 
 
 class LabelItem(GraphicsItem):

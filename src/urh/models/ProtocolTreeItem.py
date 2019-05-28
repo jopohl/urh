@@ -1,6 +1,6 @@
 import copy
 
-from PyQt5.QtCore import Qt
+from PySide2.QtCore import Qt
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message

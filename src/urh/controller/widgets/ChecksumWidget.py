@@ -2,9 +2,9 @@ import array
 import copy
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
+from PySide2.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
+from PySide2.QtGui import QRegExpValidator
+from PySide2.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
 
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message

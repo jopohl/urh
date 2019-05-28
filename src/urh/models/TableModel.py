@@ -2,9 +2,9 @@ import array
 import math
 from collections import defaultdict
 
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QUndoStack
+from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
+from PySide2.QtGui import QFont, QColor
+from PySide2.QtWidgets import QUndoStack
 from urh.util.Logger import logger
 
 from urh import constants

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PySide2.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase

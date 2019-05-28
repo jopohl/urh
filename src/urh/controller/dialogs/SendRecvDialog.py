@@ -1,9 +1,9 @@
 import locale
 import time
 
-from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
-from PyQt5.QtGui import QCloseEvent, QTransform
-from PyQt5.QtWidgets import QDialog, QGraphicsView
+from PySide2.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
+from PySide2.QtGui import QCloseEvent, QTransform
+from PySide2.QtWidgets import QDialog, QGraphicsView
 
 from urh import constants
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget

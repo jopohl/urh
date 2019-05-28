@@ -1,8 +1,8 @@
 import math
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
-from PyQt5.QtWidgets import QStyledItemDelegate, QPushButton
+from PySide2.QtCore import pyqtSlot
+from PySide2.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
+from PySide2.QtWidgets import QStyledItemDelegate, QPushButton
 
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.util import util

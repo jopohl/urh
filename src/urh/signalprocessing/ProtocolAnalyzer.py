@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PySide2.QtCore import QObject, pyqtSignal, Qt
 
 from urh import constants
 from urh.cythonext import signal_functions

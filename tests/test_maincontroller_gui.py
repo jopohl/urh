@@ -4,8 +4,8 @@ import tempfile
 import wave
 
 import numpy as np
-from PyQt5.QtCore import QTimer, QDir
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtCore import QTimer, QDir
+from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file

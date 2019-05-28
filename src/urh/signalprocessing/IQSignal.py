@@ -4,8 +4,8 @@ import tarfile
 import wave
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QObject, QDir, Qt
-from PyQt5.QtWidgets import QApplication
+from PySide2.QtCore import pyqtSignal, QObject, QDir, Qt
+from PySide2.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
 from urh.ainterpretation import AutoInterpretation

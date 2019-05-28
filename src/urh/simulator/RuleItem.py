@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
-from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QFont, QPen, QColor
+from PySide2.QtWidgets import QGraphicsTextItem, QAbstractItemView
+from PySide2.QtCore import Qt, QRectF, QLineF
+from PySide2.QtGui import QFont, QPen, QColor
 
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType

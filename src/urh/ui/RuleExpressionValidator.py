@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QValidator
-from PyQt5.QtCore import pyqtSignal
+from PySide2.QtGui import QValidator
+from PySide2.QtCore import pyqtSignal
 
 class RuleExpressionValidator(QValidator):
     validation_status_changed = pyqtSignal(QValidator.State, str)

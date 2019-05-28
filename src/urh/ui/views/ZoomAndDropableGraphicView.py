@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from PySide2.QtCore import pyqtSignal
+from PySide2.QtGui import QDragEnterEvent, QDropEvent
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.IQSignal import IQSignal

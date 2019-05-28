@@ -2,8 +2,8 @@ import csv
 
 import os
 import numpy as np
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QInputDialog, QApplication, QCompleter, QDirModel, QFileDialog
+from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtWidgets import QDialog, QInputDialog, QApplication, QCompleter, QDirModel, QFileDialog
 
 from urh.ui.ui_csv_wizard import Ui_DialogCSVImport
 from urh.util import FileOperator, util

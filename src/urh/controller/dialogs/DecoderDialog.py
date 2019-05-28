@@ -1,9 +1,9 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
+from PySide2.QtCore import QDir, Qt, pyqtSlot
+from PySide2.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
+from PySide2.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
     QLineEdit, QMessageBox
 
 from urh import constants

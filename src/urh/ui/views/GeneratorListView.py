@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QKeyEvent, QIcon
-from PyQt5.QtWidgets import QListView, QMenu
+from PySide2.QtCore import pyqtSignal, Qt, pyqtSlot
+from PySide2.QtGui import QContextMenuEvent, QKeyEvent, QIcon
+from PySide2.QtWidgets import QListView, QMenu
 
 from urh.models.GeneratorListModel import GeneratorListModel
 

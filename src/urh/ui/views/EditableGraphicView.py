@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
+from PySide2.QtCore import Qt, pyqtSlot, pyqtSignal
+from PySide2.QtGui import QIcon, QKeySequence
+from PySide2.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager

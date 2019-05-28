@@ -1,7 +1,7 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMessageBox
+from PySide2.QtCore import pyqtSignal, pyqtSlot
+from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QMessageBox
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import Mode, VirtualDevice

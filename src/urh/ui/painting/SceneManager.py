@@ -1,9 +1,9 @@
 import math
 
 import numpy as np
-from PyQt5.QtCore import QObject
-from PyQt5.QtGui import QPen, QColor
-from PyQt5.QtWidgets import QGraphicsPathItem
+from PySide2.QtCore import QObject
+from PySide2.QtGui import QPen, QColor
+from PySide2.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.cythonext import path_creator, util

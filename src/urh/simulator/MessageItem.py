@@ -3,9 +3,9 @@ from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.UnlabeledRangeItem import UnlabeledRangeItem
 
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QPen, QPolygonF
+from PySide2.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
+from PySide2.QtCore import QPointF, Qt
+from PySide2.QtGui import QPen, QPolygonF
 
 import math
 

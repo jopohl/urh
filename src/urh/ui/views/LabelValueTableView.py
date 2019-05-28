@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon, QContextMenuEvent, QKeySequence
-from PyQt5.QtWidgets import QTableView, QMenu, QAction
+from PySide2.QtCore import pyqtSlot, pyqtSignal, Qt
+from PySide2.QtGui import QIcon, QContextMenuEvent, QKeySequence
+from PySide2.QtWidgets import QTableView, QMenu, QAction
 
 from urh import constants
 from urh.models.LabelValueTableModel import LabelValueTableModel

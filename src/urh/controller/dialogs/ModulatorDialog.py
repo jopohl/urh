@@ -1,7 +1,7 @@
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
+from PySide2.QtWidgets import QDialog, QMessageBox
 
 from urh import constants
 from urh.signalprocessing.IQArray import IQArray

@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QTreeView, QAbstractItemView
-from PyQt5.QtCore import QItemSelectionModel
+from PySide2.QtWidgets import QTreeView, QAbstractItemView
+from PySide2.QtCore import QItemSelectionModel
 
 from urh.models.GeneratorTreeModel import GeneratorTreeModel
 

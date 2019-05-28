@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QColor
+from PySide2.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
+from PySide2.QtGui import QColor
 
 from urh import constants
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel

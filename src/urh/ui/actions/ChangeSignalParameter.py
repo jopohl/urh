@@ -1,7 +1,7 @@
 import copy
 
 import numpy as np
-from PyQt5.QtWidgets import QUndoCommand
+from PySide2.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.IQSignal import IQSignal

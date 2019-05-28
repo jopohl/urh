@@ -1,8 +1,8 @@
-from PyQt5.QtCore import QLocale
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QValidator
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDoubleSpinBox
+from PySide2.QtCore import QLocale
+from PySide2.QtCore import QRegExp
+from PySide2.QtGui import QValidator
+from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QDoubleSpinBox
 
 
 class KillerDoubleSpinBox(QDoubleSpinBox):

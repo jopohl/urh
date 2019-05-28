@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QRadioButton
+from PySide2.QtCore import pyqtSlot, Qt
+from PySide2.QtWidgets import QDialog, QLabel, QRadioButton
 
 from urh import constants
 from urh.signalprocessing.Filter import Filter

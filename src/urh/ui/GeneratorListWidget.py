@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QFocusEvent
-from PyQt5.QtWidgets import QListWidget, QMenu, QAction
+from PySide2.QtCore import pyqtSignal, pyqtSlot
+from PySide2.QtGui import QContextMenuEvent, QFocusEvent
+from PySide2.QtWidgets import QListWidget, QMenu, QAction
 
 
 class GeneratorListWidget(QListWidget):

@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
+from PySide2.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType

@@ -2,7 +2,7 @@ import random
 import uuid
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PySide2.QtCore import Qt
 
 from urh import constants
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel

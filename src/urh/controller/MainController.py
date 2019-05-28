@@ -2,9 +2,9 @@ import copy
 import os
 import traceback
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
-from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
-from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
+from PySide2.QtCore import QDir, Qt, pyqtSlot, QTimer
+from PySide2.QtGui import QIcon, QCloseEvent, QKeySequence
+from PySide2.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
     QMessageBox, QApplication, qApp
 
 from urh import constants, version

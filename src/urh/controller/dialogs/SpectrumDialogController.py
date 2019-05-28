@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QTimer, pyqtSlot
-from PyQt5.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
-from PyQt5.QtWidgets import QGraphicsScene
+from PySide2.QtCore import QTimer, pyqtSlot
+from PySide2.QtGui import QWheelEvent, QIcon, QPixmap, QResizeEvent
+from PySide2.QtWidgets import QGraphicsScene
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode

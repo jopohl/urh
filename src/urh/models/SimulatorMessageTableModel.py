@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from PyQt5.QtCore import QModelIndex, Qt
+from PySide2.QtCore import QModelIndex, Qt
 
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer

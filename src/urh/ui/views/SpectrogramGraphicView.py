@@ -1,7 +1,7 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QMenu
+from PySide2.QtCore import pyqtSlot, pyqtSignal
+from PySide2.QtGui import QIcon, QKeySequence
+from PySide2.QtWidgets import QMenu
 
 from urh.controller.dialogs.FilterBandwidthDialog import FilterBandwidthDialog
 from urh.signalprocessing.Filter import Filter

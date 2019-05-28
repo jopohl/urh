@@ -18,7 +18,7 @@ from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh import constants
 from urh.util.ProjectManager import ProjectManager
 
-from PyQt5.QtCore import pyqtSignal, QObject
+from PySide2.QtCore import pyqtSignal, QObject
 import xml.etree.ElementTree as ET
 
 

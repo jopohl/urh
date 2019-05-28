@@ -6,10 +6,10 @@ from collections import defaultdict
 from datetime import datetime
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
+from PySide2.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
     QModelIndex
-from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
+from PySide2.QtGui import QContextMenuEvent, QIcon
+from PySide2.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
 from urh.util.Errors import Errors
 
 from urh import constants

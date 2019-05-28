@@ -2,7 +2,7 @@ import random
 import string
 
 import itertools
-from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, QModelIndex, Qt, QItemSelection
+from PySide2.QtCore import QAbstractTableModel, pyqtSignal, QModelIndex, Qt, QItemSelection
 
 from urh import constants
 from urh.signalprocessing.Participant import Participant

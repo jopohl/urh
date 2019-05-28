@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
-from PyQt5.QtGui import QFont
+from PySide2.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
+from PySide2.QtGui import QFont
 
 from urh.signalprocessing.MessageType import MessageType
 

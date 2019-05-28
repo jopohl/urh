@@ -1,8 +1,8 @@
 import copy
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog
+from PySide2.QtCore import Qt, pyqtSlot
+from PySide2.QtGui import QCloseEvent
+from PySide2.QtWidgets import QDialog
 
 from urh import constants
 from urh.models.RulesetTableModel import RulesetTableModel

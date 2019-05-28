@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, Qt, QSortFilterProxyModel
-from PyQt5.QtGui import QFont, QColor
+from PySide2.QtCore import QModelIndex, Qt, QSortFilterProxyModel
+from PySide2.QtGui import QFont, QColor
 
 
 class FileFilterProxyModel(QSortFilterProxyModel):

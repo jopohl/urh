@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QWheelEvent
-from PyQt5.QtWidgets import QGraphicsView
+from PySide2.QtCore import pyqtSignal
+from PySide2.QtGui import QWheelEvent
+from PySide2.QtWidgets import QGraphicsView
 
 
 class LegendGraphicView(QGraphicsView):

@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
+from PySide2.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
+from PySide2.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
 
 
 class CheckBoxDelegate(QStyledItemDelegate):

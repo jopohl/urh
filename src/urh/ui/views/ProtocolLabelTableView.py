@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtWidgets import QTableView, QMenu, QAction, QActionGroup
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QKeySequence, QIcon
+from PySide2.QtWidgets import QTableView, QMenu, QAction, QActionGroup
 
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel

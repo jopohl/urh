@@ -1,7 +1,7 @@
 import os
 
 from PySide2.QtCore import QDir, QPoint
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase

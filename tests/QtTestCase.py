@@ -1,14 +1,12 @@
 import faulthandler
 import gc
 import os
-import sip
-import sys
 import time
 import unittest
 
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QDropEvent
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
@@ -52,15 +50,11 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-
-            sip.delete(self.dialog)
             self.dialog = None
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
-
-            sip.delete(self.form)
             self.form = None
 
         gc.collect()

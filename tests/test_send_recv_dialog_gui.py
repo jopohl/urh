@@ -6,7 +6,7 @@ from multiprocessing import Process, Value, Array
 import numpy as np
 from PySide2.QtCore import QDir, QEvent, QPoint, Qt
 from PySide2.QtGui import QMouseEvent
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 
 from urh.signalprocessing.IQArray import IQArray

@@ -3,7 +3,7 @@ import copy
 from PySide2.QtCore import QPoint, Qt, QModelIndex
 from PySide2.QtCore import QTimer
 from PySide2.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase

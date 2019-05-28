@@ -1,7 +1,7 @@
 import time
 
 from PySide2.QtCore import Qt
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.Message import Message

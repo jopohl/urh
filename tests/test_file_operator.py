@@ -6,7 +6,7 @@ from zipfile import ZipFile
 
 import numpy as np
 from PySide2.QtCore import QDir
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication, QFileDialog
 
 from tests.QtTestCase import QtTestCase

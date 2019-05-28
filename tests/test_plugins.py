@@ -1,6 +1,6 @@
 import math
 
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase

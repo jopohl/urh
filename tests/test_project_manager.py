@@ -3,7 +3,7 @@ import random
 import tempfile
 
 from PySide2.QtCore import QDir, Qt
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase

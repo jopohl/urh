@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from PySide2.QtCore import QDir, QPoint, Qt
-from PyQt5.QtTest import QTest
+from PySide2.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.GeneratorTabController import GeneratorTabController

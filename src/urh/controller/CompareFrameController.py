@@ -1166,7 +1166,7 @@ class CompareFrameController(QWidget):
 
     @Slot(bool)
     def on_chkbox_show_differences_clicked(self, checked: bool):
-        self.show_differences(checked)
+        self.show_differences(self.ui.cbShowDiffs.isChecked())
 
     @Slot()
     def on_search_action_triggered(self):

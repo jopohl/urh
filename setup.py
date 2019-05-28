@@ -118,7 +118,7 @@ if IS_RELEASE:
     install_requires.append("pyside2")
 else:
     try:
-        import PyQt5
+        import PySide2
     except ImportError:
         install_requires.append("pyside2")
 

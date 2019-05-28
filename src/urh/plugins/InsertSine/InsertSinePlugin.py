@@ -1,7 +1,7 @@
 import os
 
 import numpy as np
-from PyQt5 import uic
+from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import QRegExp, Qt, Signal, Slot
 from PySide2.QtGui import QBrush, QColor, QPen, QRegExpValidator
 from PySide2.QtWidgets import QApplication, QDialog
@@ -38,7 +38,7 @@ class InsertSinePlugin(SignalEditorPlugin):
     def dialog_ui(self) -> QDialog:
         if self.__dialog_ui is None:
             dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
-            self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            self.__dialog_ui = QUiLoader().load(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
             self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
             self.__dialog_ui.setModal(True)
             self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)

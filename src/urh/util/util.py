@@ -426,7 +426,11 @@ def run_command(command, param: str = None, use_stdin=False, detailed_output=Fal
 def read_setting(key: str, default_value=None, type=str):
     val = constants.SETTINGS.value(key, default_value)
     if type is bool:
-        return True if str(val).lower() == "true" else False
+        val = str(val).lower()
+        try:
+            return bool(int(val))
+        except ValueError:
+            return True if str(val).lower() == "true" else False
     else:
         return type(val)
 

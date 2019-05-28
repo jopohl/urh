@@ -342,7 +342,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxPort.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
-        self.ui.checkBoxDCCorrection.clicked.emit(self.ui.checkBoxDCCorrection.isChecked())
+        self.ui.checkBoxDCCorrection.clicked.emit()
 
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}
@@ -496,9 +496,9 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxDeviceIdentifier.clear()
         self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
 
-    @Slot(bool)
-    def on_check_box_dc_correction_clicked(self, checked: bool):
-        self.device.apply_dc_correction = bool(checked)
+    @Slot()
+    def on_check_box_dc_correction_clicked(self):
+        self.device.apply_dc_correction = bool(self.ui.checkBoxDCCorrection.isChecked())
 
     @Slot()
     def on_combo_box_device_identifier_current_index_changed(self):

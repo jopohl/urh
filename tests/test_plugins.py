@@ -18,6 +18,7 @@ class TestPlugins(QtTestCase):
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller
         self.form.ui.tabWidget.setCurrentIndex(1)
+        self.form.ui.actionAuto_detect_new_signals.setChecked(True)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
     def test_message_break_plugin(self):

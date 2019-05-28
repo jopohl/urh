@@ -9,6 +9,7 @@ from PySide2.QtWidgets import QApplication, QDialog
 from urh.plugins.Plugin import SignalEditorPlugin
 from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.SceneManager import SceneManager
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 
 
@@ -38,7 +39,9 @@ class InsertSinePlugin(SignalEditorPlugin):
     def dialog_ui(self) -> QDialog:
         if self.__dialog_ui is None:
             dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
-            self.__dialog_ui = QUiLoader().load(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            loader = QUiLoader()
+            loader.registerCustomWidget(ZoomableGraphicView)
+            self.__dialog_ui = loader.load(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
             self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
             self.__dialog_ui.setModal(True)
             self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)

@@ -31,7 +31,7 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnAddModulation.click()
         self.assertEqual(len(self.dialog.modulators), 3)
-        self.app.processEvents()
+        QApplication.processEvents()
         self.dialog.ui.btnRemoveModulation.click()
         self.assertEqual(len(self.dialog.modulators), 2)
         self.dialog.ui.btnRemoveModulation.click()

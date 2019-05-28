@@ -1,4 +1,5 @@
 from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -122,8 +123,8 @@ class TestCRCGUIIntegration(QtTestCase):
 
         # Now change something and verify CRC gets recalced
         checksum_before = gframe.table_model.display_data[0][4:6]
-        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(0, 1)), "f")
-        gframe.table_model.setData(gframe.table_model.index(0, 1), "f", Qt.EditRole)
+        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(0, 1)), "d")
+        gframe.table_model.setData(gframe.table_model.index(0, 1), "d", Qt.EditRole)
         checksum_after = gframe.table_model.display_data[0][4:6]
         self.assertNotEqual(checksum_before, checksum_after)
 

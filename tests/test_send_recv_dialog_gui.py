@@ -9,6 +9,7 @@ from PySide2.QtGui import QMouseEvent
 from PySide2.QtTest import QTest
 from PySide2.QtWidgets import QApplication
 
+from urh import constants
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
@@ -60,6 +61,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def setUp(self):
         super().setUp()
+        constants.SETTINGS.setValue("modulation_dtype", "float32")
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
         self.signal = IQSignal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -252,7 +254,6 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(1000)
         time.sleep(1)
         process.join(1)
 

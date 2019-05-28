@@ -21,6 +21,6 @@ class CheckBoxDelegate(QStyledItemDelegate):
     def setModelData(self, editor: QCheckBox, model: QAbstractItemModel, index: QModelIndex):
         model.setData(index, editor.isChecked(), Qt.EditRole)
 
-    @Slot()
+
     def stateChanged(self):
         self.commitData.emit(self.sender())

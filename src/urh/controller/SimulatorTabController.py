@@ -281,7 +281,6 @@ class SimulatorTabController(QWidget):
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)
 
-    @Slot()
     def refresh_modulators(self):
         # update Generator tab ...
         cBoxModulations = self.generator_tab_controller.ui.cBoxModulations

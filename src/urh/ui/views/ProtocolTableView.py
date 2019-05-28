@@ -249,13 +249,11 @@ class ProtocolTableView(TableView):
             message.participant = None
         self.participant_changed.emit()
 
-    @Slot()
     def on_participant_action_triggered(self):
         for message in self.selected_messages:
             message.participant = self.participant_actions[self.sender()]
         self.participant_changed.emit()
 
-    @Slot()
     def on_message_type_action_triggered(self):
         self.messagetype_selected.emit(self.message_type_actions[self.sender()], self.selected_messages)
 
@@ -281,6 +279,5 @@ class ProtocolTableView(TableView):
         self.model().update()
         self.row_visibility_changed.emit()
 
-    @Slot()
     def on_writeable_action_triggered(self):
         self.writeable_changed.emit(self.sender().isChecked())

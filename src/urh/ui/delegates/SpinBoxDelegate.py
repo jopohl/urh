@@ -26,6 +26,5 @@ class SpinBoxDelegate(QStyledItemDelegate):
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         model.setData(index, editor.value(), Qt.EditRole)
 
-    @Slot()
     def valueChanged(self):
         self.commitData.emit(self.sender())

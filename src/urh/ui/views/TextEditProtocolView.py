@@ -47,7 +47,6 @@ class TextEditProtocolView(QTextEdit):
             msg.participant = None
         self.participant_changed.emit()
 
-    @Slot()
     def on_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = self.participant_actions[self.sender()]
@@ -57,7 +56,6 @@ class TextEditProtocolView(QTextEdit):
     def on_zoom_to_bits_action_triggered(self):
         self.show_proto_clicked.emit()
 
-    @Slot()
     def on_line_wrap_action_triggered(self):
         line_wrap = self.sender().isChecked()
 

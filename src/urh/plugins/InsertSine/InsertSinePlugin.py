@@ -226,7 +226,6 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.insert_sine_wave_clicked.emit()
         self.dialog_ui.close()
 
-    @Slot()
     def on_dialog_finished(self):
         self.sender().graphicsViewSineWave.eliminate()
         self.__dialog_ui = None

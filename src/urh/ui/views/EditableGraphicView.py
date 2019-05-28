@@ -291,7 +291,6 @@ class EditableGraphicView(ZoomableGraphicView):
             msg.participant = None
         self.participant_changed.emit()
 
-    @Slot()
     def on_participant_action_triggered(self):
         for msg in self.selected_messages:
             msg.participant = self.participant_actions[self.sender()]

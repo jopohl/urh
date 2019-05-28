@@ -233,8 +233,9 @@ class MainController(QMainWindow):
             recent_file_action = QAction(self)
             recent_file_action.setVisible(False)
             recent_file_action.triggered.connect(self.on_open_recent_action_triggered)
+            self.ui.menuFile.addAction(recent_file_action)
             self.recentFileActionList.append(recent_file_action)
-            self.ui.menuFile.addAction(self.recentFileActionList[i])
+
 
     def add_plain_bits_from_txt(self, filename: str):
         with open(filename) as f:
@@ -550,9 +551,9 @@ class MainController(QMainWindow):
     def on_show_field_types_config_action_triggered(self):
         self.show_options_dialog_specific_tab(tab_index=2)
 
-    @Slot()
     def on_open_recent_action_triggered(self):
         action = self.sender()
+
         try:
             if os.path.isdir(action.data()):
                 self.project_manager.set_project_folder(action.data())
@@ -752,7 +753,6 @@ class MainController(QMainWindow):
         else:
             self.ui.splitter.setSizes([1, 1])
 
-    @Slot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
             self.project_manager.from_dialog(self.sender())

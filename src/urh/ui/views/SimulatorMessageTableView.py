@@ -103,7 +103,6 @@ class SimulatorMessageTableView(TableView):
 
         return menu
 
-    @Slot()
     def on_encoding_action_triggered(self):
         updated_messages = []
 
@@ -112,7 +111,6 @@ class SimulatorMessageTableView(TableView):
             updated_messages.append(self.model().protocol.messages[row])
         SimulatorItem.simulator_config.items_updated.emit(updated_messages)
 
-    @Slot()
     def on_modulation_action_triggered(self):
         for row in self.selected_rows:
             self.model().protocol.messages[row].modulator_index = self.sender().data()

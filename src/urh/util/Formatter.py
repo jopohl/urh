@@ -1,4 +1,5 @@
 import locale
+
 from urh.util.Logger import logger
 
 
@@ -34,14 +35,13 @@ class Formatter:
     def big_value_with_suffix(value: float, decimals=3) -> str:
         fmt_str = "%.{0:d}f".format(decimals)
         if abs(value) >= 1e9:
-            return locale.format_string(fmt_str+"G", value / 1e9)
+            return locale.format_string(fmt_str + "G", value / 1e9)
         elif abs(value) >= 1e6:
-            return locale.format_string(fmt_str+"M", value / 1e6)
+            return locale.format_string(fmt_str + "M", value / 1e6)
         elif abs(value) >= 1e3:
-            return locale.format_string(fmt_str+"k", value / 1e3)
+            return locale.format_string(fmt_str + "k", value / 1e3)
         else:
             return locale.format_string(fmt_str, value)
-
 
     @staticmethod
     def str2val(str_val, dtype, default=0):

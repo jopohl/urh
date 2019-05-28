@@ -142,7 +142,6 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_clear_all_action_triggered(self):
         self.scene().clear_all()
 
-    @Slot()
     def on_set_value_type_action_triggered(self):
         value_type_index = self.sender().data()
         for msg in self.scene().get_selected_messages():
@@ -151,14 +150,12 @@ class SimulatorGraphicsView(QGraphicsView):
                     lbl.value_type_index = value_type_index
             self.message_updated.emit(msg)
 
-    @Slot()
     def on_source_action_triggered(self):
         for msg in self.scene().get_selected_messages():
             if msg.destination != self.sender().data():
                 msg.source = self.sender().data()
                 self.message_updated.emit(msg)
 
-    @Slot()
     def on_destination_action_triggered(self):
         for msg in self.scene().get_selected_messages():
             if msg.source != self.sender().data():

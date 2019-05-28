@@ -70,7 +70,6 @@ class ModulationSettingsWidget(QWidget):
         dialog.show()
         dialog.initialize("101010")
 
-    @Slot()
     def refresh_modulators_from_dialog(self):
         current_index = 0
         if type(self.sender()) == ModulatorDialog:

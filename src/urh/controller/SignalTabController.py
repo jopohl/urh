@@ -240,7 +240,6 @@ class SignalTabController(QWidget):
             if frame.ui.gvSpectrogram.width_spectrogram > 0:
                 frame.draw_spectrogram(force_redraw=True)
 
-    @Slot(IQSignal)
     def emit_signal_created(self, signal):
         try:
             index = self.signal_frames.index(self.sender()) + 1

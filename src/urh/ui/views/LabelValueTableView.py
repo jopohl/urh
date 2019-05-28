@@ -83,7 +83,6 @@ class LabelValueTableView(QTableView):
     def on_edit_label_action_triggered(self):
         self.edit_label_action_triggered.emit()
 
-    @Slot()
     def on_copy_to_msg_type_action_triggered(self):
         min_row, max_row = self.selected_min_max_row
         self.model().add_labels_to_message_type(min_row, max_row, int(self.sender().data()))

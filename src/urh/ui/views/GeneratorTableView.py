@@ -194,7 +194,6 @@ class GeneratorTableView(TableView):
     def on_clear_action_triggered(self):
         self.model().clear()
 
-    @Slot()
     def on_encoding_action_triggered(self):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.encoding_actions[self.sender()]

@@ -56,7 +56,6 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         painter.end()
         return QIcon(pixmap)
 
-    @Slot()
     def on_btn_clicked(self):
         button = self.sender()
         index = self.parent().indexAt(button.pos())

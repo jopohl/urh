@@ -91,7 +91,6 @@ class ProtocolTreeView(QTreeView):
         self.model().addGroup()
         self.model().update()
 
-    @Slot()
     def on_move_to_group_action_triggered(self):
         selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
         i = self.move_to_group_actions[self.sender()]

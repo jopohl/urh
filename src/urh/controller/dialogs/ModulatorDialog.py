@@ -523,7 +523,6 @@ class ModulatorDialog(QDialog):
         else:
             self.mark_samples_in_view()
 
-    @Slot(float)
     def on_carrier_data_modulated_zoomed(self, factor: float):
 
         x = self.sender().view_rect().x() + self.sender().view_rect().width() / 2

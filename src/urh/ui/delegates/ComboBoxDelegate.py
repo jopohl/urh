@@ -93,7 +93,6 @@ class ComboBoxDelegate(QStyledItemDelegate):
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)
 
-    @Slot()
     def currentIndexChanged(self):
         self.commitData.emit(self.sender())
 

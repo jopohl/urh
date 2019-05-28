@@ -1,9 +1,9 @@
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.painting.SceneManager import SceneManager
 
 
 class SignalSceneManager(SceneManager):
-    def __init__(self, signal: Signal, parent):
+    def __init__(self, signal: IQSignal, parent):
         super().__init__(parent)
         self.signal = signal
         self.scene_type = 0  # 0 = Analog Signal, 1 = QuadDemodView

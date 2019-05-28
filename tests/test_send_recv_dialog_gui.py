@@ -22,7 +22,7 @@ from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogContro
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
@@ -61,7 +61,7 @@ class TestSendRecvDialog(QtTestCase):
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
-        self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
+        self.signal = IQSignal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):

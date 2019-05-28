@@ -3,7 +3,7 @@ import numpy as np
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 import array
 
 from matplotlib import pyplot as plt
@@ -36,7 +36,7 @@ class SpectrogramTest(unittest.TestCase):
         return np.fft.fft(frames)
 
     def setUp(self):
-        self.signal = Signal(get_path_for_data_file("two_participants.coco"), "test")
+        self.signal = IQSignal(get_path_for_data_file("two_participants.coco"), "test")
 
     def test_numpy_impl(self):
         sample_rate = 1e6

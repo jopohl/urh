@@ -6,7 +6,7 @@ from urh import constants
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.IQArray import IQArray
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.util import FileOperator
 from urh.util.Logger import logger
@@ -41,7 +41,7 @@ class SendDialog(SendRecvDialog):
             # modulated_data is none in continuous send mode
             self.ui.progressBarSample.setMaximum(len(modulated_data))
             samp_rate = self.device_settings_widget.ui.spinBoxSampleRate.value()
-            signal = Signal("", "Modulated Preview", sample_rate=samp_rate)
+            signal = IQSignal("", "Modulated Preview", sample_rate=samp_rate)
             signal.iq_array = modulated_data
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,

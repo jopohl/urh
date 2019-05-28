@@ -4,11 +4,11 @@ import numpy as np
 from PyQt5.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 class ChangeSignalParameter(QUndoCommand):
-    def __init__(self, signal: Signal, protocol: ProtocolAnalyzer, parameter_name: str, parameter_value):
+    def __init__(self, signal: IQSignal, protocol: ProtocolAnalyzer, parameter_name: str, parameter_value):
         super().__init__()
         if not hasattr(signal, parameter_name):
             raise ValueError("signal has no attribute {}".format(parameter_name))

@@ -17,7 +17,7 @@ from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
@@ -37,13 +37,13 @@ def perform_filter(result_array: Array, data, f_low, f_high, filter_bw):
 
 class SignalFrame(QFrame):
     closed = pyqtSignal(QWidget)
-    signal_created = pyqtSignal(Signal)
+    signal_created = pyqtSignal(IQSignal)
     drag_started = pyqtSignal(QPoint)
     frame_dropped = pyqtSignal(QPoint)
     files_dropped = pyqtSignal(list)
     not_show_again_changed = pyqtSignal()
     signal_drawing_finished = pyqtSignal()
-    apply_to_all_clicked = pyqtSignal(Signal)
+    apply_to_all_clicked = pyqtSignal(IQSignal)
     sort_action_clicked = pyqtSignal()
 
     @property
@@ -75,7 +75,7 @@ class SignalFrame(QFrame):
         self.project_manager = project_manager
 
         self.proto_analyzer = proto_analyzer
-        self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: Signal
+        self.signal = proto_analyzer.signal if self.proto_analyzer is not None else None  # type: IQSignal
         self.ui.gvSignal.protocol = self.proto_analyzer
         self.ui.gvSignal.set_signal(self.signal)
         self.ui.sliderFFTWindowSize.setValue(int(math.log2(Spectrogram.DEFAULT_FFT_WINDOW_SIZE)))

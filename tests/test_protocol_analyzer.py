@@ -5,12 +5,12 @@ import unittest
 from tests.utils_testing import get_path_for_data_file
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
-        signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
+        signal = IQSignal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = 0
         signal.bit_len = 100
 
@@ -21,7 +21,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
             self.assertLess(pos, signal.num_samples, msg=i)
 
     def test_fsk_freq_detection(self):
-        s = Signal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
+        s = IQSignal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
         s.noise_threshold = 0.06
         s.qad_center = 0
         s.bit_len = 100
@@ -40,7 +40,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
         self.assertEqual(3, int(freq / 10000))  # Freq for 0 is 30K
 
     def test_get_rssi_of_message(self):
-        signal = Signal(get_path_for_data_file("two_participants.coco"), "RSSI-Test")
+        signal = IQSignal(get_path_for_data_file("two_participants.coco"), "RSSI-Test")
         signal.modulation_type = 1
         signal.bit_len = 100
         signal.qad_center = -0.0507

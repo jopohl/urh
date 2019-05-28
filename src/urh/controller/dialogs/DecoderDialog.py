@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog
 from urh import constants
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_decoding import Ui_Decoder
 from urh.util.ProjectManager import ProjectManager
@@ -20,7 +20,7 @@ class DecoderDialog(QDialog):
                  parent=None):
         """
         :type decodings: list of Encoding
-        :type signals: list of Signal
+        :type signals: list of IQSignal
         """
         # Init
         super().__init__(parent)

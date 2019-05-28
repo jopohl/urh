@@ -10,7 +10,7 @@ from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util.SettingsProxy import SettingsProxy
 
 
@@ -55,7 +55,7 @@ class TestProtocolSniffer(QtTestCase):
 
         # verify modulation was correct
         pa = ProtocolAnalyzer(None)
-        signal = Signal("", "", sample_rate=sample_rate)
+        signal = IQSignal("", "", sample_rate=sample_rate)
         signal.iq_array = IQArray.concatenate(packages)
         signal.modulation_type = modulation_type
         signal.bit_len = bit_len

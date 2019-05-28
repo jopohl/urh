@@ -2,13 +2,13 @@ from PyQt5.QtCore import QTimer
 
 from tests.QtTestCase import QtTestCase
 from urh import colormaps
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.signalprocessing.Spectrogram import Spectrogram
 
 
 class TestSpectrogram(QtTestCase):
     def setUp(self):
-        self.signal = Signal(self.get_path_for_filename("two_participants.coco"), "test")
+        self.signal = IQSignal(self.get_path_for_filename("two_participants.coco"), "test")
         self.spectrogram = Spectrogram(self.signal.iq_array.data)
 
     def test_create_spectrogram_image(self):

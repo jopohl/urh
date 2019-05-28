@@ -7,7 +7,7 @@ import numpy as np
 from urh.signalprocessing.Modulator import Modulator
 from urh.cythonext import signal_functions
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from tests.utils_testing import get_path_for_data_file
 
 
@@ -41,7 +41,7 @@ class PlotTests(unittest.TestCase):
         plt.show()
 
     def test_carrier_auto_detect(self):
-        signal = Signal(get_path_for_data_file("wsp.complex"), "test")
+        signal = IQSignal(get_path_for_data_file("wsp.complex"), "test")
         signal.modulation_type = 0
         signal.noise_threshold = 0.035
         signal.qad_center = 0.0245

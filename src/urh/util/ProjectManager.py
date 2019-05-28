@@ -12,7 +12,7 @@ from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util import FileOperator, util
 from urh.util.Logger import logger
 
@@ -283,7 +283,7 @@ class ProjectManager(QObject):
         self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
         self.main_controller.show_project_settings()
 
-    def write_signal_information_to_project_file(self, signal: Signal, tree=None):
+    def write_signal_information_to_project_file(self, signal: IQSignal, tree=None):
         if self.project_file is None or signal is None or len(signal.filename) == 0:
             return
 
@@ -439,7 +439,7 @@ class ProjectManager(QObject):
 
         util.write_xml_to_file(root, self.project_file)
 
-    def read_participants_for_signal(self, signal: Signal, messages):
+    def read_participants_for_signal(self, signal: IQSignal, messages):
         if self.project_file is None or len(signal.filename) == 0:
             return False
 
@@ -466,7 +466,7 @@ class ProjectManager(QObject):
 
         return False
 
-    def read_project_file_for_signal(self, signal: Signal):
+    def read_project_file_for_signal(self, signal: IQSignal):
         if self.project_file is None or len(signal.filename) == 0:
             return False
 

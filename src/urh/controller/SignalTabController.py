@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessag
 from urh import constants
 
 from urh.controller.widgets.SignalFrame import SignalFrame
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
 from urh.util import util
 
@@ -12,7 +12,7 @@ from urh.util import util
 class SignalTabController(QWidget):
     frame_closed = pyqtSignal(SignalFrame)
     not_show_again_changed = pyqtSignal()
-    signal_created = pyqtSignal(int, Signal)
+    signal_created = pyqtSignal(int, IQSignal)
     files_dropped = pyqtSignal(list)
     frame_was_dropped = pyqtSignal(int, int)
 
@@ -158,8 +158,8 @@ class SignalTabController(QWidget):
         for f in self.signal_frames:
             f.my_close()
 
-    @pyqtSlot(Signal)
-    def on_apply_to_all_clicked(self, signal: Signal):
+    @pyqtSlot(IQSignal)
+    def on_apply_to_all_clicked(self, signal: IQSignal):
         for frame in self.signal_frames:
             if frame.signal is not None:
                 frame.signal.noise_min_plot = signal.noise_min_plot
@@ -241,7 +241,7 @@ class SignalTabController(QWidget):
             if frame.ui.gvSpectrogram.width_spectrogram > 0:
                 frame.draw_spectrogram(force_redraw=True)
 
-    @pyqtSlot(Signal)
+    @pyqtSlot(IQSignal)
     def emit_signal_created(self, signal):
         try:
             index = self.signal_frames.index(self.sender()) + 1

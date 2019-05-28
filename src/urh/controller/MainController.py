@@ -27,7 +27,7 @@ from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.ui_main import Ui_MainWindow
 from urh.util import FileOperator, util
 from urh.util.Errors import Errors
@@ -284,7 +284,7 @@ class MainController(QMainWindow):
         else:
             sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        signal = Signal(filename, sig_name, sample_rate=sample_rate)
+        signal = IQSignal(filename, sig_name, sample_rate=sample_rate)
 
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
@@ -862,8 +862,8 @@ class MainController(QMainWindow):
             self.filemodel.setRootPath(path)
             self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))
 
-    @pyqtSlot(int, Signal)
-    def on_signal_created(self, index: int, signal: Signal):
+    @pyqtSlot(int, IQSignal)
+    def on_signal_created(self, index: int, signal: IQSignal):
         self.add_signal(signal, index=index)
 
     @pyqtSlot()

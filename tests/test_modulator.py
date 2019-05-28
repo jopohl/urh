@@ -9,7 +9,7 @@ from PyQt5.QtCore import QDir
 
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 class TestModulator(unittest.TestCase):
@@ -43,7 +43,7 @@ class TestModulator(unittest.TestCase):
 
             modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 
-            signal = Signal(filename, modulation)
+            signal = IQSignal(filename, modulation)
             signal.modulation_type = i
             signal.bit_len = self.samples_per_bit
             if modulation == "ASK":
@@ -74,7 +74,7 @@ class TestModulator(unittest.TestCase):
 
         s.tofile(target_file)
 
-        pa = ProtocolAnalyzer(Signal(target_file, "test", modulation="FSK"))
+        pa = ProtocolAnalyzer(IQSignal(target_file, "test", modulation="FSK"))
         pa.get_protocol_from_signal()
 
     def test_performance(self):

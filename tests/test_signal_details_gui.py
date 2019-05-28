@@ -1,13 +1,13 @@
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util.Formatter import Formatter
 
 
 class TestSignalDetailsGUI(QtTestCase):
     def setUp(self):
-        self.signal = Signal(get_path_for_data_file("esaver.coco"), "test")
+        self.signal = IQSignal(get_path_for_data_file("esaver.coco"), "test")
         self.signal.sample_rate = 2e6
         self.dialog = SignalDetailsDialog(self.signal)
 

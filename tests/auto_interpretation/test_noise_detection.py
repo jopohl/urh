@@ -4,7 +4,7 @@ import numpy as np
 
 from urh.ainterpretation.AutoInterpretation import detect_noise_level
 from tests.test_util import get_path_for_data_file
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 class TestNoiseDetection(unittest.TestCase):
@@ -39,18 +39,18 @@ class TestNoiseDetection(unittest.TestCase):
         self.assertEqual(noise_level, 0)
 
     def test_multi_messages_different_rssi(self):
-        data = Signal(get_path_for_data_file("multi_messages_different_rssi.coco"), "").iq_array.data
+        data = IQSignal(get_path_for_data_file("multi_messages_different_rssi.coco"), "").iq_array.data
         noise_level = detect_noise_level(np.abs(data))
         self.assertGreater(noise_level, 0.001)
         self.assertLess(noise_level, 0.002)
 
     def test_for_psk_signal(self):
-        data = Signal(get_path_for_data_file("psk_generated.complex"), "").iq_array.data
+        data = IQSignal(get_path_for_data_file("psk_generated.complex"), "").iq_array.data
         noise_level = detect_noise_level(np.abs(data))
         self.assertGreater(noise_level, 0.0067)
         self.assertLessEqual(noise_level, 0.0081)
 
     def test_for_noisy_fsk_15db_signal(self):
-        data = Signal(get_path_for_data_file("FSK15.complex"), "").iq_array.data
+        data = IQSignal(get_path_for_data_file("FSK15.complex"), "").iq_array.data
         noise_level = detect_noise_level(np.abs(data))
         self.assertEqual(noise_level, 0)

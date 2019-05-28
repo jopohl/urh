@@ -15,7 +15,7 @@ from urh.util import FileOperator
 from urh.util.Logger import logger
 
 
-class Signal(QObject):
+class IQSignal(QObject):
     """
     Representation of a loaded signal (complex file).
     """
@@ -340,7 +340,7 @@ class Signal(QObject):
             return self.noise_threshold_relative
 
     def create_new(self, start=0, end=0, new_data=None):
-        new_signal = Signal("", "New " + self.name)
+        new_signal = IQSignal("", "New " + self.name)
 
         if new_data is None:
             new_signal.iq_array = IQArray(self.iq_array[start:end])
@@ -468,7 +468,7 @@ class Signal(QObject):
 
     @staticmethod
     def from_samples(samples: np.ndarray, name: str, sample_rate: float):
-        signal = Signal("", name, sample_rate=sample_rate)
+        signal = IQSignal("", name, sample_rate=sample_rate)
         signal.iq_array = IQArray(samples)
 
         return signal

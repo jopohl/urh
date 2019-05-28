@@ -20,7 +20,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem, CounterActionItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.util.SettingsProxy import SettingsProxy
@@ -280,7 +280,7 @@ class TestSimulator(QtTestCase):
             logger.error("Did not receive any data from socket.")
 
         arr = IQArray(np.array(np.frombuffer(b"".join(total_data), dtype=np.complex64)))
-        signal = Signal("", "")
+        signal = IQSignal("", "")
         signal.iq_array = arr
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()

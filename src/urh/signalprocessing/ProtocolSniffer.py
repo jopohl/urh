@@ -13,7 +13,7 @@ from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util.Logger import logger
 
 
@@ -30,7 +30,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
                  modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False):
-        signal = Signal("", "LiveSignal")
+        signal = IQSignal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
         signal.noise_threshold = noise

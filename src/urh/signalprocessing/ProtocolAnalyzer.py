@@ -15,7 +15,7 @@ from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util import util as urh_util
 from urh.util.Logger import logger
 
@@ -40,7 +40,7 @@ class ProtocolAnalyzer(object):
     This class offers several methods for protocol analysis.
     """
 
-    def __init__(self, signal: Signal or None, filename=None):
+    def __init__(self, signal: IQSignal or None, filename=None):
         self.messages = []  # type: list[Message]
         self.signal = signal
         if filename is None:

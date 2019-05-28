@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QUndoCommand
 from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 from enum import Enum
 
@@ -23,7 +23,7 @@ class EditAction(Enum):
 
 
 class EditSignalAction(QUndoCommand):
-    def __init__(self, signal: Signal, mode: EditAction,
+    def __init__(self, signal: IQSignal, mode: EditAction,
                  start: int = 0, end: int = 0, position: int = 0,
                  data_to_insert: np.ndarray=None, dsp_filter: Filter=None,
                  protocol: ProtocolAnalyzer=None, cache_qad=True):

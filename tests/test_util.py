@@ -12,7 +12,7 @@ from tests.utils_testing import get_path_for_data_file
 from urh import constants
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.util import util
 from urh.util.SettingsProxy import SettingsProxy
 
@@ -55,7 +55,7 @@ class TestUtil(QtTestCase):
         self.assertEqual(len(str(ns1)), len(str(ns2)))
 
     def test_write_pcap(self):
-        signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
+        signal = IQSignal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = 0
         signal.bit_len = 295
         signal.qad_center = -0.1667

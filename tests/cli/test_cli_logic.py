@@ -5,7 +5,7 @@ from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 import numpy as np
 
 class TestCLILogic(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestCLILogic(unittest.TestCase):
         modulated = urh_cli.modulate_messages([message], modulator)
 
         # Demodulate for testing
-        s = Signal("", "", modulation="ASK", sample_rate=2e6)
+        s = IQSignal("", "", modulation="ASK", sample_rate=2e6)
         s.bit_len = 100
         s.noise_threshold = 0
         s.iq_array = modulated

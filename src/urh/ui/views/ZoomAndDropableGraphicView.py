@@ -2,7 +2,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 
@@ -14,7 +14,7 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         self.signal_tree_root = None  # type: ProtocolTreeItem
         self.scene_manager = None
 
-        self.signal = None  # type: Signal
+        self.signal = None  # type: IQSignal
         self.proto_analyzer = None  # type: ProtocolAnalyzer
 
         super().__init__(parent)
@@ -50,7 +50,7 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         if signal is None:
             return
 
-        self.signal = signal  # type: Signal
+        self.signal = signal  # type: IQSignal
         self.proto_analyzer = proto_analyzer  # type: ProtocolAnalyzer
 
         self.scene_manager = SignalSceneManager(signal, self)

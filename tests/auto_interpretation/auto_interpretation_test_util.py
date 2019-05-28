@@ -6,11 +6,11 @@ from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 def demodulate(signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None, pause_threshold=8):
-    signal = Signal("", "")
+    signal = IQSignal("", "")
     if isinstance(signal_data, IQArray):
         signal.iq_array = signal_data
     else:

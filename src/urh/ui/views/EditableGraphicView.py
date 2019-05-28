@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QAction, QActionGroup, QMenu, QUndoStack
 
 from urh.plugins.InsertSine.InsertSinePlugin import InsertSinePlugin
 from urh.plugins.PluginManager import PluginManager
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
@@ -30,7 +30,7 @@ class EditableGraphicView(ZoomableGraphicView):
         self.participants_assign_enabled = False
         self.cache_qad = False  # cache qad demod after edit operations?
 
-        self.__signal = None  # type: Signal
+        self.__signal = None  # type: IQSignal
 
         self.stored_item = None  # For copy/paste
         self.paste_position = 0  # Where to paste? Set in contextmenuevent
@@ -113,7 +113,7 @@ class EditableGraphicView(ZoomableGraphicView):
         self.__sample_rate = value
 
     @property
-    def signal(self) -> Signal:
+    def signal(self) -> IQSignal:
         return self.__signal
 
     @property
@@ -124,7 +124,7 @@ class EditableGraphicView(ZoomableGraphicView):
     def selection_area(self, value):
         self.scene().selection_area = value
 
-    def set_signal(self, signal: Signal):
+    def set_signal(self, signal: IQSignal):
         self.__signal = signal
 
     def create_context_menu(self):

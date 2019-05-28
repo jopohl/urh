@@ -6,7 +6,7 @@ from tests.test_util import get_path_for_data_file
 from urh.ainterpretation.AutoInterpretation import segment_messages_from_magnitudes, merge_message_segments_for_ook
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Signal import Signal
+from urh.signalprocessing.IQSignal import IQSignal
 
 
 class TestMessageSegmentation(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestMessageSegmentation(unittest.TestCase):
         self.assertEqual(segments[2], (44216, 47546))
 
     def test_message_segmentation_fsk_xavax(self):
-        signal = Signal(get_path_for_data_file("xavax.coco"), "")
+        signal = IQSignal(get_path_for_data_file("xavax.coco"), "")
         segments = segment_messages_from_magnitudes(signal.iq_array.magnitudes, noise_threshold=0.002)
 
         # Signal starts with overdrive, so one message more
@@ -63,7 +63,7 @@ class TestMessageSegmentation(unittest.TestCase):
         self.assertEqual(segments, [(0, 999), (10999, 12599), (32599, 34199)])
 
     def test_segmentation_elektromaten(self):
-        signal = Signal(get_path_for_data_file("elektromaten.coco"), "")
+        signal = IQSignal(get_path_for_data_file("elektromaten.coco"), "")
         segments = segment_messages_from_magnitudes(signal.iq_array.magnitudes, noise_threshold=0.0167)
         segments = merge_message_segments_for_ook(segments)
 

@@ -49,7 +49,7 @@ class MessageType(list):
 
     @property
     def show(self):
-        return Qt.Checked if self.show else Qt.Unchecked
+        return Qt.Checked if self.__show else Qt.Unchecked
 
     @show.setter
     def show(self, value):

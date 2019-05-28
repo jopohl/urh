@@ -19,6 +19,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -391,26 +392,29 @@ class GeneratorTabController(QWidget):
             except Exception as e:
                 logger.exception(e)
                 sample_rate = 1e6
-            FileOperator.save_data_dialog("generated.complex", modulated_samples, sample_rate=sample_rate, parent=self)
+            FileOperator.save_data_dialog("generated", modulated_samples, sample_rate=sample_rate, parent=self)
         except Exception as e:
             Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
             self.unsetCursor()
 
-    def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> np.ndarray:
-        memory_size_for_buffer = total_samples * 8
+    def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> IQArray:
+        dtype = Modulator.get_dtype()
+        n = 2 if dtype == np.int8 else 4 if dtype == np.int16 else 8
+
+        memory_size_for_buffer = total_samples * n
         logger.debug("Allocating {0:.2f}MB for modulated samples".format(memory_size_for_buffer / (1024 ** 2)))
         try:
             # allocate it three times as we need the same amount for the sending process
-            np.zeros(3*total_samples, dtype=np.complex64)
+            IQArray(None, dtype=dtype, n=3*total_samples)
         except MemoryError:
             # will go into continuous mode in this case
             if show_error:
                 Errors.not_enough_ram_for_sending_precache(3*memory_size_for_buffer)
             return None
 
-        return np.zeros(total_samples, dtype=np.complex64)
+        return IQArray(None, dtype=dtype, n=total_samples)
 
-    def modulate_data(self, buffer: np.ndarray) -> np.ndarray:
+    def modulate_data(self, buffer: IQArray) -> IQArray:
         """
         
         :param buffer: Buffer in which the modulated data shall be written, initialized with zeros

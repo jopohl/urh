@@ -16,6 +16,8 @@ class USRP(Device):
     DEVICE_LIB = usrp
     ASYNCHRONOUS = False
 
+    DATA_TYPE = np.float32
+
     @classmethod
     def get_device_list(cls):
         return usrp.find_devices("")
@@ -95,13 +97,12 @@ class USRP(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def unpack_complex(buffer):
-        return np.frombuffer(buffer, dtype=np.complex64)
+    def bytes_to_iq(buffer):
+        return np.frombuffer(buffer, dtype=np.float32).reshape((-1, 2), order="C")
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        # We can pass the complex samples directly to the USRP Send API
-        arr = Array("f", 2 * len(complex_samples), lock=False)
+    def iq_to_bytes(samples: np.ndarray):
+        arr = Array("f", 2 * len(samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.float32)
-        numpy_view[:] = complex_samples.view(np.float32)
+        numpy_view[:] = samples.flatten(order="C")
         return arr

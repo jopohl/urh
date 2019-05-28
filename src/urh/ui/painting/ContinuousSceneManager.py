@@ -1,3 +1,4 @@
+from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.SceneManager import SceneManager
 from urh.util.RingBuffer import RingBuffer
 
@@ -9,8 +10,7 @@ class ContinuousSceneManager(SceneManager):
         self.__start = 0
         self.__end = 0
 
-        self.minimum = -1
-        self.maximum = 1
+        self.minimum, self.maximum = IQArray.min_max_for_dtype(self.ring_buffer.dtype)
 
     @property
     def plot_data(self):

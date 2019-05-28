@@ -7,6 +7,7 @@ import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 
 from urh.plugins.Plugin import SDRPlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
@@ -15,6 +16,8 @@ from urh.util.SettingsProxy import SettingsProxy
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
+    DATA_TYPE = np.float32
+
     NETWORK_SDR_NAME = "Network SDR"  # Display text for device combo box
     show_proto_sniff_dialog_clicked = pyqtSignal()
     sending_status_changed = pyqtSignal(bool)
@@ -27,11 +30,12 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     class MyTCPHandler(socketserver.BaseRequestHandler):
         def handle(self):
-            received = self.request.recv(65536 * 8)
+            size = 2 * np.dtype(NetworkSDRInterfacePlugin.DATA_TYPE).itemsize
+            received = self.request.recv(65536 * size)
             self.data = received
 
             while received:
-                received = self.request.recv(65536 * 8)
+                received = self.request.recv(65536 * size)
                 self.data += received
 
             if len(self.data) == 0:
@@ -41,10 +45,11 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 for data in filter(None, self.data.split(b"\n")):
                     self.server.received_bits.append(NetworkSDRInterfacePlugin.bytearray_to_bit_str(data))
             else:
-                while len(self.data) % 8 != 0:
-                    self.data += self.request.recv(len(self.data) % 8)
+                while len(self.data) % size != 0:
+                    self.data += self.request.recv(len(self.data) % size)
 
-                received = np.frombuffer(self.data, dtype=np.complex64)
+                received = np.frombuffer(self.data, dtype=NetworkSDRInterfacePlugin.DATA_TYPE)
+                received = received.reshape((len(received)//2, 2))
 
                 if len(received) + self.server.current_receive_index >= len(self.server.receive_buffer):
                     self.server.current_receive_index = 0
@@ -86,14 +91,14 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                 num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                     self.is_in_spectrum_mode)
                 try:
-                    self.receive_buffer = np.zeros(num_samples, dtype=np.complex64, order='C')
+                    self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=num_samples)
                 except MemoryError:
                     logger.warning("Could not allocate buffer with {0:d} samples, trying less...")
                     i = 0
                     while True:
                         try:
                             i += 2
-                            self.receive_buffer = np.zeros(num_samples // i, dtype=np.complex64, order='C')
+                            self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=num_samples // i)
                             logger.debug("Using buffer with {0:d} samples instead.".format(num_samples // i))
                             break
                         except MemoryError:
@@ -138,7 +143,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
     def free_data(self):
         if self.raw_mode:
-            self.receive_buffer = np.empty(0)
+            self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=0)
         else:
             self.received_bits[:] = []
 
@@ -186,8 +191,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         except Exception as e:
             return str(e)
 
-    def send_raw_data(self, data: np.ndarray, num_repeats: int):
-        byte_data = data.tostring()
+    def send_raw_data(self, data: IQArray, num_repeats: int):
+        byte_data = data.to_bytes()
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
 
         sock = self.prepare_send_connection()

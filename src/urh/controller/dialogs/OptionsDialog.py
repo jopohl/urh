@@ -15,12 +15,13 @@ from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.native import ExtensionHelper
 from urh.models.FieldTypeTableModel import FieldTypeTableModel
 from urh.signalprocessing.FieldType import FieldType
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.ui_options import Ui_DialogOptions
 from urh.util import util
-
+import numpy as np
 
 class DeviceOptionsTableModel(QAbstractTableModel):
     header_labels = ["Software Defined Radio", "Info", "Native backend (recommended)", "GNU Radio backend"]
@@ -194,6 +195,10 @@ class OptionsDialog(QDialog):
 
         self.ui.checkBoxMultipleModulations.setChecked(constants.SETTINGS.value("multiple_modulations", False, bool))
 
+        self.ui.radioButtonLowModulationAccuracy.setChecked(Modulator.get_dtype() == np.int8)
+        self.ui.radioButtonMediumModulationAccuracy.setChecked(Modulator.get_dtype() == np.int16)
+        self.ui.radioButtonHighModulationAccuracy.setChecked(Modulator.get_dtype() == np.float32)
+
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
         self.ui.lineEditPython2Interpreter.setCompleter(completer)
@@ -242,6 +247,10 @@ class OptionsDialog(QDialog):
         self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
         self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
         self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
+        self.ui.radioButtonLowModulationAccuracy.clicked.connect(self.on_radio_button_low_modulation_accuracy_clicked)
+        self.ui.radioButtonMediumModulationAccuracy.clicked.connect(self.on_radio_button_medium_modulation_accuracy_clicked)
+        self.ui.radioButtonHighModulationAccuracy.clicked.connect(self.on_radio_button_high_modulation_accuracy_clicked)
+
         self.ui.doubleSpinBoxRAMThreshold.valueChanged.connect(self.on_double_spinbox_ram_threshold_value_changed)
         self.ui.btnRebuildNative.clicked.connect(self.on_btn_rebuild_native_clicked)
         self.ui.comboBoxIconTheme.currentIndexChanged.connect(self.on_combobox_icon_theme_index_changed)
@@ -507,6 +516,21 @@ class OptionsDialog(QDialog):
         font = qApp.font()
         font.setPointSize(self.ui.spinBoxFontSize.value())
         qApp.setFont(font)
+
+    @pyqtSlot(bool)
+    def on_radio_button_high_modulation_accuracy_clicked(self, checked):
+        if checked:
+            constants.SETTINGS.setValue("modulation_dtype", "float32")
+
+    @pyqtSlot(bool)
+    def on_radio_button_medium_modulation_accuracy_clicked(self, checked):
+        if checked:
+            constants.SETTINGS.setValue("modulation_dtype", "int16")
+
+    @pyqtSlot(bool)
+    def on_radio_button_low_modulation_accuracy_clicked(self, checked):
+        if checked:
+            constants.SETTINGS.setValue("modulation_dtype", "int8")
 
     @staticmethod
     def write_default_options():

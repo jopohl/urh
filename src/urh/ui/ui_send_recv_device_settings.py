@@ -6,10 +6,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_FormDeviceSettings(object):
     def setupUi(self, FormDeviceSettings):
         FormDeviceSettings.setObjectName("FormDeviceSettings")
-        FormDeviceSettings.resize(860, 668)
+        FormDeviceSettings.resize(860, 711)
         self.verticalLayout = QtWidgets.QVBoxLayout(FormDeviceSettings)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -234,6 +235,7 @@ class Ui_FormDeviceSettings(object):
         self.labelDCCorrection.setObjectName("labelDCCorrection")
         self.gridLayout.addWidget(self.labelDCCorrection, 15, 0, 1, 1)
         self.checkBoxDCCorrection = QtWidgets.QCheckBox(self.frame_2)
+        self.checkBoxDCCorrection.setChecked(True)
         self.checkBoxDCCorrection.setObjectName("checkBoxDCCorrection")
         self.gridLayout.addWidget(self.checkBoxDCCorrection, 15, 1, 1, 1)
         self.gridLayout_6.addWidget(self.frame_2, 0, 0, 1, 1)
@@ -302,6 +304,7 @@ class Ui_FormDeviceSettings(object):
         self.labelDCCorrection.setText(_translate("FormDeviceSettings", "DC correction:"))
         self.checkBoxDCCorrection.setToolTip(_translate("FormDeviceSettings", "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero."))
         self.checkBoxDCCorrection.setText(_translate("FormDeviceSettings", "Apply DC correction"))
+
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from . import urh_rc

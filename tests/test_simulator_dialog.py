@@ -83,7 +83,7 @@ class TestSimulatorDialog(QtTestCase):
         self.assertEqual(simulator.sniffer.signal.tolerance, 13)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Noise, 0.1234)
-        self.assertEqual(simulator.sniffer.signal.noise_threshold, 0.1234)
+        self.assertEqual(simulator.sniffer.signal.noise_threshold_relative, 0.1234)
 
         sniff_settings_widget.ui.combox_sniff_Modulation.setCurrentText("PSK")
         self.assertEqual(simulator.sniffer.signal.modulation_type_str, "PSK")

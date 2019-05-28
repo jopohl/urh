@@ -9,6 +9,7 @@ from pickle import UnpicklingError
 import numpy as np
 
 from urh.dev.native.SendConfig import SendConfig
+from urh.signalprocessing.IQArray import IQArray
 from urh.util.Logger import logger
 from urh.util.SettingsProxy import SettingsProxy
 
@@ -22,6 +23,8 @@ class Device(object):
 
     SYNC_TX_CHUNK_SIZE = 0
     CONTINUOUS_TX_CHUNK_SIZE = 0
+
+    DATA_TYPE = np.float32
 
     class Command(Enum):
         STOP = 0
@@ -269,7 +272,7 @@ class Device(object):
         self.device_serial = None
         self.device_number = 0
 
-        self.samples_to_send = np.array([], dtype=np.complex64)
+        self.samples_to_send = np.array([], dtype=self.DATA_TYPE)
         self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
 
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
@@ -334,7 +337,7 @@ class Device(object):
             total_samples = 2 * self.num_samples_to_send
         return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
                           total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          pack_complex_method=self.pack_complex,
+                          iq_to_bytes_method=self.iq_to_bytes,
                           continuous_send_ring_buffer=self.continuous_send_ring_buffer)
 
     @property
@@ -349,7 +352,7 @@ class Device(object):
         if self.receive_buffer is None:
             num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                 self.is_in_spectrum_mode)
-            self.receive_buffer = np.zeros(int(num_samples), dtype=np.complex64, order='C')
+            self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=int(num_samples))
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
@@ -630,11 +633,11 @@ class Device(object):
             logger.exception(e)
 
     @staticmethod
-    def unpack_complex(buffer) -> np.ndarray:
+    def bytes_to_iq(buffer) -> np.ndarray:
         pass
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
+    def iq_to_bytes(complex_samples: np.ndarray):
         pass
 
     def read_device_messages(self):
@@ -659,13 +662,13 @@ class Device(object):
         while self.is_receiving:
             try:
                 byte_buffer = self.parent_data_conn.recv_bytes()
-                samples = self.unpack_complex(byte_buffer)
+                samples = self.bytes_to_iq(byte_buffer)
                 n_samples = len(samples)
                 if n_samples == 0:
                     continue
 
                 if self.apply_dc_correction:
-                    samples -= np.mean(samples)
+                    samples = samples - np.mean(samples, axis=0)
 
             except OSError as e:
                 logger.exception(e)
@@ -690,13 +693,21 @@ class Device(object):
 
         logger.debug("Exiting read_receive_queue thread.")
 
-    def init_send_parameters(self, samples_to_send: np.ndarray = None, repeats: int = None, resume=False):
+    def init_send_parameters(self, samples_to_send: IQArray = None, repeats: int = None, resume=False):
         if samples_to_send is not None:
+            if isinstance(samples_to_send, IQArray):
+                samples_to_send = samples_to_send.convert_to(self.DATA_TYPE)
+            else:
+                samples_to_send = IQArray(samples_to_send).convert_to(self.DATA_TYPE)
+
             self.samples_to_send = samples_to_send
             self.send_buffer = None
 
         if self.send_buffer is None:
-            self.send_buffer = self.pack_complex(self.samples_to_send)
+            if isinstance(self.samples_to_send, IQArray):
+                self.send_buffer = self.iq_to_bytes(self.samples_to_send.data)
+            else:
+                self.send_buffer = self.iq_to_bytes(self.samples_to_send)
         elif not resume:
             self.current_sending_repeat = 0
 

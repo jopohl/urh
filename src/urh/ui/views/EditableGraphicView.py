@@ -221,7 +221,7 @@ class EditableGraphicView(ZoomableGraphicView):
         else:
             num_samples = None
 
-        original_data = self.signal.data if self.signal is not None else None
+        original_data = self.signal.iq_array.data if self.signal is not None else None
         dialog = self.insert_sine_plugin.get_insert_sine_dialog(original_data=original_data,
                                                                 position=self.paste_position,
                                                                 sample_rate=self.sample_rate,
@@ -241,7 +241,7 @@ class EditableGraphicView(ZoomableGraphicView):
     @pyqtSlot()
     def on_copy_action_triggered(self):
         if self.something_is_selected:
-            self.stored_item = self.signal._fulldata[int(self.selection_area.start):int(self.selection_area.end)]
+            self.stored_item = self.signal.iq_array[int(self.selection_area.start):int(self.selection_area.end)]
 
     @pyqtSlot()
     def on_paste_action_triggered(self):

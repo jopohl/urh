@@ -1,5 +1,4 @@
 from PyQt5.QtCore import Qt
-from urh.controller.MainController import MainController
 
 from tests.QtTestCase import QtTestCase
 from urh import constants
@@ -87,7 +86,7 @@ class TestCRCGUIIntegration(QtTestCase):
 
         model = checksum_tab.ui.tableViewDataRanges.model()
         model.setData(model.index(0, 0), "17")
-        self.assertEqual(model.data(model.index(0,0)), 17)
+        self.assertEqual(model.data(model.index(0, 0)), 17)
 
         proto_label_dialog.ui.btnConfirm.click()
 
@@ -144,7 +143,6 @@ class TestCRCGUIIntegration(QtTestCase):
                     self.assertTrue(font.italic(), msg=str(j))
                 else:
                     self.assertFalse(font.italic(), msg=str(j))
-
 
     def __add_wsp_signal(self):
         self.add_signal_to_form("wsp.complex")

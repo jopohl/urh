@@ -6,6 +6,7 @@ from PyQt5.QtTest import QTest
 from tests.QtTestCase import QtTestCase
 from urh.dev.BackendHandler import BackendHandler
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
@@ -55,7 +56,7 @@ class TestProtocolSniffer(QtTestCase):
         # verify modulation was correct
         pa = ProtocolAnalyzer(None)
         signal = Signal("", "", sample_rate=sample_rate)
-        signal._fulldata = np.concatenate(packages)
+        signal.iq_array = IQArray.concatenate(packages)
         signal.modulation_type = modulation_type
         signal.bit_len = bit_len
         signal.tolerance = tolerance
@@ -66,12 +67,12 @@ class TestProtocolSniffer(QtTestCase):
         self.assertEqual(pa.plain_bits_str, data)
 
         # send data
-        send_data = np.concatenate(packages)
+        send_data = IQArray.concatenate(packages)
         self.network_sdr_plugin_sender.send_raw_data(send_data, 1)
         time.sleep(1)
 
         # Send enough pauses to end sniffing
-        self.network_sdr_plugin_sender.send_raw_data(np.zeros(10 * bit_len, dtype=np.complex64), 1)
+        self.network_sdr_plugin_sender.send_raw_data(IQArray(None, np.float32, 10 * 2 * bit_len), 1)
         time.sleep(1)
 
         sniffer.stop()

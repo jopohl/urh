@@ -10,6 +10,7 @@ from urh.ainterpretation import Wavelet
 from urh.cythonext import auto_interpretation as c_auto_interpretation
 from urh.cythonext import signal_functions
 from urh.cythonext import util
+from urh.signalprocessing.IQArray import IQArray
 
 
 def max_without_outliers(data: np.ndarray, z=3):
@@ -59,7 +60,7 @@ def detect_noise_level(magnitudes):
 
     mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
     minimum, maximum = util.minmax(mean_values)
-    if minimum / maximum > 0.9:
+    if maximum == 0 or minimum / maximum > 0.9:
         # Mean values are very close to each other, so there is probably no noise in the signal
         return 0
 
@@ -175,10 +176,11 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
                 return "OOK"
 
 
-def detect_modulation_for_messages(signal: np.ndarray, message_indices: list) -> str:
+def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> str:
     modulations_for_messages = []
+    complex = signal.as_complex64()
     for start, end in message_indices:
-        mod = detect_modulation(signal[start:end])
+        mod = detect_modulation(complex[start:end])
         if mod is not None:
             modulations_for_messages.append(mod)
 
@@ -348,8 +350,11 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(result)
 
 
-def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) -> dict:
-    magnitudes = np.abs(signal)
+def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> dict:
+    if isinstance(iq_array, np.ndarray):
+        iq_array = IQArray(iq_array)
+
+    magnitudes = iq_array.magnitudes
     # find noise threshold
     noise = detect_noise_level(magnitudes) if noise is None else noise
 
@@ -357,7 +362,7 @@ def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) ->
     message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
 
     # detect modulation
-    modulation = detect_modulation_for_messages(signal, message_indices) if modulation is None else modulation
+    modulation = detect_modulation_for_messages(iq_array, message_indices) if modulation is None else modulation
     if modulation is None:
         return None
 
@@ -365,11 +370,11 @@ def estimate(signal: np.ndarray, noise: float = None, modulation: str = None) ->
         message_indices = merge_message_segments_for_ook(message_indices)
 
     if modulation == "OOK" or modulation == "ASK":
-        data = signal_functions.afp_demod(signal, noise, 0)
+        data = signal_functions.afp_demod(iq_array.data, noise, 0)
     elif modulation == "FSK":
-        data = signal_functions.afp_demod(signal, noise, 1)
+        data = signal_functions.afp_demod(iq_array.data, noise, 1)
     elif modulation == "PSK":
-        data = signal_functions.afp_demod(signal, noise, 2)
+        data = signal_functions.afp_demod(iq_array.data, noise, 2)
     else:
         raise ValueError("Unsupported Modulation")
 

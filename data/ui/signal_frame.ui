@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>539</height>
+    <height>566</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -172,6 +172,9 @@
       <widget class="QDoubleSpinBox" name="spinBoxNoiseTreshold">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="suffix">
+        <string/>
        </property>
        <property name="decimals">
         <number>4</number>
@@ -437,7 +440,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;treshold of magnitude,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated (set to &lt;span style=&quot; font-style:italic;&quot;&gt;-127&lt;/span&gt;) after demod.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Current noise treshold is: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <item>
         <property name="text">

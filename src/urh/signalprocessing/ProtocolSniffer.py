@@ -10,6 +10,7 @@ from urh.cythonext.signal_functions import grab_pulse_lens
 from urh.ainterpretation import AutoInterpretation
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice, Mode
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
@@ -43,12 +44,15 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.rcv_device = VirtualDevice(self.backend_handler, device, Mode.receive,
                                         resume_on_full_receive_buffer=True, raw_mode=network_raw_mode)
 
+        signal.iq_array = IQArray(None, self.rcv_device.data_type, 0)
+
         self.sniff_thread = Thread(target=self.check_for_data, daemon=True)
 
         self.rcv_device.started.connect(self.__emit_started)
         self.rcv_device.stopped.connect(self.__emit_stopped)
 
-        self.__buffer = np.zeros(int(self.BUFFER_SIZE_MB * 1000 * 1000 / 8), dtype=np.complex64)
+        self.__buffer = IQArray(None, np.float32, 0)
+        self.__init_buffer()
         self.__current_buffer_index = 0
 
         self.reading_data = False
@@ -77,6 +81,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     def __buffer_is_full(self):
         return self.__current_buffer_index >= len(self.__buffer) - 2
+
+    def __init_buffer(self):
+        self.__buffer = IQArray(None, self.rcv_device.data_type, int(self.BUFFER_SIZE_MB * 1000 * 1000 / 8))
+        self.__current_buffer_index = 0
 
     def decoded_to_string(self, view: int, start=0, include_timestamps=True):
         result = []
@@ -114,6 +122,10 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                                             resume_on_full_receive_buffer=True, raw_mode=self.network_raw_mode)
             self.rcv_device.started.connect(self.__emit_started)
             self.rcv_device.stopped.connect(self.__emit_stopped)
+
+            self.signal.iq_array = IQArray(None, self.rcv_device.data_type, 0)
+
+            self.__init_buffer()
 
     def sniff(self):
         self.is_running = True
@@ -161,7 +173,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         if len(data) == 0:
             return
 
-        power_spectrum = data.real ** 2 + data.imag ** 2
+        power_spectrum = data.real ** 2.0 + data.imag ** 2.0
         is_above_noise = np.sqrt(np.mean(power_spectrum)) > self.signal.noise_threshold
 
         if self.adaptive_noise and not is_above_noise:
@@ -183,7 +195,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             return
 
         # clear cache and start a new message
-        self.signal._fulldata = self.__buffer[0:self.__current_buffer_index]
+        self.signal.iq_array = IQArray(self.__buffer[0:self.__current_buffer_index])
         self.__clear_buffer()
         self.signal._qad = None
 

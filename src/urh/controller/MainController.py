@@ -515,7 +515,7 @@ class MainController(QMainWindow):
 
         self.init_recent_file_action_list(recent_file_paths)
 
-        constants.SETTINGS.setValue("recentFiles", ", ".join(recent_file_paths))
+        constants.SETTINGS.setValue("recentFiles", recent_file_paths)
 
     def init_recent_file_action_list(self, recent_file_paths: list):
         for i in range(len(self.recentFileActionList)):

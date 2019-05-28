@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_SignalDetails(object):
     def setupUi(self, SignalDetails):
@@ -82,20 +78,19 @@ class Ui_SignalDetails(object):
         self.retranslateUi(SignalDetails)
 
     def retranslateUi(self, SignalDetails):
-        _translate = QtCore.QCoreApplication.translate
-        SignalDetails.setWindowTitle(_translate("SignalDetails", "Signal details"))
-        self.label.setText(_translate("SignalDetails", "Name:"))
-        self.lblFile.setText(_translate("SignalDetails", "TextLabel"))
-        self.label_2.setText(_translate("SignalDetails", "File:"))
-        self.label_5.setText(_translate("SignalDetails", "Samples:"))
-        self.label_6.setText(_translate("SignalDetails", "Sample Rate (Sps):"))
-        self.lblSamplesTotal.setText(_translate("SignalDetails", "TextLabel"))
-        self.label_3.setText(_translate("SignalDetails", "File size:"))
-        self.lblName.setText(_translate("SignalDetails", "TextLabel"))
-        self.lblFileSize.setText(_translate("SignalDetails", "TextLabel"))
-        self.label_4.setText(_translate("SignalDetails", "File created:"))
-        self.lFileCreated.setText(_translate("SignalDetails", "TextLabel"))
-        self.label_7.setText(_translate("SignalDetails", "Duration:"))
-        self.lDuration.setText(_translate("SignalDetails", "42s"))
+        SignalDetails.setWindowTitle(QtWidgets.QApplication.translate("SignalDetails", "Signal details", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("SignalDetails", "Name:", None, -1))
+        self.lblFile.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("SignalDetails", "File:", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("SignalDetails", "Samples:", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("SignalDetails", "Sample Rate (Sps):", None, -1))
+        self.lblSamplesTotal.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("SignalDetails", "File size:", None, -1))
+        self.lblName.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
+        self.lblFileSize.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("SignalDetails", "File created:", None, -1))
+        self.lFileCreated.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
+        self.label_7.setText(QtWidgets.QApplication.translate("SignalDetails", "Duration:", None, -1))
+        self.lDuration.setText(QtWidgets.QApplication.translate("SignalDetails", "42s", None, -1))
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

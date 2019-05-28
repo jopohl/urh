@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_FilterDialog(object):
     def setupUi(self, FilterDialog):
         FilterDialog.setObjectName("FilterDialog")
         FilterDialog.resize(528, 485)
-        icon = QtGui.QIcon.fromTheme("view-filter")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         FilterDialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(FilterDialog)
         self.gridLayout.setObjectName("gridLayout")
@@ -62,14 +59,13 @@ class Ui_FilterDialog(object):
         self.retranslateUi(FilterDialog)
 
     def retranslateUi(self, FilterDialog):
-        _translate = QtCore.QCoreApplication.translate
-        FilterDialog.setWindowTitle(_translate("FilterDialog", "Configure filter"))
-        self.radioButtonCustomTaps.setText(_translate("FilterDialog", "Custom taps:"))
-        self.radioButtonMovingAverage.setText(_translate("FilterDialog", "Moving average filter"))
-        self.label_3.setText(_translate("FilterDialog", "You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps.  By default we use 10 taps with each tap set to 0.1 producing a moving average filter."))
-        self.label_2.setText(_translate("FilterDialog", "These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here."))
-        self.lineEditCustomTaps.setToolTip(_translate("FilterDialog", "<html><head/><body><p>You can configure custom filter taps here either explicit using [0.1, 0.2, 0.3] or with <span style=\" font-weight:600;\">python programming shortcuts</span> like [0.1] * 3 + [0.2] * 4 will result in [0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2]</p></body></html>"))
-        self.lineEditCustomTaps.setText(_translate("FilterDialog", "[0.1]*10"))
-        self.label.setText(_translate("FilterDialog", "Number of taps:"))
-        self.radioButtonDCcorrection.setText(_translate("FilterDialog", "DC correction"))
+        FilterDialog.setWindowTitle(QtWidgets.QApplication.translate("FilterDialog", "Configure filter", None, -1))
+        self.radioButtonCustomTaps.setText(QtWidgets.QApplication.translate("FilterDialog", "Custom taps:", None, -1))
+        self.radioButtonMovingAverage.setText(QtWidgets.QApplication.translate("FilterDialog", "Moving average filter", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("FilterDialog", "You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps.  By default we use 10 taps with each tap set to 0.1 producing a moving average filter.", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("FilterDialog", "These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here.", None, -1))
+        self.lineEditCustomTaps.setToolTip(QtWidgets.QApplication.translate("FilterDialog", "<html><head/><body><p>You can configure custom filter taps here either explicit using [0.1, 0.2, 0.3] or with <span style=\" font-weight:600;\">python programming shortcuts</span> like [0.1] * 3 + [0.2] * 4 will result in [0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2]</p></body></html>", None, -1))
+        self.lineEditCustomTaps.setText(QtWidgets.QApplication.translate("FilterDialog", "[0.1]*10", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("FilterDialog", "Number of taps:", None, -1))
+        self.radioButtonDCcorrection.setText(QtWidgets.QApplication.translate("FilterDialog", "DC correction", None, -1))
 

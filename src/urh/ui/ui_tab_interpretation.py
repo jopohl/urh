@@ -1,18 +1,14 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_Interpretation(object):
     def setupUi(self, Interpretation):
         Interpretation.setObjectName("Interpretation")
         Interpretation.resize(631, 561)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Interpretation)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.scrollArea = ScrollArea(Interpretation)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -38,7 +34,6 @@ class Ui_Interpretation(object):
         self.scrlAreaSignals.setStyleSheet("")
         self.scrlAreaSignals.setObjectName("scrlAreaSignals")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrlAreaSignals)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(self.scrlAreaSignals)
         self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
@@ -71,9 +66,8 @@ class Ui_Interpretation(object):
         self.retranslateUi(Interpretation)
 
     def retranslateUi(self, Interpretation):
-        _translate = QtCore.QCoreApplication.translate
-        Interpretation.setWindowTitle(_translate("Interpretation", "Form"))
-        self.labelGettingStarted.setText(_translate("Interpretation", "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>"))
+        Interpretation.setWindowTitle(QtWidgets.QApplication.translate("Interpretation", "Form", None, -1))
+        self.labelGettingStarted.setText(QtWidgets.QApplication.translate("Interpretation", "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>", None, -1))
 
 from urh.ui.ScrollArea import ScrollArea
 from . import urh_rc

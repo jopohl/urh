@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_DialogFilterBandwidth(object):
     def setupUi(self, DialogFilterBandwidth):
@@ -120,30 +116,29 @@ class Ui_DialogFilterBandwidth(object):
         self.verticalLayout.setStretch(2, 1)
 
         self.retranslateUi(DialogFilterBandwidth)
-        self.buttonBox.accepted.connect(DialogFilterBandwidth.accept)
-        self.buttonBox.rejected.connect(DialogFilterBandwidth.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogFilterBandwidth.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogFilterBandwidth.reject)
 
     def retranslateUi(self, DialogFilterBandwidth):
-        _translate = QtCore.QCoreApplication.translate
-        DialogFilterBandwidth.setWindowTitle(_translate("DialogFilterBandwidth", "Configure Filter Bandwidth"))
-        self.labelExplanation.setText(_translate("DialogFilterBandwidth", "<html><head/><body>To separate the frequency bands from each other a <b>bandpass</b> filter is used. You can configure the <b>bandwidth</b> of this filter here. The bandwidth determines the <b>length N</b> of the<b> filter kernel</b>. Decreasing the bandwidth will increase the accuracy of the filter, at cost of higher computation time.</body></html>"))
-        self.radioButtonCustom.setText(_translate("DialogFilterBandwidth", "Custom"))
-        self.labelMediumKernelLength.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.radioButtonWide.setText(_translate("DialogFilterBandwidth", "Wide"))
-        self.labelVeryWideKernelLength.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.radioButtonNarrow.setText(_translate("DialogFilterBandwidth", "Narrow"))
-        self.labelWideBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.labelVeryNarrowKernelLength.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.labelBandwidthCaption.setText(_translate("DialogFilterBandwidth", "<b>Bandwidth (Hz)</b>"))
-        self.labelNarrowBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.labelNarrowKernelLength.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.labelVeryNarrowBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.labelKernelLengthCaption.setText(_translate("DialogFilterBandwidth", "<b >Kernel Length N</b>"))
-        self.labelWideKernelLength.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.radioButtonVery_Wide.setText(_translate("DialogFilterBandwidth", "Very Wide"))
-        self.radioButtonVery_Narrow.setText(_translate("DialogFilterBandwidth", "Very Narrow"))
-        self.label.setText(_translate("DialogFilterBandwidth", "<b>Choose </b>"))
-        self.labelVeryWideBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-        self.radioButtonMedium.setText(_translate("DialogFilterBandwidth", "Medium"))
-        self.labelMediumBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
+        DialogFilterBandwidth.setWindowTitle(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Configure Filter Bandwidth", None, -1))
+        self.labelExplanation.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<html><head/><body>To separate the frequency bands from each other a <b>bandpass</b> filter is used. You can configure the <b>bandwidth</b> of this filter here. The bandwidth determines the <b>length N</b> of the<b> filter kernel</b>. Decreasing the bandwidth will increase the accuracy of the filter, at cost of higher computation time.</body></html>", None, -1))
+        self.radioButtonCustom.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Custom", None, -1))
+        self.labelMediumKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.radioButtonWide.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Wide", None, -1))
+        self.labelVeryWideKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.radioButtonNarrow.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Narrow", None, -1))
+        self.labelWideBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.labelVeryNarrowKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.labelBandwidthCaption.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b>Bandwidth (Hz)</b>", None, -1))
+        self.labelNarrowBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.labelNarrowKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.labelVeryNarrowBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.labelKernelLengthCaption.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b >Kernel Length N</b>", None, -1))
+        self.labelWideKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.radioButtonVery_Wide.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Very Wide", None, -1))
+        self.radioButtonVery_Narrow.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Very Narrow", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b>Choose </b>", None, -1))
+        self.labelVeryWideBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        self.radioButtonMedium.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Medium", None, -1))
+        self.labelMediumBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
 

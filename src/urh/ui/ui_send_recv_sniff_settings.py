@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
@@ -16,8 +11,8 @@ class Ui_SniffSettings(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBoxSniffSettings = QtWidgets.QGroupBox(SniffSettings)
         font = QtGui.QFont()
-        font.setBold(True)
         font.setWeight(75)
+        font.setBold(True)
         self.groupBoxSniffSettings.setFont(font)
         self.groupBoxSniffSettings.setStyleSheet("QGroupBox\n"
 "{\n"
@@ -171,7 +166,7 @@ class Ui_SniffSettings(object):
         self.verticalLayout.addWidget(self.groupBoxSniffSettings)
 
         self.retranslateUi(SniffSettings)
-        self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
+        QtCore.QObject.connect(self.groupBoxSniffSettings, QtCore.SIGNAL("toggled(bool)"), self.frame.setVisible)
         SniffSettings.setTabOrder(self.groupBoxSniffSettings, self.spinbox_sniff_Noise)
         SniffSettings.setTabOrder(self.spinbox_sniff_Noise, self.spinbox_sniff_BitLen)
         SniffSettings.setTabOrder(self.spinbox_sniff_BitLen, self.spinbox_sniff_ErrorTolerance)
@@ -182,30 +177,28 @@ class Ui_SniffSettings(object):
         SniffSettings.setTabOrder(self.checkBox_sniff_Timestamp, self.lineEdit_sniff_OutputFile)
 
     def retranslateUi(self, SniffSettings):
-        _translate = QtCore.QCoreApplication.translate
-        SniffSettings.setWindowTitle(_translate("SniffSettings", "Form"))
-        self.groupBoxSniffSettings.setTitle(_translate("SniffSettings", "Sniff settings"))
-        self.label_sniff_Signal.setText(_translate("SniffSettings", "Use values from:"))
-        self.btn_sniff_use_signal.setText(_translate("SniffSettings", "Use"))
-        self.label_sniff_Noise.setText(_translate("SniffSettings", "Noise:"))
-        self.checkBoxAdaptiveNoise.setToolTip(_translate("SniffSettings", "<html><head/><body><p>With adaptive noise URH will update the noise level automatically during RX. This is helpful in a dynamic environment where noise differs in time.</p></body></html>"))
-        self.checkBoxAdaptiveNoise.setText(_translate("SniffSettings", "Adaptive"))
-        self.label_sniff_Center.setText(_translate("SniffSettings", "Center:"))
-        self.label_sniff_BitLength.setText(_translate("SniffSettings", "Bit Length:"))
-        self.label_sniff_Tolerance.setText(_translate("SniffSettings", "Error Tolerance:"))
-        self.label_sniff_Modulation.setText(_translate("SniffSettings", "Modulation:"))
-        self.combox_sniff_Modulation.setItemText(0, _translate("SniffSettings", "ASK"))
-        self.combox_sniff_Modulation.setItemText(1, _translate("SniffSettings", "FSK"))
-        self.combox_sniff_Modulation.setItemText(2, _translate("SniffSettings", "PSK"))
-        self.label_sniff_encoding.setText(_translate("SniffSettings", "Encoding:"))
-        self.label_sniff_viewtype.setText(_translate("SniffSettings", "View:"))
-        self.comboBox_sniff_viewtype.setItemText(0, _translate("SniffSettings", "Bit"))
-        self.comboBox_sniff_viewtype.setItemText(1, _translate("SniffSettings", "Hex"))
-        self.comboBox_sniff_viewtype.setItemText(2, _translate("SniffSettings", "ASCII"))
-        self.checkBox_sniff_Timestamp.setText(_translate("SniffSettings", "Show Timestamp"))
-        self.label_sniff_OutputFile.setText(_translate("SniffSettings", "Write bitstream to file:"))
-        self.lineEdit_sniff_OutputFile.setPlaceholderText(_translate("SniffSettings", "None"))
-        self.checkBoxAutoCenter.setText(_translate("SniffSettings", "Automatic"))
-
+        SniffSettings.setWindowTitle(QtWidgets.QApplication.translate("SniffSettings", "Form", None, -1))
+        self.groupBoxSniffSettings.setTitle(QtWidgets.QApplication.translate("SniffSettings", "Sniff settings", None, -1))
+        self.label_sniff_Signal.setText(QtWidgets.QApplication.translate("SniffSettings", "Use values from:", None, -1))
+        self.btn_sniff_use_signal.setText(QtWidgets.QApplication.translate("SniffSettings", "Use", None, -1))
+        self.label_sniff_Noise.setText(QtWidgets.QApplication.translate("SniffSettings", "Noise:", None, -1))
+        self.checkBoxAdaptiveNoise.setToolTip(QtWidgets.QApplication.translate("SniffSettings", "<html><head/><body><p>With adaptive noise URH will update the noise level automatically during RX. This is helpful in a dynamic environment where noise differs in time.</p></body></html>", None, -1))
+        self.checkBoxAdaptiveNoise.setText(QtWidgets.QApplication.translate("SniffSettings", "Adaptive", None, -1))
+        self.label_sniff_Center.setText(QtWidgets.QApplication.translate("SniffSettings", "Center:", None, -1))
+        self.label_sniff_BitLength.setText(QtWidgets.QApplication.translate("SniffSettings", "Bit Length:", None, -1))
+        self.label_sniff_Tolerance.setText(QtWidgets.QApplication.translate("SniffSettings", "Error Tolerance:", None, -1))
+        self.label_sniff_Modulation.setText(QtWidgets.QApplication.translate("SniffSettings", "Modulation:", None, -1))
+        self.combox_sniff_Modulation.setItemText(0, QtWidgets.QApplication.translate("SniffSettings", "ASK", None, -1))
+        self.combox_sniff_Modulation.setItemText(1, QtWidgets.QApplication.translate("SniffSettings", "FSK", None, -1))
+        self.combox_sniff_Modulation.setItemText(2, QtWidgets.QApplication.translate("SniffSettings", "PSK", None, -1))
+        self.label_sniff_encoding.setText(QtWidgets.QApplication.translate("SniffSettings", "Encoding:", None, -1))
+        self.label_sniff_viewtype.setText(QtWidgets.QApplication.translate("SniffSettings", "View:", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(0, QtWidgets.QApplication.translate("SniffSettings", "Bit", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(1, QtWidgets.QApplication.translate("SniffSettings", "Hex", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(2, QtWidgets.QApplication.translate("SniffSettings", "ASCII", None, -1))
+        self.checkBox_sniff_Timestamp.setText(QtWidgets.QApplication.translate("SniffSettings", "Show Timestamp", None, -1))
+        self.label_sniff_OutputFile.setText(QtWidgets.QApplication.translate("SniffSettings", "Write bitstream to file:", None, -1))
+        self.lineEdit_sniff_OutputFile.setPlaceholderText(QtWidgets.QApplication.translate("SniffSettings", "None", None, -1))
+        self.checkBoxAutoCenter.setText(QtWidgets.QApplication.translate("SniffSettings", "Automatic", None, -1))
 
 from . import urh_rc

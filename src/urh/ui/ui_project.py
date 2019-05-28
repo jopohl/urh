@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
@@ -15,8 +11,8 @@ class Ui_ProjectDialog(object):
         self.lNewProject = QtWidgets.QLabel(ProjectDialog)
         font = QtGui.QFont()
         font.setPointSize(16)
-        font.setBold(True)
         font.setWeight(75)
+        font.setBold(True)
         self.lNewProject.setFont(font)
         self.lNewProject.setObjectName("lNewProject")
         self.verticalLayout.addWidget(self.lNewProject)
@@ -96,7 +92,8 @@ class Ui_ProjectDialog(object):
         self.label_10.setObjectName("label_10")
         self.gridLayout.addWidget(self.label_10, 5, 0, 1, 2)
         self.btnAddParticipant = QtWidgets.QToolButton(ProjectDialog)
-        icon = QtGui.QIcon.fromTheme("list-add")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnAddParticipant.setIcon(icon)
         self.btnAddParticipant.setObjectName("btnAddParticipant")
         self.gridLayout.addWidget(self.btnAddParticipant, 11, 4, 1, 2)
@@ -123,7 +120,6 @@ class Ui_ProjectDialog(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
         self.btnRemoveParticipant = QtWidgets.QToolButton(ProjectDialog)
-        icon = QtGui.QIcon.fromTheme("list-remove")
         self.btnRemoveParticipant.setIcon(icon)
         self.btnRemoveParticipant.setObjectName("btnRemoveParticipant")
         self.gridLayout.addWidget(self.btnRemoveParticipant, 12, 4, 1, 2)
@@ -146,7 +142,6 @@ class Ui_ProjectDialog(object):
         self.label_11.setObjectName("label_11")
         self.gridLayout.addWidget(self.label_11, 6, 0, 1, 2)
         self.btnUp = QtWidgets.QToolButton(ProjectDialog)
-        icon = QtGui.QIcon.fromTheme("go-up")
         self.btnUp.setIcon(icon)
         self.btnUp.setObjectName("btnUp")
         self.gridLayout.addWidget(self.btnUp, 13, 4, 1, 1)
@@ -159,7 +154,6 @@ class Ui_ProjectDialog(object):
         self.label_9.setObjectName("label_9")
         self.gridLayout.addWidget(self.label_9, 11, 0, 5, 2)
         self.btnDown = QtWidgets.QToolButton(ProjectDialog)
-        icon = QtGui.QIcon.fromTheme("go-down")
         self.btnDown.setIcon(icon)
         self.btnDown.setObjectName("btnDown")
         self.gridLayout.addWidget(self.btnDown, 14, 4, 1, 1)
@@ -182,34 +176,33 @@ class Ui_ProjectDialog(object):
         ProjectDialog.setTabOrder(self.btnRemoveParticipant, self.lineEditBroadcastAddress)
 
     def retranslateUi(self, ProjectDialog):
-        _translate = QtCore.QCoreApplication.translate
-        ProjectDialog.setWindowTitle(_translate("ProjectDialog", "Create a new project"))
-        self.lNewProject.setText(_translate("ProjectDialog", "New Project"))
-        self.lblName.setText(_translate("ProjectDialog", "<Name>"))
-        self.label_5.setText(_translate("ProjectDialog", "Sps"))
-        self.lblNewPath.setText(_translate("ProjectDialog", "<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>"))
-        self.label_3.setText(_translate("ProjectDialog", "Default frequency:"))
-        self.lineEditBroadcastAddress.setToolTip(_translate("ProjectDialog", "<html><head/><body><p>Enter the broadcast address of your protocol in <span style=\" font-weight:600;\">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>"))
-        self.lineEditBroadcastAddress.setText(_translate("ProjectDialog", "ffff"))
-        self.label_10.setText(_translate("ProjectDialog", "Default bandwidth:"))
-        self.btnAddParticipant.setToolTip(_translate("ProjectDialog", "Add participant"))
-        self.btnAddParticipant.setText(_translate("ProjectDialog", "..."))
-        self.btnSelectPath.setText(_translate("ProjectDialog", "..."))
-        self.label_6.setText(_translate("ProjectDialog", "Hz"))
-        self.label_2.setText(_translate("ProjectDialog", "Default sample rate:"))
-        self.label.setText(_translate("ProjectDialog", "Choose a path:"))
-        self.btnRemoveParticipant.setToolTip(_translate("ProjectDialog", "Remove participant"))
-        self.btnRemoveParticipant.setText(_translate("ProjectDialog", "..."))
-        self.label_4.setText(_translate("ProjectDialog", "Broadcast address (hex):"))
-        self.label_8.setText(_translate("ProjectDialog", "Description:"))
-        self.label_12.setText(_translate("ProjectDialog", "Hz"))
-        self.label_11.setText(_translate("ProjectDialog", "Default gain:"))
-        self.btnUp.setToolTip(_translate("ProjectDialog", "Move selected participants up"))
-        self.btnUp.setText(_translate("ProjectDialog", "..."))
-        self.lOpenSpectrumAnalyzer.setText(_translate("ProjectDialog", "<html><head/><body><p>Tip: Open <a href=\"open_spectrum_analyzer\">spectrum analyzer</a> to find these values.</p></body></html>"))
-        self.label_9.setText(_translate("ProjectDialog", "Participants:"))
-        self.btnDown.setToolTip(_translate("ProjectDialog", "Move selected participants down"))
-        self.btnDown.setText(_translate("ProjectDialog", "..."))
+        ProjectDialog.setWindowTitle(QtWidgets.QApplication.translate("ProjectDialog", "Create a new project", None, -1))
+        self.lNewProject.setText(QtWidgets.QApplication.translate("ProjectDialog", "New Project", None, -1))
+        self.lblName.setText(QtWidgets.QApplication.translate("ProjectDialog", "<Name>", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("ProjectDialog", "Sps", None, -1))
+        self.lblNewPath.setText(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default frequency:", None, -1))
+        self.lineEditBroadcastAddress.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p>Enter the broadcast address of your protocol in <span style=\" font-weight:600;\">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>", None, -1))
+        self.lineEditBroadcastAddress.setText(QtWidgets.QApplication.translate("ProjectDialog", "ffff", None, -1))
+        self.label_10.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default bandwidth:", None, -1))
+        self.btnAddParticipant.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Add participant", None, -1))
+        self.btnAddParticipant.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
+        self.btnSelectPath.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("ProjectDialog", "Hz", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default sample rate:", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("ProjectDialog", "Choose a path:", None, -1))
+        self.btnRemoveParticipant.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Remove participant", None, -1))
+        self.btnRemoveParticipant.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("ProjectDialog", "Broadcast address (hex):", None, -1))
+        self.label_8.setText(QtWidgets.QApplication.translate("ProjectDialog", "Description:", None, -1))
+        self.label_12.setText(QtWidgets.QApplication.translate("ProjectDialog", "Hz", None, -1))
+        self.label_11.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default gain:", None, -1))
+        self.btnUp.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Move selected participants up", None, -1))
+        self.btnUp.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
+        self.lOpenSpectrumAnalyzer.setText(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p>Tip: Open <a href=\"open_spectrum_analyzer\">spectrum analyzer</a> to find these values.</p></body></html>", None, -1))
+        self.label_9.setText(QtWidgets.QApplication.translate("ProjectDialog", "Participants:", None, -1))
+        self.btnDown.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Move selected participants down", None, -1))
+        self.btnDown.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ParticipantTableView import ParticipantTableView

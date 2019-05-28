@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_FramePlugins(object):
     def setupUi(self, FramePlugins):
@@ -63,9 +59,8 @@ class Ui_FramePlugins(object):
         self.retranslateUi(FramePlugins)
 
     def retranslateUi(self, FramePlugins):
-        _translate = QtCore.QCoreApplication.translate
-        FramePlugins.setWindowTitle(_translate("FramePlugins", "Plugins"))
-        self.label.setText(_translate("FramePlugins", "Available Plugins"))
-        self.label_2.setText(_translate("FramePlugins", "Description"))
-        self.groupBoxSettings.setTitle(_translate("FramePlugins", "Settings"))
+        FramePlugins.setWindowTitle(QtWidgets.QApplication.translate("FramePlugins", "Plugins", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("FramePlugins", "Available Plugins", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("FramePlugins", "Description", None, -1))
+        self.groupBoxSettings.setTitle(QtWidgets.QApplication.translate("FramePlugins", "Settings", None, -1))
 

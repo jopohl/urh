@@ -9,6 +9,7 @@ from PySide2.QtWidgets import QGraphicsScene
 from urh import constants
 from urh.cythonext import path_creator, signal_functions
 from urh.signalprocessing.IQArray import IQArray
+from urh.ui.painting import path_painter
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util import util
 from urh.util.Formatter import Formatter
@@ -149,7 +150,7 @@ class Modulator(object):
         scene.setBackgroundBrush(constants.BGCOLOR)
         scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
 
-        path = path_creator.array_to_QPath(x, y)
+        path = path_painter.array_to_QPath(x, y)
         scene.addPath(path, QPen(constants.LINECOLOR, 0))
 
         return scene

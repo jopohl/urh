@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_DialogAdvancedModSettings(object):
     def setupUi(self, DialogAdvancedModSettings):
@@ -51,16 +46,14 @@ class Ui_DialogAdvancedModSettings(object):
         self.verticalLayout_3.addWidget(self.buttonBox)
 
         self.retranslateUi(DialogAdvancedModSettings)
-        self.buttonBox.accepted.connect(DialogAdvancedModSettings.accept)
-        self.buttonBox.rejected.connect(DialogAdvancedModSettings.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogAdvancedModSettings.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogAdvancedModSettings.reject)
 
     def retranslateUi(self, DialogAdvancedModSettings):
-        _translate = QtCore.QCoreApplication.translate
-        DialogAdvancedModSettings.setWindowTitle(_translate("DialogAdvancedModSettings", "Advanced Modulation Settings"))
-        self.groupBox.setTitle(_translate("DialogAdvancedModSettings", "Pause Threshold"))
-        self.label.setText(_translate("DialogAdvancedModSettings", "<html><head/><body><p>The pause threshold gives you control <span style=\" font-weight:600;\">when to insert a message break.</span></p><p>The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.</p><p>Special value is 0 to disable message breaking completely.</p></body></html>"))
-        self.spinBoxPauseThreshold.setSpecialValueText(_translate("DialogAdvancedModSettings", "Disable"))
-        self.groupBox_2.setTitle(_translate("DialogAdvancedModSettings", "Message Length Divisor"))
-        self.label_2.setText(_translate("DialogAdvancedModSettings", "<html><head/><body><p>With the message <span style=\" font-weight:600;\">divisor length</span> you can control the minimum message length in a flexible way. URH will try to demodulate signals in such a way, that the resulting message has a number of bits that is divisble by the configured divisor. <br/><br/><span style=\" font-style:italic;\">How does the zero padding work? Remaining zero bits are taken from the pause behind the message if possible.</span></p></body></html>"))
-
+        DialogAdvancedModSettings.setWindowTitle(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "Advanced Modulation Settings", None, -1))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "Pause Threshold", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "<html><head/><body><p>The pause threshold gives you control <span style=\" font-weight:600;\">when to insert a message break.</span></p><p>The pause threshold is the maximum length of consecutive zero bits represented by a pause before a new message begins.</p><p>Special value is 0 to disable message breaking completely.</p></body></html>", None, -1))
+        self.spinBoxPauseThreshold.setSpecialValueText(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "Disable", None, -1))
+        self.groupBox_2.setTitle(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "Message Length Divisor", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("DialogAdvancedModSettings", "<html><head/><body><p>With the message <span style=\" font-weight:600;\">divisor length</span> you can control the minimum message length in a flexible way. URH will try to demodulate signals in such a way, that the resulting message has a number of bits that is divisble by the configured divisor. <br/><br/><span style=\" font-style:italic;\">How does the zero padding work? Remaining zero bits are taken from the pause behind the message if possible.</span></p></body></html>", None, -1))
 

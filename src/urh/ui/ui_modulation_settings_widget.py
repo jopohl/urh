@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ModulationSettings(object):
     def setupUi(self, ModulationSettings):
@@ -15,8 +11,8 @@ class Ui_ModulationSettings(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBoxSniffSettings = QtWidgets.QGroupBox(ModulationSettings)
         font = QtGui.QFont()
-        font.setBold(True)
         font.setWeight(75)
+        font.setBold(True)
         self.groupBoxSniffSettings.setFont(font)
         self.groupBoxSniffSettings.setStyleSheet("QGroupBox\n"
 "{\n"
@@ -106,37 +102,3 @@ class Ui_ModulationSettings(object):
         self.gridLayout.addWidget(self.labelSampleRateValue, 1, 4, 1, 1)
         self.verticalLayout_2.addLayout(self.gridLayout)
         self.btnConfigurationDialog = QtWidgets.QPushButton(self.frame)
-        icon = QtGui.QIcon.fromTheme("configure")
-        self.btnConfigurationDialog.setIcon(icon)
-        self.btnConfigurationDialog.setObjectName("btnConfigurationDialog")
-        self.verticalLayout_2.addWidget(self.btnConfigurationDialog)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem)
-        self.gridLayout_3.addWidget(self.frame, 0, 0, 1, 1)
-        self.verticalLayout.addWidget(self.groupBoxSniffSettings)
-
-        self.retranslateUi(ModulationSettings)
-        self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
-        ModulationSettings.setTabOrder(self.groupBoxSniffSettings, self.comboBoxModulationProfiles)
-        ModulationSettings.setTabOrder(self.comboBoxModulationProfiles, self.btnConfigurationDialog)
-
-    def retranslateUi(self, ModulationSettings):
-        _translate = QtCore.QCoreApplication.translate
-        ModulationSettings.setWindowTitle(_translate("ModulationSettings", "Form"))
-        self.groupBoxSniffSettings.setTitle(_translate("ModulationSettings", "Modulation settings"))
-        self.labelModulationProfile.setText(_translate("ModulationSettings", "Choose profile:"))
-        self.labelBitLength.setText(_translate("ModulationSettings", "Bit Length:"))
-        self.labelParamOneValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelCarrierFrequencyValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelModulationType.setText(_translate("ModulationSettings", "Modulation type:"))
-        self.labelBitLengthValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelParamOne.setText(_translate("ModulationSettings", "Param for 1:"))
-        self.labelModulationTypeValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelCarrierFrequency.setText(_translate("ModulationSettings", "Carrier Frequency:"))
-        self.labelParamZero.setText(_translate("ModulationSettings", "Param for 0:"))
-        self.labelParamZeroValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelSampleRate.setText(_translate("ModulationSettings", "Sample Rate:"))
-        self.labelSampleRateValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.btnConfigurationDialog.setText(_translate("ModulationSettings", "Open modulation configuration dialog..."))
-
-from . import urh_rc

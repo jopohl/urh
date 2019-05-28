@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ChecksumOptions(object):
     def setupUi(self, ChecksumOptions):
@@ -55,12 +51,12 @@ class Ui_ChecksumOptions(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.btnAddRange = QtWidgets.QToolButton(self.groupBox)
-        icon = QtGui.QIcon.fromTheme("list-add")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("../../../"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnAddRange.setIcon(icon)
         self.btnAddRange.setObjectName("btnAddRange")
         self.verticalLayout.addWidget(self.btnAddRange)
         self.btnRemoveRange = QtWidgets.QToolButton(self.groupBox)
-        icon = QtGui.QIcon.fromTheme("list-remove")
         self.btnRemoveRange.setIcon(icon)
         self.btnRemoveRange.setObjectName("btnRemoveRange")
         self.verticalLayout.addWidget(self.btnRemoveRange)
@@ -141,24 +137,23 @@ class Ui_ChecksumOptions(object):
         ChecksumOptions.setTabOrder(self.radioButtonWSPChecksum8, self.radioButtonWSPCRC8)
 
     def retranslateUi(self, ChecksumOptions):
-        _translate = QtCore.QCoreApplication.translate
-        ChecksumOptions.setWindowTitle(_translate("ChecksumOptions", "Configure Checksum"))
-        self.label_4.setText(_translate("ChecksumOptions", "Checksum category:"))
-        self.comboBoxCategory.setItemText(0, _translate("ChecksumOptions", "CRC"))
-        self.comboBoxCategory.setItemText(1, _translate("ChecksumOptions", "Wireless Short Packet Checksum"))
-        self.label_5.setText(_translate("ChecksumOptions", "CRC polynomial (hex):"))
-        self.groupBox.setTitle(_translate("ChecksumOptions", "Configure data ranges for CRC"))
-        self.btnAddRange.setText(_translate("ChecksumOptions", "..."))
-        self.btnRemoveRange.setText(_translate("ChecksumOptions", "..."))
-        self.label_3.setText(_translate("ChecksumOptions", "CRC function:"))
-        self.label_2.setText(_translate("ChecksumOptions", "Final XOR (hex):"))
-        self.label.setText(_translate("ChecksumOptions", "Start value (hex):"))
-        self.label_crc_info.setText(_translate("ChecksumOptions", "<html><head/><body><p>Order=17</p><p>Length of checksum=16</p><p>start value length =16</p><p>final XOR length = 16</p><p>Polynomial = x<span style=\" vertical-align:super;\">1</span> + 4</p></body></html>"))
-        self.checkBoxRefIn.setText(_translate("ChecksumOptions", "RefIn (Reflect input)"))
-        self.checkBoxRefOut.setText(_translate("ChecksumOptions", "RefOut (Reflect output)"))
-        self.label_6.setText(_translate("ChecksumOptions", "<html><head/><body><p>The Wireless Short Packet (WSP) standard uses three different checksums. URH can automatically detect the used checksum algorithm from the message. However, you can enforce the usage of a certain checksum if you need to.</p><p>With <span style=\" font-weight:600;\">Automatic</span> setting, checksums are chosen by these rules:</p><p>1) 4 Bit Checksum - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)</p><p>2) 8 Bit Checksum: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 0</p><p>3) 8 Bit CRC: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 1</p></body></html>"))
-        self.radioButtonWSPAuto.setText(_translate("ChecksumOptions", "Automatic (recommended)"))
-        self.radioButtonWSPChecksum4.setText(_translate("ChecksumOptions", "Force Checksum4"))
-        self.radioButtonWSPChecksum8.setText(_translate("ChecksumOptions", "Force Checksum8"))
-        self.radioButtonWSPCRC8.setText(_translate("ChecksumOptions", "Force CRC8"))
+        ChecksumOptions.setWindowTitle(QtWidgets.QApplication.translate("ChecksumOptions", "Configure Checksum", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Checksum category:", None, -1))
+        self.comboBoxCategory.setItemText(0, QtWidgets.QApplication.translate("ChecksumOptions", "CRC", None, -1))
+        self.comboBoxCategory.setItemText(1, QtWidgets.QApplication.translate("ChecksumOptions", "Wireless Short Packet Checksum", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("ChecksumOptions", "CRC polynomial (hex):", None, -1))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("ChecksumOptions", "Configure data ranges for CRC", None, -1))
+        self.btnAddRange.setText(QtWidgets.QApplication.translate("ChecksumOptions", "...", None, -1))
+        self.btnRemoveRange.setText(QtWidgets.QApplication.translate("ChecksumOptions", "...", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("ChecksumOptions", "CRC function:", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Final XOR (hex):", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Start value (hex):", None, -1))
+        self.label_crc_info.setText(QtWidgets.QApplication.translate("ChecksumOptions", "<html><head/><body><p>Order=17</p><p>Length of checksum=16</p><p>start value length =16</p><p>final XOR length = 16</p><p>Polynomial = x<span style=\" vertical-align:super;\">1</span> + 4</p></body></html>", None, -1))
+        self.checkBoxRefIn.setText(QtWidgets.QApplication.translate("ChecksumOptions", "RefIn (Reflect input)", None, -1))
+        self.checkBoxRefOut.setText(QtWidgets.QApplication.translate("ChecksumOptions", "RefOut (Reflect output)", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("ChecksumOptions", "<html><head/><body><p>The Wireless Short Packet (WSP) standard uses three different checksums. URH can automatically detect the used checksum algorithm from the message. However, you can enforce the usage of a certain checksum if you need to.</p><p>With <span style=\" font-weight:600;\">Automatic</span> setting, checksums are chosen by these rules:</p><p>1) 4 Bit Checksum - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)</p><p>2) 8 Bit Checksum: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 0</p><p>3) 8 Bit CRC: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 1</p></body></html>", None, -1))
+        self.radioButtonWSPAuto.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Automatic (recommended)", None, -1))
+        self.radioButtonWSPChecksum4.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Force Checksum4", None, -1))
+        self.radioButtonWSPChecksum8.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Force Checksum8", None, -1))
+        self.radioButtonWSPCRC8.setText(QtWidgets.QApplication.translate("ChecksumOptions", "Force CRC8", None, -1))
 

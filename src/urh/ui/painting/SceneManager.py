@@ -7,6 +7,7 @@ from PySide2.QtWidgets import QGraphicsPathItem
 
 from urh import constants
 from urh.cythonext import path_creator, util
+from urh.ui.painting import path_painter
 from urh.ui.painting.ZoomableScene import ZoomableScene
 
 
@@ -128,6 +129,6 @@ class SceneManager(QObject):
             y = np.array(y)
         else:
             y = np.array(y).astype(np.float32)
-        path = path_creator.array_to_QPath(x, y)
+        path = path_painter.array_to_QPath(x, y)
         scene.addPath(path, QPen(constants.LINECOLOR, 0))
         return scene, n

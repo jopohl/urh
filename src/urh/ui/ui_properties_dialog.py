@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_DialogLabels(object):
     def setupUi(self, DialogLabels):
@@ -69,15 +65,14 @@ class Ui_DialogLabels(object):
         self.retranslateUi(DialogLabels)
 
     def retranslateUi(self, DialogLabels):
-        _translate = QtCore.QCoreApplication.translate
-        DialogLabels.setWindowTitle(_translate("DialogLabels", "Manage Protocol Labels"))
-        self.groupBoxSettings.setTitle(_translate("DialogLabels", "Protocol Label Settings"))
-        self.label.setText(_translate("DialogLabels", "View Type:"))
-        self.cbProtoView.setItemText(0, _translate("DialogLabels", "Bits"))
-        self.cbProtoView.setItemText(1, _translate("DialogLabels", "Hex"))
-        self.cbProtoView.setItemText(2, _translate("DialogLabels", "ASCII"))
-        self.groupBoxAdvancedSettings.setTitle(_translate("DialogLabels", "Advanced Settings"))
-        self.btnConfirm.setText(_translate("DialogLabels", "Confirm"))
+        DialogLabels.setWindowTitle(QtWidgets.QApplication.translate("DialogLabels", "Manage Protocol Labels", None, -1))
+        self.groupBoxSettings.setTitle(QtWidgets.QApplication.translate("DialogLabels", "Protocol Label Settings", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("DialogLabels", "View Type:", None, -1))
+        self.cbProtoView.setItemText(0, QtWidgets.QApplication.translate("DialogLabels", "Bits", None, -1))
+        self.cbProtoView.setItemText(1, QtWidgets.QApplication.translate("DialogLabels", "Hex", None, -1))
+        self.cbProtoView.setItemText(2, QtWidgets.QApplication.translate("DialogLabels", "ASCII", None, -1))
+        self.groupBoxAdvancedSettings.setTitle(QtWidgets.QApplication.translate("DialogLabels", "Advanced Settings", None, -1))
+        self.btnConfirm.setText(QtWidgets.QApplication.translate("DialogLabels", "Confirm", None, -1))
 
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
 from . import urh_rc

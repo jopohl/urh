@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 
-#
-#
-# WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_DialogCSVImport(object):
     def setupUi(self, DialogCSVImport):
@@ -23,7 +19,8 @@ class Ui_DialogCSVImport(object):
         self.comboBoxCSVSeparator.addItem("")
         self.horizontalLayout.addWidget(self.comboBoxCSVSeparator)
         self.btnAddSeparator = QtWidgets.QToolButton(DialogCSVImport)
-        icon = QtGui.QIcon.fromTheme("list-add")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btnAddSeparator.setIcon(icon)
         self.btnAddSeparator.setIconSize(QtCore.QSize(16, 16))
         self.btnAddSeparator.setObjectName("btnAddSeparator")
@@ -109,8 +106,8 @@ class Ui_DialogCSVImport(object):
         self.gridLayout.addWidget(self.btnAutoDefault, 10, 2, 1, 1)
 
         self.retranslateUi(DialogCSVImport)
-        self.buttonBox.accepted.connect(DialogCSVImport.accept)
-        self.buttonBox.rejected.connect(DialogCSVImport.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogCSVImport.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogCSVImport.reject)
         DialogCSVImport.setTabOrder(self.lineEditFilename, self.btnChooseFile)
         DialogCSVImport.setTabOrder(self.btnChooseFile, self.plainTextEditFilePreview)
         DialogCSVImport.setTabOrder(self.plainTextEditFilePreview, self.comboBoxCSVSeparator)
@@ -121,30 +118,26 @@ class Ui_DialogCSVImport(object):
         DialogCSVImport.setTabOrder(self.spinBoxTimestampColumn, self.tableWidgetPreview)
 
     def retranslateUi(self, DialogCSVImport):
-        _translate = QtCore.QCoreApplication.translate
-        DialogCSVImport.setWindowTitle(_translate("DialogCSVImport", "CSV Import"))
-        self.labelFileNotFound.setText(_translate("DialogCSVImport", "<html><head/><body><p><span style=\" color:#ff0000;\">Could not open the selected file.</span></p></body></html>"))
-        self.comboBoxCSVSeparator.setItemText(0, _translate("DialogCSVImport", ","))
-        self.comboBoxCSVSeparator.setItemText(1, _translate("DialogCSVImport", ";"))
-        self.btnAddSeparator.setToolTip(_translate("DialogCSVImport", "Add a custom separator."))
-        self.btnAddSeparator.setText(_translate("DialogCSVImport", "..."))
-        self.spinBoxTimestampColumn.setToolTip(_translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>"))
-        self.spinBoxTimestampColumn.setSpecialValueText(_translate("DialogCSVImport", "Not present"))
-        self.label.setText(_translate("DialogCSVImport", "I Data Column:"))
-        self.spinBoxQDataColumn.setSpecialValueText(_translate("DialogCSVImport", "Not present"))
-        self.label_3.setToolTip(_translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>"))
-        self.label_3.setText(_translate("DialogCSVImport", "Timestamp Column:"))
-        self.label_2.setText(_translate("DialogCSVImport", "Q Data Column:"))
-        self.groupBox.setTitle(_translate("DialogCSVImport", "Preview"))
-        item = self.tableWidgetPreview.horizontalHeaderItem(0)
-        item.setText(_translate("DialogCSVImport", "Timestamp"))
-        item = self.tableWidgetPreview.horizontalHeaderItem(1)
-        item.setText(_translate("DialogCSVImport", "I"))
-        item = self.tableWidgetPreview.horizontalHeaderItem(2)
-        item.setText(_translate("DialogCSVImport", "Q"))
-        self.btnChooseFile.setText(_translate("DialogCSVImport", "..."))
-        self.label_4.setText(_translate("DialogCSVImport", "CSV Separator:"))
-        self.groupBoxFilePreview.setTitle(_translate("DialogCSVImport", "File Content (at most 100 rows)"))
-        self.label_5.setText(_translate("DialogCSVImport", "File to import:"))
-        self.btnAutoDefault.setText(_translate("DialogCSVImport", "Prevent Dialog From Close with Enter"))
+        DialogCSVImport.setWindowTitle(QtWidgets.QApplication.translate("DialogCSVImport", "CSV Import", None, -1))
+        self.labelFileNotFound.setText(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p><span style=\" color:#ff0000;\">Could not open the selected file.</span></p></body></html>", None, -1))
+        self.comboBoxCSVSeparator.setItemText(0, QtWidgets.QApplication.translate("DialogCSVImport", ",", None, -1))
+        self.comboBoxCSVSeparator.setItemText(1, QtWidgets.QApplication.translate("DialogCSVImport", ";", None, -1))
+        self.btnAddSeparator.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "Add a custom separator.", None, -1))
+        self.btnAddSeparator.setText(QtWidgets.QApplication.translate("DialogCSVImport", "...", None, -1))
+        self.spinBoxTimestampColumn.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None, -1))
+        self.spinBoxTimestampColumn.setSpecialValueText(QtWidgets.QApplication.translate("DialogCSVImport", "Not present", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("DialogCSVImport", "I Data Column:", None, -1))
+        self.spinBoxQDataColumn.setSpecialValueText(QtWidgets.QApplication.translate("DialogCSVImport", "Not present", None, -1))
+        self.label_3.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Timestamp Column:", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Q Data Column:", None, -1))
+        self.groupBox.setTitle(QtWidgets.QApplication.translate("DialogCSVImport", "Preview", None, -1))
+        self.tableWidgetPreview.horizontalHeaderItem(0).setText(QtWidgets.QApplication.translate("DialogCSVImport", "Timestamp", None, -1))
+        self.tableWidgetPreview.horizontalHeaderItem(1).setText(QtWidgets.QApplication.translate("DialogCSVImport", "I", None, -1))
+        self.tableWidgetPreview.horizontalHeaderItem(2).setText(QtWidgets.QApplication.translate("DialogCSVImport", "Q", None, -1))
+        self.btnChooseFile.setText(QtWidgets.QApplication.translate("DialogCSVImport", "...", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("DialogCSVImport", "CSV Separator:", None, -1))
+        self.groupBoxFilePreview.setTitle(QtWidgets.QApplication.translate("DialogCSVImport", "File Content (at most 100 rows)", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("DialogCSVImport", "File to import:", None, -1))
+        self.btnAutoDefault.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Prevent Dialog From Close with Enter", None, -1))
 

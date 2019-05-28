@@ -427,8 +427,6 @@ def read_setting(key: str, default_value=None, type=str):
     val = constants.SETTINGS.value(key, default_value)
     if type is bool:
         return True if str(val).lower() == "true" else False
-    elif type is list:
-        return str(val).replace(", ", ",").split(",")
     else:
         return type(val)
 

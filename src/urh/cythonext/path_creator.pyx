@@ -2,8 +2,7 @@ import struct
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
-from PySide2.QtCore import QByteArray, QDataStream
-from PySide2.QtGui import QPainterPath
+
 
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
@@ -11,6 +10,7 @@ from PySide2.QtGui import QPainterPath
 
 from cython.parallel import prange
 from urh.cythonext.util cimport iq
+from urh.ui.painting.path_painter import array_to_QPath
 
 from urh import constants
 import math
@@ -84,42 +84,3 @@ cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ra
 
 cpdef create_live_path(iq[:] samples, unsigned int start, unsigned int end):
     return array_to_QPath(np.arange(start, end).astype(np.int64), samples)
-
-cpdef array_to_QPath(np.int64_t[:] x, y):
-    """
-    Convert an array of x,y coordinates to QPainterPath as efficiently as possible.
-
-    Speed this up using >> operator
-    Format is:
-        numVerts(i4)   0(i4)
-        x(f8)   y(f8)   0(i4)    <-- 0 means this vertex does not connect
-        x(f8)   y(f8)   1(i4)    <-- 1 means this vertex connects to the previous vertex
-        ...
-        0(i4)
-
-     All values are big endian--pack using struct.pack('>d') or struct.pack('>i')
-    """
-    cdef long long n = x.shape[0]
-    arr = np.zeros(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
-
-    byte_view = arr.view(dtype=np.uint8)
-    byte_view[:12] = 0
-    byte_view.data[12:20] = struct.pack('>ii', n, 0)
-
-    arr[1:n+1]['x'] = x
-    arr[1:n+1]['y'] = np.negative(y)  # negate y since coordinate system is inverted
-    arr[1:n+1]['c'] = 1
-
-    cdef long long last_index = 20 * (n + 1)
-    byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)
-
-    try:
-        buf = QByteArray.fromRawData(byte_view.data[12:last_index + 4])
-    except TypeError:
-        buf = QByteArray(byte_view.data[12:last_index + 4])
-
-    path = QPainterPath()
-    ds = QDataStream(buf)
-    ds >> path
-
-    return path

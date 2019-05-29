@@ -1,10 +1,11 @@
 import array
 import copy
+from enum import Enum
+from xml.etree import ElementTree as ET
 
 from urh.util import util
 from urh.util.GenericCRC import GenericCRC
-from enum import Enum
-from xml.etree import ElementTree as ET
+
 
 class WSPChecksum(object):
     """
@@ -23,6 +24,16 @@ class WSPChecksum(object):
 
     def __init__(self, mode=ChecksumMode.auto):
         self.mode = mode
+        self.caption = str(mode)
+
+    def __eq__(self, other):
+        if not isinstance(other, WSPChecksum):
+            return False
+
+        return self.mode == other.mode
+
+    def __hash__(self):
+        return hash(self.mode)
 
     def calculate(self, msg: array.array) -> array.array:
         """
@@ -56,6 +67,26 @@ class WSPChecksum(object):
             return None
 
     @classmethod
+    def search_for_wsp_checksum(cls, bits_behind_sync):
+        data_start, data_stop, crc_start, crc_stop = 0, 0, 0, 0
+
+        if bits_behind_sync[-4:].tobytes() != array.array("B", [1, 0, 1, 1]).tobytes():
+            return 0, 0, 0, 0  # Check for EOF
+
+        rorg = bits_behind_sync[0:4].tobytes()
+        if rorg == array.array("B", [0, 1, 0, 1]).tobytes() or rorg == array.array("B", [0, 1, 1, 0]).tobytes():
+            # Switch telegram
+            if cls.checksum4(bits_behind_sync[-8:]).tobytes() == bits_behind_sync[-8:-4].tobytes():
+                crc_start = len(bits_behind_sync) - 8
+                crc_stop = len(bits_behind_sync) - 4
+                data_stop = crc_start
+                return data_start, data_stop, crc_start, crc_stop
+
+        # todo: Find crc8 and checksum8
+
+        return 0, 0, 0, 0
+
+    @classmethod
     def checksum4(cls, bits: array.array) -> array.array:
         hash = 0
         val = copy.copy(bits)
@@ -82,5 +113,5 @@ class WSPChecksum(object):
         return root
 
     @classmethod
-    def from_xml(cls, tag:  ET.Element):
+    def from_xml(cls, tag: ET.Element):
         return WSPChecksum(mode=WSPChecksum.ChecksumMode[tag.get("mode", "auto")])

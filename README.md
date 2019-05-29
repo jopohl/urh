@@ -14,6 +14,7 @@ The Universal Radio Hacker (URH) is a software for investigating unknown wireles
 * __assigning participants__ to keep overview of your data
 * __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening
 * __assign labels__ to reveal the logic of the protocol
+* __automatic reverse engineering__ of protocol fields
 * __fuzzing component__ to find security leaks
 * __modulation support__ to inject the data back into the system
 * __simulation environment__ to perform stateful attacks

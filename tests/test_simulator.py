@@ -261,7 +261,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(file_name))
 
     def __demodulate(self, connection: socket.socket):
-        connection.settimeout(0.1)
+        connection.settimeout(0.5)
         time.sleep(self.TIMEOUT)
 
         total_data = []

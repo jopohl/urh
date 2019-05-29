@@ -2,7 +2,7 @@ import math
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
-from PyQt5.QtWidgets import QStyledItemDelegate, QToolButton
+from PyQt5.QtWidgets import QStyledItemDelegate, QPushButton
 
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.util import util
@@ -14,8 +14,8 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         super().__init__(parent)
 
     def createEditor(self, parent, option, index):
-        button = QToolButton(parent)
-        button.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+        button = QPushButton(parent)
+        button.setFlat(True)
 
         num_rules = self.parent().model().get_num_active_rules_of_message_type_at(index.row())
 
@@ -25,7 +25,6 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
             icon = self.draw_indicator(indicator=num_rules)
 
         button.setIcon(icon)
-        button.setText("...")
         button.clicked.connect(self.on_btn_clicked)
         return button
 

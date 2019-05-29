@@ -26,8 +26,6 @@ class TestSimulatorDialog(QtTestCase):
         simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
         simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
 
-        print(self.form.simulator_tab_controller.simulator_config.tx_needed)
-
         self.dialog = SimulatorDialog(self.form.simulator_tab_controller.simulator_config,
                                       self.form.generator_tab_controller.modulators,
                                       self.form.simulator_tab_controller.sim_expression_parser,

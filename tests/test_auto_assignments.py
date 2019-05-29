@@ -3,6 +3,7 @@ import unittest
 
 from tests.utils_testing import get_path_for_data_file
 from urh import constants
+from urh.awre import AutoAssigner
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -97,24 +98,10 @@ class TestAutoAssignments(unittest.TestCase):
                              alice, alice, bob, bob, alice, alice, bob,
                              bob, alice, alice, bob, bob, alice, bob]]
 
-        proto1.auto_assign_participants([alice, bob])
+        AutoAssigner.auto_assign_participants(proto1.messages, [alice, bob])
         for i, message in enumerate(proto1.messages):
             self.assertEqual(message.participant, excpected_partis[0][i])
 
-        proto2.auto_assign_participants([alice, bob])
+        AutoAssigner.auto_assign_participants(proto2.messages, [alice, bob])
         for i, message in enumerate(proto2.messages):
             self.assertEqual(message.participant, excpected_partis[1][i])
-
-    def test_assign_decodings(self):
-        self.undecoded_protocol = ProtocolAnalyzer(None)
-        with open(get_path_for_data_file("undecoded.txt")) as f:
-            for line in f:
-                self.undecoded_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
-
-        self.undecoded_protocol.auto_assign_decodings(self.decodings)
-
-        for i, message in enumerate(self.undecoded_protocol.messages):
-            if message.plain_hex_str[8:16] == "9a7d9a7d":
-                self.assertEqual(message.decoder.name, "DeWhitening Special", msg=str(i))
-            elif message.plain_hex_str[8:16] == "67686768":
-                self.assertEqual(message.decoder.name, "DeWhitening", msg=str(i))

@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<protocol>
+   <decodings>
+      <decoding>'Non Return To Zero (NRZ)', </decoding>
+      <decoding>'Non Return To Zero Inverted (NRZ-I)', 'Invert', </decoding>
+      <decoding>'Manchester I', 'Edge Trigger', </decoding>
+      <decoding>'Manchester II', 'Edge Trigger', 'Invert', </decoding>
+      <decoding>'Differential Manchester', 'Edge Trigger', 'Differential Encoding', </decoding>
+      <decoding>'WSP', 'Wireless Short Packet (WSP)', </decoding>
+      <decoding>'Nexa', 'Substitution', '100000:0;', 'Substitution', '10:1;', </decoding>
+   </decodings>
+   <participants>
+      <participant address_hex="1337" color_index="0" id="0864c5a6-b020-4459-a8bf-457fc589303e" name="Alice" relative_rssi="0" shortname="A" simulate="0"/>
+      <participant address_hex="4711" color_index="0" id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" name="Bob" relative_rssi="0" shortname="B" simulate="0"/>
+   </participants>
+   <messages>
+      <message bits="10101010101010101001101001111101000011110001001100110111010001110001000100010110001110001100001101100001100101011011100000100010100111000101011011100101" decoding_index="0" message_type_id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1973796"/>
+      <message bits="101010101010101010011010011111010000010100010011001101111110010011110101" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.1974692"/>
+      <message bits="101010101010101010011010011111010100011101000111000100010001001100110111011110110110000010110110000001110000010100100100010000111110000011101001101110011111001011010001000111011110000100110101111000111110100011100010011010000010110000011101001111101011110101011011001101100101010001011110111100001111110111101101011010110101011110000110010001011110011001111101110101110001101010110110010101111111100001111000111100010100100001110011110110110110000111111000110011011111001000010000001111011010011001001101011110001010101011000000001111110011000100000100011100001100110101100101110101111101011011101010" decoding_index="0" message_type_id="0e697750-c73f-4992-854a-2074c0b273ac" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.1979609"/>
+      <message bits="101010101010101010011010011111010000010101000111000100011001110000100100" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1980429"/>
+      <message bits="10101010101010101001101001111101000011110001001100110111010001110001000111111111101111001010011001000010100001011011110010010100010100100010100111100111" decoding_index="0" message_type_id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.198185"/>
+      <message bits="101010101010101010011010011111010000010100010011001101111110010011110101" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.198258"/>
+      <message bits="101010101010101010011010011111010100011101000111000100010001001100110111011011000011000000010100011010010101001000001011110111111011001011010010001110111110110001100110110110100010001101111010011010110011001110000110010110000000101101111001101110100101111100010000100101000100100011111111010110110110101101001111100110010101011101101110010010000011011100001001011110010110111110110100000110000111111001110010111000101111011010001110101110101001001101011110100100100110010110011100101110100011001010100001100010010110101111010111010000011100011011001000001010010011011010100110010110101000100010110101" decoding_index="0" message_type_id="0e697750-c73f-4992-854a-2074c0b273ac" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.198747"/>
+      <message bits="101010101010101010011010011111010000010101000111000100011001110000100100" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1988373"/>
+      <message bits="10101010101010101001101001111101000011110001001100110111010001110001000100111110000101000000101001110000111100011110101001000000110111111101111000010001" decoding_index="0" message_type_id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1989856"/>
+      <message bits="101010101010101010011010011111010000010100010011001101111110010011110101" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.1990578"/>
+      <message bits="101010101010101010011010011111010100011101000111000100010001001100110111111101110101001100100000001100111110101001001101111001010010010101010101010011111110001001010100111010010000110010011110111110100101010011011101000100000100011011111100110110111000001010000011000001110111001111101001001101111011110011010100001101001110011100110110000000100001010101011111111100100101100100001011101111000001011101011000100011111110001010101110110100101101101100001100110011001101010011111110110100111011101011101111001011011111110110111001111110101011111000100110101110110011111101100001011001111001001000101001" decoding_index="0" message_type_id="0e697750-c73f-4992-854a-2074c0b273ac" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.1997647"/>
+      <message bits="101010101010101010011010011111010000010101000111000100011001110000100100" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1998444"/>
+      <message bits="10101010101010101001101001111101000011110001001100110111010001110001000110110010101010100000010101000110111001100011101101000110110011101011111101000010" decoding_index="0" message_type_id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.1999872"/>
+      <message bits="101010101010101010011010011111010000010100010011001101111110010011110101" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.2000594"/>
+      <message bits="101010101010101010011010011111010100011101000111000100010001001100110111111010110001011101011010110101100010010110000110011100100111001100010110110010000000011101100100101010101111101101100101001000000000110001000001000110001011001110111001001000011110010101011001010010010111001000001010011100001001101010101000011100011101100101001011100000010110111101011000101100101100001101000101100100111001010111000001010000100100011101000011111000010111110101010101000010101100000001100011100101000111010011110100101110111110001101110001101111100100000101001111101100100100100111110010101011111100111010011001" decoding_index="0" message_type_id="0e697750-c73f-4992-854a-2074c0b273ac" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.2005653"/>
+      <message bits="101010101010101010011010011111010000010101000111000100011001110000100100" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.200646"/>
+      <message bits="10101010101010101001101001111101000011110001001100110111010001110001000100100001010110100010000101110000101010001111010111111010010010100100011001111101" decoding_index="0" message_type_id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.2007873"/>
+      <message bits="101010101010101010011010011111010000010100010011001101111110010011110101" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.2008598"/>
+      <message bits="101010101010101010011010011111010100011101000111000100010001001100110111100001110010010001010001000110011001111100111111011011111010111011010010101010001010010011000110001111101111010100110011111101111000011100001000111000000110111000100011000001001000001110001000100100001000000110000000011011000010000101101000000000110101001000111000100101111011001010010001111010011110101011011111001111011011110010011100110111101010110101001000110010111110110110001110100111110000111100011011100011001011111001001100011010111110100000011000101001011110011011100000100010111001110010101110010000101110110010101110" decoding_index="0" message_type_id="0e697750-c73f-4992-854a-2074c0b273ac" modulator_index="0" participant_id="8e61e60d-89b8-42b3-ab43-0b3b225242f3" pause="0" timestamp="1555432607.201344"/>
+      <message bits="101010101010101010011010011111010000010101000111000100011001110000100100" decoding_index="0" message_type_id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" modulator_index="0" participant_id="0864c5a6-b020-4459-a8bf-457fc589303e" pause="0" timestamp="1555432607.2014205"/>
+   </messages>
+   <message_types>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="016735db-059a-4798-a6ad-ef13b2f62db2" name="Default">
+         <ruleset mode="0"/>
+      </message_type>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="e4c8f60b-b72c-4cb2-9206-43c6d6cd9ae8" name="data">
+         <label apply_decoding="True" auto_created="False" color_index="0" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="16" fuzz_me="2" fuzz_values="" name="preamble" show="2" start="0"/>
+         <label apply_decoding="True" auto_created="False" color_index="1" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="32" fuzz_me="2" fuzz_values="" name="synchronization" show="2" start="16"/>
+         <label apply_decoding="True" auto_created="False" color_index="2" display_bit_order_index="0" display_endianness="big" display_format_index="3" end="40" fuzz_me="2" fuzz_values="" name="length" show="2" start="32"/>
+         <label apply_decoding="True" auto_created="False" color_index="3" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="56" fuzz_me="2" fuzz_values="" name="source address" show="2" start="40"/>
+         <label apply_decoding="True" auto_created="False" color_index="4" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="72" fuzz_me="2" fuzz_values="" name="destination address" show="2" start="56"/>
+         <label apply_decoding="True" auto_created="False" color_index="5" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="136" fuzz_me="2" fuzz_values="" name="data" show="2" start="72"/>
+         <checksum_label apply_decoding="True" auto_created="False" category="generic" color_index="6" data_ranges="[(32, 136)]" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="152" fuzz_me="2" fuzz_values="" name="checksum" show="2" start="136">
+            <crc final_xor="0000000000000000" polynomial="11000000000000101" ref_in="0" ref_out="0" start_value="1111111111111111"/>
+         </checksum_label>
+         <ruleset mode="0"/>
+      </message_type>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="0e697750-c73f-4992-854a-2074c0b273ac" name="data2">
+         <label apply_decoding="True" auto_created="False" color_index="0" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="16" fuzz_me="2" fuzz_values="" name="preamble" show="2" start="0"/>
+         <label apply_decoding="True" auto_created="False" color_index="1" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="32" fuzz_me="2" fuzz_values="" name="synchronization" show="2" start="16"/>
+         <label apply_decoding="True" auto_created="False" color_index="2" display_bit_order_index="0" display_endianness="big" display_format_index="3" end="40" fuzz_me="2" fuzz_values="" name="length" show="2" start="32"/>
+         <label apply_decoding="True" auto_created="False" color_index="3" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="56" fuzz_me="2" fuzz_values="" name="source address" show="2" start="40"/>
+         <label apply_decoding="True" auto_created="False" color_index="4" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="72" fuzz_me="2" fuzz_values="" name="destination address" show="2" start="56"/>
+         <label apply_decoding="True" auto_created="False" color_index="5" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="584" fuzz_me="2" fuzz_values="" name="data" show="2" start="72"/>
+         <checksum_label apply_decoding="True" auto_created="False" category="generic" color_index="6" data_ranges="[(32, 584)]" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="600" fuzz_me="2" fuzz_values="" name="checksum" show="2" start="584">
+            <crc final_xor="0000000000000000" polynomial="11000000000000101" ref_in="0" ref_out="0" start_value="1111111111111111"/>
+         </checksum_label>
+         <ruleset mode="0"/>
+      </message_type>
+      <message_type assigned_by_logic_analyzer="0" assigned_by_ruleset="0" id="f3856ff3-9fe7-48f9-a287-a03a784b33d6" name="ack">
+         <label apply_decoding="True" auto_created="False" color_index="0" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="16" fuzz_me="2" fuzz_values="" name="preamble" show="2" start="0"/>
+         <label apply_decoding="True" auto_created="False" color_index="1" display_bit_order_index="0" display_endianness="big" display_format_index="0" end="32" fuzz_me="2" fuzz_values="" name="synchronization" show="2" start="16"/>
+         <label apply_decoding="True" auto_created="False" color_index="2" display_bit_order_index="0" display_endianness="big" display_format_index="3" end="40" fuzz_me="2" fuzz_values="" name="length" show="2" start="32"/>
+         <label apply_decoding="True" auto_created="False" color_index="3" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="56" fuzz_me="2" fuzz_values="" name="destination address" show="2" start="40"/>
+         <checksum_label apply_decoding="True" auto_created="False" category="generic" color_index="4" data_ranges="[(32, 56)]" display_bit_order_index="0" display_endianness="big" display_format_index="1" end="72" fuzz_me="2" fuzz_values="" name="checksum" show="2" start="56">
+            <crc final_xor="0000000000000000" polynomial="11000000000000101" ref_in="0" ref_out="0" start_value="1111111111111111"/>
+         </checksum_label>
+         <ruleset mode="0"/>
+      </message_type>
+   </message_types>
+</protocol>

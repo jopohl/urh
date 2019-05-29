@@ -1,6 +1,6 @@
+import copy
 import xml.etree.ElementTree as ET
 
-import copy
 from PyQt5.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
@@ -40,7 +40,10 @@ class ProtocolLabel(object):
 
         self.fuzz_created = fuzz_created
 
-        self.__field_type = field_type  # type: FieldType
+        if field_type is None:
+            self.__field_type = FieldType.from_caption(name)
+        else:
+            self.__field_type = field_type  # type: FieldType
 
         self.display_format_index = 0 if field_type is None else field_type.display_format_index
         self.display_bit_order_index = 0
@@ -69,6 +72,10 @@ class ProtocolLabel(object):
         return self.field_type is not None and self.field_type.function == FieldType.Function.SYNC
 
     @property
+    def length(self) -> int:
+        return self.end - self.start
+
+    @property
     def field_type(self) -> FieldType:
         return self.__field_type
 
@@ -79,6 +86,13 @@ class ProtocolLabel(object):
             # set viewtype for type
             if hasattr(value, "display_format_index"):
                 self.display_format_index = value.display_format_index
+
+    @property
+    def field_type_function(self):
+        if self.field_type is not None:
+            return self.field_type.function
+        else:
+            return None
 
     @property
     def name(self):
@@ -149,10 +163,13 @@ class ProtocolLabel(object):
             return False
 
     def __eq__(self, other):
-        return self.start == other.start and self.end == other.end and self.name == other.name and self.field_type == other.field_type
+        return self.start == other.start and \
+               self.end == other.end and \
+               self.name == other.name and \
+               self.field_type_function == other.field_type_function
 
     def __hash__(self):
-        return hash("{}/{}/{}".format(self.start, self.end, self.name))
+        return hash((self.start, self.end, self.name, self.field_type_function))
 
     def __repr__(self):
         return "Protocol Label - start: {0} end: {1} name: {2}".format(self.start, self.end, self.name)

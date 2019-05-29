@@ -2,7 +2,9 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.MainController import MainController
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
+from urh.controller.widgets.SignalFrame import SignalFrame
 
 
 class TestAdvancedModulationSettings(QtTestCase):
@@ -15,13 +17,24 @@ class TestAdvancedModulationSettings(QtTestCase):
         self.assertEqual(signal_frame.proto_analyzer.num_messages, 1)
 
     def test_message_length_divisor(self):
+        assert isinstance(self.form, MainController)
+        self.form.ui.actionAuto_detect_new_signals.setChecked(False)
         self.add_signal_to_form("pwm.coco")
-        signal_frame = self.form.signal_tab_controller.signal_frames[0]
+        signal_frame = self.form.signal_tab_controller.signal_frames[0]  # type: SignalFrame
+        signal_frame.ui.spinBoxNoiseTreshold.setValue(0.0525)
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
+        signal_frame.ui.spinBoxCenterOffset.setValue(0.01807)
+        signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
+        signal_frame.ui.spinBoxInfoLen.setValue(2900)
+        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxTolerance.setValue(2)
+        signal_frame.ui.spinBoxTolerance.editingFinished.emit()
+
+
         protocol = signal_frame.proto_analyzer
 
         bits = "1000100010001110100011101000111010001000100011101000111010001110100011101000111010001110111011101"
-        pauses = [77115, 77113, 58221]
+        pauses = [77114, 77112, 58221]
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits, msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i], msg=str(i))

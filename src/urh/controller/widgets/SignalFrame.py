@@ -266,6 +266,8 @@ class SignalFrame(QFrame):
                                                 self.ui.btnCloseSignal, self.ui.lineEditSignalName):
                 w.hide()
 
+        self.adjustSize()
+
     def cancel_filtering(self):
         self.filter_abort_wanted = True
 
@@ -1248,7 +1250,7 @@ class SignalFrame(QFrame):
 
     @pyqtSlot(int)
     def on_message_length_divisor_edited(self, message_length_divisor: int):
-        if self.signal.pause_threshold != message_length_divisor:
+        if self.signal.message_length_divisor != message_length_divisor:
             message_length_divisor_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
                                                                   parameter_name="message_length_divisor",
                                                                   parameter_value=message_length_divisor)

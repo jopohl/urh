@@ -225,27 +225,17 @@ jobs:
       pip install pytest pytest-faulthandler
     displayName: 'Install dependencies'
 
-  - script: python setup.py build_ext --inplace
-    displayName: "Build extensions"
-
   - script: |
-      brew install portaudio hackrf librtlsdr airspy
+      brew install portaudio hackrf librtlsdr airspy libusb
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 
+  - script: python setup.py build_ext --inplace
+    displayName: "Build extensions"
+
   - script: python setup.py bdist_wheel
     displayName: "Build python wheel"
-
-  - script: |
-      cd /tmp
-      wget https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
-      tar xf libusb-1.0.22.tar.bz2
-      cd libusb-1.0.22
-      ./configure
-      make
-      sudo make install
-    displayName: "Install libusb"
 
   - script: python data/pyinstaller_helper.py
     displayName: "Run PyInstaller"

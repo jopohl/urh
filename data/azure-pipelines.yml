@@ -216,6 +216,7 @@ jobs:
       tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
       mkdir /tmp/osx-64
       tar xf osx-64.tar.bz2 -C /tmp/osx-64
+      otool -L /tmp/osx-64/libmirsdrapi-rsp.so
       rm osx-64.tar.bz2
     displayName: "download and unpack SDR drivers"
 
@@ -250,8 +251,6 @@ jobs:
 
   - script: python data/pyinstaller_helper.py
     displayName: "Run PyInstaller"
-
-  - script: otool -L urh/src/urh/dev/native/lib/shared/libmirsdrapi-rsp.so
 
   - script: hdiutil create -volname Universal.Radio.Hacker -srcfolder pyinstaller/urh.app -ov -format UDZO Universal.Radio.Hacker.dmg
     displayName: "Build DMG"

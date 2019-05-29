@@ -251,9 +251,12 @@ jobs:
   - script: python data/pyinstaller_helper.py
     displayName: "Run PyInstaller"
 
+  - script: hdiutil create -volname Universal.Radio.Hacker -srcfolder pyinstaller/urh.app -ov -format UDZO Universal.Radio.Hacker.dmg
+    displayName: "Build DMG"
+
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: dist/
+      pathtoPublish: Universal.Radio.Hacker.dmg
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
 

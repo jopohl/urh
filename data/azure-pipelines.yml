@@ -216,7 +216,6 @@ jobs:
       tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
       mkdir /tmp/osx-64
       tar xf osx-64.tar.bz2 -C /tmp/osx-64
-      otool -L /tmp/osx-64/libmirsdrapi-rsp.so
       rm osx-64.tar.bz2
     displayName: "download and unpack SDR drivers"
 

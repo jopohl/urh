@@ -67,7 +67,7 @@ def set_shared_library_path():
                 libs.insert(0, libs.pop(libs.index(libusb)))
 
             for lib in libs:
-                if any(lib.endswith(ext) for ext in exts):
+                if lib.lower().startswith("lib") and any(ext in lib for ext in exts):
                     lib_path = os.path.join(shared_lib_dir, lib)
                     if os.path.isfile(lib_path):
                         try:

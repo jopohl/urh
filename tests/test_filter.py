@@ -21,7 +21,7 @@ class TestFilter(QtTestCase):
 
         fir_filter = Filter(filter_taps)
 
-        filtered_signal = fir_filter.apply_fir_filter(input_signal)
+        filtered_signal = fir_filter.apply_fir_filter(input_signal.flatten())
         expected_filtered_signal = np.array([0.25, 0.75, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 16.5], dtype=np.complex64)
 
         self.assertTrue(np.array_equal(filtered_signal, expected_filtered_signal))
@@ -54,26 +54,28 @@ class TestFilter(QtTestCase):
         self.sig_frame.ui.spinBoxSelectionEnd.setValue(selection_end)
         self.sig_frame.ui.spinBoxSelectionEnd.editingFinished.emit()
 
-        old_signal = self.sig_frame.signal._fulldata.copy()
+        old_signal = self.sig_frame.signal.iq_array.data.copy()
 
         self.assertFalse(self.sig_frame.undo_stack.canUndo())
         self.sig_frame.ui.btnFilter.click()
         self.assertTrue(self.sig_frame.undo_stack.canUndo())
 
-        filtered_signal = self.sig_frame.signal._fulldata
+        filtered_signal = self.sig_frame.signal.iq_array.data
         self.assertEqual(len(old_signal), len(filtered_signal))
 
-        for i, (old_sample, filtered_sample) in enumerate(zip(old_signal, filtered_signal)):
+        for i in range(0, len(old_signal), 2):
+            old_sample = complex(old_signal[i, 0], old_signal[i, 1])
+            filtered_sample = complex(filtered_signal[i, 0], filtered_signal[i, 1])
             if i in range(selection_start, selection_end):
                 self.assertNotEqual(old_sample, filtered_sample, msg=str(i))
             else:
                 self.assertEqual(old_sample, filtered_sample, msg=str(i))
 
         self.sig_frame.undo_stack.command(0).undo()
-        self.assertTrue(np.array_equal(old_signal, self.sig_frame.signal.data))
+        self.assertTrue(np.array_equal(old_signal, self.sig_frame.signal.iq_array.data))
 
         self.sig_frame.undo_stack.command(0).redo()
-        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.data))
+        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.iq_array.data))
 
     def test_filter_caption(self):
         self.assertIn("moving average", self.sig_frame.ui.btnFilter.text())

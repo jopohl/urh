@@ -66,7 +66,7 @@ class ReceiveDialog(SendRecvDialog):
         self.device = VirtualDevice(self.backend_handler, self.selected_device_name, Mode.receive,
                                     device_ip="192.168.10.2", parent=self)
         self._create_device_connects()
-        self.scene_manager = LiveSceneManager(np.array([]), parent=self)
+        self.scene_manager = LiveSceneManager(np.array([], dtype=self.device.data_type), parent=self)
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -101,7 +101,7 @@ class ReceiveDialog(SendRecvDialog):
 
         initial_name = initial_name.replace(Formatter.local_decimal_seperator(), "_").replace("_000", "")
 
-        filename = FileOperator.save_data_dialog(initial_name + ".complex", data,
+        filename = FileOperator.save_data_dialog(initial_name, data,
                                                  sample_rate=dev.sample_rate, parent=self)
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:

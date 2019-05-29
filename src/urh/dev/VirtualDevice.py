@@ -159,6 +159,13 @@ class VirtualDevice(QObject):
             self.__dev.is_in_spectrum_mode = True
 
     @property
+    def data_type(self):
+        if self.backend == Backends.native:
+            return self.__dev.DATA_TYPE
+        else:
+            return np.float32
+
+    @property
     def has_multi_device_support(self):
         return hasattr(self.__dev, "has_multi_device_support") and self.__dev.has_multi_device_support
 
@@ -560,7 +567,7 @@ class VirtualDevice(QObject):
             if self.backend == Backends.grc:
                 return self.__dev.x, self.__dev.y
             elif self.backend == Backends.native or self.backend == Backends.network:
-                w = np.abs(np.fft.fft(self.__dev.receive_buffer))
+                w = np.abs(np.fft.fft(self.__dev.receive_buffer.as_complex64()))
                 freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
                 idx = np.argsort(freqs)
                 return freqs[idx].astype(np.float32), w[idx].astype(np.float32)

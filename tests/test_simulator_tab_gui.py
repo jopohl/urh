@@ -8,6 +8,8 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
 from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+
+from urh.signalprocessing.IQArray import IQArray
 from urh.util.Logger import logger
 
 from tests.QtTestCase import QtTestCase
@@ -367,7 +369,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(0.5)
-        sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
 
         while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator wait for message 2")
@@ -375,7 +377,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.5)
-        sender.send_raw_data(np.zeros(1000, dtype=np.complex64), 1)
+        sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
         while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for mismatching message")
             time.sleep(1)

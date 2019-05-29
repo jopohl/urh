@@ -16,6 +16,8 @@ class HackRF(Device):
         Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth"
     })
 
+    DATA_TYPE = np.int8
+
     @classmethod
     def get_device_list(cls):
         result = hackrf.get_device_list()
@@ -90,17 +92,12 @@ class HackRF(Device):
         return hackrf.has_multi_device_support()
 
     @staticmethod
-    def unpack_complex(buffer):
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.int8), ('i', np.int8)])
-        result = np.empty(len(unpacked), dtype=np.complex64)
-        result.real = (unpacked['r'] + 0.5) / 127.5
-        result.imag = (unpacked['i'] + 0.5) / 127.5
-        return result
+    def bytes_to_iq(buffer):
+        return np.frombuffer(buffer, dtype=np.int8).reshape((-1, 2), order="C")
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        assert complex_samples.dtype == np.complex64
-        arr = Array("B", 2*len(complex_samples), lock=False)
-        numpy_view = np.frombuffer(arr, dtype=np.int8)
-        numpy_view[:] = (127.5 * ((complex_samples.view(np.float32)) - 0.5 / 127.5)).astype(np.int8)
+    def iq_to_bytes(samples: np.ndarray):
+        arr = Array("B", 2 * len(samples), lock=False)
+        numpy_view = np.frombuffer(arr, dtype=np.uint8)
+        numpy_view[:] = samples.flatten(order="C")
         return arr

@@ -67,19 +67,27 @@ class TestModulatorGUI(QtTestCase):
 
     def test_zoom(self):
         self.dialog.ui.gVModulated.zoom(1.1)
-        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         int(self.dialog.ui.gVCarrier.view_rect().width()))
+        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         [int(self.dialog.ui.gVCarrier.view_rect().width())-1,
+                          int(self.dialog.ui.gVCarrier.view_rect().width()),
+                          int(self.dialog.ui.gVCarrier.view_rect().width()+1)])
 
-        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         int(self.dialog.ui.gVData.view_rect().width()))
+        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         [int(self.dialog.ui.gVData.view_rect().width())-1,
+                          int(self.dialog.ui.gVData.view_rect().width()),
+                          int(self.dialog.ui.gVData.view_rect().width()+1)])
 
         self.dialog.ui.gVModulated.zoom(1.01)
 
-        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         int(self.dialog.ui.gVCarrier.view_rect().width()))
+        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         [int(self.dialog.ui.gVCarrier.view_rect().width())-1,
+                          int(self.dialog.ui.gVCarrier.view_rect().width()),
+                          int(self.dialog.ui.gVCarrier.view_rect().width()+1)])
 
-        self.assertEqual(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         int(self.dialog.ui.gVData.view_rect().width()))
+        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
+                         [int(self.dialog.ui.gVData.view_rect().width())-1,
+                          int(self.dialog.ui.gVData.view_rect().width()),
+                          int(self.dialog.ui.gVData.view_rect().width()+1)])
 
     def test_edit_modulation(self):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")

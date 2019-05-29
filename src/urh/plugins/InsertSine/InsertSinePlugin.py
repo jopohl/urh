@@ -7,6 +7,7 @@ from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
 from PyQt5.QtWidgets import QApplication, QDialog
 
 from urh.plugins.Plugin import SignalEditorPlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.SceneManager import SceneManager
 from urh.util.Formatter import Formatter
 
@@ -61,7 +62,7 @@ class InsertSinePlugin(SignalEditorPlugin):
 
     @property
     def amplitude(self) -> float:
-        return self.__amplitude
+        return self.__amplitude * IQArray.min_max_for_dtype(self.original_data.dtype)[1]
 
     @amplitude.setter
     def amplitude(self, value: float):
@@ -130,13 +131,12 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.__dialog_ui.finished.connect(self.on_dialog_finished)
 
     def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
-        self.create_dialog_connects()
         if sample_rate is not None:
             self.sample_rate = sample_rate
             self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)
 
         if num_samples is not None:
-            self.num_samples = int(num_samples)
+            self.__num_samples = int(num_samples)
             self.dialog_ui.doubleSpinBoxNSamples.setValue(num_samples)
 
         self.original_data = original_data
@@ -144,6 +144,7 @@ class InsertSinePlugin(SignalEditorPlugin):
 
         self.set_time()
         self.draw_sine_wave()
+        self.create_dialog_connects()
 
         return self.dialog_ui
 
@@ -156,7 +157,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         t = np.arange(0, self.num_samples) / self.sample_rate
         arg = ((2 * np.pi * self.frequency * t + self.phase) * 1j).astype(np.complex64)
         self.complex_wave = self.amplitude * np.exp(arg)  # type: np.ndarray
-        self.draw_data = np.insert(self.original_data, self.position, self.complex_wave).imag.astype(np.float32)
+        self.draw_data = np.insert(self.original_data[:, 0], self.position, self.complex_wave.real)
         y, h = self.dialog_ui.graphicsViewSineWave.view_rect().y(), self.dialog_ui.graphicsViewSineWave.view_rect().height()
         self.insert_indicator.setRect(self.position, y - h, self.num_samples, 2 * h + abs(y))
 

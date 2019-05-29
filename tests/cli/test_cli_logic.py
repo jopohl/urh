@@ -1,11 +1,12 @@
 import unittest
 
 from urh.cli import urh_cli
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
-
+import numpy as np
 
 class TestCLILogic(unittest.TestCase):
     def test_cli_modulate_messages(self):
@@ -28,7 +29,7 @@ class TestCLILogic(unittest.TestCase):
         s = Signal("", "", modulation="ASK", sample_rate=2e6)
         s.bit_len = 100
         s.noise_threshold = 0
-        s._fulldata = modulated
+        s.iq_array = modulated
 
         pa = ProtocolAnalyzer(s)
         pa.get_protocol_from_signal()

@@ -1,5 +1,6 @@
 import math
 import time
+import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
@@ -14,6 +15,7 @@ from urh.controller.dialogs.FilterDialog import FilterDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
 from urh.signalprocessing.Filter import Filter, FilterType
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
@@ -142,7 +144,6 @@ class SignalFrame(QFrame):
             self.set_protocol_visibility()
 
             self.ui.chkBoxShowProtocol.setChecked(True)
-            self.set_qad_tooltip(self.signal.noise_threshold)
             self.ui.btnSaveSignal.hide()
 
             self.show_protocol(refresh=False)
@@ -250,7 +251,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
@@ -286,7 +287,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(np.abs(self.signal.data[start:end:step_size]))
+                power = np.mean(self.signal.iq_array.subarray(start,end,step_size).magnitudes_normalized)
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 
@@ -415,17 +416,10 @@ class SignalFrame(QFrame):
             self.save_signal_as()
 
     def save_signal_as(self):
-        if self.signal.filename:
-            initial_name = self.signal.filename
-        else:
-            initial_name = self.signal.name.replace(" ", "-").replace(",", ".").replace(".", "_") + ".complex"
-
-        filename = FileOperator.get_save_file_name(initial_name, wav_only=self.signal.wav_mode)
-        if filename:
-            try:
-                self.signal.save_as(filename)
-            except Exception as e:
-                QMessageBox.critical(self, self.tr("Error saving signal"), e.args[0])
+        try:
+            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
+        except Exception as e:
+            Errors.generic_error("Error saving file", str(e), traceback.format_exc())
 
     def export_demodulated(self):
         try:
@@ -442,8 +436,7 @@ class SignalFrame(QFrame):
                 if filename.endswith(".wav"):
                     data = self.signal.qad.astype(np.float32)
                     data /= np.max(np.abs(data))
-                data = FileOperator.convert_data_to_format(data, filename)
-                FileOperator.save_data(data, filename, self.signal.sample_rate, num_channels=1)
+                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate, num_channels=1)
                 self.unsetCursor()
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
@@ -574,7 +567,8 @@ class SignalFrame(QFrame):
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
         data_min, data_max = self.ui.sliderSpectrogramMin.value(), self.ui.sliderSpectrogramMax.value()
 
-        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.data, window_size=window_size,
+        redraw_needed = self.ui.gvSpectrogram.scene_manager.set_parameters(self.signal.iq_array.data,
+                                                                           window_size=window_size,
                                                                            data_min=data_min, data_max=data_max)
         self.ui.gvSpectrogram.scene_manager.update_scene_rect()
 
@@ -646,14 +640,14 @@ class SignalFrame(QFrame):
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
-        new_thresh = self.signal.calc_noise_threshold(start, end)
+        new_thresh = self.signal.calc_relative_noise_threshold_from_range(start, end)
         self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
     @pyqtSlot()
     def on_noise_threshold_changed(self):
-        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold)
+        self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         minimum = self.signal.noise_min_plot
         maximum = self.signal.noise_max_plot
         if self.ui.cbSignalView.currentIndex() == 0:
@@ -765,7 +759,7 @@ class SignalFrame(QFrame):
     def on_btn_replay_clicked(self):
         project_manager = self.project_manager
         try:
-            dialog = SendDialog(project_manager, modulated_data=self.signal.data, parent=self)
+            dialog = SendDialog(project_manager, modulated_data=self.signal.iq_array, parent=self)
         except OSError as e:
             logger.error(repr(e))
             return
@@ -994,10 +988,7 @@ class SignalFrame(QFrame):
         self.draw_signal(draw_full_signal)
 
         self.__set_samples_in_view()
-
         self.update_number_selected_samples()
-
-        self.set_qad_tooltip(self.signal.noise_threshold)
         self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
@@ -1012,20 +1003,11 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
-        if self.signal is not None and self.signal.noise_threshold != self.ui.spinBoxNoiseTreshold.value():
+        if self.signal is not None and self.signal.noise_threshold_relative != self.ui.spinBoxNoiseTreshold.value():
             noise_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                 parameter_name="noise_threshold",
+                                                 parameter_name="noise_threshold_relative",
                                                  parameter_value=self.ui.spinBoxNoiseTreshold.value())
             self.undo_stack.push(noise_action)
-
-    def set_qad_tooltip(self, noise_threshold):
-        self.ui.cbSignalView.setToolTip(
-            "<html><head/><body><p>Choose the view of your signal: Analog, Demodulated or Spectrogram.</p>"
-            "<p>The quadrature demodulation uses a <b>threshold of magnitude,</b> to <b>supress noise</b>. "
-            "All samples with a magnitude lower than this threshold will be eliminated "
-            "(set to <i>-127</i>) after demodulation.</p>"
-            "<p>Tune this value by selecting a <i>noisy area</i> and mark it as noise using <b>context menu</b>.</p>"
-            "<p>Current noise threshold is: <b>" + str(noise_threshold) + "</b></p></body></html>")
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         if self.signal is None:
@@ -1205,7 +1187,7 @@ class SignalFrame(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=perform_filter, args=(filtered, self.signal.data, f_low, f_high, filter_bw))
+        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 
@@ -1282,6 +1264,6 @@ class SignalFrame(QFrame):
                                                                           include_amplitude=filename.endswith(".fta"))
         except Exception as e:
             logger.exception(e)
-            Errors.generic_error("Failed to export spectrogram", str(e))
+            Errors.generic_error("Failed to export spectrogram", str(e), traceback.format_exc())
         finally:
             QApplication.restoreOverrideCursor()

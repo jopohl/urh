@@ -40,7 +40,7 @@ class SpectrogramTest(unittest.TestCase):
 
     def test_numpy_impl(self):
         sample_rate = 1e6
-        spectrogram = np.fft.fftshift(self.stft(self.signal.data, 2**10, overlap_factor=0.5)) / 1024
+        spectrogram = np.fft.fftshift(self.stft(self.signal.iq_array.data, 2**10, overlap_factor=0.5)) / 1024
 
         ims = 10 * np.log10(spectrogram.real ** 2 + spectrogram.imag ** 2)  # convert amplitudes to decibel
         num_time_bins, num_freq_bins = np.shape(ims)
@@ -53,7 +53,7 @@ class SpectrogramTest(unittest.TestCase):
         plt.ylim(ymin=0, ymax=num_freq_bins)
 
         x_tick_pos = np.linspace(0, num_time_bins - 1, 5, dtype=np.float32)
-        plt.xticks(x_tick_pos, ["%.02f" % l for l in (x_tick_pos * len(self.signal.data) / num_time_bins) / sample_rate])
+        plt.xticks(x_tick_pos, ["%.02f" % l for l in (x_tick_pos * len(self.signal.iq_array.data) / num_time_bins) / sample_rate])
         y_tick_pos = np.linspace(0, num_freq_bins - 1, 10, dtype=np.int16)
         frequencies = np.fft.fftshift(np.fft.fftfreq(num_freq_bins, 1/sample_rate))
         plt.yticks(y_tick_pos, ["%.02f" % frequencies[i] for i in y_tick_pos])

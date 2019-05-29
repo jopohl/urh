@@ -21,7 +21,7 @@ reset_rx = False
 reset_rx_request_received = False
 
 cdef void __rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext):
-    cdef float* data = <float *>malloc(2*numSamples * sizeof(float))
+    cdef short* data = <short *>malloc(2*numSamples * sizeof(short))
 
     cdef unsigned int i = 0
     cdef unsigned int j = 0
@@ -35,14 +35,13 @@ cdef void __rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum
 
     try:
         for i in range(0, numSamples):
-            data[j] = (xi[i] + 0.5) / 32767.5
-            data[j+1] = (xq[i] + 0.5) / 32767.5
+            data[j] = xi[i]
+            data[j+1] = xq[i]
             j += 2
-
 
         gstate = PyGILState_Ensure()
         conn = <object> cbContext
-        conn.send_bytes(<float[:2*numSamples]>data)  # python callback
+        conn.send_bytes(<short[:2*numSamples]>data)  # python callback
         return
     finally:
         PyGILState_Release(gstate)
@@ -89,7 +88,7 @@ cpdef get_devices():
         result = []
 
         for i in range(num_devs):
-            d = {"serial": devs[i].SerNo.decode("utf-8"), "device_ref": devs[i].DevNm.decode("utf-8"),
+            d = {"serial": devs[i].SerNo.decode("iso-8859-1"), "device_ref": devs[i].DevNm.decode("iso-8859-1"),
                  "hw_version": devs[i].hwVer, "available": devs[i].devAvail}
             result.append(d)
 

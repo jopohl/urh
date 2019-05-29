@@ -8,14 +8,14 @@ from urh.util.RingBuffer import RingBuffer
 class SendConfig(object):
     def __init__(self, send_buffer, current_sent_index: Value, current_sending_repeat: Value,
                  total_samples: int, sending_repeats: int, continuous: bool = False,
-                 pack_complex_method: callable = None, continuous_send_ring_buffer: RingBuffer = None):
+                 iq_to_bytes_method: callable = None, continuous_send_ring_buffer: RingBuffer = None):
         self.send_buffer = send_buffer
         self.current_sent_index = current_sent_index
         self.current_sending_repeat = current_sending_repeat
         self.total_samples = total_samples
         self.sending_repeats = sending_repeats
         self.continuous = continuous
-        self.pack_complex_method = pack_complex_method
+        self.iq_to_bytes_method = iq_to_bytes_method
         self.continuous_send_ring_buffer = continuous_send_ring_buffer
 
     def get_data_to_send(self, buffer_length: int):
@@ -24,7 +24,7 @@ class SendConfig(object):
                 return np.zeros(1, dtype=self.send_buffer._type_._type_)
 
             if self.continuous:
-                result = self.pack_complex_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
+                result = self.iq_to_bytes_method(self.continuous_send_ring_buffer.pop(buffer_length // 2))
                 if len(result) == 0:
                     # avoid empty arrays which will not work with cython API
                     return np.zeros(1, dtype=self.send_buffer._type_._type_)

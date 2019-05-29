@@ -4,6 +4,7 @@ import numpy as np
 from PyQt5.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.Filter import Filter
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
@@ -54,8 +55,8 @@ class EditSignalAction(QUndoCommand):
 
         if self.mode == EditAction.crop:
             self.setText("Crop Signal")
-            self.pre_crop_data = self.signal._fulldata[0:self.start]
-            self.post_crop_data = self.signal._fulldata[self.end:]
+            self.pre_crop_data = self.signal.iq_array[0:self.start]
+            self.post_crop_data = self.signal.iq_array[self.end:]
             if self.cache_qad:
                 self.pre_crop_qad = self.signal._qad[0:self.start]
                 self.post_crop_qad = self.signal._qad[self.end:]
@@ -64,12 +65,12 @@ class EditSignalAction(QUndoCommand):
                 self.setText("Mute Signal")
             elif self.mode == EditAction.filter:
                 self.setText("Filter Signal")
-            self.orig_data_part = copy.copy(self.signal._fulldata[self.start:self.end])
+            self.orig_data_part = copy.copy(self.signal.iq_array[self.start:self.end])
             if self.cache_qad and self.signal._qad is not None:
                 self.orig_qad_part = copy.copy(self.signal._qad[self.start:self.end])
         elif self.mode == EditAction.delete:
             self.setText("Delete Range")
-            self.orig_data_part = self.signal._fulldata[self.start:self.end]
+            self.orig_data_part = self.signal.iq_array[self.start:self.end]
             if self.cache_qad and self.signal._qad is not None:
                 self.orig_qad_part = self.signal._qad[self.start:self.end]
         elif self.mode == EditAction.paste:
@@ -137,7 +138,7 @@ class EditSignalAction(QUndoCommand):
 
     def undo(self):
         if self.mode == EditAction.delete:
-            self.signal._fulldata = np.insert(self.signal._fulldata, self.start, self.orig_data_part)
+            self.signal.iq_array.insert_subarray(self.start, self.orig_data_part)
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
                     self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
@@ -146,7 +147,7 @@ class EditSignalAction(QUndoCommand):
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.mute or self.mode == EditAction.filter:
-            self.signal._fulldata[self.start:self.end] = self.orig_data_part
+            self.signal.iq_array[self.start:self.end] = self.orig_data_part
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
                     self.signal._qad[self.start:self.end] = self.orig_qad_part
@@ -155,7 +156,9 @@ class EditSignalAction(QUndoCommand):
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.crop:
-            self.signal._fulldata = np.concatenate((self.pre_crop_data, self.signal._fulldata, self.post_crop_data))
+            self.signal.iq_array = IQArray(
+                np.concatenate((self.pre_crop_data, self.signal.iq_array.data, self.post_crop_data))
+            )
             if self.cache_qad:
                 try:
                     self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))

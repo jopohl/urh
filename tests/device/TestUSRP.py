@@ -45,7 +45,7 @@ class TestUSRP(unittest.TestCase):
             #print(received_bytes)
             print(i)
             buffer.extend(received_bytes)
-            #print(USRP.unpack_complex(received_bytes, len(received_bytes) // 8))
+            #print(USRP.bytes_to_iq(received_bytes, len(received_bytes) // 8))
 
         f = open("/tmp/test.complex", "wb")
         f.write(buffer)

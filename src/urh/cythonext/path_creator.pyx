@@ -10,17 +10,24 @@ from PyQt5.QtGui import QPainterPath
 # np.import_array()
 
 from cython.parallel import prange
+from urh.cythonext.util cimport iq
 
 from urh import constants
 import math
+import cython
 
-cpdef create_path(float[:] samples, long long start, long long end, list subpath_ranges=None):
-    cdef float[:] values
+cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ranges=None):
+    cdef iq[:] values
     cdef long long[::1] sample_rng
     cdef np.int64_t[::1] x
-    cdef float sample, minimum, maximum, tmp, scale_factor
+    cdef iq sample, minimum, maximum, tmp
+    cdef float scale_factor
     cdef long long i,j,index, chunk_end, num_samples, pixels_on_path, samples_per_pixel
     num_samples = end - start
+
+    cdef dict type_lookup = {"char[:]": np.int8, "unsigned char[:]": np.uint8,
+                             "short[:]": np.int16, "unsigned short[:]": np.uint16,
+                             "float[:]": np.float32, "double[:]": np.float64}
 
     subpath_ranges = [(start, end)] if subpath_ranges is None else subpath_ranges
     pixels_on_path = constants.PIXELS_PER_PATH
@@ -33,7 +40,7 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
 
     if samples_per_pixel > 1:
         sample_rng = np.arange(start, end, samples_per_pixel, dtype=np.int64)
-        values = np.zeros(2 * len(sample_rng), dtype=np.float32, order="C")
+        values = np.zeros(2 * len(sample_rng), dtype=type_lookup[cython.typeof(samples)], order="C")
         scale_factor = num_samples / (2.0 * len(sample_rng))  # 2.0 is important to make it a float division!
         for i in prange(start, end, samples_per_pixel, nogil=True, schedule='static', num_threads=num_threads):
             chunk_end = i + samples_per_pixel
@@ -75,10 +82,10 @@ cpdef create_path(float[:] samples, long long start, long long end, list subpath
     return result
 
 
-cpdef create_live_path(float[:] samples, unsigned int start, unsigned int end):
+cpdef create_live_path(iq[:] samples, unsigned int start, unsigned int end):
     return array_to_QPath(np.arange(start, end).astype(np.int64), samples)
 
-cpdef array_to_QPath(np.int64_t[:] x, float[:] y):
+cpdef array_to_QPath(np.int64_t[:] x, y):
     """
     Convert an array of x,y coordinates to QPainterPath as efficiently as possible.
 

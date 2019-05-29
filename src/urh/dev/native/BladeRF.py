@@ -20,6 +20,8 @@ class BladeRF(Device):
         Device.Command.SET_CHANNEL_INDEX.name: "set_channel"
     })
 
+    DATA_TYPE = np.int16
+
     @classmethod
     def get_device_list(cls):
         return bladerf.get_device_list()
@@ -97,16 +99,12 @@ class BladeRF(Device):
                             ("identifier", self.device_serial)])
 
     @staticmethod
-    def unpack_complex(buffer):
-        unpacked = np.frombuffer(buffer, dtype=np.int16)
-        result = np.empty(len(unpacked)//2, dtype=np.complex64)
-        result.real = unpacked[::2] / 2048
-        result.imag = unpacked[1::2] / 2048
-        return result
+    def bytes_to_iq(buffer) -> np.ndarray:
+        return np.frombuffer(buffer, dtype=np.int16).reshape((-1, 2), order="C") << 4
 
     @staticmethod
-    def pack_complex(complex_samples: np.ndarray):
-        arr = Array("h", 2 * len(complex_samples), lock=False)
+    def iq_to_bytes(iq_samples: np.ndarray):
+        arr = Array("h", 2 * len(iq_samples), lock=False)
         numpy_view = np.frombuffer(arr, dtype=np.int16)
-        numpy_view[:] = (2048 * complex_samples.view(np.float32)).astype(np.int16)
+        numpy_view[:] = iq_samples.flatten(order="C") >> 4
         return arr

@@ -14,6 +14,8 @@ class RTLSDRTCP(Device):
                       "testMode", "agcMode", "directSampling", "offsetTuning", "rtlXtalFreq", "tunerXtalFreq",
                       "gainByIndex", "bandwidth", "biasTee"]
 
+    DATA_TYPE = np.uint8
+
     @staticmethod
     def receive_sync(data_connection, ctrl_connection, device_number: int, center_freq: int, sample_rate: int,
                      bandwidth: int, gain: int, freq_correction: int, direct_sampling_mode: int, device_ip: str,
@@ -186,14 +188,5 @@ class RTLSDRTCP(Device):
             return b''
 
     @staticmethod
-    def unpack_complex(buffer):
-        """
-        The raw, captured IQ data is 8 bit unsigned data.
-
-        :return:
-        """
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        result = np.empty(len(unpacked), dtype=np.complex64)
-        result.real = (unpacked['r'] / 127.5) - 1.0
-        result.imag = (unpacked['i'] / 127.5) - 1.0
-        return result
+    def bytes_to_iq(buffer):
+        return np.subtract(np.frombuffer(buffer, dtype=np.int8), 127).reshape((-1, 2), order="C")

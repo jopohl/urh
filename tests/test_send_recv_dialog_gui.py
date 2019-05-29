@@ -8,6 +8,8 @@ from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
+
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.QtTestCase import QtTestCase
@@ -70,7 +72,7 @@ class TestSendRecvDialog(QtTestCase):
         return receive_dialog
 
     def __get_send_dialog(self):
-        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.data,
+        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.iq_array,
                                  modulation_msg_indices=None,
                                  testing_mode=True, parent=self.form)
         if self.SHOW:
@@ -150,7 +152,7 @@ class TestSendRecvDialog(QtTestCase):
         QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         self.assertEqual(receive_dialog.device.current_index, 3)
-        self.assertTrue(np.array_equal(receive_dialog.device.data[:3], data))
+        self.assertTrue(np.array_equal(receive_dialog.device.data[:3].flatten(), data.view(np.float32)))
 
         receive_dialog.ui.btnStop.click()
         receive_dialog.ui.btnClear.click()
@@ -217,7 +219,7 @@ class TestSendRecvDialog(QtTestCase):
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
-                                       self.signal.data))
+                                       self.signal.iq_array.data))
 
         self.assertEqual(send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished")
         self.assertFalse(send_dialog.ui.btnStop.isEnabled())
@@ -234,7 +236,7 @@ class TestSendRecvDialog(QtTestCase):
         port = self.get_free_port()
 
         gframe = self.form.generator_tab_controller
-        expected = np.zeros(gframe.total_modulated_samples, dtype=np.complex64)
+        expected = IQArray(None, np.float32, gframe.total_modulated_samples)
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
         buffer = Array("f", 4 * len(expected))
@@ -257,9 +259,12 @@ class TestSendRecvDialog(QtTestCase):
         # CI sometimes swallows a sample
         self.assertGreaterEqual(current_index.value, len(expected) - 1)
 
-        buffer = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
+        buffer = np.frombuffer(buffer.get_obj(), dtype=np.float32)
+        buffer = buffer.reshape((len(buffer) // 2, 2))
+
         for i in range(len(expected)):
-            self.assertEqual(buffer[i], expected[i], msg=str(i))
+            self.assertEqual(buffer[i, 0], expected[i, 0], msg=str(i))
+            self.assertEqual(buffer[i, 1], expected[i, 1], msg=str(i))
 
         continuous_send_dialog.ui.btnStop.click()
         continuous_send_dialog.ui.btnClear.click()

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
+    <width>814</width>
     <height>822</height>
    </rect>
   </property>
@@ -21,58 +21,95 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
        <string>Generation</string>
       </attribute>
-      <widget class="QWidget" name="layoutWidget">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>20</y>
-         <width>324</width>
-         <height>102</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelFuzzingSamples">
-          <property name="text">
-           <string>Samples</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBoxDefaultFuzzingPause">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you disable the default pause, the pause of the fuzzed message will be used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="text">
-           <string>Use a default pause for fuzzed messages</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="KillerDoubleSpinBox" name="doubleSpinBoxFuzzingPause">
-          <property name="decimals">
-           <number>3</number>
-          </property>
-          <property name="maximum">
-           <double>999999999.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBoxMultipleModulations">
-          <property name="text">
-           <string>Enable modulation profiles</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="1">
+          <widget class="QLabel" name="labelFuzzingSamples">
+           <property name="text">
+            <string>Samples</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBoxDefaultFuzzingPause">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you disable the default pause, the pause of the fuzzed message will be used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Use a default pause for fuzzed messages</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="KillerDoubleSpinBox" name="doubleSpinBoxFuzzingPause">
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBoxMultipleModulations">
+           <property name="text">
+            <string>Enable modulation profiles</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxModulationAccuracy">
+         <property name="title">
+          <string>Modulation Accuracy</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QRadioButton" name="radioButtonLowModulationAccuracy">
+            <property name="text">
+             <string>Low (2x8 bit) - Recommended for HackRF and RTL-SDR</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonMediumModulationAccuracy">
+            <property name="text">
+             <string>Medium (2x16 bit) - Recommended for BladeRF, PlutoSDR and SDRPlay</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonHighModulationAccuracy">
+            <property name="text">
+             <string>High (2x32 bit) - Recommended if you are not sure what to choose</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>500</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tabView">
       <attribute name="title">
@@ -244,8 +281,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>723</width>
-               <height>404</height>
+               <width>762</width>
+               <height>397</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>

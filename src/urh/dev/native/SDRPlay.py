@@ -16,6 +16,8 @@ class SDRPlay(Device):
     DEVICE_METHODS[Device.Command.SET_IF_GAIN.name]["rx"] = "set_if_gain"
     DEVICE_METHODS[Device.Command.SET_ANTENNA_INDEX.name] = "set_antenna"
 
+    DATA_TYPE = np.int16
+
     def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
                  resume_on_full_receive_buffer=False):
         super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
@@ -115,11 +117,5 @@ class SDRPlay(Device):
             ctrl_connection.send("RELEASE DEVICE:" + str(ret))
 
     @staticmethod
-    def unpack_complex(buffer):
-        """
-        Conversion from short to float happens in c callback
-        :param buffer:
-        :param nvalues:
-        :return:
-        """
-        return np.frombuffer(buffer, dtype=np.complex64)
+    def bytes_to_iq(buffer):
+        return np.frombuffer(buffer, dtype=np.int16).reshape((-1, 2), order="C")

@@ -8,19 +8,20 @@ import numpy as np
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 from libc.stdlib cimport malloc, calloc, free
-cimport cython
 from cython.parallel import prange
 from libc.math cimport log10,pow
 from libcpp cimport bool
 
-cpdef tuple minmax(float[:] arr):
+from urh.cythonext.util cimport iq
+
+cpdef tuple minmax(iq[:] arr):
     cdef long long i, ns = len(arr)
     if ns == 0:
-        return 0,0
+        return 0, 0
 
-    cdef float maximum = arr[0]
-    cdef float minimum = arr[0]
-    cdef float e
+    cdef iq maximum = arr[0]
+    cdef iq minimum = arr[0]
+    cdef iq e
 
     for i in range(1, ns):
         e = arr[i]

@@ -1,3 +1,4 @@
+from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.SceneManager import SceneManager
 
 
@@ -9,8 +10,7 @@ class SniffSceneManager(SceneManager):
         self.__end = 0
         self.window_length = window_length
 
-        self.minimum = -1
-        self.maximum = 1
+        self.minimum, self.maximum = IQArray.min_max_for_dtype(data_array.dtype)
 
     @property
     def plot_data(self):

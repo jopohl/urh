@@ -9,9 +9,8 @@ from PyQt5.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
 from urh.ainterpretation import AutoInterpretation
-
-from urh import constants
 from urh.signalprocessing.Filter import Filter
+from urh.signalprocessing.IQArray import IQArray
 from urh.util import FileOperator
 from urh.util.Logger import logger
 
@@ -35,7 +34,7 @@ class Signal(QObject):
     protocol_needs_update = pyqtSignal()
     data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
-    def __init__(self, filename: str, name: str, modulation: str = None, sample_rate: float = 1e6, parent=None):
+    def __init__(self, filename: str, name="Signal", modulation: str = None, sample_rate: float = 1e6, parent=None):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
@@ -68,26 +67,12 @@ class Signal(QObject):
                 self.__load_complex_file(filename)
 
             self.filename = filename
-            self.noise_threshold = AutoInterpretation.detect_noise_level(np.abs(self.data))
+            self.noise_threshold = AutoInterpretation.detect_noise_level(self.iq_array.magnitudes)
         else:
             self.filename = ""
 
     def __load_complex_file(self, filename: str):
-        if filename.endswith(".complex16u") or filename.endswith(".cu8"):
-            # two 8 bit unsigned integers
-            raw = np.fromfile(filename, dtype=[('r', np.uint8), ('i', np.uint8)])
-            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-            self._fulldata.real = (raw['r'] / 127.5) - 1.0
-            self._fulldata.imag = (raw['i'] / 127.5) - 1.0
-        elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
-            # two 8 bit signed integers
-            raw = np.fromfile(filename, dtype=[('r', np.int8), ('i', np.int8)])
-            self._fulldata = np.empty(raw.shape[0], dtype=np.complex64)
-            self._fulldata.real = (raw['r'] + 0.5) / 127.5
-            self._fulldata.imag = (raw['i'] + 0.5) / 127.5
-        else:
-            # Uncompressed
-            self._fulldata = np.fromfile(filename, dtype=np.complex64)
+        self.iq_array = IQArray.from_file(filename)
 
     def __load_wav_file(self, filename: str):
         wav = wave.open(filename, "r")
@@ -117,13 +102,12 @@ class Signal(QObject):
         else:
             data = np.frombuffer(byte_frames, dtype=params["fmt"])
 
+        self.iq_array = IQArray(None, np.float32, n=num_frames)
         if num_channels == 1:
-            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
-            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
         elif num_channels == 2:
-            self._fulldata = np.zeros(num_frames, dtype=np.complex64, order="C")
-            self._fulldata.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
-            self._fulldata.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
+            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
+            self.iq_array.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
         else:
             raise ValueError("Can't handle {0} channels. Only 1 and 2 are supported.".format(num_channels))
 
@@ -136,7 +120,7 @@ class Signal(QObject):
         members = obj.getmembers()
         obj.extract(members[0], QDir.tempPath())
         extracted_filename = os.path.join(QDir.tempPath(), obj.getnames()[0])
-        self._fulldata = np.fromfile(extracted_filename, dtype=np.complex64)
+        self.__load_complex_file(extracted_filename)
         os.remove(extracted_filename)
 
     @property
@@ -261,7 +245,7 @@ class Signal(QObject):
 
     @property
     def num_samples(self):
-        return len(self.data)
+        return self.iq_array.num_samples
 
     @property
     def noise_threshold(self):
@@ -280,6 +264,14 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
+    def noise_threshold_relative(self):
+        return self.noise_threshold / (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+
+    @noise_threshold_relative.setter
+    def noise_threshold_relative(self, value: float):
+        self.noise_threshold = value * (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+
+    @property
     def qad(self):
         if self._qad is None:
             self._qad = self.quad_demod()
@@ -287,19 +279,11 @@ class Signal(QObject):
         return self._qad
 
     @property
-    def data(self) -> np.ndarray:
-        return self._fulldata
-
-    @property
     def real_plot_data(self):
         try:
-            return self.data.real
+            return self.iq_array.real
         except AttributeError:
             return np.zeros(0, dtype=np.float32)
-
-    @property
-    def wave_data(self):
-        return (self.data.view(np.float32) * 32767).astype(np.int16)
 
     @property
     def changed(self) -> bool:
@@ -339,9 +323,9 @@ class Signal(QObject):
         return signal_functions.find_signal_end(self.qad, self.modulation_type)
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.data, self.noise_threshold, self.modulation_type)
+        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
 
-    def calc_noise_threshold(self, noise_start: int, noise_end: int):
+    def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4
         noise_start, noise_end = int(noise_start), int(noise_end)
 
@@ -349,20 +333,19 @@ class Signal(QObject):
             noise_start, noise_end = noise_end, noise_start
 
         try:
-            magnitudes = np.absolute(self.data[noise_start:noise_end])
-            maximum = np.max(magnitudes)
+            maximum = np.max(self.iq_array.subarray(noise_start, noise_end).magnitudes_normalized)
             return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
         except ValueError:
             logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
-            return self.noise_threshold
+            return self.noise_threshold_relative
 
     def create_new(self, start=0, end=0, new_data=None):
         new_signal = Signal("", "New " + self.name)
 
         if new_data is None:
-            new_signal._fulldata = self.data[start:end]
+            new_signal.iq_array = IQArray(self.iq_array[start:end])
         else:
-            new_signal._fulldata = new_data
+            new_signal.iq_array = IQArray(new_data)
 
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
@@ -378,7 +361,7 @@ class Signal(QObject):
                   else "OOK" if self.__modulation_order == 2 and self.__modulation_type == 0
                   else self.modulation_type_str}
 
-        estimated_params = AutoInterpretation.estimate(self.data, **kwargs)
+        estimated_params = AutoInterpretation.estimate(self.iq_array, **kwargs)
         if estimated_params is None:
             return False
 
@@ -418,7 +401,7 @@ class Signal(QObject):
         """
         # ensure power of 2 for faster fft
         length = 2 ** int(math.log2(end - start))
-        data = self.data[start:start + length]
+        data = self.iq_array.as_complex64()[start:start + length]
 
         try:
             w = np.fft.fft(data)
@@ -433,7 +416,7 @@ class Signal(QObject):
         return freq_in_hertz
 
     def eliminate(self):
-        self._fulldata = None
+        self.iq_array = None
         self._qad = None
         self.parameter_cache.clear()
 
@@ -441,7 +424,7 @@ class Signal(QObject):
         self.__modulation_type = mod_type
 
     def insert_data(self, index: int, data: np.ndarray):
-        self._fulldata = np.insert(self._fulldata, index, data)
+        self.iq_array.insert_subarray(index, data)
         self._qad = None
 
         self.__invalidate_after_edit()
@@ -451,7 +434,7 @@ class Signal(QObject):
         mask[start:end] = False
 
         try:
-            self._fulldata = self._fulldata[mask]
+            self.iq_array.apply_mask(mask)
             self._qad = self._qad[mask] if self._qad is not None else None
         except IndexError as e:
             logger.warning("Could not delete data: " + str(e))
@@ -459,21 +442,21 @@ class Signal(QObject):
         self.__invalidate_after_edit()
 
     def mute_range(self, start: int, end: int):
-        self._fulldata[start:end] = 0
+        self.iq_array[start:end] = 0
         if self._qad is not None:
             self._qad[start:end] = 0
 
         self.__invalidate_after_edit()
 
     def crop_to_range(self, start: int, end: int):
-        self._fulldata = self._fulldata[start:end]
+        self.iq_array = IQArray(self.iq_array[start:end])
         self._qad = self._qad[start:end] if self._qad is not None else None
 
         self.__invalidate_after_edit()
 
     def filter_range(self, start: int, end: int, fir_filter: Filter):
-        self._fulldata[start:end] = fir_filter.work(self._fulldata[start:end])
-        self._qad[start:end] = signal_functions.afp_demod(self.data[start:end],
+        self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
+        self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
                                                           self.noise_threshold, self.modulation_type)
         self.__invalidate_after_edit()
 
@@ -486,6 +469,6 @@ class Signal(QObject):
     @staticmethod
     def from_samples(samples: np.ndarray, name: str, sample_rate: float):
         signal = Signal("", name, sample_rate=sample_rate)
-        signal._fulldata = samples
+        signal.iq_array = IQArray(samples)
 
         return signal

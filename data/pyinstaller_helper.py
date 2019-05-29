@@ -39,7 +39,11 @@ if __name__ == '__main__':
         cmd.append("--exclude-module={}".format(exclude))
 
     urh_path = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
-    cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
+
+    if sys.platform == "darwin":
+        cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.icns")))
+    else:
+        cmd.append('--icon="{}"'.format(os.path.join(urh_path, "data/icons/appicon.ico")))
 
     cmd.extend(["--distpath", "./pyinstaller"])
 

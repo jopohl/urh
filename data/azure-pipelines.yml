@@ -214,6 +214,8 @@ jobs:
       wget https://dl.dropboxusercontent.com/s/1kuu0nxj3wsj5ob/osx-64.tar.bz2
       mkdir src/urh/dev/native/lib/shared
       tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
+      mkdir /tmp/osx-64
+      tar xf osx-64.tar.bz2 -C /tmp/osx-64
       rm osx-64.tar.bz2
     displayName: "download and unpack SDR drivers"
 
@@ -227,7 +229,7 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      brew install portaudio hackrf librtlsdr airspy
+      brew install portaudio hackrf librtlsdr airspy libusb
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"

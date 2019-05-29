@@ -67,8 +67,10 @@ def set_shared_library_path():
                 libs.insert(0, libs.pop(libs.index(libusb)))
 
             for lib in libs:
+                print("1", lib)
                 if lib.lower().startswith("lib") and any(ext in lib for ext in exts):
                     lib_path = os.path.join(shared_lib_dir, lib)
+                    print("2", lib_path)
                     if os.path.isfile(lib_path):
                         try:
                             ctypes.cdll.LoadLibrary(lib_path)

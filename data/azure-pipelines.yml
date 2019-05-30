@@ -254,7 +254,8 @@ jobs:
   - script: |
       hdiutil create -volname Universal.Radio.Hacker \
                      -srcfolder pyinstaller/urh.app \
-                    -ov -format UDZO Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
+                     -ov -format UDZO \
+                     Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
     displayName: "Build DMG"
 
   - task: PublishBuildArtifacts@1

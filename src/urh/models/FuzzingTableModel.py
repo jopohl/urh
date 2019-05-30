@@ -14,7 +14,7 @@ class FuzzingTableModel(QAbstractTableModel):
         self.col_count = 0
         self.row_count = 0
         self.proto_view = proto_view
-        self.data = None
+        self.fuzzing_data = None
 
         self.remove_duplicates = True
 
@@ -26,7 +26,7 @@ class FuzzingTableModel(QAbstractTableModel):
                 add_seen = seen.add
                 self.fuzzing_label.fuzz_values = [l for l in seq if not (l in seen or add_seen(l))]
 
-            self.data = self.fuzzing_label.fuzz_values
+            self.fuzzing_data = self.fuzzing_label.fuzz_values
             if self.proto_view == 0:
                 self.col_count = len(self.fuzzing_label.fuzz_values[0])
             elif self.proto_view == 1:
@@ -37,7 +37,7 @@ class FuzzingTableModel(QAbstractTableModel):
         else:
             self.col_count = 0
             self.row_count = 0
-            self.data = None
+            self.fuzzing_data = None
 
         self.beginResetModel()
         self.endResetModel()
@@ -52,15 +52,15 @@ class FuzzingTableModel(QAbstractTableModel):
         i = index.row()
         j = index.column()
         if role == Qt.DisplayRole:
-            if self.data is None:
+            if self.fuzzing_data is None:
                 return None
             else:
                 if self.proto_view == 0:
-                    return self.data[i][j]
+                    return self.fuzzing_data[i][j]
                 elif self.proto_view == 1:
-                    return "{0:x}".format(int(self.data[i][4 * j:4 * (j + 1)], 2))
+                    return "{0:x}".format(int(self.fuzzing_data[i][4 * j:4 * (j + 1)], 2))
                 elif self.proto_view == 2:
-                    return chr(int(self.data[i][8 * j:8 * (j + 1)], 2))
+                    return chr(int(self.fuzzing_data[i][8 * j:8 * (j + 1)], 2))
 
         elif role == Qt.FontRole:
             if i == 0:
@@ -73,19 +73,19 @@ class FuzzingTableModel(QAbstractTableModel):
         j = index.column()
         hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
         if self.proto_view == 0 and value in ("0", "1"):
-            l = list(self.data[i])
+            l = list(self.fuzzing_data[i])
             l[j] = value
-            self.data[i] = ''.join(l)
+            self.fuzzing_data[i] = ''.join(l)
             self.update()
         elif self.proto_view == 1 and value in hex_chars:
-            l = list(self.data[i])
+            l = list(self.fuzzing_data[i])
             l[4*j : 4 * (j + 1)] = "{0:04b}".format(int(value, 16))
-            self.data[i] = ''.join(l)
+            self.fuzzing_data[i] = ''.join(l)
             self.update()
         elif self.proto_view == 2 and len(value) == 1:
-            l = list(self.data[i])
+            l = list(self.fuzzing_data[i])
             l[8*j : 8 * (j + 1)] = "{0:08b}".format(ord(value))
-            self.data[i] = ''.join(l)
+            self.fuzzing_data[i] = ''.join(l)
             self.update()
 
         return True

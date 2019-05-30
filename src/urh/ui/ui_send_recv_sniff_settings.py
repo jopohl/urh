@@ -2,6 +2,7 @@
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
         SniffSettings.setObjectName("SniffSettings")
@@ -200,5 +201,6 @@ class Ui_SniffSettings(object):
         self.label_sniff_OutputFile.setText(QtWidgets.QApplication.translate("SniffSettings", "Write bitstream to file:", None, -1))
         self.lineEdit_sniff_OutputFile.setPlaceholderText(QtWidgets.QApplication.translate("SniffSettings", "None", None, -1))
         self.checkBoxAutoCenter.setText(QtWidgets.QApplication.translate("SniffSettings", "Automatic", None, -1))
+
 
 from . import urh_rc

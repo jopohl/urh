@@ -2,6 +2,7 @@
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+
 class Ui_FormDeviceSettings(object):
     def setupUi(self, FormDeviceSettings):
         FormDeviceSettings.setObjectName("FormDeviceSettings")
@@ -299,6 +300,7 @@ class Ui_FormDeviceSettings(object):
         self.labelDCCorrection.setText(QtWidgets.QApplication.translate("FormDeviceSettings", "DC correction:", None, -1))
         self.checkBoxDCCorrection.setToolTip(QtWidgets.QApplication.translate("FormDeviceSettings", "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero.", None, -1))
         self.checkBoxDCCorrection.setText(QtWidgets.QApplication.translate("FormDeviceSettings", "Apply DC correction", None, -1))
+
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from . import urh_rc

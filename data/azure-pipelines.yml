@@ -23,6 +23,11 @@ jobs:
       architecture: 'x64'
 
   - script: |
+      apt-get install -y software-properties-common
+      add-apt-repository -y ppa:thopiekar/pyside-git
+      apt-get update
+      apt-get install python3-pyside2
+      apt-get install -y software-properties-common
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb

@@ -201,7 +201,7 @@ class ProtocolAnalyzer(object):
             if message.participant:
                 cur_str += '</span>'
 
-            #cur_str += message.get_pause_str(sample_rate=srate)
+            cur_str += message.get_pause_str(sample_rate=srate)
             result.append(cur_str)
 
         return "<br>".join(result)

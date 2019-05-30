@@ -187,12 +187,12 @@ class ProtocolAnalyzer(object):
         result = []
         for message in self.messages:
             cur_str = ""
-            if message.participant:
-                color = constants.PARTICIPANT_COLORS[message.participant.color_index]
-                red, green, blue = color.red(), color.green(), color.blue()
-                fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
-                cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue,
-                                                                                                  fgcolor)
+            # if message.participant:
+            #     color = constants.PARTICIPANT_COLORS[message.participant.color_index]
+            #     red, green, blue = color.red(), color.green(), color.blue()
+            #     fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
+            #     cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue,
+            #                                                                                       fgcolor)
 
                 # cur_str += '<span style="color: rgb({0},{1},{2})">'.format(red, green, blue)
 

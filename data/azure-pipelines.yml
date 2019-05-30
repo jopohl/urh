@@ -255,12 +255,12 @@ jobs:
       hdiutil create -volname Universal.Radio.Hacker \
                      -srcfolder pyinstaller/urh.app \
                      -ov -format UDZO \
-                     Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
+                     $(Build.ArtifactStagingDirectory)/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
     displayName: "Build DMG"
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: "*.dmg"
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
 

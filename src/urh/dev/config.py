@@ -16,9 +16,9 @@ DEVICE_CONFIG = OrderedDict()
 
 dev_range = namedtuple("dev_range", ["start", "stop", "step"])
 
-K = 10 ** 3
-M = 10 ** 6
-G = 10 ** 9
+K = 1e3
+M = 1e6
+G = 1e9
 
 DEVICE_CONFIG["PlutoSDR"] = {
     "center_freq": dev_range(start=70 * M, stop=6 * G, step=1),

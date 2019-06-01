@@ -4,8 +4,8 @@ import sys
 import tempfile
 
 from urh.constants import color
-TMP = "/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
 
+TMP = "/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
 
 LOG_LEVEL_PATH = os.path.join(TMP, "urh_log_level")
 
@@ -40,6 +40,7 @@ if hasattr(sys, "frozen"):
         logfile_name = os.path.join(TMP, "urh.log")
         # Add the log message handler to the logger
         import logging.handlers
+
         log_file_handler = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=2e6, backupCount=5)
 
 logging.basicConfig(**logger_conf)

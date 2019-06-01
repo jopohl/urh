@@ -92,12 +92,7 @@ sudo pip3 install urh
 If you use docker you can also run the official URH docker image available [here](https://hub.docker.com/r/jopohl/urh/).
 
 ## Mac OS X
-1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 
-   _If you experience issues with preinstalled Python, make sure you update to a recent version using the given link._
-2. (Optional) Install desired native libs e.g. ``` brew install librtlsdr ``` for 
-corresponding native device support.
-3. In a terminal, type: ``` pip3 install urh ```.
-4. Type ``` urh ``` in a terminal to get it started.
+Use the DMG available [here](https://github.com/jopohl/urh/releases).
 
 ## Update your installation
 ### Updating with pip

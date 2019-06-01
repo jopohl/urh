@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 
 from urh.ainterpretation import AutoInterpretation
@@ -10,6 +11,9 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
     SIGNALPATH = "~/GIT/publications/ainterpretation/experiments/signals/"
 
     def get_path(self, signalname):
+        if sys.platform == "win32":
+            return None
+
         path = os.path.join(os.path.expanduser(self.SIGNALPATH), signalname)
         if os.path.exists(path):
             return path

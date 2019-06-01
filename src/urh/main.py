@@ -158,10 +158,7 @@ def main():
     # allow usage of prange (OpenMP) in Processes
     multiprocessing.set_start_method("spawn")
 
-    if sys.platform == "darwin":
-        menu_bar = main_window.menuBar()
-        menu_bar.setNativeMenuBar(False)
-    elif sys.platform == "win32":
+    if sys.platform == "win32":
         # Ensure we get the app icon in windows taskbar
         import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")

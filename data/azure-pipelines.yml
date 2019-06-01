@@ -272,9 +272,17 @@ jobs:
       action: 'edit'
       tag: $(Build.SourceBranchName)
       repositoryName: jopohl/urh
-      assets: 'dist/*.dmg'
+      assets: '$(Build.ArtifactStagingDirectory)/*.dmg'
       assetUploadMode: 'replace'
       addChangeLog: true
+
+  - script: twine upload --skip-existing $(Build.ArtifactStagingDirectory)/*.whl
+    displayName: "Upload wheel to PyPi"
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    env:
+      TWINE_USERNAME: $(twine.username)
+      TWINE_PASSWORD: $(twine.password)
+      TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest'

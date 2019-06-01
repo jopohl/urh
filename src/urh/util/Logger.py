@@ -4,8 +4,10 @@ import sys
 import tempfile
 
 from urh.constants import color
+TMP = "/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
 
-LOG_LEVEL_PATH = os.path.join(tempfile.gettempdir(), "urh_log_level")
+
+LOG_LEVEL_PATH = os.path.join(TMP, "urh_log_level")
 
 
 def read_log_level(default):
@@ -35,7 +37,7 @@ if hasattr(sys, "frozen"):
         sys.stdin.isatty()
     except:
         # STDIN is not useable, so we are running in GUI mode
-        logfile_name = os.path.join(tempfile.gettempdir(), "urh.log")
+        logfile_name = os.path.join(TMP, "urh.log")
         # Add the log message handler to the logger
         import logging.handlers
         log_file_handler = logging.handlers.RotatingFileHandler(logfile_name, maxBytes=2e6, backupCount=5)

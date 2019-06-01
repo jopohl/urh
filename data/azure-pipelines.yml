@@ -252,15 +252,16 @@ jobs:
     displayName: "Run PyInstaller"
 
   - script: |
+      mkdir -p dist
       hdiutil create -volname Universal.Radio.Hacker \
                      -srcfolder pyinstaller/urh.app \
                      -ov -format UDZO \
-                     $(Build.ArtifactStagingDirectory)/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
+                     dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
     displayName: "Build DMG"
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      pathtoPublish: dist/
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
 
@@ -272,11 +273,11 @@ jobs:
       action: 'edit'
       tag: $(Build.SourceBranchName)
       repositoryName: jopohl/urh
-      assets: '$(Build.ArtifactStagingDirectory)/*.dmg'
+      assets: 'dist/*.dmg'
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: twine upload --skip-existing $(Build.ArtifactStagingDirectory)/*.whl
+  - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
     env:

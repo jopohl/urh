@@ -264,6 +264,18 @@ jobs:
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
 
+  - task: GitHubRelease@0
+    displayName: 'GitHub release'
+    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    inputs:
+      gitHubConnection: 'github connection 1'
+      action: 'edit'
+      tag: $(Build.SourceBranchName)
+      repositoryName: jopohl/urh
+      assets: 'dist/*.dmg'
+      assetUploadMode: 'replace'
+      addChangeLog: true
+
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest'
 

@@ -34,7 +34,8 @@ class ListWidget(QListWidget):
     def eventFilter(self, sender, event):
         if event.type() == QEvent.ChildRemoved:
             self.internalMove.emit()
-        elif event.type() == QEvent.KeyPress and (event.key() == Qt.Key_Delete or event.key() == Qt.Key_Backspace):
+        elif event.type() == QEvent.KeyPress and event.key() in (Qt.Key_Delete, Qt.Key_Backspace)\
+                and self.currentItem() is not None:
             item = self.currentRow()
             item_name = self.currentItem().text()
             self.active_element_text = item_name

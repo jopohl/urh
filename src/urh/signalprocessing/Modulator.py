@@ -50,6 +50,7 @@ class Modulator(object):
                self.name == other.name and \
                self.modulation_type == other.modulation_type and \
                self.samples_per_symbol == other.samples_per_symbol and \
+               self.bits_per_symbol == other.bits_per_symbol and \
                self.sample_rate == other.sample_rate and \
                self.parameters == other.parameters
 
@@ -230,11 +231,12 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate"):
+            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate", "parameters"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
         root.set("index", str(index))
+        root.set("parameters", ",".join(map(str, self.parameters)))
 
         return root
 
@@ -265,6 +267,11 @@ class Modulator(object):
                 result.samples_per_symbol = Formatter.str2val(value, int, 100)
             elif attrib == "sample_rate":
                 result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
+            elif attrib == "parameters":
+                try:
+                    result.parameters = array.array("f", map(float, value.split(",")))
+                except ValueError:
+                    continue
             else:
                 setattr(result, attrib, Formatter.str2val(value, float, 1))
         return result

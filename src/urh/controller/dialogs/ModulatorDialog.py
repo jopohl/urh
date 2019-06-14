@@ -126,7 +126,7 @@ class ModulatorDialog(QDialog):
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
-        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_bit)
+        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_symbol)
         self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
         self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
         self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
@@ -374,7 +374,7 @@ class ModulatorDialog(QDialog):
 
     @pyqtSlot()
     def on_bit_len_changed(self):
-        self.current_modulator.samples_per_bit = self.ui.spinBoxBitLength.value()
+        self.current_modulator.samples_per_symbol = self.ui.spinBoxBitLength.value()
         self.draw_carrier()
         self.draw_data_bits()
         self.draw_modulated()

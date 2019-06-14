@@ -89,7 +89,7 @@ def build_modulator_from_args(arguments: argparse.Namespace):
     result.carrier_freq_hz = float(arguments.carrier_frequency)
     result.carrier_amplitude = float(arguments.carrier_amplitude)
     result.carrier_phase_deg = float(arguments.carrier_phase)
-    result.samples_per_bit = int(arguments.bit_length)
+    result.samples_per_symbol = int(arguments.bit_length)
 
     if arguments.modulation_type == "ASK":
         if arguments.parameter_zero.endswith("%"):
@@ -222,7 +222,7 @@ def modulate_messages(messages, modulator):
         return None
 
     cli_progress_bar(0, len(messages), title="Modulating")
-    nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_bit + msg.pause) for msg in messages)
+    nsamples = sum(int(len(msg.encoded_bits) * modulator.samples_per_symbol + msg.pause) for msg in messages)
     buffer = IQArray(None, dtype=np.float32, n=nsamples)
     pos = 0
     for i, msg in enumerate(messages):

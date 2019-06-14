@@ -102,7 +102,7 @@ class GeneratorTabController(QWidget):
 
     @property
     def total_modulated_samples(self) -> int:
-        return sum(int(len(msg.encoded_bits) * self.__get_modulator_of_message(msg).samples_per_bit + msg.pause)
+        return sum(int(len(msg.encoded_bits) * self.__get_modulator_of_message(msg).samples_per_symbol + msg.pause)
                    for msg in self.table_model.protocol.messages)
 
     @modulators.setter
@@ -213,7 +213,7 @@ class GeneratorTabController(QWidget):
             return
 
         modulator = self.modulators[0]
-        modulator.samples_per_bit = protocol.messages[0].bit_len
+        modulator.samples_per_symbol = protocol.messages[0].bit_len
 
         if protocol.signal:
             modulator.sample_rate = protocol.signal.sample_rate
@@ -528,7 +528,7 @@ class GeneratorTabController(QWidget):
             return
 
         avg_msg_len = numpy.mean([len(msg.encoded_bits) for msg in c.messages])
-        avg_bit_len = numpy.mean([m.samples_per_bit for m in self.modulators])
+        avg_bit_len = numpy.mean([m.samples_per_symbol for m in self.modulators])
         avg_sample_rate = numpy.mean([m.sample_rate for m in self.modulators])
         pause_samples = sum(c.pauses)
         nsamples = c.num_messages * avg_msg_len * avg_bit_len + pause_samples

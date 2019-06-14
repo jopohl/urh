@@ -131,7 +131,7 @@ class TestSimulatorPerfomance(QtTestCase):
         simulator.start()
 
         modulator = Modulator("test_modulator")
-        modulator.samples_per_bit = 100
+        modulator.samples_per_symbol = 100
         modulator.carrier_freq_hz = 55e3
 
         # yappi.start()

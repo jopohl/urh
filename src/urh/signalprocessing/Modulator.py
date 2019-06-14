@@ -211,18 +211,18 @@ class Modulator(object):
         elif mod_type == "PSK":
             parameters = array.array("f", [p * (math.pi / 180) for p in parameters])
 
-        result = signal_functions.modulate_c(data, self.samples_per_symbol,
-                                             mod_type, parameters, self.bits_per_symbol,
-                                             self.carrier_amplitude, self.carrier_freq_hz,
-                                             self.carrier_phase_deg * (np.pi / 180),
-                                             self.sample_rate, pause, start, type_val)
-
         if mod_type == "GFSK":
             result = signal_functions.modulate_gfsk(data, pause, start, a,
                                                     self.param_for_zero, self.param_for_one,
                                                     self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
                                                     self.samples_per_symbol, self.gauss_bt, self.gauss_filter_width,
                                                     type_val)
+        else:
+            result = signal_functions.modulate_c(data, self.samples_per_symbol,
+                                                 mod_type, parameters, self.bits_per_symbol,
+                                                 self.carrier_amplitude, self.carrier_freq_hz,
+                                                 self.carrier_phase_deg * (np.pi / 180),
+                                                 self.sample_rate, pause, start, type_val)
 
         return IQArray(result)
 

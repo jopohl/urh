@@ -6,7 +6,7 @@ import numpy as np
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
 # np.import_array()
 
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int64_t
 from libc.stdlib cimport malloc, calloc, free
 from cython.parallel import prange
 from libc.math cimport log10,pow
@@ -42,6 +42,19 @@ cpdef np.ndarray[np.float32_t, ndim=2] arr2decibel(np.ndarray[np.complex64_t, nd
     for i in prange(x, nogil=True, schedule='static'):
         for j in range(y):
             result[i, j] = factor * log10(arr[i, j].real * arr[i, j].real + arr[i, j].imag * arr[i, j].imag)
+    return result
+
+cpdef uint64_t bit_array_to_number(uint8_t[:] bits, int64_t end, int64_t start=0) nogil:
+    if end < 1:
+        return 0
+
+    cdef long long i, acc = 1
+    cdef unsigned long long result = 0
+
+    for i in range(start, end):
+        result += bits[end-1-i+start] * acc
+        acc *= 2
+
     return result
 
 cpdef uint64_t arr_to_number(uint8_t[:] inpt, bool reverse = False, unsigned int start = 0):

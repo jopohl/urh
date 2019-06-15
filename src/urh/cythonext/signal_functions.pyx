@@ -4,12 +4,12 @@ import cython
 import numpy as np
 from libcpp cimport bool
 
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t, int64_t
-from urh.cythonext.util cimport IQ, iq
-from urh.cythonext.awre_util import bit_array_to_number
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI
+
 
 cdef extern from "math.h" nogil:
     float cosf(float x)
@@ -67,7 +67,7 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
 
     assert is_fsk or is_ask or is_psk
 
-    for s_i in range(0, total_symbols):
+    for s_i in prange(0, total_symbols, schedule="static", nogil=True):
         index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
 
         if is_ask:

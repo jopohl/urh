@@ -45,7 +45,6 @@ cdef get_numpy_dtype(iq cython_type):
     else:
         raise ValueError("dtype {} not supported for modulation".format(cython.typeof(cython_type)))
 
-
 cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_type,
                  float[:] parameters, uint16_t bits_per_symbol,
                  float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
@@ -69,6 +68,9 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
 
     for s_i in prange(0, total_symbols, schedule="static", nogil=True):
         index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
+        a = carrier_amplitude
+        f = carrier_frequency
+        phi = carrier_phase
 
         if is_ask:
             a = parameters[index]
@@ -82,6 +84,7 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
         for i in range(s_i * samples_per_symbol, (s_i+1)*samples_per_symbol):
             t = (i+start) / sample_rate
             arg = 2 * M_PI * f * t + phi
+
             result_view[i, 0] = <iq>(a * cosf(arg))
             result_view[i, 1] = <iq>(a * sinf(arg))
 

@@ -4,7 +4,7 @@ import cython
 import numpy as np
 from libcpp cimport bool
 
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, int64_t
 from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
@@ -49,9 +49,9 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                  float[:] parameters, uint16_t bits_per_symbol,
                  float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
                  uint32_t pause, uint32_t start, iq iq_type):
-    cdef uint64_t i = 0, j = 0, index = 0, s_i = 0
+    cdef int64_t i = 0, j = 0, index = 0, s_i = 0
     cdef uint32_t total_symbols = int(len(bits) // bits_per_symbol)
-    cdef uint64_t total_samples = total_symbols * samples_per_symbol + pause
+    cdef int64_t total_samples = total_symbols * samples_per_symbol + pause
 
     cdef float a = carrier_amplitude, f = carrier_frequency, phi = carrier_phase
 

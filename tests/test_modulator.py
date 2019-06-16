@@ -105,4 +105,11 @@ class TestModulator(unittest.TestCase):
         parameters = array.array("f", [np.pi/4, 3*np.pi/4, 5*np.pi/4, 7*np.pi/4])
         result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
-       # result.tofile("/tmp/test_psk.complex")
+        # result.tofile("/tmp/test_psk.complex")
+
+    def test_c_modulation_method_gfsk(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [-10e3, 10e3])
+        result = modulate_c(bits, 100, "GFSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        # result.tofile("/tmp/test_gfsk.complex")

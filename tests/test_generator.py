@@ -53,7 +53,7 @@ class TestGenerator(QtTestCase):
         # Generate Datafile
         modulator = gframe.modulators[0]
         modulator.modulation_type = 0
-        modulator.samples_per_bit = 300
+        modulator.samples_per_symbol = 300
         buffer = gframe.prepare_modulation_buffer(gframe.total_modulated_samples, show_error=False)
         modulated_data = gframe.modulate_data(buffer)
         filename = os.path.join(QDir.tempPath(), "test_generator.complex")

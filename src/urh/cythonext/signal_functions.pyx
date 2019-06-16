@@ -4,10 +4,12 @@ import cython
 import numpy as np
 from libcpp cimport bool
 
-from urh.cythonext.util cimport IQ, iq
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, int64_t
+from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI
+
 
 cdef extern from "math.h" nogil:
     float cosf(float x)
@@ -43,134 +45,79 @@ cdef get_numpy_dtype(iq cython_type):
     else:
         raise ValueError("dtype {} not supported for modulation".format(cython.typeof(cython_type)))
 
-cpdef modulate_fsk(unsigned char[:] bit_array, unsigned long pause, unsigned long start,
-                                      float a, float freq0, float freq1, float phi, float sample_rate,
-                                      long long samples_per_bit, iq iq_type):
-    cdef long long i = 0, j = 0, index = 0
-    cdef float t = 0, f = 0, arg = 0, f_next = 0, phase = 0
-    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
+cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_type,
+                 float[:] parameters, uint16_t bits_per_symbol,
+                 float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
+                 uint32_t pause, uint32_t start, iq iq_type,
+                 float gauss_bt=0.5, float filter_width=1.0):
+    cdef int64_t i = 0, j = 0, index = 0, s_i = 0
+    cdef uint32_t total_symbols = int(len(bits) // bits_per_symbol)
+    cdef int64_t total_samples = total_symbols * samples_per_symbol + pause
 
-    result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
-    cdef iq[:, ::1] result_view = result
-    cdef float* phases = <float *>malloc(total_samples * sizeof(float))
+    cdef float a = carrier_amplitude, f = carrier_frequency, phi = carrier_phase
 
-    for i in range(0, samples_per_bit):
-        phases[i] = phi
-
-    cdef long long num_bits = len(bit_array)
-    with cython.cdivision:
-        for i in range(1, num_bits):
-            phase = phases[i*samples_per_bit-1]
-
-            # We need to correct the phase on transitions between 0 and 1
-            if bit_array[i-1] != bit_array[i]:
-                t = (i*samples_per_bit+start-1) / sample_rate
-                f = freq0 if bit_array[i-1] == 0 else freq1
-                f_next = freq0 if bit_array[i] == 0 else freq1
-                phase = (phase + 2 * M_PI * t * (f - f_next)) % (2 * M_PI)
-
-            for j in range(i*samples_per_bit, (i+1)*samples_per_bit):
-                phases[j] = phase
-
-
-    cdef long long loop_end = total_samples-pause
-    for i in prange(0, loop_end, nogil=True, schedule="static"):
-        t = (i+start) / sample_rate
-        index = <long long>(i/samples_per_bit)
-        f = freq0 if bit_array[index] == 0 else freq1
-
-        arg = 2 * M_PI * f * t + phases[i]
-        result_view[i, 0] = <iq>(a * cosf(arg))
-        result_view[i, 1] = <iq>(a * sinf(arg))
-
-        # We need to correct the phase on transitions between 0 and 1
-        # if i < loop_end - 1 and (i+1) % samples_per_bit == 0:
-        #     index = <long long>((i+1)/samples_per_bit)
-        #     f_next = freq0 if bit_array[index] == 0 else freq1
-        #     phi += 2 * M_PI * t * (f - f_next)
-        #     phi = phi % (2 * M_PI)
-
-    free(phases)
-    return result
-
-cpdef modulate_ask(unsigned char[:] bit_array, unsigned long pause, unsigned long start,
-                            double a0, double a1, double f, double phi, double sample_rate,
-                            unsigned long samples_per_bit, iq iq_type):
-    cdef long long i = 0, index = 0
-    cdef float t = 0, a = 0, arg = 0
-    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
+    cdef float t = 0, arg = 0
 
     result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
     cdef iq[:, ::1] result_view = result
 
-    cdef long long loop_end = total_samples-pause
-    for i in prange(0, loop_end, nogil=True, schedule="static"):
-        index = <long long>(i/samples_per_bit)
-        a = a0 if bit_array[index] == 0 else a1
+    cdef bool is_fsk = modulation_type.lower() == "fsk"
+    cdef bool is_ask = modulation_type.lower() == "ask"
+    cdef bool is_psk = modulation_type.lower() == "psk"
+    cdef bool is_gfsk = modulation_type.lower() == "gfsk"
 
-        if a > 0:
+    assert is_fsk or is_ask or is_psk or is_gfsk
+
+    cdef np.ndarray[np.float32_t, ndim=2] gauss_filtered_freqs_phases
+    if is_gfsk:
+        gauss_filtered_freqs_phases = get_gauss_filtered_freqs_phases(bits, parameters, total_symbols,
+                                                                      samples_per_symbol, sample_rate, carrier_phase,
+                                                                      start, gauss_bt, filter_width)
+
+    for s_i in prange(0, total_symbols, schedule="static", nogil=True):
+        index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
+        a = carrier_amplitude
+        f = carrier_frequency
+        phi = carrier_phase
+
+        if is_ask:
+            a = parameters[index]
+            if a == 0:
+                continue
+        elif is_fsk:
+            f = parameters[index]
+        elif is_psk:
+            phi = parameters[index]
+
+        for i in range(s_i * samples_per_symbol, (s_i+1)*samples_per_symbol):
             t = (i+start) / sample_rate
+            if is_gfsk:
+                f = gauss_filtered_freqs_phases[i, 0]
+                phi = gauss_filtered_freqs_phases[i, 1]
             arg = 2 * M_PI * f * t + phi
+
             result_view[i, 0] = <iq>(a * cosf(arg))
             result_view[i, 1] = <iq>(a * sinf(arg))
 
     return result
 
-cpdef modulate_psk(unsigned char[:] bit_array, unsigned long pause, unsigned long start,
-                  double a, double f, double phi0, double phi1, double sample_rate,
-                  unsigned long samples_per_bit, iq iq_type):
-    cdef long long i = 0, index = 0
-    cdef float t = 0, phi = 0, arg = 0
-    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
 
-    result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
-    cdef iq[:, ::1] result_view = result
+cdef np.ndarray[np.float32_t, ndim=2] get_gauss_filtered_freqs_phases(uint8_t[:] bits,  float[:] parameters,
+                                                                     uint32_t num_symbols, uint32_t samples_per_symbol,
+                                                                     float sample_rate, float phi, uint32_t start,
+                                                                     float gauss_bt, float filter_width):
+    cdef int64_t i, s_i, index, num_values = num_symbols * samples_per_symbol
+    cdef np.ndarray[np.float32_t, ndim=1] frequencies = np.empty(num_values, dtype=np.float32)
+    cdef uint16_t bits_per_symbol = int(len(bits) // num_symbols)
 
-    cdef long long loop_end = total_samples-pause
-    for i in prange(0, loop_end, nogil=True, schedule="static"):
-        index = <long long>(i/samples_per_bit)
-        phi = phi0 if bit_array[index] == 0 else phi1
+    for s_i in range(0, num_symbols):
+        index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
 
-        t = (i+start) / sample_rate
-        arg = 2 * M_PI * f * t + phi
-        result_view[i, 0] = <iq>(a * cosf(arg))
-        result_view[i, 1] = <iq>(a * sinf(arg))
+        for i in range(s_i * samples_per_symbol, (s_i+1)*samples_per_symbol):
+            frequencies[i] = parameters[index]
 
-    return result
-
-
-cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, unsigned long samples_per_bit,
-                                                float bt=.5, float filter_width=1.0):
-    """
-
-    :param filter_width: Filter width
-    :param bt: normalized 3-dB bandwidth-symbol time product
-    :return:
-    """
-    # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
-    cdef np.ndarray[np.float32_t] k = np.arange(-int(filter_width * samples_per_bit),
-                                                int(filter_width * samples_per_bit) + 1,
-                                                dtype=np.float32)
-    cdef float ts = samples_per_bit / sample_rate  # symbol time
-    cdef np.ndarray[np.float32_t] h = np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
-        -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_bit) ** 2))
-    return h / h.sum()
-
-cpdef modulate_gfsk(unsigned char[:] bit_array, unsigned long pause, unsigned long start,
-                    double a, double freq0, double freq1, double phi, double sample_rate,
-                    unsigned long samples_per_bit, double gauss_bt, double filter_width, iq iq_type):
-    cdef long long i = 0, index = 0
-    cdef long long total_samples = int(len(bit_array) * samples_per_bit + pause)
-
-    cdef np.ndarray[np.float32_t, ndim=1] frequencies = np.empty(total_samples - pause, dtype=np.float32)
-    cdef long long loop_end = total_samples-pause
-
-    for i in prange(0, loop_end, nogil=True, schedule="static"):
-        index = <long long>(i/samples_per_bit)
-        frequencies[i] = freq0 if bit_array[index] == 0 else freq1
-
-    cdef np.ndarray[np.float32_t, ndim=1] t = np.arange(start, start + total_samples - pause, dtype=np.float32) / sample_rate
-    cdef np.ndarray[np.float32_t, ndim=1] gfir = gauss_fir(sample_rate, samples_per_bit,
+    cdef np.ndarray[np.float32_t, ndim=1] t = np.arange(start, start + num_values, dtype=np.float32) / sample_rate
+    cdef np.ndarray[np.float32_t, ndim=1] gfir = gauss_fir(sample_rate, samples_per_symbol,
                                                            bt=gauss_bt, filter_width=filter_width)
 
     if len(frequencies) >= len(gfir):
@@ -179,23 +126,30 @@ cpdef modulate_gfsk(unsigned char[:] bit_array, unsigned long pause, unsigned lo
         # Prevent dimension crash later, because gaussian finite impulse response is longer then param_vector
         frequencies = np.convolve(gfir, frequencies, mode="same")[:len(frequencies)]
 
-    result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
-    cdef iq[:, ::1] result_view = result
-
-    cdef np.ndarray[np.float32_t, ndim=1] phases = np.empty(len(frequencies), dtype=np.float32)
+    cdef np.ndarray[np.float32_t, ndim=1] phases = np.zeros(len(frequencies), dtype=np.float32)
     phases[0] = phi
     for i in range(0, len(phases) - 1):
          # Correct the phase to prevent spiky jumps
         phases[i + 1] = 2 * M_PI * t[i] * (frequencies[i] - frequencies[i + 1]) + phases[i]
 
-    cdef np.ndarray[np.float32_t, ndim=1] arg = (2 * M_PI * frequencies * t + phases)
+    return np.column_stack((frequencies, phases))
 
-    cdef long long stop = max(0, total_samples-pause)
-    for i in prange(0, stop, nogil=True, schedule="static"):
-        result_view[i, 0] = <iq>(a * cosf(arg[i]))
-        result_view[i, 1] = <iq>(a * sinf(arg[i]))
+cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, uint32_t samples_per_symbol,
+                                                float bt=.5, float filter_width=1.0):
+    """
 
-    return result
+    :param filter_width: Filter width
+    :param bt: normalized 3-dB bandwidth-symbol time product
+    :return:
+    """
+    # http://onlinelibrary.wiley.com/doi/10.1002/9780470041956.app2/pdf
+    cdef np.ndarray[np.float32_t] k = np.arange(-int(filter_width * samples_per_symbol),
+                                                int(filter_width * samples_per_symbol) + 1,
+                                                dtype=np.float32)
+    cdef float ts = samples_per_symbol / sample_rate  # symbol time
+    cdef np.ndarray[np.float32_t] h = np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
+        -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))
+    return h / h.sum()
 
 cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
     # BW in range((2pi/200), (2pi/100))

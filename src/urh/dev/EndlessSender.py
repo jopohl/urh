@@ -58,7 +58,7 @@ if __name__ == '__main__':
     msg = Message([1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4, 0,
                   MessageType("empty_message_type"))
     modulator = Modulator("test_modulator")
-    modulator.samples_per_bit = 1000
+    modulator.samples_per_symbol = 1000
     modulator.carrier_freq_hz = 55e3
 
     logger.debug("Starting endless sender")

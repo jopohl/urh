@@ -7,6 +7,7 @@ import unittest
 import numpy as np
 from PySide2.QtCore import QDir
 
+from urh.cythonext.signal_functions import modulate_c
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.IQSignal import IQSignal
@@ -15,10 +16,10 @@ from urh.signalprocessing.IQSignal import IQSignal
 class TestModulator(unittest.TestCase):
     def setUp(self):
         self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
-        self.samples_per_bit = 100
+        self.samples_per_symbol = 100
         self.pause = 1000
 
-        self.total_samples = len(self.modulation_data) * self.samples_per_bit + self.pause
+        self.total_samples = len(self.modulation_data) * self.samples_per_symbol + self.pause
 
     def test_ask_fsk_psk_modulation(self):
         modulations = ["ASK", "FSK", "PSK"]
@@ -29,7 +30,7 @@ class TestModulator(unittest.TestCase):
             filename = "{0}_mod.complex".format(modulation)
             filename = os.path.join(tmp_dir, filename)
             modulator.modulation_type = i
-            modulator.samples_per_bit = self.samples_per_bit
+            modulator.samples_per_symbol = self.samples_per_symbol
 
             if modulation == "ASK":
                 modulator.param_for_zero = 0
@@ -45,7 +46,7 @@ class TestModulator(unittest.TestCase):
 
             signal = IQSignal(filename, modulation)
             signal.modulation_type = i
-            signal.bit_len = self.samples_per_bit
+            signal.bit_len = self.samples_per_symbol
             if modulation == "ASK":
                 signal.qad_center = 0.5
             elif modulation == "FSK":
@@ -63,7 +64,7 @@ class TestModulator(unittest.TestCase):
 
         modulator = Modulator("gfsk")
         modulator.modulation_type_str = "FSK"
-        modulator.samples_per_bit = 100
+        modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
         modulator.param_for_one = 20e3
         modulator.param_for_zero = -10e3
@@ -84,3 +85,31 @@ class TestModulator(unittest.TestCase):
         modulator.modulate([True] * 1000, pause=10000000)
         elapsed = time.time() - t
         self.assertLess(elapsed, 0.5)
+
+    def test_c_modulation_method_ask(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [0, 0.25, 0.5, 1])
+        result = modulate_c(bits, 100, "ASK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        #result.tofile("/tmp/test.complex")
+
+    def test_c_modulation_method_fsk(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [-10e3, 10e3])
+        result = modulate_c(bits, 100, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        #result.tofile("/tmp/test_fsk.complex")
+
+    def test_c_modulation_method_psk(self):
+        bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [np.pi/4, 3*np.pi/4, 5*np.pi/4, 7*np.pi/4])
+        result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        # result.tofile("/tmp/test_psk.complex")
+
+    def test_c_modulation_method_gfsk(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [-10e3, 10e3])
+        result = modulate_c(bits, 100, "GFSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        # result.tofile("/tmp/test_gfsk.complex")

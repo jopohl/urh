@@ -50,7 +50,7 @@ class TestMessageSegmentation(unittest.TestCase):
         modulator.modulation_type_str = "ASK"
         modulator.param_for_zero = 50
         modulator.param_for_one = 100
-        modulator.samples_per_bit = 100
+        modulator.samples_per_symbol = 100
 
         msg1 = modulator.modulate("1010101111", pause=10000)
         msg2 = modulator.modulate("1010101110010101", pause=20000)

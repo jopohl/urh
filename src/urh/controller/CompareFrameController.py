@@ -392,10 +392,13 @@ class CompareFrameController(QWidget):
         update = False
 
         for msg in self.proto_analyzer.messages:
-            i = next((i for i, d in enumerate(self.decodings) if d.name == msg.decoder.name), 0)
-            if msg.decoder != self.decodings[i]:
+            decoder = next((d for d in self.decodings if d.name == msg.decoder.name), None)
+            if decoder is None:
+                continue
+
+            if msg.decoder != decoder:
                 update = True
-                msg.decoder = self.decodings[i]
+                msg.decoder = decoder
                 msg.clear_decoded_bits()
                 msg.clear_encoded_bits()
 

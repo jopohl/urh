@@ -60,9 +60,14 @@ def set_shared_library_path():
             # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
             exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
             import ctypes
+            libs = sorted(os.listdir(shared_lib_dir))
+            libusb = next((lib for lib in libs if "libusb" in lib), None)
+            if libusb:
+                # Ensure libusb is loaded first
+                libs.insert(0, libs.pop(libs.index(libusb)))
 
-            for lib in sorted(os.listdir(shared_lib_dir)):
-                if any(lib.endswith(ext) for ext in exts):
+            for lib in libs:
+                if lib.lower().startswith("lib") and any(ext in lib for ext in exts):
                     lib_path = os.path.join(shared_lib_dir, lib)
                     if os.path.isfile(lib_path):
                         try:

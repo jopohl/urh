@@ -200,21 +200,18 @@ class Modulator(object):
         dtype = self.get_dtype()
         a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
 
-        # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)
-        result = np.zeros(0, dtype=dtype)
-
         type_code = "b" if dtype == np.int8 else "h" if dtype == np.int16 else "f"
         type_val = array.array(type_code, [0])[0]
 
         parameters = self.parameters
         if mod_type == "ASK":
-            parameters = array.array("f", [p/100 for p in parameters])
+            parameters = array.array("f", [a*p/100 for p in parameters])
         elif mod_type == "PSK":
             parameters = array.array("f", [p * (math.pi / 180) for p in parameters])
 
         result = signal_functions.modulate_c(data, self.samples_per_symbol,
                                              mod_type, parameters, self.bits_per_symbol,
-                                             self.carrier_amplitude, self.carrier_freq_hz,
+                                             a, self.carrier_freq_hz,
                                              self.carrier_phase_deg * (np.pi / 180),
                                              self.sample_rate, pause, start, type_val,
                                              self.gauss_bt, self.gauss_filter_width)

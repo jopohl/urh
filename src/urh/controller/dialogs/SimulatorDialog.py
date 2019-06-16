@@ -12,6 +12,7 @@ from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWi
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
+from urh.signalprocessing.IQArray import IQArray
 from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.ui.SimulatorScene import SimulatorScene
@@ -415,10 +416,12 @@ class SimulatorDialog(QDialog):
     @pyqtSlot()
     def on_btn_save_rx_clicked(self):
         rx_device = self.simulator.sniffer.rcv_device
-        if isinstance(rx_device.data, np.ndarray):
-            filename = FileOperator.get_save_file_name("simulation_capture.complex")
+        if isinstance(rx_device.data, np.ndarray) or isinstance(rx_device.data, IQArray):
+            data = IQArray(rx_device.data[:rx_device.current_index])
+            filename = FileOperator.save_data_dialog("simulation_capture", data,
+                                                     sample_rate=rx_device.sample_rate, parent=self)
             if filename:
-                rx_device.data[:rx_device.current_index].tofile(filename)
+                data.tofile(filename)
                 self.rx_file_saved.emit(filename)
 
     @pyqtSlot()

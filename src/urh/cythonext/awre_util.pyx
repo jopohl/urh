@@ -7,12 +7,10 @@ from libc.math cimport floor, ceil, pow
 from libc.stdlib cimport malloc, free
 
 from libcpp cimport bool
-from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int8_t, int64_t
-
-from array import array
-
+from libc.stdint cimport uint8_t, uint32_t, int32_t, int64_t
 
 from urh.cythonext.util import crc
+from urh.cythonext.util cimport bit_array_to_number
 
 cpdef set find_longest_common_sub_sequence_indices(np.uint8_t[::1] seq1, np.uint8_t[::1] seq2):
     cdef unsigned int i, j, longest = 0, counter = 0, len_bits1 = len(seq1), len_bits2 = len(seq2)
@@ -299,19 +297,6 @@ cpdef list find_occurrences(np.uint8_t[::1] a, np.uint8_t[::1] b,
                 return [i]
             else:
                 result.append(i)
-
-    return result
-
-cpdef unsigned long long bit_array_to_number(uint8_t[::1] bits, int64_t end, int64_t start=0) nogil:
-    if end < 1:
-        return 0
-
-    cdef long long i, acc = 1
-    cdef unsigned long long result = 0
-
-    for i in range(start, end):
-        result += bits[end-1-i+start] * acc
-        acc *= 2
 
     return result
 

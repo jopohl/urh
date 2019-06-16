@@ -43,7 +43,7 @@ class TestProtocolSniffer(QtTestCase):
         data = ["101010", "000111", "1111000"]
         pause = 10 * bit_len
         modulator = Modulator("test")
-        modulator.samples_per_bit = bit_len
+        modulator.samples_per_symbol = bit_len
         modulator.sample_rate = sample_rate
         modulator.modulation_type = modulation_type
         modulator.param_for_one = 20e3

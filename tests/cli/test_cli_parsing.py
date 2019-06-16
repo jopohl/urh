@@ -29,7 +29,7 @@ class TestCLIParsing(QtTestCase):
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.modulation_type_str, "ASK")
         self.assertEqual(modulator.sample_rate, 2e6)
-        self.assertEqual(modulator.samples_per_bit, 24)
+        self.assertEqual(modulator.samples_per_symbol, 24)
         self.assertEqual(modulator.param_for_zero, 0)
         self.assertEqual(modulator.param_for_one, 100)
         self.assertEqual(modulator.carrier_freq_hz, 1337e3)

@@ -1,5 +1,6 @@
 import array
 import locale
+import math
 import xml.etree.ElementTree as ET
 
 import numpy as np
@@ -28,17 +29,19 @@ class Modulator(object):
         self.carrier_amplitude = 1
         self.carrier_phase_deg = 0
         self.data = [True, False, True, False]
-        self.samples_per_bit = 100
+        self.samples_per_symbol = 100
         self.default_sample_rate = 10 ** 6
         self.__sample_rate = None
         self.modulation_type = 0
+
+        self.bits_per_symbol = 1
+
         self.name = name
 
         self.gauss_bt = 0.5  # bt product for gaussian filter (GFSK)
         self.gauss_filter_width = 1  # filter width for gaussian filter (GFSK)
 
-        self.param_for_zero = 0  # Freq, Amplitude (0..100%) or Phase (0..360)
-        self.param_for_one = 100  # Freq, Amplitude (0..100%) or Phase (0..360)
+        self.parameters = array.array("f", [0, 100])  # Freq, Amplitude (0..100%) or Phase (0..360)
 
     def __eq__(self, other):
         return self.carrier_freq_hz == other.carrier_freq_hz and \
@@ -46,10 +49,10 @@ class Modulator(object):
                self.carrier_phase_deg == other.carrier_phase_deg and \
                self.name == other.name and \
                self.modulation_type == other.modulation_type and \
-               self.samples_per_bit == other.samples_per_bit and \
+               self.samples_per_symbol == other.samples_per_symbol and \
+               self.bits_per_symbol == other.bits_per_symbol and \
                self.sample_rate == other.sample_rate and \
-               self.param_for_one == other.param_for_one and \
-               self.param_for_zero == other.param_for_zero
+               self.parameters == other.parameters
 
     @staticmethod
     def get_dtype():
@@ -60,6 +63,30 @@ class Modulator(object):
             return np.int16
         else:
             return np.float32
+
+    @property
+    def is_binary_modulation(self):
+        return self.bits_per_symbol == 1
+
+    @property
+    def param_for_zero(self):
+        assert self.is_binary_modulation
+        return self.parameters[0]
+
+    @param_for_zero.setter
+    def param_for_zero(self, value):
+        assert self.is_binary_modulation
+        self.parameters[0] = value
+
+    @property
+    def param_for_one(self):
+        assert self.is_binary_modulation
+        return self.parameters[1]
+
+    @param_for_one.setter
+    def param_for_one(self, value):
+        assert self.is_binary_modulation
+        self.parameters[1] = value
 
     @property
     def sample_rate(self):
@@ -90,7 +117,7 @@ class Modulator(object):
 
     @property
     def bit_len_str(self):
-        return self.get_value_with_suffix(self.samples_per_bit, unit="")
+        return self.get_value_with_suffix(self.samples_per_symbol, unit="")
 
     @property
     def sample_rate_str(self):
@@ -124,7 +151,7 @@ class Modulator(object):
 
     @property
     def carrier_data(self):
-        num_samples = len(self.display_bits) * self.samples_per_bit
+        num_samples = len(self.display_bits) * self.samples_per_symbol
         carrier_phase_rad = self.carrier_phase_deg * (np.pi / 180)
         t = (np.arange(0, num_samples) / self.sample_rate).astype(np.float32)
         arg = (2 * np.pi * self.carrier_freq_hz * t + carrier_phase_rad).astype(np.float32)
@@ -134,12 +161,12 @@ class Modulator(object):
 
     @property
     def data_scene(self) -> QGraphicsScene:
-        n = self.samples_per_bit * len(self.display_bits)
+        n = self.samples_per_symbol * len(self.display_bits)
         y = np.ones(n, dtype=np.float32)
 
         for i, bit in enumerate(self.display_bits):
             if bit == "0":
-                y[i*self.samples_per_bit:(i+1)*self.samples_per_bit] = -1.0
+                y[i*self.samples_per_symbol:(i + 1) * self.samples_per_symbol] = -1.0
 
         x = np.arange(0, n).astype(np.int64)
 
@@ -173,49 +200,33 @@ class Modulator(object):
         dtype = self.get_dtype()
         a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
 
-        # add a variable here to prevent it from being garbage collected in multithreaded cases (Python 3.4)
-        result = np.zeros(0, dtype=dtype)
-
         type_code = "b" if dtype == np.int8 else "h" if dtype == np.int16 else "f"
         type_val = array.array(type_code, [0])[0]
 
-        if mod_type == "FSK":
-            result = signal_functions.modulate_fsk(data, pause, start, a,
-                                                  self.param_for_zero, self.param_for_one,
-                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                  self.samples_per_bit, type_val)
-        elif mod_type == "ASK":
-            a0 = a * (self.param_for_zero / 100)
-            a1 = a * (self.param_for_one / 100)
-            result = signal_functions.modulate_ask(data, pause, start, a0, a1,
-                                                  self.carrier_freq_hz,
-                                                  self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                  self.samples_per_bit, type_val)
+        parameters = self.parameters
+        if mod_type == "ASK":
+            parameters = array.array("f", [a*p/100 for p in parameters])
         elif mod_type == "PSK":
-            phi0 = self.param_for_zero * (np.pi / 180)
-            phi1 = self.param_for_one * (np.pi / 180)
-            result = signal_functions.modulate_psk(data, pause, start, a,
-                                                  self.carrier_freq_hz,
-                                                  phi0, phi1, self.sample_rate,
-                                                  self.samples_per_bit, type_val)
-        elif mod_type == "GFSK":
-            result = signal_functions.modulate_gfsk(data, pause, start, a,
-                                                   self.param_for_zero, self.param_for_one,
-                                                   self.carrier_phase_deg * (np.pi / 180), self.sample_rate,
-                                                   self.samples_per_bit, self.gauss_bt, self.gauss_filter_width,
-                                                   type_val)
+            parameters = array.array("f", [p * (math.pi / 180) for p in parameters])
 
+        result = signal_functions.modulate_c(data, self.samples_per_symbol,
+                                             mod_type, parameters, self.bits_per_symbol,
+                                             a, self.carrier_freq_hz,
+                                             self.carrier_phase_deg * (np.pi / 180),
+                                             self.sample_rate, pause, start, type_val,
+                                             self.gauss_bt, self.gauss_filter_width)
         return IQArray(result)
 
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate"):
+            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate", "parameters"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
         root.set("index", str(index))
+        root.set("parameters", ",".join(map(str, self.parameters)))
 
         return root
 
@@ -241,10 +252,16 @@ class Modulator(object):
                 setattr(result, attrib, str(value))
             elif attrib == "modulation_type":
                 setattr(result, attrib, Formatter.str2val(value, int, 0))
-            elif attrib == "samples_per_bit":
-                setattr(result, attrib, Formatter.str2val(value, int, 100))
+            elif attrib == "samples_per_bit" or attrib == "samples_per_symbol":
+                # samples_per_bit as legacy support for older project files
+                result.samples_per_symbol = Formatter.str2val(value, int, 100)
             elif attrib == "sample_rate":
                 result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
+            elif attrib == "parameters":
+                try:
+                    result.parameters = array.array("f", map(float, value.split(",")))
+                except ValueError:
+                    continue
             else:
                 setattr(result, attrib, Formatter.str2val(value, float, 1))
         return result

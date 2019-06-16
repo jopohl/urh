@@ -59,7 +59,7 @@ class TestModulatorGUI(QtTestCase):
 
         self.dialog.ui.spinBoxBitLength.setValue(1337)
         self.dialog.ui.spinBoxBitLength.editingFinished.emit()
-        self.assertEqual(self.dialog.current_modulator.samples_per_bit, 1337)
+        self.assertEqual(self.dialog.current_modulator.samples_per_symbol, 1337)
 
         self.dialog.ui.spinBoxSampleRate.setValue(5e6)
         self.dialog.ui.spinBoxSampleRate.editingFinished.emit()

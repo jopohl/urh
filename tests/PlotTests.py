@@ -15,7 +15,7 @@ class PlotTests(unittest.TestCase):
     def test_plot(self):
         modulator = Modulator("gfsk")
         modulator.modulation_type_str = "GFSK"
-        modulator.samples_per_bit = 100
+        modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
         modulator.param_for_one = 20e3
         modulator.param_for_zero = 10e3

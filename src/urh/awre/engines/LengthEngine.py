@@ -3,9 +3,9 @@ from collections import defaultdict
 
 import numpy as np
 
-from urh.awre.CommonRange import CommonRange, EmptyCommonRange
+from urh.awre.CommonRange import CommonRange
 from urh.awre.engines.Engine import Engine
-from urh.cythonext import awre_util
+from urh.cythonext import util
 
 
 class LengthEngine(Engine):
@@ -177,7 +177,7 @@ class LengthEngine(Engine):
 
     @staticmethod
     def score_bits(bits: np.ndarray, target_length: int, position: int, byteorder="big"):
-        value = awre_util.bit_array_to_number(bits, len(bits))
+        value = util.bit_array_to_number(bits, len(bits))
         if byteorder == "little":
             if len(bits) > 8 and len(bits) % 8 == 0:
                 n = len(bits) // 8

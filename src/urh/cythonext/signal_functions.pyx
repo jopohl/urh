@@ -39,9 +39,9 @@ cdef float get_noise_for_mod_type(str mod_type):
         return 0
 
 cdef tuple get_value_range_of_mod_type(str mod_type):
-    if mod_type.upper() == "ASK":
+    if mod_type == "ASK":
         return 0, 1
-    if mod_type.upper() in ("GFSK", "FSK", "OQPSK", "PSK"):
+    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
         return -np.pi, np.pi
 
     printf("Warning unknown mod type for value range")
@@ -323,7 +323,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cdef inline int64_t get_current_symbol(float sample, float[:] thresholds, float noise_val, int n) nogil:
+cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
     if sample == noise_val:
         return PAUSE_STATE
 
@@ -347,11 +347,11 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
              Pause is (arr[i][0] = -1)
     arr[i][1] gives length of pulse
     """
-    cdef bool is_ask = modulation_type.upper() == "ASK"
-    cdef int64_t i, pulse_length = 0, num_samples = len(samples)
+    cdef bool is_ask = modulation_type == "ASK"
+    cdef int64_t i, j, pulse_length = 0, num_samples = len(samples)
     cdef int64_t cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
     cdef float s = 0, s_prev = 0
-    cdef int cur_state = 0, new_state = 0
+    cdef int cur_state = 0, new_state = 0, tmp_state = 0
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
     cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
@@ -359,47 +359,54 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef float min_of_mod_type = min_max_of_mod_type[0]
     cdef float max_of_mod_type = min_max_of_mod_type[1]
     cdef float mod_type_range = max_of_mod_type - min_of_mod_type
-    for i in range(0, modulation_order):
-        thresholds[i] = min_of_mod_type + (i+1)*(mod_type_range / modulation_order) + center
+
+    cdef int n = modulation_order // 2
+
+    for i in range(0, n):
+        thresholds[i] = min_of_mod_type + (i+1) * (center-min_of_mod_type) / n
+
+    for i in range(n, modulation_order):
+        thresholds[i] = max_of_mod_type - (modulation_order-(i+1)) * (max_of_mod_type - center) / n
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
         return result
 
+    cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
+
     s_prev = samples[0]
-    cur_state = get_current_symbol(s_prev, thresholds, NOISE, modulation_order)
+    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        if s == NOISE:
+        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
+
+        if tmp_state == PAUSE_STATE:
             consecutive_pause += 1
-            consecutive_ones = 0
-            consecutive_zeros = 0
-            if cur_state == PAUSE_STATE:
-                continue
-
-        elif s > center:
-            consecutive_ones += 1
-            consecutive_zeros = 0
-            consecutive_pause = 0
-            if cur_state == 1:
-                continue
-
         else:
-            consecutive_zeros += 1
-            consecutive_ones = 0
             consecutive_pause = 0
-            if cur_state == 0:
-                continue
 
-        if consecutive_ones > tolerance:
-            new_state = 1
-        elif consecutive_zeros > tolerance:
-            new_state = 0
-        elif consecutive_pause > tolerance:
+        for j in range(0, modulation_order):
+            if j == tmp_state:
+                state_count[j] += 1
+            else:
+                state_count[j] = 0
+
+        if cur_state == tmp_state:
+            continue
+
+        new_state = -42
+
+        if consecutive_pause > tolerance:
             new_state = PAUSE_STATE
         else:
+            for j in range(0, modulation_order):
+                if state_count[j] > tolerance:
+                    new_state = j
+                    break
+
+        if new_state == -42:
             continue
 
         if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < bit_length:

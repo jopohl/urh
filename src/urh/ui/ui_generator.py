@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/generator.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/generator.ui' applies.
+#
+# Created: Thu Jun 20 11:48:51 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -384,7 +392,7 @@ class Ui_GeneratorTab(object):
         self.lEstimatedTime.setText(QtWidgets.QApplication.translate("GeneratorTab", "Estimated Time: ", None, -1))
 
 from urh.ui.views.GeneratorTableView import GeneratorTableView
-from urh.ui.views.GeneratorListView import GeneratorListView
-from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.GeneratorListWidget import GeneratorListWidget
+from urh.ui.views.GeneratorTreeView import GeneratorTreeView
+from urh.ui.views.GeneratorListView import GeneratorListView
 from . import urh_rc

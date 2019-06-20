@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/signal_frame.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/signal_frame.ui' applies.
+#
+# Created: Thu Jun 20 11:48:50 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -600,8 +608,8 @@ class Ui_SignalFrame(object):
         self.lSamplesTotal.setText(QtWidgets.QApplication.translate("SignalFrame", "0", None, -1))
         self.lSamplesViewText.setText(QtWidgets.QApplication.translate("SignalFrame", "Samples in view", None, -1))
 
-from urh.ui.views.EpicGraphicView import EpicGraphicView
-from urh.ui.views.LegendGraphicView import LegendGraphicView
 from urh.ui.views.TextEditProtocolView import TextEditProtocolView
+from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
+from urh.ui.views.LegendGraphicView import LegendGraphicView
 from . import urh_rc

@@ -2,7 +2,7 @@
 
 # Resource object code
 #
-# Created: Di. Mai 28 12:01:07 2019
+# Created: Do. Juni 20 11:48:51 2019
 #      by: The Resource Compiler for PySide2 (Qt v5.12.3)
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,1001 +10,6 @@
 from PySide2 import QtCore
 
 qt_resource_data = b"\
-\x00\x00\x16E\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:o\
-sb=\x22http://www.o\
-penswatchbook.or\
-g/uri/2009/osb\x22\x0a\
-   xmlns:dc=\x22htt\
-p://purl.org/dc/\
-elements/1.1/\x22\x0a \
-  xmlns:cc=\x22http\
-://creativecommo\
-ns.org/ns#\x22\x0a   x\
-mlns:rdf=\x22http:/\
-/www.w3.org/1999\
-/02/22-rdf-synta\
-x-ns#\x22\x0a   xmlns:\
-svg=\x22http://www.\
-w3.org/2000/svg\x22\
-\x0a   xmlns=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns:\
-sodipodi=\x22http:/\
-/sodipodi.source\
-forge.net/DTD/so\
-dipodi-0.dtd\x22\x0a  \
- xmlns:inkscape=\
-\x22http://www.inks\
-cape.org/namespa\
-ces/inkscape\x22\x0a  \
- width=\x2216px\x22\x0a  \
- height=\x2216px\x22\x0a \
-  viewBox=\x220 0 1\
-6 16\x22\x0a   version\
-=\x221.1\x22\x0a   id=\x22SV\
-GRoot\x22\x0a   sodipo\
-di:docname=\x22snif\
-fer.svg\x22\x0a   inks\
-cape:version=\x220.\
-92.1 r\x22>\x0a  <sodi\
-podi:namedview\x0a \
-    id=\x22base\x22\x0a  \
-   pagecolor=\x22#f\
-fffff\x22\x0a     bord\
-ercolor=\x22#666666\
-\x22\x0a     borderopa\
-city=\x221.0\x22\x0a     \
-inkscape:pageopa\
-city=\x220.0\x22\x0a     \
-inkscape:pagesha\
-dow=\x222\x22\x0a     ink\
-scape:zoom=\x2232\x22\x0a\
-     inkscape:cx\
-=\x222.7848469\x22\x0a   \
-  inkscape:cy=\x229\
-.5734649\x22\x0a     i\
-nkscape:document\
--units=\x22px\x22\x0a    \
- inkscape:curren\
-t-layer=\x22layer1\x22\
-\x0a     showgrid=\x22\
-false\x22\x0a     inks\
-cape:window-widt\
-h=\x221920\x22\x0a     in\
-kscape:window-he\
-ight=\x221141\x22\x0a    \
- inkscape:window\
--x=\x220\x22\x0a     inks\
-cape:window-y=\x220\
-\x22\x0a     inkscape:\
-window-maximized\
-=\x221\x22\x0a     inksca\
-pe:grid-bbox=\x22tr\
-ue\x22 />\x0a  <defs\x0a \
-    id=\x22defs5036\
-\x22>\x0a    <linearGr\
-adient\x0a       id\
-=\x22linearGradient\
-7079\x22\x0a       osb\
-:paint=\x22solid\x22>\x0a\
-      <stop\x0a    \
-     style=\x22stop\
--color:#aaccff;s\
-top-opacity:1;\x22\x0a\
-         offset=\
-\x220\x22\x0a         id=\
-\x22stop7077\x22 />\x0a  \
-  </linearGradie\
-nt>\x0a    <filter\x0a\
-       style=\x22co\
-lor-interpolatio\
-n-filters:sRGB;\x22\
-\x0a       inkscape\
-:label=\x22Drop Sha\
-dow\x22\x0a       id=\x22\
-filter914\x22>\x0a    \
-  <feFlood\x0a     \
-    flood-opacit\
-y=\x220.498039\x22\x0a   \
-      flood-colo\
-r=\x22rgb(0,0,0)\x22\x0a \
-        result=\x22\
-flood\x22\x0a         \
-id=\x22feFlood904\x22 \
-/>\x0a      <feComp\
-osite\x0a         i\
-n=\x22flood\x22\x0a      \
-   in2=\x22SourceGr\
-aphic\x22\x0a         \
-operator=\x22in\x22\x0a  \
-       result=\x22c\
-omposite1\x22\x0a     \
-    id=\x22feCompos\
-ite906\x22 />\x0a     \
- <feGaussianBlur\
-\x0a         in=\x22co\
-mposite1\x22\x0a      \
-   stdDeviation=\
-\x220.5\x22\x0a         r\
-esult=\x22blur\x22\x0a   \
-      id=\x22feGaus\
-sianBlur908\x22 />\x0a\
-      <feOffset\x0a\
-         dx=\x220.1\
-\x22\x0a         dy=\x220\
-.1\x22\x0a         res\
-ult=\x22offset\x22\x0a   \
-      id=\x22feOffs\
-et910\x22 />\x0a      \
-<feComposite\x0a   \
-      in=\x22Source\
-Graphic\x22\x0a       \
-  in2=\x22offset\x22\x0a \
-        operator\
-=\x22over\x22\x0a        \
- result=\x22composi\
-te2\x22\x0a         id\
-=\x22feComposite912\
-\x22 />\x0a    </filte\
-r>\x0a    <filter\x0a \
-      style=\x22col\
-or-interpolation\
--filters:sRGB;\x22\x0a\
-       inkscape:\
-label=\x22Drop Shad\
-ow\x22\x0a       id=\x22f\
-ilter938\x22>\x0a     \
- <feFlood\x0a      \
-   flood-opacity\
-=\x220.498039\x22\x0a    \
-     flood-color\
-=\x22rgb(0,0,0)\x22\x0a  \
-       result=\x22f\
-lood\x22\x0a         i\
-d=\x22feFlood928\x22 /\
->\x0a      <feCompo\
-site\x0a         in\
-=\x22flood\x22\x0a       \
-  in2=\x22SourceGra\
-phic\x22\x0a         o\
-perator=\x22in\x22\x0a   \
-      result=\x22co\
-mposite1\x22\x0a      \
-   id=\x22feComposi\
-te930\x22 />\x0a      \
-<feGaussianBlur\x0a\
-         in=\x22com\
-posite1\x22\x0a       \
-  stdDeviation=\x22\
-0.5\x22\x0a         re\
-sult=\x22blur\x22\x0a    \
-     id=\x22feGauss\
-ianBlur932\x22 />\x0a \
-     <feOffset\x0a \
-        dx=\x220.1\x22\
-\x0a         dy=\x220.\
-1\x22\x0a         resu\
-lt=\x22offset\x22\x0a    \
-     id=\x22feOffse\
-t934\x22 />\x0a      <\
-feComposite\x0a    \
-     in=\x22SourceG\
-raphic\x22\x0a        \
- in2=\x22offset\x22\x0a  \
-       operator=\
-\x22over\x22\x0a         \
-result=\x22composit\
-e2\x22\x0a         id=\
-\x22feComposite936\x22\
- />\x0a    </filter\
->\x0a  </defs>\x0a  <m\
-etadata\x0a     id=\
-\x22metadata5039\x22>\x0a\
-    <rdf:RDF>\x0a  \
-    <cc:Work\x0a   \
-      rdf:about=\
-\x22\x22>\x0a        <dc:\
-format>image/svg\
-+xml</dc:format>\
-\x0a        <dc:typ\
-e\x0a           rdf\
-:resource=\x22http:\
-//purl.org/dc/dc\
-mitype/StillImag\
-e\x22 />\x0a      </cc\
-:Work>\x0a    </rdf\
-:RDF>\x0a  </metada\
-ta>\x0a  <g\x0a     in\
-kscape:groupmode\
-=\x22layer\x22\x0a     id\
-=\x22layer2\x22\x0a     i\
-nkscape:label=\x22E\
-bene 2\x22>\x0a    <pa\
-th\x0a       style=\
-\x22fill:none;strok\
-e:#ff0000;stroke\
--width:1.8897637\
-8;stroke-linecap\
-:butt;stroke-lin\
-ejoin:miter;stro\
-ke-miterlimit:4;\
-stroke-dasharray\
-:none;stroke-opa\
-city:1;filter:ur\
-l(#filter938)\x22\x0a \
-      d=\x22m 11.30\
-3085,11.154756 3\
-.83883,3.910488\x22\
-\x0a       id=\x22path\
-5611\x22\x0a       ink\
-scape:connector-\
-curvature=\x220\x22 />\
-\x0a  </g>\x0a  <g\x0a   \
-  id=\x22layer1\x22\x0a  \
-   inkscape:grou\
-pmode=\x22layer\x22\x0a  \
-   inkscape:labe\
-l=\x22Ebene 1\x22>\x0a   \
- <circle\x0a       \
-style=\x22fill:#afc\
-6e9;fill-opacity\
-:0.78417263;stro\
-ke:#ff0000;strok\
-e-width:1.190939\
-43;stroke-miterl\
-imit:4;stroke-da\
-sharray:none;str\
-oke-opacity:1;fi\
-lter:url(#filter\
-914)\x22\x0a       id=\
-\x22path5605\x22\x0a     \
-  cx=\x226.8475037\x22\
-\x0a       cy=\x226.86\
-00025\x22\x0a       r=\
-\x226.0412431\x22 />\x0a \
-   <g\x0a       ari\
-a-label=\x2210\x22\x0a   \
-    style=\x22font-\
-style:normal;fon\
-t-variant:normal\
-;font-weight:900\
-;font-stretch:no\
-rmal;font-size:1\
-0.66666698px;lin\
-e-height:1.25;fo\
-nt-family:'Sourc\
-e Code Pro';-ink\
-scape-font-speci\
-fication:'Source\
- Code Pro Heavy'\
-;letter-spacing:\
-0px;word-spacing\
-:0px;fill:#00000\
-0;fill-opacity:1\
-;stroke:none\x22\x0a  \
-     id=\x22text559\
-7\x22\x0a       transf\
-orm=\x22matrix(0.76\
-43067,0,0,0.8516\
-2896,0.65422787,\
-0.02035532)\x22>\x0a  \
-    <path\x0a      \
-   d=\x22M 2.498166\
-7,11.1875 H 7.44\
-75002 V 9.7155 H\
- 5.9968335 V 4.4\
-248331 H 4.65283\
-34 c -0.5333333,\
-0.32 -1.0666667,\
-0.512 -1.8773334\
-,0.6613334 V 6.2\
-168332 H 4.16216\
-67 V 9.7155 h -1\
-.664 z\x22\x0a        \
- id=\x22path7117\x22\x0a \
-        inkscape\
-:connector-curva\
-ture=\x220\x22\x0a       \
-  style=\x22fill:#0\
-00000;fill-opaci\
-ty:1\x22 />\x0a      <\
-path\x0a         d=\
-\x22m 11.283334,11.\
-3155 c 1.589333,\
-0 2.666666,-1.22\
-6667 2.666666,-3\
-.5413334 0,-2.31\
-46668 -1.077333,\
--3.4773335 -2.66\
-6666,-3.4773335 \
--1.5893338,0 -2.\
-6666672,1.162666\
-7 -2.6666672,3.4\
-773335 0,2.31466\
-64 1.0773334,3.5\
-413334 2.6666672\
-,3.5413334 z m 0\
-,-1.408 C 10.718\
-,9.9075 10.238,9\
-.4594999 10.238,\
-7.7741666 c 0,-1\
-.6853334 0.48,-2\
-.0693334 1.04533\
-4,-2.0693334 0.5\
-65333,0 1.045333\
-,0.384 1.045333,\
-2.0693334 0,1.68\
-53333 -0.48,2.13\
-33334 -1.045333,\
-2.1333334 z m 0,\
--1.2800001 c 0.4\
-90666,0 0.853333\
-,-0.3413333 0.85\
-3333,-0.8533333 \
-0,-0.5120001 -0.\
-362667,-0.853333\
-4 -0.853333,-0.8\
-533334 -0.490667\
-,0 -0.853334,0.3\
-413333 -0.853334\
-,0.8533334 0,0.5\
-12 0.362667,0.85\
-33333 0.853334,0\
-.8533333 z\x22\x0a    \
-     id=\x22path711\
-9\x22\x0a         inks\
-cape:connector-c\
-urvature=\x220\x22\x0a   \
-      style=\x22fil\
-l:#000000;fill-o\
-pacity:1\x22 />\x0a   \
- </g>\x0a  </g>\x0a</s\
-vg>\x0a\
-\x00\x00\x0d^\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.1 r\x22\x0a   s\
-odipodi:docname=\
-\x22lock.svg\x22>\x0a  <s\
-odipodi:namedvie\
-w\x0a     id=\x22base\x22\
-\x0a     pagecolor=\
-\x22#ffffff\x22\x0a     b\
-ordercolor=\x22#666\
-666\x22\x0a     border\
-opacity=\x221.0\x22\x0a  \
-   inkscape:page\
-opacity=\x220.0\x22\x0a  \
-   inkscape:page\
-shadow=\x222\x22\x0a     \
-inkscape:zoom=\x223\
-2\x22\x0a     inkscape\
-:cx=\x222.438584\x22\x0a \
-    inkscape:cy=\
-\x228.4622059\x22\x0a    \
- inkscape:docume\
-nt-units=\x22px\x22\x0a  \
-   inkscape:curr\
-ent-layer=\x22layer\
-1\x22\x0a     showgrid\
-=\x22false\x22\x0a     in\
-kscape:window-wi\
-dth=\x221440\x22\x0a     \
-inkscape:window-\
-height=\x22844\x22\x0a   \
-  inkscape:windo\
-w-x=\x220\x22\x0a     ink\
-scape:window-y=\x22\
-0\x22\x0a     inkscape\
-:window-maximize\
-d=\x221\x22\x0a     inksc\
-ape:grid-bbox=\x22t\
-rue\x22 />\x0a  <defs\x0a\
-     id=\x22defs10\x22\
- />\x0a  <metadata\x0a\
-     id=\x22metadat\
-a13\x22>\x0a    <rdf:R\
-DF>\x0a      <cc:Wo\
-rk\x0a         rdf:\
-about=\x22\x22>\x0a      \
-  <dc:format>ima\
-ge/svg+xml</dc:f\
-ormat>\x0a        <\
-dc:type\x0a        \
-   rdf:resource=\
-\x22http://purl.org\
-/dc/dcmitype/Sti\
-llImage\x22 />\x0a    \
-    <dc:title />\
-\x0a      </cc:Work\
->\x0a    </rdf:RDF>\
-\x0a  </metadata>\x0a \
- <g\x0a     inkscap\
-e:groupmode=\x22lay\
-er\x22\x0a     id=\x22lay\
-er3\x22\x0a     inksca\
-pe:label=\x22Ebene \
-3\x22 />\x0a  <g\x0a     \
-id=\x22layer1\x22\x0a    \
- inkscape:groupm\
-ode=\x22layer\x22\x0a    \
- inkscape:label=\
-\x22Ebene 1\x22>\x0a    <\
-rect\x0a       styl\
-e=\x22fill:#0055d4;\
-fill-opacity:1;s\
-troke-width:1.29\
-552507\x22\x0a       i\
-d=\x22rect26\x22\x0a     \
-  width=\x2213.1875\
-\x22\x0a       height=\
-\x229.4109621\x22\x0a    \
-   x=\x221.53125\x22\x0a \
-      y=\x226.18278\
-79\x22\x0a       ry=\x221\
-.668939\x22 />\x0a    \
-<path\x0a       sty\
-le=\x22fill:none;fi\
-ll-opacity:1;str\
-oke:#0055d4;stro\
-ke-width:2.37899\
-995;stroke-miter\
-limit:4;stroke-d\
-asharray:none;st\
-roke-opacity:1\x22\x0a\
-       id=\x22path9\
-55\x22\x0a       sodip\
-odi:type=\x22arc\x22\x0a \
-      sodipodi:c\
-x=\x228.0946102\x22\x0a  \
-     sodipodi:cy\
-=\x224.9240141\x22\x0a   \
-    sodipodi:rx=\
-\x224.0718422\x22\x0a    \
-   sodipodi:ry=\x22\
-3.1146088\x22\x0a     \
-  sodipodi:start\
-=\x223.1334605\x22\x0a   \
-    sodipodi:end\
-=\x223.1328231\x22\x0a   \
-    d=\x22M 4.02290\
-27,4.9493423 A 4\
-.0718422,3.11460\
-88 0 0 1 8.06084\
-89,1.8095124 4.0\
-718422,3.1146088\
- 0 0 1 12.166307\
-,4.8976933 4.071\
-8422,3.1146088 0\
- 0 1 8.1296692,8\
-.0385074 4.07184\
-22,3.1146088 0 0\
- 1 4.0229246,4.9\
-513275\x22\x0a       s\
-odipodi:open=\x22tr\
-ue\x22 />\x0a  </g>\x0a  \
-<g\x0a     inkscape\
-:groupmode=\x22laye\
-r\x22\x0a     id=\x22laye\
-r2\x22\x0a     inkscap\
-e:label=\x22Ebene 2\
-\x22>\x0a    <path\x0a   \
-    style=\x22fill:\
-#ffffff;fill-opa\
-city:1;stroke:no\
-ne;stroke-width:\
-1.50427711;strok\
-e-opacity:1\x22\x0a   \
-    id=\x22path853\x22\
-\x0a       sodipodi\
-:type=\x22arc\x22\x0a    \
-   sodipodi:cx=\x22\
-8.0742912\x22\x0a     \
-  sodipodi:cy=\x228\
-.8435822\x22\x0a      \
- sodipodi:rx=\x221.\
-8158679\x22\x0a       \
-sodipodi:ry=\x221.7\
-158939\x22\x0a       s\
-odipodi:start=\x223\
-.1415927\x22\x0a      \
- sodipodi:end=\x222\
-.8204603\x22\x0a      \
- d=\x22M 6.2584233,\
-8.8435821 A 1.81\
-58679,1.7158939 \
-0 0 1 7.9286644,\
-7.1332151 1.8158\
-679,1.7158939 0 \
-0 1 9.8668015,8.\
-56925 1.8158679,\
-1.7158939 0 0 1 \
-8.5074256,10.509\
-948 1.8158679,1.\
-7158939 0 0 1 6.\
-351253,9.385189\x22\
-\x0a       sodipodi\
-:open=\x22true\x22 />\x0a\
-    <rect\x0a      \
- style=\x22fill:#ff\
-ffff;fill-opacit\
-y:1;stroke:none;\
-stroke-width:0.7\
-9365373;stroke-o\
-pacity:1\x22\x0a      \
- id=\x22rect1685\x22\x0a \
-      width=\x221.2\
-488354\x22\x0a       h\
-eight=\x224.0842142\
-\x22\x0a       x=\x227.49\
-14622\x22\x0a       y=\
-\x2210.344006\x22 />\x0a \
- </g>\x0a</svg>\x0a\
-\x00\x00\x09p\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x228m\
-m\x22\x0a   height=\x2216\
-mm\x22\x0a   viewBox=\x22\
-0 0 8 16\x22\x0a   ver\
-sion=\x221.1\x22\x0a   id\
-=\x22svg8\x22\x0a   inksc\
-ape:version=\x220.9\
-2.1 r\x22\x0a   sodipo\
-di:docname=\x22spli\
-tter_handle_vert\
-ical.svg\x22>\x0a  <de\
-fs\x0a     id=\x22defs\
-2\x22 />\x0a  <sodipod\
-i:namedview\x0a    \
- id=\x22base\x22\x0a     \
-pagecolor=\x22#ffff\
-ff\x22\x0a     borderc\
-olor=\x22#666666\x22\x0a \
-    borderopacit\
-y=\x221.0\x22\x0a     ink\
-scape:pageopacit\
-y=\x220.0\x22\x0a     ink\
-scape:pageshadow\
-=\x222\x22\x0a     inksca\
-pe:zoom=\x2211.2\x22\x0a \
-    inkscape:cx=\
-\x2228.682636\x22\x0a    \
- inkscape:cy=\x2235\
-.128679\x22\x0a     in\
-kscape:document-\
-units=\x22mm\x22\x0a     \
-inkscape:current\
--layer=\x22layer1\x22\x0a\
-     showgrid=\x22f\
-alse\x22\x0a     inksc\
-ape:window-width\
-=\x221920\x22\x0a     ink\
-scape:window-hei\
-ght=\x221141\x22\x0a     \
-inkscape:window-\
-x=\x220\x22\x0a     inksc\
-ape:window-y=\x220\x22\
-\x0a     inkscape:w\
-indow-maximized=\
-\x221\x22 />\x0a  <metada\
-ta\x0a     id=\x22meta\
-data5\x22>\x0a    <rdf\
-:RDF>\x0a      <cc:\
-Work\x0a         rd\
-f:about=\x22\x22>\x0a    \
-    <dc:format>i\
-mage/svg+xml</dc\
-:format>\x0a       \
- <dc:type\x0a      \
-     rdf:resourc\
-e=\x22http://purl.o\
-rg/dc/dcmitype/S\
-tillImage\x22 />\x0a  \
-      <dc:title>\
-</dc:title>\x0a    \
-  </cc:Work>\x0a   \
- </rdf:RDF>\x0a  </\
-metadata>\x0a  <g\x0a \
-    inkscape:lab\
-el=\x22Ebene 1\x22\x0a   \
-  inkscape:group\
-mode=\x22layer\x22\x0a   \
-  id=\x22layer1\x22\x0a  \
-   transform=\x22tr\
-anslate(0,-281)\x22\
->\x0a    <circle\x0a  \
-     style=\x22fill\
-:#000000;fill-op\
-acity:1;stroke:n\
-one;stroke-width\
-:0.25;stroke-mit\
-erlimit:4;stroke\
--dasharray:none;\
-stroke-opacity:1\
-\x22\x0a       id=\x22pat\
-h4487\x22\x0a       cx\
-=\x22-294.98648\x22\x0a  \
-     cy=\x223.91350\
-46\x22\x0a       r=\x221.\
-9135045\x22\x0a       \
-transform=\x22rotat\
-e(-90)\x22 />\x0a    <\
-circle\x0a       st\
-yle=\x22fill:#00000\
-0;fill-opacity:1\
-;stroke:none;str\
-oke-width:0.25;s\
-troke-miterlimit\
-:4;stroke-dashar\
-ray:none;stroke-\
-opacity:1\x22\x0a     \
-  id=\x22path4487-6\
-\x22\x0a       cx=\x22-28\
-9.08649\x22\x0a       \
-cy=\x223.9135046\x22\x0a \
-      r=\x221.91350\
-45\x22\x0a       trans\
-form=\x22rotate(-90\
-)\x22 />\x0a    <circl\
-e\x0a       style=\x22\
-fill:#000000;fil\
-l-opacity:1;stro\
-ke:none;stroke-w\
-idth:0.25;stroke\
--miterlimit:4;st\
-roke-dasharray:n\
-one;stroke-opaci\
-ty:1\x22\x0a       id=\
-\x22path4487-7\x22\x0a   \
-    cx=\x22-282.986\
-48\x22\x0a       cy=\x223\
-.9135046\x22\x0a      \
- r=\x221.9135045\x22\x0a \
-      transform=\
-\x22rotate(-90)\x22 />\
-\x0a  </g>\x0a</svg>\x0a\
-\x00\x00\x072\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.2 5c3e80d\
-, 2017-08-06\x22\x0a  \
- sodipodi:docnam\
-e=\x22collapse.svg\x22\
->\x0a  <sodipodi:na\
-medview\x0a     id=\
-\x22base\x22\x0a     page\
-color=\x22#ffffff\x22\x0a\
-     bordercolor\
-=\x22#666666\x22\x0a     \
-borderopacity=\x221\
-.0\x22\x0a     inkscap\
-e:pageopacity=\x220\
-.0\x22\x0a     inkscap\
-e:pageshadow=\x222\x22\
-\x0a     inkscape:z\
-oom=\x2216\x22\x0a     in\
-kscape:cx=\x22-25.7\
-5\x22\x0a     inkscape\
-:cy=\x228\x22\x0a     ink\
-scape:document-u\
-nits=\x22px\x22\x0a     i\
-nkscape:current-\
-layer=\x22layer1\x22\x0a \
-    showgrid=\x22fa\
-lse\x22\x0a     inksca\
-pe:window-width=\
-\x221920\x22\x0a     inks\
-cape:window-heig\
-ht=\x221141\x22\x0a     i\
-nkscape:window-x\
-=\x220\x22\x0a     inksca\
-pe:window-y=\x220\x22\x0a\
-     inkscape:wi\
-ndow-maximized=\x22\
-1\x22\x0a     inkscape\
-:grid-bbox=\x22true\
-\x22 />\x0a  <defs\x0a   \
-  id=\x22defs815\x22 /\
->\x0a  <metadata\x0a  \
-   id=\x22metadata8\
-18\x22>\x0a    <rdf:RD\
-F>\x0a      <cc:Wor\
-k\x0a         rdf:a\
-bout=\x22\x22>\x0a       \
- <dc:format>imag\
-e/svg+xml</dc:fo\
-rmat>\x0a        <d\
-c:type\x0a         \
-  rdf:resource=\x22\
-http://purl.org/\
-dc/dcmitype/Stil\
-lImage\x22 />\x0a     \
-   <dc:title />\x0a\
-      </cc:Work>\
-\x0a    </rdf:RDF>\x0a\
-  </metadata>\x0a  \
-<g\x0a     id=\x22laye\
-r1\x22\x0a     inkscap\
-e:groupmode=\x22lay\
-er\x22\x0a     inkscap\
-e:label=\x22Ebene 1\
-\x22>\x0a    <path\x0a   \
-    id=\x22path1447\
-\x22\x0a       inkscap\
-e:label=\x22Triangl\
-e\x22\x0a       style=\
-\x22fill:#000000;fi\
-ll-opacity:1;str\
-oke:none;stroke-\
-width:1.0745703;\
-stroke-opacity:1\
-\x22\x0a       d=\x22m 4,\
-4 v 8 l 8,-4.000\
-0001 z\x22\x0a       i\
-nkscape:connecto\
-r-curvature=\x220\x22 \
-/>\x0a  </g>\x0a</svg>\
-\x0a\
-\x00\x00\x09/\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.2 2405546\
-, 2018-03-11\x22\x0a  \
- sodipodi:docnam\
-e=\x22message_type.\
-svg\x22>\x0a  <sodipod\
-i:namedview\x0a    \
- id=\x22base\x22\x0a     \
-pagecolor=\x22#0000\
-00\x22\x0a     borderc\
-olor=\x22#666666\x22\x0a \
-    borderopacit\
-y=\x221.0\x22\x0a     ink\
-scape:pageopacit\
-y=\x221\x22\x0a     inksc\
-ape:pageshadow=\x22\
-2\x22\x0a     inkscape\
-:zoom=\x2232\x22\x0a     \
-inkscape:cx=\x224.9\
-678955\x22\x0a     ink\
-scape:cy=\x228.2784\
-17\x22\x0a     inkscap\
-e:document-units\
-=\x22px\x22\x0a     inksc\
-ape:current-laye\
-r=\x22layer1\x22\x0a     \
-showgrid=\x22false\x22\
-\x0a     inkscape:w\
-indow-width=\x22192\
-0\x22\x0a     inkscape\
-:window-height=\x22\
-1141\x22\x0a     inksc\
-ape:window-x=\x220\x22\
-\x0a     inkscape:w\
-indow-y=\x220\x22\x0a    \
- inkscape:window\
--maximized=\x221\x22\x0a \
-    inkscape:gri\
-d-bbox=\x22true\x22 />\
-\x0a  <defs\x0a     id\
-=\x22defs815\x22 />\x0a  \
-<metadata\x0a     i\
-d=\x22metadata818\x22>\
-\x0a    <rdf:RDF>\x0a \
-     <cc:Work\x0a  \
-       rdf:about\
-=\x22\x22>\x0a        <dc\
-:format>image/sv\
-g+xml</dc:format\
->\x0a        <dc:ty\
-pe\x0a           rd\
-f:resource=\x22http\
-://purl.org/dc/d\
-cmitype/StillIma\
-ge\x22 />\x0a        <\
-dc:title></dc:ti\
-tle>\x0a      </cc:\
-Work>\x0a    </rdf:\
-RDF>\x0a  </metadat\
-a>\x0a  <g\x0a     id=\
-\x22layer1\x22\x0a     in\
-kscape:groupmode\
-=\x22layer\x22\x0a     in\
-kscape:label=\x22Eb\
-ene 1\x22>\x0a    <tex\
-t\x0a       xml:spa\
-ce=\x22preserve\x22\x0a  \
-     style=\x22font\
--style:normal;fo\
-nt-variant:norma\
-l;font-weight:90\
-0;font-stretch:n\
-ormal;font-size:\
-14.66666698px;li\
-ne-height:1.25;f\
-ont-family:'Sour\
-ce Sans Pro';-in\
-kscape-font-spec\
-ification:'Sourc\
-e Sans Pro Heavy\
-';letter-spacing\
-:0px;word-spacin\
-g:0px;fill:#0080\
-00;fill-opacity:\
-1;stroke:none\x22\x0a \
-      x=\x22-0.75\x22\x0a\
-       y=\x2212.062\
-5\x22\x0a       id=\x22te\
-xt1376\x22><tspan\x0a \
-        sodipodi\
-:role=\x22line\x22\x0a   \
-      id=\x22tspan1\
-374\x22\x0a         x=\
-\x22-0.75\x22\x0a        \
- y=\x2212.0625\x22\x0a   \
-      style=\x22fon\
-t-style:normal;f\
-ont-variant:norm\
-al;font-weight:9\
-00;font-stretch:\
-normal;font-size\
-:12.66666698px;l\
-ine-height:1;fon\
-t-family:'Source\
- Sans Pro';-inks\
-cape-font-specif\
-ication:'Source \
-Sans Pro Heavy';\
-fill:#008000\x22>MT\
-</tspan></text>\x0a\
-  </g>\x0a</svg>\x0a\
 \x00\x00\x1a\x8b\
 <\
 ?xml version=\x221.\
@@ -1432,7 +437,552 @@ Pro Heavy';fill:\
   id=\x22path4553\x22 \
 />\x0a    </g>\x0a  </\
 g>\x0a</svg>\x0a\
-\x00\x00\x0a\xe9\
+\x00\x00\x072\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.2 5c3e80d\
+, 2017-08-06\x22\x0a  \
+ sodipodi:docnam\
+e=\x22collapse.svg\x22\
+>\x0a  <sodipodi:na\
+medview\x0a     id=\
+\x22base\x22\x0a     page\
+color=\x22#ffffff\x22\x0a\
+     bordercolor\
+=\x22#666666\x22\x0a     \
+borderopacity=\x221\
+.0\x22\x0a     inkscap\
+e:pageopacity=\x220\
+.0\x22\x0a     inkscap\
+e:pageshadow=\x222\x22\
+\x0a     inkscape:z\
+oom=\x2216\x22\x0a     in\
+kscape:cx=\x22-25.7\
+5\x22\x0a     inkscape\
+:cy=\x228\x22\x0a     ink\
+scape:document-u\
+nits=\x22px\x22\x0a     i\
+nkscape:current-\
+layer=\x22layer1\x22\x0a \
+    showgrid=\x22fa\
+lse\x22\x0a     inksca\
+pe:window-width=\
+\x221920\x22\x0a     inks\
+cape:window-heig\
+ht=\x221141\x22\x0a     i\
+nkscape:window-x\
+=\x220\x22\x0a     inksca\
+pe:window-y=\x220\x22\x0a\
+     inkscape:wi\
+ndow-maximized=\x22\
+1\x22\x0a     inkscape\
+:grid-bbox=\x22true\
+\x22 />\x0a  <defs\x0a   \
+  id=\x22defs815\x22 /\
+>\x0a  <metadata\x0a  \
+   id=\x22metadata8\
+18\x22>\x0a    <rdf:RD\
+F>\x0a      <cc:Wor\
+k\x0a         rdf:a\
+bout=\x22\x22>\x0a       \
+ <dc:format>imag\
+e/svg+xml</dc:fo\
+rmat>\x0a        <d\
+c:type\x0a         \
+  rdf:resource=\x22\
+http://purl.org/\
+dc/dcmitype/Stil\
+lImage\x22 />\x0a     \
+   <dc:title />\x0a\
+      </cc:Work>\
+\x0a    </rdf:RDF>\x0a\
+  </metadata>\x0a  \
+<g\x0a     id=\x22laye\
+r1\x22\x0a     inkscap\
+e:groupmode=\x22lay\
+er\x22\x0a     inkscap\
+e:label=\x22Ebene 1\
+\x22>\x0a    <path\x0a   \
+    id=\x22path1447\
+\x22\x0a       inkscap\
+e:label=\x22Triangl\
+e\x22\x0a       style=\
+\x22fill:#000000;fi\
+ll-opacity:1;str\
+oke:none;stroke-\
+width:1.0745703;\
+stroke-opacity:1\
+\x22\x0a       d=\x22m 4,\
+4 v 8 l 8,-4.000\
+0001 z\x22\x0a       i\
+nkscape:connecto\
+r-curvature=\x220\x22 \
+/>\x0a  </g>\x0a</svg>\
+\x0a\
+\x00\x00\x0d^\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.1 r\x22\x0a   s\
+odipodi:docname=\
+\x22lock.svg\x22>\x0a  <s\
+odipodi:namedvie\
+w\x0a     id=\x22base\x22\
+\x0a     pagecolor=\
+\x22#ffffff\x22\x0a     b\
+ordercolor=\x22#666\
+666\x22\x0a     border\
+opacity=\x221.0\x22\x0a  \
+   inkscape:page\
+opacity=\x220.0\x22\x0a  \
+   inkscape:page\
+shadow=\x222\x22\x0a     \
+inkscape:zoom=\x223\
+2\x22\x0a     inkscape\
+:cx=\x222.438584\x22\x0a \
+    inkscape:cy=\
+\x228.4622059\x22\x0a    \
+ inkscape:docume\
+nt-units=\x22px\x22\x0a  \
+   inkscape:curr\
+ent-layer=\x22layer\
+1\x22\x0a     showgrid\
+=\x22false\x22\x0a     in\
+kscape:window-wi\
+dth=\x221440\x22\x0a     \
+inkscape:window-\
+height=\x22844\x22\x0a   \
+  inkscape:windo\
+w-x=\x220\x22\x0a     ink\
+scape:window-y=\x22\
+0\x22\x0a     inkscape\
+:window-maximize\
+d=\x221\x22\x0a     inksc\
+ape:grid-bbox=\x22t\
+rue\x22 />\x0a  <defs\x0a\
+     id=\x22defs10\x22\
+ />\x0a  <metadata\x0a\
+     id=\x22metadat\
+a13\x22>\x0a    <rdf:R\
+DF>\x0a      <cc:Wo\
+rk\x0a         rdf:\
+about=\x22\x22>\x0a      \
+  <dc:format>ima\
+ge/svg+xml</dc:f\
+ormat>\x0a        <\
+dc:type\x0a        \
+   rdf:resource=\
+\x22http://purl.org\
+/dc/dcmitype/Sti\
+llImage\x22 />\x0a    \
+    <dc:title />\
+\x0a      </cc:Work\
+>\x0a    </rdf:RDF>\
+\x0a  </metadata>\x0a \
+ <g\x0a     inkscap\
+e:groupmode=\x22lay\
+er\x22\x0a     id=\x22lay\
+er3\x22\x0a     inksca\
+pe:label=\x22Ebene \
+3\x22 />\x0a  <g\x0a     \
+id=\x22layer1\x22\x0a    \
+ inkscape:groupm\
+ode=\x22layer\x22\x0a    \
+ inkscape:label=\
+\x22Ebene 1\x22>\x0a    <\
+rect\x0a       styl\
+e=\x22fill:#0055d4;\
+fill-opacity:1;s\
+troke-width:1.29\
+552507\x22\x0a       i\
+d=\x22rect26\x22\x0a     \
+  width=\x2213.1875\
+\x22\x0a       height=\
+\x229.4109621\x22\x0a    \
+   x=\x221.53125\x22\x0a \
+      y=\x226.18278\
+79\x22\x0a       ry=\x221\
+.668939\x22 />\x0a    \
+<path\x0a       sty\
+le=\x22fill:none;fi\
+ll-opacity:1;str\
+oke:#0055d4;stro\
+ke-width:2.37899\
+995;stroke-miter\
+limit:4;stroke-d\
+asharray:none;st\
+roke-opacity:1\x22\x0a\
+       id=\x22path9\
+55\x22\x0a       sodip\
+odi:type=\x22arc\x22\x0a \
+      sodipodi:c\
+x=\x228.0946102\x22\x0a  \
+     sodipodi:cy\
+=\x224.9240141\x22\x0a   \
+    sodipodi:rx=\
+\x224.0718422\x22\x0a    \
+   sodipodi:ry=\x22\
+3.1146088\x22\x0a     \
+  sodipodi:start\
+=\x223.1334605\x22\x0a   \
+    sodipodi:end\
+=\x223.1328231\x22\x0a   \
+    d=\x22M 4.02290\
+27,4.9493423 A 4\
+.0718422,3.11460\
+88 0 0 1 8.06084\
+89,1.8095124 4.0\
+718422,3.1146088\
+ 0 0 1 12.166307\
+,4.8976933 4.071\
+8422,3.1146088 0\
+ 0 1 8.1296692,8\
+.0385074 4.07184\
+22,3.1146088 0 0\
+ 1 4.0229246,4.9\
+513275\x22\x0a       s\
+odipodi:open=\x22tr\
+ue\x22 />\x0a  </g>\x0a  \
+<g\x0a     inkscape\
+:groupmode=\x22laye\
+r\x22\x0a     id=\x22laye\
+r2\x22\x0a     inkscap\
+e:label=\x22Ebene 2\
+\x22>\x0a    <path\x0a   \
+    style=\x22fill:\
+#ffffff;fill-opa\
+city:1;stroke:no\
+ne;stroke-width:\
+1.50427711;strok\
+e-opacity:1\x22\x0a   \
+    id=\x22path853\x22\
+\x0a       sodipodi\
+:type=\x22arc\x22\x0a    \
+   sodipodi:cx=\x22\
+8.0742912\x22\x0a     \
+  sodipodi:cy=\x228\
+.8435822\x22\x0a      \
+ sodipodi:rx=\x221.\
+8158679\x22\x0a       \
+sodipodi:ry=\x221.7\
+158939\x22\x0a       s\
+odipodi:start=\x223\
+.1415927\x22\x0a      \
+ sodipodi:end=\x222\
+.8204603\x22\x0a      \
+ d=\x22M 6.2584233,\
+8.8435821 A 1.81\
+58679,1.7158939 \
+0 0 1 7.9286644,\
+7.1332151 1.8158\
+679,1.7158939 0 \
+0 1 9.8668015,8.\
+56925 1.8158679,\
+1.7158939 0 0 1 \
+8.5074256,10.509\
+948 1.8158679,1.\
+7158939 0 0 1 6.\
+351253,9.385189\x22\
+\x0a       sodipodi\
+:open=\x22true\x22 />\x0a\
+    <rect\x0a      \
+ style=\x22fill:#ff\
+ffff;fill-opacit\
+y:1;stroke:none;\
+stroke-width:0.7\
+9365373;stroke-o\
+pacity:1\x22\x0a      \
+ id=\x22rect1685\x22\x0a \
+      width=\x221.2\
+488354\x22\x0a       h\
+eight=\x224.0842142\
+\x22\x0a       x=\x227.49\
+14622\x22\x0a       y=\
+\x2210.344006\x22 />\x0a \
+ </g>\x0a</svg>\x0a\
+\x00\x00\x0d\x0c\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.1 r\x22\x0a   s\
+odipodi:docname=\
+\x22unlock.svg\x22>\x0a  \
+<sodipodi:namedv\
+iew\x0a     id=\x22bas\
+e\x22\x0a     pagecolo\
+r=\x22#ffffff\x22\x0a    \
+ bordercolor=\x22#6\
+66666\x22\x0a     bord\
+eropacity=\x221.0\x22\x0a\
+     inkscape:pa\
+geopacity=\x220.0\x22\x0a\
+     inkscape:pa\
+geshadow=\x222\x22\x0a   \
+  inkscape:zoom=\
+\x2232\x22\x0a     inksca\
+pe:cx=\x222.438584\x22\
+\x0a     inkscape:c\
+y=\x228.4622059\x22\x0a  \
+   inkscape:docu\
+ment-units=\x22px\x22\x0a\
+     inkscape:cu\
+rrent-layer=\x22lay\
+er1\x22\x0a     showgr\
+id=\x22false\x22\x0a     \
+inkscape:window-\
+width=\x221440\x22\x0a   \
+  inkscape:windo\
+w-height=\x22844\x22\x0a \
+    inkscape:win\
+dow-x=\x220\x22\x0a     i\
+nkscape:window-y\
+=\x220\x22\x0a     inksca\
+pe:window-maximi\
+zed=\x221\x22\x0a     ink\
+scape:grid-bbox=\
+\x22true\x22 />\x0a  <def\
+s\x0a     id=\x22defs1\
+0\x22 />\x0a  <metadat\
+a\x0a     id=\x22metad\
+ata13\x22>\x0a    <rdf\
+:RDF>\x0a      <cc:\
+Work\x0a         rd\
+f:about=\x22\x22>\x0a    \
+    <dc:format>i\
+mage/svg+xml</dc\
+:format>\x0a       \
+ <dc:type\x0a      \
+     rdf:resourc\
+e=\x22http://purl.o\
+rg/dc/dcmitype/S\
+tillImage\x22 />\x0a  \
+      <dc:title>\
+</dc:title>\x0a    \
+  </cc:Work>\x0a   \
+ </rdf:RDF>\x0a  </\
+metadata>\x0a  <g\x0a \
+    inkscape:gro\
+upmode=\x22layer\x22\x0a \
+    id=\x22layer3\x22\x0a\
+     inkscape:la\
+bel=\x22Ebene 3\x22 />\
+\x0a  <g\x0a     id=\x22l\
+ayer1\x22\x0a     inks\
+cape:groupmode=\x22\
+layer\x22\x0a     inks\
+cape:label=\x22Eben\
+e 1\x22>\x0a    <rect\x0a\
+       style=\x22fi\
+ll:#0055d4;fill-\
+opacity:1;stroke\
+-width:1.2955250\
+7\x22\x0a       id=\x22re\
+ct26\x22\x0a       wid\
+th=\x2213.1875\x22\x0a   \
+    height=\x229.41\
+09621\x22\x0a       x=\
+\x221.53125\x22\x0a      \
+ y=\x226.1827879\x22\x0a \
+      ry=\x221.6689\
+39\x22 />\x0a    <path\
+\x0a       style=\x22f\
+ill:none;fill-op\
+acity:1;stroke:#\
+0055d4;stroke-wi\
+dth:2.37899995;s\
+troke-miterlimit\
+:4;stroke-dashar\
+ray:none;stroke-\
+opacity:1\x22\x0a     \
+  id=\x22path955\x22\x0a \
+      sodipodi:t\
+ype=\x22arc\x22\x0a      \
+ sodipodi:cx=\x228.\
+0946102\x22\x0a       \
+sodipodi:cy=\x224.9\
+240141\x22\x0a       s\
+odipodi:rx=\x224.07\
+18422\x22\x0a       so\
+dipodi:ry=\x223.114\
+6088\x22\x0a       sod\
+ipodi:start=\x224.7\
+09543\x22\x0a       so\
+dipodi:end=\x221.54\
+24001\x22\x0a       d=\
+\x22M 8.0830218,1.8\
+094179 A 4.07184\
+22,3.1146088 0 0\
+ 1 12.165956,4.8\
+753624 4.0718422\
+,3.1146088 0 0 1\
+ 8.2102196,8.037\
+3672\x22\x0a       sod\
+ipodi:open=\x22true\
+\x22 />\x0a  </g>\x0a  <g\
+\x0a     inkscape:g\
+roupmode=\x22layer\x22\
+\x0a     id=\x22layer2\
+\x22\x0a     inkscape:\
+label=\x22Ebene 2\x22>\
+\x0a    <path\x0a     \
+  style=\x22fill:#f\
+fffff;fill-opaci\
+ty:1;stroke:none\
+;stroke-width:1.\
+50427711;stroke-\
+opacity:1\x22\x0a     \
+  id=\x22path853\x22\x0a \
+      sodipodi:t\
+ype=\x22arc\x22\x0a      \
+ sodipodi:cx=\x228.\
+0742912\x22\x0a       \
+sodipodi:cy=\x228.8\
+435822\x22\x0a       s\
+odipodi:rx=\x221.81\
+58679\x22\x0a       so\
+dipodi:ry=\x221.715\
+8939\x22\x0a       sod\
+ipodi:start=\x223.1\
+415927\x22\x0a       s\
+odipodi:end=\x222.8\
+204603\x22\x0a       d\
+=\x22M 6.2584233,8.\
+8435821 A 1.8158\
+679,1.7158939 0 \
+0 1 7.9286644,7.\
+1332151 1.815867\
+9,1.7158939 0 0 \
+1 9.8668015,8.56\
+925 1.8158679,1.\
+7158939 0 0 1 8.\
+5074256,10.50994\
+8 1.8158679,1.71\
+58939 0 0 1 6.35\
+1253,9.385189\x22\x0a \
+      sodipodi:o\
+pen=\x22true\x22 />\x0a  \
+  <rect\x0a       s\
+tyle=\x22fill:#ffff\
+ff;fill-opacity:\
+1;stroke:none;st\
+roke-width:0.793\
+65373;stroke-opa\
+city:1\x22\x0a       i\
+d=\x22rect1685\x22\x0a   \
+    width=\x221.248\
+8354\x22\x0a       hei\
+ght=\x224.0842142\x22\x0a\
+       x=\x227.4914\
+622\x22\x0a       y=\x221\
+0.344006\x22 />\x0a  <\
+/g>\x0a</svg>\x0a\
+\x00\x00\x0b@\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
@@ -1473,108 +1023,258 @@ id=\x22SVGRoot\x22\x0a   \
 inkscape:version\
 =\x220.92.1 r\x22\x0a   s\
 odipodi:docname=\
-\x22equals.svg\x22>\x0a  \
-<sodipodi:namedv\
-iew\x0a     id=\x22bas\
-e\x22\x0a     pagecolo\
-r=\x22#ffffff\x22\x0a    \
- bordercolor=\x22#6\
-66666\x22\x0a     bord\
-eropacity=\x221.0\x22\x0a\
-     inkscape:pa\
-geopacity=\x220.0\x22\x0a\
-     inkscape:pa\
-geshadow=\x222\x22\x0a   \
-  inkscape:zoom=\
-\x2216\x22\x0a     inksca\
-pe:cx=\x22-7.834002\
-3\x22\x0a     inkscape\
-:cy=\x229.8125\x22\x0a   \
-  inkscape:docum\
-ent-units=\x22px\x22\x0a \
-    inkscape:cur\
-rent-layer=\x22laye\
-r1\x22\x0a     showgri\
-d=\x22false\x22\x0a     i\
-nkscape:window-w\
-idth=\x221920\x22\x0a    \
- inkscape:window\
--height=\x221141\x22\x0a \
+\x22equals_qm.svg\x22>\
+\x0a  <sodipodi:nam\
+edview\x0a     id=\x22\
+base\x22\x0a     pagec\
+olor=\x22#ffffff\x22\x0a \
+    bordercolor=\
+\x22#666666\x22\x0a     b\
+orderopacity=\x221.\
+0\x22\x0a     inkscape\
+:pageopacity=\x220.\
+0\x22\x0a     inkscape\
+:pageshadow=\x222\x22\x0a\
+     inkscape:zo\
+om=\x2216\x22\x0a     ink\
+scape:cx=\x2220.384\
+743\x22\x0a     inksca\
+pe:cy=\x2214.953125\
+\x22\x0a     inkscape:\
+document-units=\x22\
+px\x22\x0a     inkscap\
+e:current-layer=\
+\x22layer1\x22\x0a     sh\
+owgrid=\x22false\x22\x0a \
     inkscape:win\
-dow-x=\x220\x22\x0a     i\
-nkscape:window-y\
-=\x220\x22\x0a     inksca\
-pe:window-maximi\
-zed=\x221\x22\x0a     ink\
-scape:grid-bbox=\
-\x22true\x22 />\x0a  <def\
-s\x0a     id=\x22defs4\
-485\x22 />\x0a  <metad\
-ata\x0a     id=\x22met\
-adata4488\x22>\x0a    \
-<rdf:RDF>\x0a      \
-<cc:Work\x0a       \
-  rdf:about=\x22\x22>\x0a\
-        <dc:form\
-at>image/svg+xml\
-</dc:format>\x0a   \
-     <dc:type\x0a  \
-         rdf:res\
-ource=\x22http://pu\
-rl.org/dc/dcmity\
-pe/StillImage\x22 /\
->\x0a        <dc:ti\
-tle />\x0a      </c\
-c:Work>\x0a    </rd\
-f:RDF>\x0a  </metad\
-ata>\x0a  <g\x0a     i\
-d=\x22layer1\x22\x0a     \
-inkscape:groupmo\
-de=\x22layer\x22\x0a     \
-inkscape:label=\x22\
-Ebene 1\x22>\x0a    <t\
-ext\x0a       xml:s\
-pace=\x22preserve\x22\x0a\
-       style=\x22fo\
-nt-style:normal;\
-font-variant:nor\
-mal;font-weight:\
-normal;font-stre\
-tch:normal;font-\
-size:8px;line-he\
-ight:1.25;font-f\
-amily:'Source Co\
-de Pro';-inkscap\
-e-font-specifica\
-tion:'Source Cod\
-e Pro';letter-sp\
-acing:0px;word-s\
-pacing:0px;fill:\
-#000000;fill-opa\
-city:1;stroke:no\
-ne\x22\x0a       x=\x228.\
-375\x22\x0a       y=\x227\
-.875\x22\x0a       id=\
-\x22text5091\x22><tspa\
-n\x0a         sodip\
-odi:role=\x22line\x22\x0a\
-         id=\x22tsp\
-an5089\x22\x0a        \
- x=\x228.375\x22\x0a     \
-    y=\x2214.875\x22 /\
-></text>\x0a    <g\x0a\
-       transform\
-=\x22translate(-2.8\
-046876,-0.052734\
-3)\x22\x0a       aria-\
-label=\x22 \xe2\x89\x9f\x22\x0a   \
-    style=\x22font-\
-style:normal;fon\
-t-variant:normal\
-;font-weight:900\
-;font-stretch:no\
-rmal;font-size:4\
-0px;line-height:\
+dow-width=\x221920\x22\
+\x0a     inkscape:w\
+indow-height=\x2211\
+41\x22\x0a     inkscap\
+e:window-x=\x220\x22\x0a \
+    inkscape:win\
+dow-y=\x220\x22\x0a     i\
+nkscape:window-m\
+aximized=\x221\x22\x0a   \
+  inkscape:grid-\
+bbox=\x22true\x22 />\x0a \
+ <defs\x0a     id=\x22\
+defs4485\x22 />\x0a  <\
+metadata\x0a     id\
+=\x22metadata4488\x22>\
+\x0a    <rdf:RDF>\x0a \
+     <cc:Work\x0a  \
+       rdf:about\
+=\x22\x22>\x0a        <dc\
+:format>image/sv\
+g+xml</dc:format\
+>\x0a        <dc:ty\
+pe\x0a           rd\
+f:resource=\x22http\
+://purl.org/dc/d\
+cmitype/StillIma\
+ge\x22 />\x0a        <\
+dc:title></dc:ti\
+tle>\x0a      </cc:\
+Work>\x0a    </rdf:\
+RDF>\x0a  </metadat\
+a>\x0a  <g\x0a     id=\
+\x22layer1\x22\x0a     in\
+kscape:groupmode\
+=\x22layer\x22\x0a     in\
+kscape:label=\x22Eb\
+ene 1\x22>\x0a    <g\x0a \
+      aria-label\
+=\x22\x09\xe2\x89\x9f\x22\x0a       s\
+tyle=\x22font-style\
+:normal;font-var\
+iant:normal;font\
+-weight:900;font\
+-stretch:normal;\
+font-size:40px;l\
+ine-height:1.25;\
+font-family:'Sou\
+rce Code Pro';-i\
+nkscape-font-spe\
+cification:'Sour\
+ce Code Pro Heav\
+y';letter-spacin\
+g:0px;word-spaci\
+ng:0px;fill:#005\
+5d4;fill-opacity\
+:1;stroke:none\x22\x0a\
+       id=\x22text5\
+046\x22>\x0a      <pat\
+h\x0a         d=\x22M \
+3.9726563,17.472\
+656 H 29.011719 \
+V 22.0625 H 3.97\
+26563 Z m 0,8.88\
+6719 H 29.011719\
+ v 4.628906 H 3.\
+9726563 Z M 17.5\
+85937,10.539063 \
+h -3.535156 v -0\
+.46875 q 0,-0.82\
+0313 0.3125,-1.4\
+257817 0.332032,\
+-0.625 1.367188,\
+-1.5820313 l 0.6\
+25,-0.5664063 q \
+0.566406,-0.5078\
+125 0.820312,-0.\
+9570312 0.253906\
+,-0.4492188 0.25\
+3906,-0.8984375 \
+0,-0.6835937 -0.\
+46875,-1.0546875\
+ -0.46875,-0.390\
+625 -1.308593,-0\
+.390625 -0.80078\
+1,0 -1.71875,0.3\
+320313 -0.917969\
+,0.3125 -1.89453\
+1,0.9570312 V 1.\
+4179687 Q 13.210\
+938,1.0078125 14\
+.1875,0.8125 q 0\
+.976563,-0.19531\
+25 1.875,-0.1953\
+125 2.382812,0 3\
+.632812,0.976562\
+5 1.25,0.9765625\
+ 1.25,2.8320312 \
+0,0.9570313 -0.3\
+71093,1.71875 Q \
+20.203125,6.9062\
+5 19.265625,7.76\
+5625 l -0.625,0.\
+546875 q -0.6640\
+63,0.625 -0.8593\
+75,0.9960938 -0.\
+195313,0.3515625\
+ -0.195313,0.800\
+7812 z m -3.5351\
+56,1.445312 h 3.\
+535156 v 3.47656\
+3 h -3.535156 z\x22\
+\x0a         style=\
+\x22fill:#0055d4;fi\
+ll-opacity:1\x22\x0a  \
+       id=\x22path5\
+048\x22 />\x0a    </g>\
+\x0a  </g>\x0a</svg>\x0a\
+\x00\x01\x19\x0f\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.1 r\x22\x0a   s\
+odipodi:docname=\
+\x22modulation.svg\x22\
+>\x0a  <sodipodi:na\
+medview\x0a     id=\
+\x22base\x22\x0a     page\
+color=\x22#ffffff\x22\x0a\
+     bordercolor\
+=\x22#666666\x22\x0a     \
+borderopacity=\x221\
+.0\x22\x0a     inkscap\
+e:pageopacity=\x220\
+.0\x22\x0a     inkscap\
+e:pageshadow=\x222\x22\
+\x0a     inkscape:z\
+oom=\x2232\x22\x0a     in\
+kscape:cx=\x228.038\
+5822\x22\x0a     inksc\
+ape:cy=\x228.349242\
+4\x22\x0a     inkscape\
+:document-units=\
+\x22px\x22\x0a     inksca\
+pe:current-layer\
+=\x22layer1\x22\x0a     s\
+howgrid=\x22false\x22\x0a\
+     inkscape:wi\
+ndow-width=\x221920\
+\x22\x0a     inkscape:\
+window-height=\x221\
+141\x22\x0a     inksca\
+pe:window-x=\x220\x22\x0a\
+     inkscape:wi\
+ndow-y=\x220\x22\x0a     \
+inkscape:window-\
+maximized=\x221\x22\x0a  \
+   inkscape:grid\
+-bbox=\x22true\x22 />\x0a\
+  <defs\x0a     id=\
+\x22defs5036\x22 />\x0a  \
+<metadata\x0a     i\
+d=\x22metadata5039\x22\
+>\x0a    <rdf:RDF>\x0a\
+      <cc:Work\x0a \
+        rdf:abou\
+t=\x22\x22>\x0a        <d\
+c:format>image/s\
+vg+xml</dc:forma\
+t>\x0a        <dc:t\
+ype\x0a           r\
+df:resource=\x22htt\
+p://purl.org/dc/\
+dcmitype/StillIm\
+age\x22 />\x0a        \
+<dc:title></dc:t\
+itle>\x0a      </cc\
+:Work>\x0a    </rdf\
+:RDF>\x0a  </metada\
+ta>\x0a  <g\x0a     in\
+kscape:label=\x22Eb\
+ene 1\x22\x0a     inks\
+cape:groupmode=\x22\
+layer\x22\x0a     id=\x22\
+layer1\x22>\x0a    <g\x0a\
+       id=\x22text5\
+805\x22\x0a       styl\
+e=\x22font-style:no\
+rmal;font-varian\
+t:normal;font-we\
+ight:900;font-st\
+retch:normal;fon\
+t-size:9.3333330\
+2px;line-height:\
 1.25;font-family\
 :'Source Code Pr\
 o';-inkscape-fon\
@@ -1583,32 +1283,4386 @@ t-specification:\
  Heavy';letter-s\
 pacing:0px;word-\
 spacing:0px;fill\
-:#0055d4;fill-op\
+:#ff0000;fill-op\
 acity:1;stroke:n\
-one\x22\x0a       id=\x22\
-text5046\x22 />\x0a   \
- <path\x0a       id\
-=\x22path5687\x22\x0a    \
-   style=\x22fill:#\
-0055d4;fill-opac\
-ity:1;stroke:non\
-e;stroke-width:0\
-.94488192;stroke\
--miterlimit:4;st\
-roke-dasharray:n\
-one;stroke-opaci\
-ty:1\x22\x0a       d=\x22\
-M 3.1054687,18.1\
-19141 H 28.14453\
-1 v 4.628906 H 3\
-.1054687 Z m 0,-\
-8.886719 H 28.14\
-4531 v 4.589844 \
-H 3.1054687 Z\x22\x0a \
-      inkscape:c\
-onnector-curvatu\
-re=\x220\x22 />\x0a  </g>\
-\x0a</svg>\x0a\
+one\x22\x0a       aria\
+-label=\x22101\x22>\x0a  \
+    <path\x0a      \
+   id=\x22path5847\x22\
+\x0a         style=\
+\x22\x22\x0a         d=\x22M\
+ 0.27199999,6.38\
+8 H 4.6026665 V \
+5.1000001 H 3.33\
+33332 V 0.470666\
+88 H 2.1573333 C\
+ 1.6906666,0.750\
+66687 1.224,0.91\
+866686 0.5146666\
+5,1.0493335 V 2.\
+0386668 H 1.7279\
+999 V 5.1000001 \
+H 0.27199999 Z\x22 \
+/>\x0a      <path\x0a \
+        id=\x22path\
+5849\x22\x0a         s\
+tyle=\x22\x22\x0a        \
+ d=\x22m 7.9590206,\
+6.5 c 1.3906666,\
+0 2.3333334,-1.0\
+733333 2.3333334\
+,-3.0986666 0,-2\
+.0253332 -0.9426\
+668,-3.04266652 \
+-2.3333334,-3.04\
+266652 -1.390666\
+6,0 -2.3333333,1\
+.01733332 -2.333\
+3333,3.04266652 \
+C 5.6256873,5.42\
+66667 6.568354,6\
+.5 7.9590206,6.5\
+ Z m 0,-1.232 C \
+7.4643539,5.268 \
+7.044354,4.87600\
+01 7.044354,3.40\
+13334 c 0,-1.474\
+6666 0.4199999,-\
+1.8106666 0.9146\
+666,-1.8106666 0\
+.4946666,0 0.914\
+6666,0.336 0.914\
+6666,1.8106666 0\
+,1.4746667 -0.42\
+,1.8666666 -0.91\
+46666,1.8666666 \
+z m 0,-1.1199999\
+ c 0.4293333,0 0\
+.7466666,-0.2986\
+667 0.7466666,-0\
+.7466667 0,-0.44\
+79999 -0.3173333\
+,-0.7466666 -0.7\
+466666,-0.746666\
+6 -0.4293333,0 -\
+0.7466666,0.2986\
+667 -0.7466666,0\
+.7466666 0,0.448\
+ 0.3173333,0.746\
+6667 0.7466666,0\
+.7466667 z\x22 />\x0a \
+     <path\x0a     \
+    id=\x22path5851\
+\x22\x0a         style\
+=\x22\x22\x0a         d=\x22\
+m 11.464708,6.38\
+8 h 4.330667 V 5\
+.1000001 H 14.52\
+6041 V 0.4706668\
+8 h -1.176 C 12.\
+883375,0.7506668\
+7 12.416708,0.91\
+866686 11.707375\
+,1.0493335 v 0.9\
+893333 h 1.21333\
+3 v 3.0613333 h \
+-1.456 z\x22 />\x0a   \
+ </g>\x0a    <path\x0a\
+       inkscape:\
+connector-curvat\
+ure=\x220\x22\x0a       i\
+d=\x22path5845\x22\x0a   \
+    d=\x22M 0,7.500\
+4876 H 16\x22\x0a     \
+  style=\x22fill:no\
+ne;stroke:#00000\
+0;stroke-width:0\
+.99902487px;stro\
+ke-linecap:butt;\
+stroke-linejoin:\
+miter;stroke-opa\
+city:1\x22 />\x0a    <\
+path\x0a       id=\x22\
+path5894\x22\x0a      \
+ title=\x22sin(x)\x22\x0a\
+       d=\x22 M 0.5\
+2007908 12.15124\
+49 C 0.526320148\
+836 12.193291464\
+9 0.532561217672\
+ 12.2353379957 0\
+.538802286508 12\
+.2773520955 C 0.\
+545043355344 12.\
+3193661954 0.551\
+28442418 12.3613\
+476661 0.5575254\
+93016 12.4032643\
+56 C 0.563766561\
+852 12.445181045\
+8 0.570007630688\
+ 12.487032562 0.\
+576248699524 12.\
+5287870475 C 0.5\
+82489768361 12.5\
+70541533 0.58873\
+0837196 12.61219\
+8401 0.594971906\
+033 12.653726138\
+4 C 0.6012129748\
+69 12.6952538759\
+ 0.607454043705 \
+12.736651703 0.6\
+13695112541 12.7\
+778884994 C 0.61\
+9936181377 12.81\
+91252958 0.62617\
+7250213 12.86020\
+00897 0.63241831\
+9049 12.90108220\
+15 C 0.638659387\
+885 12.941964313\
+4 0.644900456721\
+ 12.9826525811 0\
+.651141525557 13\
+.0231168133 C 0.\
+657382594393 13.\
+0635810456 0.663\
+623663229 13.103\
+8198916 0.669864\
+732065 13.143803\
+6951 C 0.6761058\
+00901 13.1837874\
+985 0.6823468697\
+37 13.2235147221\
+ 0.688587938573 \
+13.2629562903 C \
+0.694829007409 1\
+3.3023978584 0.7\
+01070076245 13.3\
+415520497 0.7073\
+11145081 13.3803\
+904141 C 0.71355\
+2213917 13.41922\
+87786 0.71979328\
+2753 13.45774941\
+34 0.72603435158\
+9 13.4959245383 \
+C 0.732275420426\
+ 13.5340996631 0\
+.738516489261 13\
+.5719271967 0.74\
+4757558098 13.60\
+93800713 C 0.750\
+998626934 13.646\
+8329459 0.757239\
+69577 13.6839089\
+049 0.7634807646\
+06 13.7205816349\
+ C 0.76972183344\
+2 13.757254365 0\
+.775962902278 13\
+.7935214377 0.78\
+2203971114 13.82\
+9357335 C 0.7884\
+4503995 13.86519\
+32322 0.79468610\
+8786 13.90059535\
+75 0.80092717762\
+2 13.9355390271 \
+C 0.807168246458\
+ 13.9704826968 0\
+.813409315294 14\
+.0049651504 0.81\
+965038413 14.038\
+9625769 C 0.8258\
+91452966 14.0729\
+600035 0.8321325\
+21802 14.1064694\
+827 0.8383735906\
+38 14.1394681133\
+ C 0.84461465947\
+4 14.1724667439 \
+0.85085572831 14\
+.2049514503 0.85\
+7096797146 14.23\
+6900276 C 0.8633\
+37865983 14.2688\
+491017 0.8695789\
+34818 14.3002588\
+207 0.8758200036\
+55 14.3311084554\
+ C 0.88206107249\
+1 14.3619580901 \
+0.888302141327 1\
+4.3922442689 0.8\
+94543210163 14.4\
+219470255 C 0.90\
+0784278999 14.45\
+16497821 0.90702\
+5347835 14.48076\
+56047 0.91326641\
+6671 14.50927556\
+9 C 0.9195074855\
+07 14.5377855334\
+ 0.925748554343 \
+14.5656859928 0.\
+931989623179 14.\
+5929590945 C 0.9\
+38230692015 14.6\
+202321962 0.9444\
+71760851 14.6468\
+741643 0.9507128\
+29687 14.6728682\
+449 C 0.95695389\
+8523 14.69886232\
+55 0.96319496735\
+9 14.7242046193 \
+0.969436036195 1\
+4.7488794974 C 0\
+.975677105031 14\
+.7735543755 0.98\
+1918173867 14.79\
+75578212 0.98815\
+9242703 14.82087\
+53547 C 0.994400\
+31154 14.8441928\
+882 1.0006413803\
+8 14.8668203816 \
+1.00688244921 14\
+.8887445264 C 1.\
+01312351805 14.9\
+106686713 1.0193\
+6458688 14.93188\
+5235 1.025605655\
+72 14.9523821011\
+ C 1.03184672456\
+ 14.9728789673 1\
+.03808779339 14.\
+992651805 1.0443\
+2886223 15.01168\
+97086 C 1.050569\
+93106 15.0307276\
+122 1.0568109999\
+ 15.0490261591 1\
+.06305206874 15.\
+0665756716 C 1.0\
+6929313757 15.08\
+41251841 1.07553\
+420641 15.100921\
+1547 1.081775275\
+24 15.1169551482\
+ C 1.08801634408\
+ 15.1329891417 1\
+.09425741292 15.\
+1482565729 1.100\
+49848175 15.1627\
+502623 C 1.10673\
+955059 15.177243\
+9516 1.112980619\
+42 15.1909592433\
+ 1.11922168826 1\
+5.2038902242 C 1\
+.1254627571 15.2\
+168212052 1.1317\
+0382593 15.22896\
+31563 1.13794489\
+477 15.240311440\
+4 C 1.1441859636\
+ 15.2516597244 1\
+.15042703244 15.\
+2622095661 1.156\
+66810128 15.2719\
+576112 C 1.16290\
+917011 15.281705\
+6563 1.169150238\
+95 15.2906470807\
+ 1.17539130778 1\
+5.2987798184 C 1\
+.18163237662 15.\
+3069125561 1.187\
+87344546 15.3142\
+317417 1.1941145\
+1429 15.32073660\
+05 C 1.200355583\
+13 15.3272414594\
+ 1.20659665197 1\
+5.3329270922 1.2\
+128377208 15.337\
+794017 C 1.21907\
+878964 15.342660\
+9418 1.225319858\
+47 15.3467042331\
+ 1.23156092731 1\
+5.3499257006 C 1\
+.23780199615 15.\
+3531471681 1.244\
+04306498 15.3555\
+418678 1.2502841\
+3382 15.35711289\
+84 C 1.256525202\
+65 15.3586839289\
+ 1.26276627149 1\
+5.3594263353 1.2\
+6900734033 15.35\
+93445004 C 1.275\
+24840916 15.3592\
+626655 1.2814894\
+78 15.3583516309\
+ 1.28773054683 1\
+5.3566170571 C 1\
+.29397161567 15.\
+3548824832 1.300\
+21268451 15.3523\
+19416 1.30645375\
+334 15.348934784\
+5 C 1.3126948221\
+8 15.345550153 1\
+.31893589101 15.\
+3413390151 1.325\
+17695985 15.3363\
+095578 C 1.33141\
+802869 15.331280\
+1005 1.337659097\
+52 15.3254274015\
+ 1.34390016636 1\
+5.318760893 C 1.\
+35014123519 15.3\
+120943844 1.3563\
+8230403 15.30460\
+91713 1.36262337\
+287 15.296315916\
+5 C 1.3688644417\
+ 15.2880226617 1\
+.37510551054 15.\
+278916505 1.3813\
+4657937 15.26900\
+93236 C 1.387587\
+64821 15.2591021\
+422 1.3938287170\
+5 15.2483891181 \
+1.40006978588 15\
+.2368833245 C 1.\
+40631085472 15.2\
+253775308 1.4125\
+5192355 15.21307\
+41995 1.41879299\
+239 15.199987579\
+2 C 1.4250340612\
+3 15.1869009589 \
+1.43127513006 15\
+.1730263386 1.43\
+75161989 15.1583\
+791207 C 1.44375\
+726773 15.143731\
+9029 1.449998336\
+57 15.1283074409\
+ 1.45623940541 1\
+5.1121222671 C 1\
+.46248047424 15.\
+0959370932 1.468\
+72154308 15.0789\
+866325 1.4749626\
+1191 15.06128852\
+15 C 1.481203680\
+75 15.0435904105\
+ 1.48744474959 1\
+5.0251401529 1.4\
+9368581842 15.00\
+59564623 C 1.499\
+92688726 14.9867\
+727716 1.5061679\
+561 14.966851237\
+3 1.51240902493 \
+14.9462116211 C \
+1.51865009377 14\
+.9255720048 1.52\
+48911626 14.9042\
+099883 1.5311322\
+3144 14.88214635\
+09 C 1.537373300\
+28 14.8600827134\
+ 1.54361436911 1\
+4.8373132359 1.5\
+4985543795 14.81\
+3859683 C 1.5560\
+9650678 14.79040\
+61301 1.56233757\
+562 14.766264388\
+4 1.56857864446 \
+14.7414571743 C \
+1.57481971329 14\
+.7166499602 1.58\
+106078213 14.691\
+1732723 1.587301\
+85096 14.6650507\
+437 C 1.59354291\
+98 14.6389282152\
+ 1.59978398864 1\
+4.6121559627 1.6\
+0602505747 14.58\
+47584995 C 1.612\
+26612631 14.5573\
+610364 1.6185071\
+9514 14.52933460\
+36 1.62474826398\
+ 14.5007045566 C\
+ 1.63098933282 1\
+4.4720745096 1.6\
+3723040165 14.44\
+28372194 1.64347\
+147049 14.413018\
+8446 C 1.6497125\
+3932 14.38320046\
+98 1.65595360816\
+ 14.3527975169 1\
+.662194677 14.32\
+18369071 C 1.668\
+43574583 14.2908\
+762974 1.6746768\
+1467 14.25935467\
+83 1.6809178835 \
+14.2272996922 C \
+1.68715895234 14\
+.1952447061 1.69\
+340002118 14.162\
+6531467 1.699641\
+09001 14.1295533\
+345 C 1.70588215\
+885 14.096453522\
+3 1.71212322768 \
+14.0628424022 1.\
+71836429652 14.0\
+287489292 C 1.72\
+460536536 13.994\
+6554562 1.730846\
+43419 13.9600767\
+311 1.7370875030\
+3 13.9250422987 \
+C 1.74332857186 \
+13.8900078662 1.\
+7495696407 13.85\
+45149876 1.75581\
+070954 13.818593\
+7515 C 1.7620517\
+7837 13.78267251\
+55 1.76829284721\
+ 13.7463203477 1\
+.77453391605 13.\
+7095678347 C 1.7\
+8077498488 13.67\
+28153217 1.78701\
+605372 13.635660\
+0577 1.793257122\
+55 13.5981330793\
+ C 1.79949819139\
+ 13.560606101 1.\
+80573926023 13.5\
+227051749 1.8119\
+8032906 13.48446\
+174 C 1.81822139\
+79 13.4462183051\
+ 1.82446246673 1\
+3.4076303038 1.8\
+3070353557 13.36\
+87295286 C 1.836\
+94460441 13.3298\
+287535 1.8431856\
+7324 13.29061332\
+58 1.84942674208\
+ 13.2511153428 C\
+ 1.85566781091 1\
+3.2116173598 1.8\
+6190887975 13.17\
+18351246 1.86814\
+994859 13.131800\
+9893 C 1.8743910\
+1742 13.09176685\
+39 1.88063208626\
+ 13.0514793061 1\
+.88687315509 13.\
+0109709028 C 1.8\
+9311422393 12.97\
+04624995 1.89935\
+529277 12.929731\
+9152 1.905596361\
+6 12.8888118613 \
+C 1.91183743044 \
+12.8478918075 1.\
+91807849927 12.8\
+067811475 1.9243\
+1956811 12.76551\
+26969 C 1.930560\
+63695 12.7242442\
+463 1.9368017057\
+8 12.682817059 1\
+.94304277462 12.\
+641264004 C 1.94\
+928384345 12.599\
+710949 1.9555249\
+1229 12.55803127\
+21 1.96176598113\
+ 12.5162578449 C\
+ 1.96800704996 1\
+2.4744844177 1.9\
+742481188 12.432\
+6166793 1.980489\
+18763 12.3906874\
+528 C 1.98673025\
+647 12.348758226\
+3 1.99297132531 \
+12.306767145 1.9\
+9921239414 12.26\
+4746933 C 2.0054\
+5346298 12.22272\
+6721 2.011694531\
+81 12.1806772062\
+ 2.01793560065 1\
+2.138630963 C 2.\
+02417666949 12.0\
+965847199 2.0304\
+1773832 12.05454\
+17712 2.03665880\
+716 12.012534491\
+5 C 2.0428998759\
+9 11.9705272118 \
+2.04914094483 11\
+.9285558188 2.05\
+538201367 11.886\
+652437 C 2.06162\
+30825 11.8447490\
+552 2.0678641513\
+4 11.8029140969 \
+2.07410522018 11\
+.7611793867 C 2.\
+08034628901 11.7\
+194446766 2.0865\
+8735785 11.67781\
+08208 2.09282842\
+668 11.636309295\
+4 C 2.0990694955\
+2 11.59480777 2.\
+10531056436 11.5\
+53439374 2.11155\
+163319 11.512235\
+1859 C 2.1177927\
+0203 11.47103099\
+78 2.12403377086\
+ 11.4299920084 2\
+.1302748397 11.3\
+891488507 C 2.13\
+651590854 11.348\
+3056929 2.142756\
+97737 11.3076595\
+477 2.1489980462\
+1 11.2672405552 \
+C 2.15523911504 \
+11.2268215626 2.\
+16148018388 11.1\
+86631092 2.16772\
+125272 11.146698\
+7439 C 2.1739623\
+2155 11.10676639\
+58 2.18020339039\
+ 11.0670937259 2\
+.18644445922 11.\
+0277097492 C 2.1\
+9268552806 10.98\
+83257725 2.19892\
+65969 10.9492322\
+287 2.2051676657\
+3 10.9104575028 \
+C 2.21140873457 \
+10.8716827769 2.\
+2176498034 10.83\
+32287896 2.22389\
+087224 10.795123\
+252 C 2.23013194\
+108 10.757017714\
+4 2.23637300991 \
+10.7192627254 2.\
+24261407875 10.6\
+818852793 C 2.24\
+885514758 10.644\
+5078331 2.255096\
+21642 10.6075102\
+037 2.2613372852\
+6 10.5709186266 \
+C 2.26757835409 \
+10.5343270495 2.\
+27381942293 10.4\
+981439701 2.2800\
+6049176 10.46239\
+4825 C 2.2863015\
+606 10.426645679\
+8 2.29254262944 \
+10.3913330819 2.\
+29878369827 10.3\
+564816294 C 2.30\
+502476711 10.321\
+6301768 2.311265\
+83594 10.2872426\
+462 2.3175069047\
+8 10.2533427592 \
+C 2.32374797362 \
+10.2194428723 2.\
+32998904245 10.1\
+860335649 2.3362\
+3011129 10.15313\
+76455 C 2.342471\
+18013 10.1202417\
+262 2.3487122489\
+6 10.0878622857 \
+2.3549533178 10.\
+0560211842 C 2.3\
+6119438663 10.02\
+41800826 2.36743\
+545547 9.9928805\
+6087 2.373676524\
+31 9.96214349676\
+ C 2.37991759314\
+ 9.93140643265 2\
+.38615866198 9.9\
+0123521205 2.392\
+39973081 9.87164\
+969839 C 2.39864\
+079965 9.8420641\
+8473 2.404881868\
+49 9.81306790364\
+ 2.41112293732 9\
+.78467967339 C 2\
+.41736400616 9.7\
+5629144314 2.423\
+60507499 9.72851\
+492369 2.4298461\
+4383 9.701367859\
+07 C 2.436087212\
+67 9.67422079445\
+ 2.4423282815 9.\
+64770697329 2.44\
+856935034 9.6218\
+4303793 C 2.4548\
+1041917 9.595979\
+10258 2.46105148\
+801 9.5707689644\
+7 2.46729255685 \
+9.54622813857 C \
+2.47353362568 9.\
+52168731267 2.47\
+977469452 9.4978\
+1982718 2.486015\
+76335 9.47464004\
+567 C 2.49225683\
+219 9.4514602641\
+6 2.49849790103 \
+9.42897232538 2.\
+50473896986 9.40\
+718941932 C 2.51\
+09800387 9.38540\
+651326 2.5172211\
+0753 9.364332882\
+81 2.52346217637\
+ 9.34398052397 C\
+ 2.52970324521 9\
+.32362816514 2.5\
+3594431404 9.304\
+00141839 2.54218\
+538288 9.2851110\
+6724 C 2.5484264\
+5171 9.266220716\
+08 2.55466752055\
+ 9.24807119186 2\
+.56090858939 9.2\
+3067204888 C 2.5\
+6714965822 9.213\
+2729059 2.573390\
+72706 9.19662865\
+954 2.5796317958\
+9 9.18074762014 \
+C 2.58587286473 \
+9.16486658075 2.\
+59211393357 9.14\
+975334074 2.5983\
+550024 9.1354149\
+5366 C 2.6045960\
+7124 9.121076566\
+59 2.61083714008\
+ 9.10751769481 2\
+.61707820891 9.0\
+9474412418 C 2.6\
+2331927775 9.081\
+97055355 2.62956\
+034658 9.0699870\
+0916 2.635801415\
+42 9.05879800022\
+ C 2.64204248426\
+ 9.04760899128 2\
+.64828355309 9.0\
+3721929831 2.654\
+52462193 9.02763\
+21469 C 2.660765\
+69076 9.01804499\
+55 2.6670067596 \
+9.00926521423 2.\
+67324782844 9.00\
+129474007 C 2.67\
+948889727 8.9933\
+2426592 2.685729\
+96611 8.98616796\
+803 2.6919710349\
+4 8.9798264918 C\
+ 2.69821210378 8\
+.97348501557 2.7\
+0445317262 8.967\
+96326319 2.71069\
+424145 8.9632605\
+8747 C 2.7169353\
+1029 8.958557911\
+74 2.72317637912\
+ 8.95467924035 2\
+.72941744796 8.9\
+5162263447 C 2.7\
+356585168 8.9485\
+660286 2.7418995\
+8563 8.946336433\
+79 2.74814065447\
+ 8.94493062264 C\
+ 2.7543817233 8.\
+94352481148 2.76\
+062279214 8.9429\
+4773974 2.766863\
+86098 8.94319489\
+639 C 2.77310492\
+981 8.9434420530\
+5 2.77934599865 \
+8.94451839641 2.\
+78558706748 8.94\
+641813881 C 2.79\
+182813632 8.9483\
+1788122 2.798069\
+20516 8.95104597\
+588 2.8043102739\
+9 8.95459536744 \
+C 2.81055134283 \
+8.95814475901 2.\
+81679241166 8.96\
+252038791 2.8230\
+334805 8.9677139\
+4201 C 2.8292745\
+4934 8.972907496\
+12 2.83551561817\
+ 8.97892389546 2\
+.84175668701 8.9\
+8575358397 C 2.8\
+4799775584 8.992\
+58327248 2.85423\
+882468 9.0002311\
+4218 2.860479893\
+52 9.00868640784\
+ C 2.86672096235\
+ 9.0171416735 2.\
+87296203119 9.02\
+640919156 2.8792\
+0310003 9.036476\
+9643 C 2.8854441\
+6886 9.046544737\
+05 2.8916852377 \
+9.05741757785 2.\
+89792630653 9.06\
+908229503 C 2.90\
+416737537 9.0807\
+4701221 2.910408\
+44421 9.09320836\
+863 2.9166495130\
+4 9.10645199905 \
+C 2.92289058188 \
+9.11969562948 2.\
+92913165071 9.13\
+372623888 2.9353\
+7271955 9.148528\
+31069 C 2.941613\
+78839 9.16333038\
+25 2.94785485722\
+ 9.17890855653 2\
+.95409592606 9.1\
+9524618884 C 2.9\
+6033699489 9.211\
+58382116 2.96657\
+806373 9.2286854\
+7924 2.972819132\
+57 9.24653341752\
+ C 2.9790602014 \
+9.26438135581 2.\
+98530127024 9.28\
+298006239 2.9915\
+4233907 9.302310\
+71749 C 2.997783\
+40791 9.32164137\
+26 3.00402447675\
+ 9.341708378 3.0\
+1026554558 9.362\
+49186881 C 3.016\
+50661442 9.38327\
+535962 3.0227476\
+8325 9.404779644\
+48 3.02898875209\
+ 9.4269838441 C \
+3.03522982093 9.\
+44918804373 3.04\
+147088976 9.4720\
+9636697 3.047711\
+9586 9.495686952\
+39 C 3.053953027\
+43 9.51927753782\
+ 3.06019409627 9\
+.54355448799 3.0\
+6643516511 9.568\
+49499316 C 3.072\
+67623394 9.59343\
+549832 3.0789173\
+0278 9.619043548\
+39 3.08515837161\
+ 9.64529542052 C\
+ 3.09139944045 9\
+.67154729265 3.0\
+9764050929 9.698\
+44685797 3.10388\
+157812 9.7259695\
+1722 C 3.1101226\
+4696 9.753492176\
+47 3.11636371579\
+ 9.78164167599 3\
+.12260478463 9.8\
+1039257813 C 3.1\
+2884585347 9.839\
+14348027 3.13508\
+69223 9.86849940\
+079 3.1413279911\
+4 9.89843410299 \
+C 3.14756905997 \
+9.92836880519 3.\
+15381012881 9.95\
+888576866 3.1600\
+5119765 9.989957\
+99818 C 3.166292\
+26648 10.0210302\
+277 3.1725333353\
+2 10.0526610613 \
+3.17877440416 10\
+.0848227871 C 3.\
+18501547299 10.1\
+169845128 3.1912\
+5654183 10.14968\
+0322 3.197497610\
+66 10.1828818287\
+ C 3.2037386795 \
+10.2160833354 3.\
+20997974834 10.2\
+497935793 3.2162\
+2081717 10.28398\
+35444 C 3.222461\
+88601 10.3181735\
+096 3.2287029548\
+4 10.3528460793 \
+3.23494402368 10\
+.3879716524 C 3.\
+24118509252 10.4\
+230972255 3.2474\
+2616135 10.45867\
+85246 3.25366723\
+019 10.494685408\
+9 C 3.2599082990\
+2 10.5306922933 \
+3.26614936786 10\
+.5671273204 3.27\
+23904367 10.6039\
+59857 C 3.278631\
+50553 10.6407923\
+935 3.2848725743\
+7 10.678024828 3\
+.2911136432 10.7\
+156260814 C 3.29\
+735471204 10.753\
+2273348 3.303595\
+78088 10.7911996\
+23 3.30983684971\
+ 10.8295114697 C\
+ 3.31607791855 1\
+0.8678233163 3.3\
+2231898738 10.90\
+64767612 3.32856\
+005622 10.945439\
+9791 C 3.3348011\
+2506 10.98440319\
+69 3.34104219389\
+ 11.0236780484 3\
+.34728326273 11.\
+0632324085 C 3.3\
+5352433156 11.10\
+27867687 3.35976\
+54004 11.1426223\
+161 3.3660064692\
+4 11.1827066758 \
+C 3.37224753807 \
+11.2227910356 3.\
+37848860691 11.2\
+631257015 3.3847\
+2967574 11.30367\
+80989 C 3.390970\
+74458 11.3442304\
+963 3.3972118134\
+2 11.385001932 3\
+.40345288225 11.\
+4259596815 C 3.4\
+0969395109 11.46\
+69174311 3.41593\
+501992 11.508062\
+6124 3.422176088\
+76 11.5493624021\
+ C 3.4284171576 \
+11.5906621918 3.\
+43465822643 11.6\
+32117517 3.44089\
+929527 11.673695\
+5061 C 3.4471403\
+6411 11.71527349\
+52 3.45338143294\
+ 11.756974883 3.\
+45962250178 11.7\
+987668007 C 3.46\
+586357061 11.840\
+5587184 3.472104\
+63945 11.8824417\
+074 3.4783457082\
+9 11.9243829521 \
+C 3.48458677712 \
+11.9663241969 3.\
+49082784596 12.0\
+083240447 3.4970\
+6891479 12.05034\
+97842 C 3.503309\
+98363 12.0923755\
+238 3.5095510524\
+7 12.1344273076 \
+3.5157921213 12.\
+1764725789 C 3.5\
+2203319014 12.21\
+85178503 3.52827\
+425897 12.260556\
+5669 3.534515327\
+81 12.302556377 \
+C 3.54075639665 \
+12.344556187 3.5\
+4699746548 12.38\
+65168534 3.55323\
+853432 12.428406\
+2794 C 3.5594796\
+0315 12.47029570\
+53 3.56572067199\
+ 12.5121134591 3\
+.57196174083 12.\
+5538277487 C 3.5\
+7820280966 12.59\
+55420383 3.58444\
+38785 12.6371522\
+382 3.5906849473\
+3 12.6786269099 \
+C 3.59692601617 \
+12.7201015817 3.\
+60316708501 12.7\
+61439907 3.60940\
+815384 12.802610\
+8498 C 3.6156492\
+2268 12.84378179\
+26 3.62189029151\
+ 12.884784343 3.\
+62813136035 12.9\
+255879152 C 3.63\
+437242919 12.966\
+3914875 3.640613\
+49802 13.0069948\
+817 3.6468545668\
+6 13.0473680097 \
+C 3.65309563569 \
+13.0877411378 3.\
+65933670453 13.1\
+278826115 3.6655\
+7777337 13.16776\
+28869 C 3.671818\
+8422 13.20764316\
+24 3.67805991104\
+ 13.2472606653 3\
+.68430097987 13.\
+2865864417 C 3.6\
+9054204871 13.32\
+59122181 3.69678\
+311755 13.364944\
+51 3.70302418638\
+ 13.4036549979 C\
+ 3.70926525522 1\
+3.4423654858 3.7\
+1550632406 13.48\
+0752231 3.721747\
+39289 13.5187875\
+923 C 3.72798846\
+173 13.556822953\
+5 3.73422953056 \
+13.5945048142 3.\
+7404705994 13.63\
+18062541 C 3.746\
+71166824 13.6691\
+07694 3.75295273\
+707 13.706026421\
+9 3.75919380591 \
+13.7425362803 C \
+3.76543487474 13\
+.7790461387 3.77\
+167594358 13.815\
+1446653 3.777917\
+01242 13.8508065\
+057 C 3.78415808\
+125 13.886468346\
+1 3.79039915009 \
+13.9216908707 3.\
+79664021892 13.9\
+564495673 C 3.80\
+288128776 13.991\
+208264 3.8091223\
+566 14.025500339\
+9 3.81536342543 \
+14.0593021633 C \
+3.82160449427 14\
+.0931039866 3.82\
+78455631 14.1264\
+126056 3.8340866\
+3194 14.15920530\
+52 C 3.840327700\
+78 14.1919980047\
+ 3.84656876961 1\
+4.2242716787 3.8\
+5280983845 14.25\
+60045638 C 3.859\
+05090728 14.2877\
+374489 3.8652919\
+7612 14.31892628\
+96 3.87153304496\
+ 14.3495503079 C\
+ 3.87777411379 1\
+4.3801743262 3.8\
+8401518263 14.41\
+02301222 3.89025\
+625146 14.439697\
+9355 C 3.8964973\
+203 14.469165748\
+8 3.90273838914 \
+14.4980420402 3.\
+90897945797 14.5\
+263080974 C 3.91\
+522052681 14.554\
+5741547 3.921461\
+59564 14.5822263\
+047 3.9277026644\
+8 14.6092469126 \
+C 3.93394373332 \
+14.6362675204 3.\
+94018480215 14.6\
+626527848 3.9464\
+2587099 14.68838\
+61751 C 3.952666\
+93982 14.7141195\
+653 3.9589080086\
+6 14.739197158 3\
+.9651490775 14.7\
+636035523 C 3.97\
+139014633 14.788\
+0099465 3.977631\
+21517 14.8117411\
+028 3.9838722840\
+1 14.834782774 C\
+ 3.99011335284 1\
+4.8578244452 3.9\
+9635442168 14.88\
+01724817 4.00259\
+549051 14.901813\
+8122 C 4.0088365\
+5935 14.92345514\
+27 4.01507762819\
+ 14.9443855141 4\
+.02131869702 14.\
+964593051 C 4.02\
+755976586 14.984\
+8005879 4.033800\
+83469 15.0042809\
+403 4.0400419035\
+3 15.0230234469 \
+C 4.04628297237 \
+15.0417659536 4.\
+0525240412 15.05\
+97661745 4.05876\
+511004 15.077014\
+679 C 4.06500617\
+887 15.094263183\
+5 4.07124724771 \
+15.1107554482 4.\
+07748831655 15.1\
+26483288 C 4.083\
+72938538 15.1422\
+111278 4.0899704\
+5422 15.15716994\
+29 4.09621152305\
+ 15.1713528061 C\
+ 4.10245259189 1\
+5.1855356693 4.1\
+0869366073 15.19\
+89379115 4.11493\
+472956 15.211553\
+8743 C 4.1211757\
+984 15.224169837\
+1 4.12741686723 \
+15.2359947895 4.\
+13365793607 15.2\
+470243504 C 4.13\
+989900491 15.258\
+0539112 4.146140\
+07374 15.2682832\
+948 4.1523811425\
+8 15.2777094043 \
+C 4.15862221141 \
+15.2871355138 4.\
+16486328025 15.2\
+957535162 4.1711\
+0434909 15.30356\
+16036 C 4.177345\
+41792 15.3113696\
+91 4.18358648676\
+ 15.3183629906 4\
+.18982755559 15.\
+3245409862 C 4.1\
+9606862443 15.33\
+07189818 4.20230\
+969327 15.336076\
+7683 4.208550762\
+1 15.3406151223 \
+C 4.21479183094 \
+15.3451534762 4.\
+22103289977 15.3\
+488674678 4.2272\
+7396861 15.35175\
+91647 C 4.233515\
+03745 15.3546508\
+617 4.2397561062\
+8 15.3567153172 \
+4.24599717512 15\
+.3579558872 C 4.\
+25223824395 15.3\
+591964572 4.2584\
+7931279 15.35960\
+81854 4.26472038\
+163 15.359195710\
+8 C 4.2709614504\
+6 15.3587832362 \
+4.2772025193 15.\
+3575416007 4.283\
+44358814 15.3554\
+767191 C 4.28968\
+465697 15.353411\
+8375 4.295925725\
+81 15.3505187576\
+ 4.30216679464 1\
+5.3468046609 C 4\
+.30840786348 15.\
+3430905641 4.314\
+64893232 15.3385\
+505119 4.3208900\
+0115 15.33319294\
+12 C 4.327131069\
+99 15.3278353706\
+ 4.33337213882 1\
+5.3216553639 4.3\
+3961320766 15.31\
+4662601 C 4.3458\
+542765 15.307669\
+8381 4.352095345\
+33 15.2998594301\
+ 4.35833641417 1\
+5.2912422843 C 4\
+.364577483 15.28\
+26251385 4.37081\
+855184 15.273196\
+4024 4.377059620\
+68 15.2629681939\
+ C 4.38330068951\
+ 15.2527399855 4\
+.38954175835 15.\
+2417074961 4.395\
+78282718 15.2298\
+840357 C 4.40202\
+389602 15.218060\
+5753 4.408264964\
+86 15.2054413865\
+ 4.41450603369 1\
+5.1920409507 C 4\
+.42074710253 15.\
+1786405148 4.426\
+98817136 15.1644\
+541333 4.4332292\
+402 15.149497436\
+3 C 4.4394703090\
+4 15.1345407394 \
+4.44571137787 15\
+.1188090941 4.45\
+195244671 15.102\
+3192559 C 4.4581\
+9351554 15.08582\
+94177 4.46443458\
+438 15.068576826\
+7 4.47067565322 \
+15.050579337 C 4\
+.47691672205 15.\
+0325818474 4.483\
+15779089 15.0138\
+349794 4.4893988\
+5972 14.99435765\
+86 C 4.495639928\
+56 14.9748803379\
+ 4.5018809974 14\
+.9546681716 4.50\
+812206623 14.933\
+7411276 C 4.5143\
+6313507 14.91281\
+40835 4.52060420\
+39 14.8911678628\
+ 4.52684527274 1\
+4.8688234442 C 4\
+.53308634158 14.\
+8464790257 4.539\
+32741041 14.8234\
+322109 4.5455684\
+7925 14.79970495\
+77 C 4.551809548\
+09 14.7759777044\
+ 4.55805061692 1\
+4.7515659211 4.5\
+6429168576 14.72\
+64925104 C 4.570\
+53275459 14.7014\
+190998 4.5767738\
+2343 14.67568008\
+35 4.58301489227\
+ 14.6492992736 C\
+ 4.5892559611 14\
+.6229184638 4.59\
+549702994 14.595\
+8920015 4.601738\
+09877 14.5682445\
+716 C 4.60797916\
+761 14.540597141\
+7 4.61422023645 \
+14.5123250107 4.\
+62046130528 14.4\
+834536979 C 4.62\
+670237412 14.454\
+5823851 4.632943\
+44295 14.4251082\
+881 4.6391845117\
+9 14.3950577213 \
+C 4.64542558063 \
+14.3650071545 4.\
+65166664946 14.3\
+343766522 4.6579\
+077183 14.303193\
+2833 C 4.6641487\
+8713 14.27200991\
+44 4.67038985597\
+ 14.2402703552 4\
+.67663092481 14.\
+208002387 C 4.68\
+287199364 14.175\
+7344189 4.689113\
+06248 14.1429348\
+654 4.6953541313\
+1 14.1096321775 \
+C 4.70159520015 \
+14.0763294896 4.\
+70783626899 14.0\
+42520643 4.71407\
+733782 14.008234\
+7143 C 4.7203184\
+0666 13.97394878\
+56 4.72655947549\
+ 13.9391829073 4\
+.73280054433 13.\
+9039667365 C 4.7\
+3904161317 13.86\
+87505658 4.74528\
+2682 13.83308139\
+64 4.75152375084\
+ 13.7969894205 C\
+ 4.75776481967 1\
+3.7608974445 4.7\
+6400588851 13.72\
+43801211 4.77024\
+695735 13.687468\
+1305 C 4.7764880\
+2618 13.65055613\
+99 4.78272909502\
+ 13.6132471106 4\
+.78897016385 13.\
+5755721635 C 4.7\
+9521123269 13.53\
+78972163 4.80145\
+230153 13.499854\
+153 4.8076933703\
+6 13.4614744869 \
+C 4.8139344392 1\
+3.4230948208 4.8\
+2017550804 13.38\
+43765299 4.82641\
+657687 13.345351\
+4717 C 4.8326576\
+4571 13.30632641\
+35 4.83889871454\
+ 13.2669927454 4\
+.84513978338 13.\
+2273826196 C 4.8\
+5138085222 13.18\
+77724938 4.85762\
+192105 13.147884\
+2501 4.863862989\
+89 13.1077502856\
+ C 4.87010405872\
+ 13.0676163211 4\
+.87634512756 13.\
+0272351606 4.882\
+5861964 12.98663\
+93961 C 4.888827\
+26523 12.9460436\
+315 4.8950683340\
+7 12.9052319749 \
+4.9013094029 12.\
+8642371628 C 4.9\
+0755047174 12.82\
+32423507 4.91379\
+154058 12.782063\
+2842 4.920032609\
+41 12.7407327939\
+ C 4.92627367825\
+ 12.6994023035 4\
+.93251474708 12.\
+6579194814 4.938\
+75581592 12.6163\
+17201 C 4.944996\
+88476 12.5747149\
+206 4.9512379535\
+9 12.5329924665 \
+4.95747902243 12\
+.4911827044 C 4.\
+96372009126 12.4\
+493729424 4.9699\
+611601 12.407475\
+3503 4.976202228\
+94 12.3655227357\
+ C 4.98244329777\
+ 12.3235701211 4\
+.98868436661 12.\
+281562156 4.9949\
+2543544 12.23953\
+15387 C 5.001166\
+50428 12.1975009\
+214 5.0074075731\
+2 12.1554475186 \
+5.01364864195 12\
+.1134038691 C 5.\
+01988971079 12.0\
+713602196 5.0261\
+3077962 12.02932\
+63849 5.03237184\
+846 11.987334693\
+8 C 5.0386129173\
+ 11.9453430026 5\
+.04485398613 11.\
+9033937116 5.051\
+09505497 11.8615\
+188891 C 5.05733\
+61238 11.8196440\
+666 5.0635771926\
+4 11.7778441638 \
+5.06981826148 11\
+.7361509397 C 5.\
+07605933031 11.6\
+944577155 5.0823\
+0039915 11.65287\
+18149 5.08854146\
+798 11.611424638\
+ C 5.09478253682\
+ 11.5699774611 5\
+.10102360566 11.\
+5286698456 5.107\
+26467449 11.4875\
+327846 C 5.11350\
+574333 11.446395\
+7235 5.119746812\
+17 11.405430246 \
+5.125987881 11.3\
+646668901 C 5.13\
+222894984 11.323\
+9035341 5.138470\
+01867 11.2833435\
+186 5.1447110875\
+1 11.2430168793 \
+C 5.15095215635 \
+11.20269024 5.15\
+719322518 11.162\
+5983837 5.163434\
+29402 11.1227707\
+975 C 5.16967536\
+285 11.082943211\
+2 5.17591643169 \
+11.0433814877 5.\
+18215750053 11.0\
+041145197 C 5.18\
+839856936 10.964\
+8475516 5.194639\
+6382 10.92587711\
+5 5.20088070703 \
+10.8872314635 C \
+5.20712177587 10\
+.848585812 5.213\
+36284471 10.8102\
+669023 5.2196039\
+1354 10.77230230\
+55 C 5.225844982\
+38 10.7343377086\
+ 5.23208605121 1\
+0.6967295588 5.2\
+3832712005 10.65\
+95047019 C 5.244\
+56818889 10.6222\
+798449 5.2508092\
+5772 10.58544058\
+93 5.25705032656\
+ 10.549013014 C \
+5.26329139539 10\
+.5125854387 5.26\
+953246423 10.476\
+5720229 5.275773\
+53307 10.4409980\
+386 C 5.28201460\
+19 10.4054240543\
+ 5.28825567074 1\
+0.3702921476 5.2\
+9449673957 10.33\
+56267442 C 5.300\
+73780841 10.3009\
+613408 5.3069788\
+7725 10.26676524\
+96 5.31321994608\
+ 10.2330620125 C\
+ 5.31946101492 1\
+0.1993587754 5.3\
+2570208375 10.16\
+61513597 5.33194\
+315259 10.133462\
+3869 C 5.3381842\
+2143 10.10077341\
+42 5.34442529026\
+ 10.0686060056 5\
+.3506663591 10.0\
+369818276 C 5.35\
+690742793 10.005\
+3576495 5.363148\
+49677 9.97427997\
+208 5.3693895656\
+1 9.94376947294 \
+C 5.37563063444 \
+9.91325897381 5.\
+38187170328 9.88\
+331906714 5.3881\
+1277212 9.853969\
+40975 C 5.394353\
+84095 9.82461975\
+236 5.4005949097\
+9 9.79586389718 \
+5.40683597862 9.\
+76772044992 C 5.\
+41307704746 9.73\
+957700265 5.4193\
+181163 9.7120496\
+4945 5.425559185\
+13 9.68515591615\
+ C 5.43180025397\
+ 9.65826218285 5\
+.4380413228 9.63\
+200588311 5.4442\
+8239164 9.606403\
+4358 C 5.4505234\
+6048 9.580800988\
+5 5.45676452931 \
+9.55585632892 5.\
+46300559815 9.53\
+15847436 C 5.469\
+24666698 9.50731\
+315829 5.4754877\
+3582 9.483718698\
+05 5.48172880466\
+ 9.46081549346 C\
+ 5.48796987349 9\
+.43791228888 5.4\
+9421094233 9.415\
+70450005 5.50045\
+201116 9.3942050\
+7972 C 5.5066930\
+8 9.3727056594 5\
+.51293414884 9.3\
+5191887052 5.519\
+17521767 9.33185\
+646803 C 5.52541\
+628651 9.3117940\
+6553 5.531657355\
+34 9.2924604086 \
+5.53789842418 9.\
+27386603618 C 5.\
+54413949302 9.25\
+527166376 5.5503\
+8056185 9.237421\
+02453 5.55662163\
+069 9.2203234251\
+6 C 5.5628626995\
+2 9.20322582578 \
+5.56910376836 9.\
+18688579759 5.57\
+53448372 9.17131\
+140055 C 5.58158\
+590603 9.1557370\
+035 5.5878269748\
+7 9.14093284458 \
+5.5940680437 9.1\
+269057246 C 5.60\
+030911254 9.1128\
+7860462 5.606550\
+18138 9.09963319\
+906 5.6127912502\
+1 9.08717503912 \
+C 5.61903231905 \
+9.07471687917 5.\
+62527338788 9.06\
+305070159 5.6315\
+1445672 9.052180\
+75937 C 5.637755\
+52556 9.04131081\
+714 5.6439965943\
+9 9.03124190099 \
+5.65023766323 9.\
+02197697912 C 5.\
+65647873207 9.01\
+271205725 5.6627\
+198009 9.0042559\
+6695 5.668960869\
+74 8.99661038706\
+ C 5.67520193857\
+ 8.98896480716 5\
+.68144300741 8.9\
+8213461404 5.687\
+68407625 8.97612\
+019457 C 5.69392\
+514508 8.9701057\
+751 5.7001662139\
+2 8.9649120372 5\
+.70640728275 8.9\
+6053807518 C 5.7\
+1264835159 8.956\
+16411317 5.71888\
+942043 8.9526148\
+589 5.7251304892\
+6 8.94988811556 \
+C 5.7313715581 8\
+.94716137222 5.7\
+3761262693 8.945\
+262088 5.7438536\
+9577 8.944186778\
+3 C 5.7500947646\
+1 8.9431114686 5\
+.75633583344 8.9\
+4286509031 5.762\
+57690228 8.94344\
+287645 C 5.76881\
+797111 8.9440206\
+626 5.7750590399\
+5 8.94542757109 \
+5.78130010879 8.\
+94765755995 C 5.\
+78754117762 8.94\
+988754881 5.7937\
+8224646 8.952945\
+56929 5.80002331\
+529 8.9568243137\
+7 C 5.8062643841\
+3 8.96070305825 \
+5.81250545297 8.\
+96540746367 5.81\
+87465218 8.97092\
+896805 C 5.82498\
+759064 8.9764504\
+7242 5.831228659\
+47 8.98279399077\
+ 5.83746972831 8\
+.98994971996 C 5\
+.84371079715 8.9\
+9710544915 5.849\
+95186598 9.00507\
+827469 5.8561929\
+3482 9.013857167\
+45 C 5.862434003\
+65 9.02263606021\
+ 5.86867507249 9\
+.03222586862 5.8\
+7491614133 9.042\
+61435463 C 5.881\
+15721016 9.05300\
+284064 5.8873982\
+79 9.0641948081 \
+5.89363934783 9.\
+07617682895 C 5.\
+89988041667 9.08\
+815884981 5.9061\
+2148551 9.100935\
+67591 5.91236255\
+434 9.1144927099\
+3 C 5.9186036231\
+8 9.12804974394 \
+5.92484469202 9.\
+1423916784 5.931\
+08576085 9.15750\
+276927 C 5.93732\
+682969 9.1726138\
+6014 5.943567898\
+52 9.18849873334\
+ 5.94980896736 9\
+.20514052251 C 5\
+.9560500362 9.22\
+178231167 5.9622\
+9110503 9.239185\
+56896 5.96853217\
+387 9.2573323317\
+2 C 5.9747732427\
+ 9.27547909448 5\
+.98101431154 9.2\
+9437383409 5.987\
+25538038 9.31399\
+751938 C 5.99349\
+644921 9.3336212\
+0466 5.999737518\
+05 9.35397821931\
+ 6.00597858688 9\
+.37504849305 C 6\
+.01221965572 9.3\
+9611876679 6.018\
+46072456 9.41790\
+658882 6.0247017\
+9339 9.440390880\
+81 C 6.030942862\
+23 9.4628751728 \
+6.03718393106 9.\
+48606012285 6.04\
+34249999 9.50992\
+367711 C 6.04966\
+606874 9.5337872\
+3138 6.055907137\
+57 9.5583334704 \
+6.06214820641 9.\
+58353939892 C 6.\
+06838927524 9.60\
+874532744 6.0746\
+3034408 9.634614\
+91212 6.08087141\
+292 9.6611242518\
+5 C 6.0871124817\
+5 9.68763359158 \
+6.09335355059 9.\
+71478653299 6.09\
+959461942 9.7425\
+5830608 C 6.1058\
+3568826 9.770330\
+07917 6.11207675\
+71 9.7987244046 \
+6.11831782593 9.\
+82771568175 C 6.\
+12455889477 9.85\
+670695889 6.1307\
+999636 9.8862987\
+767 6.1370410324\
+4 9.9164647435 C\
+ 6.14328210128 9\
+.9466307103 6.14\
+952317011 9.9773\
+7427779 6.155764\
+23895 10.0086683\
+04 C 6.162005307\
+78 10.0399623303\
+ 6.16824637662 1\
+0.0718101243 6.1\
+7448744546 10.10\
+4183836 C 6.1807\
+2851429 10.13655\
+75477 6.18696958\
+313 10.169460338\
+5 6.19321065196 \
+10.2028636927 C \
+6.1994517208 10.\
+2362670469 6.205\
+69278964 10.2701\
+739735 6.2119338\
+5847 10.30455533\
+58 C 6.218174927\
+31 10.338936698 \
+6.22441599615 10\
+.3737953475 6.23\
+065706498 10.409\
+1015714 C 6.2368\
+9813382 10.44440\
+77953 6.24313920\
+265 10.480164283\
+5 6.24938027149 \
+10.5163407931 C \
+6.25562134033 10\
+.5525173027 6.26\
+186240916 10.589\
+1163578 6.268103\
+478 10.626107231\
+8 C 6.2743445468\
+3 10.6630981058 \
+6.28058561567 10\
+.7004831532 6.28\
+682668451 10.738\
+2312116 C 6.2930\
+6775334 10.77597\
+927 6.2993088221\
+8 10.8140925204 \
+6.30554989101 10\
+.8525394125 C 6.\
+31179095985 10.8\
+909863047 6.3180\
+3202869 10.92976\
+8843 6.324273097\
+52 10.9688551383\
+ C 6.33051416636\
+ 11.0079414335 6\
+.33675523519 11.\
+0473333101 6.342\
+99630403 11.0869\
+985891 C 6.34923\
+737287 11.126663\
+8682 6.355478441\
+7 11.1666041916 \
+6.36171951054 11\
+.2067871404 C 6.\
+36796057937 11.2\
+469700891 6.3742\
+0164821 11.28739\
+71199 6.38044271\
+705 11.328035624\
+1 C 6.3866837858\
+8 11.3686741282 \
+6.39292485472 11\
+.4095253748 6.39\
+916592355 11.450\
+5566157 C 6.4054\
+0699239 11.49158\
+78566 6.41164806\
+123 11.532800171\
+5 6.41788913006 \
+11.5741607236 C \
+6.4241301989 11.\
+6155212756 6.430\
+37126773 11.6570\
+309534 6.4366123\
+3657 11.69865688\
+19 C 6.442853405\
+41 11.7402828104\
+ 6.44909447424 1\
+1.7820256858 6.4\
+5533554308 11.82\
+38526458 C 6.461\
+57661191 11.8656\
+796059 6.4678176\
+8075 11.90759115\
+32 6.47405874959\
+ 11.9495544892 C\
+ 6.48029981842 1\
+1.9915178251 6.4\
+8654088726 12.03\
+3533258 6.492781\
+9561 12.07556810\
+33 C 6.499023024\
+93 12.1176029486\
+ 6.50526409377 1\
+2.1596573201 6.5\
+115051626 12.201\
+6986978 C 6.5177\
+4623144 12.24374\
+00756 6.52398730\
+028 12.285768378\
+4 6.53022836911 \
+12.3277513014 C \
+6.53646943795 12\
+.3697342245 6.54\
+271050678 12.411\
+6714917 6.548951\
+57562 12.4535310\
+633 C 6.55519264\
+446 12.495390635\
+ 6.56143371329 1\
+2.5371720405 6.5\
+6767478213 12.57\
+88435546 C 6.573\
+91585096 12.6205\
+150687 6.5801569\
+198 12.662076027\
+3 6.58639798864 \
+12.7034950685 C \
+6.59263905747 12\
+.7449141098 6.59\
+888012631 12.786\
+1903769 6.605121\
+19514 12.8272929\
+202 C 6.61136226\
+398 12.868395463\
+5 6.61760333282 \
+12.9093232348 6.\
+62384440165 12.9\
+500457442 C 6.63\
+008547049 12.990\
+7682536 6.636326\
+53932 13.0312842\
+634 6.6425676081\
+6 13.0715637906 \
+C 6.648808677 13\
+.1118433178 6.65\
+504974583 13.151\
+8849368 6.661290\
+81467 13.1916592\
+181 C 6.66753188\
+35 13.2314334994\
+ 6.67377295234 1\
+3.2709388318 6.6\
+8001402118 13.31\
+01463845 C 6.686\
+25509001 13.3493\
+539372 6.6924961\
+5885 13.38826191\
+61 6.69873722768\
+ 13.4268421336 C\
+ 6.70497829652 1\
+3.4654223512 6.7\
+1121936536 13.50\
+3672833 6.717460\
+43419 13.5415660\
+785 C 6.72370150\
+303 13.579459324\
+1 6.72994257186 \
+13.6169931816 6.\
+7361836407 13.65\
+41408801 C 6.742\
+42470954 13.6912\
+885786 6.7486657\
+7837 13.72804779\
+25 6.75490684721\
+ 13.7643925215 C\
+ 6.76114791605 1\
+3.8007372505 6.7\
+6738898488 13.83\
+66649987 6.77363\
+005372 13.872150\
+5769 C 6.7798711\
+2255 13.90763615\
+51 6.78611219139\
+ 13.9426769009 6\
+.79235326023 13.\
+9772484751 C 6.7\
+9859432906 14.01\
+18200493 6.80483\
+53979 14.0459196\
+271 6.8110764667\
+3 14.0795237569 \
+C 6.81731753557 \
+14.1131278868 6.\
+82355860441 14.1\
+462335858 6.8297\
+9967324 14.17881\
+83263 C 6.836040\
+74208 14.2114030\
+669 6.8422818109\
+1 14.2434637127 \
+6.84852287975 14\
+.2749786949 C 6.\
+85476394859 14.3\
+064936771 6.8610\
+0501742 14.33745\
+97107 6.86724608\
+626 14.367856218\
+9 C 6.8734871550\
+9 14.3982527272 \
+6.87972822393 14\
+.4280762817 6.88\
+596929277 14.457\
+3073294 C 6.8922\
+103616 14.486538\
+3772 6.898451430\
+44 14.5151733516\
+ 6.90469249927 1\
+4.5431937538 C 6\
+.91093356811 14.\
+571214156 6.9171\
+7463695 14.59861\
+62867 6.92341570\
+578 14.625382729\
+7 C 6.9296567746\
+2 14.6521491727 \
+6.93589784345 14\
+.6782761019 6.94\
+213891229 14.703\
+7472104 C 6.9483\
+7998113 14.72921\
+8319 6.954621049\
+96 14.7540296598\
+ 6.9608621188 14\
+.7781660609 C 6.\
+96710318763 14.8\
+023024621 6.9733\
+4425647 14.82575\
+98615 6.97958532\
+531 14.848524245\
+4 C 6.9858263941\
+4 14.8712886293 \
+6.99206746298 14\
+.8933558271 6.99\
+830853181 14.914\
+7130049 C 7.0045\
+4960065 14.93607\
+01827 7.01079066\
+949 14.956713067\
+6 7.01703173832 \
+14.9766300256 C \
+7.02327280716 14\
+.9965469836 7.02\
+9513876 15.01573\
+36461 7.03575494\
+483 15.034179596\
+8 C 7.0419960136\
+7 15.0526255475 \
+7.0482370825 15.\
+0703263291 7.054\
+47815134 15.0872\
+727591 C 7.06071\
+922018 15.104219\
+189 7.0669602890\
+1 15.120406728 7\
+.07320135785 15.\
+1358274415 C 7.0\
+7944242668 15.15\
+1248155 7.085683\
+49552 15.1658974\
+289 7.0919245643\
+6 15.1797685888 \
+C 7.09816563319 \
+15.1936397488 7.\
+10440670203 15.2\
+067281129 7.1106\
+4777086 15.21902\
+82773 C 7.116888\
+8397 15.23132844\
+18 7.12312990854\
+ 15.2428356642 7\
+.12937097737 15.\
+2535458198 C 7.1\
+3561204621 15.26\
+42559754 7.14185\
+311504 15.274164\
+2684 7.148094183\
+88 15.2832678594\
+ C 7.15433525272\
+ 15.2923714504 7\
+.16057632155 15.\
+3006654978 7.166\
+81739039 15.3081\
+48452 C 7.173058\
+45922 15.3156314\
+063 7.1792995280\
+6 15.3222983873 \
+7.1855405969 15.\
+3281491377 C 7.1\
+9178166573 15.33\
+3999888 7.198022\
+73457 15.3390294\
+97 7.2042638034 \
+15.3432389995 C \
+7.21050487224 15\
+.3474485019 7.21\
+674594108 15.350\
+832964 7.2229870\
+0991 15.35339471\
+16 C 7.229228078\
+75 15.3559564592\
+ 7.23546914758 1\
+5.3576905428 7.2\
+4171021642 15.35\
+86005755 C 7.247\
+95128526 15.3595\
+106083 7.2541923\
+5409 15.35959163\
+29 7.26043342293\
+ 15.3588485441 C\
+ 7.26667449176 1\
+5.3581054553 7.2\
+729155606 15.356\
+5332956 7.279156\
+62944 15.3541382\
+34 C 7.285397698\
+27 15.3517431723\
+ 7.29163876711 1\
+5.3485202586 7.2\
+9787983594 15.34\
+44769263 C 7.304\
+12090478 15.3404\
+33594 7.31036197\
+362 15.335564908\
+2 7.31660304245 \
+15.3298795554 C \
+7.32284411129 15\
+.3241942027 7.32\
+908518013 15.317\
+6872707 7.335326\
+24896 15.3103686\
+858 C 7.34156731\
+78 15.303050101 \
+7.34780838663 15\
+.2949149812 7.35\
+404945547 15.285\
+9744772 C 7.3602\
+9052431 15.27703\
+39732 7.36653159\
+314 15.267283240\
+8 7.37277266198 \
+15.2567346378 C \
+7.37901373081 15\
+.2461860348 7.38\
+525479965 15.234\
+8347623 7.391495\
+86849 15.2226943\
+663 C 7.39773693\
+732 15.210553970\
+2 7.40397800616 \
+15.1976197044 7.\
+41021907499 15.1\
+839062817 C 7.41\
+646014383 15.170\
+1928591 7.422701\
+21267 15.1556955\
+935 7.4289422815\
+ 15.1404303423 C\
+ 7.43518335034 1\
+5.1251650911 7.4\
+4142441917 15.10\
+91272355 7.44766\
+548801 15.092333\
+7527 C 7.4539065\
+5685 15.07554026\
+98 7.46014762568\
+ 15.0579866154 7\
+.46638869452 15.\
+03969086 C 7.472\
+62976335 15.0213\
+951047 7.4788708\
+3219 15.00235278\
+56 7.48511190103\
+ 14.9825830392 C\
+ 7.49135296986 1\
+4.9628132927 7.4\
+975940387 14.942\
+3117444 7.503835\
+10753 14.9210985\
+667 C 7.51007617\
+637 14.899885389\
+ 7.51631724521 1\
+4.8779563026 7.5\
+2255831404 14.85\
+53324847 C 7.528\
+79938288 14.8327\
+086669 7.5350404\
+5171 14.80938594\
+ 7.54128152055 1\
+4.7853864536 C 7\
+.54752258939 14.\
+7613869673 7.553\
+76365822 14.7367\
+06652 7.56000472\
+706 14.711368595\
+3 C 7.5662457958\
+9 14.6860305386 \
+7.57248686473 14\
+.6600307856 7.57\
+872793357 14.633\
+3933258 C 7.5849\
+690024 14.606755\
+866 7.5912100712\
+4 14.5794768652 \
+7.59745114008 14\
+.5515811783 C 7.\
+60369220891 14.5\
+236854913 7.6099\
+3327775 14.49516\
+94105 7.61617434\
+658 14.466058617\
+2 C 7.6224154154\
+2 14.4369478239 \
+7.62865648426 14\
+.4072387428 7.63\
+489755309 14.376\
+9578423 C 7.6411\
+3862193 14.34667\
+69419 7.64737969\
+076 14.315820784\
+4 7.6536207596 1\
+4.2844165847 C 7\
+.65986182844 14.\
+253012385 7.6661\
+0289727 14.22105\
+68484 7.67234396\
+611 14.188577893\
+6 C 7.6785850349\
+4 14.1560989388 \
+7.68482610378 14\
+.1230934196 7.69\
+106717262 14.089\
+5899154 C 7.6973\
+0824145 14.05608\
+64112 7.70354931\
+029 14.022081928\
+8 7.70979037912 \
+13.9876056646 C \
+7.71603144796 13\
+.9531294004 7.72\
+22725168 13.9181\
+785187 7.7285135\
+8563 13.88278278\
+74 C 7.734754654\
+47 13.8473870562\
+ 7.7409957233 13\
+.8115438018 7.74\
+723679214 13.775\
+2833179 C 7.7534\
+7786098 13.73902\
+28339 7.75971892\
+981 13.702342613\
+1 7.76595999865 \
+13.6652734275 C \
+7.77220106748 13\
+.6282042419 7.77\
+844213632 13.590\
+7437544 7.784683\
+20516 13.5529231\
+683 C 7.79092427\
+399 13.515102582\
+3 7.79716534283 \
+13.4769197341 7.\
+80340641166 13.4\
+384062102 C 7.80\
+96474805 13.3998\
+926863 7.8158885\
+4934 13.36104650\
+02 7.82212961817\
+ 13.3218995722 C\
+ 7.82837068701 1\
+3.2827526442 7.8\
+3461175584 13.24\
+33031681 7.84085\
+282468 13.203583\
+349 C 7.84709389\
+352 13.163863529\
+8 7.85333496235 \
+13.1238717443 7.\
+85957603119 13.0\
+836404325 C 7.86\
+581710002 13.043\
+4091206 7.872058\
+16886 13.0029368\
+445 7.8782992377\
+ 12.9622562291 C\
+ 7.88454030653 1\
+2.9215756137 7.8\
+9078137537 12.88\
+06854087 7.89702\
+244421 12.839618\
+3733 C 7.9032635\
+1304 12.79855133\
+8 7.90950458188 \
+12.7573064116 7.\
+91574565071 12.7\
+159164374 C 7.92\
+198671955 12.674\
+5264631 7.928227\
+78839 12.6329905\
+713 7.9344688572\
+2 12.5913416383 \
+C 7.94070992606 \
+12.5496927052 7.\
+94695099489 12.5\
+079300538 7.9531\
+9206373 12.46608\
+65424 C 7.959433\
+13257 12.4242430\
+311 7.9656742014\
+ 12.3823181763 7\
+.97191527024 12.\
+3403447679 C 7.9\
+7815633907 12.29\
+83713594 7.98439\
+740791 12.256349\
+1082 7.990638476\
+75 12.2143106848\
+ C 7.99687954558\
+ 12.1722722613 8\
+.00312061442 12.\
+1302175712 8.009\
+36168325 12.0881\
+791152 C 8.01560\
+275209 12.046140\
+6593 8.021843820\
+93 12.0041185381\
+ 8.02808488976 1\
+1.9621450321 C 8\
+.0343259586 11.9\
+201715262 8.0405\
+6702743 11.87824\
+69312 8.04680809\
+627 11.836403257\
+6 C 8.0530491651\
+1 11.7945595839 \
+8.05929023394 11\
+.7527973216 8.06\
+553130278 11.711\
+1481617 C 8.0717\
+7237161 11.66949\
+90019 8.07801344\
+045 11.627963627\
+9 8.08425450929 \
+11.5865733626 C \
+8.09049557812 11\
+.5451830974 8.09\
+673664696 11.503\
+9388167 8.102977\
+71579 11.4628714\
+267 C 8.10921878\
+463 11.421804036\
+6 8.11545985347 \
+11.3809146042 8.\
+1217009223 11.34\
+02335709 C 8.127\
+94199114 11.2995\
+525375 8.1341830\
+5998 11.25908115\
+99 8.14042412881\
+ 11.2188493675 C\
+ 8.14666519765 1\
+1.1786175752 8.1\
+5290626648 11.13\
+86268125 8.15914\
+733532 11.098906\
+451 C 8.16538840\
+416 11.059186089\
+6 8.17162947299 \
+11.019737759 8.1\
+7787054183 10.98\
+05902278 C 8.184\
+11161066 10.9414\
+426966 8.1903526\
+795 10.902597777\
+ 8.19659374834 1\
+0.8640835898 C 8\
+.20283481717 10.\
+8255694026 8.209\
+07588601 10.7873\
+879401 8.2153169\
+5484 10.74956663\
+17 C 8.221558023\
+68 10.7117453233\
+ 8.22779909252 1\
+0.6742863383 8.2\
+3404016135 10.63\
+72163725 C 8.240\
+28123019 10.6001\
+464067 8.2465222\
+9902 10.56346780\
+3 8.25276336786 \
+10.5272064821 C \
+8.2590044367 10.\
+4909451612 8.265\
+24550553 10.4551\
+036361 8.2714865\
+7437 10.41970701\
+26 C 8.277727643\
+2 10.384310389 8\
+.28396871204 10.\
+349361346 8.2902\
+0978088 10.31488\
+41354 C 8.296450\
+84971 10.2804069\
+248 8.3026919185\
+5 10.2464043877 \
+8.30893298738 10\
+.2128998846 C 8.\
+31517405622 10.1\
+793953816 8.3214\
+1512506 10.14639\
+19111 8.32765619\
+389 10.113911906\
+4 C 8.3338972627\
+3 10.0814319017 \
+8.34013833156 10\
+.0494785143 8.34\
+63794004 10.0180\
+732153 C 8.35262\
+046924 9.9866679\
+1626 8.358861538\
+07 9.95581400509\
+ 8.36510260691 9\
+.92553195767 C 8\
+.37134367574 9.8\
+9524991025 8.377\
+58474458 9.86554\
+316897 8.3838258\
+1342 9.836431182\
+81 C 8.390066882\
+25 9.80731919665\
+ 8.39630795109 9\
+.77880554562 8.4\
+0254901992 9.750\
+90862171 C 8.408\
+79008876 9.72301\
+16978 8.41503115\
+76 9.69573521312\
+ 8.42127222643 9\
+.66909647422 C 8\
+.42751329527 9.6\
+4245773532 8.433\
+75436411 9.61646\
+058068 8.4399954\
+3294 9.591121204\
+66 C 8.446236501\
+78 9.56578182865\
+ 8.45247757061 9\
+.54110419015 8.4\
+5871863945 9.517\
+10334635 C 8.464\
+95970829 9.49310\
+250256 8.4712007\
+7712 9.469782526\
+63 8.47744184596\
+ 9.44715731529 C\
+ 8.48368291479 9\
+.42453210395 8.4\
+8992398363 9.402\
+60583837 8.49616\
+505247 9.3813912\
+3329 C 8.5024061\
+213 9.3601766282\
+1 8.50864719014 \
+9.33967796635 8.\
+51488825897 9.31\
+990676084 C 8.52\
+112932781 9.3001\
+3555533 8.527370\
+39665 9.28109618\
+379 8.5336114654\
+8 9.26279893996 \
+C 8.53985253432 \
+9.24450169613 8.\
+54609360315 9.22\
+695104578 8.5523\
+3467199 9.210156\
+04731 C 8.558575\
+74083 9.19336104\
+884 8.5648168096\
+6 9.17732624927 \
+8.5710578785 9.1\
+6205945769 C 8.5\
+7729894733 9.146\
+7926661 8.583540\
+01617 9.13229850\
+374 8.5897810850\
+1 9.11858351828 \
+C 8.59602215384 \
+9.10486853282 8.\
+60226322268 9.09\
+193741258 8.6085\
+0429151 9.079795\
+43371 C 8.614745\
+36035 9.06765345\
+485 8.6209864291\
+9 9.05630536552 \
+8.62722749802 9.\
+04575516219 C 8.\
+63346856686 9.03\
+520495887 8.6397\
+0963569 9.025457\
+4422 8.645950704\
+53 9.0165153228 \
+C 8.65219177337 \
+9.0075732034 8.6\
+584328422 8.9994\
+4132699 8.664673\
+91104 8.99212111\
+415 C 8.67091497\
+987 8.9848009013\
+1 8.67715604871 \
+8.97829723533 8.\
+68339711755 8.97\
+261024455 C 8.68\
+963818638 8.9669\
+2325378 8.695879\
+25522 8.96205785\
+152 8.7021203240\
+6 8.95801287369 \
+C 8.70836139289 \
+8.95396789587 8.\
+71460246173 8.95\
+074827822 8.7208\
+4353056 8.948351\
+56603 C 8.727084\
+5994 8.945954853\
+84 8.73332566824\
+ 8.94438599765 8\
+.73956673707 8.9\
+436412559 C 8.74\
+580780591 8.9428\
+9651415 8.752048\
+87474 8.94298084\
+455 8.7582899435\
+8 8.94388922446 \
+C 8.76453101242 \
+8.94479760437 8.\
+77077208125 8.94\
+653499099 8.7770\
+1315009 8.949095\
+0884 C 8.7832542\
+1892 8.951655185\
+8 8.78949528776 \
+8.95504294301 8.\
+7957363566 8.959\
+25080054 C 8.801\
+97742543 8.96345\
+865807 8.8082184\
+9427 8.968491549\
+12 8.8144595631 \
+8.97434066231 C \
+8.82070063194 8.\
+98018977551 8.82\
+694170078 8.9868\
+6002059 8.833182\
+76961 8.99434134\
+796 C 8.83942383\
+845 9.0018226753\
+2 8.84566490728 \
+9.01011996366 8.\
+85190597612 9.01\
+922194064 C 8.85\
+814704496 9.0283\
+2391762 8.864388\
+11379 9.03823542\
+335 8.8706291826\
+3 9.04894398021 \
+C 8.87687025146 \
+9.05965253706 8.\
+8831113203 9.071\
+1629391 8.889352\
+38914 9.08346152\
+266 C 8.89559345\
+797 9.0957601062\
+3 8.90183452681 \
+9.1088516119 8.9\
+0807559564 9.122\
+72121116 C 8.914\
+31666448 9.13659\
+081041 8.9205577\
+3332 9.151243183\
+02 8.92679880215\
+ 9.1666623585 C \
+8.93303987099 9.\
+18208153397 8.93\
+928093982 9.1982\
+7212404 8.945522\
+00866 9.21521704\
+094 C 8.95176307\
+75 9.23216195784\
+ 8.95800414633 9\
+.24986573813 8.9\
+6424521517 9.268\
+31020318 C 8.970\
+48628401 9.28675\
+466824 8.9767273\
+5284 9.305944272\
+44 8.98296842168\
+ 9.3258597744 C \
+8.98920949051 9.\
+34577527636 8.99\
+545055935 9.3664\
+2104139 9.001691\
+62819 9.38777679\
+509 C 9.00793269\
+702 9.4091325487\
+8 9.01417376586 \
+9.43120256065 9.\
+02041483469 9.45\
+396555459 C 9.02\
+665590353 9.4767\
+2854854 9.032896\
+97237 9.50018869\
+166 9.0391380412\
+ 9.52432373906 C\
+ 9.04537911004 9\
+.54845878646 9.0\
+5162017887 9.573\
+2727964 9.057861\
+24771 9.59874258\
+957 C 9.06410231\
+655 9.6242123827\
+3 9.07034338538 \
+9.65034190226 9.\
+07658445422 9.67\
+710707027 C 9.08\
+282552305 9.7038\
+7223828 9.089066\
+59189 9.73127687\
+667 9.0953076607\
+3 9.75929604621 \
+C 9.10154872956 \
+9.78731521575 9.\
+1077897984 9.815\
+95261122 9.11403\
+086723 9.8451824\
+7057 C 9.1202719\
+3607 9.874412329\
+92 9.12651300491\
+ 9.90423821509 9\
+.13275407374 9.9\
+3463358105 C 9.1\
+3899514258 9.965\
+02894701 9.14523\
+621141 9.9959972\
+1736 9.151477280\
+25 10.0275111051\
+ C 9.15771834909\
+ 10.0590249929 9\
+.16395941792 10.\
+091087778 9.1702\
+0048676 10.12367\
+14737 C 9.176441\
+55559 10.1562551\
+694 9.1826826244\
+3 10.1893629069 \
+9.18892369327 10\
+.2229660431 C 9.\
+1951647621 10.25\
+65691792 9.20140\
+583094 10.290670\
+6917 9.207646899\
+77 10.3252413249\
+ C 9.21388796861\
+ 10.3598119581 9\
+.22012903745 10.\
+3948545317 9.226\
+37010628 10.4303\
+392231 C 9.23261\
+117512 10.465823\
+9145 9.238852243\
+95 10.5017533808\
+ 9.24509331279 1\
+0.5380972785 C 9\
+.25133438163 10.\
+5744411762 9.257\
+57545046 10.6112\
+019959 9.2638165\
+193 10.648348919\
+9 C 9.2700575881\
+4 10.685495844 9\
+.27629865697 10.\
+7230311924 9.282\
+53972581 10.7609\
+237215 C 9.28878\
+079464 10.798816\
+2505 9.295021863\
+48 10.8370681061\
+ 9.30126293232 1\
+0.8756476664 C 9\
+.30750400115 10.\
+9142272266 9.313\
+74506999 10.9531\
+3646 9.319986138\
+82 10.9923434155\
+ C 9.32622720766\
+ 11.031550371 9.\
+3324682765 11.07\
+10568368 9.33870\
+934533 11.110830\
+5819 C 9.3449504\
+1417 11.15060432\
+7 9.351191483 11\
+.1906469565 9.35\
+743255184 11.230\
+9260094 C 9.3636\
+7362068 11.27120\
+50623 9.36991468\
+951 11.311721958\
+ 9.37615575835 1\
+1.3524440558 C 9\
+.38239682718 11.\
+3931661536 9.388\
+63789602 11.4340\
+946849 9.3948789\
+6486 11.47519687\
+98 C 9.401120033\
+69 11.5162990747\
+ 9.40736110253 1\
+1.5575759748 9.4\
+1360217136 11.59\
+89947315 C 9.419\
+8432402 11.64041\
+34881 9.42608430\
+904 11.681974951\
+6 9.43232537787 \
+11.7236462454 C \
+9.43856644671 11\
+.7653175392 9.44\
+480751554 11.807\
+0993208 9.451048\
+58438 11.8489587\
+367 C 9.45728965\
+322 11.890818152\
+5 9.46353072205 \
+11.9327556665 9.\
+46977179089 11.9\
+747384986 C 9.47\
+601285972 12.016\
+7213307 9.482253\
+92856 12.0587497\
+504 9.4884949974\
+ 12.1007911022 C\
+ 9.49473606623 1\
+2.1428324539 9.5\
+0097713507 12.18\
+48868124 9.50721\
+82039 12.2269216\
+967 C 9.51345927\
+274 12.268956581\
+ 9.51970034158 1\
+2.310971871 9.52\
+594141041 12.352\
+9353108 C 9.5321\
+8247925 12.39489\
+87507 9.53842354\
+809 12.436810025\
+4 9.54466461692 \
+12.4786371542 C \
+9.55090568576 12\
+.5204642829 9.55\
+714675459 12.562\
+2067564 9.563387\
+82343 12.6038329\
+181 C 9.56962889\
+227 12.645459079\
+8 9.5758699611 1\
+2.686968227 9.58\
+211102994 12.728\
+3290764 C 9.5883\
+5209877 12.76968\
+99259 9.59459316\
+761 12.810901582\
+3 9.60083423645 \
+12.8519331843 C \
+9.60707530528 12\
+.8929647863 9.61\
+331637412 12.933\
+8152476 9.619557\
+44295 12.9744541\
+759 C 9.62579851\
+179 13.015093104\
+3 9.63203958063 \
+13.0555192242 9.\
+63828064946 13.0\
+957026596 C 9.64\
+45217183 13.1358\
+860951 9.6507627\
+8713 13.17582538\
+33 9.65700385597\
+ 13.2154912109 C\
+ 9.66324492481 1\
+3.2551570384 9.6\
+6948599364 13.29\
+45477572 9.67572\
+706248 13.333634\
+6617 C 9.6819681\
+3131 13.37272156\
+63 9.68820920015\
+ 13.411502826 9.\
+69445026899 13.4\
+499503875 C 9.70\
+069133782 13.488\
+3979489 9.706932\
+40666 13.5265098\
+018 9.7131734754\
+9 13.5642585884 \
+C 9.71941454433 \
+13.6020073749 9.\
+72565561317 13.6\
+393909082 9.7318\
+96682 13.6763825\
+682 C 9.73813775\
+084 13.713374228\
+2 9.74437881967 \
+13.7499716548 9.\
+75061988851 13.7\
+861490069 C 9.75\
+686095735 13.822\
+326359 9.7631020\
+2618 13.85808110\
+69 9.76934309502\
+ 13.8933882286 C\
+ 9.77558416385 1\
+3.9286953503 9.7\
+8182523269 13.96\
+35521503 9.78806\
+630153 13.997934\
+4642 C 9.7943073\
+7036 14.03231677\
+81 9.8005484392 \
+14.066221749 9.8\
+0678950804 14.09\
+96261073 C 9.813\
+03057687 14.1330\
+304656 9.8192716\
+4571 14.16593119\
+73 9.82551271454\
+ 14.198305964 C \
+9.83175378338 14\
+.2306807306 9.83\
+799485222 14.262\
+5263656 9.844235\
+92105 14.2938214\
+96 C 9.850476989\
+89 14.3251166263\
+ 9.85671805872 1\
+4.355857938 9.86\
+295912756 14.386\
+0250565 C 9.8692\
+001964 14.416192\
+1749 9.875441265\
+23 14.4457816437\
+ 9.88168233407 1\
+4.4747741183 C 9\
+.8879234029 14.5\
+037665928 9.8941\
+6447174 14.53215\
+84796 9.90040554\
+058 14.559931493\
+9 C 9.9066466094\
+1 14.5877045083 \
+9.91288767825 14\
+.6148549252 9.91\
+912874708 14.641\
+3655482 C 9.9253\
+6981592 14.66787\
+61711 9.93161088\
+476 14.693743149\
+3 9.93785195359 \
+14.7189504011 C \
+9.94409302243 14\
+.7441576528 9.95\
+033409126 14.768\
+7012075 9.956575\
+1601 14.79256612\
+29 C 9.962816228\
+94 14.8164310383\
+ 9.96905729777 1\
+4.8396132302 9.9\
+7529836661 14.86\
+20989192 C 9.981\
+53943544 14.8845\
+846082 9.9877805\
+0428 14.90636960\
+26 9.99402157312\
+ 14.927441307 C \
+10.000262642 14.\
+9485130113 10.00\
+65037108 14.9688\
+671332 10.012744\
+7796 14.98849228\
+06 C 10.01898584\
+85 15.008117428 \
+10.0252269173 15\
+.0270092142 10.0\
+314679861 15.045\
+1574683 C 10.037\
+709055 15.063305\
+7224 10.04395012\
+38 15.0807059701\
+ 10.0501911926 1\
+5.0973492775 C 1\
+0.0564322615 15.\
+1139925849 10.06\
+26733303 15.1298\
+743971 10.068914\
+3991 15.14498703\
+07 C 10.07515546\
+8 15.1600996644 \
+10.0813965368 15\
+.1744384911 10.0\
+876376057 15.187\
+9970901 C 10.093\
+8786745 15.20155\
+5689 10.10011974\
+33 15.2143293655\
+ 10.1063608122 1\
+5.226312971 C 10\
+.112601881 15.23\
+82965766 10.1188\
+429498 15.249485\
+3574 10.12508401\
+87 15.2598754454\
+ C 10.1313250875\
+ 15.2702655334 1\
+0.1375661563 15.\
+279852123 10.143\
+8072252 15.28863\
+26326 C 10.15004\
+8294 15.29741314\
+21 10.1562893629\
+ 15.3053827217 1\
+0.1625304317 15.\
+31254008 C 10.16\
+87715005 15.3196\
+974383 10.175012\
+5694 15.32603768\
+87 10.1812536382\
+ 15.331560832 C \
+10.187494707 15.\
+3370839752 10.19\
+37357759 15.3417\
+850956 10.199976\
+8447 15.34566548\
+62 C 10.20621791\
+35 15.3495458769\
+ 10.2124589824 1\
+5.3526006003 10.\
+2187000512 15.35\
+48322401 C 10.22\
+49411201 15.3570\
+638798 10.231182\
+1889 15.35846748\
+43 10.2374232577\
+ 15.3590469235 C\
+ 10.2436643266 1\
+5.3596263628 10.\
+2499053954 15.35\
+93766787 10.2561\
+464642 15.358303\
+0217 C 10.262387\
+5331 15.35722936\
+47 10.2686286019\
+ 15.355326778 10\
+.2748696707 15.3\
+526016844 C 10.2\
+811107396 15.349\
+8765908 10.28735\
+18084 15.3463240\
+426 10.293592877\
+2 15.3419517248 \
+C 10.2998339461 \
+15.3375794071 10\
+.3060750149 15.3\
+323823887 10.312\
+3160838 15.32636\
+96054 C 10.31855\
+71526 15.3203568\
+222 10.324798221\
+4 15.3135233672 \
+10.3310392903 15\
+.3058794129 C 10\
+.3372803591 15.2\
+982354587 10.343\
+5214279 15.28977\
+61301 10.3497624\
+968 15.280512820\
+9 C 10.356003565\
+6 15.2712495116 \
+10.3622446344 15\
+.2611773858 10.3\
+684857033 15.250\
+3090406 C 10.374\
+7267721 15.23944\
+06954 10.3809678\
+41 15.2277713418\
+ 10.3872089098 1\
+5.2153147609 C 1\
+0.3934499786 15.\
+2028581799 10.39\
+96910475 15.1896\
+096369 10.405932\
+1163 15.17558407\
+54 C 10.41217318\
+51 15.161558514 \
+10.418414254 15.\
+1467512609 10.42\
+46553228 15.1311\
+783995 C 10.4308\
+963916 15.115605\
+5381 10.43713746\
+05 15.0992624638\
+ 10.4433785293 1\
+5.0821663748 C 1\
+0.4496195981 15.\
+0650702859 10.45\
+5860667 15.04721\
+66534 10.4621017\
+358 15.028623763\
+8 C 10.468342804\
+7 15.0100308742 \
+10.4745838735 14\
+.9906942816 10.4\
+808249423 14.970\
+633332 C 10.4870\
+660112 14.950572\
+3824 10.49330708\
+ 14.9297827198 1\
+0.4995481488 14.\
+9082847203 C 10.\
+5057892177 14.88\
+67867207 10.5120\
+302865 14.864576\
+1247 10.51827135\
+53 14.8416743065\
+ C 10.5245124242\
+ 14.8187724884 1\
+0.530753493 14.7\
+951752917 10.536\
+9945619 14.77090\
+50564 C 10.54323\
+56307 14.7466348\
+211 10.549476699\
+5 14.7216875001 \
+10.5557177684 14\
+.6960863642 C 10\
+.5619588372 14.6\
+704852283 10.568\
+199906 14.644226\
+3463 10.57444097\
+49 14.6173338839\
+ C 10.5806820437\
+ 14.5904414214 1\
+0.5869231125 14.\
+562911569 10.593\
+1641814 14.53476\
+93501 C 10.59940\
+52502 14.5066271\
+311 10.605646319\
+ 14.4778688638 1\
+0.6118873879 14.\
+4485203903 C 10.\
+6181284567 14.41\
+91719167 10.6243\
+695256 14.389229\
+6886 10.63061059\
+44 14.3587203271\
+ C 10.6368516632\
+ 14.3282109655 1\
+0.6430927321 14.\
+297131061 10.649\
+3338009 14.26550\
+79724 C 10.65557\
+48697 14.2338848\
+839 10.661815938\
+6 14.201715346 1\
+0.6680570074 14.\
+1690274131 C 10.\
+6742980762 14.13\
+63394802 10.6805\
+391451 14.103130\
+0361 10.68678021\
+39 14.0694277875\
+ C 10.6930212828\
+ 14.0357255389 1\
+0.6992623516 14.\
+0015275236 10.70\
+55034204 13.9668\
+630558 C 10.7117\
+444893 13.932198\
+588 10.717985558\
+1 13.8970648643 \
+10.7242266269 13\
+.8614917614 C 10\
+.7304676958 13.8\
+259186584 10.736\
+7087646 13.78990\
+35357 10.7429498\
+334 13.753476786\
+ C 10.7491909023\
+ 13.7170500364 1\
+0.7554319711 13.\
+6802091864 10.76\
+16730399 13.6429\
+850981 C 10.7679\
+141088 13.605761\
+0099 10.77415517\
+76 13.5681513808\
+ 10.7803962465 1\
+3.5301874945 C 1\
+0.7866373153 13.\
+4922236083 10.79\
+28783841 13.4539\
+033366 10.799119\
+453 13.415258336\
+5 C 10.805360521\
+8 13.3766133364 \
+10.8116015906 13\
+.3376416573 10.8\
+178426595 13.298\
+3752803 C 10.824\
+0837283 13.25910\
+89034 10.8303247\
+971 13.219546058\
+8 10.836565866 1\
+3.1797190025 C 1\
+0.8428069348 13.\
+1398919463 10.84\
+90480037 13.0997\
+99092 10.8552890\
+725 13.059472920\
+7 C 10.861530141\
+3 13.0191467494 \
+10.8677712102 12\
+.9785858605 10.8\
+74012279 12.9378\
+229099 C 10.8802\
+533478 12.897059\
+9593 10.88649441\
+67 12.8560937344\
+ 10.8927354855 1\
+2.8149570154 C 1\
+0.8989765543 12.\
+7738202964 10.90\
+52176232 12.7325\
+120607 10.911458\
+692 12.691065162\
+ C 10.9176997609\
+ 12.6496182633 1\
+0.9239408297 12.\
+6080318705 10.93\
+01818985 12.5663\
+388603 C 10.9364\
+229674 12.524645\
+8501 10.94266403\
+62 12.4828455841\
+ 10.948905105 12\
+.4409709109 C 10\
+.9551461739 12.3\
+990962377 10.961\
+3872427 12.35714\
+67129 10.9676283\
+115 12.315155106\
+2 C 10.973869380\
+4 12.2731634995 \
+10.9801104492 12\
+.2311295609 10.9\
+86351518 12.1890\
+859309 C 10.9925\
+925869 12.147042\
+3009 10.99883365\
+57 12.1049889241\
+ 11.0050747246 1\
+2.0629582613 C 1\
+1.0113157934 12.\
+0209275985 11.01\
+75568622 11.9789\
+197893 11.023797\
+9311 11.93696706\
+43 C 11.03003899\
+99 11.8950143392\
+ 11.0362800687 1\
+1.8531170328 11.\
+0425211376 11.81\
+13070956 C 11.04\
+87622064 11.7694\
+971584 11.055003\
+2752 11.72777511\
+91 11.0612443441\
+ 11.686172599 C \
+11.0674854129 11\
+.644570079 11.07\
+37264818 11.6030\
+878003 11.079967\
+5506 11.56175700\
+61 C 11.08620861\
+94 11.520426212 \
+11.0924496883 11\
+.4792478168 11.0\
+986907571 11.438\
+2526372 C 11.104\
+9318259 11.39725\
+74577 11.1111728\
+948 11.356446599\
+ 11.1174139636 1\
+1.3158504039 C 1\
+1.1236550324 11.\
+2752542089 11.12\
+98961013 11.2348\
+739718 11.136137\
+1701 11.19473951\
+44 C 11.14237823\
+89 11.1546050569\
+ 11.1486193078 1\
+1.1147178607 11.\
+1548603766 11.07\
+51071804 C 11.16\
+11014455 11.0354\
+965 11.167342514\
+3 10.9961640018 \
+11.1735835831 10\
+.9571383283 C 11\
+.179824652 10.91\
+81126547 11.1860\
+657208 10.879395\
+6544 11.19230678\
+96 10.8410153131\
+ C 11.1985478585\
+ 10.8026349718 1\
+1.2047889273 10.\
+7645933176 11.21\
+10299961 10.7269\
+176365 C 11.2172\
+71065 10.6892419\
+554 11.223512133\
+8 10.6519344518 \
+11.2297532027 10\
+.6150216695 C 11\
+.2359942715 10.5\
+781088872 11.242\
+2353403 10.54159\
+32036 11.2484764\
+092 10.505500379\
+5 C 11.254717478\
+ 10.4694075555 1\
+1.2609585468 10.\
+4337401374 11.26\
+71996157 10.3985\
+230635 C 11.2734\
+406845 10.363305\
+9895 11.27968175\
+33 10.3285419714\
+ 11.2859228222 1\
+0.2942550857 C 1\
+1.292163891 10.2\
+599682 11.298404\
+9598 10.22616131\
+96 11.3046460287\
+ 10.1928576225 C\
+ 11.3108870975 1\
+0.1595539254 11.\
+3171281664 10.12\
+6756441 11.32336\
+92352 10.0944874\
+13 C 11.32961030\
+4 10.0622183849 \
+11.3358513729 10\
+.0304809946 11.3\
+420924417 9.9992\
+9651669 C 11.348\
+3335105 9.968112\
+0388 11.35457457\
+94 9.93748380182\
+ 11.3608156482 9\
+.90743207873 C 1\
+1.367056717 9.87\
+738035564 11.373\
+2977859 9.847908\
+6168 11.37953885\
+47 9.81903610212\
+ C 11.3857799236\
+ 9.79016358745 1\
+1.3920209924 9.7\
+6189390384 11.39\
+82620612 9.73424\
+522841 C 11.4045\
+031301 9.7065965\
+5298 11.41074419\
+89 9.67957262357\
+ 11.4169852677 9\
+.65319052639 C 1\
+1.4232263366 9.6\
+2680842922 11.42\
+94674054 9.60107\
+202731 11.435708\
+4742 9.575997289\
+55 C 11.44194954\
+31 9.55092255179\
+ 11.4481906119 9\
+.52651346042 11.\
+4544316808 9.502\
+78484234 C 11.46\
+06727496 9.47905\
+622425 11.466913\
+8184 9.456012174\
+74 11.4731548873\
+ 9.43366635576 C\
+ 11.4793959561 9\
+.41132053679 11.\
+4856370249 9.389\
+67715036 11.4918\
+780938 9.3687486\
+7242 C 11.498119\
+1626 9.347820194\
+48 11.5043602314\
+ 9.32761092726 1\
+1.5106013003 9.3\
+0813214137 C 11.\
+5168423691 9.288\
+65335547 11.5230\
+834379 9.2699094\
+4672 11.52932450\
+68 9.25191046297\
+ C 11.5355655756\
+ 9.23391147921 1\
+1.5418066445 9.2\
+1666190305 11.54\
+80477133 9.20017\
+054407 C 11.5542\
+887821 9.1836791\
+851 11.560529851\
+ 9.16795060574 1\
+1.5667709198 9.1\
+529923637 C 11.5\
+730119886 9.1380\
+3412165 11.57925\
+30575 9.12385085\
+216 11.585494126\
+3 9.11044884935 \
+C 11.5917351951 \
+9.09704684653 11\
+.597976264 9.084\
+43081125 11.6042\
+173328 9.0726057\
+6432 C 11.610458\
+4017 9.060780717\
+4 11.6166994705 \
+9.04975141806 11\
+.6229405393 9.03\
+952160606 C 11.6\
+291816082 9.0292\
+9179405 11.63542\
+2677 9.019866279\
+63 11.6416637458\
+ 9.01124751568 C\
+ 11.6479048147 9\
+.00262875173 11.\
+6541458835 8.994\
+82159207 11.6603\
+869523 8.9878271\
+9897 C 11.666628\
+0212 8.980832805\
+86 11.67286909 8\
+.9746560692 11.6\
+791101588 8.9692\
+9685879 C 11.685\
+3512277 8.963937\
+64839 11.6915922\
+965 8.9594008826\
+5 11.6978333654 \
+8.95568513915 C \
+11.7040744342 8.\
+95196939565 11.7\
+10315503 8.94907\
+961372 11.716556\
+5719 8.947013080\
+89 C 11.72279764\
+07 8.94494654806\
+ 11.7290387095 8\
+.94370821693 11.\
+7352797784 8.943\
+29408918 C 11.74\
+15208472 8.94287\
+996144 11.747761\
+916 8.9432949953\
+1 11.7540029849 \
+8.94453391281 C \
+11.7602440537 8.\
+94577283031 11.7\
+664851226 8.9478\
+4058762 11.77272\
+61914 8.95073063\
+526 C 11.7789672\
+602 8.9536206829\
+ 11.7852083291 8\
+.95733796734 11.\
+7914493979 8.961\
+87467771 C 11.79\
+76904667 8.96641\
+138809 11.803931\
+5356 8.971772453\
+51 11.8101726044\
+ 8.97794881383 C\
+ 11.8164136732 8\
+.98412517414 11.\
+8226547421 8.991\
+12173347 11.8288\
+958109 8.9989281\
+9637 C 11.835136\
+8797 9.006734659\
+27 11.8413779486\
+ 9.01535589732 1\
+1.8476190174 9.0\
+2478039566 C 11.\
+8538600863 9.034\
+204894 11.860101\
+1551 9.044437484\
+13 11.8663422239\
+ 9.05546544963 C\
+ 11.8725832928 9\
+.06649341513 11.\
+8788243616 9.078\
+32153993 11.8850\
+654304 9.0909359\
+2567 C 11.891306\
+4993 9.103550311\
+41 11.8975475681\
+ 9.11695568709 1\
+1.9037886369 9.1\
+311369939 C 11.9\
+100297058 9.1453\
+1830071 11.91627\
+07746 9.16028020\
+539 11.922511843\
+5 9.17600651196 \
+C 11.9287529123 \
+9.19173281852 11\
+.9349939811 9.20\
+822812425 11.941\
+23505 9.22547512\
+102 C 11.9474761\
+188 9.2427221177\
+9 11.9537171876 \
+9.2607253263 11.\
+9599582565 9.279\
+46635306 C 11.96\
+61993253 9.29820\
+737981 11.972440\
+3941 9.317690661\
+94 11.978681463 \
+9.33789674901 C \
+11.9849225318 9.\
+35810283608 11.9\
+911636007 9.3790\
+3607478 11.99740\
+46695 9.40067598\
+781 C 12.0036457\
+383 9.4223159008\
+4 12.0098868072 \
+9.44466673775 12\
+.016127876 9.467\
+707026 C 12.0223\
+689448 9.4907473\
+1425 12.02861001\
+37 9.51448119969\
+ 12.0348510825 9\
+.53888624773 C 1\
+2.0410921513 9.5\
+6329129578 12.04\
+73332202 9.58837\
+154216 12.053574\
+289 9.6141036249\
+4 C 12.059815357\
+8 9.63983570772 \
+12.0660564267 9.\
+66622354628 12.0\
+722974955 9.6932\
+4288742 C 12.078\
+5385644 9.720262\
+22857 12.0847796\
+332 9.7479168692\
+7 12.091020702 9\
+.77618170258 C 1\
+2.0972617709 9.8\
+0444653589 12.10\
+35028397 9.83332\
+523048 12.109743\
+9085 9.862791864\
+48 C 12.11598497\
+74 9.89225849849\
+ 12.1222260462 9\
+.92231660661 12.\
+128467115 9.9529\
+394921 C 12.1347\
+081839 9.9835623\
+776 12.140949252\
+7 10.0147534357 \
+12.1471903216 10\
+.0464852362 C 12\
+.1534313904 10.0\
+782170367 12.159\
+6724592 10.11049\
+28301 12.1659135\
+281 10.143284494\
+8 C 12.172154596\
+9 10.1760761596 \
+12.1783956657 10\
+.2093867966 12.1\
+846367346 10.243\
+1876367 C 12.190\
+8778034 10.27698\
+84768 12.1971188\
+722 10.311282466\
+3 12.2033599411 \
+10.3460402327 C \
+12.2096010099 10\
+.3807979991 12.2\
+158420787 10.416\
+0223297 12.22208\
+31476 10.4516832\
+943 C 12.2283242\
+164 10.487344258\
+8 12.2345652853 \
+10.5234444813 12\
+.2408063541 10.5\
+599535197 C 12.2\
+470474229 10.596\
+4625581 12.25328\
+84918 10.6333828\
+69 12.2595295606\
+ 10.6706835459 C\
+ 12.2657706294 1\
+0.7079842229 12.\
+2720116983 10.74\
+56675512 12.2782\
+527671 10.783702\
+2077 C 12.284493\
+8359 10.82173686\
+42 12.2907349048\
+ 10.8601249596 1\
+2.2969759736 10.\
+8988348021 C 12.\
+3032170425 10.93\
+75446446 12.3094\
+581113 10.976578\
+167 12.315699180\
+1 11.0159033583 \
+C 12.321940249 1\
+1.0552285496 12.\
+3281813178 11.09\
+48471615 12.3344\
+223866 11.134726\
+9131 C 12.340663\
+4555 11.17460666\
+47 12.3469045243\
+ 11.214749124 12\
+.3531455931 11.2\
+551217903 C 12.3\
+59386662 11.2954\
+944565 12.365627\
+7308 11.33609871\
+15 12.3718687996\
+ 11.3769018848 C\
+ 12.3781098685 1\
+1.417705058 12.3\
+843509373 11.458\
+7083431 12.39059\
+20062 11.4998789\
+502 C 12.3968330\
+75 11.5410495574\
+ 12.4030741438 1\
+1.5823884901 12.\
+4093152127 11.62\
+38628901 C 12.41\
+55562815 11.6653\
+3729 12.42179735\
+03 11.7069479691\
+ 12.4280384192 1\
+1.7486620513 C 1\
+2.434279488 11.7\
+903761334 12.440\
+5205568 11.83219\
+42375 12.4467616\
+257 11.874083520\
+6 C 12.453002694\
+5 11.9159728037 \
+12.4592437634 11\
+.9579336909 12.4\
+654848322 11.999\
+933423 C 12.4717\
+25901 12.0419331\
+551 12.477966969\
+9 12.0839719627 \
+12.4842080387 12\
+.1260172211 C 12\
+.4904491075 12.1\
+680624794 12.496\
+6901764 12.21011\
+42242 12.5029312\
+452 12.252140015\
+8 C 12.509172314\
+ 12.2941658073 1\
+2.5154133829 12.\
+3361654862 12.52\
+16544517 12.3781\
+068479 C 12.5278\
+955206 12.420048\
+2095 12.53413658\
+94 12.4619309 12\
+.5403776582 12.5\
+037229993 C 12.5\
+466187271 12.545\
+5150986 12.55285\
+97959 12.5872160\
+587 12.559100864\
+7 12.6287942939 \
+C 12.5653419336 \
+12.6703725291 12\
+.5715830024 12.7\
+11827298 12.5778\
+240712 12.753127\
+3979 C 12.584065\
+1401 12.79442749\
+78 12.5903062089\
+ 12.8355719951 1\
+2.5965472777 12.\
+8765301185 C 12.\
+6027883466 12.91\
+74882418 12.6090\
+294154 12.958258\
+8669 12.61527048\
+43 12.9988117011\
+ C 12.6215115531\
+ 13.0393645352 1\
+2.6277526219 13.\
+0796982653 12.63\
+39936908 13.1197\
+831242 C 12.6402\
+347596 13.159867\
+9831 12.64647582\
+84 13.1997024706\
+ 12.6527168973 1\
+3.2392573915 C 1\
+2.6589579661 13.\
+2788123123 12.66\
+51990349 13.3180\
+859817 12.671440\
+1038 13.35704982\
+09 C 12.67768117\
+26 13.3960136602\
+ 12.6839222415 1\
+3.4346658026 12.\
+6901633103 13.47\
+29783303 C 12.69\
+64043791 13.5112\
+908581 12.702645\
+448 13.549261725\
+4 12.7088865168 \
+13.5868637186 C \
+12.7151275856 13\
+.6244657118 12.7\
+213686545 13.661\
+6966091 12.72760\
+97233 13.6985299\
+43 C 12.73385079\
+21 13.7353632769\
+ 12.740091861 13\
+.7717966531 12.7\
+463329298 13.807\
+8043911 C 12.752\
+5739986 13.84381\
+21291 12.7588150\
+675 13.879391665\
+8 12.7650561363 \
+13.9145181476 C \
+12.7712972052 13\
+.9496446294 12.7\
+77538274 13.9843\
+153282 12.783779\
+3428 14.01850625\
+56 C 12.79002041\
+17 14.052697183 \
+12.7962614805 14\
+.0864054503 12.8\
+025025493 14.119\
+6079713 C 12.808\
+7436182 14.15281\
+04924 12.8149846\
+87 14.1855042223\
+ 12.8212257558 1\
+4.2176670129 C 1\
+2.8274668247 14.\
+2498298036 12.83\
+37078935 14.2814\
+584585 12.839948\
+9624 14.31253180\
+18 C 12.84619003\
+12 14.3436051451\
+ 12.8524311 14.3\
+741198339 12.858\
+6721689 14.40405\
+5697 C 12.864913\
+2377 14.43399156\
+01 12.8711543065\
+ 14.4633451134 1\
+2.8773953754 14.\
+4920972219 C 12.\
+8836364442 14.52\
+08493303 12.8898\
+77513 14.5489963\
+737 12.896118581\
+9 14.5765202828 \
+C 12.9023596507 \
+14.6040441918 12\
+.9086007195 14.6\
+30941216 12.9148\
+417884 14.657194\
+3795 C 12.921082\
+8572 14.68344754\
+3 12.9273239261 \
+14.7090529707 12\
+.9335649949 14.7\
+339948068 C 12.9\
+398060637 14.758\
+936643 12.946047\
+1326 14.78321089\
+37 12.9522882014\
+ 14.8068028476 C\
+ 12.9585292702 1\
+4.8303948015 12.\
+9647703391 14.85\
+33003524 12.9710\
+114079 14.875505\
+9559 C 12.977252\
+4767 14.89771155\
+94 12.9834935456\
+ 14.9192130033 1\
+2.9897346144 14.\
+9399979312 C 12.\
+9959756833 14.96\
+07828591 13.0022\
+167521 14.980846\
+9593 13.00845782\
+09 15.0001790825\
+ C 13.0146988898\
+ 15.0195112058 1\
+3.0209399586 15.\
+0381069473 13.02\
+71810274 15.0559\
+563825 C 13.0334\
+220963 15.073805\
+8176 13.03966316\
+51 15.0909044555\
+ 13.0459042339 1\
+5.1072436112 C 1\
+3.0521453028 15.\
+1235827668 13.05\
+83863716 15.1391\
+578701 13.064627\
+4405 15.15396148\
+93 C 13.07086850\
+93 15.1687651085\
+ 13.0771095781 1\
+5.1827926014 13.\
+083350647 15.196\
+0378009 C 13.089\
+5917158 15.20928\
+30004 13.0958327\
+846 15.221741199\
+5 13.1020738535 \
+15.233407505 C 1\
+3.1083149223 15.\
+2450738105 13.11\
+45559911 15.2559\
+434578 13.120797\
+06 15.2660128357\
+ C 13.1270381288\
+ 15.2760822136 1\
+3.1332791976 15.\
+2853465071 13.13\
+95202665 15.2938\
+033922 C 13.1457\
+613353 15.302260\
+2773 13.15200240\
+42 15.3099048962\
+ 13.158243473 15\
+.316736216 C 13.\
+1644845418 15.32\
+35675358 13.1707\
+256107 15.329580\
+6633 13.17696667\
+95 15.334775858 \
+C 13.1832077483 \
+15.3399710527 13\
+.1894488172 15.3\
+443433937 13.195\
+689886 15.347894\
+4326 C 13.201930\
+9548 15.35144547\
+14 13.2081720237\
+ 15.3541702672 1\
+3.2144130925 15.\
+3560716612 C 13.\
+2206541614 15.35\
+79730551 13.2268\
+952302 15.359046\
+0938 13.23313629\
+9 15.3592949036 \
+C 13.2393773679 \
+15.3595437135 13\
+.2456184367 15.3\
+589633362 13.251\
+8595055 15.35755\
+91774 C 13.25810\
+05744 15.3561550\
+185 13.264341643\
+2 15.3539221225 \
+13.270582712 15.\
+3508671655 C 13.\
+2768237809 15.34\
+78122085 13.2830\
+648497 15.343930\
+2454 13.28930591\
+85 15.3392292125\
+ C 13.2955469874\
+ 15.3345281797 1\
+3.3017880562 15.\
+3290031501 13.30\
+80291251 15.3226\
+633082 C 13.3142\
+701939 15.316323\
+4663 13.32051126\
+27 15.3091639108\
+ 13.3267523316 1\
+5.3011950599 C 1\
+3.3329934004 15.\
+293226209 13.339\
+2344692 15.28444\
+31948 13.3454755\
+381 15.274857653\
+1 C 13.351716606\
+9 15.2652721114 \
+13.3579576757 15\
+.2548792151 13.3\
+641987446 15.243\
+6917998 C 13.370\
+4398134 15.23250\
+43845 13.3766808\
+823 15.220517671\
+3 13.3829219511 \
+15.2077456758 C \
+13.3891630199 15\
+.1949736803 13.3\
+954040888 15.181\
+4116793 13.40164\
+51576 15.1670748\
+463 C 13.4078862\
+264 15.152738013\
+4 13.4141272953 \
+15.1376216885 13\
+.4203683641 15.1\
+217421799 C 13.4\
+266094329 15.105\
+8626712 13.43285\
+05018 15.0892153\
+89 13.4390915706\
+ 15.0718177511 C\
+ 13.4453326394 1\
+5.0544201132 13.\
+4515737083 15.03\
+62676069 13.4578\
+147771 15.017378\
+7328 C 13.464055\
+846 14.998489858\
+6 13.4702969148 \
+14.9788601882 13\
+.4765379836 14.9\
+58509276 C 13.48\
+27790525 14.9381\
+583639 13.489020\
+1213 14.91708187\
+26 13.4952611901\
+ 14.8953003807 C\
+ 13.501502259 14\
+.8735188887 13.5\
+077433278 14.851\
+0281565 13.51398\
+43966 14.8278497\
+543 C 13.5202254\
+655 14.804671352\
+2 13.5264665343 \
+14.7808011449 13\
+.5327076032 14.7\
+562616614 C 13.5\
+38948672 14.7317\
+22178 13.5451897\
+408 14.706509393\
+9 13.5514308097 \
+14.6806467621 C \
+13.5576718785 14\
+.6547841302 13.5\
+639129473 14.628\
+2677431 13.57015\
+40162 14.6011219\
+409 C 13.5763950\
+85 14.5739761388\
+ 13.5826361538 1\
+4.5461971373 13.\
+5888772227 14.51\
+78101266 C 13.59\
+51182915 14.4894\
+231159 13.601359\
+3604 14.46042444\
+05 13.6076004292\
+ 14.4308401016 C\
+ 13.613841498 14\
+.4012557627 13.6\
+200825669 14.371\
+0822392 13.62632\
+36357 14.3403463\
+032 C 13.6325647\
+045 14.309610367\
+2 13.6388057734 \
+14.2783086376 13\
+.6450468422 14.2\
+464686158 C 13.6\
+51287911 14.2146\
+28594 13.6575289\
+799 14.182247044\
+1 13.6637700487 \
+14.1493521545 C \
+13.6700111175 14\
+.1164572648 13.6\
+762521864 14.083\
+0459497 13.68249\
+32552 14.0491470\
+408 C 13.6887343\
+241 14.015248131\
+8 13.6949753929 \
+13.9808586983 13\
+.7012164617 13.9\
+460081706 C 13.7\
+074575306 13.911\
+157643 13.713698\
+5994 13.87584324\
+99 13.7199396682\
+ 13.840094975 C \
+13.7261807371 13\
+.8043467002 13.7\
+324218059 13.768\
+1619361 13.73866\
+28747 13.7315711\
+734 C 13.7449039\
+436 13.694980410\
+7 13.7511450124 \
+13.6579812097 13\
+.7573860813 13.6\
+206045207 C 13.7\
+636271501 13.583\
+2278318 13.76986\
+82189 13.5454713\
+868 13.776109287\
+8 13.507366548 C\
+ 13.7823503566 1\
+3.4692617092 13.\
+7885914254 13.43\
+08063837 13.7948\
+324943 13.392032\
+2972 C 13.801073\
+5631 13.35325821\
+07 13.8073146319\
+ 13.3141634485 1\
+3.8135557008 13.\
+2747800508 C 13.\
+8197967696 13.23\
+53966531 13.8260\
+378384 13.195722\
+8865 13.83227890\
+73 13.1557910561\
+ C 13.8385199761\
+ 13.1158592256 1\
+3.844761045 13.0\
+756677819 13.851\
+0021138 13.03524\
+92448 C 13.85724\
+31826 12.9948307\
+078 13.863484251\
+5 12.9541837144 \
+13.8697253203 12\
+.9133409493 C 13\
+.8759663891 12.8\
+724981843 13.882\
+207458 12.831458\
+4729 13.88844852\
+68 12.7902546141\
+ C 13.8946895956\
+ 12.7490507553 1\
+3.9009306645 12.\
+7076817647 13.90\
+71717333 12.6661\
+805046 C 13.9134\
+128022 12.624679\
+2445 13.91965387\
+1 12.5830449224 \
+13.9258949398 12\
+.5413104133 C 13\
+.9321360087 12.4\
+995759042 13.938\
+3770775 12.45774\
+06084 13.9446181\
+463 12.415837363\
+ C 13.9508592152\
+ 12.3739341175 1\
+3.957100284 12.3\
+319625167 13.963\
+3413528 12.28995\
+53085 C 13.96958\
+24217 12.2479481\
+003 13.975823490\
+5 12.2059050736 \
+13.9820645593 12\
+.163858837 C 13.\
+9883056282 12.12\
+18126003 13.9945\
+46697 12.0797631\
+375 14.000787765\
+9 12.037742867 C\
+ 14.0070288347 1\
+1.9957225965 14.\
+0132699035 11.95\
+37316971 14.0195\
+109724 11.911802\
+3472 C 14.025752\
+0412 11.86987299\
+73 14.03199311 1\
+1.8280055704 14.\
+0382341789 11.78\
+62319551 C 14.04\
+44752477 11.7444\
+583398 14.050716\
+3165 11.70277910\
+36 14.0569573854\
+ 11.661225796 C \
+14.0631984542 11\
+.6196724885 14.0\
+694395231 11.578\
+2458702 14.07568\
+05919 11.5369771\
+031 C 14.0819216\
+607 11.495708336\
+ 14.0881627296 1\
+1.4545983726 14.\
+0944037984 11.41\
+36779387 C 14.10\
+06448672 11.3727\
+575047 14.106885\
+9361 11.33202774\
+35 14.1131270049\
+ 11.2915188972 C\
+ 14.1193680737 1\
+1.2510100508 14.\
+1256091426 11.21\
+07234514 14.1318\
+502114 11.170688\
+8107 C 14.138091\
+2803 11.13065417\
+01 14.1443323491\
+ 11.090873007 14\
+.1505734179 11.0\
+513744572 C 14.1\
+568144868 11.011\
+8759074 14.16305\
+55556 10.9726616\
+739 14.169296624\
+4 10.9337602714 \
+C 14.1755376933 \
+10.8948588688 14\
+.1817787621 10.8\
+56272182 14.1880\
+198309 10.818028\
+06 C 14.19426089\
+98 10.7797839381\
+ 14.2005019686 1\
+0.7418844447 14.\
+2067430374 10.70\
+43567207 C 14.21\
+29841063 10.6668\
+289967 14.219225\
+1751 10.62967528\
+14 14.225466244 \
+10.5929219653 C \
+14.2317073128 10\
+.5561686492 14.2\
+379483816 10.519\
+8181438 14.24418\
+94505 10.4838960\
+485 C 14.2504305\
+193 10.447973953\
+2 14.2566715881 \
+10.4124828478 14\
+.262912657 10.37\
+74475013 C 14.26\
+91537258 10.3424\
+121548 14.275394\
+7946 10.30783531\
+13 14.2816358635\
+ 10.2737408708 C\
+ 14.2878769323 1\
+0.2396464303 14.\
+2941180012 10.20\
+60372972 14.3003\
+5907 10.17293646\
+55 C 14.30660013\
+88 10.1398356338\
+ 14.3128412077 1\
+0.1072461637 14.\
+3190822765 10.07\
+51901078 C 14.32\
+53233453 10.0431\
+340518 14.331564\
+4142 10.01161462\
+12 14.337805483 \
+9.98065289287 C \
+14.3440465518 9.\
+94969116455 14.3\
+502876207 9.9192\
+9049579 14.35652\
+86895 9.88947095\
+54 C 14.36276975\
+83 9.85965141502\
+ 14.3690108272 9\
+.83041650112 14.\
+375251896 9.8017\
+8524339 C 14.381\
+4929649 9.773153\
+98566 14.3877340\
+337 9.7451300176\
+5 14.3939751025 \
+9.71773130046 C \
+14.4002161714 9.\
+69033258328 14.4\
+064572402 9.6635\
+6288028 14.41269\
+8309 9.637439056\
+28 C 14.41893937\
+79 9.61131523228\
+ 14.4251804467 9\
+.58584117462 14.\
+4314215155 9.561\
+03262572 C 14.43\
+76625844 9.53622\
+407682 14.443903\
+6532 9.512085042\
+02 14.4501447221\
+ 9.48863011701 C\
+ 14.4563857909 9\
+.46517519199 14.\
+4626268597 9.442\
+40849391 14.4688\
+679286 9.4203434\
+4915 C 14.475108\
+9974 9.398278404\
+39 14.4813500662\
+ 9.37691923553 1\
+4.4875911351 9.3\
+5627817893 C 14.\
+4938322039 9.335\
+63712233 14.5000\
+732727 9.3157184\
+9947 14.50631434\
+16 9.29653333775\
+ C 14.5125554104\
+ 9.27734817602 1\
+4.5187964792 9.2\
+5890088915 14.52\
+50375481 9.24120\
+127852 C 14.5312\
+786169 9.2235016\
+6789 14.53751968\
+58 9.20655423262\
+ 14.5437607546 9\
+.19036753295 C 1\
+4.5500018234 9.1\
+7418083328 14.55\
+62428923 9.15875\
+944677 14.562483\
+9611 9.144110679\
+28 C 14.56872502\
+99 9.12946191178\
+ 14.5749660988 9\
+.11559041225 14.\
+5812071676 9.102\
+50222084 C 14.58\
+74482364 9.08941\
+402944 14.593689\
+3053 9.077113859\
+29 14.5999303741\
+ 9.06560647555 C\
+ 14.606171443 9.\
+05409909181 14.6\
+124125118 9.0433\
+8926452 14.61865\
+35806 9.03348047\
+644 C 14.6248946\
+495 9.0235716883\
+5 14.6311357183 \
+9.01446875905 14\
+.6373767871 9.00\
+617388352 C 14.6\
+43617856 8.99787\
+900799 14.649858\
+9248 8.990397047\
+88 14.6560999936\
+ 8.98372890704 C\
+ 14.6623410625 8\
+.97706076619 14.\
+6685821313 8.971\
+21134081 14.6748\
+232002 8.9661802\
+4219 C 14.681064\
+269 8.9611491435\
+6 14.6873053378 \
+8.95694129489 14\
+.6935464067 8.95\
+35550155 C 14.69\
+97874755 8.95016\
+873611 14.706028\
+5443 8.947608968\
+6 14.7122696132 \
+8.94587274292 C \
+14.718510682 8.9\
+4413651724 14.72\
+47517508 8.94322\
+878774 14.730992\
+8197 8.943145299\
+62 C 14.73723388\
+85 8.94306181149\
+ 14.7434749573 8\
+.94380752316 14.\
+7497160262 8.945\
+37690164 C 14.75\
+5957095 8.946946\
+28012 14.7621981\
+639 8.9493442802\
+5 14.7684392327 \
+8.95256409941 C \
+14.7746803015 8.\
+95578391856 14.7\
+809213704 8.9598\
+3050035 14.78716\
+24392 8.96469578\
+302 C 14.7934035\
+08 8.9695610657 \
+14.7996445769 8.\
+97524997398 14.8\
+058856457 8.9817\
+5319947 C 14.812\
+1267145 8.988256\
+42495 14.8183677\
+834 8.9955788658\
+8 14.8246088522 \
+9.00370998157 C \
+14.8308499211 9.\
+01184109726 14.8\
+370909899 9.0207\
+8575188 14.84333\
+20587 9.03053218\
+878 C 14.8495731\
+276 9.0402786256\
+8 14.8558141964 \
+9.05083166744 14\
+.8620552652 9.06\
+217835961 C 14.8\
+682963341 9.0735\
+2505179 14.87453\
+74029 9.08567016\
+792 14.880778471\
+7 9.09859957577 \
+C 14.8870195406 \
+9.11152898363 14\
+.8932606094 9.12\
+524740034 14.899\
+5016782 9.139739\
+53774 C 14.90574\
+27471 9.15423167\
+514 14.911983815\
+9 9.16950218665 \
+14.9182248848 9.\
+18553465181 C 14\
+.9244659536 9.20\
+156711697 14.930\
+7070224 9.218366\
+11829 14.9369480\
+913 9.2359141283\
+9 C 14.943189160\
+1 9.2534621385 1\
+4.9494302289 9.2\
+7176366192 14.95\
+56712978 9.29080\
+009145 C 14.9619\
+123666 9.3098365\
+2098 14.96815343\
+54 9.3296122762 \
+14.9743945043 9.\
+35010769885 C 14\
+.9806355731 9.37\
+06031215 14.9868\
+76642 9.39182253\
+938 14.993117710\
+8 9.41374527355 \
+C 14.9993587796 \
+9.43566800772 15\
+.0055998485 9.45\
+829828751 15.011\
+8409173 9.481614\
+44528 C 15.01808\
+19861 9.50493060\
+304 15.024323055\
+ 9.52893676311 1\
+5.0305641238 9.5\
+5361030261 C 15.\
+0368051926 9.578\
+28384211 15.0430\
+462615 9.6036287\
+7399 15.04928733\
+03 9.62962155513\
+ C 15.0555283991\
+ 9.65561433628 1\
+5.061769468 9.68\
+225886205 15.068\
+0105368 9.709530\
+70548 C 15.07425\
+16057 9.73680254\
+892 15.080492674\
+5 9.76470548177 \
+15.0867337433 9.\
+79321423098 C 15\
+.0929748122 9.82\
+172298018 15.099\
+215881 9.8508411\
+8806 15.10545694\
+98 9.88054277452\
+ C 15.1116980187\
+ 9.91024436099 1\
+5.1179390875 9.9\
+4053283329 15.12\
+41801563 9.97138\
+134462 C 15.1304\
+212252 10.002229\
+856 15.136662294\
+ 10.0336417731 1\
+5.1429033629 10.\
+065589524 C 15.1\
+491444317 10.097\
+5372749 15.15538\
+55005 10.1300240\
+807 15.161626569\
+4 10.1630216867 \
+C 15.1678676382 \
+10.1960192927 15\
+.174108707 10.22\
+95307693 15.1803\
+497759 10.263527\
+2231 C 15.186590\
+8447 10.29752367\
+68 15.1928319135\
+ 10.3320080227 1\
+5.1990729824 10.\
+3669507729 C 15.\
+2053140512 10.40\
+1893523 15.21155\
+512 10.437297432\
+6 15.2177961889 \
+10.473132465 C 1\
+5.2240372577 10.\
+5089674975 15.23\
+02783266 10.5452\
+362437 15.236519\
+3954 10.58190816\
+51 C 15.24276046\
+42 10.6185800864\
+ 15.2490015331 1\
+0.6556576055 15.\
+2552426019 10.69\
+31097287 C 15.26\
+14836707 10.7305\
+618519 15.267724\
+7396 10.76839082\
+98 15.2739658084\
+ 10.8065652617 C\
+ 15.2802068772 1\
+0.8447396936 15.\
+2864479461 10.88\
+32616548 15.2926\
+890149 10.922099\
+3859 C 15.298930\
+0838 10.96093711\
+69 15.3051711526\
+ 11.0000925145 1\
+5.3114122214 11.\
+0395335097 C 15.\
+3176532903 11.07\
+8974505 15.32389\
+43591 11.1187028\
+13 15.3301354279\
+ 11.1586861049 C\
+ 15.3363764968 1\
+1.1986693969 15.\
+3426175656 11.23\
+89092037 15.3488\
+586344 11.279372\
+9867 C 15.355099\
+7033 11.31983676\
+96 15.3613407721\
+ 11.360525873 15\
+.367581841 11.40\
+14075985 C 15.37\
+38229098 11.4422\
+893239 15.380063\
+9786 11.48336482\
+72 15.3863050475\
+ 11.5246013006 C\
+ 15.3925461163 1\
+1.565837774 15.3\
+987871851 11.607\
+236183 15.405028\
+254 11.648763661\
+6 C 15.411269322\
+8 11.6902911401 \
+15.4175103916 11\
+.7319484616 15.4\
+237514605 11.773\
+7027525 C 15.429\
+9925293 11.81545\
+70435 15.4362335\
+981 11.857308884\
+1 15.442474667 1\
+1.899225444 C 15\
+.4487157358 11.9\
+41142004 15.4549\
+568047 11.983123\
+6696 15.46119787\
+35 12.0251377045\
+ C 15.4674389423\
+ 12.0671517393 1\
+5.4736800112 12.\
+1091983351 15.47\
+992108 12.151244\
+9\x22\x0a       style=\
+\x22fill:none;fill-\
+opacity:1;stroke\
+:#ff0000;stroke-\
+width:0.94488189\
+;stroke-miterlim\
+it:4;stroke-dash\
+array:none;strok\
+e-opacity:1\x22 />\x0a\
+  </g>\x0a</svg>\x0a\
 \x00\x00\x09\x12\
 <\
 ?xml version=\x221.\
@@ -1757,6 +5811,424 @@ d=\x22path4487-7\x22\x0a \
   r=\x221.9135045\x22 \
 />\x0a  </g>\x0a</svg>\
 \x0a\
+\x00\x00\x073\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.2 5c3e80d\
+, 2017-08-06\x22\x0a  \
+ sodipodi:docnam\
+e=\x22uncollapse.sv\
+g\x22>\x0a  <sodipodi:\
+namedview\x0a     i\
+d=\x22base\x22\x0a     pa\
+gecolor=\x22#ffffff\
+\x22\x0a     bordercol\
+or=\x22#666666\x22\x0a   \
+  borderopacity=\
+\x221.0\x22\x0a     inksc\
+ape:pageopacity=\
+\x220.0\x22\x0a     inksc\
+ape:pageshadow=\x22\
+2\x22\x0a     inkscape\
+:zoom=\x2216\x22\x0a     \
+inkscape:cx=\x22-8.\
+875\x22\x0a     inksca\
+pe:cy=\x228\x22\x0a     i\
+nkscape:document\
+-units=\x22px\x22\x0a    \
+ inkscape:curren\
+t-layer=\x22layer1\x22\
+\x0a     showgrid=\x22\
+false\x22\x0a     inks\
+cape:window-widt\
+h=\x221920\x22\x0a     in\
+kscape:window-he\
+ight=\x221141\x22\x0a    \
+ inkscape:window\
+-x=\x220\x22\x0a     inks\
+cape:window-y=\x220\
+\x22\x0a     inkscape:\
+window-maximized\
+=\x221\x22\x0a     inksca\
+pe:grid-bbox=\x22tr\
+ue\x22 />\x0a  <defs\x0a \
+    id=\x22defs815\x22\
+ />\x0a  <metadata\x0a\
+     id=\x22metadat\
+a818\x22>\x0a    <rdf:\
+RDF>\x0a      <cc:W\
+ork\x0a         rdf\
+:about=\x22\x22>\x0a     \
+   <dc:format>im\
+age/svg+xml</dc:\
+format>\x0a        \
+<dc:type\x0a       \
+    rdf:resource\
+=\x22http://purl.or\
+g/dc/dcmitype/St\
+illImage\x22 />\x0a   \
+     <dc:title /\
+>\x0a      </cc:Wor\
+k>\x0a    </rdf:RDF\
+>\x0a  </metadata>\x0a\
+  <g\x0a     id=\x22la\
+yer1\x22\x0a     inksc\
+ape:groupmode=\x22l\
+ayer\x22\x0a     inksc\
+ape:label=\x22Ebene\
+ 1\x22>\x0a    <path\x0a \
+      id=\x22path14\
+47\x22\x0a       inksc\
+ape:label=\x22Trian\
+gle\x22\x0a       styl\
+e=\x22fill:#000000;\
+fill-opacity:1;s\
+troke:none;strok\
+e-width:1.074570\
+3;stroke-opacity\
+:1\x22\x0a       d=\x22M \
+12,4 H 4 l 4.000\
+001,8 z\x22\x0a       \
+inkscape:connect\
+or-curvature=\x220\x22\
+ />\x0a  </g>\x0a</svg\
+>\x0a\
+\x00\x00\x09p\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x228m\
+m\x22\x0a   height=\x2216\
+mm\x22\x0a   viewBox=\x22\
+0 0 8 16\x22\x0a   ver\
+sion=\x221.1\x22\x0a   id\
+=\x22svg8\x22\x0a   inksc\
+ape:version=\x220.9\
+2.1 r\x22\x0a   sodipo\
+di:docname=\x22spli\
+tter_handle_vert\
+ical.svg\x22>\x0a  <de\
+fs\x0a     id=\x22defs\
+2\x22 />\x0a  <sodipod\
+i:namedview\x0a    \
+ id=\x22base\x22\x0a     \
+pagecolor=\x22#ffff\
+ff\x22\x0a     borderc\
+olor=\x22#666666\x22\x0a \
+    borderopacit\
+y=\x221.0\x22\x0a     ink\
+scape:pageopacit\
+y=\x220.0\x22\x0a     ink\
+scape:pageshadow\
+=\x222\x22\x0a     inksca\
+pe:zoom=\x2211.2\x22\x0a \
+    inkscape:cx=\
+\x2228.682636\x22\x0a    \
+ inkscape:cy=\x2235\
+.128679\x22\x0a     in\
+kscape:document-\
+units=\x22mm\x22\x0a     \
+inkscape:current\
+-layer=\x22layer1\x22\x0a\
+     showgrid=\x22f\
+alse\x22\x0a     inksc\
+ape:window-width\
+=\x221920\x22\x0a     ink\
+scape:window-hei\
+ght=\x221141\x22\x0a     \
+inkscape:window-\
+x=\x220\x22\x0a     inksc\
+ape:window-y=\x220\x22\
+\x0a     inkscape:w\
+indow-maximized=\
+\x221\x22 />\x0a  <metada\
+ta\x0a     id=\x22meta\
+data5\x22>\x0a    <rdf\
+:RDF>\x0a      <cc:\
+Work\x0a         rd\
+f:about=\x22\x22>\x0a    \
+    <dc:format>i\
+mage/svg+xml</dc\
+:format>\x0a       \
+ <dc:type\x0a      \
+     rdf:resourc\
+e=\x22http://purl.o\
+rg/dc/dcmitype/S\
+tillImage\x22 />\x0a  \
+      <dc:title>\
+</dc:title>\x0a    \
+  </cc:Work>\x0a   \
+ </rdf:RDF>\x0a  </\
+metadata>\x0a  <g\x0a \
+    inkscape:lab\
+el=\x22Ebene 1\x22\x0a   \
+  inkscape:group\
+mode=\x22layer\x22\x0a   \
+  id=\x22layer1\x22\x0a  \
+   transform=\x22tr\
+anslate(0,-281)\x22\
+>\x0a    <circle\x0a  \
+     style=\x22fill\
+:#000000;fill-op\
+acity:1;stroke:n\
+one;stroke-width\
+:0.25;stroke-mit\
+erlimit:4;stroke\
+-dasharray:none;\
+stroke-opacity:1\
+\x22\x0a       id=\x22pat\
+h4487\x22\x0a       cx\
+=\x22-294.98648\x22\x0a  \
+     cy=\x223.91350\
+46\x22\x0a       r=\x221.\
+9135045\x22\x0a       \
+transform=\x22rotat\
+e(-90)\x22 />\x0a    <\
+circle\x0a       st\
+yle=\x22fill:#00000\
+0;fill-opacity:1\
+;stroke:none;str\
+oke-width:0.25;s\
+troke-miterlimit\
+:4;stroke-dashar\
+ray:none;stroke-\
+opacity:1\x22\x0a     \
+  id=\x22path4487-6\
+\x22\x0a       cx=\x22-28\
+9.08649\x22\x0a       \
+cy=\x223.9135046\x22\x0a \
+      r=\x221.91350\
+45\x22\x0a       trans\
+form=\x22rotate(-90\
+)\x22 />\x0a    <circl\
+e\x0a       style=\x22\
+fill:#000000;fil\
+l-opacity:1;stro\
+ke:none;stroke-w\
+idth:0.25;stroke\
+-miterlimit:4;st\
+roke-dasharray:n\
+one;stroke-opaci\
+ty:1\x22\x0a       id=\
+\x22path4487-7\x22\x0a   \
+    cx=\x22-282.986\
+48\x22\x0a       cy=\x223\
+.9135046\x22\x0a      \
+ r=\x221.9135045\x22\x0a \
+      transform=\
+\x22rotate(-90)\x22 />\
+\x0a  </g>\x0a</svg>\x0a\
+\x00\x00\x09\x03\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2216\
+px\x22\x0a   height=\x221\
+6px\x22\x0a   viewBox=\
+\x220 0 16 16\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.1 r\x22\x0a   s\
+odipodi:docname=\
+\x22spectrum.svg\x22>\x0a\
+  <sodipodi:name\
+dview\x0a     id=\x22b\
+ase\x22\x0a     pageco\
+lor=\x22#ffffff\x22\x0a  \
+   bordercolor=\x22\
+#666666\x22\x0a     bo\
+rderopacity=\x221.0\
+\x22\x0a     inkscape:\
+pageopacity=\x220.0\
+\x22\x0a     inkscape:\
+pageshadow=\x222\x22\x0a \
+    inkscape:zoo\
+m=\x2245.254834\x22\x0a  \
+   inkscape:cx=\x22\
+4.0007222\x22\x0a     \
+inkscape:cy=\x227.9\
+550105\x22\x0a     ink\
+scape:document-u\
+nits=\x22px\x22\x0a     i\
+nkscape:current-\
+layer=\x22layer1\x22\x0a \
+    showgrid=\x22fa\
+lse\x22\x0a     inksca\
+pe:window-width=\
+\x221920\x22\x0a     inks\
+cape:window-heig\
+ht=\x221015\x22\x0a     i\
+nkscape:window-x\
+=\x220\x22\x0a     inksca\
+pe:window-y=\x220\x22\x0a\
+     inkscape:wi\
+ndow-maximized=\x22\
+1\x22\x0a     inkscape\
+:grid-bbox=\x22true\
+\x22 />\x0a  <defs\x0a   \
+  id=\x22defs5788\x22 \
+/>\x0a  <metadata\x0a \
+    id=\x22metadata\
+5791\x22>\x0a    <rdf:\
+RDF>\x0a      <cc:W\
+ork\x0a         rdf\
+:about=\x22\x22>\x0a     \
+   <dc:format>im\
+age/svg+xml</dc:\
+format>\x0a        \
+<dc:type\x0a       \
+    rdf:resource\
+=\x22http://purl.or\
+g/dc/dcmitype/St\
+illImage\x22 />\x0a   \
+     <dc:title /\
+>\x0a      </cc:Wor\
+k>\x0a    </rdf:RDF\
+>\x0a  </metadata>\x0a\
+  <g\x0a     inksca\
+pe:label=\x22Ebene \
+2\x22\x0a     id=\x22laye\
+r2\x22\x0a     inkscap\
+e:groupmode=\x22lay\
+er\x22 />\x0a  <g\x0a    \
+ id=\x22layer1\x22\x0a   \
+  inkscape:group\
+mode=\x22layer\x22\x0a   \
+  inkscape:label\
+=\x22Ebene 1\x22>\x0a    \
+<path\x0a       sty\
+le=\x22fill:#80b3ff\
+;fill-rule:eveno\
+dd;stroke:#7d7d7\
+d;stroke-width:1\
+px;stroke-lineca\
+p:butt;stroke-li\
+nejoin:miter;str\
+oke-opacity:1\x22\x0a \
+      d=\x22M -0.17\
+67767,13.19367 C\
+ -0.15467961,13.\
+061088 0.7954951\
+2,7.2716507 0.79\
+549512,7.2716507\
+ L 1.6130873,12.\
+818019 2.9610096\
+,8.4648934 4.021\
+6698,13.326252 5\
+.5021746,7.71359\
+24 6.2755727,12.\
+199301 8.2201163\
+,0.50994206 10.3\
+41437,13.171573 \
+l 1.635184,-5.17\
+07185 0.861787,4\
+.1542525 0.77339\
+7,-3.9995729 0.6\
+62913,4.8171649 \
+1.038563,-5.5905\
+629 0.795495,5.8\
+115339\x22\x0a       i\
+d=\x22path4631\x22\x0a   \
+    inkscape:con\
+nector-curvature\
+=\x220\x22\x0a       sodi\
+podi:nodetypes=\x22\
+ccccccccccccccc\x22\
+ />\x0a  </g>\x0a</svg\
+>\x0a\
 \x00\x01;&\
 \x89\
 PNG\x0d\x0a\x1a\x0a\x00\x00\x00\x0dIHDR\x00\
@@ -6802,7 +11274,7 @@ G\xef?J\xcbn\x13\x9a\xecC\xf0\xe5\x0d\xf3g\x93\
 V\x05\xfe,\xcb\xebO}\xa5R\xa5\xd9\xf3\xc6\xa2\xff\
 \x0f1,\x01n`\x90;\xec\x00\x00\x00\x00IEN\
 D\xaeB`\x82\
-\x00\x01\x19\x0f\
+\x00\x00\x09/\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
@@ -6841,4546 +11313,48 @@ px\x22\x0a   height=\x221\
 ersion=\x221.1\x22\x0a   \
 id=\x22SVGRoot\x22\x0a   \
 inkscape:version\
-=\x220.92.1 r\x22\x0a   s\
-odipodi:docname=\
-\x22modulation.svg\x22\
->\x0a  <sodipodi:na\
-medview\x0a     id=\
-\x22base\x22\x0a     page\
-color=\x22#ffffff\x22\x0a\
-     bordercolor\
-=\x22#666666\x22\x0a     \
-borderopacity=\x221\
-.0\x22\x0a     inkscap\
-e:pageopacity=\x220\
-.0\x22\x0a     inkscap\
-e:pageshadow=\x222\x22\
-\x0a     inkscape:z\
-oom=\x2232\x22\x0a     in\
-kscape:cx=\x228.038\
-5822\x22\x0a     inksc\
-ape:cy=\x228.349242\
-4\x22\x0a     inkscape\
-:document-units=\
-\x22px\x22\x0a     inksca\
-pe:current-layer\
-=\x22layer1\x22\x0a     s\
-howgrid=\x22false\x22\x0a\
-     inkscape:wi\
-ndow-width=\x221920\
-\x22\x0a     inkscape:\
-window-height=\x221\
-141\x22\x0a     inksca\
-pe:window-x=\x220\x22\x0a\
-     inkscape:wi\
-ndow-y=\x220\x22\x0a     \
-inkscape:window-\
-maximized=\x221\x22\x0a  \
-   inkscape:grid\
--bbox=\x22true\x22 />\x0a\
-  <defs\x0a     id=\
-\x22defs5036\x22 />\x0a  \
-<metadata\x0a     i\
-d=\x22metadata5039\x22\
->\x0a    <rdf:RDF>\x0a\
-      <cc:Work\x0a \
-        rdf:abou\
-t=\x22\x22>\x0a        <d\
-c:format>image/s\
-vg+xml</dc:forma\
-t>\x0a        <dc:t\
-ype\x0a           r\
-df:resource=\x22htt\
-p://purl.org/dc/\
-dcmitype/StillIm\
-age\x22 />\x0a        \
-<dc:title></dc:t\
-itle>\x0a      </cc\
-:Work>\x0a    </rdf\
-:RDF>\x0a  </metada\
-ta>\x0a  <g\x0a     in\
-kscape:label=\x22Eb\
-ene 1\x22\x0a     inks\
-cape:groupmode=\x22\
-layer\x22\x0a     id=\x22\
-layer1\x22>\x0a    <g\x0a\
-       id=\x22text5\
-805\x22\x0a       styl\
-e=\x22font-style:no\
-rmal;font-varian\
-t:normal;font-we\
-ight:900;font-st\
-retch:normal;fon\
-t-size:9.3333330\
-2px;line-height:\
-1.25;font-family\
-:'Source Code Pr\
-o';-inkscape-fon\
-t-specification:\
-'Source Code Pro\
- Heavy';letter-s\
-pacing:0px;word-\
-spacing:0px;fill\
-:#ff0000;fill-op\
-acity:1;stroke:n\
-one\x22\x0a       aria\
--label=\x22101\x22>\x0a  \
-    <path\x0a      \
-   id=\x22path5847\x22\
-\x0a         style=\
-\x22\x22\x0a         d=\x22M\
- 0.27199999,6.38\
-8 H 4.6026665 V \
-5.1000001 H 3.33\
-33332 V 0.470666\
-88 H 2.1573333 C\
- 1.6906666,0.750\
-66687 1.224,0.91\
-866686 0.5146666\
-5,1.0493335 V 2.\
-0386668 H 1.7279\
-999 V 5.1000001 \
-H 0.27199999 Z\x22 \
-/>\x0a      <path\x0a \
-        id=\x22path\
-5849\x22\x0a         s\
-tyle=\x22\x22\x0a        \
- d=\x22m 7.9590206,\
-6.5 c 1.3906666,\
-0 2.3333334,-1.0\
-733333 2.3333334\
-,-3.0986666 0,-2\
-.0253332 -0.9426\
-668,-3.04266652 \
--2.3333334,-3.04\
-266652 -1.390666\
-6,0 -2.3333333,1\
-.01733332 -2.333\
-3333,3.04266652 \
-C 5.6256873,5.42\
-66667 6.568354,6\
-.5 7.9590206,6.5\
- Z m 0,-1.232 C \
-7.4643539,5.268 \
-7.044354,4.87600\
-01 7.044354,3.40\
-13334 c 0,-1.474\
-6666 0.4199999,-\
-1.8106666 0.9146\
-666,-1.8106666 0\
-.4946666,0 0.914\
-6666,0.336 0.914\
-6666,1.8106666 0\
-,1.4746667 -0.42\
-,1.8666666 -0.91\
-46666,1.8666666 \
-z m 0,-1.1199999\
- c 0.4293333,0 0\
-.7466666,-0.2986\
-667 0.7466666,-0\
-.7466667 0,-0.44\
-79999 -0.3173333\
-,-0.7466666 -0.7\
-466666,-0.746666\
-6 -0.4293333,0 -\
-0.7466666,0.2986\
-667 -0.7466666,0\
-.7466666 0,0.448\
- 0.3173333,0.746\
-6667 0.7466666,0\
-.7466667 z\x22 />\x0a \
-     <path\x0a     \
-    id=\x22path5851\
-\x22\x0a         style\
-=\x22\x22\x0a         d=\x22\
-m 11.464708,6.38\
-8 h 4.330667 V 5\
-.1000001 H 14.52\
-6041 V 0.4706668\
-8 h -1.176 C 12.\
-883375,0.7506668\
-7 12.416708,0.91\
-866686 11.707375\
-,1.0493335 v 0.9\
-893333 h 1.21333\
-3 v 3.0613333 h \
--1.456 z\x22 />\x0a   \
- </g>\x0a    <path\x0a\
-       inkscape:\
-connector-curvat\
-ure=\x220\x22\x0a       i\
-d=\x22path5845\x22\x0a   \
-    d=\x22M 0,7.500\
-4876 H 16\x22\x0a     \
-  style=\x22fill:no\
-ne;stroke:#00000\
-0;stroke-width:0\
-.99902487px;stro\
-ke-linecap:butt;\
-stroke-linejoin:\
-miter;stroke-opa\
-city:1\x22 />\x0a    <\
-path\x0a       id=\x22\
-path5894\x22\x0a      \
- title=\x22sin(x)\x22\x0a\
-       d=\x22 M 0.5\
-2007908 12.15124\
-49 C 0.526320148\
-836 12.193291464\
-9 0.532561217672\
- 12.2353379957 0\
-.538802286508 12\
-.2773520955 C 0.\
-545043355344 12.\
-3193661954 0.551\
-28442418 12.3613\
-476661 0.5575254\
-93016 12.4032643\
-56 C 0.563766561\
-852 12.445181045\
-8 0.570007630688\
- 12.487032562 0.\
-576248699524 12.\
-5287870475 C 0.5\
-82489768361 12.5\
-70541533 0.58873\
-0837196 12.61219\
-8401 0.594971906\
-033 12.653726138\
-4 C 0.6012129748\
-69 12.6952538759\
- 0.607454043705 \
-12.736651703 0.6\
-13695112541 12.7\
-778884994 C 0.61\
-9936181377 12.81\
-91252958 0.62617\
-7250213 12.86020\
-00897 0.63241831\
-9049 12.90108220\
-15 C 0.638659387\
-885 12.941964313\
-4 0.644900456721\
- 12.9826525811 0\
-.651141525557 13\
-.0231168133 C 0.\
-657382594393 13.\
-0635810456 0.663\
-623663229 13.103\
-8198916 0.669864\
-732065 13.143803\
-6951 C 0.6761058\
-00901 13.1837874\
-985 0.6823468697\
-37 13.2235147221\
- 0.688587938573 \
-13.2629562903 C \
-0.694829007409 1\
-3.3023978584 0.7\
-01070076245 13.3\
-415520497 0.7073\
-11145081 13.3803\
-904141 C 0.71355\
-2213917 13.41922\
-87786 0.71979328\
-2753 13.45774941\
-34 0.72603435158\
-9 13.4959245383 \
-C 0.732275420426\
- 13.5340996631 0\
-.738516489261 13\
-.5719271967 0.74\
-4757558098 13.60\
-93800713 C 0.750\
-998626934 13.646\
-8329459 0.757239\
-69577 13.6839089\
-049 0.7634807646\
-06 13.7205816349\
- C 0.76972183344\
-2 13.757254365 0\
-.775962902278 13\
-.7935214377 0.78\
-2203971114 13.82\
-9357335 C 0.7884\
-4503995 13.86519\
-32322 0.79468610\
-8786 13.90059535\
-75 0.80092717762\
-2 13.9355390271 \
-C 0.807168246458\
- 13.9704826968 0\
-.813409315294 14\
-.0049651504 0.81\
-965038413 14.038\
-9625769 C 0.8258\
-91452966 14.0729\
-600035 0.8321325\
-21802 14.1064694\
-827 0.8383735906\
-38 14.1394681133\
- C 0.84461465947\
-4 14.1724667439 \
-0.85085572831 14\
-.2049514503 0.85\
-7096797146 14.23\
-6900276 C 0.8633\
-37865983 14.2688\
-491017 0.8695789\
-34818 14.3002588\
-207 0.8758200036\
-55 14.3311084554\
- C 0.88206107249\
-1 14.3619580901 \
-0.888302141327 1\
-4.3922442689 0.8\
-94543210163 14.4\
-219470255 C 0.90\
-0784278999 14.45\
-16497821 0.90702\
-5347835 14.48076\
-56047 0.91326641\
-6671 14.50927556\
-9 C 0.9195074855\
-07 14.5377855334\
- 0.925748554343 \
-14.5656859928 0.\
-931989623179 14.\
-5929590945 C 0.9\
-38230692015 14.6\
-202321962 0.9444\
-71760851 14.6468\
-741643 0.9507128\
-29687 14.6728682\
-449 C 0.95695389\
-8523 14.69886232\
-55 0.96319496735\
-9 14.7242046193 \
-0.969436036195 1\
-4.7488794974 C 0\
-.975677105031 14\
-.7735543755 0.98\
-1918173867 14.79\
-75578212 0.98815\
-9242703 14.82087\
-53547 C 0.994400\
-31154 14.8441928\
-882 1.0006413803\
-8 14.8668203816 \
-1.00688244921 14\
-.8887445264 C 1.\
-01312351805 14.9\
-106686713 1.0193\
-6458688 14.93188\
-5235 1.025605655\
-72 14.9523821011\
- C 1.03184672456\
- 14.9728789673 1\
-.03808779339 14.\
-992651805 1.0443\
-2886223 15.01168\
-97086 C 1.050569\
-93106 15.0307276\
-122 1.0568109999\
- 15.0490261591 1\
-.06305206874 15.\
-0665756716 C 1.0\
-6929313757 15.08\
-41251841 1.07553\
-420641 15.100921\
-1547 1.081775275\
-24 15.1169551482\
- C 1.08801634408\
- 15.1329891417 1\
-.09425741292 15.\
-1482565729 1.100\
-49848175 15.1627\
-502623 C 1.10673\
-955059 15.177243\
-9516 1.112980619\
-42 15.1909592433\
- 1.11922168826 1\
-5.2038902242 C 1\
-.1254627571 15.2\
-168212052 1.1317\
-0382593 15.22896\
-31563 1.13794489\
-477 15.240311440\
-4 C 1.1441859636\
- 15.2516597244 1\
-.15042703244 15.\
-2622095661 1.156\
-66810128 15.2719\
-576112 C 1.16290\
-917011 15.281705\
-6563 1.169150238\
-95 15.2906470807\
- 1.17539130778 1\
-5.2987798184 C 1\
-.18163237662 15.\
-3069125561 1.187\
-87344546 15.3142\
-317417 1.1941145\
-1429 15.32073660\
-05 C 1.200355583\
-13 15.3272414594\
- 1.20659665197 1\
-5.3329270922 1.2\
-128377208 15.337\
-794017 C 1.21907\
-878964 15.342660\
-9418 1.225319858\
-47 15.3467042331\
- 1.23156092731 1\
-5.3499257006 C 1\
-.23780199615 15.\
-3531471681 1.244\
-04306498 15.3555\
-418678 1.2502841\
-3382 15.35711289\
-84 C 1.256525202\
-65 15.3586839289\
- 1.26276627149 1\
-5.3594263353 1.2\
-6900734033 15.35\
-93445004 C 1.275\
-24840916 15.3592\
-626655 1.2814894\
-78 15.3583516309\
- 1.28773054683 1\
-5.3566170571 C 1\
-.29397161567 15.\
-3548824832 1.300\
-21268451 15.3523\
-19416 1.30645375\
-334 15.348934784\
-5 C 1.3126948221\
-8 15.345550153 1\
-.31893589101 15.\
-3413390151 1.325\
-17695985 15.3363\
-095578 C 1.33141\
-802869 15.331280\
-1005 1.337659097\
-52 15.3254274015\
- 1.34390016636 1\
-5.318760893 C 1.\
-35014123519 15.3\
-120943844 1.3563\
-8230403 15.30460\
-91713 1.36262337\
-287 15.296315916\
-5 C 1.3688644417\
- 15.2880226617 1\
-.37510551054 15.\
-278916505 1.3813\
-4657937 15.26900\
-93236 C 1.387587\
-64821 15.2591021\
-422 1.3938287170\
-5 15.2483891181 \
-1.40006978588 15\
-.2368833245 C 1.\
-40631085472 15.2\
-253775308 1.4125\
-5192355 15.21307\
-41995 1.41879299\
-239 15.199987579\
-2 C 1.4250340612\
-3 15.1869009589 \
-1.43127513006 15\
-.1730263386 1.43\
-75161989 15.1583\
-791207 C 1.44375\
-726773 15.143731\
-9029 1.449998336\
-57 15.1283074409\
- 1.45623940541 1\
-5.1121222671 C 1\
-.46248047424 15.\
-0959370932 1.468\
-72154308 15.0789\
-866325 1.4749626\
-1191 15.06128852\
-15 C 1.481203680\
-75 15.0435904105\
- 1.48744474959 1\
-5.0251401529 1.4\
-9368581842 15.00\
-59564623 C 1.499\
-92688726 14.9867\
-727716 1.5061679\
-561 14.966851237\
-3 1.51240902493 \
-14.9462116211 C \
-1.51865009377 14\
-.9255720048 1.52\
-48911626 14.9042\
-099883 1.5311322\
-3144 14.88214635\
-09 C 1.537373300\
-28 14.8600827134\
- 1.54361436911 1\
-4.8373132359 1.5\
-4985543795 14.81\
-3859683 C 1.5560\
-9650678 14.79040\
-61301 1.56233757\
-562 14.766264388\
-4 1.56857864446 \
-14.7414571743 C \
-1.57481971329 14\
-.7166499602 1.58\
-106078213 14.691\
-1732723 1.587301\
-85096 14.6650507\
-437 C 1.59354291\
-98 14.6389282152\
- 1.59978398864 1\
-4.6121559627 1.6\
-0602505747 14.58\
-47584995 C 1.612\
-26612631 14.5573\
-610364 1.6185071\
-9514 14.52933460\
-36 1.62474826398\
- 14.5007045566 C\
- 1.63098933282 1\
-4.4720745096 1.6\
-3723040165 14.44\
-28372194 1.64347\
-147049 14.413018\
-8446 C 1.6497125\
-3932 14.38320046\
-98 1.65595360816\
- 14.3527975169 1\
-.662194677 14.32\
-18369071 C 1.668\
-43574583 14.2908\
-762974 1.6746768\
-1467 14.25935467\
-83 1.6809178835 \
-14.2272996922 C \
-1.68715895234 14\
-.1952447061 1.69\
-340002118 14.162\
-6531467 1.699641\
-09001 14.1295533\
-345 C 1.70588215\
-885 14.096453522\
-3 1.71212322768 \
-14.0628424022 1.\
-71836429652 14.0\
-287489292 C 1.72\
-460536536 13.994\
-6554562 1.730846\
-43419 13.9600767\
-311 1.7370875030\
-3 13.9250422987 \
-C 1.74332857186 \
-13.8900078662 1.\
-7495696407 13.85\
-45149876 1.75581\
-070954 13.818593\
-7515 C 1.7620517\
-7837 13.78267251\
-55 1.76829284721\
- 13.7463203477 1\
-.77453391605 13.\
-7095678347 C 1.7\
-8077498488 13.67\
-28153217 1.78701\
-605372 13.635660\
-0577 1.793257122\
-55 13.5981330793\
- C 1.79949819139\
- 13.560606101 1.\
-80573926023 13.5\
-227051749 1.8119\
-8032906 13.48446\
-174 C 1.81822139\
-79 13.4462183051\
- 1.82446246673 1\
-3.4076303038 1.8\
-3070353557 13.36\
-87295286 C 1.836\
-94460441 13.3298\
-287535 1.8431856\
-7324 13.29061332\
-58 1.84942674208\
- 13.2511153428 C\
- 1.85566781091 1\
-3.2116173598 1.8\
-6190887975 13.17\
-18351246 1.86814\
-994859 13.131800\
-9893 C 1.8743910\
-1742 13.09176685\
-39 1.88063208626\
- 13.0514793061 1\
-.88687315509 13.\
-0109709028 C 1.8\
-9311422393 12.97\
-04624995 1.89935\
-529277 12.929731\
-9152 1.905596361\
-6 12.8888118613 \
-C 1.91183743044 \
-12.8478918075 1.\
-91807849927 12.8\
-067811475 1.9243\
-1956811 12.76551\
-26969 C 1.930560\
-63695 12.7242442\
-463 1.9368017057\
-8 12.682817059 1\
-.94304277462 12.\
-641264004 C 1.94\
-928384345 12.599\
-710949 1.9555249\
-1229 12.55803127\
-21 1.96176598113\
- 12.5162578449 C\
- 1.96800704996 1\
-2.4744844177 1.9\
-742481188 12.432\
-6166793 1.980489\
-18763 12.3906874\
-528 C 1.98673025\
-647 12.348758226\
-3 1.99297132531 \
-12.306767145 1.9\
-9921239414 12.26\
-4746933 C 2.0054\
-5346298 12.22272\
-6721 2.011694531\
-81 12.1806772062\
- 2.01793560065 1\
-2.138630963 C 2.\
-02417666949 12.0\
-965847199 2.0304\
-1773832 12.05454\
-17712 2.03665880\
-716 12.012534491\
-5 C 2.0428998759\
-9 11.9705272118 \
-2.04914094483 11\
-.9285558188 2.05\
-538201367 11.886\
-652437 C 2.06162\
-30825 11.8447490\
-552 2.0678641513\
-4 11.8029140969 \
-2.07410522018 11\
-.7611793867 C 2.\
-08034628901 11.7\
-194446766 2.0865\
-8735785 11.67781\
-08208 2.09282842\
-668 11.636309295\
-4 C 2.0990694955\
-2 11.59480777 2.\
-10531056436 11.5\
-53439374 2.11155\
-163319 11.512235\
-1859 C 2.1177927\
-0203 11.47103099\
-78 2.12403377086\
- 11.4299920084 2\
-.1302748397 11.3\
-891488507 C 2.13\
-651590854 11.348\
-3056929 2.142756\
-97737 11.3076595\
-477 2.1489980462\
-1 11.2672405552 \
-C 2.15523911504 \
-11.2268215626 2.\
-16148018388 11.1\
-86631092 2.16772\
-125272 11.146698\
-7439 C 2.1739623\
-2155 11.10676639\
-58 2.18020339039\
- 11.0670937259 2\
-.18644445922 11.\
-0277097492 C 2.1\
-9268552806 10.98\
-83257725 2.19892\
-65969 10.9492322\
-287 2.2051676657\
-3 10.9104575028 \
-C 2.21140873457 \
-10.8716827769 2.\
-2176498034 10.83\
-32287896 2.22389\
-087224 10.795123\
-252 C 2.23013194\
-108 10.757017714\
-4 2.23637300991 \
-10.7192627254 2.\
-24261407875 10.6\
-818852793 C 2.24\
-885514758 10.644\
-5078331 2.255096\
-21642 10.6075102\
-037 2.2613372852\
-6 10.5709186266 \
-C 2.26757835409 \
-10.5343270495 2.\
-27381942293 10.4\
-981439701 2.2800\
-6049176 10.46239\
-4825 C 2.2863015\
-606 10.426645679\
-8 2.29254262944 \
-10.3913330819 2.\
-29878369827 10.3\
-564816294 C 2.30\
-502476711 10.321\
-6301768 2.311265\
-83594 10.2872426\
-462 2.3175069047\
-8 10.2533427592 \
-C 2.32374797362 \
-10.2194428723 2.\
-32998904245 10.1\
-860335649 2.3362\
-3011129 10.15313\
-76455 C 2.342471\
-18013 10.1202417\
-262 2.3487122489\
-6 10.0878622857 \
-2.3549533178 10.\
-0560211842 C 2.3\
-6119438663 10.02\
-41800826 2.36743\
-545547 9.9928805\
-6087 2.373676524\
-31 9.96214349676\
- C 2.37991759314\
- 9.93140643265 2\
-.38615866198 9.9\
-0123521205 2.392\
-39973081 9.87164\
-969839 C 2.39864\
-079965 9.8420641\
-8473 2.404881868\
-49 9.81306790364\
- 2.41112293732 9\
-.78467967339 C 2\
-.41736400616 9.7\
-5629144314 2.423\
-60507499 9.72851\
-492369 2.4298461\
-4383 9.701367859\
-07 C 2.436087212\
-67 9.67422079445\
- 2.4423282815 9.\
-64770697329 2.44\
-856935034 9.6218\
-4303793 C 2.4548\
-1041917 9.595979\
-10258 2.46105148\
-801 9.5707689644\
-7 2.46729255685 \
-9.54622813857 C \
-2.47353362568 9.\
-52168731267 2.47\
-977469452 9.4978\
-1982718 2.486015\
-76335 9.47464004\
-567 C 2.49225683\
-219 9.4514602641\
-6 2.49849790103 \
-9.42897232538 2.\
-50473896986 9.40\
-718941932 C 2.51\
-09800387 9.38540\
-651326 2.5172211\
-0753 9.364332882\
-81 2.52346217637\
- 9.34398052397 C\
- 2.52970324521 9\
-.32362816514 2.5\
-3594431404 9.304\
-00141839 2.54218\
-538288 9.2851110\
-6724 C 2.5484264\
-5171 9.266220716\
-08 2.55466752055\
- 9.24807119186 2\
-.56090858939 9.2\
-3067204888 C 2.5\
-6714965822 9.213\
-2729059 2.573390\
-72706 9.19662865\
-954 2.5796317958\
-9 9.18074762014 \
-C 2.58587286473 \
-9.16486658075 2.\
-59211393357 9.14\
-975334074 2.5983\
-550024 9.1354149\
-5366 C 2.6045960\
-7124 9.121076566\
-59 2.61083714008\
- 9.10751769481 2\
-.61707820891 9.0\
-9474412418 C 2.6\
-2331927775 9.081\
-97055355 2.62956\
-034658 9.0699870\
-0916 2.635801415\
-42 9.05879800022\
- C 2.64204248426\
- 9.04760899128 2\
-.64828355309 9.0\
-3721929831 2.654\
-52462193 9.02763\
-21469 C 2.660765\
-69076 9.01804499\
-55 2.6670067596 \
-9.00926521423 2.\
-67324782844 9.00\
-129474007 C 2.67\
-948889727 8.9933\
-2426592 2.685729\
-96611 8.98616796\
-803 2.6919710349\
-4 8.9798264918 C\
- 2.69821210378 8\
-.97348501557 2.7\
-0445317262 8.967\
-96326319 2.71069\
-424145 8.9632605\
-8747 C 2.7169353\
-1029 8.958557911\
-74 2.72317637912\
- 8.95467924035 2\
-.72941744796 8.9\
-5162263447 C 2.7\
-356585168 8.9485\
-660286 2.7418995\
-8563 8.946336433\
-79 2.74814065447\
- 8.94493062264 C\
- 2.7543817233 8.\
-94352481148 2.76\
-062279214 8.9429\
-4773974 2.766863\
-86098 8.94319489\
-639 C 2.77310492\
-981 8.9434420530\
-5 2.77934599865 \
-8.94451839641 2.\
-78558706748 8.94\
-641813881 C 2.79\
-182813632 8.9483\
-1788122 2.798069\
-20516 8.95104597\
-588 2.8043102739\
-9 8.95459536744 \
-C 2.81055134283 \
-8.95814475901 2.\
-81679241166 8.96\
-252038791 2.8230\
-334805 8.9677139\
-4201 C 2.8292745\
-4934 8.972907496\
-12 2.83551561817\
- 8.97892389546 2\
-.84175668701 8.9\
-8575358397 C 2.8\
-4799775584 8.992\
-58327248 2.85423\
-882468 9.0002311\
-4218 2.860479893\
-52 9.00868640784\
- C 2.86672096235\
- 9.0171416735 2.\
-87296203119 9.02\
-640919156 2.8792\
-0310003 9.036476\
-9643 C 2.8854441\
-6886 9.046544737\
-05 2.8916852377 \
-9.05741757785 2.\
-89792630653 9.06\
-908229503 C 2.90\
-416737537 9.0807\
-4701221 2.910408\
-44421 9.09320836\
-863 2.9166495130\
-4 9.10645199905 \
-C 2.92289058188 \
-9.11969562948 2.\
-92913165071 9.13\
-372623888 2.9353\
-7271955 9.148528\
-31069 C 2.941613\
-78839 9.16333038\
-25 2.94785485722\
- 9.17890855653 2\
-.95409592606 9.1\
-9524618884 C 2.9\
-6033699489 9.211\
-58382116 2.96657\
-806373 9.2286854\
-7924 2.972819132\
-57 9.24653341752\
- C 2.9790602014 \
-9.26438135581 2.\
-98530127024 9.28\
-298006239 2.9915\
-4233907 9.302310\
-71749 C 2.997783\
-40791 9.32164137\
-26 3.00402447675\
- 9.341708378 3.0\
-1026554558 9.362\
-49186881 C 3.016\
-50661442 9.38327\
-535962 3.0227476\
-8325 9.404779644\
-48 3.02898875209\
- 9.4269838441 C \
-3.03522982093 9.\
-44918804373 3.04\
-147088976 9.4720\
-9636697 3.047711\
-9586 9.495686952\
-39 C 3.053953027\
-43 9.51927753782\
- 3.06019409627 9\
-.54355448799 3.0\
-6643516511 9.568\
-49499316 C 3.072\
-67623394 9.59343\
-549832 3.0789173\
-0278 9.619043548\
-39 3.08515837161\
- 9.64529542052 C\
- 3.09139944045 9\
-.67154729265 3.0\
-9764050929 9.698\
-44685797 3.10388\
-157812 9.7259695\
-1722 C 3.1101226\
-4696 9.753492176\
-47 3.11636371579\
- 9.78164167599 3\
-.12260478463 9.8\
-1039257813 C 3.1\
-2884585347 9.839\
-14348027 3.13508\
-69223 9.86849940\
-079 3.1413279911\
-4 9.89843410299 \
-C 3.14756905997 \
-9.92836880519 3.\
-15381012881 9.95\
-888576866 3.1600\
-5119765 9.989957\
-99818 C 3.166292\
-26648 10.0210302\
-277 3.1725333353\
-2 10.0526610613 \
-3.17877440416 10\
-.0848227871 C 3.\
-18501547299 10.1\
-169845128 3.1912\
-5654183 10.14968\
-0322 3.197497610\
-66 10.1828818287\
- C 3.2037386795 \
-10.2160833354 3.\
-20997974834 10.2\
-497935793 3.2162\
-2081717 10.28398\
-35444 C 3.222461\
-88601 10.3181735\
-096 3.2287029548\
-4 10.3528460793 \
-3.23494402368 10\
-.3879716524 C 3.\
-24118509252 10.4\
-230972255 3.2474\
-2616135 10.45867\
-85246 3.25366723\
-019 10.494685408\
-9 C 3.2599082990\
-2 10.5306922933 \
-3.26614936786 10\
-.5671273204 3.27\
-23904367 10.6039\
-59857 C 3.278631\
-50553 10.6407923\
-935 3.2848725743\
-7 10.678024828 3\
-.2911136432 10.7\
-156260814 C 3.29\
-735471204 10.753\
-2273348 3.303595\
-78088 10.7911996\
-23 3.30983684971\
- 10.8295114697 C\
- 3.31607791855 1\
-0.8678233163 3.3\
-2231898738 10.90\
-64767612 3.32856\
-005622 10.945439\
-9791 C 3.3348011\
-2506 10.98440319\
-69 3.34104219389\
- 11.0236780484 3\
-.34728326273 11.\
-0632324085 C 3.3\
-5352433156 11.10\
-27867687 3.35976\
-54004 11.1426223\
-161 3.3660064692\
-4 11.1827066758 \
-C 3.37224753807 \
-11.2227910356 3.\
-37848860691 11.2\
-631257015 3.3847\
-2967574 11.30367\
-80989 C 3.390970\
-74458 11.3442304\
-963 3.3972118134\
-2 11.385001932 3\
-.40345288225 11.\
-4259596815 C 3.4\
-0969395109 11.46\
-69174311 3.41593\
-501992 11.508062\
-6124 3.422176088\
-76 11.5493624021\
- C 3.4284171576 \
-11.5906621918 3.\
-43465822643 11.6\
-32117517 3.44089\
-929527 11.673695\
-5061 C 3.4471403\
-6411 11.71527349\
-52 3.45338143294\
- 11.756974883 3.\
-45962250178 11.7\
-987668007 C 3.46\
-586357061 11.840\
-5587184 3.472104\
-63945 11.8824417\
-074 3.4783457082\
-9 11.9243829521 \
-C 3.48458677712 \
-11.9663241969 3.\
-49082784596 12.0\
-083240447 3.4970\
-6891479 12.05034\
-97842 C 3.503309\
-98363 12.0923755\
-238 3.5095510524\
-7 12.1344273076 \
-3.5157921213 12.\
-1764725789 C 3.5\
-2203319014 12.21\
-85178503 3.52827\
-425897 12.260556\
-5669 3.534515327\
-81 12.302556377 \
-C 3.54075639665 \
-12.344556187 3.5\
-4699746548 12.38\
-65168534 3.55323\
-853432 12.428406\
-2794 C 3.5594796\
-0315 12.47029570\
-53 3.56572067199\
- 12.5121134591 3\
-.57196174083 12.\
-5538277487 C 3.5\
-7820280966 12.59\
-55420383 3.58444\
-38785 12.6371522\
-382 3.5906849473\
-3 12.6786269099 \
-C 3.59692601617 \
-12.7201015817 3.\
-60316708501 12.7\
-61439907 3.60940\
-815384 12.802610\
-8498 C 3.6156492\
-2268 12.84378179\
-26 3.62189029151\
- 12.884784343 3.\
-62813136035 12.9\
-255879152 C 3.63\
-437242919 12.966\
-3914875 3.640613\
-49802 13.0069948\
-817 3.6468545668\
-6 13.0473680097 \
-C 3.65309563569 \
-13.0877411378 3.\
-65933670453 13.1\
-278826115 3.6655\
-7777337 13.16776\
-28869 C 3.671818\
-8422 13.20764316\
-24 3.67805991104\
- 13.2472606653 3\
-.68430097987 13.\
-2865864417 C 3.6\
-9054204871 13.32\
-59122181 3.69678\
-311755 13.364944\
-51 3.70302418638\
- 13.4036549979 C\
- 3.70926525522 1\
-3.4423654858 3.7\
-1550632406 13.48\
-0752231 3.721747\
-39289 13.5187875\
-923 C 3.72798846\
-173 13.556822953\
-5 3.73422953056 \
-13.5945048142 3.\
-7404705994 13.63\
-18062541 C 3.746\
-71166824 13.6691\
-07694 3.75295273\
-707 13.706026421\
-9 3.75919380591 \
-13.7425362803 C \
-3.76543487474 13\
-.7790461387 3.77\
-167594358 13.815\
-1446653 3.777917\
-01242 13.8508065\
-057 C 3.78415808\
-125 13.886468346\
-1 3.79039915009 \
-13.9216908707 3.\
-79664021892 13.9\
-564495673 C 3.80\
-288128776 13.991\
-208264 3.8091223\
-566 14.025500339\
-9 3.81536342543 \
-14.0593021633 C \
-3.82160449427 14\
-.0931039866 3.82\
-78455631 14.1264\
-126056 3.8340866\
-3194 14.15920530\
-52 C 3.840327700\
-78 14.1919980047\
- 3.84656876961 1\
-4.2242716787 3.8\
-5280983845 14.25\
-60045638 C 3.859\
-05090728 14.2877\
-374489 3.8652919\
-7612 14.31892628\
-96 3.87153304496\
- 14.3495503079 C\
- 3.87777411379 1\
-4.3801743262 3.8\
-8401518263 14.41\
-02301222 3.89025\
-625146 14.439697\
-9355 C 3.8964973\
-203 14.469165748\
-8 3.90273838914 \
-14.4980420402 3.\
-90897945797 14.5\
-263080974 C 3.91\
-522052681 14.554\
-5741547 3.921461\
-59564 14.5822263\
-047 3.9277026644\
-8 14.6092469126 \
-C 3.93394373332 \
-14.6362675204 3.\
-94018480215 14.6\
-626527848 3.9464\
-2587099 14.68838\
-61751 C 3.952666\
-93982 14.7141195\
-653 3.9589080086\
-6 14.739197158 3\
-.9651490775 14.7\
-636035523 C 3.97\
-139014633 14.788\
-0099465 3.977631\
-21517 14.8117411\
-028 3.9838722840\
-1 14.834782774 C\
- 3.99011335284 1\
-4.8578244452 3.9\
-9635442168 14.88\
-01724817 4.00259\
-549051 14.901813\
-8122 C 4.0088365\
-5935 14.92345514\
-27 4.01507762819\
- 14.9443855141 4\
-.02131869702 14.\
-964593051 C 4.02\
-755976586 14.984\
-8005879 4.033800\
-83469 15.0042809\
-403 4.0400419035\
-3 15.0230234469 \
-C 4.04628297237 \
-15.0417659536 4.\
-0525240412 15.05\
-97661745 4.05876\
-511004 15.077014\
-679 C 4.06500617\
-887 15.094263183\
-5 4.07124724771 \
-15.1107554482 4.\
-07748831655 15.1\
-26483288 C 4.083\
-72938538 15.1422\
-111278 4.0899704\
-5422 15.15716994\
-29 4.09621152305\
- 15.1713528061 C\
- 4.10245259189 1\
-5.1855356693 4.1\
-0869366073 15.19\
-89379115 4.11493\
-472956 15.211553\
-8743 C 4.1211757\
-984 15.224169837\
-1 4.12741686723 \
-15.2359947895 4.\
-13365793607 15.2\
-470243504 C 4.13\
-989900491 15.258\
-0539112 4.146140\
-07374 15.2682832\
-948 4.1523811425\
-8 15.2777094043 \
-C 4.15862221141 \
-15.2871355138 4.\
-16486328025 15.2\
-957535162 4.1711\
-0434909 15.30356\
-16036 C 4.177345\
-41792 15.3113696\
-91 4.18358648676\
- 15.3183629906 4\
-.18982755559 15.\
-3245409862 C 4.1\
-9606862443 15.33\
-07189818 4.20230\
-969327 15.336076\
-7683 4.208550762\
-1 15.3406151223 \
-C 4.21479183094 \
-15.3451534762 4.\
-22103289977 15.3\
-488674678 4.2272\
-7396861 15.35175\
-91647 C 4.233515\
-03745 15.3546508\
-617 4.2397561062\
-8 15.3567153172 \
-4.24599717512 15\
-.3579558872 C 4.\
-25223824395 15.3\
-591964572 4.2584\
-7931279 15.35960\
-81854 4.26472038\
-163 15.359195710\
-8 C 4.2709614504\
-6 15.3587832362 \
-4.2772025193 15.\
-3575416007 4.283\
-44358814 15.3554\
-767191 C 4.28968\
-465697 15.353411\
-8375 4.295925725\
-81 15.3505187576\
- 4.30216679464 1\
-5.3468046609 C 4\
-.30840786348 15.\
-3430905641 4.314\
-64893232 15.3385\
-505119 4.3208900\
-0115 15.33319294\
-12 C 4.327131069\
-99 15.3278353706\
- 4.33337213882 1\
-5.3216553639 4.3\
-3961320766 15.31\
-4662601 C 4.3458\
-542765 15.307669\
-8381 4.352095345\
-33 15.2998594301\
- 4.35833641417 1\
-5.2912422843 C 4\
-.364577483 15.28\
-26251385 4.37081\
-855184 15.273196\
-4024 4.377059620\
-68 15.2629681939\
- C 4.38330068951\
- 15.2527399855 4\
-.38954175835 15.\
-2417074961 4.395\
-78282718 15.2298\
-840357 C 4.40202\
-389602 15.218060\
-5753 4.408264964\
-86 15.2054413865\
- 4.41450603369 1\
-5.1920409507 C 4\
-.42074710253 15.\
-1786405148 4.426\
-98817136 15.1644\
-541333 4.4332292\
-402 15.149497436\
-3 C 4.4394703090\
-4 15.1345407394 \
-4.44571137787 15\
-.1188090941 4.45\
-195244671 15.102\
-3192559 C 4.4581\
-9351554 15.08582\
-94177 4.46443458\
-438 15.068576826\
-7 4.47067565322 \
-15.050579337 C 4\
-.47691672205 15.\
-0325818474 4.483\
-15779089 15.0138\
-349794 4.4893988\
-5972 14.99435765\
-86 C 4.495639928\
-56 14.9748803379\
- 4.5018809974 14\
-.9546681716 4.50\
-812206623 14.933\
-7411276 C 4.5143\
-6313507 14.91281\
-40835 4.52060420\
-39 14.8911678628\
- 4.52684527274 1\
-4.8688234442 C 4\
-.53308634158 14.\
-8464790257 4.539\
-32741041 14.8234\
-322109 4.5455684\
-7925 14.79970495\
-77 C 4.551809548\
-09 14.7759777044\
- 4.55805061692 1\
-4.7515659211 4.5\
-6429168576 14.72\
-64925104 C 4.570\
-53275459 14.7014\
-190998 4.5767738\
-2343 14.67568008\
-35 4.58301489227\
- 14.6492992736 C\
- 4.5892559611 14\
-.6229184638 4.59\
-549702994 14.595\
-8920015 4.601738\
-09877 14.5682445\
-716 C 4.60797916\
-761 14.540597141\
-7 4.61422023645 \
-14.5123250107 4.\
-62046130528 14.4\
-834536979 C 4.62\
-670237412 14.454\
-5823851 4.632943\
-44295 14.4251082\
-881 4.6391845117\
-9 14.3950577213 \
-C 4.64542558063 \
-14.3650071545 4.\
-65166664946 14.3\
-343766522 4.6579\
-077183 14.303193\
-2833 C 4.6641487\
-8713 14.27200991\
-44 4.67038985597\
- 14.2402703552 4\
-.67663092481 14.\
-208002387 C 4.68\
-287199364 14.175\
-7344189 4.689113\
-06248 14.1429348\
-654 4.6953541313\
-1 14.1096321775 \
-C 4.70159520015 \
-14.0763294896 4.\
-70783626899 14.0\
-42520643 4.71407\
-733782 14.008234\
-7143 C 4.7203184\
-0666 13.97394878\
-56 4.72655947549\
- 13.9391829073 4\
-.73280054433 13.\
-9039667365 C 4.7\
-3904161317 13.86\
-87505658 4.74528\
-2682 13.83308139\
-64 4.75152375084\
- 13.7969894205 C\
- 4.75776481967 1\
-3.7608974445 4.7\
-6400588851 13.72\
-43801211 4.77024\
-695735 13.687468\
-1305 C 4.7764880\
-2618 13.65055613\
-99 4.78272909502\
- 13.6132471106 4\
-.78897016385 13.\
-5755721635 C 4.7\
-9521123269 13.53\
-78972163 4.80145\
-230153 13.499854\
-153 4.8076933703\
-6 13.4614744869 \
-C 4.8139344392 1\
-3.4230948208 4.8\
-2017550804 13.38\
-43765299 4.82641\
-657687 13.345351\
-4717 C 4.8326576\
-4571 13.30632641\
-35 4.83889871454\
- 13.2669927454 4\
-.84513978338 13.\
-2273826196 C 4.8\
-5138085222 13.18\
-77724938 4.85762\
-192105 13.147884\
-2501 4.863862989\
-89 13.1077502856\
- C 4.87010405872\
- 13.0676163211 4\
-.87634512756 13.\
-0272351606 4.882\
-5861964 12.98663\
-93961 C 4.888827\
-26523 12.9460436\
-315 4.8950683340\
-7 12.9052319749 \
-4.9013094029 12.\
-8642371628 C 4.9\
-0755047174 12.82\
-32423507 4.91379\
-154058 12.782063\
-2842 4.920032609\
-41 12.7407327939\
- C 4.92627367825\
- 12.6994023035 4\
-.93251474708 12.\
-6579194814 4.938\
-75581592 12.6163\
-17201 C 4.944996\
-88476 12.5747149\
-206 4.9512379535\
-9 12.5329924665 \
-4.95747902243 12\
-.4911827044 C 4.\
-96372009126 12.4\
-493729424 4.9699\
-611601 12.407475\
-3503 4.976202228\
-94 12.3655227357\
- C 4.98244329777\
- 12.3235701211 4\
-.98868436661 12.\
-281562156 4.9949\
-2543544 12.23953\
-15387 C 5.001166\
-50428 12.1975009\
-214 5.0074075731\
-2 12.1554475186 \
-5.01364864195 12\
-.1134038691 C 5.\
-01988971079 12.0\
-713602196 5.0261\
-3077962 12.02932\
-63849 5.03237184\
-846 11.987334693\
-8 C 5.0386129173\
- 11.9453430026 5\
-.04485398613 11.\
-9033937116 5.051\
-09505497 11.8615\
-188891 C 5.05733\
-61238 11.8196440\
-666 5.0635771926\
-4 11.7778441638 \
-5.06981826148 11\
-.7361509397 C 5.\
-07605933031 11.6\
-944577155 5.0823\
-0039915 11.65287\
-18149 5.08854146\
-798 11.611424638\
- C 5.09478253682\
- 11.5699774611 5\
-.10102360566 11.\
-5286698456 5.107\
-26467449 11.4875\
-327846 C 5.11350\
-574333 11.446395\
-7235 5.119746812\
-17 11.405430246 \
-5.125987881 11.3\
-646668901 C 5.13\
-222894984 11.323\
-9035341 5.138470\
-01867 11.2833435\
-186 5.1447110875\
-1 11.2430168793 \
-C 5.15095215635 \
-11.20269024 5.15\
-719322518 11.162\
-5983837 5.163434\
-29402 11.1227707\
-975 C 5.16967536\
-285 11.082943211\
-2 5.17591643169 \
-11.0433814877 5.\
-18215750053 11.0\
-041145197 C 5.18\
-839856936 10.964\
-8475516 5.194639\
-6382 10.92587711\
-5 5.20088070703 \
-10.8872314635 C \
-5.20712177587 10\
-.848585812 5.213\
-36284471 10.8102\
-669023 5.2196039\
-1354 10.77230230\
-55 C 5.225844982\
-38 10.7343377086\
- 5.23208605121 1\
-0.6967295588 5.2\
-3832712005 10.65\
-95047019 C 5.244\
-56818889 10.6222\
-798449 5.2508092\
-5772 10.58544058\
-93 5.25705032656\
- 10.549013014 C \
-5.26329139539 10\
-.5125854387 5.26\
-953246423 10.476\
-5720229 5.275773\
-53307 10.4409980\
-386 C 5.28201460\
-19 10.4054240543\
- 5.28825567074 1\
-0.3702921476 5.2\
-9449673957 10.33\
-56267442 C 5.300\
-73780841 10.3009\
-613408 5.3069788\
-7725 10.26676524\
-96 5.31321994608\
- 10.2330620125 C\
- 5.31946101492 1\
-0.1993587754 5.3\
-2570208375 10.16\
-61513597 5.33194\
-315259 10.133462\
-3869 C 5.3381842\
-2143 10.10077341\
-42 5.34442529026\
- 10.0686060056 5\
-.3506663591 10.0\
-369818276 C 5.35\
-690742793 10.005\
-3576495 5.363148\
-49677 9.97427997\
-208 5.3693895656\
-1 9.94376947294 \
-C 5.37563063444 \
-9.91325897381 5.\
-38187170328 9.88\
-331906714 5.3881\
-1277212 9.853969\
-40975 C 5.394353\
-84095 9.82461975\
-236 5.4005949097\
-9 9.79586389718 \
-5.40683597862 9.\
-76772044992 C 5.\
-41307704746 9.73\
-957700265 5.4193\
-181163 9.7120496\
-4945 5.425559185\
-13 9.68515591615\
- C 5.43180025397\
- 9.65826218285 5\
-.4380413228 9.63\
-200588311 5.4442\
-8239164 9.606403\
-4358 C 5.4505234\
-6048 9.580800988\
-5 5.45676452931 \
-9.55585632892 5.\
-46300559815 9.53\
-15847436 C 5.469\
-24666698 9.50731\
-315829 5.4754877\
-3582 9.483718698\
-05 5.48172880466\
- 9.46081549346 C\
- 5.48796987349 9\
-.43791228888 5.4\
-9421094233 9.415\
-70450005 5.50045\
-201116 9.3942050\
-7972 C 5.5066930\
-8 9.3727056594 5\
-.51293414884 9.3\
-5191887052 5.519\
-17521767 9.33185\
-646803 C 5.52541\
-628651 9.3117940\
-6553 5.531657355\
-34 9.2924604086 \
-5.53789842418 9.\
-27386603618 C 5.\
-54413949302 9.25\
-527166376 5.5503\
-8056185 9.237421\
-02453 5.55662163\
-069 9.2203234251\
-6 C 5.5628626995\
-2 9.20322582578 \
-5.56910376836 9.\
-18688579759 5.57\
-53448372 9.17131\
-140055 C 5.58158\
-590603 9.1557370\
-035 5.5878269748\
-7 9.14093284458 \
-5.5940680437 9.1\
-269057246 C 5.60\
-030911254 9.1128\
-7860462 5.606550\
-18138 9.09963319\
-906 5.6127912502\
-1 9.08717503912 \
-C 5.61903231905 \
-9.07471687917 5.\
-62527338788 9.06\
-305070159 5.6315\
-1445672 9.052180\
-75937 C 5.637755\
-52556 9.04131081\
-714 5.6439965943\
-9 9.03124190099 \
-5.65023766323 9.\
-02197697912 C 5.\
-65647873207 9.01\
-271205725 5.6627\
-198009 9.0042559\
-6695 5.668960869\
-74 8.99661038706\
- C 5.67520193857\
- 8.98896480716 5\
-.68144300741 8.9\
-8213461404 5.687\
-68407625 8.97612\
-019457 C 5.69392\
-514508 8.9701057\
-751 5.7001662139\
-2 8.9649120372 5\
-.70640728275 8.9\
-6053807518 C 5.7\
-1264835159 8.956\
-16411317 5.71888\
-942043 8.9526148\
-589 5.7251304892\
-6 8.94988811556 \
-C 5.7313715581 8\
-.94716137222 5.7\
-3761262693 8.945\
-262088 5.7438536\
-9577 8.944186778\
-3 C 5.7500947646\
-1 8.9431114686 5\
-.75633583344 8.9\
-4286509031 5.762\
-57690228 8.94344\
-287645 C 5.76881\
-797111 8.9440206\
-626 5.7750590399\
-5 8.94542757109 \
-5.78130010879 8.\
-94765755995 C 5.\
-78754117762 8.94\
-988754881 5.7937\
-8224646 8.952945\
-56929 5.80002331\
-529 8.9568243137\
-7 C 5.8062643841\
-3 8.96070305825 \
-5.81250545297 8.\
-96540746367 5.81\
-87465218 8.97092\
-896805 C 5.82498\
-759064 8.9764504\
-7242 5.831228659\
-47 8.98279399077\
- 5.83746972831 8\
-.98994971996 C 5\
-.84371079715 8.9\
-9710544915 5.849\
-95186598 9.00507\
-827469 5.8561929\
-3482 9.013857167\
-45 C 5.862434003\
-65 9.02263606021\
- 5.86867507249 9\
-.03222586862 5.8\
-7491614133 9.042\
-61435463 C 5.881\
-15721016 9.05300\
-284064 5.8873982\
-79 9.0641948081 \
-5.89363934783 9.\
-07617682895 C 5.\
-89988041667 9.08\
-815884981 5.9061\
-2148551 9.100935\
-67591 5.91236255\
-434 9.1144927099\
-3 C 5.9186036231\
-8 9.12804974394 \
-5.92484469202 9.\
-1423916784 5.931\
-08576085 9.15750\
-276927 C 5.93732\
-682969 9.1726138\
-6014 5.943567898\
-52 9.18849873334\
- 5.94980896736 9\
-.20514052251 C 5\
-.9560500362 9.22\
-178231167 5.9622\
-9110503 9.239185\
-56896 5.96853217\
-387 9.2573323317\
-2 C 5.9747732427\
- 9.27547909448 5\
-.98101431154 9.2\
-9437383409 5.987\
-25538038 9.31399\
-751938 C 5.99349\
-644921 9.3336212\
-0466 5.999737518\
-05 9.35397821931\
- 6.00597858688 9\
-.37504849305 C 6\
-.01221965572 9.3\
-9611876679 6.018\
-46072456 9.41790\
-658882 6.0247017\
-9339 9.440390880\
-81 C 6.030942862\
-23 9.4628751728 \
-6.03718393106 9.\
-48606012285 6.04\
-34249999 9.50992\
-367711 C 6.04966\
-606874 9.5337872\
-3138 6.055907137\
-57 9.5583334704 \
-6.06214820641 9.\
-58353939892 C 6.\
-06838927524 9.60\
-874532744 6.0746\
-3034408 9.634614\
-91212 6.08087141\
-292 9.6611242518\
-5 C 6.0871124817\
-5 9.68763359158 \
-6.09335355059 9.\
-71478653299 6.09\
-959461942 9.7425\
-5830608 C 6.1058\
-3568826 9.770330\
-07917 6.11207675\
-71 9.7987244046 \
-6.11831782593 9.\
-82771568175 C 6.\
-12455889477 9.85\
-670695889 6.1307\
-999636 9.8862987\
-767 6.1370410324\
-4 9.9164647435 C\
- 6.14328210128 9\
-.9466307103 6.14\
-952317011 9.9773\
-7427779 6.155764\
-23895 10.0086683\
-04 C 6.162005307\
-78 10.0399623303\
- 6.16824637662 1\
-0.0718101243 6.1\
-7448744546 10.10\
-4183836 C 6.1807\
-2851429 10.13655\
-75477 6.18696958\
-313 10.169460338\
-5 6.19321065196 \
-10.2028636927 C \
-6.1994517208 10.\
-2362670469 6.205\
-69278964 10.2701\
-739735 6.2119338\
-5847 10.30455533\
-58 C 6.218174927\
-31 10.338936698 \
-6.22441599615 10\
-.3737953475 6.23\
-065706498 10.409\
-1015714 C 6.2368\
-9813382 10.44440\
-77953 6.24313920\
-265 10.480164283\
-5 6.24938027149 \
-10.5163407931 C \
-6.25562134033 10\
-.5525173027 6.26\
-186240916 10.589\
-1163578 6.268103\
-478 10.626107231\
-8 C 6.2743445468\
-3 10.6630981058 \
-6.28058561567 10\
-.7004831532 6.28\
-682668451 10.738\
-2312116 C 6.2930\
-6775334 10.77597\
-927 6.2993088221\
-8 10.8140925204 \
-6.30554989101 10\
-.8525394125 C 6.\
-31179095985 10.8\
-909863047 6.3180\
-3202869 10.92976\
-8843 6.324273097\
-52 10.9688551383\
- C 6.33051416636\
- 11.0079414335 6\
-.33675523519 11.\
-0473333101 6.342\
-99630403 11.0869\
-985891 C 6.34923\
-737287 11.126663\
-8682 6.355478441\
-7 11.1666041916 \
-6.36171951054 11\
-.2067871404 C 6.\
-36796057937 11.2\
-469700891 6.3742\
-0164821 11.28739\
-71199 6.38044271\
-705 11.328035624\
-1 C 6.3866837858\
-8 11.3686741282 \
-6.39292485472 11\
-.4095253748 6.39\
-916592355 11.450\
-5566157 C 6.4054\
-0699239 11.49158\
-78566 6.41164806\
-123 11.532800171\
-5 6.41788913006 \
-11.5741607236 C \
-6.4241301989 11.\
-6155212756 6.430\
-37126773 11.6570\
-309534 6.4366123\
-3657 11.69865688\
-19 C 6.442853405\
-41 11.7402828104\
- 6.44909447424 1\
-1.7820256858 6.4\
-5533554308 11.82\
-38526458 C 6.461\
-57661191 11.8656\
-796059 6.4678176\
-8075 11.90759115\
-32 6.47405874959\
- 11.9495544892 C\
- 6.48029981842 1\
-1.9915178251 6.4\
-8654088726 12.03\
-3533258 6.492781\
-9561 12.07556810\
-33 C 6.499023024\
-93 12.1176029486\
- 6.50526409377 1\
-2.1596573201 6.5\
-115051626 12.201\
-6986978 C 6.5177\
-4623144 12.24374\
-00756 6.52398730\
-028 12.285768378\
-4 6.53022836911 \
-12.3277513014 C \
-6.53646943795 12\
-.3697342245 6.54\
-271050678 12.411\
-6714917 6.548951\
-57562 12.4535310\
-633 C 6.55519264\
-446 12.495390635\
- 6.56143371329 1\
-2.5371720405 6.5\
-6767478213 12.57\
-88435546 C 6.573\
-91585096 12.6205\
-150687 6.5801569\
-198 12.662076027\
-3 6.58639798864 \
-12.7034950685 C \
-6.59263905747 12\
-.7449141098 6.59\
-888012631 12.786\
-1903769 6.605121\
-19514 12.8272929\
-202 C 6.61136226\
-398 12.868395463\
-5 6.61760333282 \
-12.9093232348 6.\
-62384440165 12.9\
-500457442 C 6.63\
-008547049 12.990\
-7682536 6.636326\
-53932 13.0312842\
-634 6.6425676081\
-6 13.0715637906 \
-C 6.648808677 13\
-.1118433178 6.65\
-504974583 13.151\
-8849368 6.661290\
-81467 13.1916592\
-181 C 6.66753188\
-35 13.2314334994\
- 6.67377295234 1\
-3.2709388318 6.6\
-8001402118 13.31\
-01463845 C 6.686\
-25509001 13.3493\
-539372 6.6924961\
-5885 13.38826191\
-61 6.69873722768\
- 13.4268421336 C\
- 6.70497829652 1\
-3.4654223512 6.7\
-1121936536 13.50\
-3672833 6.717460\
-43419 13.5415660\
-785 C 6.72370150\
-303 13.579459324\
-1 6.72994257186 \
-13.6169931816 6.\
-7361836407 13.65\
-41408801 C 6.742\
-42470954 13.6912\
-885786 6.7486657\
-7837 13.72804779\
-25 6.75490684721\
- 13.7643925215 C\
- 6.76114791605 1\
-3.8007372505 6.7\
-6738898488 13.83\
-66649987 6.77363\
-005372 13.872150\
-5769 C 6.7798711\
-2255 13.90763615\
-51 6.78611219139\
- 13.9426769009 6\
-.79235326023 13.\
-9772484751 C 6.7\
-9859432906 14.01\
-18200493 6.80483\
-53979 14.0459196\
-271 6.8110764667\
-3 14.0795237569 \
-C 6.81731753557 \
-14.1131278868 6.\
-82355860441 14.1\
-462335858 6.8297\
-9967324 14.17881\
-83263 C 6.836040\
-74208 14.2114030\
-669 6.8422818109\
-1 14.2434637127 \
-6.84852287975 14\
-.2749786949 C 6.\
-85476394859 14.3\
-064936771 6.8610\
-0501742 14.33745\
-97107 6.86724608\
-626 14.367856218\
-9 C 6.8734871550\
-9 14.3982527272 \
-6.87972822393 14\
-.4280762817 6.88\
-596929277 14.457\
-3073294 C 6.8922\
-103616 14.486538\
-3772 6.898451430\
-44 14.5151733516\
- 6.90469249927 1\
-4.5431937538 C 6\
-.91093356811 14.\
-571214156 6.9171\
-7463695 14.59861\
-62867 6.92341570\
-578 14.625382729\
-7 C 6.9296567746\
-2 14.6521491727 \
-6.93589784345 14\
-.6782761019 6.94\
-213891229 14.703\
-7472104 C 6.9483\
-7998113 14.72921\
-8319 6.954621049\
-96 14.7540296598\
- 6.9608621188 14\
-.7781660609 C 6.\
-96710318763 14.8\
-023024621 6.9733\
-4425647 14.82575\
-98615 6.97958532\
-531 14.848524245\
-4 C 6.9858263941\
-4 14.8712886293 \
-6.99206746298 14\
-.8933558271 6.99\
-830853181 14.914\
-7130049 C 7.0045\
-4960065 14.93607\
-01827 7.01079066\
-949 14.956713067\
-6 7.01703173832 \
-14.9766300256 C \
-7.02327280716 14\
-.9965469836 7.02\
-9513876 15.01573\
-36461 7.03575494\
-483 15.034179596\
-8 C 7.0419960136\
-7 15.0526255475 \
-7.0482370825 15.\
-0703263291 7.054\
-47815134 15.0872\
-727591 C 7.06071\
-922018 15.104219\
-189 7.0669602890\
-1 15.120406728 7\
-.07320135785 15.\
-1358274415 C 7.0\
-7944242668 15.15\
-1248155 7.085683\
-49552 15.1658974\
-289 7.0919245643\
-6 15.1797685888 \
-C 7.09816563319 \
-15.1936397488 7.\
-10440670203 15.2\
-067281129 7.1106\
-4777086 15.21902\
-82773 C 7.116888\
-8397 15.23132844\
-18 7.12312990854\
- 15.2428356642 7\
-.12937097737 15.\
-2535458198 C 7.1\
-3561204621 15.26\
-42559754 7.14185\
-311504 15.274164\
-2684 7.148094183\
-88 15.2832678594\
- C 7.15433525272\
- 15.2923714504 7\
-.16057632155 15.\
-3006654978 7.166\
-81739039 15.3081\
-48452 C 7.173058\
-45922 15.3156314\
-063 7.1792995280\
-6 15.3222983873 \
-7.1855405969 15.\
-3281491377 C 7.1\
-9178166573 15.33\
-3999888 7.198022\
-73457 15.3390294\
-97 7.2042638034 \
-15.3432389995 C \
-7.21050487224 15\
-.3474485019 7.21\
-674594108 15.350\
-832964 7.2229870\
-0991 15.35339471\
-16 C 7.229228078\
-75 15.3559564592\
- 7.23546914758 1\
-5.3576905428 7.2\
-4171021642 15.35\
-86005755 C 7.247\
-95128526 15.3595\
-106083 7.2541923\
-5409 15.35959163\
-29 7.26043342293\
- 15.3588485441 C\
- 7.26667449176 1\
-5.3581054553 7.2\
-729155606 15.356\
-5332956 7.279156\
-62944 15.3541382\
-34 C 7.285397698\
-27 15.3517431723\
- 7.29163876711 1\
-5.3485202586 7.2\
-9787983594 15.34\
-44769263 C 7.304\
-12090478 15.3404\
-33594 7.31036197\
-362 15.335564908\
-2 7.31660304245 \
-15.3298795554 C \
-7.32284411129 15\
-.3241942027 7.32\
-908518013 15.317\
-6872707 7.335326\
-24896 15.3103686\
-858 C 7.34156731\
-78 15.303050101 \
-7.34780838663 15\
-.2949149812 7.35\
-404945547 15.285\
-9744772 C 7.3602\
-9052431 15.27703\
-39732 7.36653159\
-314 15.267283240\
-8 7.37277266198 \
-15.2567346378 C \
-7.37901373081 15\
-.2461860348 7.38\
-525479965 15.234\
-8347623 7.391495\
-86849 15.2226943\
-663 C 7.39773693\
-732 15.210553970\
-2 7.40397800616 \
-15.1976197044 7.\
-41021907499 15.1\
-839062817 C 7.41\
-646014383 15.170\
-1928591 7.422701\
-21267 15.1556955\
-935 7.4289422815\
- 15.1404303423 C\
- 7.43518335034 1\
-5.1251650911 7.4\
-4142441917 15.10\
-91272355 7.44766\
-548801 15.092333\
-7527 C 7.4539065\
-5685 15.07554026\
-98 7.46014762568\
- 15.0579866154 7\
-.46638869452 15.\
-03969086 C 7.472\
-62976335 15.0213\
-951047 7.4788708\
-3219 15.00235278\
-56 7.48511190103\
- 14.9825830392 C\
- 7.49135296986 1\
-4.9628132927 7.4\
-975940387 14.942\
-3117444 7.503835\
-10753 14.9210985\
-667 C 7.51007617\
-637 14.899885389\
- 7.51631724521 1\
-4.8779563026 7.5\
-2255831404 14.85\
-53324847 C 7.528\
-79938288 14.8327\
-086669 7.5350404\
-5171 14.80938594\
- 7.54128152055 1\
-4.7853864536 C 7\
-.54752258939 14.\
-7613869673 7.553\
-76365822 14.7367\
-06652 7.56000472\
-706 14.711368595\
-3 C 7.5662457958\
-9 14.6860305386 \
-7.57248686473 14\
-.6600307856 7.57\
-872793357 14.633\
-3933258 C 7.5849\
-690024 14.606755\
-866 7.5912100712\
-4 14.5794768652 \
-7.59745114008 14\
-.5515811783 C 7.\
-60369220891 14.5\
-236854913 7.6099\
-3327775 14.49516\
-94105 7.61617434\
-658 14.466058617\
-2 C 7.6224154154\
-2 14.4369478239 \
-7.62865648426 14\
-.4072387428 7.63\
-489755309 14.376\
-9578423 C 7.6411\
-3862193 14.34667\
-69419 7.64737969\
-076 14.315820784\
-4 7.6536207596 1\
-4.2844165847 C 7\
-.65986182844 14.\
-253012385 7.6661\
-0289727 14.22105\
-68484 7.67234396\
-611 14.188577893\
-6 C 7.6785850349\
-4 14.1560989388 \
-7.68482610378 14\
-.1230934196 7.69\
-106717262 14.089\
-5899154 C 7.6973\
-0824145 14.05608\
-64112 7.70354931\
-029 14.022081928\
-8 7.70979037912 \
-13.9876056646 C \
-7.71603144796 13\
-.9531294004 7.72\
-22725168 13.9181\
-785187 7.7285135\
-8563 13.88278278\
-74 C 7.734754654\
-47 13.8473870562\
- 7.7409957233 13\
-.8115438018 7.74\
-723679214 13.775\
-2833179 C 7.7534\
-7786098 13.73902\
-28339 7.75971892\
-981 13.702342613\
-1 7.76595999865 \
-13.6652734275 C \
-7.77220106748 13\
-.6282042419 7.77\
-844213632 13.590\
-7437544 7.784683\
-20516 13.5529231\
-683 C 7.79092427\
-399 13.515102582\
-3 7.79716534283 \
-13.4769197341 7.\
-80340641166 13.4\
-384062102 C 7.80\
-96474805 13.3998\
-926863 7.8158885\
-4934 13.36104650\
-02 7.82212961817\
- 13.3218995722 C\
- 7.82837068701 1\
-3.2827526442 7.8\
-3461175584 13.24\
-33031681 7.84085\
-282468 13.203583\
-349 C 7.84709389\
-352 13.163863529\
-8 7.85333496235 \
-13.1238717443 7.\
-85957603119 13.0\
-836404325 C 7.86\
-581710002 13.043\
-4091206 7.872058\
-16886 13.0029368\
-445 7.8782992377\
- 12.9622562291 C\
- 7.88454030653 1\
-2.9215756137 7.8\
-9078137537 12.88\
-06854087 7.89702\
-244421 12.839618\
-3733 C 7.9032635\
-1304 12.79855133\
-8 7.90950458188 \
-12.7573064116 7.\
-91574565071 12.7\
-159164374 C 7.92\
-198671955 12.674\
-5264631 7.928227\
-78839 12.6329905\
-713 7.9344688572\
-2 12.5913416383 \
-C 7.94070992606 \
-12.5496927052 7.\
-94695099489 12.5\
-079300538 7.9531\
-9206373 12.46608\
-65424 C 7.959433\
-13257 12.4242430\
-311 7.9656742014\
- 12.3823181763 7\
-.97191527024 12.\
-3403447679 C 7.9\
-7815633907 12.29\
-83713594 7.98439\
-740791 12.256349\
-1082 7.990638476\
-75 12.2143106848\
- C 7.99687954558\
- 12.1722722613 8\
-.00312061442 12.\
-1302175712 8.009\
-36168325 12.0881\
-791152 C 8.01560\
-275209 12.046140\
-6593 8.021843820\
-93 12.0041185381\
- 8.02808488976 1\
-1.9621450321 C 8\
-.0343259586 11.9\
-201715262 8.0405\
-6702743 11.87824\
-69312 8.04680809\
-627 11.836403257\
-6 C 8.0530491651\
-1 11.7945595839 \
-8.05929023394 11\
-.7527973216 8.06\
-553130278 11.711\
-1481617 C 8.0717\
-7237161 11.66949\
-90019 8.07801344\
-045 11.627963627\
-9 8.08425450929 \
-11.5865733626 C \
-8.09049557812 11\
-.5451830974 8.09\
-673664696 11.503\
-9388167 8.102977\
-71579 11.4628714\
-267 C 8.10921878\
-463 11.421804036\
-6 8.11545985347 \
-11.3809146042 8.\
-1217009223 11.34\
-02335709 C 8.127\
-94199114 11.2995\
-525375 8.1341830\
-5998 11.25908115\
-99 8.14042412881\
- 11.2188493675 C\
- 8.14666519765 1\
-1.1786175752 8.1\
-5290626648 11.13\
-86268125 8.15914\
-733532 11.098906\
-451 C 8.16538840\
-416 11.059186089\
-6 8.17162947299 \
-11.019737759 8.1\
-7787054183 10.98\
-05902278 C 8.184\
-11161066 10.9414\
-426966 8.1903526\
-795 10.902597777\
- 8.19659374834 1\
-0.8640835898 C 8\
-.20283481717 10.\
-8255694026 8.209\
-07588601 10.7873\
-879401 8.2153169\
-5484 10.74956663\
-17 C 8.221558023\
-68 10.7117453233\
- 8.22779909252 1\
-0.6742863383 8.2\
-3404016135 10.63\
-72163725 C 8.240\
-28123019 10.6001\
-464067 8.2465222\
-9902 10.56346780\
-3 8.25276336786 \
-10.5272064821 C \
-8.2590044367 10.\
-4909451612 8.265\
-24550553 10.4551\
-036361 8.2714865\
-7437 10.41970701\
-26 C 8.277727643\
-2 10.384310389 8\
-.28396871204 10.\
-349361346 8.2902\
-0978088 10.31488\
-41354 C 8.296450\
-84971 10.2804069\
-248 8.3026919185\
-5 10.2464043877 \
-8.30893298738 10\
-.2128998846 C 8.\
-31517405622 10.1\
-793953816 8.3214\
-1512506 10.14639\
-19111 8.32765619\
-389 10.113911906\
-4 C 8.3338972627\
-3 10.0814319017 \
-8.34013833156 10\
-.0494785143 8.34\
-63794004 10.0180\
-732153 C 8.35262\
-046924 9.9866679\
-1626 8.358861538\
-07 9.95581400509\
- 8.36510260691 9\
-.92553195767 C 8\
-.37134367574 9.8\
-9524991025 8.377\
-58474458 9.86554\
-316897 8.3838258\
-1342 9.836431182\
-81 C 8.390066882\
-25 9.80731919665\
- 8.39630795109 9\
-.77880554562 8.4\
-0254901992 9.750\
-90862171 C 8.408\
-79008876 9.72301\
-16978 8.41503115\
-76 9.69573521312\
- 8.42127222643 9\
-.66909647422 C 8\
-.42751329527 9.6\
-4245773532 8.433\
-75436411 9.61646\
-058068 8.4399954\
-3294 9.591121204\
-66 C 8.446236501\
-78 9.56578182865\
- 8.45247757061 9\
-.54110419015 8.4\
-5871863945 9.517\
-10334635 C 8.464\
-95970829 9.49310\
-250256 8.4712007\
-7712 9.469782526\
-63 8.47744184596\
- 9.44715731529 C\
- 8.48368291479 9\
-.42453210395 8.4\
-8992398363 9.402\
-60583837 8.49616\
-505247 9.3813912\
-3329 C 8.5024061\
-213 9.3601766282\
-1 8.50864719014 \
-9.33967796635 8.\
-51488825897 9.31\
-990676084 C 8.52\
-112932781 9.3001\
-3555533 8.527370\
-39665 9.28109618\
-379 8.5336114654\
-8 9.26279893996 \
-C 8.53985253432 \
-9.24450169613 8.\
-54609360315 9.22\
-695104578 8.5523\
-3467199 9.210156\
-04731 C 8.558575\
-74083 9.19336104\
-884 8.5648168096\
-6 9.17732624927 \
-8.5710578785 9.1\
-6205945769 C 8.5\
-7729894733 9.146\
-7926661 8.583540\
-01617 9.13229850\
-374 8.5897810850\
-1 9.11858351828 \
-C 8.59602215384 \
-9.10486853282 8.\
-60226322268 9.09\
-193741258 8.6085\
-0429151 9.079795\
-43371 C 8.614745\
-36035 9.06765345\
-485 8.6209864291\
-9 9.05630536552 \
-8.62722749802 9.\
-04575516219 C 8.\
-63346856686 9.03\
-520495887 8.6397\
-0963569 9.025457\
-4422 8.645950704\
-53 9.0165153228 \
-C 8.65219177337 \
-9.0075732034 8.6\
-584328422 8.9994\
-4132699 8.664673\
-91104 8.99212111\
-415 C 8.67091497\
-987 8.9848009013\
-1 8.67715604871 \
-8.97829723533 8.\
-68339711755 8.97\
-261024455 C 8.68\
-963818638 8.9669\
-2325378 8.695879\
-25522 8.96205785\
-152 8.7021203240\
-6 8.95801287369 \
-C 8.70836139289 \
-8.95396789587 8.\
-71460246173 8.95\
-074827822 8.7208\
-4353056 8.948351\
-56603 C 8.727084\
-5994 8.945954853\
-84 8.73332566824\
- 8.94438599765 8\
-.73956673707 8.9\
-436412559 C 8.74\
-580780591 8.9428\
-9651415 8.752048\
-87474 8.94298084\
-455 8.7582899435\
-8 8.94388922446 \
-C 8.76453101242 \
-8.94479760437 8.\
-77077208125 8.94\
-653499099 8.7770\
-1315009 8.949095\
-0884 C 8.7832542\
-1892 8.951655185\
-8 8.78949528776 \
-8.95504294301 8.\
-7957363566 8.959\
-25080054 C 8.801\
-97742543 8.96345\
-865807 8.8082184\
-9427 8.968491549\
-12 8.8144595631 \
-8.97434066231 C \
-8.82070063194 8.\
-98018977551 8.82\
-694170078 8.9868\
-6002059 8.833182\
-76961 8.99434134\
-796 C 8.83942383\
-845 9.0018226753\
-2 8.84566490728 \
-9.01011996366 8.\
-85190597612 9.01\
-922194064 C 8.85\
-814704496 9.0283\
-2391762 8.864388\
-11379 9.03823542\
-335 8.8706291826\
-3 9.04894398021 \
-C 8.87687025146 \
-9.05965253706 8.\
-8831113203 9.071\
-1629391 8.889352\
-38914 9.08346152\
-266 C 8.89559345\
-797 9.0957601062\
-3 8.90183452681 \
-9.1088516119 8.9\
-0807559564 9.122\
-72121116 C 8.914\
-31666448 9.13659\
-081041 8.9205577\
-3332 9.151243183\
-02 8.92679880215\
- 9.1666623585 C \
-8.93303987099 9.\
-18208153397 8.93\
-928093982 9.1982\
-7212404 8.945522\
-00866 9.21521704\
-094 C 8.95176307\
-75 9.23216195784\
- 8.95800414633 9\
-.24986573813 8.9\
-6424521517 9.268\
-31020318 C 8.970\
-48628401 9.28675\
-466824 8.9767273\
-5284 9.305944272\
-44 8.98296842168\
- 9.3258597744 C \
-8.98920949051 9.\
-34577527636 8.99\
-545055935 9.3664\
-2104139 9.001691\
-62819 9.38777679\
-509 C 9.00793269\
-702 9.4091325487\
-8 9.01417376586 \
-9.43120256065 9.\
-02041483469 9.45\
-396555459 C 9.02\
-665590353 9.4767\
-2854854 9.032896\
-97237 9.50018869\
-166 9.0391380412\
- 9.52432373906 C\
- 9.04537911004 9\
-.54845878646 9.0\
-5162017887 9.573\
-2727964 9.057861\
-24771 9.59874258\
-957 C 9.06410231\
-655 9.6242123827\
-3 9.07034338538 \
-9.65034190226 9.\
-07658445422 9.67\
-710707027 C 9.08\
-282552305 9.7038\
-7223828 9.089066\
-59189 9.73127687\
-667 9.0953076607\
-3 9.75929604621 \
-C 9.10154872956 \
-9.78731521575 9.\
-1077897984 9.815\
-95261122 9.11403\
-086723 9.8451824\
-7057 C 9.1202719\
-3607 9.874412329\
-92 9.12651300491\
- 9.90423821509 9\
-.13275407374 9.9\
-3463358105 C 9.1\
-3899514258 9.965\
-02894701 9.14523\
-621141 9.9959972\
-1736 9.151477280\
-25 10.0275111051\
- C 9.15771834909\
- 10.0590249929 9\
-.16395941792 10.\
-091087778 9.1702\
-0048676 10.12367\
-14737 C 9.176441\
-55559 10.1562551\
-694 9.1826826244\
-3 10.1893629069 \
-9.18892369327 10\
-.2229660431 C 9.\
-1951647621 10.25\
-65691792 9.20140\
-583094 10.290670\
-6917 9.207646899\
-77 10.3252413249\
- C 9.21388796861\
- 10.3598119581 9\
-.22012903745 10.\
-3948545317 9.226\
-37010628 10.4303\
-392231 C 9.23261\
-117512 10.465823\
-9145 9.238852243\
-95 10.5017533808\
- 9.24509331279 1\
-0.5380972785 C 9\
-.25133438163 10.\
-5744411762 9.257\
-57545046 10.6112\
-019959 9.2638165\
-193 10.648348919\
-9 C 9.2700575881\
-4 10.685495844 9\
-.27629865697 10.\
-7230311924 9.282\
-53972581 10.7609\
-237215 C 9.28878\
-079464 10.798816\
-2505 9.295021863\
-48 10.8370681061\
- 9.30126293232 1\
-0.8756476664 C 9\
-.30750400115 10.\
-9142272266 9.313\
-74506999 10.9531\
-3646 9.319986138\
-82 10.9923434155\
- C 9.32622720766\
- 11.031550371 9.\
-3324682765 11.07\
-10568368 9.33870\
-934533 11.110830\
-5819 C 9.3449504\
-1417 11.15060432\
-7 9.351191483 11\
-.1906469565 9.35\
-743255184 11.230\
-9260094 C 9.3636\
-7362068 11.27120\
-50623 9.36991468\
-951 11.311721958\
- 9.37615575835 1\
-1.3524440558 C 9\
-.38239682718 11.\
-3931661536 9.388\
-63789602 11.4340\
-946849 9.3948789\
-6486 11.47519687\
-98 C 9.401120033\
-69 11.5162990747\
- 9.40736110253 1\
-1.5575759748 9.4\
-1360217136 11.59\
-89947315 C 9.419\
-8432402 11.64041\
-34881 9.42608430\
-904 11.681974951\
-6 9.43232537787 \
-11.7236462454 C \
-9.43856644671 11\
-.7653175392 9.44\
-480751554 11.807\
-0993208 9.451048\
-58438 11.8489587\
-367 C 9.45728965\
-322 11.890818152\
-5 9.46353072205 \
-11.9327556665 9.\
-46977179089 11.9\
-747384986 C 9.47\
-601285972 12.016\
-7213307 9.482253\
-92856 12.0587497\
-504 9.4884949974\
- 12.1007911022 C\
- 9.49473606623 1\
-2.1428324539 9.5\
-0097713507 12.18\
-48868124 9.50721\
-82039 12.2269216\
-967 C 9.51345927\
-274 12.268956581\
- 9.51970034158 1\
-2.310971871 9.52\
-594141041 12.352\
-9353108 C 9.5321\
-8247925 12.39489\
-87507 9.53842354\
-809 12.436810025\
-4 9.54466461692 \
-12.4786371542 C \
-9.55090568576 12\
-.5204642829 9.55\
-714675459 12.562\
-2067564 9.563387\
-82343 12.6038329\
-181 C 9.56962889\
-227 12.645459079\
-8 9.5758699611 1\
-2.686968227 9.58\
-211102994 12.728\
-3290764 C 9.5883\
-5209877 12.76968\
-99259 9.59459316\
-761 12.810901582\
-3 9.60083423645 \
-12.8519331843 C \
-9.60707530528 12\
-.8929647863 9.61\
-331637412 12.933\
-8152476 9.619557\
-44295 12.9744541\
-759 C 9.62579851\
-179 13.015093104\
-3 9.63203958063 \
-13.0555192242 9.\
-63828064946 13.0\
-957026596 C 9.64\
-45217183 13.1358\
-860951 9.6507627\
-8713 13.17582538\
-33 9.65700385597\
- 13.2154912109 C\
- 9.66324492481 1\
-3.2551570384 9.6\
-6948599364 13.29\
-45477572 9.67572\
-706248 13.333634\
-6617 C 9.6819681\
-3131 13.37272156\
-63 9.68820920015\
- 13.411502826 9.\
-69445026899 13.4\
-499503875 C 9.70\
-069133782 13.488\
-3979489 9.706932\
-40666 13.5265098\
-018 9.7131734754\
-9 13.5642585884 \
-C 9.71941454433 \
-13.6020073749 9.\
-72565561317 13.6\
-393909082 9.7318\
-96682 13.6763825\
-682 C 9.73813775\
-084 13.713374228\
-2 9.74437881967 \
-13.7499716548 9.\
-75061988851 13.7\
-861490069 C 9.75\
-686095735 13.822\
-326359 9.7631020\
-2618 13.85808110\
-69 9.76934309502\
- 13.8933882286 C\
- 9.77558416385 1\
-3.9286953503 9.7\
-8182523269 13.96\
-35521503 9.78806\
-630153 13.997934\
-4642 C 9.7943073\
-7036 14.03231677\
-81 9.8005484392 \
-14.066221749 9.8\
-0678950804 14.09\
-96261073 C 9.813\
-03057687 14.1330\
-304656 9.8192716\
-4571 14.16593119\
-73 9.82551271454\
- 14.198305964 C \
-9.83175378338 14\
-.2306807306 9.83\
-799485222 14.262\
-5263656 9.844235\
-92105 14.2938214\
-96 C 9.850476989\
-89 14.3251166263\
- 9.85671805872 1\
-4.355857938 9.86\
-295912756 14.386\
-0250565 C 9.8692\
-001964 14.416192\
-1749 9.875441265\
-23 14.4457816437\
- 9.88168233407 1\
-4.4747741183 C 9\
-.8879234029 14.5\
-037665928 9.8941\
-6447174 14.53215\
-84796 9.90040554\
-058 14.559931493\
-9 C 9.9066466094\
-1 14.5877045083 \
-9.91288767825 14\
-.6148549252 9.91\
-912874708 14.641\
-3655482 C 9.9253\
-6981592 14.66787\
-61711 9.93161088\
-476 14.693743149\
-3 9.93785195359 \
-14.7189504011 C \
-9.94409302243 14\
-.7441576528 9.95\
-033409126 14.768\
-7012075 9.956575\
-1601 14.79256612\
-29 C 9.962816228\
-94 14.8164310383\
- 9.96905729777 1\
-4.8396132302 9.9\
-7529836661 14.86\
-20989192 C 9.981\
-53943544 14.8845\
-846082 9.9877805\
-0428 14.90636960\
-26 9.99402157312\
- 14.927441307 C \
-10.000262642 14.\
-9485130113 10.00\
-65037108 14.9688\
-671332 10.012744\
-7796 14.98849228\
-06 C 10.01898584\
-85 15.008117428 \
-10.0252269173 15\
-.0270092142 10.0\
-314679861 15.045\
-1574683 C 10.037\
-709055 15.063305\
-7224 10.04395012\
-38 15.0807059701\
- 10.0501911926 1\
-5.0973492775 C 1\
-0.0564322615 15.\
-1139925849 10.06\
-26733303 15.1298\
-743971 10.068914\
-3991 15.14498703\
-07 C 10.07515546\
-8 15.1600996644 \
-10.0813965368 15\
-.1744384911 10.0\
-876376057 15.187\
-9970901 C 10.093\
-8786745 15.20155\
-5689 10.10011974\
-33 15.2143293655\
- 10.1063608122 1\
-5.226312971 C 10\
-.112601881 15.23\
-82965766 10.1188\
-429498 15.249485\
-3574 10.12508401\
-87 15.2598754454\
- C 10.1313250875\
- 15.2702655334 1\
-0.1375661563 15.\
-279852123 10.143\
-8072252 15.28863\
-26326 C 10.15004\
-8294 15.29741314\
-21 10.1562893629\
- 15.3053827217 1\
-0.1625304317 15.\
-31254008 C 10.16\
-87715005 15.3196\
-974383 10.175012\
-5694 15.32603768\
-87 10.1812536382\
- 15.331560832 C \
-10.187494707 15.\
-3370839752 10.19\
-37357759 15.3417\
-850956 10.199976\
-8447 15.34566548\
-62 C 10.20621791\
-35 15.3495458769\
- 10.2124589824 1\
-5.3526006003 10.\
-2187000512 15.35\
-48322401 C 10.22\
-49411201 15.3570\
-638798 10.231182\
-1889 15.35846748\
-43 10.2374232577\
- 15.3590469235 C\
- 10.2436643266 1\
-5.3596263628 10.\
-2499053954 15.35\
-93766787 10.2561\
-464642 15.358303\
-0217 C 10.262387\
-5331 15.35722936\
-47 10.2686286019\
- 15.355326778 10\
-.2748696707 15.3\
-526016844 C 10.2\
-811107396 15.349\
-8765908 10.28735\
-18084 15.3463240\
-426 10.293592877\
-2 15.3419517248 \
-C 10.2998339461 \
-15.3375794071 10\
-.3060750149 15.3\
-323823887 10.312\
-3160838 15.32636\
-96054 C 10.31855\
-71526 15.3203568\
-222 10.324798221\
-4 15.3135233672 \
-10.3310392903 15\
-.3058794129 C 10\
-.3372803591 15.2\
-982354587 10.343\
-5214279 15.28977\
-61301 10.3497624\
-968 15.280512820\
-9 C 10.356003565\
-6 15.2712495116 \
-10.3622446344 15\
-.2611773858 10.3\
-684857033 15.250\
-3090406 C 10.374\
-7267721 15.23944\
-06954 10.3809678\
-41 15.2277713418\
- 10.3872089098 1\
-5.2153147609 C 1\
-0.3934499786 15.\
-2028581799 10.39\
-96910475 15.1896\
-096369 10.405932\
-1163 15.17558407\
-54 C 10.41217318\
-51 15.161558514 \
-10.418414254 15.\
-1467512609 10.42\
-46553228 15.1311\
-783995 C 10.4308\
-963916 15.115605\
-5381 10.43713746\
-05 15.0992624638\
- 10.4433785293 1\
-5.0821663748 C 1\
-0.4496195981 15.\
-0650702859 10.45\
-5860667 15.04721\
-66534 10.4621017\
-358 15.028623763\
-8 C 10.468342804\
-7 15.0100308742 \
-10.4745838735 14\
-.9906942816 10.4\
-808249423 14.970\
-633332 C 10.4870\
-660112 14.950572\
-3824 10.49330708\
- 14.9297827198 1\
-0.4995481488 14.\
-9082847203 C 10.\
-5057892177 14.88\
-67867207 10.5120\
-302865 14.864576\
-1247 10.51827135\
-53 14.8416743065\
- C 10.5245124242\
- 14.8187724884 1\
-0.530753493 14.7\
-951752917 10.536\
-9945619 14.77090\
-50564 C 10.54323\
-56307 14.7466348\
-211 10.549476699\
-5 14.7216875001 \
-10.5557177684 14\
-.6960863642 C 10\
-.5619588372 14.6\
-704852283 10.568\
-199906 14.644226\
-3463 10.57444097\
-49 14.6173338839\
- C 10.5806820437\
- 14.5904414214 1\
-0.5869231125 14.\
-562911569 10.593\
-1641814 14.53476\
-93501 C 10.59940\
-52502 14.5066271\
-311 10.605646319\
- 14.4778688638 1\
-0.6118873879 14.\
-4485203903 C 10.\
-6181284567 14.41\
-91719167 10.6243\
-695256 14.389229\
-6886 10.63061059\
-44 14.3587203271\
- C 10.6368516632\
- 14.3282109655 1\
-0.6430927321 14.\
-297131061 10.649\
-3338009 14.26550\
-79724 C 10.65557\
-48697 14.2338848\
-839 10.661815938\
-6 14.201715346 1\
-0.6680570074 14.\
-1690274131 C 10.\
-6742980762 14.13\
-63394802 10.6805\
-391451 14.103130\
-0361 10.68678021\
-39 14.0694277875\
- C 10.6930212828\
- 14.0357255389 1\
-0.6992623516 14.\
-0015275236 10.70\
-55034204 13.9668\
-630558 C 10.7117\
-444893 13.932198\
-588 10.717985558\
-1 13.8970648643 \
-10.7242266269 13\
-.8614917614 C 10\
-.7304676958 13.8\
-259186584 10.736\
-7087646 13.78990\
-35357 10.7429498\
-334 13.753476786\
- C 10.7491909023\
- 13.7170500364 1\
-0.7554319711 13.\
-6802091864 10.76\
-16730399 13.6429\
-850981 C 10.7679\
-141088 13.605761\
-0099 10.77415517\
-76 13.5681513808\
- 10.7803962465 1\
-3.5301874945 C 1\
-0.7866373153 13.\
-4922236083 10.79\
-28783841 13.4539\
-033366 10.799119\
-453 13.415258336\
-5 C 10.805360521\
-8 13.3766133364 \
-10.8116015906 13\
-.3376416573 10.8\
-178426595 13.298\
-3752803 C 10.824\
-0837283 13.25910\
-89034 10.8303247\
-971 13.219546058\
-8 10.836565866 1\
-3.1797190025 C 1\
-0.8428069348 13.\
-1398919463 10.84\
-90480037 13.0997\
-99092 10.8552890\
-725 13.059472920\
-7 C 10.861530141\
-3 13.0191467494 \
-10.8677712102 12\
-.9785858605 10.8\
-74012279 12.9378\
-229099 C 10.8802\
-533478 12.897059\
-9593 10.88649441\
-67 12.8560937344\
- 10.8927354855 1\
-2.8149570154 C 1\
-0.8989765543 12.\
-7738202964 10.90\
-52176232 12.7325\
-120607 10.911458\
-692 12.691065162\
- C 10.9176997609\
- 12.6496182633 1\
-0.9239408297 12.\
-6080318705 10.93\
-01818985 12.5663\
-388603 C 10.9364\
-229674 12.524645\
-8501 10.94266403\
-62 12.4828455841\
- 10.948905105 12\
-.4409709109 C 10\
-.9551461739 12.3\
-990962377 10.961\
-3872427 12.35714\
-67129 10.9676283\
-115 12.315155106\
-2 C 10.973869380\
-4 12.2731634995 \
-10.9801104492 12\
-.2311295609 10.9\
-86351518 12.1890\
-859309 C 10.9925\
-925869 12.147042\
-3009 10.99883365\
-57 12.1049889241\
- 11.0050747246 1\
-2.0629582613 C 1\
-1.0113157934 12.\
-0209275985 11.01\
-75568622 11.9789\
-197893 11.023797\
-9311 11.93696706\
-43 C 11.03003899\
-99 11.8950143392\
- 11.0362800687 1\
-1.8531170328 11.\
-0425211376 11.81\
-13070956 C 11.04\
-87622064 11.7694\
-971584 11.055003\
-2752 11.72777511\
-91 11.0612443441\
- 11.686172599 C \
-11.0674854129 11\
-.644570079 11.07\
-37264818 11.6030\
-878003 11.079967\
-5506 11.56175700\
-61 C 11.08620861\
-94 11.520426212 \
-11.0924496883 11\
-.4792478168 11.0\
-986907571 11.438\
-2526372 C 11.104\
-9318259 11.39725\
-74577 11.1111728\
-948 11.356446599\
- 11.1174139636 1\
-1.3158504039 C 1\
-1.1236550324 11.\
-2752542089 11.12\
-98961013 11.2348\
-739718 11.136137\
-1701 11.19473951\
-44 C 11.14237823\
-89 11.1546050569\
- 11.1486193078 1\
-1.1147178607 11.\
-1548603766 11.07\
-51071804 C 11.16\
-11014455 11.0354\
-965 11.167342514\
-3 10.9961640018 \
-11.1735835831 10\
-.9571383283 C 11\
-.179824652 10.91\
-81126547 11.1860\
-657208 10.879395\
-6544 11.19230678\
-96 10.8410153131\
- C 11.1985478585\
- 10.8026349718 1\
-1.2047889273 10.\
-7645933176 11.21\
-10299961 10.7269\
-176365 C 11.2172\
-71065 10.6892419\
-554 11.223512133\
-8 10.6519344518 \
-11.2297532027 10\
-.6150216695 C 11\
-.2359942715 10.5\
-781088872 11.242\
-2353403 10.54159\
-32036 11.2484764\
-092 10.505500379\
-5 C 11.254717478\
- 10.4694075555 1\
-1.2609585468 10.\
-4337401374 11.26\
-71996157 10.3985\
-230635 C 11.2734\
-406845 10.363305\
-9895 11.27968175\
-33 10.3285419714\
- 11.2859228222 1\
-0.2942550857 C 1\
-1.292163891 10.2\
-599682 11.298404\
-9598 10.22616131\
-96 11.3046460287\
- 10.1928576225 C\
- 11.3108870975 1\
-0.1595539254 11.\
-3171281664 10.12\
-6756441 11.32336\
-92352 10.0944874\
-13 C 11.32961030\
-4 10.0622183849 \
-11.3358513729 10\
-.0304809946 11.3\
-420924417 9.9992\
-9651669 C 11.348\
-3335105 9.968112\
-0388 11.35457457\
-94 9.93748380182\
- 11.3608156482 9\
-.90743207873 C 1\
-1.367056717 9.87\
-738035564 11.373\
-2977859 9.847908\
-6168 11.37953885\
-47 9.81903610212\
- C 11.3857799236\
- 9.79016358745 1\
-1.3920209924 9.7\
-6189390384 11.39\
-82620612 9.73424\
-522841 C 11.4045\
-031301 9.7065965\
-5298 11.41074419\
-89 9.67957262357\
- 11.4169852677 9\
-.65319052639 C 1\
-1.4232263366 9.6\
-2680842922 11.42\
-94674054 9.60107\
-202731 11.435708\
-4742 9.575997289\
-55 C 11.44194954\
-31 9.55092255179\
- 11.4481906119 9\
-.52651346042 11.\
-4544316808 9.502\
-78484234 C 11.46\
-06727496 9.47905\
-622425 11.466913\
-8184 9.456012174\
-74 11.4731548873\
- 9.43366635576 C\
- 11.4793959561 9\
-.41132053679 11.\
-4856370249 9.389\
-67715036 11.4918\
-780938 9.3687486\
-7242 C 11.498119\
-1626 9.347820194\
-48 11.5043602314\
- 9.32761092726 1\
-1.5106013003 9.3\
-0813214137 C 11.\
-5168423691 9.288\
-65335547 11.5230\
-834379 9.2699094\
-4672 11.52932450\
-68 9.25191046297\
- C 11.5355655756\
- 9.23391147921 1\
-1.5418066445 9.2\
-1666190305 11.54\
-80477133 9.20017\
-054407 C 11.5542\
-887821 9.1836791\
-851 11.560529851\
- 9.16795060574 1\
-1.5667709198 9.1\
-529923637 C 11.5\
-730119886 9.1380\
-3412165 11.57925\
-30575 9.12385085\
-216 11.585494126\
-3 9.11044884935 \
-C 11.5917351951 \
-9.09704684653 11\
-.597976264 9.084\
-43081125 11.6042\
-173328 9.0726057\
-6432 C 11.610458\
-4017 9.060780717\
-4 11.6166994705 \
-9.04975141806 11\
-.6229405393 9.03\
-952160606 C 11.6\
-291816082 9.0292\
-9179405 11.63542\
-2677 9.019866279\
-63 11.6416637458\
- 9.01124751568 C\
- 11.6479048147 9\
-.00262875173 11.\
-6541458835 8.994\
-82159207 11.6603\
-869523 8.9878271\
-9897 C 11.666628\
-0212 8.980832805\
-86 11.67286909 8\
-.9746560692 11.6\
-791101588 8.9692\
-9685879 C 11.685\
-3512277 8.963937\
-64839 11.6915922\
-965 8.9594008826\
-5 11.6978333654 \
-8.95568513915 C \
-11.7040744342 8.\
-95196939565 11.7\
-10315503 8.94907\
-961372 11.716556\
-5719 8.947013080\
-89 C 11.72279764\
-07 8.94494654806\
- 11.7290387095 8\
-.94370821693 11.\
-7352797784 8.943\
-29408918 C 11.74\
-15208472 8.94287\
-996144 11.747761\
-916 8.9432949953\
-1 11.7540029849 \
-8.94453391281 C \
-11.7602440537 8.\
-94577283031 11.7\
-664851226 8.9478\
-4058762 11.77272\
-61914 8.95073063\
-526 C 11.7789672\
-602 8.9536206829\
- 11.7852083291 8\
-.95733796734 11.\
-7914493979 8.961\
-87467771 C 11.79\
-76904667 8.96641\
-138809 11.803931\
-5356 8.971772453\
-51 11.8101726044\
- 8.97794881383 C\
- 11.8164136732 8\
-.98412517414 11.\
-8226547421 8.991\
-12173347 11.8288\
-958109 8.9989281\
-9637 C 11.835136\
-8797 9.006734659\
-27 11.8413779486\
- 9.01535589732 1\
-1.8476190174 9.0\
-2478039566 C 11.\
-8538600863 9.034\
-204894 11.860101\
-1551 9.044437484\
-13 11.8663422239\
- 9.05546544963 C\
- 11.8725832928 9\
-.06649341513 11.\
-8788243616 9.078\
-32153993 11.8850\
-654304 9.0909359\
-2567 C 11.891306\
-4993 9.103550311\
-41 11.8975475681\
- 9.11695568709 1\
-1.9037886369 9.1\
-311369939 C 11.9\
-100297058 9.1453\
-1830071 11.91627\
-07746 9.16028020\
-539 11.922511843\
-5 9.17600651196 \
-C 11.9287529123 \
-9.19173281852 11\
-.9349939811 9.20\
-822812425 11.941\
-23505 9.22547512\
-102 C 11.9474761\
-188 9.2427221177\
-9 11.9537171876 \
-9.2607253263 11.\
-9599582565 9.279\
-46635306 C 11.96\
-61993253 9.29820\
-737981 11.972440\
-3941 9.317690661\
-94 11.978681463 \
-9.33789674901 C \
-11.9849225318 9.\
-35810283608 11.9\
-911636007 9.3790\
-3607478 11.99740\
-46695 9.40067598\
-781 C 12.0036457\
-383 9.4223159008\
-4 12.0098868072 \
-9.44466673775 12\
-.016127876 9.467\
-707026 C 12.0223\
-689448 9.4907473\
-1425 12.02861001\
-37 9.51448119969\
- 12.0348510825 9\
-.53888624773 C 1\
-2.0410921513 9.5\
-6329129578 12.04\
-73332202 9.58837\
-154216 12.053574\
-289 9.6141036249\
-4 C 12.059815357\
-8 9.63983570772 \
-12.0660564267 9.\
-66622354628 12.0\
-722974955 9.6932\
-4288742 C 12.078\
-5385644 9.720262\
-22857 12.0847796\
-332 9.7479168692\
-7 12.091020702 9\
-.77618170258 C 1\
-2.0972617709 9.8\
-0444653589 12.10\
-35028397 9.83332\
-523048 12.109743\
-9085 9.862791864\
-48 C 12.11598497\
-74 9.89225849849\
- 12.1222260462 9\
-.92231660661 12.\
-128467115 9.9529\
-394921 C 12.1347\
-081839 9.9835623\
-776 12.140949252\
-7 10.0147534357 \
-12.1471903216 10\
-.0464852362 C 12\
-.1534313904 10.0\
-782170367 12.159\
-6724592 10.11049\
-28301 12.1659135\
-281 10.143284494\
-8 C 12.172154596\
-9 10.1760761596 \
-12.1783956657 10\
-.2093867966 12.1\
-846367346 10.243\
-1876367 C 12.190\
-8778034 10.27698\
-84768 12.1971188\
-722 10.311282466\
-3 12.2033599411 \
-10.3460402327 C \
-12.2096010099 10\
-.3807979991 12.2\
-158420787 10.416\
-0223297 12.22208\
-31476 10.4516832\
-943 C 12.2283242\
-164 10.487344258\
-8 12.2345652853 \
-10.5234444813 12\
-.2408063541 10.5\
-599535197 C 12.2\
-470474229 10.596\
-4625581 12.25328\
-84918 10.6333828\
-69 12.2595295606\
- 10.6706835459 C\
- 12.2657706294 1\
-0.7079842229 12.\
-2720116983 10.74\
-56675512 12.2782\
-527671 10.783702\
-2077 C 12.284493\
-8359 10.82173686\
-42 12.2907349048\
- 10.8601249596 1\
-2.2969759736 10.\
-8988348021 C 12.\
-3032170425 10.93\
-75446446 12.3094\
-581113 10.976578\
-167 12.315699180\
-1 11.0159033583 \
-C 12.321940249 1\
-1.0552285496 12.\
-3281813178 11.09\
-48471615 12.3344\
-223866 11.134726\
-9131 C 12.340663\
-4555 11.17460666\
-47 12.3469045243\
- 11.214749124 12\
-.3531455931 11.2\
-551217903 C 12.3\
-59386662 11.2954\
-944565 12.365627\
-7308 11.33609871\
-15 12.3718687996\
- 11.3769018848 C\
- 12.3781098685 1\
-1.417705058 12.3\
-843509373 11.458\
-7083431 12.39059\
-20062 11.4998789\
-502 C 12.3968330\
-75 11.5410495574\
- 12.4030741438 1\
-1.5823884901 12.\
-4093152127 11.62\
-38628901 C 12.41\
-55562815 11.6653\
-3729 12.42179735\
-03 11.7069479691\
- 12.4280384192 1\
-1.7486620513 C 1\
-2.434279488 11.7\
-903761334 12.440\
-5205568 11.83219\
-42375 12.4467616\
-257 11.874083520\
-6 C 12.453002694\
-5 11.9159728037 \
-12.4592437634 11\
-.9579336909 12.4\
-654848322 11.999\
-933423 C 12.4717\
-25901 12.0419331\
-551 12.477966969\
-9 12.0839719627 \
-12.4842080387 12\
-.1260172211 C 12\
-.4904491075 12.1\
-680624794 12.496\
-6901764 12.21011\
-42242 12.5029312\
-452 12.252140015\
-8 C 12.509172314\
- 12.2941658073 1\
-2.5154133829 12.\
-3361654862 12.52\
-16544517 12.3781\
-068479 C 12.5278\
-955206 12.420048\
-2095 12.53413658\
-94 12.4619309 12\
-.5403776582 12.5\
-037229993 C 12.5\
-466187271 12.545\
-5150986 12.55285\
-97959 12.5872160\
-587 12.559100864\
-7 12.6287942939 \
-C 12.5653419336 \
-12.6703725291 12\
-.5715830024 12.7\
-11827298 12.5778\
-240712 12.753127\
-3979 C 12.584065\
-1401 12.79442749\
-78 12.5903062089\
- 12.8355719951 1\
-2.5965472777 12.\
-8765301185 C 12.\
-6027883466 12.91\
-74882418 12.6090\
-294154 12.958258\
-8669 12.61527048\
-43 12.9988117011\
- C 12.6215115531\
- 13.0393645352 1\
-2.6277526219 13.\
-0796982653 12.63\
-39936908 13.1197\
-831242 C 12.6402\
-347596 13.159867\
-9831 12.64647582\
-84 13.1997024706\
- 12.6527168973 1\
-3.2392573915 C 1\
-2.6589579661 13.\
-2788123123 12.66\
-51990349 13.3180\
-859817 12.671440\
-1038 13.35704982\
-09 C 12.67768117\
-26 13.3960136602\
- 12.6839222415 1\
-3.4346658026 12.\
-6901633103 13.47\
-29783303 C 12.69\
-64043791 13.5112\
-908581 12.702645\
-448 13.549261725\
-4 12.7088865168 \
-13.5868637186 C \
-12.7151275856 13\
-.6244657118 12.7\
-213686545 13.661\
-6966091 12.72760\
-97233 13.6985299\
-43 C 12.73385079\
-21 13.7353632769\
- 12.740091861 13\
-.7717966531 12.7\
-463329298 13.807\
-8043911 C 12.752\
-5739986 13.84381\
-21291 12.7588150\
-675 13.879391665\
-8 12.7650561363 \
-13.9145181476 C \
-12.7712972052 13\
-.9496446294 12.7\
-77538274 13.9843\
-153282 12.783779\
-3428 14.01850625\
-56 C 12.79002041\
-17 14.052697183 \
-12.7962614805 14\
-.0864054503 12.8\
-025025493 14.119\
-6079713 C 12.808\
-7436182 14.15281\
-04924 12.8149846\
-87 14.1855042223\
- 12.8212257558 1\
-4.2176670129 C 1\
-2.8274668247 14.\
-2498298036 12.83\
-37078935 14.2814\
-584585 12.839948\
-9624 14.31253180\
-18 C 12.84619003\
-12 14.3436051451\
- 12.8524311 14.3\
-741198339 12.858\
-6721689 14.40405\
-5697 C 12.864913\
-2377 14.43399156\
-01 12.8711543065\
- 14.4633451134 1\
-2.8773953754 14.\
-4920972219 C 12.\
-8836364442 14.52\
-08493303 12.8898\
-77513 14.5489963\
-737 12.896118581\
-9 14.5765202828 \
-C 12.9023596507 \
-14.6040441918 12\
-.9086007195 14.6\
-30941216 12.9148\
-417884 14.657194\
-3795 C 12.921082\
-8572 14.68344754\
-3 12.9273239261 \
-14.7090529707 12\
-.9335649949 14.7\
-339948068 C 12.9\
-398060637 14.758\
-936643 12.946047\
-1326 14.78321089\
-37 12.9522882014\
- 14.8068028476 C\
- 12.9585292702 1\
-4.8303948015 12.\
-9647703391 14.85\
-33003524 12.9710\
-114079 14.875505\
-9559 C 12.977252\
-4767 14.89771155\
-94 12.9834935456\
- 14.9192130033 1\
-2.9897346144 14.\
-9399979312 C 12.\
-9959756833 14.96\
-07828591 13.0022\
-167521 14.980846\
-9593 13.00845782\
-09 15.0001790825\
- C 13.0146988898\
- 15.0195112058 1\
-3.0209399586 15.\
-0381069473 13.02\
-71810274 15.0559\
-563825 C 13.0334\
-220963 15.073805\
-8176 13.03966316\
-51 15.0909044555\
- 13.0459042339 1\
-5.1072436112 C 1\
-3.0521453028 15.\
-1235827668 13.05\
-83863716 15.1391\
-578701 13.064627\
-4405 15.15396148\
-93 C 13.07086850\
-93 15.1687651085\
- 13.0771095781 1\
-5.1827926014 13.\
-083350647 15.196\
-0378009 C 13.089\
-5917158 15.20928\
-30004 13.0958327\
-846 15.221741199\
-5 13.1020738535 \
-15.233407505 C 1\
-3.1083149223 15.\
-2450738105 13.11\
-45559911 15.2559\
-434578 13.120797\
-06 15.2660128357\
- C 13.1270381288\
- 15.2760822136 1\
-3.1332791976 15.\
-2853465071 13.13\
-95202665 15.2938\
-033922 C 13.1457\
-613353 15.302260\
-2773 13.15200240\
-42 15.3099048962\
- 13.158243473 15\
-.316736216 C 13.\
-1644845418 15.32\
-35675358 13.1707\
-256107 15.329580\
-6633 13.17696667\
-95 15.334775858 \
-C 13.1832077483 \
-15.3399710527 13\
-.1894488172 15.3\
-443433937 13.195\
-689886 15.347894\
-4326 C 13.201930\
-9548 15.35144547\
-14 13.2081720237\
- 15.3541702672 1\
-3.2144130925 15.\
-3560716612 C 13.\
-2206541614 15.35\
-79730551 13.2268\
-952302 15.359046\
-0938 13.23313629\
-9 15.3592949036 \
-C 13.2393773679 \
-15.3595437135 13\
-.2456184367 15.3\
-589633362 13.251\
-8595055 15.35755\
-91774 C 13.25810\
-05744 15.3561550\
-185 13.264341643\
-2 15.3539221225 \
-13.270582712 15.\
-3508671655 C 13.\
-2768237809 15.34\
-78122085 13.2830\
-648497 15.343930\
-2454 13.28930591\
-85 15.3392292125\
- C 13.2955469874\
- 15.3345281797 1\
-3.3017880562 15.\
-3290031501 13.30\
-80291251 15.3226\
-633082 C 13.3142\
-701939 15.316323\
-4663 13.32051126\
-27 15.3091639108\
- 13.3267523316 1\
-5.3011950599 C 1\
-3.3329934004 15.\
-293226209 13.339\
-2344692 15.28444\
-31948 13.3454755\
-381 15.274857653\
-1 C 13.351716606\
-9 15.2652721114 \
-13.3579576757 15\
-.2548792151 13.3\
-641987446 15.243\
-6917998 C 13.370\
-4398134 15.23250\
-43845 13.3766808\
-823 15.220517671\
-3 13.3829219511 \
-15.2077456758 C \
-13.3891630199 15\
-.1949736803 13.3\
-954040888 15.181\
-4116793 13.40164\
-51576 15.1670748\
-463 C 13.4078862\
-264 15.152738013\
-4 13.4141272953 \
-15.1376216885 13\
-.4203683641 15.1\
-217421799 C 13.4\
-266094329 15.105\
-8626712 13.43285\
-05018 15.0892153\
-89 13.4390915706\
- 15.0718177511 C\
- 13.4453326394 1\
-5.0544201132 13.\
-4515737083 15.03\
-62676069 13.4578\
-147771 15.017378\
-7328 C 13.464055\
-846 14.998489858\
-6 13.4702969148 \
-14.9788601882 13\
-.4765379836 14.9\
-58509276 C 13.48\
-27790525 14.9381\
-583639 13.489020\
-1213 14.91708187\
-26 13.4952611901\
- 14.8953003807 C\
- 13.501502259 14\
-.8735188887 13.5\
-077433278 14.851\
-0281565 13.51398\
-43966 14.8278497\
-543 C 13.5202254\
-655 14.804671352\
-2 13.5264665343 \
-14.7808011449 13\
-.5327076032 14.7\
-562616614 C 13.5\
-38948672 14.7317\
-22178 13.5451897\
-408 14.706509393\
-9 13.5514308097 \
-14.6806467621 C \
-13.5576718785 14\
-.6547841302 13.5\
-639129473 14.628\
-2677431 13.57015\
-40162 14.6011219\
-409 C 13.5763950\
-85 14.5739761388\
- 13.5826361538 1\
-4.5461971373 13.\
-5888772227 14.51\
-78101266 C 13.59\
-51182915 14.4894\
-231159 13.601359\
-3604 14.46042444\
-05 13.6076004292\
- 14.4308401016 C\
- 13.613841498 14\
-.4012557627 13.6\
-200825669 14.371\
-0822392 13.62632\
-36357 14.3403463\
-032 C 13.6325647\
-045 14.309610367\
-2 13.6388057734 \
-14.2783086376 13\
-.6450468422 14.2\
-464686158 C 13.6\
-51287911 14.2146\
-28594 13.6575289\
-799 14.182247044\
-1 13.6637700487 \
-14.1493521545 C \
-13.6700111175 14\
-.1164572648 13.6\
-762521864 14.083\
-0459497 13.68249\
-32552 14.0491470\
-408 C 13.6887343\
-241 14.015248131\
-8 13.6949753929 \
-13.9808586983 13\
-.7012164617 13.9\
-460081706 C 13.7\
-074575306 13.911\
-157643 13.713698\
-5994 13.87584324\
-99 13.7199396682\
- 13.840094975 C \
-13.7261807371 13\
-.8043467002 13.7\
-324218059 13.768\
-1619361 13.73866\
-28747 13.7315711\
-734 C 13.7449039\
-436 13.694980410\
-7 13.7511450124 \
-13.6579812097 13\
-.7573860813 13.6\
-206045207 C 13.7\
-636271501 13.583\
-2278318 13.76986\
-82189 13.5454713\
-868 13.776109287\
-8 13.507366548 C\
- 13.7823503566 1\
-3.4692617092 13.\
-7885914254 13.43\
-08063837 13.7948\
-324943 13.392032\
-2972 C 13.801073\
-5631 13.35325821\
-07 13.8073146319\
- 13.3141634485 1\
-3.8135557008 13.\
-2747800508 C 13.\
-8197967696 13.23\
-53966531 13.8260\
-378384 13.195722\
-8865 13.83227890\
-73 13.1557910561\
- C 13.8385199761\
- 13.1158592256 1\
-3.844761045 13.0\
-756677819 13.851\
-0021138 13.03524\
-92448 C 13.85724\
-31826 12.9948307\
-078 13.863484251\
-5 12.9541837144 \
-13.8697253203 12\
-.9133409493 C 13\
-.8759663891 12.8\
-724981843 13.882\
-207458 12.831458\
-4729 13.88844852\
-68 12.7902546141\
- C 13.8946895956\
- 12.7490507553 1\
-3.9009306645 12.\
-7076817647 13.90\
-71717333 12.6661\
-805046 C 13.9134\
-128022 12.624679\
-2445 13.91965387\
-1 12.5830449224 \
-13.9258949398 12\
-.5413104133 C 13\
-.9321360087 12.4\
-995759042 13.938\
-3770775 12.45774\
-06084 13.9446181\
-463 12.415837363\
- C 13.9508592152\
- 12.3739341175 1\
-3.957100284 12.3\
-319625167 13.963\
-3413528 12.28995\
-53085 C 13.96958\
-24217 12.2479481\
-003 13.975823490\
-5 12.2059050736 \
-13.9820645593 12\
-.163858837 C 13.\
-9883056282 12.12\
-18126003 13.9945\
-46697 12.0797631\
-375 14.000787765\
-9 12.037742867 C\
- 14.0070288347 1\
-1.9957225965 14.\
-0132699035 11.95\
-37316971 14.0195\
-109724 11.911802\
-3472 C 14.025752\
-0412 11.86987299\
-73 14.03199311 1\
-1.8280055704 14.\
-0382341789 11.78\
-62319551 C 14.04\
-44752477 11.7444\
-583398 14.050716\
-3165 11.70277910\
-36 14.0569573854\
- 11.661225796 C \
-14.0631984542 11\
-.6196724885 14.0\
-694395231 11.578\
-2458702 14.07568\
-05919 11.5369771\
-031 C 14.0819216\
-607 11.495708336\
- 14.0881627296 1\
-1.4545983726 14.\
-0944037984 11.41\
-36779387 C 14.10\
-06448672 11.3727\
-575047 14.106885\
-9361 11.33202774\
-35 14.1131270049\
- 11.2915188972 C\
- 14.1193680737 1\
-1.2510100508 14.\
-1256091426 11.21\
-07234514 14.1318\
-502114 11.170688\
-8107 C 14.138091\
-2803 11.13065417\
-01 14.1443323491\
- 11.090873007 14\
-.1505734179 11.0\
-513744572 C 14.1\
-568144868 11.011\
-8759074 14.16305\
-55556 10.9726616\
-739 14.169296624\
-4 10.9337602714 \
-C 14.1755376933 \
-10.8948588688 14\
-.1817787621 10.8\
-56272182 14.1880\
-198309 10.818028\
-06 C 14.19426089\
-98 10.7797839381\
- 14.2005019686 1\
-0.7418844447 14.\
-2067430374 10.70\
-43567207 C 14.21\
-29841063 10.6668\
-289967 14.219225\
-1751 10.62967528\
-14 14.225466244 \
-10.5929219653 C \
-14.2317073128 10\
-.5561686492 14.2\
-379483816 10.519\
-8181438 14.24418\
-94505 10.4838960\
-485 C 14.2504305\
-193 10.447973953\
-2 14.2566715881 \
-10.4124828478 14\
-.262912657 10.37\
-74475013 C 14.26\
-91537258 10.3424\
-121548 14.275394\
-7946 10.30783531\
-13 14.2816358635\
- 10.2737408708 C\
- 14.2878769323 1\
-0.2396464303 14.\
-2941180012 10.20\
-60372972 14.3003\
-5907 10.17293646\
-55 C 14.30660013\
-88 10.1398356338\
- 14.3128412077 1\
-0.1072461637 14.\
-3190822765 10.07\
-51901078 C 14.32\
-53233453 10.0431\
-340518 14.331564\
-4142 10.01161462\
-12 14.337805483 \
-9.98065289287 C \
-14.3440465518 9.\
-94969116455 14.3\
-502876207 9.9192\
-9049579 14.35652\
-86895 9.88947095\
-54 C 14.36276975\
-83 9.85965141502\
- 14.3690108272 9\
-.83041650112 14.\
-375251896 9.8017\
-8524339 C 14.381\
-4929649 9.773153\
-98566 14.3877340\
-337 9.7451300176\
-5 14.3939751025 \
-9.71773130046 C \
-14.4002161714 9.\
-69033258328 14.4\
-064572402 9.6635\
-6288028 14.41269\
-8309 9.637439056\
-28 C 14.41893937\
-79 9.61131523228\
- 14.4251804467 9\
-.58584117462 14.\
-4314215155 9.561\
-03262572 C 14.43\
-76625844 9.53622\
-407682 14.443903\
-6532 9.512085042\
-02 14.4501447221\
- 9.48863011701 C\
- 14.4563857909 9\
-.46517519199 14.\
-4626268597 9.442\
-40849391 14.4688\
-679286 9.4203434\
-4915 C 14.475108\
-9974 9.398278404\
-39 14.4813500662\
- 9.37691923553 1\
-4.4875911351 9.3\
-5627817893 C 14.\
-4938322039 9.335\
-63712233 14.5000\
-732727 9.3157184\
-9947 14.50631434\
-16 9.29653333775\
- C 14.5125554104\
- 9.27734817602 1\
-4.5187964792 9.2\
-5890088915 14.52\
-50375481 9.24120\
-127852 C 14.5312\
-786169 9.2235016\
-6789 14.53751968\
-58 9.20655423262\
- 14.5437607546 9\
-.19036753295 C 1\
-4.5500018234 9.1\
-7418083328 14.55\
-62428923 9.15875\
-944677 14.562483\
-9611 9.144110679\
-28 C 14.56872502\
-99 9.12946191178\
- 14.5749660988 9\
-.11559041225 14.\
-5812071676 9.102\
-50222084 C 14.58\
-74482364 9.08941\
-402944 14.593689\
-3053 9.077113859\
-29 14.5999303741\
- 9.06560647555 C\
- 14.606171443 9.\
-05409909181 14.6\
-124125118 9.0433\
-8926452 14.61865\
-35806 9.03348047\
-644 C 14.6248946\
-495 9.0235716883\
-5 14.6311357183 \
-9.01446875905 14\
-.6373767871 9.00\
-617388352 C 14.6\
-43617856 8.99787\
-900799 14.649858\
-9248 8.990397047\
-88 14.6560999936\
- 8.98372890704 C\
- 14.6623410625 8\
-.97706076619 14.\
-6685821313 8.971\
-21134081 14.6748\
-232002 8.9661802\
-4219 C 14.681064\
-269 8.9611491435\
-6 14.6873053378 \
-8.95694129489 14\
-.6935464067 8.95\
-35550155 C 14.69\
-97874755 8.95016\
-873611 14.706028\
-5443 8.947608968\
-6 14.7122696132 \
-8.94587274292 C \
-14.718510682 8.9\
-4413651724 14.72\
-47517508 8.94322\
-878774 14.730992\
-8197 8.943145299\
-62 C 14.73723388\
-85 8.94306181149\
- 14.7434749573 8\
-.94380752316 14.\
-7497160262 8.945\
-37690164 C 14.75\
-5957095 8.946946\
-28012 14.7621981\
-639 8.9493442802\
-5 14.7684392327 \
-8.95256409941 C \
-14.7746803015 8.\
-95578391856 14.7\
-809213704 8.9598\
-3050035 14.78716\
-24392 8.96469578\
-302 C 14.7934035\
-08 8.9695610657 \
-14.7996445769 8.\
-97524997398 14.8\
-058856457 8.9817\
-5319947 C 14.812\
-1267145 8.988256\
-42495 14.8183677\
-834 8.9955788658\
-8 14.8246088522 \
-9.00370998157 C \
-14.8308499211 9.\
-01184109726 14.8\
-370909899 9.0207\
-8575188 14.84333\
-20587 9.03053218\
-878 C 14.8495731\
-276 9.0402786256\
-8 14.8558141964 \
-9.05083166744 14\
-.8620552652 9.06\
-217835961 C 14.8\
-682963341 9.0735\
-2505179 14.87453\
-74029 9.08567016\
-792 14.880778471\
-7 9.09859957577 \
-C 14.8870195406 \
-9.11152898363 14\
-.8932606094 9.12\
-524740034 14.899\
-5016782 9.139739\
-53774 C 14.90574\
-27471 9.15423167\
-514 14.911983815\
-9 9.16950218665 \
-14.9182248848 9.\
-18553465181 C 14\
-.9244659536 9.20\
-156711697 14.930\
-7070224 9.218366\
-11829 14.9369480\
-913 9.2359141283\
-9 C 14.943189160\
-1 9.2534621385 1\
-4.9494302289 9.2\
-7176366192 14.95\
-56712978 9.29080\
-009145 C 14.9619\
-123666 9.3098365\
-2098 14.96815343\
-54 9.3296122762 \
-14.9743945043 9.\
-35010769885 C 14\
-.9806355731 9.37\
-06031215 14.9868\
-76642 9.39182253\
-938 14.993117710\
-8 9.41374527355 \
-C 14.9993587796 \
-9.43566800772 15\
-.0055998485 9.45\
-829828751 15.011\
-8409173 9.481614\
-44528 C 15.01808\
-19861 9.50493060\
-304 15.024323055\
- 9.52893676311 1\
-5.0305641238 9.5\
-5361030261 C 15.\
-0368051926 9.578\
-28384211 15.0430\
-462615 9.6036287\
-7399 15.04928733\
-03 9.62962155513\
- C 15.0555283991\
- 9.65561433628 1\
-5.061769468 9.68\
-225886205 15.068\
-0105368 9.709530\
-70548 C 15.07425\
-16057 9.73680254\
-892 15.080492674\
-5 9.76470548177 \
-15.0867337433 9.\
-79321423098 C 15\
-.0929748122 9.82\
-172298018 15.099\
-215881 9.8508411\
-8806 15.10545694\
-98 9.88054277452\
- C 15.1116980187\
- 9.91024436099 1\
-5.1179390875 9.9\
-4053283329 15.12\
-41801563 9.97138\
-134462 C 15.1304\
-212252 10.002229\
-856 15.136662294\
- 10.0336417731 1\
-5.1429033629 10.\
-065589524 C 15.1\
-491444317 10.097\
-5372749 15.15538\
-55005 10.1300240\
-807 15.161626569\
-4 10.1630216867 \
-C 15.1678676382 \
-10.1960192927 15\
-.174108707 10.22\
-95307693 15.1803\
-497759 10.263527\
-2231 C 15.186590\
-8447 10.29752367\
-68 15.1928319135\
- 10.3320080227 1\
-5.1990729824 10.\
-3669507729 C 15.\
-2053140512 10.40\
-1893523 15.21155\
-512 10.437297432\
-6 15.2177961889 \
-10.473132465 C 1\
-5.2240372577 10.\
-5089674975 15.23\
-02783266 10.5452\
-362437 15.236519\
-3954 10.58190816\
-51 C 15.24276046\
-42 10.6185800864\
- 15.2490015331 1\
-0.6556576055 15.\
-2552426019 10.69\
-31097287 C 15.26\
-14836707 10.7305\
-618519 15.267724\
-7396 10.76839082\
-98 15.2739658084\
- 10.8065652617 C\
- 15.2802068772 1\
-0.8447396936 15.\
-2864479461 10.88\
-32616548 15.2926\
-890149 10.922099\
-3859 C 15.298930\
-0838 10.96093711\
-69 15.3051711526\
- 11.0000925145 1\
-5.3114122214 11.\
-0395335097 C 15.\
-3176532903 11.07\
-8974505 15.32389\
-43591 11.1187028\
-13 15.3301354279\
- 11.1586861049 C\
- 15.3363764968 1\
-1.1986693969 15.\
-3426175656 11.23\
-89092037 15.3488\
-586344 11.279372\
-9867 C 15.355099\
-7033 11.31983676\
-96 15.3613407721\
- 11.360525873 15\
-.367581841 11.40\
-14075985 C 15.37\
-38229098 11.4422\
-893239 15.380063\
-9786 11.48336482\
-72 15.3863050475\
- 11.5246013006 C\
- 15.3925461163 1\
-1.565837774 15.3\
-987871851 11.607\
-236183 15.405028\
-254 11.648763661\
-6 C 15.411269322\
-8 11.6902911401 \
-15.4175103916 11\
-.7319484616 15.4\
-237514605 11.773\
-7027525 C 15.429\
-9925293 11.81545\
-70435 15.4362335\
-981 11.857308884\
-1 15.442474667 1\
-1.899225444 C 15\
-.4487157358 11.9\
-41142004 15.4549\
-568047 11.983123\
-6696 15.46119787\
-35 12.0251377045\
- C 15.4674389423\
- 12.0671517393 1\
-5.4736800112 12.\
-1091983351 15.47\
-992108 12.151244\
-9\x22\x0a       style=\
-\x22fill:none;fill-\
-opacity:1;stroke\
-:#ff0000;stroke-\
-width:0.94488189\
-;stroke-miterlim\
-it:4;stroke-dash\
-array:none;strok\
-e-opacity:1\x22 />\x0a\
-  </g>\x0a</svg>\x0a\
-\x00\x00\x0b@\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2232\
-px\x22\x0a   height=\x223\
-2px\x22\x0a   viewBox=\
-\x220 0 32 32\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.1 r\x22\x0a   s\
-odipodi:docname=\
-\x22equals_qm.svg\x22>\
-\x0a  <sodipodi:nam\
-edview\x0a     id=\x22\
-base\x22\x0a     pagec\
-olor=\x22#ffffff\x22\x0a \
-    bordercolor=\
-\x22#666666\x22\x0a     b\
-orderopacity=\x221.\
-0\x22\x0a     inkscape\
-:pageopacity=\x220.\
-0\x22\x0a     inkscape\
-:pageshadow=\x222\x22\x0a\
-     inkscape:zo\
-om=\x2216\x22\x0a     ink\
-scape:cx=\x2220.384\
-743\x22\x0a     inksca\
-pe:cy=\x2214.953125\
-\x22\x0a     inkscape:\
-document-units=\x22\
-px\x22\x0a     inkscap\
-e:current-layer=\
-\x22layer1\x22\x0a     sh\
-owgrid=\x22false\x22\x0a \
-    inkscape:win\
-dow-width=\x221920\x22\
+=\x220.92.2 2405546\
+, 2018-03-11\x22\x0a  \
+ sodipodi:docnam\
+e=\x22message_type.\
+svg\x22>\x0a  <sodipod\
+i:namedview\x0a    \
+ id=\x22base\x22\x0a     \
+pagecolor=\x22#0000\
+00\x22\x0a     borderc\
+olor=\x22#666666\x22\x0a \
+    borderopacit\
+y=\x221.0\x22\x0a     ink\
+scape:pageopacit\
+y=\x221\x22\x0a     inksc\
+ape:pageshadow=\x22\
+2\x22\x0a     inkscape\
+:zoom=\x2232\x22\x0a     \
+inkscape:cx=\x224.9\
+678955\x22\x0a     ink\
+scape:cy=\x228.2784\
+17\x22\x0a     inkscap\
+e:document-units\
+=\x22px\x22\x0a     inksc\
+ape:current-laye\
+r=\x22layer1\x22\x0a     \
+showgrid=\x22false\x22\
 \x0a     inkscape:w\
-indow-height=\x2211\
-41\x22\x0a     inkscap\
-e:window-x=\x220\x22\x0a \
-    inkscape:win\
-dow-y=\x220\x22\x0a     i\
-nkscape:window-m\
-aximized=\x221\x22\x0a   \
-  inkscape:grid-\
-bbox=\x22true\x22 />\x0a \
- <defs\x0a     id=\x22\
-defs4485\x22 />\x0a  <\
-metadata\x0a     id\
-=\x22metadata4488\x22>\
+indow-width=\x22192\
+0\x22\x0a     inkscape\
+:window-height=\x22\
+1141\x22\x0a     inksc\
+ape:window-x=\x220\x22\
+\x0a     inkscape:w\
+indow-y=\x220\x22\x0a    \
+ inkscape:window\
+-maximized=\x221\x22\x0a \
+    inkscape:gri\
+d-bbox=\x22true\x22 />\
+\x0a  <defs\x0a     id\
+=\x22defs815\x22 />\x0a  \
+<metadata\x0a     i\
+d=\x22metadata818\x22>\
 \x0a    <rdf:RDF>\x0a \
      <cc:Work\x0a  \
        rdf:about\
@@ -11402,88 +11376,54 @@ a>\x0a  <g\x0a     id=\
 kscape:groupmode\
 =\x22layer\x22\x0a     in\
 kscape:label=\x22Eb\
-ene 1\x22>\x0a    <g\x0a \
-      aria-label\
-=\x22\x09\xe2\x89\x9f\x22\x0a       s\
-tyle=\x22font-style\
-:normal;font-var\
-iant:normal;font\
--weight:900;font\
--stretch:normal;\
-font-size:40px;l\
-ine-height:1.25;\
-font-family:'Sou\
-rce Code Pro';-i\
-nkscape-font-spe\
-cification:'Sour\
-ce Code Pro Heav\
-y';letter-spacin\
-g:0px;word-spaci\
-ng:0px;fill:#005\
-5d4;fill-opacity\
-:1;stroke:none\x22\x0a\
-       id=\x22text5\
-046\x22>\x0a      <pat\
-h\x0a         d=\x22M \
-3.9726563,17.472\
-656 H 29.011719 \
-V 22.0625 H 3.97\
-26563 Z m 0,8.88\
-6719 H 29.011719\
- v 4.628906 H 3.\
-9726563 Z M 17.5\
-85937,10.539063 \
-h -3.535156 v -0\
-.46875 q 0,-0.82\
-0313 0.3125,-1.4\
-257817 0.332032,\
--0.625 1.367188,\
--1.5820313 l 0.6\
-25,-0.5664063 q \
-0.566406,-0.5078\
-125 0.820312,-0.\
-9570312 0.253906\
-,-0.4492188 0.25\
-3906,-0.8984375 \
-0,-0.6835937 -0.\
-46875,-1.0546875\
- -0.46875,-0.390\
-625 -1.308593,-0\
-.390625 -0.80078\
-1,0 -1.71875,0.3\
-320313 -0.917969\
-,0.3125 -1.89453\
-1,0.9570312 V 1.\
-4179687 Q 13.210\
-938,1.0078125 14\
-.1875,0.8125 q 0\
-.976563,-0.19531\
-25 1.875,-0.1953\
-125 2.382812,0 3\
-.632812,0.976562\
-5 1.25,0.9765625\
- 1.25,2.8320312 \
-0,0.9570313 -0.3\
-71093,1.71875 Q \
-20.203125,6.9062\
-5 19.265625,7.76\
-5625 l -0.625,0.\
-546875 q -0.6640\
-63,0.625 -0.8593\
-75,0.9960938 -0.\
-195313,0.3515625\
- -0.195313,0.800\
-7812 z m -3.5351\
-56,1.445312 h 3.\
-535156 v 3.47656\
-3 h -3.535156 z\x22\
-\x0a         style=\
-\x22fill:#0055d4;fi\
-ll-opacity:1\x22\x0a  \
-       id=\x22path5\
-048\x22 />\x0a    </g>\
-\x0a  </g>\x0a</svg>\x0a\
-\x00\x00\x073\
+ene 1\x22>\x0a    <tex\
+t\x0a       xml:spa\
+ce=\x22preserve\x22\x0a  \
+     style=\x22font\
+-style:normal;fo\
+nt-variant:norma\
+l;font-weight:90\
+0;font-stretch:n\
+ormal;font-size:\
+14.66666698px;li\
+ne-height:1.25;f\
+ont-family:'Sour\
+ce Sans Pro';-in\
+kscape-font-spec\
+ification:'Sourc\
+e Sans Pro Heavy\
+';letter-spacing\
+:0px;word-spacin\
+g:0px;fill:#0080\
+00;fill-opacity:\
+1;stroke:none\x22\x0a \
+      x=\x22-0.75\x22\x0a\
+       y=\x2212.062\
+5\x22\x0a       id=\x22te\
+xt1376\x22><tspan\x0a \
+        sodipodi\
+:role=\x22line\x22\x0a   \
+      id=\x22tspan1\
+374\x22\x0a         x=\
+\x22-0.75\x22\x0a        \
+ y=\x2212.0625\x22\x0a   \
+      style=\x22fon\
+t-style:normal;f\
+ont-variant:norm\
+al;font-weight:9\
+00;font-stretch:\
+normal;font-size\
+:12.66666698px;l\
+ine-height:1;fon\
+t-family:'Source\
+ Sans Pro';-inks\
+cape-font-specif\
+ication:'Source \
+Sans Pro Heavy';\
+fill:#008000\x22>MT\
+</tspan></text>\x0a\
+  </g>\x0a</svg>\x0a\
+\x00\x00\x16E\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
@@ -11492,56 +11432,59 @@ no\x22?>\x0a<!-- Creat\
 ed with Inkscape\
  (http://www.ink\
 scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
+\x0a<svg\x0a   xmlns:o\
+sb=\x22http://www.o\
+penswatchbook.or\
+g/uri/2009/osb\x22\x0a\
+   xmlns:dc=\x22htt\
+p://purl.org/dc/\
+elements/1.1/\x22\x0a \
+  xmlns:cc=\x22http\
+://creativecommo\
+ns.org/ns#\x22\x0a   x\
+mlns:rdf=\x22http:/\
+/www.w3.org/1999\
+/02/22-rdf-synta\
+x-ns#\x22\x0a   xmlns:\
+svg=\x22http://www.\
+w3.org/2000/svg\x22\
+\x0a   xmlns=\x22http:\
 //www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.2 5c3e80d\
-, 2017-08-06\x22\x0a  \
- sodipodi:docnam\
-e=\x22uncollapse.sv\
-g\x22>\x0a  <sodipodi:\
-namedview\x0a     i\
-d=\x22base\x22\x0a     pa\
-gecolor=\x22#ffffff\
-\x22\x0a     bordercol\
-or=\x22#666666\x22\x0a   \
-  borderopacity=\
-\x221.0\x22\x0a     inksc\
-ape:pageopacity=\
-\x220.0\x22\x0a     inksc\
-ape:pageshadow=\x22\
-2\x22\x0a     inkscape\
-:zoom=\x2216\x22\x0a     \
-inkscape:cx=\x22-8.\
-875\x22\x0a     inksca\
-pe:cy=\x228\x22\x0a     i\
+0/svg\x22\x0a   xmlns:\
+sodipodi=\x22http:/\
+/sodipodi.source\
+forge.net/DTD/so\
+dipodi-0.dtd\x22\x0a  \
+ xmlns:inkscape=\
+\x22http://www.inks\
+cape.org/namespa\
+ces/inkscape\x22\x0a  \
+ width=\x2216px\x22\x0a  \
+ height=\x2216px\x22\x0a \
+  viewBox=\x220 0 1\
+6 16\x22\x0a   version\
+=\x221.1\x22\x0a   id=\x22SV\
+GRoot\x22\x0a   sodipo\
+di:docname=\x22snif\
+fer.svg\x22\x0a   inks\
+cape:version=\x220.\
+92.1 r\x22>\x0a  <sodi\
+podi:namedview\x0a \
+    id=\x22base\x22\x0a  \
+   pagecolor=\x22#f\
+fffff\x22\x0a     bord\
+ercolor=\x22#666666\
+\x22\x0a     borderopa\
+city=\x221.0\x22\x0a     \
+inkscape:pageopa\
+city=\x220.0\x22\x0a     \
+inkscape:pagesha\
+dow=\x222\x22\x0a     ink\
+scape:zoom=\x2232\x22\x0a\
+     inkscape:cx\
+=\x222.7848469\x22\x0a   \
+  inkscape:cy=\x229\
+.5734649\x22\x0a     i\
 nkscape:document\
 -units=\x22px\x22\x0a    \
  inkscape:curren\
@@ -11560,405 +11503,285 @@ window-maximized\
 =\x221\x22\x0a     inksca\
 pe:grid-bbox=\x22tr\
 ue\x22 />\x0a  <defs\x0a \
-    id=\x22defs815\x22\
- />\x0a  <metadata\x0a\
-     id=\x22metadat\
-a818\x22>\x0a    <rdf:\
-RDF>\x0a      <cc:W\
-ork\x0a         rdf\
-:about=\x22\x22>\x0a     \
-   <dc:format>im\
-age/svg+xml</dc:\
-format>\x0a        \
-<dc:type\x0a       \
-    rdf:resource\
-=\x22http://purl.or\
-g/dc/dcmitype/St\
-illImage\x22 />\x0a   \
-     <dc:title /\
->\x0a      </cc:Wor\
-k>\x0a    </rdf:RDF\
->\x0a  </metadata>\x0a\
-  <g\x0a     id=\x22la\
-yer1\x22\x0a     inksc\
-ape:groupmode=\x22l\
-ayer\x22\x0a     inksc\
-ape:label=\x22Ebene\
- 1\x22>\x0a    <path\x0a \
-      id=\x22path14\
-47\x22\x0a       inksc\
-ape:label=\x22Trian\
-gle\x22\x0a       styl\
-e=\x22fill:#000000;\
-fill-opacity:1;s\
-troke:none;strok\
-e-width:1.074570\
-3;stroke-opacity\
-:1\x22\x0a       d=\x22M \
-12,4 H 4 l 4.000\
-001,8 z\x22\x0a       \
-inkscape:connect\
-or-curvature=\x220\x22\
- />\x0a  </g>\x0a</svg\
->\x0a\
-\x00\x00\x09\x03\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.1 r\x22\x0a   s\
-odipodi:docname=\
-\x22spectrum.svg\x22>\x0a\
-  <sodipodi:name\
-dview\x0a     id=\x22b\
-ase\x22\x0a     pageco\
-lor=\x22#ffffff\x22\x0a  \
-   bordercolor=\x22\
-#666666\x22\x0a     bo\
-rderopacity=\x221.0\
-\x22\x0a     inkscape:\
-pageopacity=\x220.0\
-\x22\x0a     inkscape:\
-pageshadow=\x222\x22\x0a \
-    inkscape:zoo\
-m=\x2245.254834\x22\x0a  \
-   inkscape:cx=\x22\
-4.0007222\x22\x0a     \
-inkscape:cy=\x227.9\
-550105\x22\x0a     ink\
-scape:document-u\
-nits=\x22px\x22\x0a     i\
-nkscape:current-\
-layer=\x22layer1\x22\x0a \
-    showgrid=\x22fa\
-lse\x22\x0a     inksca\
-pe:window-width=\
-\x221920\x22\x0a     inks\
-cape:window-heig\
-ht=\x221015\x22\x0a     i\
-nkscape:window-x\
-=\x220\x22\x0a     inksca\
-pe:window-y=\x220\x22\x0a\
-     inkscape:wi\
-ndow-maximized=\x22\
-1\x22\x0a     inkscape\
-:grid-bbox=\x22true\
-\x22 />\x0a  <defs\x0a   \
-  id=\x22defs5788\x22 \
-/>\x0a  <metadata\x0a \
-    id=\x22metadata\
-5791\x22>\x0a    <rdf:\
-RDF>\x0a      <cc:W\
-ork\x0a         rdf\
-:about=\x22\x22>\x0a     \
-   <dc:format>im\
-age/svg+xml</dc:\
-format>\x0a        \
-<dc:type\x0a       \
-    rdf:resource\
-=\x22http://purl.or\
-g/dc/dcmitype/St\
-illImage\x22 />\x0a   \
-     <dc:title /\
->\x0a      </cc:Wor\
-k>\x0a    </rdf:RDF\
->\x0a  </metadata>\x0a\
-  <g\x0a     inksca\
-pe:label=\x22Ebene \
-2\x22\x0a     id=\x22laye\
-r2\x22\x0a     inkscap\
-e:groupmode=\x22lay\
-er\x22 />\x0a  <g\x0a    \
- id=\x22layer1\x22\x0a   \
-  inkscape:group\
-mode=\x22layer\x22\x0a   \
-  inkscape:label\
-=\x22Ebene 1\x22>\x0a    \
-<path\x0a       sty\
-le=\x22fill:#80b3ff\
-;fill-rule:eveno\
-dd;stroke:#7d7d7\
-d;stroke-width:1\
-px;stroke-lineca\
-p:butt;stroke-li\
-nejoin:miter;str\
-oke-opacity:1\x22\x0a \
-      d=\x22M -0.17\
-67767,13.19367 C\
- -0.15467961,13.\
-061088 0.7954951\
-2,7.2716507 0.79\
-549512,7.2716507\
- L 1.6130873,12.\
-818019 2.9610096\
-,8.4648934 4.021\
-6698,13.326252 5\
-.5021746,7.71359\
-24 6.2755727,12.\
-199301 8.2201163\
-,0.50994206 10.3\
-41437,13.171573 \
-l 1.635184,-5.17\
-07185 0.861787,4\
-.1542525 0.77339\
-7,-3.9995729 0.6\
-62913,4.8171649 \
-1.038563,-5.5905\
-629 0.795495,5.8\
-115339\x22\x0a       i\
-d=\x22path4631\x22\x0a   \
-    inkscape:con\
-nector-curvature\
-=\x220\x22\x0a       sodi\
-podi:nodetypes=\x22\
-ccccccccccccccc\x22\
- />\x0a  </g>\x0a</svg\
->\x0a\
-\x00\x00\x0d\x0c\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22 standalone=\x22\
-no\x22?>\x0a<!-- Creat\
-ed with Inkscape\
- (http://www.ink\
-scape.org/) -->\x0a\
-\x0a<svg\x0a   xmlns:d\
-c=\x22http://purl.o\
-rg/dc/elements/1\
-.1/\x22\x0a   xmlns:cc\
-=\x22http://creativ\
-ecommons.org/ns#\
-\x22\x0a   xmlns:rdf=\x22\
-http://www.w3.or\
-g/1999/02/22-rdf\
--syntax-ns#\x22\x0a   \
-xmlns:svg=\x22http:\
-//www.w3.org/200\
-0/svg\x22\x0a   xmlns=\
-\x22http://www.w3.o\
-rg/2000/svg\x22\x0a   \
-xmlns:sodipodi=\x22\
-http://sodipodi.\
-sourceforge.net/\
-DTD/sodipodi-0.d\
-td\x22\x0a   xmlns:ink\
-scape=\x22http://ww\
-w.inkscape.org/n\
-amespaces/inksca\
-pe\x22\x0a   width=\x2216\
-px\x22\x0a   height=\x221\
-6px\x22\x0a   viewBox=\
-\x220 0 16 16\x22\x0a   v\
-ersion=\x221.1\x22\x0a   \
-id=\x22SVGRoot\x22\x0a   \
-inkscape:version\
-=\x220.92.1 r\x22\x0a   s\
-odipodi:docname=\
-\x22unlock.svg\x22>\x0a  \
-<sodipodi:namedv\
-iew\x0a     id=\x22bas\
-e\x22\x0a     pagecolo\
-r=\x22#ffffff\x22\x0a    \
- bordercolor=\x22#6\
-66666\x22\x0a     bord\
-eropacity=\x221.0\x22\x0a\
-     inkscape:pa\
-geopacity=\x220.0\x22\x0a\
-     inkscape:pa\
-geshadow=\x222\x22\x0a   \
-  inkscape:zoom=\
-\x2232\x22\x0a     inksca\
-pe:cx=\x222.438584\x22\
-\x0a     inkscape:c\
-y=\x228.4622059\x22\x0a  \
-   inkscape:docu\
-ment-units=\x22px\x22\x0a\
-     inkscape:cu\
-rrent-layer=\x22lay\
-er1\x22\x0a     showgr\
-id=\x22false\x22\x0a     \
-inkscape:window-\
-width=\x221440\x22\x0a   \
-  inkscape:windo\
-w-height=\x22844\x22\x0a \
-    inkscape:win\
-dow-x=\x220\x22\x0a     i\
-nkscape:window-y\
-=\x220\x22\x0a     inksca\
-pe:window-maximi\
-zed=\x221\x22\x0a     ink\
-scape:grid-bbox=\
-\x22true\x22 />\x0a  <def\
-s\x0a     id=\x22defs1\
-0\x22 />\x0a  <metadat\
-a\x0a     id=\x22metad\
-ata13\x22>\x0a    <rdf\
-:RDF>\x0a      <cc:\
-Work\x0a         rd\
-f:about=\x22\x22>\x0a    \
-    <dc:format>i\
-mage/svg+xml</dc\
-:format>\x0a       \
- <dc:type\x0a      \
-     rdf:resourc\
-e=\x22http://purl.o\
-rg/dc/dcmitype/S\
-tillImage\x22 />\x0a  \
-      <dc:title>\
-</dc:title>\x0a    \
-  </cc:Work>\x0a   \
- </rdf:RDF>\x0a  </\
-metadata>\x0a  <g\x0a \
-    inkscape:gro\
-upmode=\x22layer\x22\x0a \
-    id=\x22layer3\x22\x0a\
-     inkscape:la\
-bel=\x22Ebene 3\x22 />\
-\x0a  <g\x0a     id=\x22l\
-ayer1\x22\x0a     inks\
-cape:groupmode=\x22\
-layer\x22\x0a     inks\
-cape:label=\x22Eben\
-e 1\x22>\x0a    <rect\x0a\
-       style=\x22fi\
-ll:#0055d4;fill-\
-opacity:1;stroke\
--width:1.2955250\
-7\x22\x0a       id=\x22re\
-ct26\x22\x0a       wid\
-th=\x2213.1875\x22\x0a   \
-    height=\x229.41\
-09621\x22\x0a       x=\
-\x221.53125\x22\x0a      \
- y=\x226.1827879\x22\x0a \
-      ry=\x221.6689\
-39\x22 />\x0a    <path\
-\x0a       style=\x22f\
-ill:none;fill-op\
-acity:1;stroke:#\
-0055d4;stroke-wi\
-dth:2.37899995;s\
-troke-miterlimit\
-:4;stroke-dashar\
-ray:none;stroke-\
-opacity:1\x22\x0a     \
-  id=\x22path955\x22\x0a \
-      sodipodi:t\
-ype=\x22arc\x22\x0a      \
- sodipodi:cx=\x228.\
-0946102\x22\x0a       \
-sodipodi:cy=\x224.9\
-240141\x22\x0a       s\
-odipodi:rx=\x224.07\
-18422\x22\x0a       so\
-dipodi:ry=\x223.114\
-6088\x22\x0a       sod\
-ipodi:start=\x224.7\
-09543\x22\x0a       so\
-dipodi:end=\x221.54\
-24001\x22\x0a       d=\
-\x22M 8.0830218,1.8\
-094179 A 4.07184\
-22,3.1146088 0 0\
- 1 12.165956,4.8\
-753624 4.0718422\
-,3.1146088 0 0 1\
- 8.2102196,8.037\
-3672\x22\x0a       sod\
-ipodi:open=\x22true\
-\x22 />\x0a  </g>\x0a  <g\
-\x0a     inkscape:g\
-roupmode=\x22layer\x22\
-\x0a     id=\x22layer2\
-\x22\x0a     inkscape:\
-label=\x22Ebene 2\x22>\
-\x0a    <path\x0a     \
-  style=\x22fill:#f\
-fffff;fill-opaci\
-ty:1;stroke:none\
-;stroke-width:1.\
-50427711;stroke-\
-opacity:1\x22\x0a     \
-  id=\x22path853\x22\x0a \
-      sodipodi:t\
-ype=\x22arc\x22\x0a      \
- sodipodi:cx=\x228.\
-0742912\x22\x0a       \
-sodipodi:cy=\x228.8\
-435822\x22\x0a       s\
-odipodi:rx=\x221.81\
-58679\x22\x0a       so\
-dipodi:ry=\x221.715\
-8939\x22\x0a       sod\
-ipodi:start=\x223.1\
-415927\x22\x0a       s\
-odipodi:end=\x222.8\
-204603\x22\x0a       d\
-=\x22M 6.2584233,8.\
-8435821 A 1.8158\
-679,1.7158939 0 \
-0 1 7.9286644,7.\
-1332151 1.815867\
-9,1.7158939 0 0 \
-1 9.8668015,8.56\
-925 1.8158679,1.\
-7158939 0 0 1 8.\
-5074256,10.50994\
-8 1.8158679,1.71\
-58939 0 0 1 6.35\
-1253,9.385189\x22\x0a \
-      sodipodi:o\
-pen=\x22true\x22 />\x0a  \
-  <rect\x0a       s\
-tyle=\x22fill:#ffff\
-ff;fill-opacity:\
-1;stroke:none;st\
-roke-width:0.793\
-65373;stroke-opa\
-city:1\x22\x0a       i\
-d=\x22rect1685\x22\x0a   \
-    width=\x221.248\
-8354\x22\x0a       hei\
-ght=\x224.0842142\x22\x0a\
-       x=\x227.4914\
-622\x22\x0a       y=\x221\
-0.344006\x22 />\x0a  <\
-/g>\x0a</svg>\x0a\
+    id=\x22defs5036\
+\x22>\x0a    <linearGr\
+adient\x0a       id\
+=\x22linearGradient\
+7079\x22\x0a       osb\
+:paint=\x22solid\x22>\x0a\
+      <stop\x0a    \
+     style=\x22stop\
+-color:#aaccff;s\
+top-opacity:1;\x22\x0a\
+         offset=\
+\x220\x22\x0a         id=\
+\x22stop7077\x22 />\x0a  \
+  </linearGradie\
+nt>\x0a    <filter\x0a\
+       style=\x22co\
+lor-interpolatio\
+n-filters:sRGB;\x22\
+\x0a       inkscape\
+:label=\x22Drop Sha\
+dow\x22\x0a       id=\x22\
+filter914\x22>\x0a    \
+  <feFlood\x0a     \
+    flood-opacit\
+y=\x220.498039\x22\x0a   \
+      flood-colo\
+r=\x22rgb(0,0,0)\x22\x0a \
+        result=\x22\
+flood\x22\x0a         \
+id=\x22feFlood904\x22 \
+/>\x0a      <feComp\
+osite\x0a         i\
+n=\x22flood\x22\x0a      \
+   in2=\x22SourceGr\
+aphic\x22\x0a         \
+operator=\x22in\x22\x0a  \
+       result=\x22c\
+omposite1\x22\x0a     \
+    id=\x22feCompos\
+ite906\x22 />\x0a     \
+ <feGaussianBlur\
+\x0a         in=\x22co\
+mposite1\x22\x0a      \
+   stdDeviation=\
+\x220.5\x22\x0a         r\
+esult=\x22blur\x22\x0a   \
+      id=\x22feGaus\
+sianBlur908\x22 />\x0a\
+      <feOffset\x0a\
+         dx=\x220.1\
+\x22\x0a         dy=\x220\
+.1\x22\x0a         res\
+ult=\x22offset\x22\x0a   \
+      id=\x22feOffs\
+et910\x22 />\x0a      \
+<feComposite\x0a   \
+      in=\x22Source\
+Graphic\x22\x0a       \
+  in2=\x22offset\x22\x0a \
+        operator\
+=\x22over\x22\x0a        \
+ result=\x22composi\
+te2\x22\x0a         id\
+=\x22feComposite912\
+\x22 />\x0a    </filte\
+r>\x0a    <filter\x0a \
+      style=\x22col\
+or-interpolation\
+-filters:sRGB;\x22\x0a\
+       inkscape:\
+label=\x22Drop Shad\
+ow\x22\x0a       id=\x22f\
+ilter938\x22>\x0a     \
+ <feFlood\x0a      \
+   flood-opacity\
+=\x220.498039\x22\x0a    \
+     flood-color\
+=\x22rgb(0,0,0)\x22\x0a  \
+       result=\x22f\
+lood\x22\x0a         i\
+d=\x22feFlood928\x22 /\
+>\x0a      <feCompo\
+site\x0a         in\
+=\x22flood\x22\x0a       \
+  in2=\x22SourceGra\
+phic\x22\x0a         o\
+perator=\x22in\x22\x0a   \
+      result=\x22co\
+mposite1\x22\x0a      \
+   id=\x22feComposi\
+te930\x22 />\x0a      \
+<feGaussianBlur\x0a\
+         in=\x22com\
+posite1\x22\x0a       \
+  stdDeviation=\x22\
+0.5\x22\x0a         re\
+sult=\x22blur\x22\x0a    \
+     id=\x22feGauss\
+ianBlur932\x22 />\x0a \
+     <feOffset\x0a \
+        dx=\x220.1\x22\
+\x0a         dy=\x220.\
+1\x22\x0a         resu\
+lt=\x22offset\x22\x0a    \
+     id=\x22feOffse\
+t934\x22 />\x0a      <\
+feComposite\x0a    \
+     in=\x22SourceG\
+raphic\x22\x0a        \
+ in2=\x22offset\x22\x0a  \
+       operator=\
+\x22over\x22\x0a         \
+result=\x22composit\
+e2\x22\x0a         id=\
+\x22feComposite936\x22\
+ />\x0a    </filter\
+>\x0a  </defs>\x0a  <m\
+etadata\x0a     id=\
+\x22metadata5039\x22>\x0a\
+    <rdf:RDF>\x0a  \
+    <cc:Work\x0a   \
+      rdf:about=\
+\x22\x22>\x0a        <dc:\
+format>image/svg\
++xml</dc:format>\
+\x0a        <dc:typ\
+e\x0a           rdf\
+:resource=\x22http:\
+//purl.org/dc/dc\
+mitype/StillImag\
+e\x22 />\x0a      </cc\
+:Work>\x0a    </rdf\
+:RDF>\x0a  </metada\
+ta>\x0a  <g\x0a     in\
+kscape:groupmode\
+=\x22layer\x22\x0a     id\
+=\x22layer2\x22\x0a     i\
+nkscape:label=\x22E\
+bene 2\x22>\x0a    <pa\
+th\x0a       style=\
+\x22fill:none;strok\
+e:#ff0000;stroke\
+-width:1.8897637\
+8;stroke-linecap\
+:butt;stroke-lin\
+ejoin:miter;stro\
+ke-miterlimit:4;\
+stroke-dasharray\
+:none;stroke-opa\
+city:1;filter:ur\
+l(#filter938)\x22\x0a \
+      d=\x22m 11.30\
+3085,11.154756 3\
+.83883,3.910488\x22\
+\x0a       id=\x22path\
+5611\x22\x0a       ink\
+scape:connector-\
+curvature=\x220\x22 />\
+\x0a  </g>\x0a  <g\x0a   \
+  id=\x22layer1\x22\x0a  \
+   inkscape:grou\
+pmode=\x22layer\x22\x0a  \
+   inkscape:labe\
+l=\x22Ebene 1\x22>\x0a   \
+ <circle\x0a       \
+style=\x22fill:#afc\
+6e9;fill-opacity\
+:0.78417263;stro\
+ke:#ff0000;strok\
+e-width:1.190939\
+43;stroke-miterl\
+imit:4;stroke-da\
+sharray:none;str\
+oke-opacity:1;fi\
+lter:url(#filter\
+914)\x22\x0a       id=\
+\x22path5605\x22\x0a     \
+  cx=\x226.8475037\x22\
+\x0a       cy=\x226.86\
+00025\x22\x0a       r=\
+\x226.0412431\x22 />\x0a \
+   <g\x0a       ari\
+a-label=\x2210\x22\x0a   \
+    style=\x22font-\
+style:normal;fon\
+t-variant:normal\
+;font-weight:900\
+;font-stretch:no\
+rmal;font-size:1\
+0.66666698px;lin\
+e-height:1.25;fo\
+nt-family:'Sourc\
+e Code Pro';-ink\
+scape-font-speci\
+fication:'Source\
+ Code Pro Heavy'\
+;letter-spacing:\
+0px;word-spacing\
+:0px;fill:#00000\
+0;fill-opacity:1\
+;stroke:none\x22\x0a  \
+     id=\x22text559\
+7\x22\x0a       transf\
+orm=\x22matrix(0.76\
+43067,0,0,0.8516\
+2896,0.65422787,\
+0.02035532)\x22>\x0a  \
+    <path\x0a      \
+   d=\x22M 2.498166\
+7,11.1875 H 7.44\
+75002 V 9.7155 H\
+ 5.9968335 V 4.4\
+248331 H 4.65283\
+34 c -0.5333333,\
+0.32 -1.0666667,\
+0.512 -1.8773334\
+,0.6613334 V 6.2\
+168332 H 4.16216\
+67 V 9.7155 h -1\
+.664 z\x22\x0a        \
+ id=\x22path7117\x22\x0a \
+        inkscape\
+:connector-curva\
+ture=\x220\x22\x0a       \
+  style=\x22fill:#0\
+00000;fill-opaci\
+ty:1\x22 />\x0a      <\
+path\x0a         d=\
+\x22m 11.283334,11.\
+3155 c 1.589333,\
+0 2.666666,-1.22\
+6667 2.666666,-3\
+.5413334 0,-2.31\
+46668 -1.077333,\
+-3.4773335 -2.66\
+6666,-3.4773335 \
+-1.5893338,0 -2.\
+6666672,1.162666\
+7 -2.6666672,3.4\
+773335 0,2.31466\
+64 1.0773334,3.5\
+413334 2.6666672\
+,3.5413334 z m 0\
+,-1.408 C 10.718\
+,9.9075 10.238,9\
+.4594999 10.238,\
+7.7741666 c 0,-1\
+.6853334 0.48,-2\
+.0693334 1.04533\
+4,-2.0693334 0.5\
+65333,0 1.045333\
+,0.384 1.045333,\
+2.0693334 0,1.68\
+53333 -0.48,2.13\
+33334 -1.045333,\
+2.1333334 z m 0,\
+-1.2800001 c 0.4\
+90666,0 0.853333\
+,-0.3413333 0.85\
+3333,-0.8533333 \
+0,-0.5120001 -0.\
+362667,-0.853333\
+4 -0.853333,-0.8\
+533334 -0.490667\
+,0 -0.853334,0.3\
+413333 -0.853334\
+,0.8533334 0,0.5\
+12 0.362667,0.85\
+33333 0.853334,0\
+.8533333 z\x22\x0a    \
+     id=\x22path711\
+9\x22\x0a         inks\
+cape:connector-c\
+urvature=\x220\x22\x0a   \
+      style=\x22fil\
+l:#000000;fill-o\
+pacity:1\x22 />\x0a   \
+ </g>\x0a  </g>\x0a</s\
+vg>\x0a\
 \x00\x01\x08>\
 \x00\
 \x00\x01\x00\x01\x00\x80\x80\x00\x00\x01\x00 \x00(\x08\x01\
@@ -16355,6 +16178,183 @@ le=\x22\x22\x0a         i\
 d=\x22path5709\x22 />\x0a\
     </g>\x0a  </g>\x0a\
 </svg>\x0a\
+\x00\x00\x0a\xe9\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22 standalone=\x22\
+no\x22?>\x0a<!-- Creat\
+ed with Inkscape\
+ (http://www.ink\
+scape.org/) -->\x0a\
+\x0a<svg\x0a   xmlns:d\
+c=\x22http://purl.o\
+rg/dc/elements/1\
+.1/\x22\x0a   xmlns:cc\
+=\x22http://creativ\
+ecommons.org/ns#\
+\x22\x0a   xmlns:rdf=\x22\
+http://www.w3.or\
+g/1999/02/22-rdf\
+-syntax-ns#\x22\x0a   \
+xmlns:svg=\x22http:\
+//www.w3.org/200\
+0/svg\x22\x0a   xmlns=\
+\x22http://www.w3.o\
+rg/2000/svg\x22\x0a   \
+xmlns:sodipodi=\x22\
+http://sodipodi.\
+sourceforge.net/\
+DTD/sodipodi-0.d\
+td\x22\x0a   xmlns:ink\
+scape=\x22http://ww\
+w.inkscape.org/n\
+amespaces/inksca\
+pe\x22\x0a   width=\x2232\
+px\x22\x0a   height=\x223\
+2px\x22\x0a   viewBox=\
+\x220 0 32 32\x22\x0a   v\
+ersion=\x221.1\x22\x0a   \
+id=\x22SVGRoot\x22\x0a   \
+inkscape:version\
+=\x220.92.1 r\x22\x0a   s\
+odipodi:docname=\
+\x22equals.svg\x22>\x0a  \
+<sodipodi:namedv\
+iew\x0a     id=\x22bas\
+e\x22\x0a     pagecolo\
+r=\x22#ffffff\x22\x0a    \
+ bordercolor=\x22#6\
+66666\x22\x0a     bord\
+eropacity=\x221.0\x22\x0a\
+     inkscape:pa\
+geopacity=\x220.0\x22\x0a\
+     inkscape:pa\
+geshadow=\x222\x22\x0a   \
+  inkscape:zoom=\
+\x2216\x22\x0a     inksca\
+pe:cx=\x22-7.834002\
+3\x22\x0a     inkscape\
+:cy=\x229.8125\x22\x0a   \
+  inkscape:docum\
+ent-units=\x22px\x22\x0a \
+    inkscape:cur\
+rent-layer=\x22laye\
+r1\x22\x0a     showgri\
+d=\x22false\x22\x0a     i\
+nkscape:window-w\
+idth=\x221920\x22\x0a    \
+ inkscape:window\
+-height=\x221141\x22\x0a \
+    inkscape:win\
+dow-x=\x220\x22\x0a     i\
+nkscape:window-y\
+=\x220\x22\x0a     inksca\
+pe:window-maximi\
+zed=\x221\x22\x0a     ink\
+scape:grid-bbox=\
+\x22true\x22 />\x0a  <def\
+s\x0a     id=\x22defs4\
+485\x22 />\x0a  <metad\
+ata\x0a     id=\x22met\
+adata4488\x22>\x0a    \
+<rdf:RDF>\x0a      \
+<cc:Work\x0a       \
+  rdf:about=\x22\x22>\x0a\
+        <dc:form\
+at>image/svg+xml\
+</dc:format>\x0a   \
+     <dc:type\x0a  \
+         rdf:res\
+ource=\x22http://pu\
+rl.org/dc/dcmity\
+pe/StillImage\x22 /\
+>\x0a        <dc:ti\
+tle />\x0a      </c\
+c:Work>\x0a    </rd\
+f:RDF>\x0a  </metad\
+ata>\x0a  <g\x0a     i\
+d=\x22layer1\x22\x0a     \
+inkscape:groupmo\
+de=\x22layer\x22\x0a     \
+inkscape:label=\x22\
+Ebene 1\x22>\x0a    <t\
+ext\x0a       xml:s\
+pace=\x22preserve\x22\x0a\
+       style=\x22fo\
+nt-style:normal;\
+font-variant:nor\
+mal;font-weight:\
+normal;font-stre\
+tch:normal;font-\
+size:8px;line-he\
+ight:1.25;font-f\
+amily:'Source Co\
+de Pro';-inkscap\
+e-font-specifica\
+tion:'Source Cod\
+e Pro';letter-sp\
+acing:0px;word-s\
+pacing:0px;fill:\
+#000000;fill-opa\
+city:1;stroke:no\
+ne\x22\x0a       x=\x228.\
+375\x22\x0a       y=\x227\
+.875\x22\x0a       id=\
+\x22text5091\x22><tspa\
+n\x0a         sodip\
+odi:role=\x22line\x22\x0a\
+         id=\x22tsp\
+an5089\x22\x0a        \
+ x=\x228.375\x22\x0a     \
+    y=\x2214.875\x22 /\
+></text>\x0a    <g\x0a\
+       transform\
+=\x22translate(-2.8\
+046876,-0.052734\
+3)\x22\x0a       aria-\
+label=\x22 \xe2\x89\x9f\x22\x0a   \
+    style=\x22font-\
+style:normal;fon\
+t-variant:normal\
+;font-weight:900\
+;font-stretch:no\
+rmal;font-size:4\
+0px;line-height:\
+1.25;font-family\
+:'Source Code Pr\
+o';-inkscape-fon\
+t-specification:\
+'Source Code Pro\
+ Heavy';letter-s\
+pacing:0px;word-\
+spacing:0px;fill\
+:#0055d4;fill-op\
+acity:1;stroke:n\
+one\x22\x0a       id=\x22\
+text5046\x22 />\x0a   \
+ <path\x0a       id\
+=\x22path5687\x22\x0a    \
+   style=\x22fill:#\
+0055d4;fill-opac\
+ity:1;stroke:non\
+e;stroke-width:0\
+.94488192;stroke\
+-miterlimit:4;st\
+roke-dasharray:n\
+one;stroke-opaci\
+ty:1\x22\x0a       d=\x22\
+M 3.1054687,18.1\
+19141 H 28.14453\
+1 v 4.628906 H 3\
+.1054687 Z m 0,-\
+8.886719 H 28.14\
+4531 v 4.589844 \
+H 3.1054687 Z\x22\x0a \
+      inkscape:c\
+onnector-curvatu\
+re=\x220\x22 />\x0a  </g>\
+\x0a</svg>\x0a\
 "
 
 qt_resource_name = b"\
@@ -16362,64 +16362,60 @@ qt_resource_name = b"\
 \x00o\xa6S\
 \x00i\
 \x00c\x00o\x00n\x00s\
-\x00\x0b\
-\x0c1\xc5G\
-\x00s\
-\x00n\x00i\x00f\x00f\x00e\x00r\x00.\x00s\x00v\x00g\
+\x00\x0c\
+\x05!\x11\x87\
+\x00d\
+\x00e\x00c\x00o\x00d\x00i\x00n\x00g\x00.\x00s\x00v\x00g\
+\x00\x0c\
+\x0a\xdc?\xc7\
+\x00c\
+\x00o\x00l\x00l\x00a\x00p\x00s\x00e\x00.\x00s\x00v\x00g\
 \x00\x08\
 \x05\x9eT\xa7\
 \x00l\
 \x00o\x00c\x00k\x00.\x00s\x00v\x00g\
+\x00\x0a\
+\x05\x95\xd0\xa7\
+\x00u\
+\x00n\x00l\x00o\x00c\x00k\x00.\x00s\x00v\x00g\
+\x00\x0d\
+\x0fk\x5cG\
+\x00e\
+\x00q\x00u\x00a\x00l\x00s\x00_\x00q\x00m\x00.\x00s\x00v\x00g\
+\x00\x0e\
+\x07Y\x16\x87\
+\x00m\
+\x00o\x00d\x00u\x00l\x00a\x00t\x00i\x00o\x00n\x00.\x00s\x00v\x00g\
+\x00\x1e\
+\x09\xc6P\xc7\
+\x00s\
+\x00p\x00l\x00i\x00t\x00t\x00e\x00r\x00_\x00h\x00a\x00n\x00d\x00l\x00e\x00_\x00h\
+\x00o\x00r\x00i\x00z\x00o\x00n\x00t\x00a\x00l\x00.\x00s\x00v\x00g\
+\x00\x0e\
+\x0e\xdc \xc7\
+\x00u\
+\x00n\x00c\x00o\x00l\x00l\x00a\x00p\x00s\x00e\x00.\x00s\x00v\x00g\
 \x00\x1c\
 \x08X\xf4\x07\
 \x00s\
 \x00p\x00l\x00i\x00t\x00t\x00e\x00r\x00_\x00h\x00a\x00n\x00d\x00l\x00e\x00_\x00v\
 \x00e\x00r\x00t\x00i\x00c\x00a\x00l\x00.\x00s\x00v\x00g\
 \x00\x0c\
-\x0a\xdc?\xc7\
-\x00c\
-\x00o\x00l\x00l\x00a\x00p\x00s\x00e\x00.\x00s\x00v\x00g\
-\x00\x10\
-\x02\x83\xfa\xe7\
-\x00m\
-\x00e\x00s\x00s\x00a\x00g\x00e\x00_\x00t\x00y\x00p\x00e\x00.\x00s\x00v\x00g\
-\x00\x0c\
-\x05!\x11\x87\
-\x00d\
-\x00e\x00c\x00o\x00d\x00i\x00n\x00g\x00.\x00s\x00v\x00g\
-\x00\x0a\
-\x08;\xcb\xa7\
-\x00e\
-\x00q\x00u\x00a\x00l\x00s\x00.\x00s\x00v\x00g\
-\x00\x1e\
-\x09\xc6P\xc7\
+\x06\xf5/\xa7\
 \x00s\
-\x00p\x00l\x00i\x00t\x00t\x00e\x00r\x00_\x00h\x00a\x00n\x00d\x00l\x00e\x00_\x00h\
-\x00o\x00r\x00i\x00z\x00o\x00n\x00t\x00a\x00l\x00.\x00s\x00v\x00g\
+\x00p\x00e\x00c\x00t\x00r\x00u\x00m\x00.\x00s\x00v\x00g\
 \x00\x0b\
 \x0a\xb1\xba\xa7\
 \x00a\
 \x00p\x00p\x00i\x00c\x00o\x00n\x00.\x00p\x00n\x00g\
-\x00\x0e\
-\x07Y\x16\x87\
+\x00\x10\
+\x02\x83\xfa\xe7\
 \x00m\
-\x00o\x00d\x00u\x00l\x00a\x00t\x00i\x00o\x00n\x00.\x00s\x00v\x00g\
-\x00\x0d\
-\x0fk\x5cG\
-\x00e\
-\x00q\x00u\x00a\x00l\x00s\x00_\x00q\x00m\x00.\x00s\x00v\x00g\
-\x00\x0e\
-\x0e\xdc \xc7\
-\x00u\
-\x00n\x00c\x00o\x00l\x00l\x00a\x00p\x00s\x00e\x00.\x00s\x00v\x00g\
-\x00\x0c\
-\x06\xf5/\xa7\
+\x00e\x00s\x00s\x00a\x00g\x00e\x00_\x00t\x00y\x00p\x00e\x00.\x00s\x00v\x00g\
+\x00\x0b\
+\x0c1\xc5G\
 \x00s\
-\x00p\x00e\x00c\x00t\x00r\x00u\x00m\x00.\x00s\x00v\x00g\
-\x00\x0a\
-\x05\x95\xd0\xa7\
-\x00u\
-\x00n\x00l\x00o\x00c\x00k\x00.\x00s\x00v\x00g\
+\x00n\x00i\x00f\x00f\x00e\x00r\x00.\x00s\x00v\x00g\
 \x00\x0b\
 \x0a\xb1\xa2\x7f\
 \x00a\
@@ -16428,28 +16424,32 @@ qt_resource_name = b"\
 \x03\xc6T'\
 \x00p\
 \x00l\x00u\x00s\x00.\x00s\x00v\x00g\
+\x00\x0a\
+\x08;\xcb\xa7\
+\x00e\
+\x00q\x00u\x00a\x00l\x00s\x00.\x00s\x00v\x00g\
 "
 
 qt_resource_struct = b"\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x02\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x10\x00\x00\x00\x03\
-\x00\x00\x00\x9e\x00\x00\x00\x00\x00\x01\x00\x004U\
-\x00\x00\x02\x12\x00\x00\x00\x00\x00\x01\x00\x03\xf1+\
-\x00\x00\x00\xc4\x00\x00\x00\x00\x00\x01\x00\x00=\x88\
-\x00\x00\x01\xdc\x00\x00\x00\x00\x00\x01\x00\x02\xdb\xd9\
-\x00\x00\x00,\x00\x00\x00\x00\x00\x01\x00\x00\x16I\
-\x00\x00\x01\xbe\x00\x00\x00\x00\x00\x01\x00\x02\xd2\xd2\
-\x00\x00\x01Z\x00\x00\x00\x00\x00\x01\x00\x01\xa7D\
-\x00\x00\x00\xe2\x00\x00\x00\x00\x00\x01\x00\x00X\x17\
-\x00\x00\x00B\x00\x00\x00\x00\x00\x01\x00\x00#\xab\
-\x00\x00\x00\xfc\x00\x00\x00\x00\x00\x01\x00\x00c\x04\
-\x00\x00\x01\xf6\x00\x00\x00\x00\x00\x01\x00\x02\xe8\xe9\
-\x00\x00\x01>\x00\x00\x00\x00\x00\x01\x00\x00l\x1a\
-\x00\x00\x00\x80\x00\x00\x00\x00\x00\x01\x00\x00-\x1f\
+\x00\x00\x01\x9a\x00\x00\x00\x00\x00\x01\x00\x02\xbe\x80\
+\x00\x00\x01\xf8\x00\x00\x00\x00\x00\x01\x00\x03\xe6>\
 \x00\x00\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x01\x9c\x00\x00\x00\x00\x00\x01\x00\x02\xcb\x9b\
-\x00\x00\x01|\x00\x00\x00\x00\x00\x01\x00\x02\xc0W\
+\x00\x00\x00b\x00\x00\x00\x00\x00\x01\x00\x00/'\
+\x00\x00\x00L\x00\x00\x00\x00\x00\x01\x00\x00!\xc5\
+\x00\x00\x01`\x00\x00\x00\x00\x00\x01\x00\x01zO\
+\x00\x00\x00\x9c\x00\x00\x00\x00\x00\x01\x00\x00G{\
+\x00\x00\x02\x0e\x00\x00\x00\x00\x00\x01\x00\x03\xf0z\
+\x00\x00\x01\x22\x00\x00\x00\x00\x00\x01\x00\x01p\xdb\
+\x00\x00\x00\xbe\x00\x00\x00\x00\x00\x01\x00\x01`\x8e\
+\x00\x00\x01\xdc\x00\x00\x00\x00\x00\x01\x00\x02\xdd\xfc\
+\x00\x00\x01~\x00\x00\x00\x00\x00\x01\x00\x01\x83V\
+\x00\x00\x00.\x00\x00\x00\x00\x00\x01\x00\x00\x1a\x8f\
+\x00\x00\x01\xc0\x00\x00\x00\x00\x00\x01\x00\x02\xc7\xb3\
+\x00\x00\x01\x00\x00\x00\x00\x00\x00\x01\x00\x01i\xa4\
+\x00\x00\x00|\x00\x00\x00\x00\x00\x01\x00\x00<7\
 "
 
 def qInitResources():

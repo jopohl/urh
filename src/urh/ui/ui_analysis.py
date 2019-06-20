@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/analysis.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/analysis.ui' applies.
+#
+# Created: Thu Jun 20 11:48:49 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -610,7 +618,7 @@ class Ui_TabAnalysis(object):
         self.btnAddMessagetype.setText(QtWidgets.QApplication.translate("TabAnalysis", "Add new message type", None, -1))
 
 from urh.ui.views.ProtocolTreeView import ProtocolTreeView
-from urh.ui.views.LabelValueTableView import LabelValueTableView
 from urh.ui.views.ProtocolTableView import ProtocolTableView
+from urh.ui.views.LabelValueTableView import LabelValueTableView
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from . import urh_rc

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/decoding.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/decoding.ui' applies.
 #
+# Created: Thu Jun 20 11:48:47 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_Decoder(object):
     def setupUi(self, Decoder):
@@ -67,8 +70,8 @@ class Ui_Decoder(object):
         self.label = QtWidgets.QLabel(Decoder)
         font = QtGui.QFont()
         font.setPointSize(11)
-        font.setBold(True)
         font.setWeight(75)
+        font.setBold(True)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -272,9 +275,6 @@ class Ui_Decoder(object):
         self.btnAddtoYourDecoding = QtWidgets.QPushButton(self.gb_infoandoptions)
         self.btnAddtoYourDecoding.setObjectName("btnAddtoYourDecoding")
         self.verticalLayout_5.addWidget(self.btnAddtoYourDecoding)
-        self.optionWidget.raise_()
-        self.info.raise_()
-        self.btnAddtoYourDecoding.raise_()
         self.verticalLayout_3.addWidget(self.gb_infoandoptions)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout_4.addLayout(self.horizontalLayout)
@@ -316,43 +316,41 @@ class Ui_Decoder(object):
         self.optionWidget.setCurrentIndex(5)
 
     def retranslateUi(self, Decoder):
-        _translate = QtCore.QCoreApplication.translate
-        Decoder.setWindowTitle(_translate("Decoder", "Decoding"))
-        self.combobox_decodings.setItemText(0, _translate("Decoder", "Non Return to Zero (NRZ)"))
-        self.combobox_decodings.setItemText(1, _translate("Decoder", "Empty"))
-        self.delete_decoding.setText(_translate("Decoder", "Delete"))
-        self.saveas.setText(_translate("Decoder", "Save as..."))
-        self.label_8.setText(_translate("Decoder", "Base Functions"))
-        self.label_9.setText(_translate("Decoder", "Additional Functions"))
-        self.label.setText(_translate("Decoder", "Your Decoding"))
-        self.gb_infoandoptions.setTitle(_translate("Decoder", "Information and Options"))
-        self.info.setText(_translate("Decoder", "Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information."))
-        self.label_5.setText(_translate("Decoder", "Number of redundant bits"))
-        self.label_6.setText(_translate("Decoder", "Carrier (\'1_\' -> 1_1_1_...)"))
-        self.label_10.setText(_translate("Decoder", "Rows"))
-        self.label_11.setText(_translate("Decoder", "Decoder"))
-        self.btnChooseDecoder.setText(_translate("Decoder", "..."))
-        self.label_12.setText(_translate("Decoder", "Encoder"))
-        self.btnChooseEncoder.setText(_translate("Decoder", "..."))
-        self.label_13.setText(_translate("Decoder", "Synchronization bytes (hex coded)"))
-        self.label_14.setText(_translate("Decoder", "Data whitening polynomial (LFSR, hex, w/o first bit)"))
-        self.datawhitening_overwrite_crc.setText(_translate("Decoder", "Overwrite CRC16 field with correct value when encoding"))
-        self.cutmark.setText(_translate("Decoder", "1010"))
-        self.label_15.setText(_translate("Decoder", "Sequence"))
-        self.rB_delbefore.setText(_translate("Decoder", "&Cut before"))
-        self.rB_delafter.setText(_translate("Decoder", "Cut afte&r"))
-        self.rB_delbeforepos.setText(_translate("Decoder", "Cut before"))
-        self.rB_delafterpos.setText(_translate("Decoder", "Cut after"))
-        self.label_16.setText(_translate("Decoder", "Position (in bit)"))
-        self.label_17.setText(_translate("Decoder", "Maximum (<=) length of 1-sequence for: Low (0)"))
-        self.label_18.setText(_translate("Decoder", "Minimum (>=) length of 1-sequence for: High (1)"))
-        self.label_19.setText(_translate("Decoder", "Number of 0s between 1-sequences (just for encoding)"))
-        self.btnAddtoYourDecoding.setText(_translate("Decoder", "Add to Your Decoding"))
-        self.combobox_signals.setItemText(0, _translate("Decoder", "Test"))
-        self.label_2.setText(_translate("Decoder", "Signal {0,1}:"))
-        self.label_3.setText(_translate("Decoder", "Decoded Bits:"))
-        self.decoding_errors_label.setText(_translate("Decoder", "[Decoding Errors = 0]"))
+        Decoder.setWindowTitle(QtWidgets.QApplication.translate("Decoder", "Decoding", None, -1))
+        self.combobox_decodings.setItemText(0, QtWidgets.QApplication.translate("Decoder", "Non Return to Zero (NRZ)", None, -1))
+        self.combobox_decodings.setItemText(1, QtWidgets.QApplication.translate("Decoder", "Empty", None, -1))
+        self.delete_decoding.setText(QtWidgets.QApplication.translate("Decoder", "Delete", None, -1))
+        self.saveas.setText(QtWidgets.QApplication.translate("Decoder", "Save as...", None, -1))
+        self.label_8.setText(QtWidgets.QApplication.translate("Decoder", "Base Functions", None, -1))
+        self.label_9.setText(QtWidgets.QApplication.translate("Decoder", "Additional Functions", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("Decoder", "Your Decoding", None, -1))
+        self.gb_infoandoptions.setTitle(QtWidgets.QApplication.translate("Decoder", "Information and Options", None, -1))
+        self.info.setText(QtWidgets.QApplication.translate("Decoder", "Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information.", None, -1))
+        self.label_5.setText(QtWidgets.QApplication.translate("Decoder", "Number of redundant bits", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("Decoder", "Carrier (\'1_\' -> 1_1_1_...)", None, -1))
+        self.label_10.setText(QtWidgets.QApplication.translate("Decoder", "Rows", None, -1))
+        self.label_11.setText(QtWidgets.QApplication.translate("Decoder", "Decoder", None, -1))
+        self.btnChooseDecoder.setText(QtWidgets.QApplication.translate("Decoder", "...", None, -1))
+        self.label_12.setText(QtWidgets.QApplication.translate("Decoder", "Encoder", None, -1))
+        self.btnChooseEncoder.setText(QtWidgets.QApplication.translate("Decoder", "...", None, -1))
+        self.label_13.setText(QtWidgets.QApplication.translate("Decoder", "Synchronization bytes (hex coded)", None, -1))
+        self.label_14.setText(QtWidgets.QApplication.translate("Decoder", "Data whitening polynomial (LFSR, hex, w/o first bit)", None, -1))
+        self.datawhitening_overwrite_crc.setText(QtWidgets.QApplication.translate("Decoder", "Overwrite CRC16 field with correct value when encoding", None, -1))
+        self.cutmark.setText(QtWidgets.QApplication.translate("Decoder", "1010", None, -1))
+        self.label_15.setText(QtWidgets.QApplication.translate("Decoder", "Sequence", None, -1))
+        self.rB_delbefore.setText(QtWidgets.QApplication.translate("Decoder", "&Cut before", None, -1))
+        self.rB_delafter.setText(QtWidgets.QApplication.translate("Decoder", "Cut afte&r", None, -1))
+        self.rB_delbeforepos.setText(QtWidgets.QApplication.translate("Decoder", "Cut before", None, -1))
+        self.rB_delafterpos.setText(QtWidgets.QApplication.translate("Decoder", "Cut after", None, -1))
+        self.label_16.setText(QtWidgets.QApplication.translate("Decoder", "Position (in bit)", None, -1))
+        self.label_17.setText(QtWidgets.QApplication.translate("Decoder", "Maximum (<=) length of 1-sequence for: Low (0)", None, -1))
+        self.label_18.setText(QtWidgets.QApplication.translate("Decoder", "Minimum (>=) length of 1-sequence for: High (1)", None, -1))
+        self.label_19.setText(QtWidgets.QApplication.translate("Decoder", "Number of 0s between 1-sequences (just for encoding)", None, -1))
+        self.btnAddtoYourDecoding.setText(QtWidgets.QApplication.translate("Decoder", "Add to Your Decoding", None, -1))
+        self.combobox_signals.setItemText(0, QtWidgets.QApplication.translate("Decoder", "Test", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("Decoder", "Signal {0,1}:", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("Decoder", "Decoded Bits:", None, -1))
+        self.decoding_errors_label.setText(QtWidgets.QApplication.translate("Decoder", "[Decoding Errors = 0]", None, -1))
 
-
-from urh.ui.ListWidget import ListWidget
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.ListWidget import ListWidget

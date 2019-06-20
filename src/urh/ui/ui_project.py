@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/project.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/project.ui' applies.
+#
+# Created: Thu Jun 20 11:48:49 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -204,5 +212,5 @@ class Ui_ProjectDialog(object):
         self.btnDown.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Move selected participants down", None, -1))
         self.btnDown.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
 
-from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ParticipantTableView import ParticipantTableView
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

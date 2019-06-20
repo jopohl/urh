@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/modulation_settings_widget.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/modulation_settings_widget.ui' applies.
+#
+# Created: Thu Jun 20 11:48:48 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 

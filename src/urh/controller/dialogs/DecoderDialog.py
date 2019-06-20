@@ -830,7 +830,7 @@ class DecoderDialog(QDialog):
             self.chainoptions[self.active_message] = cut_text
         self.decoderchainUpdate()
 
-    @pyqtSlot()
+    @Slot()
     def on_btn_add_to_your_decoding_clicked(self):
         if self.last_selected_item != "":
             self.ui.decoderchain.addItem(self.last_selected_item)

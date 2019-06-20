@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/modulation.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/modulation.ui' applies.
+#
+# Created: Thu Jun 20 11:48:49 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -585,8 +593,8 @@ class Ui_DialogModulation(object):
         self.label_10.setText(QtWidgets.QApplication.translate("DialogModulation", "Samples selected:", None, -1))
         self.lOriginalSignalSamplesSelected.setText(QtWidgets.QApplication.translate("DialogModulation", "0", None, -1))
 
-from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ModulatorTreeView import ModulatorTreeView
 from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from . import urh_rc

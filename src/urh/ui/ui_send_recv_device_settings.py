@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/send_recv_device_settings.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/send_recv_device_settings.ui' applies.
+#
+# Created: Thu Jun 20 11:48:48 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
-
 
 class Ui_FormDeviceSettings(object):
     def setupUi(self, FormDeviceSettings):
@@ -300,7 +307,6 @@ class Ui_FormDeviceSettings(object):
         self.labelDCCorrection.setText(QtWidgets.QApplication.translate("FormDeviceSettings", "DC correction:", None, -1))
         self.checkBoxDCCorrection.setToolTip(QtWidgets.QApplication.translate("FormDeviceSettings", "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero.", None, -1))
         self.checkBoxDCCorrection.setText(QtWidgets.QApplication.translate("FormDeviceSettings", "Apply DC correction", None, -1))
-
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from . import urh_rc

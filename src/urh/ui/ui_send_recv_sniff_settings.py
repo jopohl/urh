@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/send_recv_sniff_settings.ui',
+# licensing of '/home/joe/GIT/urh/data/ui/send_recv_sniff_settings.ui' applies.
+#
+# Created: Thu Jun 20 11:48:51 2019
+#      by: pyside2-uic  running on PySide2 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
-
 
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
@@ -201,6 +208,5 @@ class Ui_SniffSettings(object):
         self.label_sniff_OutputFile.setText(QtWidgets.QApplication.translate("SniffSettings", "Write bitstream to file:", None, -1))
         self.lineEdit_sniff_OutputFile.setPlaceholderText(QtWidgets.QApplication.translate("SniffSettings", "None", None, -1))
         self.checkBoxAutoCenter.setText(QtWidgets.QApplication.translate("SniffSettings", "Automatic", None, -1))
-
 
 from . import urh_rc

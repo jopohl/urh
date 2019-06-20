@@ -102,7 +102,11 @@ class SpectrumDialogController(SendRecvDialog):
             self.scene_manager.show_full_scene()
             self.graphics_view.fitInView(self.graphics_view.sceneRect())
 
-            self.__update_spectrogram()
+            try:
+                self.__update_spectrogram()
+            except MemoryError:
+                self.__clear_spectrogram()
+                self.__update_spectrogram()
 
     def init_device(self):
         self.device = VirtualDevice(self.backend_handler, self.selected_device_name,

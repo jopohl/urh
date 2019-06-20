@@ -358,7 +358,6 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
     cdef float min_of_mod_type = min_max_of_mod_type[0]
     cdef float max_of_mod_type = min_max_of_mod_type[1]
-    cdef float mod_type_range = max_of_mod_type - min_of_mod_type
 
     cdef int n = modulation_order // 2
 

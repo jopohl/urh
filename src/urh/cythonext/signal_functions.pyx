@@ -329,7 +329,7 @@ cdef inline int64_t get_current_state(float sample, float[:] thresholds, float n
 
     cdef int i
     for i in range(n):
-        if sample < thresholds[i]:
+        if sample <= thresholds[i]:
             return i
 
     return PAUSE_STATE

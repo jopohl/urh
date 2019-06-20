@@ -34,7 +34,7 @@ class PlotTests(unittest.TestCase):
         plt.title("Modulated Wave")
 
         plt.subplot(2, 1, 2)
-        qad = signal_functions.afp_demod(np.ascontiguousarray(data), 0, 1)
+        qad = signal_functions.afp_demod(np.ascontiguousarray(data), 0, "FSK")
         plt.plot(qad)
         plt.title("Quad Demod")
 

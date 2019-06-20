@@ -370,11 +370,11 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
         message_indices = merge_message_segments_for_ook(message_indices)
 
     if modulation == "OOK" or modulation == "ASK":
-        data = signal_functions.afp_demod(iq_array.data, noise, 0)
+        data = signal_functions.afp_demod(iq_array.data, noise, "ASK")
     elif modulation == "FSK":
-        data = signal_functions.afp_demod(iq_array.data, noise, 1)
+        data = signal_functions.afp_demod(iq_array.data, noise, "FSK")
     elif modulation == "PSK":
-        data = signal_functions.afp_demod(iq_array.data, noise, 2)
+        data = signal_functions.afp_demod(iq_array.data, noise, "PSK")
     else:
         raise ValueError("Unsupported Modulation")
 

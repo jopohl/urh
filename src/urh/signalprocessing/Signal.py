@@ -312,18 +312,8 @@ class Signal(QObject):
         self.changed = False
         QApplication.instance().restoreOverrideCursor()
 
-    def get_signal_start(self) -> int:
-        """
-        Index ab dem das Signal losgeht (Nach Übersteuern + Pause am Anfang)
-
-        """
-        return signal_functions.find_signal_start(self.qad, self.modulation_type)
-
-    def get_signal_end(self):
-        return signal_functions.find_signal_end(self.qad, self.modulation_type)
-
     def quad_demod(self):
-        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
+        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type_str)
 
     def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4
@@ -457,7 +447,7 @@ class Signal(QObject):
     def filter_range(self, start: int, end: int, fir_filter: Filter):
         self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
         self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
-                                                          self.noise_threshold, self.modulation_type)
+                                                          self.noise_threshold, self.modulation_type_str)
         self.__invalidate_after_edit()
 
     def __invalidate_after_edit(self):

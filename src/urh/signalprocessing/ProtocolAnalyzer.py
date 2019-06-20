@@ -9,7 +9,6 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 from urh import constants
 from urh.cythonext import signal_functions
 from urh.signalprocessing.Encoding import Encoding
-from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
@@ -226,7 +225,7 @@ class ProtocolAnalyzer(object):
         bit_len = signal.bit_len
 
         ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                 signal.modulation_type, signal.bit_len)
+                                                 signal.modulation_type_str, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":
@@ -281,7 +280,7 @@ class ProtocolAnalyzer(object):
         start = 0
         total_samples = 0
 
-        pause_type = 42
+        pause_type = -1
         zero_pulse_type = 0
         one_pulse_type = 1
 

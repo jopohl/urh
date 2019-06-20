@@ -79,7 +79,7 @@
        <item>
         <widget class="QListWidget" name="basefunctions">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -102,7 +102,7 @@
        <item>
         <widget class="QListWidget" name="additionalfunctions">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -118,22 +118,6 @@
       </layout>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="label">
@@ -145,7 +129,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Decoder</string>
+          <string>Your Decoding</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -155,7 +139,7 @@
        <item>
         <widget class="ListWidget" name="decoderchain">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -184,22 +168,6 @@
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_6">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Maximum</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -658,9 +626,17 @@
             </widget>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="btnAddtoYourDecoding">
+            <property name="text">
+             <string>Add to Your Decoding</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>optionWidget</zorder>
          <zorder>info</zorder>
+         <zorder>btnAddtoYourDecoding</zorder>
         </widget>
        </item>
       </layout>
@@ -669,53 +645,6 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Decoded Bits:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QComboBox" name="combobox_signals">
-       <item>
-        <property name="text">
-         <string>Test</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="2">
-      <widget class="QLineEdit" name="output">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="decoding_errors_label">
-       <property name="text">
-        <string>[Decoding Errors = 0]</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Signal {0,1}:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="inpt">
-       <property name="inputMethodHints">
-        <set>Qt::ImhDigitsOnly</set>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <spacer name="horizontalSpacer_5">
        <property name="orientation">
@@ -729,13 +658,60 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="0" colspan="2">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="inpt">
+       <property name="inputMethodHints">
+        <set>Qt::ImhDigitsOnly</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="combobox_signals">
+       <item>
+        <property name="text">
+         <string>Test</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="2">
       <widget class="ZoomableGraphicView" name="graphicsView_signal"/>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Signal {0,1}:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
       <widget class="ZoomableGraphicView" name="graphicsView_decoded"/>
      </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="output">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Decoded Bits:</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="decoding_errors_label">
+     <property name="text">
+      <string>[Decoding Errors = 0]</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

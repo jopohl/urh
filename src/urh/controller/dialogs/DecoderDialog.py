@@ -49,6 +49,8 @@ class DecoderDialog(QDialog):
         self.chainoptions = {}
         self.set_e()
 
+        self.last_selected_item = ""
+
         # Signals
         self.signals = signals if signals is not None else []
         for signal in signals:
@@ -84,6 +86,7 @@ class DecoderDialog(QDialog):
         self.ui.substitution.setColumnWidth(0, 190)
         self.ui.substitution.setColumnWidth(1, 190)
 
+        self.ui.btnAddtoYourDecoding.hide()
         self.ui.saveas.setVisible(False)
 
         # Connects
@@ -116,6 +119,7 @@ class DecoderDialog(QDialog):
         self.ui.decoderchain.currentRowChanged.connect(self.on_decoder_chain_current_row_changed)
         self.ui.basefunctions.currentRowChanged.connect(self.on_base_functions_current_row_changed)
         self.ui.additionalfunctions.currentRowChanged.connect(self.on_additional_functions_current_row_changed)
+        self.ui.btnAddtoYourDecoding.clicked.connect(self.on_btn_add_to_your_decoding_clicked)
 
         self.ui.combobox_decodings.currentIndexChanged.connect(self.set_e)
         self.ui.combobox_signals.currentIndexChanged.connect(self.set_signal)
@@ -434,12 +438,16 @@ class DecoderDialog(QDialog):
         if mode == 0:
             element = self.ui.basefunctions.currentItem().text()
             txt += element + ":\n"
+            self.last_selected_item = element
+            self.ui.btnAddtoYourDecoding.show()
         elif mode == 1:
             element = self.ui.additionalfunctions.currentItem().text()
             txt += element + ":\n"
+            self.last_selected_item = element
+            self.ui.btnAddtoYourDecoding.show()
         elif mode == 2:
             decoderEdit = True
-            txt = "## DECODING PROCESS ##\n\n"
+            txt = "## In Your Decoding ##\n\n"
             element = self.ui.decoderchain.currentItem().text()
             if element[-1] == " ":
                 elementname = element[0:-1]
@@ -447,6 +455,7 @@ class DecoderDialog(QDialog):
                 elementname = element
             txt += elementname + ":\n"
             self.active_message = element
+            self.ui.btnAddtoYourDecoding.hide()
 
         # Remove "[Disabled] " for further tasks
         if constants.DECODING_DISABLED_PREFIX in element:
@@ -820,6 +829,13 @@ class DecoderDialog(QDialog):
         if constants.DECODING_CUT in self.active_message:
             self.chainoptions[self.active_message] = cut_text
         self.decoderchainUpdate()
+
+    @pyqtSlot()
+    def on_btn_add_to_your_decoding_clicked(self):
+        if self.last_selected_item != "":
+            self.ui.decoderchain.addItem(self.last_selected_item)
+            self.decoderchainUpdate()
+            self.ui.decoderchain.setCurrentRow(self.ui.decoderchain.count()-1)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         event.accept()

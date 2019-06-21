@@ -457,6 +457,9 @@ def set_splitter_stylesheet(splitter: QSplitter):
 def calc_x_y_scale(rect, parent):
     view_rect = parent.view_rect() if hasattr(parent, "view_rect") else rect
     parent_width = parent.width() if hasattr(parent, "width") else 750
+    parent_height = parent.height() if hasattr(parent, "height") else 300
+
     scale_x = view_rect.width() / parent_width
-    scale_y = view_rect.height() / parent_width
+    scale_y = view_rect.height() / parent_height
+
     return scale_x, scale_y

@@ -87,13 +87,15 @@ class ZoomableScene(QGraphicsScene):
 
             self.ones_caption.show()
             self.zeros_caption.show()
-            padding = view_rect.height() / 10
+            padding = view_rect.height() / 20
             scale_x, scale_y = util.calc_x_y_scale(self.ones_area.rect(), self.parent())
+
             self.ones_caption.setPos(view_rect.center().x(),
                                      y_mid - QFontMetrics(self.ones_caption.font()).height()*scale_y - padding)
             self.ones_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
 
             scale_x, scale_y = util.calc_x_y_scale(self.zeros_area.rect(), self.parent())
+
             self.zeros_caption.setPos(view_rect.center().x(), y_mid + padding)
             self.zeros_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
         else:

@@ -14,6 +14,8 @@ class ZoomableScene(QGraphicsScene):
         self.ones_area = None
         self.zeros_area = None
 
+        self.y_mid = 0
+
         self.always_show_symbols_legend = False
 
         self.ones_caption = None
@@ -43,9 +45,45 @@ class ZoomableScene(QGraphicsScene):
             self.noise_area.setY(y)
             self.noise_area.height = h
 
-    def draw_sep_area(self, y_mid, show_symbols=False):
-        show_symbols = show_symbols or self.always_show_symbols_legend
+    def redraw_legend(self, force_show=False):
+        if not (force_show or self.always_show_symbols_legend):
+            if self.zeros_caption is not None:
+                self.zeros_caption.hide()
+            if self.ones_caption is not None:
+                self.ones_caption.hide()
+            return
 
+        if self.ones_caption is None:
+            font = QFont()
+            font.setPointSize(32)
+            font.setBold(True)
+            self.ones_caption = self.addSimpleText("1", font)
+
+        if self.zeros_caption is None:
+            font = QFont()
+            font.setPointSize(32)
+            font.setBold(True)
+            self.zeros_caption = self.addSimpleText("0", font)
+
+        view_rect = self.parent().view_rect()  # type: QRectF
+
+        self.ones_caption.show()
+        self.zeros_caption.show()
+        padding = view_rect.height() / 20
+        scale_x, scale_y = util.calc_x_y_scale(self.ones_area.rect(), self.parent())
+
+        y_mid = self.y_mid
+        fm = QFontMetrics(self.ones_caption.font())
+        self.ones_caption.setPos(view_rect.x() + view_rect.width() - fm.width("1") * scale_x,
+                                 y_mid - fm.height()*scale_y - padding)
+        self.ones_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
+
+        scale_x, scale_y = util.calc_x_y_scale(self.zeros_area.rect(), self.parent())
+
+        self.zeros_caption.setPos(view_rect.x() + view_rect.width() - fm.width("0") * scale_x, y_mid + padding)
+        self.zeros_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
+
+    def draw_sep_area(self, y_mid, show_symbols=False):
         x = self.sceneRect().x()
         y = self.sceneRect().y()
         h = self.sceneRect().height()
@@ -63,18 +101,6 @@ class ZoomableScene(QGraphicsScene):
             self.ones_area.show()
             self.ones_area.setRect(x, y, w, h / 2 + y_mid)
 
-        if self.ones_caption is None:
-            font = QFont()
-            font.setPointSize(32)
-            font.setBold(True)
-            self.ones_caption = self.addSimpleText("1", font)
-
-        if self.zeros_caption is None:
-            font = QFont()
-            font.setPointSize(32)
-            font.setBold(True)
-            self.zeros_caption = self.addSimpleText("0", font)
-
         start = y + h / 2 + y_mid
         if self.zeros_area is None:
             self.zeros_area = QGraphicsRectItem(x, start, w, (y + h) - start)
@@ -86,25 +112,8 @@ class ZoomableScene(QGraphicsScene):
             self.zeros_area.show()
             self.zeros_area.setRect(x, start, w, (y + h) - start)
 
-        if show_symbols:
-            view_rect = self.parent().view_rect()  # type: QRectF
-
-            self.ones_caption.show()
-            self.zeros_caption.show()
-            padding = view_rect.height() / 20
-            scale_x, scale_y = util.calc_x_y_scale(self.ones_area.rect(), self.parent())
-
-            self.ones_caption.setPos(view_rect.center().x(),
-                                     y_mid - QFontMetrics(self.ones_caption.font()).height()*scale_y - padding)
-            self.ones_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
-
-            scale_x, scale_y = util.calc_x_y_scale(self.zeros_area.rect(), self.parent())
-
-            self.zeros_caption.setPos(view_rect.center().x(), y_mid + padding)
-            self.zeros_caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
-        else:
-            self.ones_caption.hide()
-            self.zeros_caption.hide()
+        self.y_mid = y_mid
+        self.redraw_legend(show_symbols)
 
     def clear(self):
         self.noise_area = None

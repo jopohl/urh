@@ -77,7 +77,7 @@ class SniffSettingsWidget(QWidget):
         set_val(self.ui.spinbox_sniff_Center, "center", signal.qad_center if signal else 0.02)
         set_val(self.ui.spinbox_sniff_ErrorTolerance, "tolerance", signal.tolerance if signal else 5)
         set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold_relative if signal else 0.001)
-        set_val(self.ui.combox_sniff_Modulation, "modulation_index", signal.modulation_type if signal else 1)
+        self.ui.combox_sniff_Modulation.setCurrentText(conf_dict.get("modulation_type", signal.modulation_type if signal else "FSK"))
         self.ui.comboBox_sniff_encoding.setCurrentText(conf_dict.get("decoding_name", ""))
         self.ui.checkBoxAdaptiveNoise.setChecked(bool(conf_dict.get("adaptive_noise", False)))
         self.ui.checkBoxAutoCenter.setChecked(bool(conf_dict.get("automatic_center", False)))
@@ -90,7 +90,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.spinbox_sniff_Center.editingFinished.connect(self.on_center_edited)
         self.ui.spinbox_sniff_BitLen.editingFinished.connect(self.on_bit_len_edited)
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
-        self.ui.combox_sniff_Modulation.currentIndexChanged.connect(self.on_modulation_changed)
+        self.ui.combox_sniff_Modulation.currentTextChanged.connect(self.on_modulation_changed)
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
         self.ui.lineEdit_sniff_OutputFile.editingFinished.connect(self.on_line_edit_output_file_editing_finished)
         self.ui.comboBox_sniff_encoding.currentIndexChanged.connect(self.on_combobox_sniff_encoding_index_changed)
@@ -112,7 +112,7 @@ class SniffSettingsWidget(QWidget):
                                                 center=self.sniffer.signal.qad_center,
                                                 noise=self.sniffer.signal.noise_threshold,
                                                 tolerance=self.sniffer.signal.tolerance,
-                                                modulation_index=self.sniffer.signal.modulation_type,
+                                                modulation_type=self.sniffer.signal.modulation_type,
                                                 decoding_name=self.sniffer.decoder.name,
                                                 adaptive_noise=self.sniffer.adaptive_noise,
                                                 automatic_center=self.sniffer.automatic_center))
@@ -137,9 +137,9 @@ class SniffSettingsWidget(QWidget):
         self.sniffer.signal.tolerance = self.ui.spinbox_sniff_ErrorTolerance.value()
         self.sniff_setting_edited.emit()
 
-    @pyqtSlot(int)
-    def on_modulation_changed(self, new_index: int):
-        self.sniffer.signal.silent_set_modulation_type(new_index)
+    @pyqtSlot(str)
+    def on_modulation_changed(self, new_modulation: str):
+        self.sniffer.signal.silent_set_modulation_type(new_modulation)
         self.sniff_setting_edited.emit()
 
     @pyqtSlot()
@@ -186,7 +186,7 @@ class SniffSettingsWidget(QWidget):
         self.ui.spinbox_sniff_Center.setValue(signal.qad_center)
         self.ui.spinbox_sniff_Noise.setValue(signal.noise_threshold_relative)
         self.ui.spinbox_sniff_ErrorTolerance.setValue(signal.tolerance)
-        self.ui.combox_sniff_Modulation.setCurrentIndex(signal.modulation_type)
+        self.ui.combox_sniff_Modulation.setCurrentText(signal.modulation_type)
 
         self.emit_editing_finished_signals()
 

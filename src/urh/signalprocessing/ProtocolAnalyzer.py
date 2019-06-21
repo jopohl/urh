@@ -225,10 +225,10 @@ class ProtocolAnalyzer(object):
         bit_len = signal.bit_len
 
         ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                 signal.modulation_type_str, signal.bit_len)
+                                                 signal.modulation_type, signal.bit_len)
 
         bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
-        if signal.message_length_divisor > 1 and signal.modulation_type_str == "ASK":
+        if signal.message_length_divisor > 1 and signal.modulation_type == "ASK":
             self.__ensure_message_length_multiple(bit_data, signal.bit_len, pauses, bit_sample_pos,
                                                   signal.message_length_divisor)
 

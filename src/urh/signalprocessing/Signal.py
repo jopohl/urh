@@ -28,7 +28,7 @@ class Signal(QObject):
     qad_center_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
-    modulation_type_changed = pyqtSignal(int)
+    modulation_type_changed = pyqtSignal(str)
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
@@ -53,7 +53,7 @@ class Signal(QObject):
         self.__changed = False
         if modulation is None:
             modulation = "FSK"
-        self.__modulation_type = self.MODULATION_TYPES.index(modulation)
+        self.__modulation_type = modulation
         self.__modulation_order = 2
 
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
@@ -148,11 +148,11 @@ class Signal(QObject):
         self.__parameter_cache = val
 
     @property
-    def modulation_type(self):
+    def modulation_type(self) -> str:
         return self.__modulation_type
 
     @modulation_type.setter
-    def modulation_type(self, value: int):
+    def modulation_type(self, value: str):
         """
         0 - "ASK", 1 - "FSK", 2 - "PSK", 3 - "APSK (QAM)"
 
@@ -166,14 +166,6 @@ class Signal(QObject):
             self.modulation_type_changed.emit(self.__modulation_type)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
-
-    @property
-    def modulation_type_str(self):
-        return self.MODULATION_TYPES[self.modulation_type]
-
-    @modulation_type_str.setter
-    def modulation_type_str(self, value: str):
-        self.modulation_type = self.MODULATION_TYPES.index(value)
 
     @property
     def bit_len(self):
@@ -313,7 +305,7 @@ class Signal(QObject):
         QApplication.instance().restoreOverrideCursor()
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type_str)
+        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
 
     def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4
@@ -348,8 +340,8 @@ class Signal(QObject):
     def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,
                   "modulation": None if detect_modulation
-                  else "OOK" if self.__modulation_order == 2 and self.__modulation_type == 0
-                  else self.modulation_type_str}
+                  else "OOK" if self.__modulation_order == 2 and self.modulation_type == "ASK"
+                  else self.modulation_type}
 
         estimated_params = AutoInterpretation.estimate(self.iq_array, **kwargs)
         if estimated_params is None:
@@ -362,7 +354,7 @@ class Signal(QObject):
             self.noise_threshold = estimated_params["noise"]
 
         if detect_modulation:
-            self.modulation_type_str = estimated_params["modulation_type"]
+            self.modulation_type = estimated_params["modulation_type"]
 
         self.qad_center = estimated_params["center"]
         self.tolerance = estimated_params["tolerance"]
@@ -410,7 +402,7 @@ class Signal(QObject):
         self._qad = None
         self.parameter_cache.clear()
 
-    def silent_set_modulation_type(self, mod_type: int):
+    def silent_set_modulation_type(self, mod_type: str):
         self.__modulation_type = mod_type
 
     def insert_data(self, index: int, data: np.ndarray):
@@ -447,7 +439,7 @@ class Signal(QObject):
     def filter_range(self, start: int, end: int, fir_filter: Filter):
         self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
         self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
-                                                          self.noise_threshold, self.modulation_type_str)
+                                                          self.noise_threshold, self.modulation_type)
         self.__invalidate_after_edit()
 
     def __invalidate_after_edit(self):

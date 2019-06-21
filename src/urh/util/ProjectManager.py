@@ -487,7 +487,11 @@ class ProjectManager(QObject):
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
                 signal.bit_len = int(sig_tag.get("bit_length", 100))
-                signal.modulation_type = int(sig_tag.get("modulation_type", 0))
+                try:
+                    # Legacy support when modulation type was integer
+                    signal.modulation_type = Signal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]
+                except (ValueError, IndexError):
+                    signal.modulation_type = sig_tag.get("modulation_type", "ASK")
                 signal.pause_threshold = int(sig_tag.get("pause_threshold", 8))
                 signal.message_length_divisor = int(sig_tag.get("message_length_divisor", 1))
                 break

@@ -27,7 +27,7 @@ class TestCLIParsing(QtTestCase):
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
                                       " -p0 0 -p1 1 -mo ASK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
-        self.assertEqual(modulator.modulation_type_str, "ASK")
+        self.assertEqual(modulator.modulation_type, "ASK")
         self.assertEqual(modulator.sample_rate, 2e6)
         self.assertEqual(modulator.samples_per_symbol, 24)
         self.assertEqual(modulator.param_for_zero, 0)
@@ -45,7 +45,7 @@ class TestCLIParsing(QtTestCase):
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
                                       " -p0 20e3 -p1=-20e3 -mo FSK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
-        self.assertEqual(modulator.modulation_type_str, "FSK")
+        self.assertEqual(modulator.modulation_type, "FSK")
         self.assertEqual(modulator.param_for_zero, 20e3)
         self.assertEqual(modulator.param_for_one, -20e3)
 

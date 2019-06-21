@@ -1,6 +1,9 @@
+import array
 import unittest
 
 from tests.utils_testing import get_path_for_data_file
+from urh.cythonext.signal_functions import modulate_c
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
@@ -8,7 +11,7 @@ from urh.signalprocessing.Signal import Signal
 class TestDemodulations(unittest.TestCase):
     def test_ask(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
-        signal.modulation_type = 0
+        signal.modulation_type = "ASK"
         signal.bit_len = 295
         signal.qad_center = 0.0219
         self.assertEqual(signal.num_samples, 13710)
@@ -19,7 +22,7 @@ class TestDemodulations(unittest.TestCase):
 
     def test_ask_two(self):
         signal = Signal(get_path_for_data_file("ask_short.complex"), "ASK-Test2")
-        signal.modulation_type = 0
+        signal.modulation_type = "ASK"
         signal.noise_threshold = 0.0299
         signal.bit_len = 16
         signal.qad_center = 0.1300
@@ -32,7 +35,7 @@ class TestDemodulations(unittest.TestCase):
 
     def test_fsk(self):
         signal = Signal(get_path_for_data_file("fsk.complex"), "FSK-Test")
-        signal.modulation_type = 1
+        signal.modulation_type = "FSK"
         signal.bit_len = 100
         signal.qad_center = 0
 
@@ -43,7 +46,7 @@ class TestDemodulations(unittest.TestCase):
 
     def test_psk(self):
         signal = Signal(get_path_for_data_file("psk_gen_noisy.complex"), "PSK-Test")
-        signal.modulation_type = 2
+        signal.modulation_type = "PSK"
         signal.bit_len = 300
         signal.qad_center = 0.0281
         signal.noise_threshold = 0
@@ -52,3 +55,12 @@ class TestDemodulations(unittest.TestCase):
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.plain_bits_str[0], "101100")
+
+    def test_4_fsk(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
+        parameters = array.array("f", [-20e3, -10e3, 10e3, 20e3])
+        result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        signal = Signal("")
+        signal.iq_array = IQArray(result)
+        signal.bits

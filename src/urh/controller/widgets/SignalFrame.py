@@ -178,7 +178,7 @@ class SignalFrame(QFrame):
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
-            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentIndex)
+            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentText)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
@@ -223,7 +223,7 @@ class SignalFrame(QFrame):
         self.proto_selection_timer.timeout.connect(self.update_number_selected_samples)
 
         self.ui.cbSignalView.currentIndexChanged.connect(self.on_cb_signal_view_index_changed)
-        self.ui.cbModulationType.currentIndexChanged.connect(self.on_combobox_modulation_type_index_changed)
+        self.ui.cbModulationType.currentTextChanged.connect(self.on_combobox_modulation_type_text_changed)
         self.ui.cbProtoView.currentIndexChanged.connect(self.on_combo_box_proto_view_index_changed)
 
         self.ui.chkBoxShowProtocol.stateChanged.connect(self.set_protocol_visibility)
@@ -252,7 +252,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
-        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
         self.ui.spinBoxTolerance.blockSignals(False)
@@ -419,7 +419,7 @@ class SignalFrame(QFrame):
         try:
             FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
         except Exception as e:
-            Errors.generic_error("Error saving file", str(e), traceback.format_exc())
+            Errors.exception(e)
 
     def export_demodulated(self):
         try:
@@ -1029,7 +1029,7 @@ class SignalFrame(QFrame):
 
     def show_modulation_type(self):
         self.ui.cbModulationType.blockSignals(True)
-        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.cbModulationType.blockSignals(False)
 
     def on_participant_changed(self):
@@ -1050,12 +1050,12 @@ class SignalFrame(QFrame):
         sdc = SignalDetailsDialog(self.signal, self)
         sdc.show()
 
-    @pyqtSlot(int)
-    def on_combobox_modulation_type_index_changed(self, index: int):
-        if index != self.signal.modulation_type:
+    @pyqtSlot(str)
+    def on_combobox_modulation_type_text_changed(self, txt: str):
+        if txt != self.signal.modulation_type:
             modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
                                                       parameter_name="modulation_type",
-                                                      parameter_value=index)
+                                                      parameter_value=txt)
 
             self.undo_stack.push(modulation_action)
 
@@ -1263,7 +1263,6 @@ class SignalFrame(QFrame):
                                                                           filename=filename,
                                                                           include_amplitude=filename.endswith(".fta"))
         except Exception as e:
-            logger.exception(e)
-            Errors.generic_error("Failed to export spectrogram", str(e), traceback.format_exc())
+            Errors.exception(e)
         finally:
             QApplication.restoreOverrideCursor()

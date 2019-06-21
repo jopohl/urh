@@ -134,6 +134,7 @@ class SignalFrame(QFrame):
 
             self.scene_manager = SignalSceneManager(self.signal, self)
             self.ui.gvSignal.scene_manager = self.scene_manager
+            self.scene_manager.scene.setParent(self.ui.gvSignal)
             self.ui.gvSignal.setScene(self.scene_manager.scene)
 
             self.jump_sync = True

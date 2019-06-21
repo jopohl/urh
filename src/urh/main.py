@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
 import locale
-import re
-import os
-import sys
 import multiprocessing
-
+import os
+import re
+import sys
 
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
-
 
 try:
     locale.setlocale(locale.LC_ALL, '')
@@ -107,6 +105,11 @@ def main():
 
     app = QApplication(["URH"] + sys.argv[1:])
     app.setWindowIcon(QIcon(":/icons/icons/appicon.png"))
+
+    try:
+        app.styleHints().setShowShortcutsInContextMenus(True)
+    except AttributeError:
+        pass
 
     util.set_icon_theme()
 

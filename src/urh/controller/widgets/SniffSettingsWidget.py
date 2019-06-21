@@ -33,7 +33,7 @@ class SniffSettingsWidget(QWidget):
                                        center=self.ui.spinbox_sniff_Center.value(),
                                        noise=self.ui.spinbox_sniff_Noise.value(),
                                        tolerance=self.ui.spinbox_sniff_ErrorTolerance.value(),
-                                       modulation_type=self.ui.combox_sniff_Modulation.currentIndex(),
+                                       modulation_type=self.ui.combox_sniff_Modulation.currentText(),
                                        device=device_name,
                                        backend_handler=BackendHandler() if backend_handler is None else backend_handler,
                                        network_raw_mode=network_raw_mode)

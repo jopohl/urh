@@ -349,7 +349,7 @@ class Signal(QObject):
     def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,
                   "modulation": None if detect_modulation
-                  else "OOK" if self.__modulation_order == 2 and self.modulation_type == "ASK"
+                  else "OOK" if self.bits_per_symbol == 1 and self.modulation_type == "ASK"
                   else self.modulation_type}
 
         estimated_params = AutoInterpretation.estimate(self.iq_array, **kwargs)

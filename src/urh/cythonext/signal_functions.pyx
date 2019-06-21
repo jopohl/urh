@@ -336,13 +336,10 @@ cdef inline int64_t get_current_state(float sample, float[:] thresholds, float n
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
                                       str modulation_type, uint16_t bit_length,
-                                      uint8_t modulation_order=2):
+                                      uint8_t bits_per_symbol=1, float center_offset=0.1):
     """
     Get the pulse lengths after quadrature demodulation
 
-    @param samples: samples after QAD
-    @param center: center of separation lines
-    @return: a 2d array
     arr[i][0] gives type of symbol e.g. (arr[i][0] = 1) and (arr[i][0] = 0) for binary modulation
              Pause is (arr[i][0] = -1)
     arr[i][1] gives length of pulse
@@ -354,6 +351,8 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int cur_state = 0, new_state = 0, tmp_state = 0
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
+    cdef int modulation_order = 2**bits_per_symbol
+
     cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
     cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
     cdef float min_of_mod_type = min_max_of_mod_type[0]
@@ -362,10 +361,12 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int n = modulation_order // 2
 
     for i in range(0, n):
-        thresholds[i] = min_of_mod_type + (i+1) * (center-min_of_mod_type) / n
+        thresholds[i] = center - (n-(i+1)) * center_offset
 
-    for i in range(n, modulation_order):
-        thresholds[i] = max_of_mod_type - (modulation_order-(i+1)) * (max_of_mod_type - center) / n
+    for i in range(n, modulation_order-1):
+        thresholds[i] = center + (i+1-n) * center_offset
+
+    thresholds[modulation_order-1] = max_of_mod_type
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:

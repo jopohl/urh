@@ -15,7 +15,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.Signal import Signal
-from urh.util import util as urh_util
+from urh.util import util as urh_util, util
 from urh.util.Logger import logger
 
 
@@ -225,9 +225,10 @@ class ProtocolAnalyzer(object):
         bit_len = signal.bit_len
 
         ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.qad_center, signal.tolerance,
-                                                 signal.modulation_type, signal.bit_len)
+                                                 signal.modulation_type, signal.bit_len, signal.bits_per_symbol)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, pause_threshold=signal.pause_threshold)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.signal.bits_per_symbol,
+                                                               pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type == "ASK":
             self.__ensure_message_length_multiple(bit_data, signal.bit_len, pauses, bit_sample_pos,
                                                   signal.message_length_divisor)
@@ -270,7 +271,7 @@ class ProtocolAnalyzer(object):
                 bit_sample_pos[i].extend([bit_sample_pos[i][-1] + (k + 1) * bit_len for k in range(missing_bits - 1)])
                 bit_sample_pos[i].append(bit_sample_pos[i][-1] + pauses[i])
 
-    def _ppseq_to_bits(self, ppseq, bit_len: int, write_bit_sample_pos=True, pause_threshold=8):
+    def _ppseq_to_bits(self, ppseq, samples_per_symbol: int, bits_per_symbol: int, write_bit_sample_pos=True, pause_threshold=8):
         bit_sampl_pos = array.array("L", [])
         bit_sample_positions = []
 
@@ -281,10 +282,10 @@ class ProtocolAnalyzer(object):
         total_samples = 0
 
         pause_type = -1
-        zero_pulse_type = 0
-        one_pulse_type = 1
 
         there_was_data = False
+
+        samples_per_bit = int(samples_per_symbol/bits_per_symbol)
 
         if len(ppseq) > 0 and ppseq[0, 0] == pause_type:
             start = 1  # Starts with Pause
@@ -293,19 +294,20 @@ class ProtocolAnalyzer(object):
         for i in range(start, len(ppseq)):
             cur_pulse_type = ppseq[i, 0]
             num_samples = ppseq[i, 1]
-            num_bits_floated = num_samples / bit_len
-            num_bits = int(num_bits_floated)
-            decimal_place = num_bits_floated - num_bits
+            num_symbols_float = num_samples / samples_per_symbol
+            num_symbols = int(num_symbols_float)
+            decimal_place = num_symbols_float - num_symbols
 
             if decimal_place > 0.5:
-                num_bits += 1
+                num_symbols += 1
 
             if cur_pulse_type == pause_type:
                 # OOK
-                if num_bits <= pause_threshold or pause_threshold == 0:
-                    data_bits.extend([False] * num_bits)
+                if num_symbols <= pause_threshold or pause_threshold == 0:
+                    data_bits.extend([0] * (num_symbols * bits_per_symbol))
                     if write_bit_sample_pos:
-                        bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
+                        bit_sampl_pos.extend([total_samples + k * samples_per_bit
+                                              for k in range(num_symbols*bits_per_symbol)])
 
                 elif not there_was_data:
                     # Ignore this pause, if there were no information
@@ -324,18 +326,12 @@ class ProtocolAnalyzer(object):
                     data_bits[:] = array.array("B", [])
                     pauses.append(num_samples)
                     there_was_data = False
-
-            elif cur_pulse_type == zero_pulse_type:
-                data_bits.extend([False] * num_bits)
+            else:
+                data_bits.extend(util.number_to_bits(cur_pulse_type, bits_per_symbol) * num_symbols)
+                if not there_was_data and num_symbols > 0:
+                    there_was_data = True
                 if write_bit_sample_pos:
-                    bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
-
-            elif cur_pulse_type == one_pulse_type:
-                if not there_was_data:
-                    there_was_data = num_bits > 0
-                data_bits.extend([True] * num_bits)
-                if write_bit_sample_pos:
-                    bit_sampl_pos.extend([total_samples + k * bit_len for k in range(num_bits)])
+                    bit_sampl_pos.extend([total_samples + k * samples_per_bit for k in range(num_symbols*bits_per_symbol)])
 
             total_samples += num_samples
 

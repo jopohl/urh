@@ -29,6 +29,7 @@ class Signal(QObject):
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
     modulation_type_changed = pyqtSignal(str)
+    bits_per_symbol_changed = pyqtSignal(int)
 
     saved_status_changed = pyqtSignal()
     protocol_needs_update = pyqtSignal()
@@ -54,7 +55,7 @@ class Signal(QObject):
         if modulation is None:
             modulation = "FSK"
         self.__modulation_type = modulation
-        self.__modulation_order = 2
+        self.__bits_per_symbol = 2
 
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
@@ -153,17 +154,25 @@ class Signal(QObject):
 
     @modulation_type.setter
     def modulation_type(self, value: str):
-        """
-        0 - "ASK", 1 - "FSK", 2 - "PSK", 3 - "APSK (QAM)"
-
-        :param value:
-        :return:
-        """
         if self.__modulation_type != value:
             self.__modulation_type = value
             self._qad = None
 
             self.modulation_type_changed.emit(self.__modulation_type)
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def bits_per_symbol(self):
+        return self.__bits_per_symbol
+
+    @bits_per_symbol.setter
+    def bits_per_symbol(self, value: int):
+        if self.__bits_per_symbol != value:
+            self.__bits_per_symbol = value
+            self._qad = None
+
+            self.bits_per_symbol_changed.emit(self.__bits_per_symbol)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 

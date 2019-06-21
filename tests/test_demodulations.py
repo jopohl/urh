@@ -63,4 +63,10 @@ class TestDemodulations(unittest.TestCase):
 
         signal = Signal("")
         signal.iq_array = IQArray(result)
-        signal.bits
+        signal.bits_per_symbol = 2
+        signal.qad_center = 0
+
+        proto_analyzer = ProtocolAnalyzer(signal)
+        proto_analyzer.get_protocol_from_signal()
+        self.assertEqual(proto_analyzer.plain_bits_str[0], "1010110001")
+

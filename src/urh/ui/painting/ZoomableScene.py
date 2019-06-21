@@ -14,6 +14,8 @@ class ZoomableScene(QGraphicsScene):
         self.ones_area = None
         self.zeros_area = None
 
+        self.always_show_symbols_legend = False
+
         self.ones_caption = None
         self.zeros_caption = None
 
@@ -42,6 +44,8 @@ class ZoomableScene(QGraphicsScene):
             self.noise_area.height = h
 
     def draw_sep_area(self, y_mid, show_symbols=False):
+        show_symbols = show_symbols or self.always_show_symbols_legend
+
         x = self.sceneRect().x()
         y = self.sceneRect().y()
         h = self.sceneRect().height()

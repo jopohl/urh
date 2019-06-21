@@ -121,7 +121,6 @@ class SignalFrame(QFrame):
             else:
                 self.ui.lSignalTyp.setText("Complex Signal")
 
-            self.ui.gvLegend.hide()
             self.ui.lineEditSignalName.setText(self.signal.name)
             self.ui.lSamplesInView.setText("{0:,}".format(self.signal.num_samples))
             self.ui.lSamplesTotal.setText("{0:,}".format(self.signal.num_samples))
@@ -189,7 +188,6 @@ class SignalFrame(QFrame):
             self.signal.saved_status_changed.connect(self.on_signal_data_changed_before_save)
             self.ui.btnSaveSignal.clicked.connect(self.save_signal)
             self.signal.name_changed.connect(self.ui.lineEditSignalName.setText)
-            self.ui.gvLegend.resized.connect(self.on_gv_legend_resized)
 
             self.ui.gvSignal.selection_width_changed.connect(self.start_proto_selection_timer)
             self.ui.gvSignal.sel_area_start_end_changed.connect(self.start_proto_selection_timer)
@@ -212,7 +210,6 @@ class SignalFrame(QFrame):
         self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.selection_height_changed.connect(self.update_number_selected_samples)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
-        self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
 
         self.ui.sliderYScale.valueChanged.connect(self.on_slider_y_scale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -443,22 +440,12 @@ class SignalFrame(QFrame):
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
 
     def draw_signal(self, full_signal=False):
-        gv_legend = self.ui.gvLegend
-        gv_legend.y_sep = -self.signal.qad_center
-
         self.scene_manager.scene_type = self.ui.cbSignalView.currentIndex()
         self.scene_manager.init_scene()
         if full_signal:
             self.ui.gvSignal.show_full_scene()
         else:
             self.ui.gvSignal.redraw_view()
-
-        legend = LegendScene()
-        legend.setBackgroundBrush(constants.BGCOLOR)
-        legend.setSceneRect(0, self.scene_manager.scene.sceneRect().y(), gv_legend.width(),
-                            self.scene_manager.scene.sceneRect().height())
-        legend.draw_one_zero_arrows(-self.signal.qad_center)
-        gv_legend.setScene(legend)
 
         self.ui.gvSignal.y_sep = -self.signal.qad_center
 
@@ -596,7 +583,6 @@ class SignalFrame(QFrame):
             self.proto_analyzer.eliminate()
             self.ui.gvSignal.scene_manager.eliminate()
 
-        self.ui.gvLegend.eliminate()
         self.ui.gvSignal.eliminate()
         self.ui.gvSpectrogram.eliminate()
 
@@ -683,15 +669,6 @@ class SignalFrame(QFrame):
         self.ui.txtEdProto.setEnabled(True)
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
 
-    @pyqtSlot(float)
-    def update_legend(self, y_sep):
-        if self.ui.gvLegend.isVisible():
-            self.ui.gvLegend.y_sep = y_sep
-            self.ui.gvLegend.refresh()
-        self.ui.spinBoxCenterOffset.blockSignals(True)
-        self.ui.spinBoxCenterOffset.setValue(-y_sep)
-        self.ui.spinBoxCenterOffset.blockSignals(False)
-
     @pyqtSlot()
     def handle_protocol_sync_changed(self):
         self.sync_protocol = self.ui.chkBoxSyncSelection.isChecked()
@@ -727,13 +704,6 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
             self.ui.labelRSSI.show()
-
-            if self.ui.cbSignalView.currentIndex() == 1:
-                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
-                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
-                self.ui.gvLegend.refresh()
-            else:
-                self.ui.gvLegend.hide()
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
@@ -995,11 +965,9 @@ class SignalFrame(QFrame):
     @pyqtSlot(float)
     def on_signal_qad_center_changed(self, qad_center):
         self.ui.gvSignal.y_sep = -qad_center
-        self.ui.gvLegend.y_sep = -qad_center
 
         if self.ui.cbSignalView.currentIndex() > 0:
             self.scene_manager.scene.draw_sep_area(-qad_center)
-            self.ui.gvLegend.refresh()
         self.ui.spinBoxCenterOffset.blockSignals(False)
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
@@ -1062,9 +1030,6 @@ class SignalFrame(QFrame):
 
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.scene_manager.init_scene()
-                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
-                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
-                self.ui.gvLegend.refresh()
                 self.on_slider_y_scale_value_changed()
 
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
@@ -1090,13 +1055,6 @@ class SignalFrame(QFrame):
         self.ui.gvSignal.auto_fit_on_resize_is_blocked = False
 
         self.ui.lineEditSignalName.setFont(font)
-
-    @pyqtSlot()
-    def on_gv_legend_resized(self):
-        if self.ui.gvLegend.isVisible():
-            self.ui.gvLegend.y_zoom_factor = self.ui.gvSignal.transform().m22()
-            self.ui.gvLegend.refresh()
-            self.ui.gvLegend.translate(0, 1)  # Resize verschiebt sonst Pfeile
 
     @pyqtSlot()
     def on_btn_show_hide_start_end_clicked(self):

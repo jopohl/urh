@@ -106,7 +106,7 @@ def build_modulator_from_args(arguments: argparse.Namespace):
 
     result.param_for_zero = param_zero
     result.param_for_one = param_one
-    result.modulation_type_str = arguments.modulation_type
+    result.modulation_type = arguments.modulation_type
     result.sample_rate = arguments.sample_rate
 
     return result
@@ -150,7 +150,7 @@ def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
 
     result = ProtocolSniffer(arguments.bit_length, arguments.center, arguments.noise, arguments.tolerance,
-                             Modulator.MODULATION_TYPES.index(arguments.modulation_type),
+                             arguments.modulation_type,
                              arguments.device.lower(), bh)
     result.rcv_device.frequency = arguments.frequency
     result.rcv_device.sample_rate = arguments.sample_rate
@@ -261,7 +261,7 @@ def parse_project_file(file_path: str):
         result["carrier_phase"] = modulator.carrier_phase_deg
         result["parameter_zero"] = modulator.param_for_zero
         result["parameter_one"] = modulator.param_for_one
-        result["modulation_type"] = modulator.modulation_type_str
+        result["modulation_type"] = modulator.modulation_type
 
     return result
 

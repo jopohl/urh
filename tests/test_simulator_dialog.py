@@ -86,7 +86,7 @@ class TestSimulatorDialog(QtTestCase):
         self.assertEqual(simulator.sniffer.signal.noise_threshold_relative, 0.1234)
 
         sniff_settings_widget.ui.combox_sniff_Modulation.setCurrentText("PSK")
-        self.assertEqual(simulator.sniffer.signal.modulation_type_str, "PSK")
+        self.assertEqual(simulator.sniffer.signal.modulation_type, "PSK")
 
         decodings = [sniff_settings_widget.ui.comboBox_sniff_encoding.itemText(i) for i in
                      range(sniff_settings_widget.ui.comboBox_sniff_encoding.count())]

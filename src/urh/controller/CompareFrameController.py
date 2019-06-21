@@ -1046,10 +1046,7 @@ class CompareFrameController(QWidget):
                 self.message_type_table_model.update()
                 self.ui.tblViewMessageTypes.clearSelection()
             except Exception as e:
-                logger.exception(e)
-                Errors.generic_error("Failed to assign labels",
-                                     "An error occurred during automatic label assignment",
-                                     traceback.format_exc())
+                Errors.exception(e)
 
         self.ui.progressBarLogicAnalyzer.setValue(90)
 

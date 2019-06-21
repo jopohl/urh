@@ -1,7 +1,10 @@
 import sys
+import traceback
+
 from PyQt5.QtWidgets import QMessageBox, QWidget
 
 from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 
 class Errors:
@@ -13,6 +16,14 @@ class Errors:
                                              "<br>") + "</b>" + "<br><br>----------<br><br>" + detailed_msg.replace(
                 "\n", "<br>")
         QMessageBox.critical(w, title, msg)
+
+    @staticmethod
+    def exception(exception: Exception):
+        logger.exception(exception)
+        w = QWidget()
+        msg = "Error: <b>" + str(exception).replace("\n", "<br>") + "</b><hr>"
+        msg += traceback.format_exc().replace("\n", "<br>")
+        QMessageBox.critical(w, "An error occurred", msg)
 
     @staticmethod
     def no_device():

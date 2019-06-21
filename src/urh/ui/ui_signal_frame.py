@@ -316,18 +316,6 @@ class Ui_SignalFrame(object):
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_6.setSpacing(0)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.gvLegend = LegendGraphicView(self.pageSignal)
-        self.gvLegend.setMinimumSize(QtCore.QSize(0, 150))
-        self.gvLegend.setMaximumSize(QtCore.QSize(30, 16777215))
-        self.gvLegend.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.gvLegend.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.gvLegend.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.gvLegend.setInteractive(False)
-        self.gvLegend.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
-        self.gvLegend.setRubberBandSelectionMode(QtCore.Qt.ContainsItemShape)
-        self.gvLegend.setOptimizationFlags(QtWidgets.QGraphicsView.DontSavePainterState)
-        self.gvLegend.setObjectName("gvLegend")
-        self.horizontalLayout_6.addWidget(self.gvLegend)
         self.gvSignal = EpicGraphicView(self.pageSignal)
         self.gvSignal.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -611,7 +599,6 @@ class Ui_SignalFrame(object):
 
 
 from urh.ui.views.EpicGraphicView import EpicGraphicView
-from urh.ui.views.LegendGraphicView import LegendGraphicView
 from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
 from urh.ui.views.TextEditProtocolView import TextEditProtocolView
 from . import urh_rc

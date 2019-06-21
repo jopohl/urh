@@ -367,7 +367,7 @@ class SimulatorDialog(QDialog):
             self.device_settings_tx_widget.device = self.simulator.sender.device
         except Exception as e:
             self.device_settings_tx_widget.ui.cbDevice.setCurrentText(old_name)
-            Errors.generic_error("Error occurred", str(e))
+            Errors.exception(e)
 
     @pyqtSlot()
     def on_btn_test_sniff_settings_clicked(self):

@@ -198,21 +198,6 @@ class TestSignalTabGUI(QtTestCase):
         self.assertAlmostEqual((128440 - 89383) / 1000000,
                                (frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
 
-    def test_legend_graphic_view(self):
-        self.add_signal_to_form("esaver.coco")
-        frame = self.form.signal_tab_controller.signal_frames[0]
-
-        self.assertTrue(frame.ui.gvLegend.isHidden())
-        frame.ui.cbSignalView.setCurrentIndex(1)
-        self.assertFalse(frame.ui.gvLegend.isHidden())
-
-        self.assertAlmostEqual(frame.ui.gvLegend.y_sep, -frame.ui.spinBoxCenterOffset.value(), places=4)
-
-        frame.ui.spinBoxCenterOffset.setValue(0)
-        frame.ui.spinBoxCenterOffset.editingFinished.emit()
-
-        self.assertEqual(frame.ui.gvLegend.y_sep, 0)
-
     def test_auto_detect_button(self):
         self.add_signal_to_form("esaver.coco")
         frame = self.form.signal_tab_controller.signal_frames[0]
@@ -244,8 +229,6 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.cbSignalView.setCurrentIndex(1)
         QApplication.instance().processEvents()
         self.assertEqual(frame.ui.gvSignal.scene_type, 1)
-        if self.SHOW:
-            self.assertTrue(frame.ui.gvLegend.isVisible())
 
     def test_context_menu_text_edit_protocol_view(self):
         self.add_signal_to_form("esaver.coco")

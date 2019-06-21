@@ -231,7 +231,7 @@ class GeneratorTabController(QWidget):
         self.ui.lCarrierPhaseValue.setText(cur_mod.carrier_phase_str)
         self.ui.lBitLenValue.setText(cur_mod.bit_len_str)
         self.ui.lSampleRateValue.setText(cur_mod.sample_rate_str)
-        mod_type = cur_mod.modulation_type_str
+        mod_type = cur_mod.modulation_type
         self.ui.lModTypeValue.setText(mod_type)
         if mod_type == "ASK":
             prefix = "Amplitude"
@@ -394,7 +394,7 @@ class GeneratorTabController(QWidget):
                 sample_rate = 1e6
             FileOperator.save_data_dialog("generated", modulated_samples, sample_rate=sample_rate, parent=self)
         except Exception as e:
-            Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
+            Errors.exception(e)
             self.unsetCursor()
 
     def prepare_modulation_buffer(self, total_samples: int, show_error=True) -> IQArray:
@@ -606,7 +606,7 @@ class GeneratorTabController(QWidget):
             dialog.show()
             dialog.graphics_view.show_full_scene(reinitialize=True)
         except Exception as e:
-            Errors.generic_error(self.tr("Failed to generate data"), str(e), traceback.format_exc())
+            Errors.exception(e)
             self.unsetCursor()
 
     @pyqtSlot()

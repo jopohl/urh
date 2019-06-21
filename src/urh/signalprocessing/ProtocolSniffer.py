@@ -29,7 +29,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
     BUFFER_SIZE_MB = 100
 
     def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: int, device: str, backend_handler: BackendHandler, network_raw_mode=False):
+                 modulation_type: str, device: str, backend_handler: BackendHandler, network_raw_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
         signal.qad_center = center
@@ -204,9 +204,11 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             self.signal.qad_center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*self.signal.bit_len)
 
         ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len)
+                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len,
+                                self.signal.bits_per_symbol)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, write_bit_sample_pos=False)
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len,
+                                                               self.signal.bits_per_symbol, write_bit_sample_pos=False)
 
         for bits, pause in zip(bit_data, pauses):
             message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,

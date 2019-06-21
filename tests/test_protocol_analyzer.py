@@ -11,7 +11,7 @@ from urh.signalprocessing.Signal import Signal
 class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
         signal = Signal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
-        signal.modulation_type = 0
+        signal.modulation_type = "ASK"
         signal.bit_len = 100
 
         proto_analyzer = ProtocolAnalyzer(signal)
@@ -41,7 +41,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
 
     def test_get_rssi_of_message(self):
         signal = Signal(get_path_for_data_file("two_participants.coco"), "RSSI-Test")
-        signal.modulation_type = 1
+        signal.modulation_type = "FSK"
         signal.bit_len = 100
         signal.qad_center = -0.0507
 

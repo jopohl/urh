@@ -452,3 +452,14 @@ def set_splitter_stylesheet(splitter: QSplitter):
                            "stop:0.5 rgba({0}, {1}, {2}, {3}),"
                            "stop:0.8 rgba(255, 255, 255, 0));"
                            "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b, a))
+
+
+def calc_x_y_scale(rect, parent):
+    view_rect = parent.view_rect() if hasattr(parent, "view_rect") else rect
+    parent_width = parent.width() if hasattr(parent, "width") else 750
+    parent_height = parent.height() if hasattr(parent, "height") else 300
+
+    scale_x = view_rect.width() / parent_width
+    scale_y = view_rect.height() / parent_height
+
+    return scale_x, scale_y

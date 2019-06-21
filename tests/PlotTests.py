@@ -14,7 +14,7 @@ from tests.utils_testing import get_path_for_data_file
 class PlotTests(unittest.TestCase):
     def test_plot(self):
         modulator = Modulator("gfsk")
-        modulator.modulation_type_str = "GFSK"
+        modulator.modulation_type = "GFSK"
         modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
         modulator.param_for_one = 20e3
@@ -34,7 +34,7 @@ class PlotTests(unittest.TestCase):
         plt.title("Modulated Wave")
 
         plt.subplot(2, 1, 2)
-        qad = signal_functions.afp_demod(np.ascontiguousarray(data), 0, 1)
+        qad = signal_functions.afp_demod(np.ascontiguousarray(data), 0, "FSK")
         plt.plot(qad)
         plt.title("Quad Demod")
 
@@ -42,7 +42,7 @@ class PlotTests(unittest.TestCase):
 
     def test_carrier_auto_detect(self):
         signal = Signal(get_path_for_data_file("wsp.complex"), "test")
-        signal.modulation_type = 0
+        signal.modulation_type = "ASK"
         signal.noise_threshold = 0.035
         signal.qad_center = 0.0245
         signal.bit_len = 25

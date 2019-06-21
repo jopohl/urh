@@ -5,6 +5,7 @@ import numpy as np
 from libcpp cimport bool
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, int64_t
+from libc.stdio cimport printf
 from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
@@ -19,21 +20,32 @@ cdef extern from "math.h" nogil:
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
 # np.import_array()
 
+cdef int64_t PAUSE_STATE = -1
+
 cdef float complex imag_unit = 1j
 cdef float NOISE_FSK_PSK = -4.0
 cdef float NOISE_ASK = 0.0
 
-cpdef float get_noise_for_mod_type(int mod_type):
-    if mod_type == 0:
+cdef float get_noise_for_mod_type(str mod_type):
+    if mod_type == "ASK":
         return NOISE_ASK
-    elif mod_type == 1:
+    elif mod_type == "FSK":
         return NOISE_FSK_PSK
-    elif mod_type == 2:
+    elif mod_type == "PSK" or mod_type == "OQPSK":
         return NOISE_FSK_PSK
-    elif mod_type == 3:  # ASK + PSK (QAM)
+    elif mod_type == "QAM":
         return NOISE_ASK * NOISE_FSK_PSK
     else:
         return 0
+
+cdef tuple get_value_range_of_mod_type(str mod_type):
+    if mod_type == "ASK":
+        return 0, 1
+    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
+        return -np.pi, np.pi
+
+    printf("Warning unknown mod type for value range")
+    return 0, 0
 
 cdef get_numpy_dtype(iq cython_type):
     if str(cython.typeof(cython_type)) == "char":
@@ -239,7 +251,7 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
         else:
             result[i] = nco_times_sample.real
 
-cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, int mod_type):
+cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, str mod_type):
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
@@ -285,8 +297,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, in
 
     cdef bool qam = False
 
-    if mod_type == 2 or mod_type == 3: # PSK or QAM
-        if mod_type == 3:
+    if mod_type in ("PSK", "QAM", "OQPSK"):
+        if mod_type == "QAM":
             qam = True
 
         costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
@@ -302,143 +314,102 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, in
                 result[i] = NOISE
                 continue
 
-            if mod_type == 0:  # ASK
+            if mod_type == "ASK":
                 result[i] = sqrt(magnitude) / max_magnitude
-            elif mod_type == 1:  # FSK
+            elif mod_type == "FSK":
                 #tmp = samples[i - 1].conjugate() * c
                 tmp = (samples[i-1, 0] - imag_unit * samples[i-1, 1]) * (real + imag_unit * imag)
                 result[i] = atan2(tmp.imag, tmp.real)  # Freq
 
     return np.asarray(result)
 
-cpdef unsigned long long find_signal_start(float[::1] demod_samples, int mod_type):
+cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
+    if sample == noise_val:
+        return PAUSE_STATE
 
-    cdef unsigned long i = 0
-    cdef unsigned long ns = len(demod_samples)
-    cdef unsigned long l = 100
-    if ns < 100:
-        l = ns
+    cdef int i
+    for i in range(n):
+        if sample <= thresholds[i]:
+            return i
 
-    cdef float dsample = 0
-    cdef int has_oversteuern = 0
-    cdef int conseq_noise = 0
-    cdef int conseq_not_noise = 0
-    cdef int behind_oversteuern = 0
-    cdef float NOISE = get_noise_for_mod_type(mod_type)
+    return PAUSE_STATE
 
-    for i in range(0, l):
-        dsample = demod_samples[i]
-        if dsample > NOISE:
-            has_oversteuern = 1
-            break
-
-    for i in range(0, ns):
-        dsample = demod_samples[i]
-
-        if dsample == NOISE:
-            conseq_noise += 1
-            conseq_not_noise = 0
-        else:
-            conseq_noise = 0
-            conseq_not_noise += 1
-
-        if has_oversteuern == 1:
-            if has_oversteuern and conseq_noise > 100:
-                behind_oversteuern = 1
-
-            if behind_oversteuern and conseq_not_noise == 3:
-                return i - 3
-
-        elif conseq_not_noise == 3:
-            return i -3
-
-    return 0
-
-cpdef unsigned long long find_signal_end(float[::1] demod_samples, int mod_type):
-
-    cdef unsigned long long i = 0
-    cdef float dsample = 0
-    cdef int conseq_not_noise = 0
-    cdef float NOISE = get_noise_for_mod_type(mod_type)
-    cdef unsigned long long ns = len(demod_samples)
-
-    for i in range(ns, 0, -1):
-        dsample = demod_samples[i]
-
-        if dsample > NOISE:
-            conseq_not_noise += 1
-
-        if conseq_not_noise == 3:
-            return i + 3
-
-    return ns
-
-cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float center,
-                                                 unsigned int tolerance, int modulation_type, unsigned int bit_length):
+cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
+                                      str modulation_type, uint16_t bit_length,
+                                      uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
-    Holt sich die Pulslängen aus den quadraturdemodulierten Samples
-    
-    @param samples: Samples nach der QAD
-    @param center: Alles über der Treshold ist ein Einserpuls, alles darunter 0er Puls
-    @return: Ein 2D Array arr.
-    arr[i] gibt Position an.
-    arr[i][0] gibt an ob Einspuls (arr[i][0] = 1) Nullpuls (arr[i][0] = 0) Pause (arr[i][0] = 42)
-    arr[i][1] gibt die Länge des Pulses bzw. der Pause an.
+    Get the pulse lengths after quadrature demodulation
+
+    arr[i][0] gives type of symbol e.g. (arr[i][0] = 1) and (arr[i][0] = 0) for binary modulation
+             Pause is (arr[i][0] = -1)
+    arr[i][1] gives length of pulse
     """
-    cdef int is_ask = modulation_type == 0
-    cdef unsigned long long i, pulse_length = 0
-    cdef unsigned long long cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
+    cdef bool is_ask = modulation_type == "ASK"
+    cdef int64_t i, j, pulse_length = 0, num_samples = len(samples)
+    cdef int64_t cur_index = 0, consecutive_ones = 0, consecutive_zeros = 0, consecutive_pause = 0
     cdef float s = 0, s_prev = 0
-    cdef unsigned short cur_state = 0, new_state = 0
+    cdef int cur_state = 0, new_state = 0, tmp_state = 0
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
-    cdef unsigned long long num_samples = len(samples)
 
-    cdef unsigned long long[:, ::1] result = np.zeros((num_samples, 2), dtype=np.uint64, order="C")
+    cdef int modulation_order = 2**bits_per_symbol
+
+    cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
+    cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
+    cdef float min_of_mod_type = min_max_of_mod_type[0]
+    cdef float max_of_mod_type = min_max_of_mod_type[1]
+
+    cdef int n = modulation_order // 2
+
+    for i in range(0, n):
+        thresholds[i] = center - (n-(i+1)) * center_spacing
+
+    for i in range(n, modulation_order-1):
+        thresholds[i] = center + (i+1-n) * center_spacing
+
+    thresholds[modulation_order-1] = max_of_mod_type
+
+    cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
         return result
 
+    cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
+
     s_prev = samples[0]
-    if s_prev == NOISE:
-        cur_state = 42
-    elif s_prev > center:
-        cur_state = 1
-    else:
-        cur_state = 0
+    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        if s == NOISE:
+        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
+
+        if tmp_state == PAUSE_STATE:
             consecutive_pause += 1
-            consecutive_ones = 0
-            consecutive_zeros = 0
-            if cur_state == 42:
-                continue
-
-        elif s > center:
-            consecutive_ones += 1
-            consecutive_zeros = 0
-            consecutive_pause = 0
-            if cur_state == 1:
-                continue
-
         else:
-            consecutive_zeros += 1
-            consecutive_ones = 0
             consecutive_pause = 0
-            if cur_state == 0:
-                continue
 
-        if consecutive_ones > tolerance:
-            new_state = 1
-        elif consecutive_zeros > tolerance:
-            new_state = 0
-        elif consecutive_pause > tolerance:
-            new_state = 42
-        else:
+        for j in range(0, modulation_order):
+            if j == tmp_state:
+                state_count[j] += 1
+            else:
+                state_count[j] = 0
+
+        if cur_state == tmp_state:
             continue
 
-        if is_ask and cur_state == 42 and (pulse_length - tolerance) < bit_length:
+        new_state = -42
+
+        if consecutive_pause > tolerance:
+            new_state = PAUSE_STATE
+        else:
+            for j in range(0, modulation_order):
+                if state_count[j] > tolerance:
+                    new_state = j
+                    break
+
+        if new_state == -42:
+            continue
+
+        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < bit_length:
             # Aggregate short pauses for ASK
             cur_state = 0
 
@@ -453,7 +424,7 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
         cur_state = new_state
 
     # Append last one
-    cdef unsigned long long len_result = len(result)
+    cdef int64_t len_result = len(result)
     if cur_index < len_result:
         if cur_index > 0 and result[cur_index - 1, 0] == cur_state:
             result[cur_index - 1, 1] += pulse_length - tolerance
@@ -463,18 +434,6 @@ cpdef unsigned long long[:, ::1] grab_pulse_lens(float[::1] samples, float cente
             cur_index += 1
 
     return result[:cur_index]
-
-cpdef unsigned long long estimate_bit_len(float[::1] qad_samples, float qad_center, int tolerance, int mod_type):
-
-    start = find_signal_start(qad_samples, mod_type)
-    cdef unsigned long long[:, ::1] ppseq = grab_pulse_lens(qad_samples[start:], qad_center, tolerance, mod_type, 0)
-    cdef unsigned long long i = 0
-    cdef unsigned long long l = len(ppseq)
-    for i in range(0, l):
-        if ppseq[i, 0] == 1:
-            return ppseq[i, 1] # first pulse after pause
-
-    return 100
 
 cpdef int find_nearest_center(float sample, float[::1] centers, int num_centers) nogil:
     cdef int i = 0
@@ -491,9 +450,6 @@ cpdef int find_nearest_center(float sample, float[::1] centers, int num_centers)
             result = i
 
     return result
-
-
-from libc.stdlib cimport malloc, free
 
 cpdef np.ndarray[np.complex64_t, ndim=1] fir_filter(float complex[::1] input_samples, float complex[::1] filter_taps):
     cdef int i = 0, j = 0

@@ -779,43 +779,6 @@ stop:1 rgba(255, 255, 255, 0));
               <number>0</number>
              </property>
              <item>
-              <widget class="LegendGraphicView" name="gvLegend">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>150</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOn</enum>
-               </property>
-               <property name="interactive">
-                <bool>false</bool>
-               </property>
-               <property name="resizeAnchor">
-                <enum>QGraphicsView::AnchorViewCenter</enum>
-               </property>
-               <property name="rubberBandSelectionMode">
-                <enum>Qt::ContainsItemShape</enum>
-               </property>
-               <property name="optimizationFlags">
-                <set>QGraphicsView::DontSavePainterState</set>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="EpicGraphicView" name="gvSignal">
                <property name="enabled">
                 <bool>true</bool>
@@ -1307,11 +1270,6 @@ stop:1 rgba(255, 255, 255, 0));
    <class>EpicGraphicView</class>
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.EpicGraphicView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LegendGraphicView</class>
-   <extends>QGraphicsView</extends>
-   <header>urh.ui.views.LegendGraphicView.h</header>
   </customwidget>
   <customwidget>
    <class>TextEditProtocolView</class>

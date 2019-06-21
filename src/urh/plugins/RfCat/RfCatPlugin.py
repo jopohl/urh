@@ -167,13 +167,13 @@ class RfCatPlugin(SDRPlugin):
         if not self.open_rfcat():
             return False
         modulation = self.modulators[messages[0].modulator_index].modulation_type
-        if modulation == 0:     # ASK
+        if modulation == "ASK":
             modulation = "MOD_ASK_OOK"
-        elif modulation == 1:   # FSK
+        elif modulation == "FSK":
             modulation = "MOD_2FSK"
-        elif modulation == 2:   # GFSK
+        elif modulation == "GFSK":
             modulation = "MOD_GFSK"
-        elif modulation == 3:   # PSK
+        elif modulation == "PSK":
             modulation = "MOD_MSK"
         else:                   # Fallback
             modulation = "MOD_ASK_OOK"

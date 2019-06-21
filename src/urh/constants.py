@@ -45,14 +45,14 @@ SEND_INDICATOR_COLOR = QColor("darkblue")  # overwritten by system color (bin/ur
 # ROI-SELECTION COLORS
 SELECTION_COLOR = QColor("darkblue")  # overwritten by system color (bin/urh)
 NOISE_COLOR = QColor("red")
-SELECTION_OPACITY = 0.8
+SELECTION_OPACITY = 1
 NOISE_OPACITY = 0.4
 
 # SEPARATION COLORS
-ONES_AREA_COLOR = QColor.fromRgb(0, 128, 128)
-ZEROS_AREA_COLOR = QColor.fromRgb(90, 9, 148)
-SEPARATION_OPACITY = 0.2
-SEPARATION_PADDING = .05  # Prozent
+ONES_AREA_COLOR = Qt.darkGreen
+ZEROS_AREA_COLOR = Qt.darkRed
+SEPARATION_OPACITY = 0.25
+SEPARATION_PADDING = .05  # percent
 
 # PROTOCOL TABLE COLORS
 SELECTED_ROW_COLOR = QColor.fromRgb(0, 0, 255)

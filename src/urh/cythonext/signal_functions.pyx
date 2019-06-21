@@ -336,7 +336,7 @@ cdef inline int64_t get_current_state(float sample, float[:] thresholds, float n
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
                                       str modulation_type, uint16_t bit_length,
-                                      uint8_t bits_per_symbol=1, float center_offset=0.1):
+                                      uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
     Get the pulse lengths after quadrature demodulation
 
@@ -361,10 +361,10 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int n = modulation_order // 2
 
     for i in range(0, n):
-        thresholds[i] = center - (n-(i+1)) * center_offset
+        thresholds[i] = center - (n-(i+1)) * center_spacing
 
     for i in range(n, modulation_order-1):
-        thresholds[i] = center + (i+1-n) * center_offset
+        thresholds[i] = center + (i+1-n) * center_spacing
 
     thresholds[modulation_order-1] = max_of_mod_type
 

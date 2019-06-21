@@ -55,7 +55,7 @@ class Signal(QObject):
         if modulation is None:
             modulation = "FSK"
         self.__modulation_type = modulation
-        self.__bits_per_symbol = 2
+        self.__bits_per_symbol = 1
 
         self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 

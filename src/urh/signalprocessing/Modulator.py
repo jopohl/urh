@@ -216,10 +216,12 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate", "parameters"):
+            if attr not in ("data", "_Modulator__sample_rate", "_Modulator__modulation_type",
+                            "default_sample_rate", "parameters"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
+        root.set("modulation_type", self.__modulation_type)
         root.set("index", str(index))
         root.set("parameters", ",".join(map(str, self.parameters)))
 

@@ -38,15 +38,6 @@ cdef float get_noise_for_mod_type(str mod_type):
     else:
         return 0
 
-cdef tuple get_value_range_of_mod_type(str mod_type):
-    if mod_type == "ASK":
-        return 0, 1
-    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
-        return -np.pi, np.pi
-
-    printf("Warning unknown mod type for value range")
-    return 0, 0
-
 cdef get_numpy_dtype(iq cython_type):
     if str(cython.typeof(cython_type)) == "char":
         return np.int8
@@ -332,7 +323,7 @@ cdef inline int64_t get_current_state(float sample, float[:] thresholds, float n
         if sample <= thresholds[i]:
             return i
 
-    return PAUSE_STATE
+    return n
 
 cpdef inline np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
     cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
@@ -366,12 +357,6 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int modulation_order = 2**bits_per_symbol
 
     cdef np.ndarray[np.float32_t, ndim=1] thresholds = get_center_thresholds(center, center_spacing, modulation_order)
-    cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
-    cdef float max_of_mod_type = min_max_of_mod_type[1]
-
-    cdef int n = modulation_order // 2
-
-    thresholds = np.append(thresholds, max_of_mod_type).astype(np.float32)   # for last comparision
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
@@ -380,12 +365,12 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
 
     s_prev = samples[0]
-    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
+    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order - 1)
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
+        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order - 1)
 
         if tmp_state == PAUSE_STATE:
             consecutive_pause += 1

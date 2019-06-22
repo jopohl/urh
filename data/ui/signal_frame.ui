@@ -857,7 +857,7 @@ stop:1 rgba(255, 255, 255, 0));
                 <enum>QFrame::Raised</enum>
                </property>
                <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
+                <enum>Qt::ScrollBarAlwaysOn</enum>
                </property>
                <property name="horizontalScrollBarPolicy">
                 <enum>Qt::ScrollBarAlwaysOn</enum>

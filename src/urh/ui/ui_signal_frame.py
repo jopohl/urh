@@ -348,7 +348,7 @@ class Ui_SignalFrame(object):
         self.gvSignal.setStyleSheet("")
         self.gvSignal.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.gvSignal.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.gvSignal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.gvSignal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.gvSignal.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.gvSignal.setInteractive(False)
         self.gvSignal.setRenderHints(QtGui.QPainter.Antialiasing|QtGui.QPainter.TextAntialiasing)

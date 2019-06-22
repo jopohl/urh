@@ -46,10 +46,13 @@ class ZoomableScene(QGraphicsScene):
             self.noise_area.setY(y)
             self.noise_area.height = h
 
+    def hide_legend(self):
+        for caption in self.captions:
+            caption.hide()
+
     def redraw_legend(self, force_show=False):
         if not (force_show or self.always_show_symbols_legend):
-            for caption in self.captions:
-                caption.hide()
+            self.hide_legend()
             return
 
         num_captions = len(self.centers) + 1
@@ -107,6 +110,7 @@ class ZoomableScene(QGraphicsScene):
         start = y + h
 
         for i, area in enumerate(self.separation_areas):
+            area.show()
             try:
                 self.separation_areas[i].setRect(x, start, w, -(start - centers[i]))
                 start -= (start - centers[i])

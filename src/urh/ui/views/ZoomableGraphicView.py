@@ -181,6 +181,8 @@ class ZoomableGraphicView(SelectableGraphicView):
 
             if self.scene_type == 1:
                 self.scene().redraw_legend()
+            else:
+                self.scene().hide_legend()
 
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
         # Overwritten in Epic Graphic View

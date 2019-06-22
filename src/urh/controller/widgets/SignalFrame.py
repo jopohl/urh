@@ -1,6 +1,5 @@
 import math
 import time
-import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
@@ -21,7 +20,6 @@ from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
-from urh.ui.painting.LegendScene import LegendScene
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator, util
@@ -285,7 +283,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(self.signal.iq_array.subarray(start,end,step_size).magnitudes_normalized)
+                power = np.mean(self.signal.iq_array.subarray(start, end, step_size).magnitudes_normalized)
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 
@@ -415,7 +413,8 @@ class SignalFrame(QFrame):
 
     def save_signal_as(self):
         try:
-            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
+            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate,
+                                          self.signal.wav_mode)
         except Exception as e:
             Errors.exception(e)
 
@@ -434,7 +433,8 @@ class SignalFrame(QFrame):
                 if filename.endswith(".wav"):
                     data = self.signal.qad.astype(np.float32)
                     data /= np.max(np.abs(data))
-                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate, num_channels=1)
+                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate,
+                                       num_channels=1)
                 self.unsetCursor()
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
@@ -1146,7 +1146,8 @@ class SignalFrame(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
+        p = Process(target=perform_filter,
+                    args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 

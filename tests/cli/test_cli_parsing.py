@@ -25,7 +25,7 @@ class TestCLIParsing(QtTestCase):
             urh_cli.build_modulator_from_args(args)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 0 -p1 1 -mo ASK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
+                                      " -p0 0 -p1 1 -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.modulation_type, "ASK")
         self.assertEqual(modulator.sample_rate, 2e6)
@@ -37,13 +37,13 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(modulator.carrier_phase_deg, 30)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 10% -p1 20% -mo ASK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
+                                      " -p0 10% -p1 20% -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.param_for_zero, 10)
         self.assertEqual(modulator.param_for_one, 20)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 20e3 -p1=-20e3 -mo FSK -cf 1337e3 -ca 0.9 -bl 24 -cp 30".split())
+                                      " -p0 20e3 -p1=-20e3 -mo FSK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.modulation_type, "FSK")
         self.assertEqual(modulator.param_for_zero, 20e3)
@@ -102,7 +102,7 @@ class TestCLIParsing(QtTestCase):
     def test_build_protocol_sniffer_from_args(self):
         args = self.parser.parse_args("--device HackRF --frequency 50e3 --sample-rate 2.5e6 -rx "
                                       "-if 24 -bb 30 -g 0 --device-identifier abcde "
-                                      "-bl 1337 --center 0.5 --noise 0.1234 --tolerance 42".split())
+                                      "-sps 1337 --center 0.5 --noise 0.1234 --tolerance 42".split())
         sniffer = urh_cli.build_protocol_sniffer_from_args(args)
         self.assertEqual(sniffer.rcv_device.frequency, 50e3)
         self.assertEqual(sniffer.rcv_device.sample_rate, 2.5e6)

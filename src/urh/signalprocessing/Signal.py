@@ -26,6 +26,7 @@ class Signal(QObject):
     tolerance_changed = pyqtSignal(int)
     noise_threshold_changed = pyqtSignal()
     center_changed = pyqtSignal(float)
+    center_spacing_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
     modulation_type_changed = pyqtSignal(str)
@@ -56,6 +57,7 @@ class Signal(QObject):
             modulation = "FSK"
         self.__modulation_type = modulation
         self.__bits_per_symbol = 1
+        self.__center_spacing = 0.1  # required for higher order modulations
 
         self.__parameter_cache = {mod: {"center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
@@ -209,6 +211,18 @@ class Signal(QObject):
         if self.__center != value:
             self.__center = value
             self.center_changed.emit(value)
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def center_spacing(self) -> float:
+        return self.__center_spacing
+
+    @center_spacing.setter
+    def center_spacing(self, value: float):
+        if self.__center_spacing != value:
+            self.__center_spacing = value
+            self.center_spacing_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 

@@ -338,6 +338,8 @@ class SignalFrame(QFrame):
             gv.scale(1, yscale / current_factor)
             x, w = gv.view_rect().x(), gv.view_rect().width()
             gv.centerOn(x + w / 2, gv.y_center)
+            if gv.scene_type == 1:
+                gv.scene().redraw_legend()
         except ZeroDivisionError:
             pass
 

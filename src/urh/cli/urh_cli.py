@@ -355,8 +355,7 @@ def main():
             return default
 
     import multiprocessing as mp
-    # allow usage of prange (OpenMP) in Processes
-    mp.set_start_method("spawn")
+    mp.set_start_method("spawn")  # allow usage of prange (OpenMP) in Processes
     mp.freeze_support()
 
     parser = create_parser()

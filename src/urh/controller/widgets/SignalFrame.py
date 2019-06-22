@@ -186,7 +186,7 @@ class SignalFrame(QFrame):
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
             self.signal.bits_per_symbol_changed.connect(self.ui.spinBoxBitsPerSymbol.setValue)
-            self.signal.center_spacing_changed.connect(self.ui.spinBoxCenterSpacing.setValue)
+            self.signal.center_spacing_changed.connect(self.on_signal_center_spacing_changed)
 
             self.signal.sample_rate_changed.connect(self.on_signal_sample_rate_changed)
 
@@ -650,6 +650,12 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.setValue(new_thresh)
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
+
+    @pyqtSlot(float)
+    def on_signal_center_spacing_changed(self, value: float):
+        self.ui.spinBoxCenterSpacing.setValue(value)
+        if self.ui.gvSignal.scene_type == 1:
+            self.ui.gvSignal.scene().redraw_legend()
 
     @pyqtSlot()
     def on_noise_threshold_changed(self):

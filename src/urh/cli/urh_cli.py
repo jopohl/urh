@@ -14,7 +14,7 @@ DEFAULT_CARRIER_FREQUENCY = 1e3
 DEFAULT_CARRIER_AMPLITUDE = 1
 DEFAULT_CARRIER_PHASE = 0
 
-DEFAULT_BIT_LENGTH = 100
+DEFAULT_SAMPLES_PER_SYMBOL = 100
 DEFAULT_NOISE = 0.1
 DEFAULT_CENTER = 0
 DEFAULT_TOLERANCE = 5
@@ -89,7 +89,7 @@ def build_modulator_from_args(arguments: argparse.Namespace):
     result.carrier_freq_hz = float(arguments.carrier_frequency)
     result.carrier_amplitude = float(arguments.carrier_amplitude)
     result.carrier_phase_deg = float(arguments.carrier_phase)
-    result.samples_per_symbol = int(arguments.bit_length)
+    result.samples_per_symbol = int(arguments.samples_per_symbol)
 
     if arguments.modulation_type == "ASK":
         if arguments.parameter_zero.endswith("%"):
@@ -149,7 +149,7 @@ def build_device_from_args(arguments: argparse.Namespace):
 def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
 
-    result = ProtocolSniffer(arguments.bit_length, arguments.center, arguments.noise, arguments.tolerance,
+    result = ProtocolSniffer(arguments.samples_per_symbol, arguments.center, arguments.noise, arguments.tolerance,
                              arguments.modulation_type,
                              arguments.device.lower(), bh)
     result.rcv_device.frequency = arguments.frequency
@@ -300,8 +300,8 @@ def create_parser():
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
     group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
     group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
-    group2.add_argument("-bl", "--bit-length", type=float,
-                        help="Length of a bit in samples (default: {}).".format(DEFAULT_BIT_LENGTH))
+    group2.add_argument("-sps", "--samples-per-symbol", type=float,
+                        help="Length of a symbol in samples (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
 
     group2.add_argument("-n", "--noise", type=float,
                         help="Noise threshold (default: {}). Used for RX only.".format(DEFAULT_NOISE))
@@ -394,7 +394,7 @@ def main():
         except:
             pass
 
-    args.bit_length = get_val(args.bit_length, project_params, "bit_len", DEFAULT_BIT_LENGTH)
+    args.samples_per_symbol = get_val(args.samples_per_symbol, project_params, "samples_per_symbol", DEFAULT_SAMPLES_PER_SYMBOL)
     args.center = get_val(args.center, project_params, "center", DEFAULT_CENTER)
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)

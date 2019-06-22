@@ -6,6 +6,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DialogModulation(object):
     def setupUi(self, DialogModulation):
         DialogModulation.setObjectName("DialogModulation")
@@ -40,7 +41,7 @@ class Ui_DialogModulation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1024, 985))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1024, 984))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -161,7 +162,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 337, 201))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 346, 201))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
@@ -221,7 +222,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 337, 202))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 346, 201))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_3)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -259,16 +260,16 @@ class Ui_DialogModulation(object):
         self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
         self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
-        self.spinBoxBitLength = QtWidgets.QSpinBox(self.scrollAreaWidgetContents_3)
+        self.spinBoxSamplesPerSymbol = QtWidgets.QSpinBox(self.scrollAreaWidgetContents_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxBitLength.sizePolicy().hasHeightForWidth())
-        self.spinBoxBitLength.setSizePolicy(sizePolicy)
-        self.spinBoxBitLength.setMinimum(1)
-        self.spinBoxBitLength.setMaximum(999999)
-        self.spinBoxBitLength.setObjectName("spinBoxBitLength")
-        self.gridLayout_2.addWidget(self.spinBoxBitLength, 1, 1, 1, 1)
+        sizePolicy.setHeightForWidth(self.spinBoxSamplesPerSymbol.sizePolicy().hasHeightForWidth())
+        self.spinBoxSamplesPerSymbol.setSizePolicy(sizePolicy)
+        self.spinBoxSamplesPerSymbol.setMinimum(1)
+        self.spinBoxSamplesPerSymbol.setMaximum(999999)
+        self.spinBoxSamplesPerSymbol.setObjectName("spinBoxSamplesPerSymbol")
+        self.gridLayout_2.addWidget(self.spinBoxSamplesPerSymbol, 1, 1, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -297,7 +298,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 337, 278))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 346, 285))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_4)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -404,7 +405,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName("scrollArea_5")
         self.scrollAreaWidgetContents_5 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 320, 266))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 326, 280))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -562,7 +563,7 @@ class Ui_DialogModulation(object):
         self.btnAutoDetect.setText(_translate("DialogModulation", "Auto detect from original signal"))
         self.linEdDataBits.setPlaceholderText(_translate("DialogModulation", "Enter Data Bits here"))
         self.btnRestoreBits.setToolTip(_translate("DialogModulation", "Restore"))
-        self.label.setText(_translate("DialogModulation", "Bit Length:"))
+        self.label.setText(_translate("DialogModulation", "Samples per Symbol:"))
         self.label_3.setText(_translate("DialogModulation", "Sample Rate (Sps):"))
         self.comboBoxModulationType.setItemText(0, _translate("DialogModulation", "Amplitude Shift Keying (ASK)"))
         self.comboBoxModulationType.setItemText(1, _translate("DialogModulation", "Frequency Shift Keying (FSK)"))
@@ -588,6 +589,7 @@ class Ui_DialogModulation(object):
         self.lSamplesInViewOrigSignal.setText(_translate("DialogModulation", "0"))
         self.label_10.setText(_translate("DialogModulation", "Samples selected:"))
         self.lOriginalSignalSamplesSelected.setText(_translate("DialogModulation", "0"))
+
 
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ModulatorTreeView import ModulatorTreeView

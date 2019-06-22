@@ -213,7 +213,7 @@ class GeneratorTabController(QWidget):
             return
 
         modulator = self.modulators[0]
-        modulator.samples_per_symbol = protocol.messages[0].bit_len
+        modulator.samples_per_symbol = protocol.messages[0].samples_per_symbol
 
         if protocol.signal:
             modulator.sample_rate = protocol.signal.sample_rate
@@ -229,7 +229,7 @@ class GeneratorTabController(QWidget):
         cur_mod = self.modulators[cur_ind]
         self.ui.lCarrierFreqValue.setText(cur_mod.carrier_frequency_str)
         self.ui.lCarrierPhaseValue.setText(cur_mod.carrier_phase_str)
-        self.ui.lBitLenValue.setText(cur_mod.bit_len_str)
+        self.ui.lBitLenValue.setText(cur_mod.samples_per_symbol_str)
         self.ui.lSampleRateValue.setText(cur_mod.sample_rate_str)
         mod_type = cur_mod.modulation_type
         self.ui.lModTypeValue.setText(mod_type)
@@ -260,7 +260,7 @@ class GeneratorTabController(QWidget):
         else:
             selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
-                selected_message.bit_len = self.table_model.protocol.messages[0].bit_len
+                selected_message.samples_per_symbol = self.table_model.protocol.messages[0].samples_per_symbol
 
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
@@ -528,10 +528,10 @@ class GeneratorTabController(QWidget):
             return
 
         avg_msg_len = numpy.mean([len(msg.encoded_bits) for msg in c.messages])
-        avg_bit_len = numpy.mean([m.samples_per_symbol for m in self.modulators])
+        avg_samples_per_symbol = numpy.mean([m.samples_per_symbol for m in self.modulators])
         avg_sample_rate = numpy.mean([m.sample_rate for m in self.modulators])
         pause_samples = sum(c.pauses)
-        nsamples = c.num_messages * avg_msg_len * avg_bit_len + pause_samples
+        nsamples = c.num_messages * avg_msg_len * avg_samples_per_symbol + pause_samples
 
         self.ui.lEstimatedTime.setText(
             locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))

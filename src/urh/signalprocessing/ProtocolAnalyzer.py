@@ -222,54 +222,55 @@ class ProtocolAnalyzer(object):
         else:
             self.messages = []
 
-        bit_len = signal.bit_len
+        samples_per_symbol = signal.samples_per_symbol
 
         ppseq = signal_functions.grab_pulse_lens(signal.qad, signal.center, signal.tolerance,
-                                                 signal.modulation_type, signal.bit_len,
+                                                 signal.modulation_type, signal.samples_per_symbol,
                                                  signal.bits_per_symbol, signal.center_spacing)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len, self.signal.bits_per_symbol,
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, samples_per_symbol, self.signal.bits_per_symbol,
                                                                pause_threshold=signal.pause_threshold)
         if signal.message_length_divisor > 1 and signal.modulation_type == "ASK":
-            self.__ensure_message_length_multiple(bit_data, signal.bit_len, pauses, bit_sample_pos,
+            self.__ensure_message_length_multiple(bit_data, signal.samples_per_symbol, pauses, bit_sample_pos,
                                                   signal.message_length_divisor)
 
         i = 0
         for bits, pause in zip(bit_data, pauses):
             middle_bit_pos = bit_sample_pos[i][int(len(bits) / 2)]
-            start, end = middle_bit_pos, middle_bit_pos + bit_len
+            start, end = middle_bit_pos, middle_bit_pos + samples_per_symbol
             rssi = np.mean(signal.iq_array.subarray(start, end).magnitudes_normalized)
             message = Message(bits, pause, message_type=self.default_message_type,
-                              bit_len=bit_len, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
+                              samples_per_symbol=samples_per_symbol, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
             self.messages.append(message)
             i += 1
 
         self.qt_signals.protocol_updated.emit()
 
     @staticmethod
-    def __ensure_message_length_multiple(bit_data, bit_len: int, pauses, bit_sample_pos, divisor: int):
+    def __ensure_message_length_multiple(bit_data, samples_per_symbol: int, pauses, bit_sample_pos, divisor: int):
         """
         In case of ASK modulation, this method tries to use pauses after messages as zero bits so that
         the bit lengths of messages are divisible by divisor
+
         :param bit_data: List of bit arrays
-        :param bit_len: Bit length that was used for demodulation
+        :param samples_per_symbol: Symbol length that was used for demodulation
         :param pauses: List of pauses
         :param bit_sample_pos: List of Array of bit sample positions
         :param divisor: Divisor the messages should be divisible by
         """
         for i in range(len(bit_data)):
             missing_bits = (divisor - (len(bit_data[i]) % divisor)) % divisor
-            if missing_bits > 0 and pauses[i] >= bit_len * missing_bits:
+            if missing_bits > 0 and pauses[i] >= samples_per_symbol * missing_bits:
                 bit_data[i].extend([0] * missing_bits)
-                pauses[i] = pauses[i] - missing_bits * bit_len
+                pauses[i] = pauses[i] - missing_bits * samples_per_symbol
 
                 try:
-                    bit_sample_pos[i][-1] = bit_sample_pos[i][-2] + bit_len
+                    bit_sample_pos[i][-1] = bit_sample_pos[i][-2] + samples_per_symbol
                 except IndexError as e:
                     logger.warning("Error padding message " + str(e))
                     continue
 
-                bit_sample_pos[i].extend([bit_sample_pos[i][-1] + (k + 1) * bit_len for k in range(missing_bits - 1)])
+                bit_sample_pos[i].extend([bit_sample_pos[i][-1] + (k + 1) * samples_per_symbol for k in range(missing_bits - 1)])
                 bit_sample_pos[i].append(bit_sample_pos[i][-1] + pauses[i])
 
     def _ppseq_to_bits(self, ppseq, samples_per_symbol: int, bits_per_symbol: int, write_bit_sample_pos=True, pause_threshold=8):

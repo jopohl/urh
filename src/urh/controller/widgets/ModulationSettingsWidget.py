@@ -47,7 +47,7 @@ class ModulationSettingsWidget(QWidget):
     def show_selected_modulation_infos(self):
         modulator = self.selected_modulator
         self.ui.labelCarrierFrequencyValue.setText(modulator.carrier_frequency_str)
-        self.ui.labelBitLengthValue.setText(modulator.bit_len_str)
+        self.ui.labelSamplesPerSymbolValue.setText(modulator.samples_per_symbol_str)
         self.ui.labelSampleRateValue.setText(modulator.sample_rate_str)
         self.ui.labelModulationTypeValue.setText(modulator.modulation_type_verbose)
         prefixes = {"ASK": "Amplitude", "PSK": "Phase", "FSK": "Frequency", "GFSK": "Frequency"}

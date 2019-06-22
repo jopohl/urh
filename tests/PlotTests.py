@@ -45,7 +45,7 @@ class PlotTests(unittest.TestCase):
         signal.modulation_type = "ASK"
         signal.noise_threshold = 0.035
         signal.center = 0.0245
-        signal.bit_len = 25
+        signal.samples_per_symbol = 25
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
         start, num_samples = pa.get_samplepos_of_bitseq(0, 0, 0, 999999, include_pause=False)

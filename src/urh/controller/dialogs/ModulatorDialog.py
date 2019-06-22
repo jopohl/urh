@@ -126,7 +126,7 @@ class ModulatorDialog(QDialog):
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
-        self.ui.spinBoxBitLength.setValue(self.current_modulator.samples_per_symbol)
+        self.ui.spinBoxSamplesPerSymbol.setValue(self.current_modulator.samples_per_symbol)
         self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
         self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
         self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
@@ -134,7 +134,7 @@ class ModulatorDialog(QDialog):
     def create_connects(self):
         self.ui.doubleSpinBoxCarrierFreq.valueChanged.connect(self.on_carrier_freq_changed)
         self.ui.doubleSpinBoxCarrierPhase.valueChanged.connect(self.on_carrier_phase_changed)
-        self.ui.spinBoxBitLength.valueChanged.connect(self.on_bit_len_changed)
+        self.ui.spinBoxSamplesPerSymbol.valueChanged.connect(self.on_samples_per_symbol_changed)
         self.ui.spinBoxSampleRate.valueChanged.connect(self.on_sample_rate_changed)
         self.ui.linEdDataBits.textChanged.connect(self.on_data_bits_changed)
         self.ui.spinBoxParameter0.valueChanged.connect(self.on_modulation_parameter_zero_changed)
@@ -296,7 +296,7 @@ class ModulatorDialog(QDialog):
         self.protocol = protocol
 
         # Apply bit length of original signal to current modulator
-        self.ui.spinBoxBitLength.setValue(self.ui.gVOriginalSignal.signal.bit_len)
+        self.ui.spinBoxSamplesPerSymbol.setValue(self.ui.gVOriginalSignal.signal.samples_per_symbol)
 
         # https://github.com/jopohl/urh/issues/130
         self.ui.gVModulated.show_full_scene(reinitialize=True)
@@ -373,8 +373,8 @@ class ModulatorDialog(QDialog):
         self.draw_modulated()
 
     @pyqtSlot()
-    def on_bit_len_changed(self):
-        self.current_modulator.samples_per_symbol = self.ui.spinBoxBitLength.value()
+    def on_samples_per_symbol_changed(self):
+        self.current_modulator.samples_per_symbol = self.ui.spinBoxSamplesPerSymbol.value()
         self.draw_carrier()
         self.draw_data_bits()
         self.draw_modulated()

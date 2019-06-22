@@ -125,7 +125,7 @@ class Modulator(object):
         return self.get_value_with_suffix(self.carrier_phase_deg, unit="°")
 
     @property
-    def bit_len_str(self):
+    def samples_per_symbol_str(self):
         return self.get_value_with_suffix(self.samples_per_symbol, unit="")
 
     @property

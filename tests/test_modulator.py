@@ -46,7 +46,7 @@ class TestModulator(unittest.TestCase):
 
             signal = Signal(filename, modulation)
             signal.modulation_type = modulation
-            signal.bit_len = self.samples_per_symbol
+            signal.samples_per_symbol = self.samples_per_symbol
             if modulation == "ASK":
                 signal.center = 0.5
             elif modulation == "FSK":

@@ -76,7 +76,7 @@
         <x>0</x>
         <y>0</y>
         <width>1024</width>
-        <height>985</height>
+        <height>984</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,1,0,1,0,1,0,0,1" columnstretch="0,0,0,0">
@@ -385,7 +385,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>337</width>
+            <width>346</width>
             <height>201</height>
            </rect>
           </property>
@@ -506,8 +506,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>337</width>
-            <height>202</height>
+            <width>346</width>
+            <height>201</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -563,12 +563,12 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Bit Length:</string>
+              <string>Samples per Symbol:</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QSpinBox" name="spinBoxBitLength">
+            <widget class="QSpinBox" name="spinBoxSamplesPerSymbol">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -645,8 +645,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>337</width>
-            <height>278</height>
+            <width>346</width>
+            <height>285</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -879,8 +879,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>320</width>
-            <height>266</height>
+            <width>326</width>
+            <height>280</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">

@@ -73,8 +73,8 @@ class TestSimulatorDialog(QtTestCase):
     def test_set_sniff_parameters(self):
         sniff_settings_widget = self.dialog.sniff_settings_widget
         simulator = self.dialog.simulator
-        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_BitLen, 111)
-        self.assertEqual(simulator.sniffer.signal.bit_len, 111)
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol, 111)
+        self.assertEqual(simulator.sniffer.signal.samples_per_symbol, 111)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Center, 0.1337)
         self.assertEqual(simulator.sniffer.signal.center, 0.1337)

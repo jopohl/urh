@@ -311,7 +311,7 @@ class ProjectManager(QObject):
 
         signal_tag.set("name", signal.name)
         signal_tag.set("filename", file_path)
-        signal_tag.set("bit_length", str(signal.bit_len))
+        signal_tag.set("samples_per_symbol", str(signal.samples_per_symbol))
         signal_tag.set("center", str(signal.center))
         signal_tag.set("center_spacing", str(signal.center_spacing))
         signal_tag.set("tolerance", str(signal.tolerance))
@@ -490,7 +490,10 @@ class ProjectManager(QObject):
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
-                signal.bit_len = int(sig_tag.get("bit_length", 100))
+                signal.samples_per_symbol = int(sig_tag.get("bit_length", 0))   # Legacy for old project files
+                if signal.samples_per_symbol == 0:
+                    signal.samples_per_symbol = int(sig_tag.get("samples_per_symbol", 100))
+
                 try:
                     # Legacy support when modulation type was integer
                     signal.modulation_type = Signal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]

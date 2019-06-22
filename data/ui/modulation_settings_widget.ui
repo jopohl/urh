@@ -88,9 +88,9 @@ QGroupBox::indicator:checked {
          <item>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="3">
-            <widget class="QLabel" name="labelBitLength">
+            <widget class="QLabel" name="labelSamplesPerSymbol">
              <property name="text">
-              <string>Bit Length:</string>
+              <string>Samples per Symbol:</string>
              </property>
             </widget>
            </item>
@@ -122,7 +122,7 @@ QGroupBox::indicator:checked {
             </widget>
            </item>
            <item row="0" column="4">
-            <widget class="QLabel" name="labelBitLengthValue">
+            <widget class="QLabel" name="labelSamplesPerSymbolValue">
              <property name="text">
               <string>TextLabel</string>
              </property>
@@ -199,7 +199,8 @@ QGroupBox::indicator:checked {
             <string>Open modulation configuration dialog...</string>
            </property>
            <property name="icon">
-            <iconset theme="configure"/>
+            <iconset theme="configure">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>

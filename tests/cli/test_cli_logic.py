@@ -27,7 +27,7 @@ class TestCLILogic(unittest.TestCase):
 
         # Demodulate for testing
         s = Signal("", "", modulation="ASK", sample_rate=2e6)
-        s.bit_len = 100
+        s.samples_per_symbol = 100
         s.noise_threshold = 0
         s.iq_array = modulated
 

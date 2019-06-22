@@ -22,7 +22,7 @@ class Signal(QObject):
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "QAM"]
 
-    bit_len_changed = pyqtSignal(int)
+    samples_per_symbol_changed = pyqtSignal(int)
     tolerance_changed = pyqtSignal(int)
     noise_threshold_changed = pyqtSignal()
     center_changed = pyqtSignal(float)
@@ -40,7 +40,7 @@ class Signal(QObject):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
-        self.__bit_len = 100
+        self.__samples_per_symbol = 100
         self.__pause_threshold = 8
         self.__message_length_divisor = 1
         self._qad = None
@@ -59,7 +59,7 @@ class Signal(QObject):
         self.__bits_per_symbol = 1
         self.__center_spacing = 0.1  # required for higher order modulations
 
-        self.__parameter_cache = {mod: {"center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
+        self.__parameter_cache = {mod: {"center": None, "samples_per_symbol": None} for mod in self.MODULATION_TYPES}
 
         if len(filename) > 0:
             if self.wav_mode:
@@ -179,14 +179,14 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
-    def bit_len(self):
-        return self.__bit_len
+    def samples_per_symbol(self):
+        return self.__samples_per_symbol
 
-    @bit_len.setter
-    def bit_len(self, value):
-        if self.__bit_len != value:
-            self.__bit_len = value
-            self.bit_len_changed.emit(value)
+    @samples_per_symbol.setter
+    def samples_per_symbol(self, value):
+        if self.__samples_per_symbol != value:
+            self.__samples_per_symbol = value
+            self.samples_per_symbol_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 
@@ -363,7 +363,7 @@ class Signal(QObject):
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
-        new_signal.__bit_len = self.bit_len
+        new_signal.__samples_per_symbol = self.samples_per_symbol
         new_signal.__center = self.center
         new_signal.changed = True
         return new_signal
@@ -392,7 +392,7 @@ class Signal(QObject):
 
         self.center = estimated_params["center"]
         self.tolerance = estimated_params["tolerance"]
-        self.bit_len = estimated_params["bit_length"]
+        self.samples_per_symbol = estimated_params["bit_length"]
 
         self.block_protocol_update = orig_block
 
@@ -403,7 +403,7 @@ class Signal(QObject):
 
     def clear_parameter_cache(self):
         for mod in self.parameter_cache.keys():
-            self.parameter_cache[mod]["bit_len"] = None
+            self.parameter_cache[mod]["samples_per_symbol"] = None
             self.parameter_cache[mod]["center"] = None
 
     def estimate_frequency(self, start: int, end: int, sample_rate: float):

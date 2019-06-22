@@ -6,6 +6,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_ModulationSettings(object):
     def setupUi(self, ModulationSettings):
         ModulationSettings.setObjectName("ModulationSettings")
@@ -53,9 +54,9 @@ class Ui_ModulationSettings(object):
         self.verticalLayout_2.addWidget(self.comboBoxModulationProfiles)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.labelBitLength = QtWidgets.QLabel(self.frame)
-        self.labelBitLength.setObjectName("labelBitLength")
-        self.gridLayout.addWidget(self.labelBitLength, 0, 3, 1, 1)
+        self.labelSamplesPerSymbol = QtWidgets.QLabel(self.frame)
+        self.labelSamplesPerSymbol.setObjectName("labelSamplesPerSymbol")
+        self.gridLayout.addWidget(self.labelSamplesPerSymbol, 0, 3, 1, 1)
         self.labelParamOneValue = QtWidgets.QLabel(self.frame)
         self.labelParamOneValue.setObjectName("labelParamOneValue")
         self.gridLayout.addWidget(self.labelParamOneValue, 1, 7, 1, 1)
@@ -70,9 +71,9 @@ class Ui_ModulationSettings(object):
         self.labelModulationType = QtWidgets.QLabel(self.frame)
         self.labelModulationType.setObjectName("labelModulationType")
         self.gridLayout.addWidget(self.labelModulationType, 1, 0, 1, 1)
-        self.labelBitLengthValue = QtWidgets.QLabel(self.frame)
-        self.labelBitLengthValue.setObjectName("labelBitLengthValue")
-        self.gridLayout.addWidget(self.labelBitLengthValue, 0, 4, 1, 1)
+        self.labelSamplesPerSymbolValue = QtWidgets.QLabel(self.frame)
+        self.labelSamplesPerSymbolValue.setObjectName("labelSamplesPerSymbolValue")
+        self.gridLayout.addWidget(self.labelSamplesPerSymbolValue, 0, 4, 1, 1)
         self.labelParamOne = QtWidgets.QLabel(self.frame)
         self.labelParamOne.setObjectName("labelParamOne")
         self.gridLayout.addWidget(self.labelParamOne, 1, 6, 1, 1)
@@ -125,11 +126,11 @@ class Ui_ModulationSettings(object):
         ModulationSettings.setWindowTitle(_translate("ModulationSettings", "Form"))
         self.groupBoxSniffSettings.setTitle(_translate("ModulationSettings", "Modulation settings"))
         self.labelModulationProfile.setText(_translate("ModulationSettings", "Choose profile:"))
-        self.labelBitLength.setText(_translate("ModulationSettings", "Bit Length:"))
+        self.labelSamplesPerSymbol.setText(_translate("ModulationSettings", "Samples per Symbol:"))
         self.labelParamOneValue.setText(_translate("ModulationSettings", "TextLabel"))
         self.labelCarrierFrequencyValue.setText(_translate("ModulationSettings", "TextLabel"))
         self.labelModulationType.setText(_translate("ModulationSettings", "Modulation type:"))
-        self.labelBitLengthValue.setText(_translate("ModulationSettings", "TextLabel"))
+        self.labelSamplesPerSymbolValue.setText(_translate("ModulationSettings", "TextLabel"))
         self.labelParamOne.setText(_translate("ModulationSettings", "Param for 1:"))
         self.labelModulationTypeValue.setText(_translate("ModulationSettings", "TextLabel"))
         self.labelCarrierFrequency.setText(_translate("ModulationSettings", "Carrier Frequency:"))
@@ -138,5 +139,6 @@ class Ui_ModulationSettings(object):
         self.labelSampleRate.setText(_translate("ModulationSettings", "Sample Rate:"))
         self.labelSampleRateValue.setText(_translate("ModulationSettings", "TextLabel"))
         self.btnConfigurationDialog.setText(_translate("ModulationSettings", "Open modulation configuration dialog..."))
+
 
 from . import urh_rc

@@ -114,7 +114,7 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(sniffer.rcv_device.gain, 0)
         self.assertEqual(sniffer.rcv_device.baseband_gain, 30)
         self.assertEqual(sniffer.rcv_device.device_serial, "abcde")
-        self.assertEqual(sniffer.signal.bit_len, 1337)
+        self.assertEqual(sniffer.signal.samples_per_symbol, 1337)
         self.assertEqual(sniffer.signal.noise_threshold, 0.1234)
         self.assertEqual(sniffer.signal.center, 0.5)
         self.assertEqual(sniffer.signal.tolerance, 42)

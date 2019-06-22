@@ -12,7 +12,7 @@ class TestDemodulations(unittest.TestCase):
     def test_ask(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = "ASK"
-        signal.bit_len = 295
+        signal.samples_per_symbol = 295
         signal.center = 0.0219
         self.assertEqual(signal.num_samples, 13710)
 
@@ -24,7 +24,7 @@ class TestDemodulations(unittest.TestCase):
         signal = Signal(get_path_for_data_file("ask_short.complex"), "ASK-Test2")
         signal.modulation_type = "ASK"
         signal.noise_threshold = 0.0299
-        signal.bit_len = 16
+        signal.samples_per_symbol = 16
         signal.center = 0.1300
         signal.tolerance = 0
         self.assertEqual(signal.num_samples, 131)
@@ -36,7 +36,7 @@ class TestDemodulations(unittest.TestCase):
     def test_fsk(self):
         signal = Signal(get_path_for_data_file("fsk.complex"), "FSK-Test")
         signal.modulation_type = "FSK"
-        signal.bit_len = 100
+        signal.samples_per_symbol = 100
         signal.center = 0
 
         proto_analyzer = ProtocolAnalyzer(signal)
@@ -47,7 +47,7 @@ class TestDemodulations(unittest.TestCase):
     def test_psk(self):
         signal = Signal(get_path_for_data_file("psk_gen_noisy.complex"), "PSK-Test")
         signal.modulation_type = "PSK"
-        signal.bit_len = 300
+        signal.samples_per_symbol = 300
         signal.center = 0.0281
         signal.noise_threshold = 0
         signal.tolerance = 10

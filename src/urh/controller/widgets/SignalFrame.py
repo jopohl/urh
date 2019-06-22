@@ -178,7 +178,7 @@ class SignalFrame(QFrame):
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
-            self.signal.bit_len_changed.connect(self.ui.spinBoxSamplesPerSymbol.setValue)
+            self.signal.samples_per_symbol_changed.connect(self.ui.spinBoxSamplesPerSymbol.setValue)
             self.signal.center_changed.connect(self.on_signal_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentText)
@@ -257,7 +257,7 @@ class SignalFrame(QFrame):
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.center)
-        self.ui.spinBoxSamplesPerSymbol.setValue(self.signal.bit_len)
+        self.ui.spinBoxSamplesPerSymbol.setValue(self.signal.samples_per_symbol)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
@@ -1114,12 +1114,12 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_spinbox_samples_per_symbol_editing_finished(self):
-        if self.signal.bit_len != self.ui.spinBoxSamplesPerSymbol.value():
+        if self.signal.samples_per_symbol != self.ui.spinBoxSamplesPerSymbol.value():
             self.ui.spinBoxSamplesPerSymbol.blockSignals(True)
-            bitlen_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="bit_len",
-                                                  parameter_value=self.ui.spinBoxSamplesPerSymbol.value())
-            self.undo_stack.push(bitlen_action)
+            action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                           parameter_name="samples_per_symbol",
+                                           parameter_value=self.ui.spinBoxSamplesPerSymbol.value())
+            self.undo_stack.push(action)
             self.ui.spinBoxSamplesPerSymbol.blockSignals(False)
 
     @pyqtSlot()

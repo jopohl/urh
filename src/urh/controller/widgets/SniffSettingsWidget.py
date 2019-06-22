@@ -29,7 +29,7 @@ class SniffSettingsWidget(QWidget):
 
         self.bootstrap(project_manager.device_conf, signal, enforce_default=True)
 
-        self.sniffer = ProtocolSniffer(bit_len=self.ui.spinbox_sniff_BitLen.value(),
+        self.sniffer = ProtocolSniffer(samples_per_symbol=self.ui.spinbox_sniff_SamplesPerSymbol.value(),
                                        center=self.ui.spinbox_sniff_Center.value(),
                                        noise=self.ui.spinbox_sniff_Noise.value(),
                                        tolerance=self.ui.spinbox_sniff_ErrorTolerance.value(),
@@ -73,7 +73,7 @@ class SniffSettingsWidget(QWidget):
                 elif hasattr(widget, "setCurrentIndex"):
                     widget.setCurrentIndex(value)
 
-        set_val(self.ui.spinbox_sniff_BitLen, "bit_len", signal.bit_len if signal else 100)
+        set_val(self.ui.spinbox_sniff_SamplesPerSymbol, "samples_per_symbol", signal.samples_per_symbol if signal else 100)
         set_val(self.ui.spinbox_sniff_Center, "center", signal.center if signal else 0.02)
         set_val(self.ui.spinbox_sniff_ErrorTolerance, "tolerance", signal.tolerance if signal else 5)
         set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold_relative if signal else 0.001)
@@ -88,7 +88,7 @@ class SniffSettingsWidget(QWidget):
     def create_connects(self):
         self.ui.spinbox_sniff_Noise.editingFinished.connect(self.on_noise_edited)
         self.ui.spinbox_sniff_Center.editingFinished.connect(self.on_center_edited)
-        self.ui.spinbox_sniff_BitLen.editingFinished.connect(self.on_bit_len_edited)
+        self.ui.spinbox_sniff_SamplesPerSymbol.editingFinished.connect(self.on_samples_per_symbol_edited)
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.connect(self.on_tolerance_edited)
         self.ui.combox_sniff_Modulation.currentTextChanged.connect(self.on_modulation_changed)
         self.ui.comboBox_sniff_viewtype.currentIndexChanged.connect(self.on_view_type_changed)
@@ -102,13 +102,13 @@ class SniffSettingsWidget(QWidget):
     def emit_editing_finished_signals(self):
         self.ui.spinbox_sniff_Noise.editingFinished.emit()
         self.ui.spinbox_sniff_Center.editingFinished.emit()
-        self.ui.spinbox_sniff_BitLen.editingFinished.emit()
+        self.ui.spinbox_sniff_SamplesPerSymbol.editingFinished.emit()
         self.ui.spinbox_sniff_ErrorTolerance.editingFinished.emit()
         self.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
         self.ui.checkBoxAdaptiveNoise.clicked.emit()
 
     def emit_sniff_parameters_changed(self):
-        self.sniff_parameters_changed.emit(dict(bit_len=self.sniffer.signal.bit_len,
+        self.sniff_parameters_changed.emit(dict(samples_per_symbol=self.sniffer.signal.samples_per_symbol,
                                                 center=self.sniffer.signal.center,
                                                 noise=self.sniffer.signal.noise_threshold,
                                                 tolerance=self.sniffer.signal.tolerance,
@@ -128,8 +128,8 @@ class SniffSettingsWidget(QWidget):
         self.sniff_setting_edited.emit()
 
     @pyqtSlot()
-    def on_bit_len_edited(self):
-        self.sniffer.signal.bit_len = self.ui.spinbox_sniff_BitLen.value()
+    def on_samples_per_symbol_edited(self):
+        self.sniffer.signal.samples_per_symbol = self.ui.spinbox_sniff_SamplesPerSymbol.value()
         self.sniff_setting_edited.emit()
 
     @pyqtSlot()
@@ -182,7 +182,7 @@ class SniffSettingsWidget(QWidget):
         except IndexError:
             return
 
-        self.ui.spinbox_sniff_BitLen.setValue(signal.bit_len)
+        self.ui.spinbox_sniff_SamplesPerSymbol.setValue(signal.samples_per_symbol)
         self.ui.spinbox_sniff_Center.setValue(signal.center)
         self.ui.spinbox_sniff_Noise.setValue(signal.noise_threshold_relative)
         self.ui.spinbox_sniff_ErrorTolerance.setValue(signal.tolerance)

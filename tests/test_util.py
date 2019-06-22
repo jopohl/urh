@@ -56,7 +56,7 @@ class TestUtil(QtTestCase):
     def test_write_pcap(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = "ASK"
-        signal.bit_len = 295
+        signal.samples_per_symbol = 295
         signal.center = -0.1667
         self.assertEqual(signal.num_samples, 13710)
 

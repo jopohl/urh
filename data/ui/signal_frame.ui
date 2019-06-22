@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1057</width>
-    <height>566</height>
+    <height>652</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,281 +70,7 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
-     <item row="12" column="0">
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="9" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="spacing">
-        <number>7</number>
-       </property>
-       <item>
-        <widget class="QComboBox" name="cbModulationType">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>ASK</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string extracomment="effgfdg">FSK</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>PSK</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnAdvancedModulationSettings">
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset theme="configure">
-           <normaloff>.</normaloff>.</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="labelModulation">
-       <property name="text">
-        <string>Modulation:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="22" column="0">
-      <widget class="QCheckBox" name="chkBoxSyncSelection">
-       <property name="toolTip">
-        <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
-       </property>
-       <property name="text">
-        <string>Sync Selection</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="1">
-      <widget class="QSlider" name="sliderSpectrogramMin">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimum">
-        <number>-150</number>
-       </property>
-       <property name="maximum">
-        <number>10</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="spinBoxNoiseTreshold">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="decimals">
-        <number>4</number>
-       </property>
-       <property name="maximum">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.000100000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="0">
-      <widget class="QCheckBox" name="chkBoxShowProtocol">
-       <property name="toolTip">
-        <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
-
-If you want your protocol to be better seperated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.</string>
-       </property>
-       <property name="text">
-        <string>Show Signal as</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelNoise">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Noise:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QLineEdit" name="lineEditSignalName">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>214</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>SignalName</string>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="1">
-      <widget class="QComboBox" name="cbProtoView">
-       <item>
-        <property name="text">
-         <string>Bits</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Hex</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ASCII</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="lInfoLenText">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Bit Length:</string>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse</set>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="spinBoxInfoLen">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QSpinBox" name="spinBoxTolerance">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="lErrorTolerance">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Error Tolerance:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="0">
+     <item row="17" column="0">
       <widget class="QLabel" name="lSignalViewText">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -362,101 +88,14 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
       </widget>
      </item>
-     <item row="13" column="0" colspan="2">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="lCenterOffset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="whatsThis">
-        <string/>
-       </property>
-       <property name="text">
-        <string>Center:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="spinBoxCenterOffset">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="decimals">
-        <number>4</number>
-       </property>
+     <item row="11" column="1">
+      <widget class="QSpinBox" name="spinBoxBitsPerSymbol">
        <property name="minimum">
-        <double>-3.150000000000000</double>
+        <number>1</number>
        </property>
        <property name="maximum">
-        <double>6.280000000000000</double>
+        <number>256</number>
        </property>
-       <property name="singleStep">
-        <double>0.000100000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="1">
-      <widget class="QComboBox" name="cbSignalView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Analog</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Demodulated</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Spectrogram</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="0" column="0" colspan="2">
@@ -615,66 +254,329 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </item>
       </layout>
      </item>
-     <item row="18" column="0">
-      <widget class="QLabel" name="labelFFTWindowSize">
+     <item row="23" column="1">
+      <widget class="QComboBox" name="cbProtoView">
+       <item>
+        <property name="text">
+         <string>Bits</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hex</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ASCII</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="lCenterSpacing">
        <property name="text">
-        <string>FFT Window Size:</string>
+        <string>Center Spacing:</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
-      <widget class="QSlider" name="sliderFFTWindowSize">
+     <item row="8" column="1">
+      <widget class="QSpinBox" name="spinBoxTolerance">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lSamplesPerSymbol">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Samples/Symbol:</string>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse</set>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="lErrorTolerance">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Error Tolerance:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lCenterOffset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Center:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="labelModulation">
+       <property name="text">
+        <string>Modulation:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <widget class="QComboBox" name="cbSignalView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Analog</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Demodulated</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Spectrogram</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="spinBoxNoiseTreshold">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="suffix">
+        <string/>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.000100000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="spinBoxCenterSpacing">
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QLineEdit" name="lineEditSignalName">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimum">
-        <number>6</number>
+       <property name="minimumSize">
+        <size>
+         <width>214</width>
+         <height>0</height>
+        </size>
        </property>
-       <property name="maximum">
-        <number>15</number>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
        </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="acceptDrops">
+        <bool>false</bool>
        </property>
-      </widget>
-     </item>
-     <item row="20" column="1">
-      <widget class="QSlider" name="sliderSpectrogramMax">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimum">
-        <number>-150</number>
-       </property>
-       <property name="maximum">
-        <number>10</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+       <property name="text">
+        <string>SignalName</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="10" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>7</number>
+       </property>
+       <item>
+        <widget class="QComboBox" name="cbModulationType">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>ASK</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="effgfdg">FSK</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>PSK</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btnAdvancedModulationSettings">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset theme="configure">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="24" column="0">
+      <widget class="QCheckBox" name="chkBoxSyncSelection">
+       <property name="toolTip">
+        <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
+       </property>
+       <property name="text">
+        <string>Sync Selection</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="0">
       <widget class="QLabel" name="labelSpectrogramMin">
        <property name="text">
         <string>Data&lt;sub&gt;min&lt;/sub&gt;:</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="0">
+     <item row="22" column="0">
       <widget class="QLabel" name="labelSpectrogramMax">
        <property name="text">
         <string>Data&lt;sub&gt;max&lt;/sub&gt;:</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="0" colspan="2">
+     <item row="23" column="0">
+      <widget class="QCheckBox" name="chkBoxShowProtocol">
+       <property name="toolTip">
+        <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
+
+If you want your protocol to be better seperated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.</string>
+       </property>
+       <property name="text">
+        <string>Show Signal as</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QSpinBox" name="spinBoxSamplesPerSymbol">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="2">
       <widget class="QToolButton" name="btnAutoDetect">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -705,6 +607,138 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
        </property>
        <property name="arrowType">
         <enum>Qt::NoArrow</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0" colspan="2">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="1">
+      <widget class="QSlider" name="sliderSpectrogramMin">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>-150</number>
+       </property>
+       <property name="maximum">
+        <number>10</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0">
+      <widget class="QLabel" name="labelFFTWindowSize">
+       <property name="text">
+        <string>FFT Window Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="22" column="1">
+      <widget class="QSlider" name="sliderSpectrogramMax">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>-150</number>
+       </property>
+       <property name="maximum">
+        <number>10</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="spinBoxCenterOffset">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the threshold used for determining if a &lt;span style=&quot; font-weight:600;&quot;&gt;bit is one or zero&lt;/span&gt;. You can set it here or grab the middle of the area in &lt;span style=&quot; font-style:italic;&quot;&gt;Quadrature Demod View&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-3.150000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>6.280000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.000100000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelNoise">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the &lt;span style=&quot; font-weight:600;&quot;&gt;noise magnitude&lt;/span&gt; of your signal. You can tune this value to mute noise in your signal and reveal the true data.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Noise:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="20" column="1">
+      <widget class="QSlider" name="sliderFFTWindowSize">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="lBitsPerSymbol">
+       <property name="text">
+        <string>Bits/Symbol:</string>
        </property>
       </widget>
      </item>
@@ -1284,20 +1318,35 @@ stop:1 rgba(255, 255, 255, 0));
  </customwidgets>
  <tabstops>
   <tabstop>btnSaveSignal</tabstop>
+  <tabstop>btnReplay</tabstop>
   <tabstop>btnInfo</tabstop>
   <tabstop>btnCloseSignal</tabstop>
+  <tabstop>gvSignal</tabstop>
   <tabstop>lineEditSignalName</tabstop>
   <tabstop>spinBoxNoiseTreshold</tabstop>
   <tabstop>spinBoxCenterOffset</tabstop>
-  <tabstop>spinBoxInfoLen</tabstop>
+  <tabstop>spinBoxCenterSpacing</tabstop>
+  <tabstop>spinBoxSamplesPerSymbol</tabstop>
   <tabstop>spinBoxTolerance</tabstop>
-  <tabstop>chkBoxShowProtocol</tabstop>
-  <tabstop>cbProtoView</tabstop>
-  <tabstop>chkBoxSyncSelection</tabstop>
-  <tabstop>txtEdProto</tabstop>
+  <tabstop>cbModulationType</tabstop>
+  <tabstop>spinBoxBitsPerSymbol</tabstop>
+  <tabstop>btnAdvancedModulationSettings</tabstop>
   <tabstop>btnShowHideStartEnd</tabstop>
+  <tabstop>btnAutoDetect</tabstop>
+  <tabstop>txtEdProto</tabstop>
+  <tabstop>cbSignalView</tabstop>
+  <tabstop>sliderFFTWindowSize</tabstop>
+  <tabstop>sliderSpectrogramMin</tabstop>
+  <tabstop>sliderSpectrogramMax</tabstop>
+  <tabstop>cbProtoView</tabstop>
+  <tabstop>chkBoxShowProtocol</tabstop>
+  <tabstop>chkBoxSyncSelection</tabstop>
+  <tabstop>sliderYScale</tabstop>
+  <tabstop>btnFilter</tabstop>
   <tabstop>spinBoxSelectionStart</tabstop>
   <tabstop>spinBoxSelectionEnd</tabstop>
+  <tabstop>spinBoxXZoom</tabstop>
+  <tabstop>gvSpectrogram</tabstop>
  </tabstops>
  <resources>
   <include location="urh.qrc"/>

@@ -95,10 +95,10 @@ class TestModulator(unittest.TestCase):
 
     def test_c_modulation_method_fsk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
-        parameters = array.array("f", [-10e3, 10e3])
-        result = modulate_c(bits, 100, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+        parameters = array.array("f", [-20e3, -10e3, 10e3, 20e3])
+        result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
-        #result.tofile("/tmp/test_fsk.complex")
+        # result.tofile("/tmp/test_4fsk.complex")
 
     def test_c_modulation_method_psk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])

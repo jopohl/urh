@@ -111,8 +111,8 @@ class TestSignalTabGUI(QtTestCase):
         self.add_signal_to_form("ask.complex")
         frame2 = self.form.signal_tab_controller.signal_frames[1]
 
-        frame.ui.spinBoxInfoLen.setValue(42)
-        frame.ui.spinBoxInfoLen.editingFinished.emit()
+        frame.ui.spinBoxSamplesPerSymbol.setValue(42)
+        frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
 
         frame.ui.spinBoxCenterOffset.setValue(0.1)
         frame.ui.spinBoxCenterOffset.editingFinished.emit()
@@ -128,7 +128,7 @@ class TestSignalTabGUI(QtTestCase):
 
         frame.apply_to_all_clicked.emit(frame.signal)
 
-        self.assertEqual(42, frame2.ui.spinBoxInfoLen.value())
+        self.assertEqual(42, frame2.ui.spinBoxSamplesPerSymbol.value())
         self.assertEqual(0.1, frame2.ui.spinBoxCenterOffset.value())
         self.assertEqual(0.5, frame2.ui.spinBoxNoiseTreshold.value())
         self.assertEqual(10, frame2.ui.spinBoxTolerance.value())

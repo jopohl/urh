@@ -191,6 +191,10 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
+    def modulation_order(self):
+        return 2 ** self.bits_per_symbol
+
+    @property
     def tolerance(self):
         return self.__tolerance
 
@@ -225,6 +229,10 @@ class Signal(QObject):
             self.center_spacing_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
+
+    @property
+    def center_thresholds(self):
+        return self.get_thresholds_for_center(self.center)
 
     @property
     def pause_threshold(self) -> int:
@@ -359,6 +367,9 @@ class Signal(QObject):
         new_signal.__center = self.center
         new_signal.changed = True
         return new_signal
+
+    def get_thresholds_for_center(self, center: float):
+        return signal_functions.get_center_thresholds(center, self.center_spacing, self.modulation_order)
 
     def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,

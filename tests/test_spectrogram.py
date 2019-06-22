@@ -79,8 +79,8 @@ class TestSpectrogram(QtTestCase):
         filtered_frame.ui.cbModulationType.setCurrentText("ASK")
         filtered_frame.ui.spinBoxNoiseTreshold.setValue(0)
         filtered_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
-        filtered_frame.ui.spinBoxInfoLen.setValue(100)
-        filtered_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        filtered_frame.ui.spinBoxSamplesPerSymbol.setValue(100)
+        filtered_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         if center is not None:
             filtered_frame.ui.spinBoxCenterOffset.setValue(center)
             filtered_frame.ui.spinBoxCenterOffset.editingFinished.emit()

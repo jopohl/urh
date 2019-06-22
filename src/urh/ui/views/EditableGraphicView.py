@@ -225,9 +225,9 @@ class EditableGraphicView(ZoomableGraphicView):
         self.set_horizontal_selection(0, 0)
 
     def toggle_symbol_legend(self):
-        if self.scene_type == 1:
+        if self.scene_type == 1 and self.signal is not None:
             self.scene().always_show_symbols_legend = self.show_symbol_legend_action.isChecked()
-            self.scene().draw_sep_area(self.y_sep)
+            self.scene().draw_sep_area(-self.signal.center_thresholds)
 
     @pyqtSlot()
     def on_insert_sine_action_triggered(self):

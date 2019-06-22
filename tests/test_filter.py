@@ -33,8 +33,8 @@ class TestFilter(QtTestCase):
 
         self.sig_frame.ui.btnFilter.click()
         self.sig_frame.ui.cbModulationType.setCurrentText("FSK")
-        self.sig_frame.ui.spinBoxInfoLen.setValue(bit_len)
-        self.sig_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        self.sig_frame.ui.spinBoxSamplesPerSymbol.setValue(bit_len)
+        self.sig_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         self.sig_frame.ui.spinBoxCenterOffset.setValue(center)
         self.sig_frame.ui.spinBoxCenterOffset.editingFinished.emit()
         self.sig_frame.ui.spinBoxTolerance.setValue(5)

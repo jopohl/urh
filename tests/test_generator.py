@@ -25,8 +25,8 @@ class TestGenerator(QtTestCase):
         self.add_signal_to_form("ask.complex")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentIndex(0)  # ASK
-        signal_frame.ui.spinBoxInfoLen.setValue(300)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(300)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         signal_frame.ui.spinBoxCenterOffset.setValue(0.032)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
         signal_frame.ui.cbProtoView.setCurrentIndex(0)
@@ -71,8 +71,8 @@ class TestGenerator(QtTestCase):
         signal_frame.ui.spinBoxNoiseTreshold.setValue(0)
         signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
 
-        signal_frame.ui.spinBoxInfoLen.setValue(295)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(295)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
 
         signal_frame.ui.spinBoxCenterOffset.setValue(0.1)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
@@ -89,7 +89,7 @@ class TestGenerator(QtTestCase):
         self.add_signal_to_form("ask.complex")
         sframe = self.form.signal_tab_controller.signal_frames[0]
         sframe.ui.cbModulationType.setCurrentIndex(0)  # ASK
-        sframe.ui.spinBoxInfoLen.setValue(295)
+        sframe.ui.spinBoxSamplesPerSymbol.setValue(295)
         sframe.ui.spinBoxCenterOffset.setValue(-0.1667)
         sframe.refresh()
 

@@ -25,8 +25,8 @@ class TestAdvancedModulationSettings(QtTestCase):
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         signal_frame.ui.spinBoxCenterOffset.setValue(0.01807)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
-        signal_frame.ui.spinBoxInfoLen.setValue(2900)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(2900)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         signal_frame.ui.spinBoxTolerance.setValue(2)
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 

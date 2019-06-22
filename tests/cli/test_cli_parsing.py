@@ -116,7 +116,7 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(sniffer.rcv_device.device_serial, "abcde")
         self.assertEqual(sniffer.signal.bit_len, 1337)
         self.assertEqual(sniffer.signal.noise_threshold, 0.1234)
-        self.assertEqual(sniffer.signal.qad_center, 0.5)
+        self.assertEqual(sniffer.signal.center, 0.5)
         self.assertEqual(sniffer.signal.tolerance, 42)
 
     def test_build_encoding_from_args(self):

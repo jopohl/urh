@@ -48,11 +48,11 @@ class TestModulator(unittest.TestCase):
             signal.modulation_type = modulation
             signal.bit_len = self.samples_per_symbol
             if modulation == "ASK":
-                signal.qad_center = 0.5
+                signal.center = 0.5
             elif modulation == "FSK":
-                signal.qad_center = 0.0097
+                signal.center = 0.0097
             elif modulation == "PSK":
-                signal.qad_center = 0
+                signal.center = 0
             self.assertEqual(signal.num_samples, self.total_samples, msg=modulation)
             pa = ProtocolAnalyzer(signal)
             pa.get_protocol_from_signal()

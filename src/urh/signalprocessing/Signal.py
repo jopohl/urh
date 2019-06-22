@@ -25,7 +25,7 @@ class Signal(QObject):
     bit_len_changed = pyqtSignal(int)
     tolerance_changed = pyqtSignal(int)
     noise_threshold_changed = pyqtSignal()
-    qad_center_changed = pyqtSignal(float)
+    center_changed = pyqtSignal(float)
     name_changed = pyqtSignal(str)
     sample_rate_changed = pyqtSignal(float)
     modulation_type_changed = pyqtSignal(str)
@@ -43,7 +43,7 @@ class Signal(QObject):
         self.__pause_threshold = 8
         self.__message_length_divisor = 1
         self._qad = None
-        self.__qad_center = 0
+        self.__center = 0
         self._noise_threshold = 0
         self.__sample_rate = sample_rate
         self.noise_min_plot = 0
@@ -57,7 +57,7 @@ class Signal(QObject):
         self.__modulation_type = modulation
         self.__bits_per_symbol = 1
 
-        self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
+        self.__parameter_cache = {mod: {"center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
 
         if len(filename) > 0:
             if self.wav_mode:
@@ -137,7 +137,7 @@ class Signal(QObject):
     @property
     def parameter_cache(self) -> dict:
         """
-        Caching bit_len and qad_center for modulations, so they do not need
+        Caching bit_len and center for modulations, so they do not need
         to be recalculated every time.
 
         :return:
@@ -201,14 +201,14 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
-    def qad_center(self):
-        return self.__qad_center
+    def center(self):
+        return self.__center
 
-    @qad_center.setter
-    def qad_center(self, value: float):
-        if self.__qad_center != value:
-            self.__qad_center = value
-            self.qad_center_changed.emit(value)
+    @center.setter
+    def center(self, value: float):
+        if self.__center != value:
+            self.__center = value
+            self.center_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 
@@ -342,7 +342,7 @@ class Signal(QObject):
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
         new_signal.__bit_len = self.bit_len
-        new_signal.__qad_center = self.qad_center
+        new_signal.__center = self.center
         new_signal.changed = True
         return new_signal
 
@@ -365,7 +365,7 @@ class Signal(QObject):
         if detect_modulation:
             self.modulation_type = estimated_params["modulation_type"]
 
-        self.qad_center = estimated_params["center"]
+        self.center = estimated_params["center"]
         self.tolerance = estimated_params["tolerance"]
         self.bit_len = estimated_params["bit_length"]
 
@@ -379,7 +379,7 @@ class Signal(QObject):
     def clear_parameter_cache(self):
         for mod in self.parameter_cache.keys():
             self.parameter_cache[mod]["bit_len"] = None
-            self.parameter_cache[mod]["qad_center"] = None
+            self.parameter_cache[mod]["center"] = None
 
     def estimate_frequency(self, start: int, end: int, sample_rate: float):
         """

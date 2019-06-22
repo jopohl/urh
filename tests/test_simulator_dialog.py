@@ -77,7 +77,7 @@ class TestSimulatorDialog(QtTestCase):
         self.assertEqual(simulator.sniffer.signal.bit_len, 111)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Center, 0.1337)
-        self.assertEqual(simulator.sniffer.signal.qad_center, 0.1337)
+        self.assertEqual(simulator.sniffer.signal.center, 0.1337)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_ErrorTolerance, 13)
         self.assertEqual(simulator.sniffer.signal.tolerance, 13)

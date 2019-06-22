@@ -74,7 +74,7 @@ class SniffSettingsWidget(QWidget):
                     widget.setCurrentIndex(value)
 
         set_val(self.ui.spinbox_sniff_BitLen, "bit_len", signal.bit_len if signal else 100)
-        set_val(self.ui.spinbox_sniff_Center, "center", signal.qad_center if signal else 0.02)
+        set_val(self.ui.spinbox_sniff_Center, "center", signal.center if signal else 0.02)
         set_val(self.ui.spinbox_sniff_ErrorTolerance, "tolerance", signal.tolerance if signal else 5)
         set_val(self.ui.spinbox_sniff_Noise, "noise", signal.noise_threshold_relative if signal else 0.001)
         self.ui.combox_sniff_Modulation.setCurrentText(conf_dict.get("modulation_type", signal.modulation_type if signal else "FSK"))
@@ -109,7 +109,7 @@ class SniffSettingsWidget(QWidget):
 
     def emit_sniff_parameters_changed(self):
         self.sniff_parameters_changed.emit(dict(bit_len=self.sniffer.signal.bit_len,
-                                                center=self.sniffer.signal.qad_center,
+                                                center=self.sniffer.signal.center,
                                                 noise=self.sniffer.signal.noise_threshold,
                                                 tolerance=self.sniffer.signal.tolerance,
                                                 modulation_type=self.sniffer.signal.modulation_type,
@@ -124,7 +124,7 @@ class SniffSettingsWidget(QWidget):
 
     @pyqtSlot()
     def on_center_edited(self):
-        self.sniffer.signal.qad_center = self.ui.spinbox_sniff_Center.value()
+        self.sniffer.signal.center = self.ui.spinbox_sniff_Center.value()
         self.sniff_setting_edited.emit()
 
     @pyqtSlot()
@@ -183,7 +183,7 @@ class SniffSettingsWidget(QWidget):
             return
 
         self.ui.spinbox_sniff_BitLen.setValue(signal.bit_len)
-        self.ui.spinbox_sniff_Center.setValue(signal.qad_center)
+        self.ui.spinbox_sniff_Center.setValue(signal.center)
         self.ui.spinbox_sniff_Noise.setValue(signal.noise_threshold_relative)
         self.ui.spinbox_sniff_ErrorTolerance.setValue(signal.tolerance)
         self.ui.combox_sniff_Modulation.setCurrentText(signal.modulation_type)

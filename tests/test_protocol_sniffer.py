@@ -61,7 +61,7 @@ class TestProtocolSniffer(QtTestCase):
         signal.bit_len = bit_len
         signal.tolerance = tolerance
         signal.noise_threshold = noise
-        signal.qad_center = center
+        signal.center = center
         pa.signal = signal
         pa.get_protocol_from_signal()
         self.assertEqual(pa.plain_bits_str, data)

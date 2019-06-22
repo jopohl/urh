@@ -61,7 +61,7 @@ class ZoomableGraphicView(SelectableGraphicView):
                 # Normal scene
                 return 0
             else:
-                return -self.signal.qad_center
+                return -self.signal.center
         except Exception as e:
             logger.error("Could not access y_center property: {0}. Falling back to 0".format(e))
             return 0

@@ -174,7 +174,7 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
-            self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
+            self.signal.center_changed.connect(self.on_signal_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentText)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
@@ -207,7 +207,7 @@ class SignalFrame(QFrame):
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.selection_height_changed.connect(self.update_number_selected_samples)
-        self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
+        self.ui.gvSignal.sep_area_changed.connect(self.set_center)
 
         self.ui.sliderYScale.valueChanged.connect(self.on_slider_y_scale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -245,7 +245,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.blockSignals(block)
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
-        self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
+        self.ui.spinBoxCenterOffset.setValue(self.signal.center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
@@ -447,7 +447,7 @@ class SignalFrame(QFrame):
         else:
             self.ui.gvSignal.redraw_view()
 
-        self.ui.gvSignal.y_sep = -self.signal.qad_center
+        self.ui.gvSignal.y_sep = -self.signal.center
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
         if old_protoview == self.proto_view:
@@ -765,7 +765,7 @@ class SignalFrame(QFrame):
         self.show_protocol(old_view=old_view)
 
     @pyqtSlot(float)
-    def set_qad_center(self, th):
+    def set_center(self, th):
         self.ui.spinBoxCenterOffset.setValue(th)
         self.ui.spinBoxCenterOffset.editingFinished.emit()
 
@@ -963,13 +963,13 @@ class SignalFrame(QFrame):
         self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
-    def on_signal_qad_center_changed(self, qad_center):
-        self.ui.gvSignal.y_sep = -qad_center
+    def on_signal_center_changed(self, center):
+        self.ui.gvSignal.y_sep = -center
 
         if self.ui.cbSignalView.currentIndex() > 0:
-            self.scene_manager.scene.draw_sep_area(-qad_center)
+            self.scene_manager.scene.draw_sep_area(-center)
         self.ui.spinBoxCenterOffset.blockSignals(False)
-        self.ui.spinBoxCenterOffset.setValue(qad_center)
+        self.ui.spinBoxCenterOffset.setValue(center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
         if self.signal is not None and self.signal.noise_threshold_relative != self.ui.spinBoxNoiseTreshold.value():
@@ -1094,10 +1094,10 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_spinbox_center_editing_finished(self):
-        if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
+        if self.signal.center != self.ui.spinBoxCenterOffset.value():
             self.ui.spinBoxCenterOffset.blockSignals(True)
             center_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="qad_center",
+                                                  parameter_name="center",
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
 

@@ -32,7 +32,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                  modulation_type: str, device: str, backend_handler: BackendHandler, network_raw_mode=False):
         signal = Signal("", "LiveSignal")
         signal.bit_len = bit_len
-        signal.qad_center = center
+        signal.center = center
         signal.noise_threshold = noise
         signal.tolerance = tolerance
         signal.silent_set_modulation_type(modulation_type)
@@ -201,9 +201,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         bit_len = self.signal.bit_len
         if self.automatic_center:
-            self.signal.qad_center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*self.signal.bit_len)
+            self.signal.center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*self.signal.bit_len)
 
-        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.center,
                                 self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len,
                                 self.signal.bits_per_symbol)
 

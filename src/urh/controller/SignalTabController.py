@@ -172,8 +172,8 @@ class SignalTabController(QWidget):
                     frame.signal.modulation_type = signal.modulation_type
                     proto_needs_update = True
 
-                if frame.signal.qad_center != signal.qad_center:
-                    frame.signal.qad_center = signal.qad_center
+                if frame.signal.center != signal.center:
+                    frame.signal.center = signal.center
                     proto_needs_update = True
 
                 if frame.signal.tolerance != signal.tolerance:

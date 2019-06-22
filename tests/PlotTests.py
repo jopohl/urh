@@ -44,7 +44,7 @@ class PlotTests(unittest.TestCase):
         signal = Signal(get_path_for_data_file("wsp.complex"), "test")
         signal.modulation_type = "ASK"
         signal.noise_threshold = 0.035
-        signal.qad_center = 0.0245
+        signal.center = 0.0245
         signal.bit_len = 25
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()

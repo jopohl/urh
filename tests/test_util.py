@@ -57,7 +57,7 @@ class TestUtil(QtTestCase):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = "ASK"
         signal.bit_len = 295
-        signal.qad_center = -0.1667
+        signal.center = -0.1667
         self.assertEqual(signal.num_samples, 13710)
 
         proto_analyzer = ProtocolAnalyzer(signal)

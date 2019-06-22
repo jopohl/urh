@@ -312,7 +312,7 @@ class ProjectManager(QObject):
         signal_tag.set("name", signal.name)
         signal_tag.set("filename", file_path)
         signal_tag.set("bit_length", str(signal.bit_len))
-        signal_tag.set("qad_center", str(signal.qad_center))
+        signal_tag.set("center", str(signal.center))
         signal_tag.set("tolerance", str(signal.tolerance))
         signal_tag.set("noise_threshold", str(signal.noise_threshold))
         signal_tag.set("noise_minimum", str(signal.noise_min_plot))
@@ -481,7 +481,7 @@ class ProjectManager(QObject):
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
-                signal.qad_center = float(sig_tag.get("qad_center", 0))
+                signal.center = float(sig_tag.get("center", 0))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))

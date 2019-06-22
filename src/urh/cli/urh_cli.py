@@ -8,8 +8,6 @@ from collections import defaultdict
 
 import numpy as np
 
-from urh.signalprocessing.IQArray import IQArray
-
 DEFAULT_CARRIER_FREQUENCY = 1e3
 DEFAULT_CARRIER_AMPLITUDE = 1
 DEFAULT_CARRIER_PHASE = 0
@@ -26,6 +24,7 @@ SRC_DIR = os.path.realpath(os.path.join(cur_dir, "..", ".."))
 if os.path.isdir(SRC_DIR):
     sys.path.insert(0, SRC_DIR)
 
+from urh.signalprocessing.IQArray import IQArray
 from urh.util import util
 
 util.set_shared_library_path()
@@ -302,6 +301,8 @@ def create_parser():
     group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
     group2.add_argument("-sps", "--samples-per-symbol", type=float,
                         help="Length of a symbol in samples (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
+    group2.add_argument("-bl", "--bit-length", type=float,
+                        help="Same as samples per symbol, just there for legacy support (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
 
     group2.add_argument("-n", "--noise", type=float,
                         help="Noise threshold (default: {}). Used for RX only.".format(DEFAULT_NOISE))
@@ -394,7 +395,12 @@ def main():
         except:
             pass
 
-    args.samples_per_symbol = get_val(args.samples_per_symbol, project_params, "samples_per_symbol", DEFAULT_SAMPLES_PER_SYMBOL)
+    if args.bit_length is not None and args.samples_per_symbol is None:
+        args.samples_per_symbol = args.bit_length  # legacy
+    else:
+        args.samples_per_symbol = get_val(args.samples_per_symbol, project_params,
+                                          "samples_per_symbol", DEFAULT_SAMPLES_PER_SYMBOL)
+
     args.center = get_val(args.center, project_params, "center", DEFAULT_CENTER)
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)

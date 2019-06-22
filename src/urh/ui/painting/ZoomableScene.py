@@ -1,8 +1,10 @@
+import math
+
+import numpy as np
 from PyQt5.QtCore import QRectF
 from PyQt5.QtGui import QPen, QFont, QTransform, QFontMetrics
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
 
-import numpy as np
 from urh import constants
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.util import util
@@ -18,7 +20,6 @@ class ZoomableScene(QGraphicsScene):
 
         self.centers = [0]
 
-        self.bits_per_symbol = 1
         self.always_show_symbols_legend = False
 
         self.ones_caption = None
@@ -29,6 +30,10 @@ class ZoomableScene(QGraphicsScene):
         self.selection_area = HorizontalSelection(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR,
                                                   opacity=constants.SELECTION_OPACITY)
         self.addItem(self.selection_area)
+
+    @property
+    def bits_per_symbol(self):
+        return int(math.log2(len(self.centers) + 1))
 
     def draw_noise_area(self, y, h):
         x = self.sceneRect().x()
@@ -50,6 +55,11 @@ class ZoomableScene(QGraphicsScene):
         for caption in self.captions:
             caption.hide()
 
+    def clear_legend(self):
+        for caption in self.captions:
+            self.removeItem(caption)
+        self.captions.clear()
+
     def redraw_legend(self, force_show=False):
         if not (force_show or self.always_show_symbols_legend):
             self.hide_legend()
@@ -57,14 +67,12 @@ class ZoomableScene(QGraphicsScene):
 
         num_captions = len(self.centers) + 1
         if num_captions != len(self.captions):
-            for caption in self.captions:
-                self.removeItem(caption)
-            self.captions.clear()
+            self.clear_legend()
 
             fmt = "{0:0" + str(self.bits_per_symbol) + "b}"
             for i in range(num_captions):
                 font = QFont()
-                font.setPointSize(32)
+                font.setPointSize(16)
                 font.setBold(True)
                 self.captions.append(self.addSimpleText(fmt.format(i), font))
 
@@ -80,7 +88,7 @@ class ZoomableScene(QGraphicsScene):
                                self.centers[i] + padding)
             except IndexError:
                 caption.setPos(view_rect.x() + view_rect.width() - fm.width(caption.text()) * scale_x,
-                               self.centers[i-1] - padding - fm.height()*scale_y)
+                               self.centers[i - 1] - padding - fm.height() * scale_y)
 
             caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
 

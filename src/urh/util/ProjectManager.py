@@ -313,6 +313,7 @@ class ProjectManager(QObject):
         signal_tag.set("filename", file_path)
         signal_tag.set("bit_length", str(signal.bit_len))
         signal_tag.set("center", str(signal.center))
+        signal_tag.set("center_spacing", str(signal.center_spacing))
         signal_tag.set("tolerance", str(signal.tolerance))
         signal_tag.set("noise_threshold", str(signal.noise_threshold))
         signal_tag.set("noise_minimum", str(signal.noise_min_plot))
@@ -321,6 +322,7 @@ class ProjectManager(QObject):
         signal_tag.set("sample_rate", str(signal.sample_rate))
         signal_tag.set("pause_threshold", str(signal.pause_threshold))
         signal_tag.set("message_length_divisor", str(signal.message_length_divisor))
+        signal_tag.set("bits_per_symbol", str(signal.bits_per_symbol))
 
         messages = ET.SubElement(signal_tag, "messages")
         for message in messages:
@@ -482,7 +484,9 @@ class ProjectManager(QObject):
             if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
                 signal.center = float(sig_tag.get("center", 0))
+                signal.center_spacing = float(sig_tag.get("center_spacing", 0.1))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
+                signal.bits_per_symbol = int(sig_tag.get("bits_per_symbol", 1))
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))

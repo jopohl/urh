@@ -135,6 +135,7 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.setScene(self.scene_manager.scene)
 
             self.ui.spinBoxCenterSpacing.setValue(self.signal.center_spacing)
+            self.ui.spinBoxBitsPerSymbol.setValue(self.signal.bits_per_symbol)
 
             self.jump_sync = True
             self.on_btn_show_hide_start_end_clicked()
@@ -184,6 +185,8 @@ class SignalFrame(QFrame):
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
+            self.signal.bits_per_symbol_changed.connect(self.ui.spinBoxBitsPerSymbol.setValue)
+            self.signal.center_spacing_changed.connect(self.ui.spinBoxCenterSpacing.setValue)
 
             self.signal.sample_rate_changed.connect(self.on_signal_sample_rate_changed)
 
@@ -249,6 +252,8 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.blockSignals(block)
         self.ui.spinBoxSamplesPerSymbol.blockSignals(block)
         self.ui.spinBoxNoiseTreshold.blockSignals(block)
+        self.ui.spinBoxBitsPerSymbol.blockSignals(block)
+        self.ui.spinBoxCenterSpacing.blockSignals(block)
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
         self.ui.spinBoxCenterOffset.setValue(self.signal.center)
@@ -256,11 +261,17 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
+        self.ui.spinBoxCenterSpacing.setValue(self.signal.center_spacing)
+        self.ui.spinBoxBitsPerSymbol.setValue(self.signal.bits_per_symbol)
 
         self.ui.spinBoxTolerance.blockSignals(False)
         self.ui.spinBoxCenterOffset.blockSignals(False)
         self.ui.spinBoxSamplesPerSymbol.blockSignals(False)
         self.ui.spinBoxNoiseTreshold.blockSignals(False)
+        self.ui.spinBoxCenterSpacing.blockSignals(False)
+        self.ui.spinBoxBitsPerSymbol.blockSignals(False)
+
+        self.set_center_spacing_visibility()
 
     def set_empty_frame_visibilities(self):
         for widget in dir(self.ui):
@@ -1115,7 +1126,6 @@ class SignalFrame(QFrame):
             self.undo_stack.push(bits_per_symbol_action)
             self.ui.spinBoxBitsPerSymbol.blockSignals(False)
 
-            self.ui.gvSignal.scene().bits_per_symbol = self.signal.bits_per_symbol
             if self.ui.gvSignal.scene_type == 1:
                 self.ui.gvSignal.scene().draw_sep_area(-self.signal.center_thresholds)
 
@@ -1142,7 +1152,6 @@ class SignalFrame(QFrame):
             self.ui.spinBoxCenterSpacing.blockSignals(False)
 
             if self.ui.gvSignal.scene_type == 1:
-                print(self.signal.center_thresholds)
                 self.ui.gvSignal.scene().draw_sep_area(-self.signal.center_thresholds)
 
     @pyqtSlot()

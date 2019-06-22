@@ -357,8 +357,7 @@ def main():
     import multiprocessing as mp
     # allow usage of prange (OpenMP) in Processes
     mp.set_start_method("spawn")
-    if sys.platform == "win32":
-        mp.freeze_support()
+    mp.freeze_support()
 
     parser = create_parser()
     args = parser.parse_args()

@@ -1,13 +1,18 @@
+from array import array
+
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtCore import Qt, pyqtSlot, QRegExp
+from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegExpValidator
+from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit
 
 from urh import constants
+from urh.controller.dialogs.ModulationParametersDialog import ModulationParametersDialog
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
+from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
 
 class ModulatorDialog(QDialog):
@@ -62,6 +67,9 @@ class ModulatorDialog(QDialog):
         self.original_bits = ""
         self.ui.btnRestoreBits.setEnabled(False)
 
+        self.configure_parameters_action = self.ui.lineEditParameters.addAction(QIcon.fromTheme("configure"),
+                                                                                QLineEdit.TrailingPosition)
+
         self.create_connects()
 
         try:
@@ -107,6 +115,7 @@ class ModulatorDialog(QDialog):
         self.ui.spinBoxGaussBT.setValue(self.current_modulator.gauss_bt)
 
     def closeEvent(self, event: QCloseEvent):
+        self.ui.lineEditParameters.editingFinished.emit()
         constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 
         for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated, self.ui.gVOriginalSignal):
@@ -130,6 +139,8 @@ class ModulatorDialog(QDialog):
         self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
         self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
         self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
+
+        self.update_modulation_parameters()
 
     def create_connects(self):
         self.ui.doubleSpinBoxCarrierFreq.valueChanged.connect(self.on_carrier_freq_changed)
@@ -161,6 +172,9 @@ class ModulatorDialog(QDialog):
 
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
+
+        self.configure_parameters_action.triggered.connect(self.on_configure_parameters_action_triggered)
+        self.ui.lineEditParameters.editingFinished.connect(self.on_line_edit_parameters_editing_finished)
 
     def draw_carrier(self):
         self.ui.gVCarrier.plot_data(self.current_modulator.carrier_data)
@@ -360,6 +374,23 @@ class ModulatorDialog(QDialog):
 
         self.mark_samples_in_view()
 
+    def update_modulation_parameters(self):
+        n = len(self.current_modulator.parameters) - 1
+        if "ASK" in self.current_modulator.modulation_type:
+            text = "/".join(map(str, map(int, self.current_modulator.parameters)))
+            regex = r"(100|[0-9]{1,2})"
+        elif "FSK" in self.current_modulator.modulation_type:
+            text = "/".join(map(Formatter.big_value_with_suffix, self.current_modulator.parameters))
+            regex = r"((-?[0-9]+)[.,]?[0-9]*[kKmMgG]?)"
+
+        else:
+            text = "/".join(map(str, map(int, self.current_modulator.parameters)))
+            regex = r"(-?36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])"
+
+        full_regex = r"^" + regex + r"/{" + str(n) + "}" + regex + r"$"
+        self.ui.lineEditParameters.setValidator(QRegExpValidator(QRegExp(full_regex)))
+        self.ui.lineEditParameters.setText(text)
+
     @pyqtSlot()
     def on_carrier_freq_changed(self):
         self.current_modulator.carrier_freq_hz = self.ui.doubleSpinBoxCarrierFreq.value()
@@ -504,6 +535,8 @@ class ModulatorDialog(QDialog):
                 self.ui.spinBoxParameter0.setValue(self.current_modulator.param_for_zero)
                 self.ui.spinBoxParameter1.setValue(self.current_modulator.param_for_one)
 
+        self.update_modulation_parameters()
+
     @pyqtSlot()
     def on_orig_signal_zoomed(self):
         start = self.ui.gVOriginalSignal.view_rect().x()
@@ -619,3 +652,39 @@ class ModulatorDialog(QDialog):
     @pyqtSlot(int)
     def on_original_selection_changed(self, new_width: int):
         self.ui.lOriginalSignalSamplesSelected.setText(str(abs(new_width)))
+
+    @pyqtSlot()
+    def on_configure_parameters_action_triggered(self):
+        self.ui.lineEditParameters.editingFinished.emit()
+        dialog = ModulationParametersDialog(self.current_modulator.parameters, self.current_modulator.modulation_type,
+                                            self)
+        dialog.accepted.connect(self.update_modulation_parameters)
+        dialog.show()
+
+    @pyqtSlot()
+    def on_line_edit_parameters_editing_finished(self):
+        if not self.ui.lineEditParameters.hasAcceptableInput():
+            return
+
+        text = self.ui.lineEditParameters.text()
+        parameters = []
+        for param in text.split("/"):
+            param = param.upper().replace(",", ".")
+            factor = 1
+            if param.endswith("G"):
+                factor = 10 ** 9
+                param = param[:-1]
+            elif param.endswith("M"):
+                factor = 10 ** 6
+                param = param[:-1]
+            elif param.endswith("K"):
+                factor = 10 ** 3
+                param = param[:-1]
+
+            try:
+                parameters.append(factor * float(param))
+            except ValueError:
+                logger.warning("Could not convert {} to number".format(param))
+                return
+
+        self.current_modulator.parameters[:] = array("f", parameters)

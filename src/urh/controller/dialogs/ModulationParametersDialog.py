@@ -24,7 +24,7 @@ class ModulationParametersDialog(QDialog):
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Frequency in Hz")
         elif "ASK" in modulation_type:
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Amplitude")
-            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, SpinBoxDelegate(0, 1, self))
+            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, SpinBoxDelegate(0, 100, self, "%"))
         elif "PSK" in modulation_type:
             self.ui.tblSymbolParameters.setItemDelegateForColumn(1, SpinBoxDelegate(-360, 360, self, "°"))
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Phase")
@@ -38,7 +38,10 @@ class ModulationParametersDialog(QDialog):
             item.setFont(font)
             item.setFlags(Qt.ItemIsEnabled)
             self.ui.tblSymbolParameters.setItem(i, 0, item)
-            self.ui.tblSymbolParameters.setItem(i, 1, QTableWidgetItem(str(self.parameters[i])))
+
+            item = QTableWidgetItem()
+            item.setData(Qt.DisplayRole, self.parameters[i])
+            self.ui.tblSymbolParameters.setItem(i, 1, item)
             self.ui.tblSymbolParameters.openPersistentEditor(self.ui.tblSymbolParameters.item(i, 1))
 
         self.create_connects()
@@ -59,7 +62,7 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication(["urh"])
 
-    dialog = ModulationParametersDialog([0, 180, 270, 360], "FSK")
+    dialog = ModulationParametersDialog([0, 100.0], "ASK")
     dialog.show()
 
     app.exec_()

@@ -8,6 +8,8 @@
 # Pycharm
 .idea/
 
+venv/
+
 src/__pycache__/
 src/urh/__pycache__/
 __pycache__/

@@ -300,7 +300,7 @@ def create_parser():
     group2.add_argument("-mo", "--modulation-type", choices=MODULATIONS, metavar="MOD_TYPE", default="FSK",
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
     group2.add_argument("-bps", "--bits-per-symbol", type=int,
-                        help="Bits per symbol for higher order modulations (default: 1=binary modulation).")
+                        help="Bits per symbol e.g. 1 means binary modulation (default: 1).")
     group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
     group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
     group2.add_argument("-sps", "--samples-per-symbol", type=int,

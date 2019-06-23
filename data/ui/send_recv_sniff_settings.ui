@@ -75,38 +75,10 @@ QGroupBox::indicator:checked {
          <number>0</number>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_sniff_Signal">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_sniff_Center">
            <property name="text">
-            <string>Use values from:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QComboBox" name="comboBox_sniff_signal">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_sniff_use_signal">
-             <property name="text">
-              <string>Use</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_sniff_Noise">
-           <property name="text">
-            <string>Noise:</string>
+            <string>Center:</string>
            </property>
           </widget>
          </item>
@@ -140,38 +112,21 @@ QGroupBox::indicator:checked {
            </item>
           </layout>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_sniff_Center">
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_sniff_Modulation">
            <property name="text">
-            <string>Center:</string>
+            <string>Modulation:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_sniff_BitLength">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_sniff_Signal">
            <property name="text">
-            <string>Samples per Symbol:</string>
+            <string>Use values from:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QSpinBox" name="spinbox_sniff_SamplesPerSymbol">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>999999999</number>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_sniff_Tolerance">
-           <property name="text">
-            <string>Error Tolerance:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QSpinBox" name="spinbox_sniff_ErrorTolerance">
            <property name="maximum">
             <number>999999</number>
@@ -181,14 +136,7 @@ QGroupBox::indicator:checked {
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_sniff_Modulation">
-           <property name="text">
-            <string>Modulation:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="QComboBox" name="combox_sniff_Modulation">
            <item>
             <property name="text">
@@ -207,71 +155,31 @@ QGroupBox::indicator:checked {
            </item>
           </widget>
          </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="label_sniff_encoding">
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_sniff_Tolerance">
            <property name="text">
-            <string>Encoding:</string>
+            <string>Error Tolerance:</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="QComboBox" name="comboBox_sniff_encoding">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinbox_sniff_SamplesPerSymbol">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>999999999</number>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="label_sniff_viewtype">
            <property name="text">
             <string>View:</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <item>
-            <widget class="QComboBox" name="comboBox_sniff_viewtype">
-             <item>
-              <property name="text">
-               <string>Bit</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ASCII</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox_sniff_Timestamp">
-             <property name="text">
-              <string>Show Timestamp</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="label_sniff_OutputFile">
-           <property name="text">
-            <string>Write bitstream to file:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
+         <item row="10" column="1">
           <widget class="QLineEdit" name="lineEdit_sniff_OutputFile">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -287,6 +195,51 @@ QGroupBox::indicator:checked {
            </property>
            <property name="clearButtonEnabled">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_sniff_BitLength">
+           <property name="text">
+            <string>Samples per Symbol:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="spinBoxCenterSpacing">
+           <property name="decimals">
+            <number>4</number>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QComboBox" name="comboBox_sniff_signal">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_sniff_use_signal">
+             <property name="text">
+              <string>Use</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label_sniff_OutputFile">
+           <property name="text">
+            <string>Write bitstream to file:</string>
            </property>
           </widget>
          </item>
@@ -319,6 +272,87 @@ QGroupBox::indicator:checked {
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_sniff_encoding">
+           <property name="text">
+            <string>Encoding:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <item>
+            <widget class="QComboBox" name="comboBox_sniff_viewtype">
+             <item>
+              <property name="text">
+               <string>Bit</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ASCII</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_sniff_Timestamp">
+             <property name="text">
+              <string>Show Timestamp</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_sniff_Noise">
+           <property name="text">
+            <string>Noise:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QComboBox" name="comboBox_sniff_encoding">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelCenterSpacing">
+           <property name="text">
+            <string>Center Spacing:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="labelBitsPerSymbol">
+           <property name="text">
+            <string>Bits per Symbol:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="spinBoxBitsPerSymbol">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>256</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

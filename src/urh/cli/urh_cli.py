@@ -15,6 +15,7 @@ DEFAULT_CARRIER_PHASE = 0
 DEFAULT_SAMPLES_PER_SYMBOL = 100
 DEFAULT_NOISE = 0.1
 DEFAULT_CENTER = 0
+DEFAULT_CENTER_SPACING = 0.1
 DEFAULT_TOLERANCE = 5
 
 cli_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
@@ -148,8 +149,9 @@ def build_device_from_args(arguments: argparse.Namespace):
 def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
 
-    result = ProtocolSniffer(arguments.samples_per_symbol, arguments.center, arguments.noise, arguments.tolerance,
-                             arguments.modulation_type,
+    result = ProtocolSniffer(arguments.samples_per_symbol, arguments.center, arguments.center_spacing,
+                             arguments.noise, arguments.tolerance,
+                             arguments.modulation_type, arguments.bits_per_symbol,
                              arguments.device.lower(), bh)
     result.rcv_device.frequency = arguments.frequency
     result.rcv_device.sample_rate = arguments.sample_rate
@@ -297,18 +299,24 @@ def create_parser():
                         help="Carrier phase in degree (default: {})".format(DEFAULT_CARRIER_PHASE))
     group2.add_argument("-mo", "--modulation-type", choices=MODULATIONS, metavar="MOD_TYPE", default="FSK",
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
+    group2.add_argument("-bps", "--bits-per-symbol", type=int,
+                        help="Bits per symbol for higher order modulations (default: 1=binary modulation).")
     group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
     group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
-    group2.add_argument("-sps", "--samples-per-symbol", type=float,
+    group2.add_argument("-sps", "--samples-per-symbol", type=int,
                         help="Length of a symbol in samples (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
-    group2.add_argument("-bl", "--bit-length", type=float,
+    group2.add_argument("-bl", "--bit-length", type=int,
                         help="Same as samples per symbol, just there for legacy support (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
 
     group2.add_argument("-n", "--noise", type=float,
                         help="Noise threshold (default: {}). Used for RX only.".format(DEFAULT_NOISE))
     group2.add_argument("-c", "--center", type=float,
-                        help="Center between 0 and 1 for demodulation (default: {}). "
+                        help="Center between symbols for demodulation (default: {}). "
                              "Used for RX only.".format(DEFAULT_CENTER))
+    group2.add_argument("-cs", "--center-spacing", type=float,
+                        help="Center spacing between symbols for demodulation (default: {}). "
+                             "Value has only effect for modulations with more than 1 bit per symbol. "
+                             "Used only for RX.".format(DEFAULT_CENTER_SPACING))
     group2.add_argument("-t", "--tolerance", type=float,
                         help="Tolerance for demodulation in samples (default: {}). "
                              "Used for RX only.".format(DEFAULT_TOLERANCE))
@@ -400,8 +408,10 @@ def main():
                                           "samples_per_symbol", DEFAULT_SAMPLES_PER_SYMBOL)
 
     args.center = get_val(args.center, project_params, "center", DEFAULT_CENTER)
+    args.center_spacing = get_val(args.center_spacing, project_params, "center_spacing", DEFAULT_CENTER_SPACING)
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)
+    args.bits_per_symbol = get_val(args.bits_per_symbol, project_params, "bits_per_symbol", 1)
 
     args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency",
                                      DEFAULT_CARRIER_FREQUENCY)

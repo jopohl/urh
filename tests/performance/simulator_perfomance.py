@@ -87,7 +87,8 @@ class TestSimulatorPerfomance(QtTestCase):
         self.form.project_manager.participants.append(part_b)
         self.form.project_manager.project_updated.emit()
 
-        sniffer = ProtocolSniffer(100, 0.01, 0.1, 5, 1, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
+        sniffer = ProtocolSniffer(100, 0.01, 0.01, 0.1, 5, "FSK", 1,
+                                  NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
                                   network_raw_mode=True)
         sender = EndlessSender(BackendHandler(), NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 

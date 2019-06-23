@@ -27,8 +27,10 @@ class TestProtocolSniffer(QtTestCase):
         modulation_type = "FSK"
         sample_rate = 1e6
         device_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        sniffer = ProtocolSniffer(samples_per_symbol=samples_per_symbol, center=center, noise=noise, tolerance=tolerance,
-                                  modulation_type=modulation_type, device=device_name, backend_handler=BackendHandler(),
+        sniffer = ProtocolSniffer(samples_per_symbol=samples_per_symbol, center=center, center_spacing=0.1,
+                                  noise=noise, tolerance=tolerance,
+                                  modulation_type=modulation_type, bits_per_symbol=1,
+                                  device=device_name, backend_handler=BackendHandler(),
                                   network_raw_mode=True)
 
         port = self.get_free_port()

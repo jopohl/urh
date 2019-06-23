@@ -102,7 +102,8 @@ class TestCLIParsing(QtTestCase):
     def test_build_protocol_sniffer_from_args(self):
         args = self.parser.parse_args("--device HackRF --frequency 50e3 --sample-rate 2.5e6 -rx "
                                       "-if 24 -bb 30 -g 0 --device-identifier abcde "
-                                      "-sps 1337 --center 0.5 --noise 0.1234 --tolerance 42".split())
+                                      "-sps 1337 --center 0.5 --noise 0.1234 --tolerance 42 "
+                                      "-cs 0.42 -bps 4".split())
         sniffer = urh_cli.build_protocol_sniffer_from_args(args)
         self.assertEqual(sniffer.rcv_device.frequency, 50e3)
         self.assertEqual(sniffer.rcv_device.sample_rate, 2.5e6)
@@ -115,6 +116,8 @@ class TestCLIParsing(QtTestCase):
         self.assertEqual(sniffer.rcv_device.baseband_gain, 30)
         self.assertEqual(sniffer.rcv_device.device_serial, "abcde")
         self.assertEqual(sniffer.signal.samples_per_symbol, 1337)
+        self.assertEqual(sniffer.signal.bits_per_symbol, 4)
+        self.assertEqual(sniffer.signal.center_spacing, 0.42)
         self.assertEqual(sniffer.signal.noise_threshold, 0.1234)
         self.assertEqual(sniffer.signal.center, 0.5)
         self.assertEqual(sniffer.signal.tolerance, 42)

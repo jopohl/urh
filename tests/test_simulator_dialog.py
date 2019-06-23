@@ -79,6 +79,9 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Center, 0.1337)
         self.assertEqual(simulator.sniffer.signal.center, 0.1337)
 
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxCenterSpacing, 0.4)
+        self.assertEqual(simulator.sniffer.signal.center_spacing, 0.4)
+
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_ErrorTolerance, 13)
         self.assertEqual(simulator.sniffer.signal.tolerance, 13)
 
@@ -87,6 +90,9 @@ class TestSimulatorDialog(QtTestCase):
 
         sniff_settings_widget.ui.combox_sniff_Modulation.setCurrentText("PSK")
         self.assertEqual(simulator.sniffer.signal.modulation_type, "PSK")
+
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxBitsPerSymbol, 5)
+        self.assertEqual(simulator.sniffer.signal.bits_per_symbol, 5)
 
         decodings = [sniff_settings_widget.ui.comboBox_sniff_encoding.itemText(i) for i in
                      range(sniff_settings_widget.ui.comboBox_sniff_encoding.count())]

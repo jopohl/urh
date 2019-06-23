@@ -28,14 +28,17 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     BUFFER_SIZE_MB = 100
 
-    def __init__(self, samples_per_symbol: int, center: float, noise: float, tolerance: int,
-                 modulation_type: str, device: str, backend_handler: BackendHandler, network_raw_mode=False):
+    def __init__(self, samples_per_symbol: int, center: float, center_spacing: float,
+                 noise: float, tolerance: int, modulation_type: str, bits_per_symbol: int,
+                 device: str, backend_handler: BackendHandler, network_raw_mode=False):
         signal = Signal("", "LiveSignal")
         signal.samples_per_symbol = samples_per_symbol
         signal.center = center
+        signal.center_spacing = center_spacing
         signal.noise_threshold = noise
         signal.tolerance = tolerance
         signal.silent_set_modulation_type(modulation_type)
+        signal.bits_per_symbol = bits_per_symbol
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 

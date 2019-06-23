@@ -65,7 +65,10 @@ class ModulatorDialog(QDialog):
         self.ui.chkBoxLockSIV.setDisabled(True)
 
         self.original_bits = ""
-        self.ui.btnRestoreBits.setEnabled(False)
+
+        self.restore_bits_action = self.ui.linEdDataBits.addAction(QIcon.fromTheme("edit-undo"),
+                                                                   QLineEdit.TrailingPosition)
+        self.restore_bits_action.setEnabled(False)
 
         self.configure_parameters_action = self.ui.lineEditParameters.addAction(QIcon.fromTheme("configure"),
                                                                                 QLineEdit.TrailingPosition)
@@ -168,11 +171,11 @@ class ModulatorDialog(QDialog):
         self.ui.spinBoxGaussFilterWidth.valueChanged.connect(self.on_gaus_filter_wdith_changed)
 
         self.ui.chkBoxLockSIV.stateChanged.connect(self.on_lock_siv_changed)
-        self.ui.btnRestoreBits.clicked.connect(self.on_btn_restore_bits_clicked)
 
         self.ui.gVOriginalSignal.signal_loaded.connect(self.handle_signal_loaded)
         self.ui.btnAutoDetect.clicked.connect(self.on_btn_autodetect_clicked)
 
+        self.restore_bits_action.triggered.connect(self.on_restore_bits_action_triggered)
         self.configure_parameters_action.triggered.connect(self.on_configure_parameters_action_triggered)
         self.ui.lineEditParameters.editingFinished.connect(self.on_line_edit_parameters_editing_finished)
 
@@ -436,11 +439,7 @@ class ModulatorDialog(QDialog):
             self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
 
         self.search_data_sequence()
-
-        if text == self.original_bits:
-            self.ui.btnRestoreBits.setDisabled(True)
-        else:
-            self.ui.btnRestoreBits.setEnabled(True)
+        self.restore_bits_action.setEnabled(text != self.original_bits)
 
         for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
             graphic_view.show_full_scene(reinitialize=True)
@@ -629,7 +628,7 @@ class ModulatorDialog(QDialog):
             self.adjust_samples_in_view(self.ui.gVModulated.view_rect().width())
 
     @pyqtSlot()
-    def on_btn_restore_bits_clicked(self):
+    def on_restore_bits_action_triggered(self):
         self.ui.linEdDataBits.setText(self.original_bits)
 
     @pyqtSlot()

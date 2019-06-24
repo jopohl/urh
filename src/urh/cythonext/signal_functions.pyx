@@ -314,7 +314,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
+cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n) nogil:
     if sample == noise_val:
         return PAUSE_STATE
 

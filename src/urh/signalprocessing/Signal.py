@@ -364,6 +364,7 @@ class Signal(QObject):
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
         new_signal.__samples_per_symbol = self.samples_per_symbol
+        new_signal.__bits_per_symbol = self.bits_per_symbol
         new_signal.__center = self.center
         new_signal.changed = True
         return new_signal

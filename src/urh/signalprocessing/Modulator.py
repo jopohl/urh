@@ -78,6 +78,22 @@ class Modulator(object):
         return self.bits_per_symbol == 1
 
     @property
+    def is_amplitude_based(self):
+        return "ASK" in self.modulation_type
+
+    @property
+    def is_frequency_based(self):
+        return "FSK" in self.modulation_type
+
+    @property
+    def is_phase_based(self):
+        return "PSK" in self.modulation_type
+
+    @property
+    def modulation_order(self):
+        return 2 ** self.bits_per_symbol
+
+    @property
     def param_for_zero(self):
         assert self.is_binary_modulation
         return self.parameters[0]

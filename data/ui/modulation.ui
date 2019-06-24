@@ -614,7 +614,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-40</y>
+            <y>0</y>
             <width>346</width>
             <height>285</height>
            </rect>
@@ -1098,14 +1098,34 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>comboBoxCustomModulations</tabstop>
   <tabstop>btnAddModulation</tabstop>
-  <tabstop>btnRemoveModulation</tabstop>
-  <tabstop>scrollArea</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>doubleSpinBoxCarrierFreq</tabstop>
+  <tabstop>doubleSpinBoxCarrierPhase</tabstop>
+  <tabstop>btnAutoDetect</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>linEdDataBits</tabstop>
+  <tabstop>spinBoxSamplesPerSymbol</tabstop>
+  <tabstop>spinBoxSampleRate</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>comboBoxModulationType</tabstop>
+  <tabstop>spinBoxBitsPerSymbol</tabstop>
+  <tabstop>lineEditParameters</tabstop>
+  <tabstop>spinBoxGaussBT</tabstop>
+  <tabstop>spinBoxGaussFilterWidth</tabstop>
+  <tabstop>scrollArea_5</tabstop>
+  <tabstop>treeViewSignals</tabstop>
+  <tabstop>chkBoxLockSIV</tabstop>
   <tabstop>gVCarrier</tabstop>
   <tabstop>gVData</tabstop>
   <tabstop>gVModulated</tabstop>
   <tabstop>gVOriginalSignal</tabstop>
+  <tabstop>cbShowDataBitsOnly</tabstop>
+  <tabstop>btnSearchPrev</tabstop>
+  <tabstop>btnSearchNext</tabstop>
+  <tabstop>btnRemoveModulation</tabstop>
+  <tabstop>comboBoxCustomModulations</tabstop>
+  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources>
   <include location="urh.qrc"/>

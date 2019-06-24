@@ -1,7 +1,7 @@
 from array import array
 
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot, QRegExp
+from PyQt5.QtCore import Qt, pyqtSlot, QRegExp, QTimer
 from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit
 
@@ -81,6 +81,9 @@ class ModulatorDialog(QDialog):
 
         self.set_bits_per_symbol_enabled_status()
         self.set_modulation_profile_status()
+
+        # Ensure full sceen shown after resize
+        QTimer.singleShot(100, self.show_full_scene)
 
     def __cur_selected_mod_type(self):
         s = self.ui.comboBoxModulationType.currentText()
@@ -416,6 +419,10 @@ class ModulatorDialog(QDialog):
         else:
             self.ui.spinBoxBitsPerSymbol.setEnabled(True)
 
+    def show_full_scene(self):
+        for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
+            graphic_view.show_full_scene(reinitialize=True)
+
     @pyqtSlot()
     def on_carrier_freq_changed(self):
         self.current_modulator.carrier_freq_hz = self.ui.doubleSpinBoxCarrierFreq.value()
@@ -434,9 +441,7 @@ class ModulatorDialog(QDialog):
         self.draw_carrier()
         self.draw_data_bits()
         self.draw_modulated()
-
-        for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
-            graphic_view.show_full_scene(reinitialize=True)
+        self.show_full_scene()
 
     @pyqtSlot()
     def on_data_bits_changed(self):
@@ -462,9 +467,7 @@ class ModulatorDialog(QDialog):
 
         self.search_data_sequence()
         self.restore_bits_action.setEnabled(text != self.original_bits)
-
-        for graphic_view in (self.ui.gVModulated, self.ui.gVData, self.ui.gVCarrier):
-            graphic_view.show_full_scene(reinitialize=True)
+        self.show_full_scene()
 
     @pyqtSlot()
     def on_sample_rate_changed(self):
@@ -489,8 +492,9 @@ class ModulatorDialog(QDialog):
             return
         self.current_modulator.bits_per_symbol = self.ui.spinBoxBitsPerSymbol.value()
         self.set_default_modulation_parameters()
-
         self.draw_modulated()
+        self.show_full_scene()
+
 
     @pyqtSlot()
     def on_modulation_type_changed(self):
@@ -507,6 +511,7 @@ class ModulatorDialog(QDialog):
 
         self.set_bits_per_symbol_enabled_status()
         self.draw_modulated()
+        self.show_full_scene()
 
     @pyqtSlot()
     def on_orig_signal_zoomed(self):
@@ -660,3 +665,4 @@ class ModulatorDialog(QDialog):
 
         self.current_modulator.parameters[:] = array("f", parameters)
         self.draw_modulated()
+        self.show_full_scene()

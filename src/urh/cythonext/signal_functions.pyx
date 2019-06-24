@@ -316,7 +316,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
 cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
     cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
-    cdef int n = modulation_order // 2
+    cdef int i, n = modulation_order // 2
 
     for i in range(0, n):
         result[i] = center - (n-(i+1)) * spacing

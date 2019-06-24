@@ -4,6 +4,7 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.util.Logger import logger
 
 
@@ -53,7 +54,9 @@ class TestModulatorGUI(QtTestCase):
         self.dialog.ui.linEdDataBits.editingFinished.emit()
         self.assertEqual(self.dialog.current_modulator.display_bits, "10101010")
 
-        self.dialog.ui.btnRestoreBits.click()
+        assert isinstance(self.dialog, ModulatorDialog)
+
+        self.dialog.restore_bits_action.trigger()
         self.dialog.ui.linEdDataBits.editingFinished.emit()
         self.assertEqual(self.dialog.current_modulator.display_bits, bits)
 
@@ -91,16 +94,13 @@ class TestModulatorGUI(QtTestCase):
 
     def test_edit_modulation(self):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
-        self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")
-        self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Amplitude for 1:")
+        self.assertEqual(self.dialog.ui.labelParameters.text(), "Amplitudes in %:")
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Frequency Shift Keying (FSK)")
-        self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Frequency for 0:")
-        self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Frequency for 1:")
+        self.assertEqual(self.dialog.ui.labelParameters.text(), "Frequencies in Hz:")
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Gaussian Frequency Shift Keying (GFSK)")
-        self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Frequency for 0:")
-        self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Frequency for 1:")
+        self.assertEqual(self.dialog.ui.labelParameters.text(), "Frequencies in Hz:")
         self.dialog.ui.spinBoxGaussBT.setValue(0.5)
         self.dialog.ui.spinBoxGaussBT.editingFinished.emit()
         self.assertEqual(self.dialog.current_modulator.gauss_bt, 0.5)
@@ -109,12 +109,10 @@ class TestModulatorGUI(QtTestCase):
         self.assertEqual(self.dialog.current_modulator.gauss_filter_width, 5)
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Phase Shift Keying (PSK)")
-        self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Phase (degree) for 0:")
-        self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Phase (degree) for 1:")
+        self.assertEqual(self.dialog.ui.labelParameters.text(), "Phases in degree:")
 
         self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
-        self.assertEqual(self.dialog.ui.lParameterfor0.text(), "Amplitude for 0:")
-        self.assertEqual(self.dialog.ui.lParameterfor1.text(), "Amplitude for 1:")
+        self.assertEqual(self.dialog.ui.labelParameters.text(), "Amplitudes in %:")
 
         self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()),
                          int(self.dialog.ui.gVModulated.view_rect().width()))

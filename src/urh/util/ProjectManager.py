@@ -166,7 +166,11 @@ class ProjectManager(QObject):
                     value = float(dev_tag.text)
             except ValueError:
                 value = dev_tag.text
-            target_dict[dev_tag.tag] = value
+
+            if dev_tag.tag == "bit_len":
+                target_dict["samples_per_symbol"] = value   # legacy
+            else:
+                target_dict[dev_tag.tag] = value
 
     @staticmethod
     def __device_conf_dict_to_xml(key_name: str, device_conf: dict):

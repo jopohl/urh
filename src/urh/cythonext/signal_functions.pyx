@@ -314,18 +314,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n) nogil:
-    if sample == noise_val:
-        return PAUSE_STATE
-
-    cdef int i
-    for i in range(n):
-        if sample <= thresholds[i]:
-            return i
-
-    return n
-
-cpdef inline np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
+cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
     cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
     cdef int n = modulation_order // 2
 
@@ -355,6 +344,8 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
     cdef int modulation_order = 2**bits_per_symbol
+    cdef int k
+
 
     cdef np.ndarray[np.float32_t, ndim=1] thresholds = get_center_thresholds(center, center_spacing, modulation_order)
 
@@ -365,12 +356,27 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
 
     s_prev = samples[0]
-    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order - 1)
+    if s_prev == NOISE:
+        cur_state = PAUSE_STATE
+    else:
+        cur_state = modulation_order - 1
+        for k in range(modulation_order - 1):
+            if s <= thresholds[k]:
+                cur_state = k
+                break
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order - 1)
+
+        if s == NOISE:
+            tmp_state = PAUSE_STATE
+        else:
+            tmp_state = modulation_order - 1
+            for k in range(modulation_order - 1):
+                if s <= thresholds[k]:
+                    tmp_state = k
+                    break
 
         if tmp_state == PAUSE_STATE:
             consecutive_pause += 1

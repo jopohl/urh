@@ -67,7 +67,7 @@ class ModulationSettingsWidget(QWidget):
         dialog.ui.comboBoxCustomModulations.setCurrentIndex(self.ui.comboBoxModulationProfiles.currentIndex())
         dialog.finished.connect(self.refresh_modulators_from_dialog)
         dialog.show()
-        dialog.initialize("101010")
+        dialog.initialize("10101011010010")
 
     @pyqtSlot()
     def refresh_modulators_from_dialog(self):

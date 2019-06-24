@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
         SniffSettings.setObjectName("SniffSettings")
-        SniffSettings.resize(482, 424)
+        SniffSettings.resize(482, 510)
         self.verticalLayout = QtWidgets.QVBoxLayout(SniffSettings)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -180,7 +180,7 @@ class Ui_SniffSettings(object):
         self.gridLayout.addWidget(self.labelBitsPerSymbol, 7, 0, 1, 1)
         self.spinBoxBitsPerSymbol = QtWidgets.QSpinBox(self.frame)
         self.spinBoxBitsPerSymbol.setMinimum(1)
-        self.spinBoxBitsPerSymbol.setMaximum(256)
+        self.spinBoxBitsPerSymbol.setMaximum(10)
         self.spinBoxBitsPerSymbol.setObjectName("spinBoxBitsPerSymbol")
         self.gridLayout.addWidget(self.spinBoxBitsPerSymbol, 7, 1, 1, 1)
         self.gridLayout_3.addWidget(self.frame, 0, 0, 1, 1)

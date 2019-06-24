@@ -45,7 +45,7 @@ class Ui_SignalFrame(object):
         self.gridLayout_2.addWidget(self.lSignalViewText, 17, 0, 1, 1)
         self.spinBoxBitsPerSymbol = QtWidgets.QSpinBox(SignalFrame)
         self.spinBoxBitsPerSymbol.setMinimum(1)
-        self.spinBoxBitsPerSymbol.setMaximum(256)
+        self.spinBoxBitsPerSymbol.setMaximum(10)
         self.spinBoxBitsPerSymbol.setObjectName("spinBoxBitsPerSymbol")
         self.gridLayout_2.addWidget(self.spinBoxBitsPerSymbol, 11, 1, 1, 1)
         self.gridLayout = QtWidgets.QGridLayout()

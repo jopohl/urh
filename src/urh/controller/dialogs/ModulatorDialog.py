@@ -149,6 +149,7 @@ class ModulatorDialog(QDialog):
         self.ui.spinBoxSamplesPerSymbol.valueChanged.connect(self.on_samples_per_symbol_changed)
         self.ui.spinBoxSampleRate.valueChanged.connect(self.on_sample_rate_changed)
         self.ui.linEdDataBits.textChanged.connect(self.on_data_bits_changed)
+        self.ui.spinBoxBitsPerSymbol.valueChanged.connect(self.on_bits_per_symbol_changed)
         self.ui.comboBoxModulationType.currentIndexChanged.connect(self.on_modulation_type_changed)
         self.ui.gVOriginalSignal.zoomed.connect(self.on_orig_signal_zoomed)
         self.ui.cbShowDataBitsOnly.stateChanged.connect(self.on_show_data_bits_only_changed)
@@ -478,6 +479,15 @@ class ModulatorDialog(QDialog):
         self.draw_modulated()
 
     @pyqtSlot()
+    def on_bits_per_symbol_changed(self):
+        if self.current_modulator.bits_per_symbol == self.ui.spinBoxBitsPerSymbol.value():
+            return
+        self.current_modulator.bits_per_symbol = self.ui.spinBoxBitsPerSymbol.value()
+        self.set_default_modulation_parameters()
+
+        self.draw_modulated()
+
+    @pyqtSlot()
     def on_modulation_type_changed(self):
         write_default_parameters = self.current_modulator.modulation_type != self.__cur_selected_mod_type()
         self.current_modulator.modulation_type = self.__cur_selected_mod_type()
@@ -495,6 +505,8 @@ class ModulatorDialog(QDialog):
             self.set_default_modulation_parameters()
         else:
             self.update_modulation_parameters()
+
+        self.draw_modulated()
 
     @pyqtSlot()
     def on_orig_signal_zoomed(self):
@@ -647,3 +659,4 @@ class ModulatorDialog(QDialog):
                 return
 
         self.current_modulator.parameters[:] = array("f", parameters)
+        self.draw_modulated()

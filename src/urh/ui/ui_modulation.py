@@ -323,7 +323,7 @@ class Ui_DialogModulation(object):
         self.gridLayout_3.addWidget(self.lSamplesInViewModulatedText, 5, 0, 1, 1)
         self.spinBoxBitsPerSymbol = QtWidgets.QSpinBox(self.scrollAreaWidgetContents_4)
         self.spinBoxBitsPerSymbol.setMinimum(1)
-        self.spinBoxBitsPerSymbol.setMaximum(2048)
+        self.spinBoxBitsPerSymbol.setMaximum(10)
         self.spinBoxBitsPerSymbol.setObjectName("spinBoxBitsPerSymbol")
         self.gridLayout_3.addWidget(self.spinBoxBitsPerSymbol, 1, 1, 1, 1)
         self.labelParameters = QtWidgets.QLabel(self.scrollAreaWidgetContents_4)

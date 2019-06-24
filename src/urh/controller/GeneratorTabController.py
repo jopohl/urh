@@ -256,9 +256,9 @@ class GeneratorTabController(QWidget):
                 selected_message = self.table_model.protocol.messages[min_row]
                 preselected_index = selected_message.modulator_index
             except IndexError:
-                selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
+                selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0], 0, [], MessageType("empty"))
         else:
-            selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
+            selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
                 selected_message.samples_per_symbol = self.table_model.protocol.messages[0].samples_per_symbol
 
@@ -296,7 +296,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog, message = self.prepare_modulation_dialog()
         modulator_dialog.showMaximized()
 
-        modulator_dialog.initialize(message.encoded_bits_str[0:10])
+        modulator_dialog.initialize(message.encoded_bits_str[0:16])
         self.project_manager.modulation_was_edited = True
 
     @pyqtSlot()

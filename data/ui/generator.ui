@@ -399,17 +399,31 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2" colspan="2">
+               <item row="3" column="3">
+                <widget class="ElidedLabel" name="labelParameterValues">
+                 <property name="text">
+                  <string>0/100</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
                 <widget class="QLabel" name="lParamCaption">
                  <property name="text">
                   <string>Amplitudes:</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="2" colspan="2">
-                <widget class="ElidedLabel" name="labelParameterValues">
+               <item row="2" column="2">
+                <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>0/100</string>
+                  <string>Bits per Symbol:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="3">
+                <widget class="QLabel" name="labelBitsPerSymbol">
+                 <property name="text">
+                  <string>TextLabel</string>
                  </property>
                 </widget>
                </item>
@@ -723,6 +737,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>urh.ui.ElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>GeneratorTreeView</class>
    <extends>QTreeView</extends>
    <header>urh.ui.views.GeneratorTreeView.h</header>
@@ -741,11 +760,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    <class>GeneratorListView</class>
    <extends>QListView</extends>
    <header>urh.ui.views.GeneratorListView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>urh.ui.ElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

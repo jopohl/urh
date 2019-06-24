@@ -87,55 +87,6 @@ QGroupBox::indicator:checked {
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelModulationTypeValue">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="labelSampleRate">
-             <property name="text">
-              <string>Sample Rate:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="4">
-            <widget class="QLabel" name="labelSampleRateValue">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="4">
-            <widget class="QLabel" name="labelSamplesPerSymbolValue">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="labelSamplesPerSymbol">
-             <property name="text">
-              <string>Samples per Symbol:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelModulationType">
-             <property name="text">
-              <string>Modulation type:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="6" colspan="2">
-            <widget class="QLabel" name="labelParameters">
-             <property name="text">
-              <string>Amplitudes in %:</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="1">
             <widget class="QLabel" name="labelCarrierFrequencyValue">
              <property name="sizePolicy">
@@ -149,15 +100,15 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="0" column="5" rowspan="2">
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+           <item row="1" column="3">
+            <widget class="QLabel" name="labelSampleRate">
+             <property name="text">
+              <string>Sample Rate:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="2" rowspan="2">
-            <widget class="Line" name="line">
+           <item row="0" column="5" rowspan="2">
+            <widget class="Line" name="line_2">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -170,10 +121,73 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="1" column="6" colspan="2">
+           <item row="0" column="3">
+            <widget class="QLabel" name="labelSamplesPerSymbol">
+             <property name="text">
+              <string>Samples per Symbol:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="labelSampleRateValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelModulationType">
+             <property name="text">
+              <string>Modulation type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" rowspan="2">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="labelSamplesPerSymbolValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelModulationTypeValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QLabel" name="labelParameters">
+             <property name="text">
+              <string>Amplitudes in %:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
             <widget class="ElidedLabel" name="labelParameterValues">
              <property name="text">
               <string>0/100</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="6">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Bits per Symbol:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7">
+            <widget class="QLabel" name="labelBitsPerSymbol">
+             <property name="text">
+              <string>1</string>
              </property>
             </widget>
            </item>

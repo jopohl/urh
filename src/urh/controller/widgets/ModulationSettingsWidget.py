@@ -53,6 +53,7 @@ class ModulationSettingsWidget(QWidget):
 
         self.ui.labelParameters.setText(modulator.parameter_type_str)
         self.ui.labelParameterValues.setText(modulator.parameters_string)
+        self.ui.labelBitsPerSymbol.setText(str(modulator.bits_per_symbol))
 
     @pyqtSlot()
     def on_cb_modulation_type_current_index_changed(self):

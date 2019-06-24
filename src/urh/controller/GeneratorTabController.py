@@ -236,6 +236,7 @@ class GeneratorTabController(QWidget):
 
         self.ui.lParamCaption.setText(mod.parameter_type_str)
         self.ui.labelParameterValues.setText(mod.parameters_string)
+        self.ui.labelBitsPerSymbol.setText(str(mod.bits_per_symbol))
 
     def prepare_modulation_dialog(self) -> (ModulatorDialog, Message):
         preselected_index = self.ui.cBoxModulations.currentIndex()

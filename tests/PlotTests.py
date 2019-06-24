@@ -17,8 +17,8 @@ class PlotTests(unittest.TestCase):
         modulator.modulation_type = "GFSK"
         modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = 10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = 10e3
         modulator.carrier_freq_hz = 15e3
         modulator.carrier_phase_deg = 90
 

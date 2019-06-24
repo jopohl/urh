@@ -226,26 +226,16 @@ class GeneratorTabController(QWidget):
 
     def show_modulation_info(self):
         cur_ind = self.ui.cBoxModulations.currentIndex()
-        cur_mod = self.modulators[cur_ind]
-        self.ui.lCarrierFreqValue.setText(cur_mod.carrier_frequency_str)
-        self.ui.lCarrierPhaseValue.setText(cur_mod.carrier_phase_str)
-        self.ui.lBitLenValue.setText(cur_mod.samples_per_symbol_str)
-        self.ui.lSampleRateValue.setText(cur_mod.sample_rate_str)
-        mod_type = cur_mod.modulation_type
+        mod = self.modulators[cur_ind]
+        self.ui.lCarrierFreqValue.setText(mod.carrier_frequency_str)
+        self.ui.lCarrierPhaseValue.setText(mod.carrier_phase_str)
+        self.ui.lBitLenValue.setText(mod.samples_per_symbol_str)
+        self.ui.lSampleRateValue.setText(mod.sample_rate_str)
+        mod_type = mod.modulation_type
         self.ui.lModTypeValue.setText(mod_type)
-        if mod_type == "ASK":
-            prefix = "Amplitude"
-        elif mod_type == "PSK":
-            prefix = "Phase"
-        elif mod_type in ("FSK", "GFSK"):
-            prefix = "Frequency"
-        else:
-            prefix = "Unknown Modulation Type (This should not happen...)"
 
-        self.ui.lParamForZero.setText(prefix + " for 0:")
-        self.ui.lParamForZeroValue.setText(cur_mod.param_for_zero_str)
-        self.ui.lParamForOne.setText(prefix + " for 1:")
-        self.ui.lParamForOneValue.setText(cur_mod.param_for_one_str)
+        self.ui.lParamCaption.setText(mod.parameter_type_str)
+        self.ui.labelParameterValues.setText(mod.parameters_string)
 
     def prepare_modulation_dialog(self) -> (ModulatorDialog, Message):
         preselected_index = self.ui.cBoxModulations.currentIndex()

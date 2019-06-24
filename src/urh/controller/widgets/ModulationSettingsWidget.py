@@ -50,12 +50,9 @@ class ModulationSettingsWidget(QWidget):
         self.ui.labelSamplesPerSymbolValue.setText(modulator.samples_per_symbol_str)
         self.ui.labelSampleRateValue.setText(modulator.sample_rate_str)
         self.ui.labelModulationTypeValue.setText(modulator.modulation_type_verbose)
-        prefixes = {"ASK": "Amplitude", "PSK": "Phase", "FSK": "Frequency", "GFSK": "Frequency"}
-        self.ui.labelParamZero.setText(prefixes[modulator.modulation_type] + " for 0:")
-        self.ui.labelParamOne.setText(prefixes[modulator.modulation_type] + " for 1:")
 
-        self.ui.labelParamZeroValue.setText(modulator.param_for_zero_str)
-        self.ui.labelParamOneValue.setText(modulator.param_for_one_str)
+        self.ui.labelParameters.setText(modulator.parameter_type_str)
+        self.ui.labelParameterValues.setText(modulator.parameters_string)
 
     @pyqtSlot()
     def on_cb_modulation_type_current_index_changed(self):

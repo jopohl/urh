@@ -25,29 +25,29 @@ class TestCLIParsing(QtTestCase):
             urh_cli.build_modulator_from_args(args)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 0 -p1 1 -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
+                                      " -pm 0 1 -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.modulation_type, "ASK")
         self.assertEqual(modulator.sample_rate, 2e6)
         self.assertEqual(modulator.samples_per_symbol, 24)
-        self.assertEqual(modulator.param_for_zero, 0)
-        self.assertEqual(modulator.param_for_one, 100)
+        self.assertEqual(modulator.parameters[0], 0)
+        self.assertEqual(modulator.parameters[1], 100)
         self.assertEqual(modulator.carrier_freq_hz, 1337e3)
         self.assertEqual(modulator.carrier_amplitude, 0.9)
         self.assertEqual(modulator.carrier_phase_deg, 30)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 10% -p1 20% -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
+                                      " -pm 10% 20% -mo ASK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
-        self.assertEqual(modulator.param_for_zero, 10)
-        self.assertEqual(modulator.param_for_one, 20)
+        self.assertEqual(modulator.parameters[0], 10)
+        self.assertEqual(modulator.parameters[1], 20)
 
         args = self.parser.parse_args("--device HackRF --frequency 433.92e6 --sample-rate 2e6"
-                                      " -p0 20e3 -p1=-20e3 -mo FSK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
+                                      " -pm 20e3 -20000 -mo FSK -cf 1337e3 -ca 0.9 -sps 24 -cp 30".split())
         modulator = urh_cli.build_modulator_from_args(args)
         self.assertEqual(modulator.modulation_type, "FSK")
-        self.assertEqual(modulator.param_for_zero, 20e3)
-        self.assertEqual(modulator.param_for_one, -20e3)
+        self.assertEqual(modulator.parameters[0], 20e3)
+        self.assertEqual(modulator.parameters[1], -20e3)
 
     def test_build_backend_handler_from_args(self):
         args = self.parser.parse_args("--device USRP --frequency 433.92e6 --sample-rate 2e6".split())

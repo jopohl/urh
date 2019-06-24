@@ -11,7 +11,6 @@ from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
-from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 
@@ -140,6 +139,7 @@ class ModulatorDialog(QDialog):
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
         self.ui.spinBoxSamplesPerSymbol.setValue(self.current_modulator.samples_per_symbol)
         self.ui.spinBoxSampleRate.setValue(self.current_modulator.sample_rate)
+        self.ui.spinBoxBitsPerSymbol.setValue(self.current_modulator.bits_per_symbol)
 
         self.update_modulation_parameters()
 
@@ -297,7 +297,7 @@ class ModulatorDialog(QDialog):
         except (AttributeError, NotImplementedError):
             n = self.current_modulator.modulation_order
             for i in range(n):
-                frequencies.append((i+1) * self.current_modulator.carrier_freq_hz / n)
+                frequencies.append((i + 1) * self.current_modulator.carrier_freq_hz / n)
 
         self.current_modulator.parameters = array("f", frequencies)
         self.update_modulation_parameters()
@@ -396,20 +396,17 @@ class ModulatorDialog(QDialog):
     def update_modulation_parameters(self):
         n = len(self.current_modulator.parameters) - 1
         if self.current_modulator.is_amplitude_based:
-            text = "/".join(map(str, map(int, self.current_modulator.parameters)))
             regex = r"(100|[0-9]{1,2})"
         elif self.current_modulator.is_frequency_based:
-            text = "/".join(map(Formatter.big_value_with_suffix, self.current_modulator.parameters))
             regex = r"((-?[0-9]+)[.,]?[0-9]*[kKmMgG]?)"
         elif self.current_modulator.is_phase_based:
-            text = "/".join(map(str, map(int, self.current_modulator.parameters)))
             regex = r"(-?36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])"
         else:
             raise ValueError("Unknown modulation type")
 
         full_regex = r"^" + regex + r"/{" + str(n) + "}" + regex + r"$"
         self.ui.lineEditParameters.setValidator(QRegExpValidator(QRegExp(full_regex)))
-        self.ui.lineEditParameters.setText(text)
+        self.ui.lineEditParameters.setText(self.current_modulator.parameters_string)
 
     @pyqtSlot()
     def on_carrier_freq_changed(self):
@@ -494,13 +491,7 @@ class ModulatorDialog(QDialog):
 
         self.__set_gauss_ui_visibility(self.__cur_selected_mod_type() == "GFSK")
 
-        if self.current_modulator.is_amplitude_based:
-            self.ui.labelParameters.setText(self.tr("Amplitudes in %:"))
-        elif self.current_modulator.is_frequency_based:
-            self.ui.labelParameters.setText(self.tr("Frequencies in Hz:"))
-        elif self.current_modulator.is_phase_based:
-            self.ui.labelParameters.setText(self.tr("Phases in degree:"))
-
+        self.ui.labelParameters.setText(self.current_modulator.parameter_type_str)
         if write_default_parameters:
             self.set_default_modulation_parameters()
         else:

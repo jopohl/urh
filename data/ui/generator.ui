@@ -128,7 +128,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Drag&amp;amp;Drop Protocols to the table on the right to fill the generation table.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <attribute name="headerDefaultSectionSize">
-                  <number>0</number>
+                  <number>57</number>
                  </attribute>
                 </widget>
                </item>
@@ -307,15 +307,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
              <property name="rightMargin">
               <number>0</number>
              </property>
-             <item row="2" column="1">
-              <widget class="QComboBox" name="cBoxModulations">
-               <item>
-                <property name="text">
-                 <string>MyModulation</string>
-                </property>
-               </item>
-              </widget>
-             </item>
              <item row="0" column="0" colspan="3">
               <layout class="QGridLayout" name="modulationLayout_2">
                <item row="1" column="1">
@@ -353,20 +344,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="lParamForZero">
-                 <property name="text">
-                  <string>Amplitude for 0:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="3">
-                <widget class="QLabel" name="lParamForZeroValue">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="lBitLength">
                  <property name="text">
@@ -376,20 +353,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                </item>
                <item row="3" column="1">
                 <widget class="QLabel" name="lBitLenValue">
-                 <property name="text">
-                  <string>TextLabel</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="lParamForOne">
-                 <property name="text">
-                  <string>Amplitude for 1:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QLabel" name="lParamForOneValue">
                  <property name="text">
                   <string>TextLabel</string>
                  </property>
@@ -436,12 +399,51 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                  </property>
                 </widget>
                </item>
+               <item row="2" column="2" colspan="2">
+                <widget class="QLabel" name="lParamCaption">
+                 <property name="text">
+                  <string>Amplitudes:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2" colspan="2">
+                <widget class="ElidedLabel" name="labelParameterValues">
+                 <property name="text">
+                  <string>0/100</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lModulation">
-               <property name="text">
-                <string>Modulation:</string>
+             <item row="1" column="0" colspan="3">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="cBoxModulations">
+               <item>
+                <property name="text">
+                 <string>MyModulation</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QProgressBar" name="prBarGeneration">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+               <property name="format">
+                <string>Modulating %p%</string>
                </property>
               </widget>
              </item>
@@ -459,13 +461,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                </property>
               </widget>
              </item>
-             <item row="1" column="0" colspan="3">
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="2">
               <widget class="QPushButton" name="btnEditModulation">
                <property name="text">
@@ -473,19 +468,10 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
-              <widget class="QProgressBar" name="prBarGeneration">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-               <property name="format">
-                <string>Modulating %p%</string>
+             <item row="2" column="0">
+              <widget class="QLabel" name="lModulation">
+               <property name="text">
+                <string>Modulation:</string>
                </property>
               </widget>
              </item>
@@ -755,6 +741,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    <class>GeneratorListView</class>
    <extends>QListView</extends>
    <header>urh.ui.views.GeneratorListView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>urh.ui.ElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

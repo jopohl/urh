@@ -33,14 +33,14 @@ class TestModulator(unittest.TestCase):
             modulator.samples_per_symbol = self.samples_per_symbol
 
             if modulation == "ASK":
-                modulator.param_for_zero = 0
-                modulator.param_for_one = 100
+                modulator.parameters[0] = 0
+                modulator.parameters[1] = 100
             elif modulation == "FSK":
-                modulator.param_for_zero = 1000
-                modulator.param_for_one = 2500
+                modulator.parameters[0] = 1000
+                modulator.parameters[1] = 2500
             elif modulation == "PSK":
-                modulator.param_for_zero = 0
-                modulator.param_for_one = 180
+                modulator.parameters[0] = 0
+                modulator.parameters[1] = 180
 
             modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 
@@ -66,8 +66,8 @@ class TestModulator(unittest.TestCase):
         modulator.modulation_type = "GFSK"
         modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = -10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = -10e3
         data1 = modulator.modulate([True, False, False, True, False], 9437)
         data2 = modulator.modulate([True, False, True], 9845) #, start=len(s))
         data3 = modulator.modulate([True, False, True, False], 8458) #, start=len(s))

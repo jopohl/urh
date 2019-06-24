@@ -78,36 +78,29 @@ def on_fatal_device_error_occurred(error: str):
 def build_modulator_from_args(arguments: argparse.Namespace):
     if arguments.raw:
         return None
+    if arguments.bits_per_symbol is None:
+        arguments.bits_per_symbol = 1
 
-    if arguments.parameter_zero is None:
-        raise ValueError("You need to give a modulation parameter for zero (-p0, --parameter-zero)")
-
-    if arguments.parameter_one is None:
-        raise ValueError("You need to give a modulation parameter for one (-p1, --parameter-one)")
+    n = 2 ** int(arguments.bits_per_symbol)
+    if arguments.parameters is None or len(arguments.parameters) != n:
+        raise ValueError("You need to give {} parameters for {} bits per symbol".format(n, int(arguments.bits_per_symbol)))
 
     result = Modulator("CLI Modulator")
     result.carrier_freq_hz = float(arguments.carrier_frequency)
     result.carrier_amplitude = float(arguments.carrier_amplitude)
     result.carrier_phase_deg = float(arguments.carrier_phase)
     result.samples_per_symbol = int(arguments.samples_per_symbol)
-
-    if arguments.modulation_type == "ASK":
-        if arguments.parameter_zero.endswith("%"):
-            param_zero = float(arguments.parameter_zero[:-1])
-        else:
-            param_zero = float(arguments.parameter_zero) * 100
-        if arguments.parameter_one.endswith("%"):
-            param_one = float(arguments.parameter_one[:-1])
-        else:
-            param_one = float(arguments.parameter_one) * 100
-    else:
-        param_zero = float(arguments.parameter_zero)
-        param_one = float(arguments.parameter_one)
-
-    result.param_for_zero = param_zero
-    result.param_for_one = param_one
+    result.bits_per_symbol = int(arguments.bits_per_symbol)
     result.modulation_type = arguments.modulation_type
     result.sample_rate = arguments.sample_rate
+
+    for i, param in enumerate(arguments.parameters):
+        if result.is_amplitude_based and param.endswith("%"):
+            result.parameters[i] = float(param[:-1])
+        elif result.is_amplitude_based and not param.endswith("%"):
+            result.parameters[i] = float(param) * 100
+        else:
+            result.parameters[i] = float(param)
 
     return result
 
@@ -260,8 +253,7 @@ def parse_project_file(file_path: str):
         result["carrier_frequency"] = modulator.carrier_freq_hz
         result["carrier_amplitude"] = modulator.carrier_amplitude
         result["carrier_phase"] = modulator.carrier_phase_deg
-        result["parameter_zero"] = modulator.param_for_zero
-        result["parameter_one"] = modulator.param_for_one
+        result["parameters"] = " ".join(map(str, modulator.parameters))
         result["modulation_type"] = modulator.modulation_type
 
     return result
@@ -301,8 +293,12 @@ def create_parser():
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
     group2.add_argument("-bps", "--bits-per-symbol", type=int,
                         help="Bits per symbol e.g. 1 means binary modulation (default: 1).")
-    group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
-    group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
+    group2.add_argument("-pm", "--parameters", nargs='+', help="Parameters for modulation. Separate with spaces")
+
+    # Legacy
+    group2.add_argument("-p0", "--parameter-zero", help=argparse.SUPPRESS)
+    group2.add_argument("-p1", "--parameter-one", help=argparse.SUPPRESS)
+
     group2.add_argument("-sps", "--samples-per-symbol", type=int,
                         help="Length of a symbol in samples (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
     group2.add_argument("-bl", "--bit-length", type=int,
@@ -368,6 +364,11 @@ def main():
 
     parser = create_parser()
     args = parser.parse_args()
+    if args.parameter_zero is not None or args.parameter_one is not None:
+        print("Options -p0 (--parameter-zero) and -p1 (--parameter-one) are not supported anymore.\n"
+              "Use --parameters instead e.g. --parameters 20K 40K for a binary FSK.")
+        sys.exit(1)
+
     project_params = parse_project_file(args.project_file)
     for argument in ("device", "frequency", "sample_rate"):
         if getattr(args, argument):
@@ -418,8 +419,10 @@ def main():
     args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude",
                                      DEFAULT_CARRIER_AMPLITUDE)
     args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
-    args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
-    args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
+    args.parameters = get_val(args.parameters, project_params, "parameters", None)
+    if args.parameters is None:
+        print("You must give modulation parameters (--parameters)")
+        sys.exit(0)
 
     if args.verbose is None:
         logger.setLevel(logging.ERROR)

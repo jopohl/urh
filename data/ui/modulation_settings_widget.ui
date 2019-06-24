@@ -87,6 +87,34 @@ QGroupBox::indicator:checked {
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelModulationTypeValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="labelSampleRate">
+             <property name="text">
+              <string>Sample Rate:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="labelSampleRateValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="labelSamplesPerSymbolValue">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="3">
             <widget class="QLabel" name="labelSamplesPerSymbol">
              <property name="text">
@@ -94,10 +122,17 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="1" column="7">
-            <widget class="QLabel" name="labelParamOneValue">
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelModulationType">
              <property name="text">
-              <string>TextLabel</string>
+              <string>Modulation type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="6" colspan="2">
+            <widget class="QLabel" name="labelParameters">
+             <property name="text">
+              <string>Amplitudes in %:</string>
              </property>
             </widget>
            </item>
@@ -114,31 +149,10 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelModulationType">
-             <property name="text">
-              <string>Modulation type:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="4">
-            <widget class="QLabel" name="labelSamplesPerSymbolValue">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="6">
-            <widget class="QLabel" name="labelParamOne">
-             <property name="text">
-              <string>Param for 1:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="labelModulationTypeValue">
-             <property name="text">
-              <string>TextLabel</string>
+           <item row="0" column="5" rowspan="2">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -156,38 +170,10 @@ QGroupBox::indicator:checked {
              </property>
             </widget>
            </item>
-           <item row="0" column="5" rowspan="2">
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="6">
-            <widget class="QLabel" name="labelParamZero">
+           <item row="1" column="6" colspan="2">
+            <widget class="ElidedLabel" name="labelParameterValues">
              <property name="text">
-              <string>Param for 0:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="7">
-            <widget class="QLabel" name="labelParamZeroValue">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="labelSampleRate">
-             <property name="text">
-              <string>Sample Rate:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="4">
-            <widget class="QLabel" name="labelSampleRateValue">
-             <property name="text">
-              <string>TextLabel</string>
+              <string>0/100</string>
              </property>
             </widget>
            </item>
@@ -225,6 +211,13 @@ QGroupBox::indicator:checked {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>urh.ui.ElidedLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>groupBoxSniffSettings</tabstop>
   <tabstop>comboBoxModulationProfiles</tabstop>

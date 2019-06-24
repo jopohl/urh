@@ -48,8 +48,8 @@ class TestProtocolSniffer(QtTestCase):
         modulator.samples_per_symbol = samples_per_symbol
         modulator.sample_rate = sample_rate
         modulator.modulation_type = modulation_type
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = 10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = 10e3
 
         packages = []
         for d in data:

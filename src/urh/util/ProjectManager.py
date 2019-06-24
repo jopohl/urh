@@ -483,8 +483,8 @@ class ProjectManager(QObject):
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
-                center = float(sig_tag.get("qad_center", None))  # legacy support
-                signal.center = float(sig_tag.get("center", 0)) if center is None else center
+                center = sig_tag.get("qad_center", None)  # legacy support
+                signal.center = float(sig_tag.get("center", 0)) if center is None else float(center)
                 signal.center_spacing = float(sig_tag.get("center_spacing", 0.1))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
                 signal.bits_per_symbol = int(sig_tag.get("bits_per_symbol", 1))

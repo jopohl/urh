@@ -15,10 +15,11 @@ from urh.util.Formatter import Formatter
 
 
 class Modulator(object):
-    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
+    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK", "OQPSK"]
     MODULATION_TYPES_VERBOSE = {"ASK": "Amplitude Shift Keying (ASK)",
                                 "FSK": "Frequency Shift Keying (FSK)",
                                 "PSK": "Phase Shift Keying (PSK)",
+                                "OQPSK": "Offset Quadrature Phase Shift Keying (OQPSK)",
                                 "GFSK": "Gaussian Frequeny Shift Keying (GFSK)"}
 
     def __init__(self, name: str):

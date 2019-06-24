@@ -79,6 +79,7 @@ class ModulatorDialog(QDialog):
         except TypeError:
             pass
 
+        self.set_bits_per_symbol_enabled_status()
         self.set_modulation_profile_status()
 
     def __cur_selected_mod_type(self):
@@ -404,9 +405,16 @@ class ModulatorDialog(QDialog):
         else:
             raise ValueError("Unknown modulation type")
 
-        full_regex = r"^" + regex + r"/{" + str(n) + "}" + regex + r"$"
+        full_regex = r"^(" + regex + r"/){" + str(n) + "}" + regex + r"$"
         self.ui.lineEditParameters.setValidator(QRegExpValidator(QRegExp(full_regex)))
         self.ui.lineEditParameters.setText(self.current_modulator.parameters_string)
+
+    def set_bits_per_symbol_enabled_status(self):
+        if self.current_modulator.modulation_type == "OQPSK":
+            self.ui.spinBoxBitsPerSymbol.setEnabled(False)
+            self.ui.spinBoxBitsPerSymbol.setValue(2)
+        else:
+            self.ui.spinBoxBitsPerSymbol.setEnabled(True)
 
     @pyqtSlot()
     def on_carrier_freq_changed(self):
@@ -497,6 +505,7 @@ class ModulatorDialog(QDialog):
         else:
             self.update_modulation_parameters()
 
+        self.set_bits_per_symbol_enabled_status()
         self.draw_modulated()
 
     @pyqtSlot()

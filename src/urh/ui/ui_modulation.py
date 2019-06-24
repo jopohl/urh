@@ -354,6 +354,7 @@ class Ui_DialogModulation(object):
         self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.addItem("")
+        self.comboBoxModulationType.addItem("")
         self.gridLayout_3.addWidget(self.comboBoxModulationType, 0, 0, 1, 2)
         spacerItem9 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem9, 7, 0, 1, 1)
@@ -556,6 +557,7 @@ class Ui_DialogModulation(object):
         self.comboBoxModulationType.setItemText(1, _translate("DialogModulation", "Frequency Shift Keying (FSK)"))
         self.comboBoxModulationType.setItemText(2, _translate("DialogModulation", "Gaussian Frequency Shift Keying (GFSK)"))
         self.comboBoxModulationType.setItemText(3, _translate("DialogModulation", "Phase Shift Keying (PSK)"))
+        self.comboBoxModulationType.setItemText(4, _translate("DialogModulation", "Offset Quadrature Phase Shift Keying (OQPSK)"))
         self.chkBoxLockSIV.setText(_translate("DialogModulation", "Lock view to original signal"))
         self.cbShowDataBitsOnly.setText(_translate("DialogModulation", "Show Only Data Sequence\n"
 "(10)"))

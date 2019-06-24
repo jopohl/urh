@@ -15,6 +15,8 @@ from urh.util.Formatter import Formatter
 
 
 class Modulator(object):
+    FORCE_DTYPE = None
+
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK", "OQPSK"]
     MODULATION_TYPES_VERBOSE = {"ASK": "Amplitude Shift Keying (ASK)",
                                 "FSK": "Frequency Shift Keying (FSK)",
@@ -54,6 +56,9 @@ class Modulator(object):
 
     @staticmethod
     def get_dtype():
+        if Modulator.FORCE_DTYPE is not None:
+            return Modulator.FORCE_DTYPE
+
         dtype_str = constants.SETTINGS.value("modulation_dtype", "float32", str)
         if dtype_str == "int8":
             return np.int8

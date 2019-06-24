@@ -24,6 +24,7 @@ class EndlessSender(object):
     def device(self, value: VirtualDevice):
         self.__device = value
         self.__device.is_send_continuous = True
+        self.ringbuffer = RingBuffer(int(constants.CONTINUOUS_BUFFER_SIZE_MB * 10 ** 6) // 8, self.__device.data_type)
         self.__device.continuous_send_ring_buffer = self.ringbuffer
 
     @property

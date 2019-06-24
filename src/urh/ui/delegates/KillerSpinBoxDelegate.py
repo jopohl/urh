@@ -7,6 +7,6 @@ class KillerSpinBoxDelegate(SpinBoxDelegate):
         super().__init__(minimum, maximum, parent, suffix)
 
     def _get_editor(self, parent):
-        return KillerDoubleSpinBox(parent)
-
-
+        editor = KillerDoubleSpinBox(parent)
+        editor.setDecimals(3)
+        return editor

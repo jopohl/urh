@@ -31,7 +31,7 @@ class Formatter:
         return result
 
     @staticmethod
-    def big_value_with_suffix(value: float, decimals=3, strip_zeros=False) -> str:
+    def big_value_with_suffix(value: float, decimals=3, strip_zeros=True) -> str:
         fmt_str = "%.{0:d}f".format(decimals)
         suffix = ""
         if abs(value) >= 1e9:

@@ -398,8 +398,7 @@ class ModulatorDialog(QDialog):
             text = "/".join(map(str, map(int, self.current_modulator.parameters)))
             regex = r"(100|[0-9]{1,2})"
         elif self.current_modulator.is_frequency_based:
-            text = "/".join(Formatter.big_value_with_suffix(p, strip_zeros=True)
-                            for p in self.current_modulator.parameters)
+            text = "/".join(map(Formatter.big_value_with_suffix, self.current_modulator.parameters))
             regex = r"((-?[0-9]+)[.,]?[0-9]*[kKmMgG]?)"
         elif self.current_modulator.is_phase_based:
             text = "/".join(map(str, map(int, self.current_modulator.parameters)))

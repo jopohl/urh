@@ -21,7 +21,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         super().__init__(parent)
 
         self.move_y_with_drag = True
-        self.scene_manager = SpectrogramSceneManager(np.zeros(1), parent=self)
+        self.scene_manager = SpectrogramSceneManager(np.zeros(1, dtype=np.complex64), parent=self)
         self.setScene(self.scene_manager.scene)
 
     @property

@@ -241,6 +241,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxSelectionStart.valueChanged.connect(self.on_spinbox_selection_start_value_changed)
         self.ui.spinBoxSelectionEnd.valueChanged.connect(self.on_spinbox_selection_end_value_changed)
         self.ui.spinBoxCenterOffset.editingFinished.connect(self.on_spinbox_center_editing_finished)
+        self.ui.spinBoxCenterSpacing.valueChanged.connect(self.on_spinbox_spacing_value_changed)
         self.ui.spinBoxCenterSpacing.editingFinished.connect(self.on_spinbox_spacing_editing_finished)
         self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinbox_tolerance_editing_finished)
         self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinbox_noise_threshold_editing_finished)
@@ -1146,6 +1147,12 @@ class SignalFrame(QFrame):
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
             self.ui.spinBoxCenterOffset.blockSignals(False)
+
+    @pyqtSlot()
+    def on_spinbox_spacing_value_changed(self):
+        if self.ui.gvSignal.scene_type == 1:
+            thresholds = self.signal.get_thresholds_for_center(self.signal.center, self.ui.spinBoxCenterSpacing.value())
+            self.ui.gvSignal.scene().draw_sep_area(-thresholds)
 
     @pyqtSlot()
     def on_spinbox_spacing_editing_finished(self):

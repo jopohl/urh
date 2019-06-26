@@ -240,7 +240,8 @@ class ProtocolAnalyzer(object):
             start, end = middle_bit_pos, middle_bit_pos + samples_per_symbol
             rssi = np.mean(signal.iq_array.subarray(start, end).magnitudes_normalized)
             message = Message(bits, pause, message_type=self.default_message_type,
-                              samples_per_symbol=samples_per_symbol, rssi=rssi, decoder=self.decoder, bit_sample_pos=bit_sample_pos[i])
+                              samples_per_symbol=samples_per_symbol, rssi=rssi, decoder=self.decoder,
+                              bit_sample_pos=bit_sample_pos[i], bits_per_symbol=signal.bits_per_symbol)
             self.messages.append(message)
             i += 1
 

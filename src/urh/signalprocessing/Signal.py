@@ -369,8 +369,9 @@ class Signal(QObject):
         new_signal.changed = True
         return new_signal
 
-    def get_thresholds_for_center(self, center: float):
-        return signal_functions.get_center_thresholds(center, self.center_spacing, self.modulation_order)
+    def get_thresholds_for_center(self, center: float, spacing=None):
+        spacing = self.center_spacing if spacing is None else spacing
+        return signal_functions.get_center_thresholds(center, spacing, self.modulation_order)
 
     def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,

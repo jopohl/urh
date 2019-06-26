@@ -90,6 +90,9 @@
      </item>
      <item row="11" column="1">
       <widget class="QSpinBox" name="spinBoxBitsPerSymbol">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Higher order&lt;/span&gt; modulations can carry &lt;span style=&quot; font-weight:600;&quot;&gt;multiple&lt;/span&gt; bits with &lt;span style=&quot; font-weight:600;&quot;&gt;each&lt;/span&gt; symbol. Configure &lt;span style=&quot; font-weight:600;&quot;&gt;how many&lt;/span&gt; bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>
@@ -275,6 +278,9 @@
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="lCenterSpacing">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For &lt;span style=&quot; font-weight:600;&quot;&gt;higher order&lt;/span&gt; modulations (&amp;gt; 1 Bits/Symbol), there are &lt;span style=&quot; font-weight:600;&quot;&gt;multiple&lt;/span&gt; centers. We assume that the &lt;span style=&quot; font-weight:600;&quot;&gt;spacing&lt;/span&gt; between all possible symbols is &lt;span style=&quot; font-weight:600;&quot;&gt;constant&lt;/span&gt;. Therefore you configure the spacing between centers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Center Spacing:</string>
        </property>
@@ -311,7 +317,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one symbol &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;. For &lt;span style=&quot; font-weight:600;&quot;&gt;binary modulations &lt;/span&gt;(default) this is the &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Samples/Symbol:</string>
@@ -382,6 +388,9 @@
      </item>
      <item row="10" column="0">
       <widget class="QLabel" name="labelModulation">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose signals modulation:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Amplitude Shift Keying (ASK)&lt;/li&gt;&lt;li&gt;Frequency Shift Keying (FSK)&lt;/li&gt;&lt;li&gt;Phase Shift Keying (PSK)&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Modulation:</string>
        </property>
@@ -436,11 +445,20 @@
      </item>
      <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="spinBoxCenterSpacing">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For &lt;span style=&quot; font-weight:600;&quot;&gt;higher order&lt;/span&gt; modulations (&amp;gt; 1 Bits/Symbol), there are &lt;span style=&quot; font-weight:600;&quot;&gt;multiple&lt;/span&gt; centers. We assume that the &lt;span style=&quot; font-weight:600;&quot;&gt;spacing&lt;/span&gt; between all possible symbols is &lt;span style=&quot; font-weight:600;&quot;&gt;constant&lt;/span&gt;. Therefore you configure the spacing between centers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="decimals">
         <number>4</number>
        </property>
+       <property name="minimum">
+        <double>0.000100000000000</double>
+       </property>
        <property name="maximum">
         <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.000100000000000</double>
        </property>
       </widget>
      </item>
@@ -566,7 +584,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one (raw) bit &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the length of one symbol &lt;span style=&quot; font-weight:600;&quot;&gt;in samples&lt;/span&gt;. For &lt;span style=&quot; font-weight:600;&quot;&gt;binary modulations &lt;/span&gt;(default) this is the &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -737,6 +755,9 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
      </item>
      <item row="11" column="0">
       <widget class="QLabel" name="lBitsPerSymbol">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Higher order&lt;/span&gt; modulations can carry &lt;span style=&quot; font-weight:600;&quot;&gt;multiple&lt;/span&gt; bits with &lt;span style=&quot; font-weight:600;&quot;&gt;each&lt;/span&gt; symbol. Configure &lt;span style=&quot; font-weight:600;&quot;&gt;how many&lt;/span&gt; bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Bits/Symbol:</string>
        </property>

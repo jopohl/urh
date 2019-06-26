@@ -299,9 +299,7 @@ class ModulatorDialog(QDialog):
             frequencies = [zero_freq, one_freq]
 
         except (AttributeError, NotImplementedError):
-            n = self.current_modulator.modulation_order
-            for i in range(n):
-                frequencies.append((i + 1) * self.current_modulator.carrier_freq_hz / n)
+            frequencies = self.current_modulator.get_default_parameters()
 
         self.current_modulator.parameters = array("f", frequencies)
         self.update_modulation_parameters()
@@ -350,22 +348,7 @@ class ModulatorDialog(QDialog):
             self.ui.lSamplesInViewModulated.setStyleSheet("")
 
     def set_default_modulation_parameters(self):
-        n = 2 ** self.ui.spinBoxBitsPerSymbol.value()
-        if self.current_modulator.is_amplitude_based:
-            parameters = numpy.linspace(0, 100, n, dtype=numpy.float32)
-        elif self.current_modulator.is_frequency_based:
-            self.detect_fsk_frequencies()
-            return
-        elif self.current_modulator.is_phase_based:
-            if n == 2:
-                parameters = [0, 180]
-            else:
-                step = 360 / n
-                parameters = numpy.arange(step / 2, 360, step)
-        else:
-            return
-
-        self.current_modulator.parameters = array("f", parameters)
+        self.current_modulator.parameters = self.current_modulator.get_default_parameters()
         self.update_modulation_parameters()
 
     def set_modulation_profile_status(self):

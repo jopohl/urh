@@ -214,6 +214,7 @@ class GeneratorTabController(QWidget):
 
         modulator = self.modulators[0]
         modulator.samples_per_symbol = protocol.messages[0].samples_per_symbol
+        modulator.bits_per_symbol = protocol.messages[0].bits_per_symbol
 
         if protocol.signal:
             modulator.sample_rate = protocol.signal.sample_rate
@@ -222,6 +223,7 @@ class GeneratorTabController(QWidget):
             if auto_freq is not None and auto_freq != 0:
                 modulator.carrier_freq_hz = auto_freq
 
+        modulator.parameters = modulator.get_default_parameters()
         self.show_modulation_info()
 
     def show_modulation_info(self):

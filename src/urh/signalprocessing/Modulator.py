@@ -236,6 +236,24 @@ class Modulator(object):
                                              self.gauss_bt, self.gauss_filter_width)
         return IQArray(result)
 
+    def get_default_parameters(self) -> array.array:
+        if self.is_amplitude_based:
+            parameters = np.linspace(0, 100, self.modulation_order, dtype=np.float32)
+        elif self.is_frequency_based:
+            parameters = []
+            for i in range(self.modulation_order):
+                parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
+        elif self.is_phase_based:
+            if self.modulation_order == 2:
+                parameters = [0, 180]
+            else:
+                step = 360 / self.modulation_order
+                parameters = np.arange(step / 2, 360, step)
+        else:
+            return None
+
+        return array.array("f", parameters)
+
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")
 

@@ -53,7 +53,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             self.messages.insert(index, Message(plain_bits=msg.decoded_bits, pause=msg.pause,
                                                 message_type=copy.copy(msg.message_type),
                                                 rssi=msg.rssi, modulator_index=0, decoder=msg.decoder,
-                                                samples_per_symbol=msg.samples_per_symbol, participant=msg.participant))
+                                                samples_per_symbol=msg.samples_per_symbol,
+                                                participant=msg.participant, bits_per_symbol=msg.bits_per_symbol)
+                                                )
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
 

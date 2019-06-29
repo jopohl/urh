@@ -74,7 +74,7 @@ def get_packages():
 
 
 def get_package_data():
-    package_data = {"urh.cythonext": ["*.pyx"]}
+    package_data = {"urh.cythonext": ["*.pyx", "*.pxd"]}
     for plugin in PLUGINS:
         package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
 

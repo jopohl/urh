@@ -198,7 +198,7 @@ jobs:
 
 - job: 'OSX'
   pool:
-    vmImage: 'macOS-10.13'
+    vmImage: 'macOS-10.14'
 
   strategy:
     matrix:
@@ -232,7 +232,7 @@ jobs:
     displayName: "Install build dependencies"
 
   - script: |
-      brew install boost@1.60
+      brew install boost
       cd /tmp
       wget https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
       tar xf libusb-1.0.22.tar.bz2

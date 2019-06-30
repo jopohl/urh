@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/simulator_dialog.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/simulator_dialog.ui' applies.
 #
-# Created: Thu Jun 20 11:48:49 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -295,6 +293,6 @@ class Ui_DialogSimulator(object):
         self.btnStartStop.setText(QtWidgets.QApplication.translate("DialogSimulator", "Start", None, -1))
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabSimulation), QtWidgets.QApplication.translate("DialogSimulator", "Simulation", None, -1))
 
-from urh.ui.views.LiveGraphicView import LiveGraphicView
 from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView
+from urh.ui.views.LiveGraphicView import LiveGraphicView
 from . import urh_rc

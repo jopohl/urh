@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/simulator.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/simulator.ui' applies.
 #
-# Created: Thu Jun 20 11:48:48 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -420,9 +418,9 @@ class Ui_SimulatorTab(object):
         self.lNumSelectedColumns.setText(QtWidgets.QApplication.translate("SimulatorTab", "0", None, -1))
         self.lColumnsSelectedText.setText(QtWidgets.QApplication.translate("SimulatorTab", "column(s) selected", None, -1))
         self.label_5.setText(QtWidgets.QApplication.translate("SimulatorTab", "Viewtype:", None, -1))
-        self.cbViewType.setItemText(0, QtWidgets.QApplication.translate("SimulatorTab", "Bit", None, -1))
-        self.cbViewType.setItemText(1, QtWidgets.QApplication.translate("SimulatorTab", "Hex", None, -1))
-        self.cbViewType.setItemText(2, QtWidgets.QApplication.translate("SimulatorTab", "ASCII", None, -1))
+        self.cbViewType.setItemText(3, QtWidgets.QApplication.translate("SimulatorTab", "Bit", None, -1))
+        self.cbViewType.setItemText(4, QtWidgets.QApplication.translate("SimulatorTab", "Hex", None, -1))
+        self.cbViewType.setItemText(5, QtWidgets.QApplication.translate("SimulatorTab", "ASCII", None, -1))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtWidgets.QApplication.translate("SimulatorTab", "Messages", None, -1))
         self.btnAddParticipant.setToolTip(QtWidgets.QApplication.translate("SimulatorTab", "Add participant", None, -1))
         self.btnAddParticipant.setText(QtWidgets.QApplication.translate("SimulatorTab", "Add", None, -1))
@@ -453,9 +451,9 @@ class Ui_SimulatorTab(object):
         self.label_17.setText(QtWidgets.QApplication.translate("SimulatorTab", "<html><head/><body><p>This counter will increase by <span style=\" font-weight:600;\">step</span> each time it gets hit during simulation. It will preserve it\'s value during simulation repeats and retries. To reset all counters stop the simulation and start it again.</p><p>Access the value of this counter using item&lt;Number&gt;.counter_value in <span style=\" font-weight:600;\">Formulas</span> or as parameter in <span style=\" font-weight:600;\">external programs</span> e.g. <span style=\" font-style:italic;\">external_py -c item5.counter_value</span>. The value of this counter will be inserted during simulation time.</p></body></html>", None, -1))
 
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
-from urh.ui.views.ParticipantTableView import ParticipantTableView
-from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 from urh.ui.views.SimulatorLabelTableView import SimulatorLabelTableView
+from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
+from urh.ui.views.ParticipantTableView import ParticipantTableView
 from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from . import urh_rc

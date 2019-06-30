@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/analysis.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/analysis.ui' applies.
 #
-# Created: Thu Jun 20 11:48:49 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -578,11 +576,11 @@ class Ui_TabAnalysis(object):
         self.cbProtoView.setItemText(1, QtWidgets.QApplication.translate("TabAnalysis", "Hex", None, -1))
         self.cbProtoView.setItemText(2, QtWidgets.QApplication.translate("TabAnalysis", "ASCII", None, -1))
         self.label_5.setText(QtWidgets.QApplication.translate("TabAnalysis", "Configure Decoding:", None, -1))
-        self.cbDecoding.setItemText(0, QtWidgets.QApplication.translate("TabAnalysis", "NRZ", None, -1))
-        self.cbDecoding.setItemText(1, QtWidgets.QApplication.translate("TabAnalysis", "Manchester", None, -1))
-        self.cbDecoding.setItemText(2, QtWidgets.QApplication.translate("TabAnalysis", "Manchester II", None, -1))
-        self.cbDecoding.setItemText(3, QtWidgets.QApplication.translate("TabAnalysis", "Differential Manchester", None, -1))
-        self.cbDecoding.setItemText(4, QtWidgets.QApplication.translate("TabAnalysis", "...", None, -1))
+        self.cbDecoding.setItemText(3, QtWidgets.QApplication.translate("TabAnalysis", "NRZ", None, -1))
+        self.cbDecoding.setItemText(4, QtWidgets.QApplication.translate("TabAnalysis", "Manchester", None, -1))
+        self.cbDecoding.setItemText(5, QtWidgets.QApplication.translate("TabAnalysis", "Manchester II", None, -1))
+        self.cbDecoding.setItemText(6, QtWidgets.QApplication.translate("TabAnalysis", "Differential Manchester", None, -1))
+        self.cbDecoding.setItemText(7, QtWidgets.QApplication.translate("TabAnalysis", "...", None, -1))
         self.lEncodingErrors.setText(QtWidgets.QApplication.translate("TabAnalysis", "Decoding errors for message:", None, -1))
         self.lDecodingErrorsValue.setText(QtWidgets.QApplication.translate("TabAnalysis", "0 (0.00%)", None, -1))
         self.cbShowDiffs.setText(QtWidgets.QApplication.translate("TabAnalysis", "Mark diffs in protocol", None, -1))
@@ -617,8 +615,8 @@ class Ui_TabAnalysis(object):
         self.btnAddMessagetype.setToolTip(QtWidgets.QApplication.translate("TabAnalysis", "Add a new message type", None, -1))
         self.btnAddMessagetype.setText(QtWidgets.QApplication.translate("TabAnalysis", "Add new message type", None, -1))
 
+from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.ui.views.ProtocolTreeView import ProtocolTreeView
 from urh.ui.views.ProtocolTableView import ProtocolTableView
 from urh.ui.views.LabelValueTableView import LabelValueTableView
-from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from . import urh_rc

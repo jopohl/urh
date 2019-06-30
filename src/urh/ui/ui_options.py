@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/options.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/options.ui' applies.
 #
-# Created: Thu Jun 20 11:48:48 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -325,12 +323,12 @@ class Ui_DialogOptions(object):
         self.labelFontSize.setText(QtWidgets.QApplication.translate("DialogOptions", "<html><head/><body><p>Application font size (<span style=\" font-weight:600;\">restart</span> for full effect):</p></body></html>", None, -1))
         self.spinBoxFontSize.setSuffix(QtWidgets.QApplication.translate("DialogOptions", "pt", None, -1))
         self.label_9.setText(QtWidgets.QApplication.translate("DialogOptions", "Choose application theme (requires restart):", None, -1))
-        self.comboBoxTheme.setItemText(0, QtWidgets.QApplication.translate("DialogOptions", "native look (default)", None, -1))
-        self.comboBoxTheme.setItemText(1, QtWidgets.QApplication.translate("DialogOptions", "fallback theme", None, -1))
-        self.comboBoxTheme.setItemText(2, QtWidgets.QApplication.translate("DialogOptions", "fallback theme (dark)", None, -1))
+        self.comboBoxTheme.setItemText(3, QtWidgets.QApplication.translate("DialogOptions", "native look (default)", None, -1))
+        self.comboBoxTheme.setItemText(4, QtWidgets.QApplication.translate("DialogOptions", "fallback theme", None, -1))
+        self.comboBoxTheme.setItemText(5, QtWidgets.QApplication.translate("DialogOptions", "fallback theme (dark)", None, -1))
         self.labelIconTheme.setText(QtWidgets.QApplication.translate("DialogOptions", "Choose icon theme (requires restart):", None, -1))
-        self.comboBoxIconTheme.setItemText(0, QtWidgets.QApplication.translate("DialogOptions", "bundled icons (default)", None, -1))
-        self.comboBoxIconTheme.setItemText(1, QtWidgets.QApplication.translate("DialogOptions", "native icon theme", None, -1))
+        self.comboBoxIconTheme.setItemText(6, QtWidgets.QApplication.translate("DialogOptions", "bundled icons (default)", None, -1))
+        self.comboBoxIconTheme.setItemText(7, QtWidgets.QApplication.translate("DialogOptions", "native icon theme", None, -1))
         self.groupBoxSpectrogramColormap.setTitle(QtWidgets.QApplication.translate("DialogOptions", "Spectrogram Colormap", None, -1))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabView), QtWidgets.QApplication.translate("DialogOptions", "View", None, -1))
         self.btnAddLabelType.setText(QtWidgets.QApplication.translate("DialogOptions", "...", None, -1))

@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/send_recv_sniff_settings.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/send_recv_sniff_settings.ui' applies.
 #
-# Created: Thu Jun 20 11:48:51 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -201,9 +199,9 @@ class Ui_SniffSettings(object):
         self.combox_sniff_Modulation.setItemText(2, QtWidgets.QApplication.translate("SniffSettings", "PSK", None, -1))
         self.label_sniff_encoding.setText(QtWidgets.QApplication.translate("SniffSettings", "Encoding:", None, -1))
         self.label_sniff_viewtype.setText(QtWidgets.QApplication.translate("SniffSettings", "View:", None, -1))
-        self.comboBox_sniff_viewtype.setItemText(0, QtWidgets.QApplication.translate("SniffSettings", "Bit", None, -1))
-        self.comboBox_sniff_viewtype.setItemText(1, QtWidgets.QApplication.translate("SniffSettings", "Hex", None, -1))
-        self.comboBox_sniff_viewtype.setItemText(2, QtWidgets.QApplication.translate("SniffSettings", "ASCII", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(3, QtWidgets.QApplication.translate("SniffSettings", "Bit", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(4, QtWidgets.QApplication.translate("SniffSettings", "Hex", None, -1))
+        self.comboBox_sniff_viewtype.setItemText(5, QtWidgets.QApplication.translate("SniffSettings", "ASCII", None, -1))
         self.checkBox_sniff_Timestamp.setText(QtWidgets.QApplication.translate("SniffSettings", "Show Timestamp", None, -1))
         self.label_sniff_OutputFile.setText(QtWidgets.QApplication.translate("SniffSettings", "Write bitstream to file:", None, -1))
         self.lineEdit_sniff_OutputFile.setPlaceholderText(QtWidgets.QApplication.translate("SniffSettings", "None", None, -1))

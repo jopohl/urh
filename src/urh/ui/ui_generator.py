@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/generator.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/generator.ui' applies.
 #
-# Created: Thu Jun 20 11:48:51 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -375,9 +373,9 @@ class Ui_GeneratorTab(object):
         self.prBarGeneration.setFormat(QtWidgets.QApplication.translate("GeneratorTab", "Modulating %p%", None, -1))
         self.btnGenerate.setToolTip(QtWidgets.QApplication.translate("GeneratorTab", "Generate the complex file of the modulated signal, after tuning all parameters above.", None, -1))
         self.btnGenerate.setText(QtWidgets.QApplication.translate("GeneratorTab", "Generate file...", None, -1))
-        self.cbViewType.setItemText(0, QtWidgets.QApplication.translate("GeneratorTab", "Bit", None, -1))
-        self.cbViewType.setItemText(1, QtWidgets.QApplication.translate("GeneratorTab", "Hex", None, -1))
-        self.cbViewType.setItemText(2, QtWidgets.QApplication.translate("GeneratorTab", "ASCII", None, -1))
+        self.cbViewType.setItemText(1, QtWidgets.QApplication.translate("GeneratorTab", "Bit", None, -1))
+        self.cbViewType.setItemText(2, QtWidgets.QApplication.translate("GeneratorTab", "Hex", None, -1))
+        self.cbViewType.setItemText(3, QtWidgets.QApplication.translate("GeneratorTab", "ASCII", None, -1))
         self.lViewType.setText(QtWidgets.QApplication.translate("GeneratorTab", "Viewtype:", None, -1))
         self.labelGeneratedData.setText(QtWidgets.QApplication.translate("GeneratorTab", "Generated Data", None, -1))
         self.btnSave.setToolTip(QtWidgets.QApplication.translate("GeneratorTab", "Save current fuzz profile.", None, -1))
@@ -391,8 +389,8 @@ class Ui_GeneratorTab(object):
         self.lEstimatedTime.setToolTip(QtWidgets.QApplication.translate("GeneratorTab", "<html><head/><body><p>The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.</p></body></html>", None, -1))
         self.lEstimatedTime.setText(QtWidgets.QApplication.translate("GeneratorTab", "Estimated Time: ", None, -1))
 
-from urh.ui.views.GeneratorTableView import GeneratorTableView
-from urh.ui.GeneratorListWidget import GeneratorListWidget
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.GeneratorListView import GeneratorListView
+from urh.ui.views.GeneratorTableView import GeneratorTableView
+from urh.ui.GeneratorListWidget import GeneratorListWidget
 from . import urh_rc

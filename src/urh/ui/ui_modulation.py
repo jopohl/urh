@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/modulation.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/modulation.ui' applies.
 #
-# Created: Thu Jun 20 11:48:49 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -568,10 +566,10 @@ class Ui_DialogModulation(object):
         self.btnRestoreBits.setToolTip(QtWidgets.QApplication.translate("DialogModulation", "Restore", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("DialogModulation", "Bit Length:", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("DialogModulation", "Sample Rate (Sps):", None, -1))
-        self.comboBoxModulationType.setItemText(0, QtWidgets.QApplication.translate("DialogModulation", "Amplitude Shift Keying (ASK)", None, -1))
-        self.comboBoxModulationType.setItemText(1, QtWidgets.QApplication.translate("DialogModulation", "Frequency Shift Keying (FSK)", None, -1))
-        self.comboBoxModulationType.setItemText(2, QtWidgets.QApplication.translate("DialogModulation", "Gaussian Frequency Shift Keying (GFSK)", None, -1))
-        self.comboBoxModulationType.setItemText(3, QtWidgets.QApplication.translate("DialogModulation", "Phase Shift Keying (PSK)", None, -1))
+        self.comboBoxModulationType.setItemText(1, QtWidgets.QApplication.translate("DialogModulation", "Amplitude Shift Keying (ASK)", None, -1))
+        self.comboBoxModulationType.setItemText(2, QtWidgets.QApplication.translate("DialogModulation", "Frequency Shift Keying (FSK)", None, -1))
+        self.comboBoxModulationType.setItemText(3, QtWidgets.QApplication.translate("DialogModulation", "Gaussian Frequency Shift Keying (GFSK)", None, -1))
+        self.comboBoxModulationType.setItemText(4, QtWidgets.QApplication.translate("DialogModulation", "Phase Shift Keying (PSK)", None, -1))
         self.lParameterfor0.setText(QtWidgets.QApplication.translate("DialogModulation", "Amplitude for 0:", None, -1))
         self.lParameterfor1.setText(QtWidgets.QApplication.translate("DialogModulation", "Amplitude for 1:", None, -1))
         self.lGaussBT.setText(QtWidgets.QApplication.translate("DialogModulation", "Gauss BT:", None, -1))
@@ -593,8 +591,8 @@ class Ui_DialogModulation(object):
         self.label_10.setText(QtWidgets.QApplication.translate("DialogModulation", "Samples selected:", None, -1))
         self.lOriginalSignalSamplesSelected.setText(QtWidgets.QApplication.translate("DialogModulation", "0", None, -1))
 
-from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ModulatorTreeView import ModulatorTreeView
-from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from . import urh_rc

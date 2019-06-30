@@ -7,7 +7,7 @@ def gen(force=False):
     if sys.platform == "win32":
         bindir = "c:\Python37\Lib\site-packages\PySide2"
     else:
-        bindir = "/usr/bin"
+        bindir = os.path.expanduser("~/GIT/urh/pyside/venv/bin")
 
     if sys.platform == "win32":
         uic_path = os.path.join(bindir, "pyside2-uic.bat")
@@ -45,6 +45,8 @@ def gen(force=False):
         for line in fileinput.input(out_file_path, inplace=True):
             if line.strip().startswith("QtCore.QMetaObject.connectSlotsByName("):
                 # disable auto slot connection, as we do not use it, and it causes crash on python 3.7
+                continue
+            if line.startswith("# Created:") or line.startswith("#      by: pyside2-uic"):
                 continue
             print(line, end='')
 

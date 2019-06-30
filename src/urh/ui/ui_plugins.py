@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/plugins.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/plugins.ui' applies.
 #
-# Created: Thu Jun 20 11:48:48 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 

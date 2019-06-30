@@ -8,7 +8,7 @@ from PySide2.QtGui import QPen
 from PySide2.QtWidgets import QGraphicsScene
 
 from urh import constants
-from urh.cythonext import path_creator, signal_functions
+from urh.cythonext import signal_functions
 from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting import path_painter
 from urh.ui.painting.ZoomableScene import ZoomableScene

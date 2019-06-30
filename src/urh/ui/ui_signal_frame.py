@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/signal_frame.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/signal_frame.ui' applies.
 #
-# Created: Thu Jun 20 11:48:50 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -558,9 +556,9 @@ class Ui_SignalFrame(object):
         self.labelNoise.setToolTip(QtWidgets.QApplication.translate("SignalFrame", "<html><head/><body><p>Set the <span style=\" font-weight:600;\">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>", None, -1))
         self.labelNoise.setText(QtWidgets.QApplication.translate("SignalFrame", "Noise:", None, -1))
         self.lineEditSignalName.setText(QtWidgets.QApplication.translate("SignalFrame", "SignalName", None, -1))
-        self.cbProtoView.setItemText(0, QtWidgets.QApplication.translate("SignalFrame", "Bits", None, -1))
-        self.cbProtoView.setItemText(1, QtWidgets.QApplication.translate("SignalFrame", "Hex", None, -1))
-        self.cbProtoView.setItemText(2, QtWidgets.QApplication.translate("SignalFrame", "ASCII", None, -1))
+        self.cbProtoView.setItemText(3, QtWidgets.QApplication.translate("SignalFrame", "Bits", None, -1))
+        self.cbProtoView.setItemText(4, QtWidgets.QApplication.translate("SignalFrame", "Hex", None, -1))
+        self.cbProtoView.setItemText(5, QtWidgets.QApplication.translate("SignalFrame", "ASCII", None, -1))
         self.lInfoLenText.setToolTip(QtWidgets.QApplication.translate("SignalFrame", "<html><head/><body><p>This is the length of one (raw) bit <span style=\" font-weight:600;\">in samples</span>.</p></body></html>", None, -1))
         self.lInfoLenText.setText(QtWidgets.QApplication.translate("SignalFrame", "Bit Length:", None, -1))
         self.spinBoxInfoLen.setToolTip(QtWidgets.QApplication.translate("SignalFrame", "<html><head/><body><p>This is the length of one (raw) bit <span style=\" font-weight:600;\">in samples</span>.</p></body></html>", None, -1))
@@ -572,9 +570,9 @@ class Ui_SignalFrame(object):
         self.lCenterOffset.setText(QtWidgets.QApplication.translate("SignalFrame", "Center:", None, -1))
         self.spinBoxCenterOffset.setToolTip(QtWidgets.QApplication.translate("SignalFrame", "<html><head/><body><p>This is the threshold used for determining if a <span style=\" font-weight:600;\">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=\" font-style:italic;\">Quadrature Demod View</span>.</p></body></html>", None, -1))
         self.cbSignalView.setToolTip(QtWidgets.QApplication.translate("SignalFrame", "<html><head/><body><p>Choose the view of your signal. Analog, Demodulated or Spectrogram.</p><p>The quadrature demodulation uses a <span style=\" font-weight:600;\">threshold of magnitudes,</span> to <span style=\" font-weight:600;\">supress noise</span>. All samples with a magnitude lower than this treshold will be eliminated after demodulation.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" font-weight:600;\">context menu</span>.</p></body></html>", None, -1))
-        self.cbSignalView.setItemText(0, QtWidgets.QApplication.translate("SignalFrame", "Analog", None, -1))
-        self.cbSignalView.setItemText(1, QtWidgets.QApplication.translate("SignalFrame", "Demodulated", None, -1))
-        self.cbSignalView.setItemText(2, QtWidgets.QApplication.translate("SignalFrame", "Spectrogram", None, -1))
+        self.cbSignalView.setItemText(6, QtWidgets.QApplication.translate("SignalFrame", "Analog", None, -1))
+        self.cbSignalView.setItemText(7, QtWidgets.QApplication.translate("SignalFrame", "Demodulated", None, -1))
+        self.cbSignalView.setItemText(8, QtWidgets.QApplication.translate("SignalFrame", "Spectrogram", None, -1))
         self.btnSaveSignal.setText(QtWidgets.QApplication.translate("SignalFrame", "...", None, -1))
         self.btnCloseSignal.setText(QtWidgets.QApplication.translate("SignalFrame", "X", None, -1))
         self.lSignalTyp.setText(QtWidgets.QApplication.translate("SignalFrame", "<Signaltyp>", None, -1))
@@ -608,8 +606,8 @@ class Ui_SignalFrame(object):
         self.lSamplesTotal.setText(QtWidgets.QApplication.translate("SignalFrame", "0", None, -1))
         self.lSamplesViewText.setText(QtWidgets.QApplication.translate("SignalFrame", "Samples in view", None, -1))
 
-from urh.ui.views.TextEditProtocolView import TextEditProtocolView
 from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
+from urh.ui.views.TextEditProtocolView import TextEditProtocolView
 from urh.ui.views.LegendGraphicView import LegendGraphicView
 from . import urh_rc

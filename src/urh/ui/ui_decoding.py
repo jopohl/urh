@@ -3,8 +3,6 @@
 # Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/decoding.ui',
 # licensing of '/home/joe/GIT/urh/data/ui/decoding.ui' applies.
 #
-# Created: Thu Jun 20 11:48:47 2019
-#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -347,7 +345,7 @@ class Ui_Decoder(object):
         self.label_18.setText(QtWidgets.QApplication.translate("Decoder", "Minimum (>=) length of 1-sequence for: High (1)", None, -1))
         self.label_19.setText(QtWidgets.QApplication.translate("Decoder", "Number of 0s between 1-sequences (just for encoding)", None, -1))
         self.btnAddtoYourDecoding.setText(QtWidgets.QApplication.translate("Decoder", "Add to Your Decoding", None, -1))
-        self.combobox_signals.setItemText(0, QtWidgets.QApplication.translate("Decoder", "Test", None, -1))
+        self.combobox_signals.setItemText(2, QtWidgets.QApplication.translate("Decoder", "Test", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("Decoder", "Signal {0,1}:", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("Decoder", "Decoded Bits:", None, -1))
         self.decoding_errors_label.setText(QtWidgets.QApplication.translate("Decoder", "[Decoding Errors = 0]", None, -1))

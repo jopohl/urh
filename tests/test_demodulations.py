@@ -61,7 +61,7 @@ class TestDemodulations(unittest.TestCase):
         parameters = array.array("f", [-20e3, -10e3, 10e3, 20e3])
         result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
-        signal = Signal("")
+        signal = IQSignal("")
         signal.iq_array = IQArray(result)
         signal.bits_per_symbol = 2
         signal.qad_center = 0

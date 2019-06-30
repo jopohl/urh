@@ -55,7 +55,7 @@ class TestUtil(QtTestCase):
 
     def test_write_pcap(self):
         signal = IQSignal(get_path_for_data_file("ask.complex"), "ASK-Test")
-        signal.modulation_type = 0
+        signal.modulation_type = "ASK"
         signal.bit_len = 295
         signal.qad_center = -0.1667
         self.assertEqual(signal.num_samples, 13710)
@@ -100,7 +100,6 @@ class TestUtil(QtTestCase):
 
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import usrp
-
 
         if sys.platform != "darwin":
             # noinspection PyUnresolvedReferences

@@ -17,14 +17,11 @@ from urh.util.Formatter import Formatter
 
 
 class Modulator(object):
-    """
-    This class can modulate bits to a carrier.
-    Very useful in generation phase.
-    """
-
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
-    MODULATION_TYPES_VERBOSE = ["Amplitude Shift Keying (ASK)", "Frequency Shift Keying (FSK)",
-                                "Phase Shift Keying (PSK)", "Gaussian Frequeny Shift Keying (GFSK)"]
+    MODULATION_TYPES_VERBOSE = {"ASK": "Amplitude Shift Keying (ASK)",
+                                "FSK": "Frequency Shift Keying (FSK)",
+                                "PSK": "Phase Shift Keying (PSK)",
+                                "GFSK": "Gaussian Frequeny Shift Keying (GFSK)"}
 
     def __init__(self, name: str):
         self.carrier_freq_hz = 40 * 10 ** 3
@@ -34,7 +31,7 @@ class Modulator(object):
         self.samples_per_symbol = 100
         self.default_sample_rate = 10 ** 6
         self.__sample_rate = None
-        self.modulation_type = 0
+        self.__modulation_type = "ASK"
 
         self.bits_per_symbol = 1
 
@@ -65,6 +62,18 @@ class Modulator(object):
             return np.int16
         else:
             return np.float32
+
+    @property
+    def modulation_type(self) -> str:
+        return self.__modulation_type
+
+    @modulation_type.setter
+    def modulation_type(self, value):
+        try:
+            # legacy support when modulation type was saved as int index
+            self.__modulation_type = self.MODULATION_TYPES[int(value)]
+        except (ValueError, IndexError):
+            self.__modulation_type = value
 
     @property
     def is_binary_modulation(self):
@@ -126,30 +135,18 @@ class Modulator(object):
         return self.get_value_with_suffix(self.sample_rate)
 
     @property
-    def modulation_type_str(self):
-        return self.MODULATION_TYPES[self.modulation_type]
-
-    @modulation_type_str.setter
-    def modulation_type_str(self, val: str):
-        val = val.upper()
-        if val in self.MODULATION_TYPES:
-            self.modulation_type = self.MODULATION_TYPES.index(val)
-
-    @property
-    def modulation_type_verbose_str(self):
+    def modulation_type_verbose(self):
         return self.MODULATION_TYPES_VERBOSE[self.modulation_type]
 
     @property
     def param_for_zero_str(self):
-        mod = self.MODULATION_TYPES[self.modulation_type]
         units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
-        return self.get_value_with_suffix(self.param_for_zero, units[mod])
+        return self.get_value_with_suffix(self.param_for_zero, units[self.modulation_type])
 
     @property
     def param_for_one_str(self):
-        mod = self.MODULATION_TYPES[self.modulation_type]
         units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
-        return self.get_value_with_suffix(self.param_for_one, units[mod])
+        return self.get_value_with_suffix(self.param_for_one, units[self.modulation_type])
 
     @property
     def carrier_data(self):
@@ -197,8 +194,6 @@ class Modulator(object):
         if len(data) == 0:
             return IQArray(None, np.float32, 0)
 
-        mod_type = self.MODULATION_TYPES[self.modulation_type]
-
         dtype = self.get_dtype()
         a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
 
@@ -206,13 +201,13 @@ class Modulator(object):
         type_val = array.array(type_code, [0])[0]
 
         parameters = self.parameters
-        if mod_type == "ASK":
+        if self.modulation_type == "ASK":
             parameters = array.array("f", [a*p/100 for p in parameters])
-        elif mod_type == "PSK":
+        elif self.modulation_type == "PSK":
             parameters = array.array("f", [p * (math.pi / 180) for p in parameters])
 
         result = signal_functions.modulate_c(data, self.samples_per_symbol,
-                                             mod_type, parameters, self.bits_per_symbol,
+                                             self.modulation_type, parameters, self.bits_per_symbol,
                                              a, self.carrier_freq_hz,
                                              self.carrier_phase_deg * (np.pi / 180),
                                              self.sample_rate, pause, start, type_val,
@@ -223,10 +218,12 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("data", "_Modulator__sample_rate", "default_sample_rate", "parameters"):
+            if attr not in ("data", "_Modulator__sample_rate", "_Modulator__modulation_type",
+                            "default_sample_rate", "parameters"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
+        root.set("modulation_type", self.__modulation_type)
         root.set("index", str(index))
         root.set("parameters", ",".join(map(str, self.parameters)))
 
@@ -250,10 +247,8 @@ class Modulator(object):
         for attrib, value in tag.attrib.items():
             if attrib == "index":
                 continue
-            elif attrib == "name":
+            elif attrib == "name" or attrib == "modulation_type":
                 setattr(result, attrib, str(value))
-            elif attrib == "modulation_type":
-                setattr(result, attrib, Formatter.str2val(value, int, 0))
             elif attrib == "samples_per_bit" or attrib == "samples_per_symbol":
                 # samples_per_bit as legacy support for older project files
                 result.samples_per_symbol = Formatter.str2val(value, int, 100)

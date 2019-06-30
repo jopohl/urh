@@ -441,7 +441,7 @@ class SimulatorTabController(QWidget):
         try:
             self.get_simulator_dialog().exec_()
         except Exception as e:
-            Errors.generic_error("An error occurred", str(e))
+            Errors.exception(e)
 
     def get_simulator_dialog(self) -> SimulatorDialog:
         protos = [p for proto_list in self.tree_model.protocols.values() for p in proto_list]

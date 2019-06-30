@@ -122,7 +122,7 @@ class ModulatorDialog(QDialog):
         return mod
 
     def set_ui_for_current_modulator(self):
-        index = self.ui.comboBoxModulationType.findText("*(" + self.current_modulator.modulation_type_str + ")",
+        index = self.ui.comboBoxModulationType.findText("*(" + self.current_modulator.modulation_type + ")",
                                                         Qt.MatchWildcard)
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
@@ -444,10 +444,10 @@ class ModulatorDialog(QDialog):
 
     @Slot()
     def on_modulation_type_changed(self):
-        if self.current_modulator.modulation_type_str == self.__cur_selected_mod_type():
+        if self.current_modulator.modulation_type == self.__cur_selected_mod_type():
             write_standard_parameters = False
         else:
-            self.current_modulator.modulation_type_str = self.__cur_selected_mod_type()
+            self.current_modulator.modulation_type = self.__cur_selected_mod_type()
             write_standard_parameters = True
 
         self.__set_gauss_ui_visibility(self.__cur_selected_mod_type() == "GFSK")

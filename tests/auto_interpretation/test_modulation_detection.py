@@ -32,7 +32,7 @@ class TestModulationDetection(unittest.TestCase):
 
     def test_psk_detection(self):
         modulator = Modulator("")
-        modulator.modulation_type_str = "PSK"
+        modulator.modulation_type = "PSK"
         modulator.param_for_zero = 0
         modulator.param_for_one = 180
 

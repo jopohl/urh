@@ -4,6 +4,7 @@ from PySide2.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrus
 
 from urh import constants
 from urh.ui.painting.ZoomableScene import ZoomableScene
+from urh.util import util
 from urh.util.Formatter import Formatter
 
 
@@ -16,13 +17,6 @@ class GridScene(ZoomableScene):
         self.frequency_marker = None
         super().__init__(parent)
         self.setSceneRect(0,0,10,10)
-
-    def __calc_x_y_scale(self, rect):
-        view_rect = self.parent().view_rect() if hasattr(self.parent(), "view_rect") else rect
-        parent_width = self.parent().width() if hasattr(self.parent(), "width") else 750
-        scale_x = view_rect.width() / parent_width
-        scale_y = view_rect.height() / parent_width
-        return scale_x, scale_y
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
         # freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
@@ -50,7 +44,7 @@ class GridScene(ZoomableScene):
                     + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
 
             painter.drawLines(lines)
-            scale_x, scale_y = self.__calc_x_y_scale(rect)
+            scale_x, scale_y = util.calc_x_y_scale(rect, self.parent())
 
             painter.scale(scale_x, scale_y)
             counter = -1  # Counter for Label for every second line
@@ -91,7 +85,7 @@ class GridScene(ZoomableScene):
             self.frequency_marker[1].setFont(font)
 
         self.frequency_marker[0].setLine(x_pos, y1, x_pos, y2)
-        scale_x, scale_y = self.__calc_x_y_scale(self.sceneRect())
+        scale_x, scale_y = util.calc_x_y_scale(self.sceneRect(), self.parent())
         self.frequency_marker[1].setTransform(QTransform.fromScale(scale_x, scale_y), False)
         self.frequency_marker[1].setText("Tune to " + Formatter.big_value_with_suffix(frequency, decimals=3))
         font_metric = QFontMetrics(self.frequency_marker[1].font())

@@ -1,6 +1,5 @@
 import copy
 
-import numpy as np
 from PySide2.QtWidgets import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -18,13 +17,14 @@ class ChangeSignalParameter(QUndoCommand):
         self.parameter_value = parameter_value
         self.orig_value = getattr(self.signal, self.parameter_name)
 
-        fmt2 = "d" if isinstance(self.orig_value, int) else ".4n"
-        fmt3 = "d" if isinstance(parameter_value, int) else ".4n"
+        fmt2 = "d" if isinstance(self.orig_value, int) else ".4n" if isinstance(self.orig_value, float) else "s"
+        fmt3 = "d" if isinstance(parameter_value, int) else ".4n" if isinstance(parameter_value, float) else "s"
         signal_name = signal.name[:10] + "..." if len(signal.name) > 10 else signal.name
 
-        self.setText(("change {0} of {1} from {2:" + fmt2 + "} to {3:" + fmt3 + "}").format(parameter_name, signal_name,
-                                                                                          self.orig_value,
-                                                                                          parameter_value))
+        self.setText(
+            ("change {0} of {1} from {2:" + fmt2 + "} to {3:" + fmt3 + "}")
+                .format(parameter_name, signal_name, self.orig_value, parameter_value)
+        )
 
         self.protocol = protocol
         self.orig_messages = copy.deepcopy(self.protocol.messages)

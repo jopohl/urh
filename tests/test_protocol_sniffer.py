@@ -24,7 +24,7 @@ class TestProtocolSniffer(QtTestCase):
         center = 0.0942
         noise = 0.1
         tolerance = 2
-        modulation_type = 1
+        modulation_type = "FSK"
         sample_rate = 1e6
         device_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         sniffer = ProtocolSniffer(bit_len=bit_len, center=center, noise=noise, tolerance=tolerance,

@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # data = np.fromfile("/tmp/psk.complex", dtype=np.complex64)
     # data = np.fromfile("/home/joe/GIT/urh/tests/data/psk_generated.complex", dtype=np.complex64)[0:8000]
     modulator = Modulator("")
-    modulator.modulation_type_str = "PSK"
+    modulator.modulation_type = "PSK"
     modulator.param_for_zero = 0
     modulator.param_for_one = 180
     modulator.carrier_freq_hz = 5e3

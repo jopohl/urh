@@ -352,7 +352,7 @@ class MainController(QMainWindow):
             self.set_frame_numbers()
             self.refresh_main_menu()
         except Exception as e:
-            Errors.generic_error(self.tr("Failed to close"), str(e), traceback.format_exc())
+            Errors.exception(e)
             self.unsetCursor()
 
     def add_files(self, filepaths, group_id=0, enforce_sample_rate=None):
@@ -562,7 +562,7 @@ class MainController(QMainWindow):
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
                 self.unsetCursor()
         except Exception as e:
-            Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
+            Errors.exception(e)
             self.unsetCursor()
 
     @Slot()
@@ -784,7 +784,7 @@ class MainController(QMainWindow):
                     self.add_files(file_names)
                     self.unsetCursor()
             except Exception as e:
-                Errors.generic_error(self.tr("Failed to open"), str(e), traceback.format_exc())
+                Errors.exception(e)
                 self.unsetCursor()
 
     @Slot()

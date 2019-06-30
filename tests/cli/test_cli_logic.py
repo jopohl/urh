@@ -13,7 +13,7 @@ class TestCLILogic(unittest.TestCase):
         modulator = Modulator("test")
         modulator.sample_rate = 2e3
         modulator.samples_per_symbol = 100
-        modulator.modulation_type_str = "ASK"
+        modulator.modulation_type = "ASK"
         modulator.param_for_zero = 0
         modulator.param_for_one = 100
 

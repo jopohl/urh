@@ -34,7 +34,7 @@ class TestProjectManager(QtTestCase):
         self.gframe.modulators[0].carrier_amplitude = amplitude
         self.gframe.modulators[0].carrier_freq_hz = 1337
         self.gframe.modulators[0].carrier_phase_deg = 42
-        self.gframe.modulators[0].modulation_type = 1
+        self.gframe.modulators[0].modulation_type = "FSK"
         self.gframe.modulators[0].sample_rate = 10 ** 3
         self.gframe.modulators.append(Modulator("test 2"))
         self.gframe.modulators = self.gframe.modulators[:2]  # Take only the first two
@@ -48,7 +48,7 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(loaded_mods[1].name, "test 2")
         self.assertEqual(loaded_mods[0].carrier_freq_hz, 1337)
         self.assertEqual(loaded_mods[0].carrier_phase_deg, 42)
-        self.assertEqual(loaded_mods[0].modulation_type, 1)
+        self.assertEqual(loaded_mods[0].modulation_type, "FSK")
         self.assertEqual(loaded_mods[0].sample_rate, 10 ** 3)
 
         self.gframe.modulators.clear()

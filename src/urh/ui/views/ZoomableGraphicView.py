@@ -179,6 +179,9 @@ class ZoomableGraphicView(SelectableGraphicView):
             start, end = vr.x(), vr.x() + vr.width()
             self.scene_manager.show_scene_section(start, end, *self._get_sub_path_ranges_and_colors(start, end))
 
+            if self.scene_type == 1:
+                self.scene().redraw_legend()
+
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
         # Overwritten in Epic Graphic View
         return None, None

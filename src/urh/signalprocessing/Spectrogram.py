@@ -22,10 +22,10 @@ class Spectrogram(object):
         :param overlap_factor: Value between 0 (= No Overlapping) and 1 (= Full overlapping) of windows
         :param window_function: Function for DFT window
         """
-        if isinstance(samples, IQArray):
-            samples = samples.as_complex64()
 
-        self.__samples = samples
+        self.__samples = np.zeros(1, dtype=np.complex64)
+        self.samples = samples
+
         self.__window_size = window_size
         self.__overlap_factor = overlap_factor
         self.__window_function = window_function
@@ -38,6 +38,13 @@ class Spectrogram(object):
 
     @samples.setter
     def samples(self, value):
+        if isinstance(value, IQArray):
+            value = value.as_complex64()
+        elif isinstance(value, np.ndarray) and value.dtype != np.complex64:
+            value = IQArray(value).as_complex64()
+        elif value is None:
+            value = np.zeros(1, dtype=np.complex64)
+
         self.__samples = value
 
     @property

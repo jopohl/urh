@@ -152,7 +152,7 @@ class SelectableGraphicView(QGraphicsView):
             y = self.sceneRect().y()
             h = self.sceneRect().height()
             if y < y_sep < y + h:
-                self.scene().draw_sep_area(y_sep)
+                self.scene().draw_sep_area(y_sep, show_symbols=True)
                 self.sep_area_moving.emit(y_sep)
         elif self.is_pos_in_separea(self.mapToScene(event.pos())):
             self.setCursor(Qt.SplitVCursor)

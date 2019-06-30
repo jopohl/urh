@@ -68,6 +68,14 @@ class EditableGraphicView(ZoomableGraphicView):
         self.save_as_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.addAction(self.save_as_action)
 
+        self.show_symbol_legend_action = QAction(self.tr("Show symbol legend"), self)
+        self.show_symbol_legend_action.setShortcut("L")
+        self.show_symbol_legend_action.triggered.connect(self.toggle_symbol_legend)
+        self.show_symbol_legend_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.show_symbol_legend_action.setCheckable(True)
+        self.show_symbol_legend_action.setChecked(False)
+        self.addAction(self.show_symbol_legend_action)
+
         self.insert_sine_action = QAction(self.tr("Insert sine wave..."), self)
         font = self.insert_sine_action.font()
         font.setBold(True)
@@ -209,10 +217,17 @@ class EditableGraphicView(ZoomableGraphicView):
             export_demod_action = menu.addAction("Export demodulated...")
             export_demod_action.triggered.connect(self.export_demodulated_clicked.emit)
 
+            menu.addAction(self.show_symbol_legend_action)
+
         return menu
 
     def clear_horizontal_selection(self):
         self.set_horizontal_selection(0, 0)
+
+    def toggle_symbol_legend(self):
+        if self.scene_type == 1:
+            self.scene().always_show_symbols_legend = self.show_symbol_legend_action.isChecked()
+            self.scene().draw_sep_area(self.y_sep)
 
     @Slot()
     def on_insert_sine_action_triggered(self):

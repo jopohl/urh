@@ -18,7 +18,7 @@ def demodulate(signal_data, mod_type: str, bit_length, center, noise, tolerance,
             signal.iq_array = IQArray(signal_data.view(np.float32))
         else:
             signal.iq_array = IQArray(signal_data)
-    signal.modulation_type = signal.MODULATION_TYPES.index(mod_type)
+    signal.modulation_type = mod_type
     signal.bit_len = bit_length
     signal.qad_center = center
     signal.noise_threshold = noise

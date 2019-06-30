@@ -121,7 +121,6 @@ class SignalFrame(QFrame):
             else:
                 self.ui.lSignalTyp.setText("Complex Signal")
 
-            self.ui.gvLegend.hide()
             self.ui.lineEditSignalName.setText(self.signal.name)
             self.ui.lSamplesInView.setText("{0:,}".format(self.signal.num_samples))
             self.ui.lSamplesTotal.setText("{0:,}".format(self.signal.num_samples))
@@ -134,6 +133,7 @@ class SignalFrame(QFrame):
 
             self.scene_manager = SignalSceneManager(self.signal, self)
             self.ui.gvSignal.scene_manager = self.scene_manager
+            self.scene_manager.scene.setParent(self.ui.gvSignal)
             self.ui.gvSignal.setScene(self.scene_manager.scene)
 
             self.jump_sync = True
@@ -178,7 +178,7 @@ class SignalFrame(QFrame):
             self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
             self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
-            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentIndex)
+            self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentText)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
@@ -188,7 +188,6 @@ class SignalFrame(QFrame):
             self.signal.saved_status_changed.connect(self.on_signal_data_changed_before_save)
             self.ui.btnSaveSignal.clicked.connect(self.save_signal)
             self.signal.name_changed.connect(self.ui.lineEditSignalName.setText)
-            self.ui.gvLegend.resized.connect(self.on_gv_legend_resized)
 
             self.ui.gvSignal.selection_width_changed.connect(self.start_proto_selection_timer)
             self.ui.gvSignal.sel_area_start_end_changed.connect(self.start_proto_selection_timer)
@@ -211,7 +210,6 @@ class SignalFrame(QFrame):
         self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.selection_height_changed.connect(self.update_number_selected_samples)
         self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
-        self.ui.gvSignal.sep_area_moving.connect(self.update_legend)
 
         self.ui.sliderYScale.valueChanged.connect(self.on_slider_y_scale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -223,7 +221,7 @@ class SignalFrame(QFrame):
         self.proto_selection_timer.timeout.connect(self.update_number_selected_samples)
 
         self.ui.cbSignalView.currentIndexChanged.connect(self.on_cb_signal_view_index_changed)
-        self.ui.cbModulationType.currentIndexChanged.connect(self.on_combobox_modulation_type_index_changed)
+        self.ui.cbModulationType.currentTextChanged.connect(self.on_combobox_modulation_type_text_changed)
         self.ui.cbProtoView.currentIndexChanged.connect(self.on_combo_box_proto_view_index_changed)
 
         self.ui.chkBoxShowProtocol.stateChanged.connect(self.set_protocol_visibility)
@@ -252,7 +250,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
         self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
-        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
 
         self.ui.spinBoxTolerance.blockSignals(False)
@@ -418,7 +416,7 @@ class SignalFrame(QFrame):
         try:
             FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
         except Exception as e:
-            Errors.generic_error("Error saving file", str(e), traceback.format_exc())
+            Errors.exception(e)
 
     def export_demodulated(self):
         try:
@@ -441,22 +439,12 @@ class SignalFrame(QFrame):
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
 
     def draw_signal(self, full_signal=False):
-        gv_legend = self.ui.gvLegend
-        gv_legend.y_sep = -self.signal.qad_center
-
         self.scene_manager.scene_type = self.ui.cbSignalView.currentIndex()
         self.scene_manager.init_scene()
         if full_signal:
             self.ui.gvSignal.show_full_scene()
         else:
             self.ui.gvSignal.redraw_view()
-
-        legend = LegendScene()
-        legend.setBackgroundBrush(constants.BGCOLOR)
-        legend.setSceneRect(0, self.scene_manager.scene.sceneRect().y(), gv_legend.width(),
-                            self.scene_manager.scene.sceneRect().height())
-        legend.draw_one_zero_arrows(-self.signal.qad_center)
-        gv_legend.setScene(legend)
 
         self.ui.gvSignal.y_sep = -self.signal.qad_center
 
@@ -594,7 +582,6 @@ class SignalFrame(QFrame):
             self.proto_analyzer.eliminate()
             self.ui.gvSignal.scene_manager.eliminate()
 
-        self.ui.gvLegend.eliminate()
         self.ui.gvSignal.eliminate()
         self.ui.gvSpectrogram.eliminate()
 
@@ -681,15 +668,6 @@ class SignalFrame(QFrame):
         self.ui.txtEdProto.setEnabled(True)
         self.ui.txtEdProto.setHtml(self.proto_analyzer.plain_to_html(self.proto_view))
 
-    @Slot(float)
-    def update_legend(self, y_sep):
-        if self.ui.gvLegend.isVisible():
-            self.ui.gvLegend.y_sep = y_sep
-            self.ui.gvLegend.refresh()
-        self.ui.spinBoxCenterOffset.blockSignals(True)
-        self.ui.spinBoxCenterOffset.setValue(-y_sep)
-        self.ui.spinBoxCenterOffset.blockSignals(False)
-
     @Slot()
     def handle_protocol_sync_changed(self):
         self.sync_protocol = self.ui.chkBoxSyncSelection.isChecked()
@@ -725,13 +703,6 @@ class SignalFrame(QFrame):
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
             self.ui.gvSignal.redraw_view(reinitialize=True)
             self.ui.labelRSSI.show()
-
-            if self.ui.cbSignalView.currentIndex() == 1:
-                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
-                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
-                self.ui.gvLegend.refresh()
-            else:
-                self.ui.gvLegend.hide()
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
@@ -993,11 +964,9 @@ class SignalFrame(QFrame):
     @Slot(float)
     def on_signal_qad_center_changed(self, qad_center):
         self.ui.gvSignal.y_sep = -qad_center
-        self.ui.gvLegend.y_sep = -qad_center
 
         if self.ui.cbSignalView.currentIndex() > 0:
             self.scene_manager.scene.draw_sep_area(-qad_center)
-            self.ui.gvLegend.refresh()
         self.ui.spinBoxCenterOffset.blockSignals(False)
         self.ui.spinBoxCenterOffset.setValue(qad_center)
 
@@ -1028,7 +997,7 @@ class SignalFrame(QFrame):
 
     def show_modulation_type(self):
         self.ui.cbModulationType.blockSignals(True)
-        self.ui.cbModulationType.setCurrentIndex(self.signal.modulation_type)
+        self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.cbModulationType.blockSignals(False)
 
     def on_participant_changed(self):
@@ -1049,20 +1018,17 @@ class SignalFrame(QFrame):
         sdc = SignalDetailsDialog(self.signal, self)
         sdc.show()
 
-    @Slot(int)
-    def on_combobox_modulation_type_index_changed(self, index: int):
-        if index != self.signal.modulation_type:
+    @Slot(str)
+    def on_combobox_modulation_type_text_changed(self, txt: str):
+        if txt != self.signal.modulation_type:
             modulation_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
                                                       parameter_name="modulation_type",
-                                                      parameter_value=index)
+                                                      parameter_value=txt)
 
             self.undo_stack.push(modulation_action)
 
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.scene_manager.init_scene()
-                self.ui.gvLegend.y_scene = self.scene_manager.scene.sceneRect().y()
-                self.ui.gvLegend.scene_height = self.scene_manager.scene.sceneRect().height()
-                self.ui.gvLegend.refresh()
                 self.on_slider_y_scale_value_changed()
 
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
@@ -1262,7 +1228,6 @@ class SignalFrame(QFrame):
                                                                           filename=filename,
                                                                           include_amplitude=filename.endswith(".fta"))
         except Exception as e:
-            logger.exception(e)
-            Errors.generic_error("Failed to export spectrogram", str(e), traceback.format_exc())
+            Errors.exception(e)
         finally:
             QApplication.restoreOverrideCursor()

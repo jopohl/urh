@@ -28,7 +28,7 @@ class IQSignal(QObject):
     qad_center_changed = Signal(float)
     name_changed = Signal(str)
     sample_rate_changed = Signal(float)
-    modulation_type_changed = Signal(int)
+    modulation_type_changed = Signal(str)
     bits_per_symbol_changed = Signal(int)
 
     saved_status_changed = Signal()

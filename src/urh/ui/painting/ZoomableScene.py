@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF
+from PySide2.QtCore import QRectF
 from PySide2.QtGui import QPen, QFont, QTransform, QFontMetrics
-from PySide2.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
+from PySide2.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent
 
 from urh import constants
 from urh.ui.painting.HorizontalSelection import HorizontalSelection

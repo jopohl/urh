@@ -489,7 +489,7 @@ class ProjectManager(QObject):
                 signal.bit_len = int(sig_tag.get("bit_length", 100))
                 try:
                     # Legacy support when modulation type was integer
-                    signal.modulation_type = Signal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]
+                    signal.modulation_type = IQSignal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]
                 except (ValueError, IndexError):
                     signal.modulation_type = sig_tag.get("modulation_type", "ASK")
                 signal.pause_threshold = int(sig_tag.get("pause_threshold", 8))

@@ -47,9 +47,14 @@ if __name__ == '__main__':
 
     cmd.extend(["--distpath", "./pyinstaller"])
 
-    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
-    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
-    cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
+    urh_cmd = cmd + ["--name=urh", "--windowed", "--workpath", "./urh_build",
+                     os.path.join(urh_path, "src/urh/main.py")]
+
+    urh_debug_cmd = cmd + ["--name=urh_debug", "--workpath", "./urh_debug_build",
+                           os.path.join(urh_path, "src/urh/main.py")]
+
+    cli_cmd = cmd + ["--workpath", "./urh_cli_build",
+                     os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
     os.makedirs("./pyinstaller")
     if sys.platform == "darwin":

@@ -203,13 +203,9 @@ cpdef uhd_error set_rf_gain(double normalized_gain):
         return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)
 
 cpdef uhd_error set_center_freq(double center_freq):
-    cdef uhd_tune_request_t tune_request
-    tune_request.target_freq = center_freq
-    tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
-    tune_request.dsp_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
-
-    # Blocks otherwise
-    time.sleep(0.25)
+    cdef uhd_tune_request_t tune_request = {"target_freq": center_freq,
+                                            "rf_freq_policy": uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO,
+                                            "dsp_freq_policy": uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO}
 
     cdef uhd_tune_result_t tune_result
     if IS_TX:

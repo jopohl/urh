@@ -86,6 +86,8 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxNRepeat, "num_sending_repeats",
                 constants.SETTINGS.value('num_sending_repeats', 1, type=int))
 
+        self.ui.lineEditSubdevice.setText(conf_dict.get("subdevice", ""))
+
         if self.rx_tx_prefix + "antenna_index" in conf_dict:
             self.ui.comboBoxAntenna.setCurrentIndex(conf_dict[self.rx_tx_prefix + "antenna_index"])
 
@@ -143,6 +145,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxBandwidth.editingFinished.connect(self.on_spinbox_bandwidth_editing_finished)
         self.ui.spinBoxPort.editingFinished.connect(self.on_spinbox_port_editing_finished)
         self.ui.lineEditIP.editingFinished.connect(self.on_line_edit_ip_editing_finished)
+        self.ui.lineEditSubdevice.editingFinished.connect(self.on_line_edit_subdevice_editing_finished)
 
         self.ui.comboBoxAntenna.currentIndexChanged.connect(self.on_combobox_antenna_current_index_changed)
         self.ui.comboBoxChannel.currentIndexChanged.connect(self.on_combobox_channel_current_index_changed)
@@ -224,6 +227,10 @@ class DeviceSettingsWidget(QWidget):
                 label.setVisible(False)
 
         self.ui.btnLockBWSR.setVisible("sample_rate" in conf and "bandwidth" in conf)
+
+        if self.device is not None:
+            self.ui.labelSubdevice.setVisible(self.device.subdevice is not None)
+            self.ui.lineEditSubdevice.setVisible(self.device.subdevice is not None)
 
         if "freq_correction" in conf:
             self.ui.labelFreqCorrection.setVisible(True)
@@ -339,6 +346,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.spinBoxSampleRate.editingFinished.emit()
         self.ui.spinBoxFreqCorrection.editingFinished.emit()
         self.ui.lineEditIP.editingFinished.emit()
+        self.ui.lineEditSubdevice.editingFinished.emit()
         self.ui.spinBoxPort.editingFinished.emit()
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
@@ -347,7 +355,7 @@ class DeviceSettingsWidget(QWidget):
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}
         for attrib in ("frequency", "sample_rate", "bandwidth", "gain", "if_gain", "baseband_gain", "freq_correction",
-                       "antenna_index", "num_sending_repeats", "apply_dc_correction"):
+                       "antenna_index", "num_sending_repeats", "apply_dc_correction", "subdevice"):
             try:
                 value = getattr(self.device, attrib, None)
                 if value is not None:
@@ -391,6 +399,10 @@ class DeviceSettingsWidget(QWidget):
     @pyqtSlot()
     def on_line_edit_ip_editing_finished(self):
         self.device.ip = self.ui.lineEditIP.text()
+
+    @pyqtSlot()
+    def on_line_edit_subdevice_editing_finished(self):
+        self.device.subdevice = self.ui.lineEditSubdevice.text()
 
     @pyqtSlot()
     def on_spinbox_port_editing_finished(self):

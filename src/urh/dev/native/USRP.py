@@ -1,14 +1,17 @@
 from collections import OrderedDict
+from multiprocessing import Array
+from multiprocessing.connection import Connection
 
 import numpy as np
-from multiprocessing import Array
 
 from urh.dev.native.Device import Device
 from urh.dev.native.lib import usrp
-from multiprocessing.connection import Connection
 
 
 class USRP(Device):
+    DEVICE_METHODS = Device.DEVICE_METHODS
+    DEVICE_METHODS.update({"SET_SUBDEVICE": "set_subdevice"})
+
     SYNC_RX_CHUNK_SIZE = 16384
     SYNC_TX_CHUNK_SIZE = 16384 * 2
     CONTINUOUS_TX_CHUNK_SIZE = -1  # take everything from queue
@@ -29,14 +32,18 @@ class USRP(Device):
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
         ret = usrp.open(device_identifier)
+
         if device_identifier:
             ctrl_connection.send("OPEN ({}):{}".format(device_identifier, ret))
         else:
             ctrl_connection.send("OPEN:" + str(ret))
+
         success = ret == 0
         if success:
             device_repr = usrp.get_device_representation()
             ctrl_connection.send(device_repr)
+        else:
+            ctrl_connection.send(usrp.get_last_error())
         return success
 
     @classmethod
@@ -81,6 +88,8 @@ class USRP(Device):
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
         self.success = 0
 
+        self.subdevice = ""
+
     def set_device_gain(self, gain):
         super().set_device_gain(gain * 0.01)
 
@@ -90,11 +99,14 @@ class USRP(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
-                            ("identifier", self.device_serial)])
+        return OrderedDict([
+            ("SET_SUBDEVICE", self.subdevice),
+            (self.Command.SET_FREQUENCY.name, self.frequency),
+            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+            (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
+            ("identifier", self.device_serial),
+        ])
 
     @staticmethod
     def bytes_to_iq(buffer):

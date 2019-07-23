@@ -41,6 +41,23 @@ cpdef uhd_error open(str device_args):
 cpdef uhd_error close():
     return uhd_usrp_free(&_c_device)
 
+cpdef uhd_error set_subdevice(str markup, size_t mboard=0):
+    if not markup:
+        return <uhd_error>0
+
+    py_byte_string = markup.encode("UTF-8")
+    cdef char* c_markup = py_byte_string
+
+    cdef uhd_subdev_spec_handle subdev_handle
+    cdef subdev_make_error = uhd_subdev_spec_make(&subdev_handle, c_markup)
+    if subdev_make_error != 0:
+        return subdev_make_error
+
+    if IS_TX:
+        return uhd_usrp_set_tx_subdev_spec(_c_device, subdev_handle, mboard)
+    else:
+        return uhd_usrp_set_rx_subdev_spec(_c_device, subdev_handle, mboard)
+
 cpdef uhd_error setup_stream():
     cdef uhd_stream_args_t stream_args
     # https://files.ettus.com/manual/structuhd_1_1stream__args__t.html
@@ -203,14 +220,17 @@ cpdef uhd_error set_center_freq(double center_freq):
     return result
 
 cpdef str get_last_error():
-    cdef char * error_msg = <char *> malloc(200 * sizeof(char))
+    if _c_device is NULL:
+        return "Could not retrieve more detailed error message from device."
 
-    if IS_TX:
-        uhd_tx_streamer_last_error(tx_streamer_handle, error_msg, 200)
-    else:
-        uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
-    error_msg_py = error_msg.decode("UTF-8")
-    return error_msg_py
+    cdef char * error_msg = <char *> malloc(1024 * sizeof(char))
+    uhd_usrp_last_error(_c_device, error_msg, 1024)
+
+    try:
+        error_msg_py = error_msg.decode("UTF-8")
+        return error_msg_py
+    finally:
+        free(error_msg)
 
 cpdef list find_devices(str args):
     py_byte_string = args.encode('UTF-8')
@@ -224,7 +244,6 @@ cpdef list find_devices(str args):
 
     result = []
 
-    print(num_devices)
     for i in range(num_devices):
         uhd_string_vector_at(h, i, vector_str_item, 512)
         device_str = vector_str_item.decode("UTF-8")

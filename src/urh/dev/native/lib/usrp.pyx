@@ -223,8 +223,8 @@ cpdef str get_last_error():
     uhd_usrp_last_error(_c_device, error_msg, 1024)
 
     try:
-        error_msg_py = error_msg.decode("UTF-8")
-        return error_msg_py
+        error_msg_py = <bytes>error_msg
+        return error_msg_py.decode("UTF-8")
     finally:
         free(error_msg)
 

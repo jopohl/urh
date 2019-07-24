@@ -59,7 +59,8 @@ DEVICE_CONFIG["USRP"] = {
     "subdevice": "",  # http://files.ettus.com/manual/page_configuration.html#config_subdev
     "rx_rf_gain": list(range(0, 101)),
     "tx_rf_gain": list(range(0, 101)),
-    "antenna": [0, 1]
+    "rx_antenna": ["Antenna 1", "Antenna 2", "Antenna 3"],
+    "tx_antenna": ["Antenna 1", "Antenna 2", "Antenna 3"]
 }
 
 # https://myriadrf.org/projects/limesdr/

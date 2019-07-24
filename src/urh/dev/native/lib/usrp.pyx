@@ -228,6 +228,58 @@ cpdef str get_last_error():
     finally:
         free(error_msg)
 
+cpdef str get_antenna():
+    cdef char* antenna = <char *> malloc(512 * sizeof(char))
+    if IS_TX:
+        uhd_usrp_get_tx_antenna(_c_device, CHANNEL, antenna, 512)
+    else:
+        uhd_usrp_get_rx_antenna(_c_device, CHANNEL, antenna, 512)
+
+    try:
+        antenna_py = <bytes>antenna
+        return antenna_py.decode("UTF-8")
+    finally:
+        free(antenna)
+
+cpdef uhd_error set_antenna(int index):
+    cdef list antennas = get_antennas()
+    if index < 0 or index >= len(antennas):
+        return <uhd_error>4711
+
+    cdef bytes antenna_py_bytes = antennas[index].encode("UTF-8")
+    cdef char* antenna = antenna_py_bytes
+
+    if IS_TX:
+        return uhd_usrp_set_tx_antenna(_c_device, antenna, CHANNEL)
+    else:
+        return uhd_usrp_set_rx_antenna(_c_device, antenna, CHANNEL)
+
+cpdef list get_antennas():
+    cdef uhd_string_vector_handle h
+    cdef size_t i, num_antennas
+    cdef char* vector_str_item = <char *> malloc(512 * sizeof(char))
+
+    uhd_string_vector_make(&h)
+
+    result = []
+
+    if IS_TX:
+        uhd_usrp_get_tx_antennas(_c_device, CHANNEL, &h)
+    else:
+        uhd_usrp_get_rx_antennas(_c_device, CHANNEL, &h)
+
+    uhd_string_vector_size(h, &num_antennas)
+    for i in range(num_antennas):
+        uhd_string_vector_at(h, i, vector_str_item, 512)
+        antenna_str = vector_str_item.decode("UTF-8")
+        if antenna_str not in result:
+            result.append(antenna_str)
+
+    free(vector_str_item)
+    uhd_string_vector_free(&h)
+
+    return result
+
 cpdef list find_devices(str args):
     py_byte_string = args.encode('UTF-8')
     cdef char* dev_args = py_byte_string

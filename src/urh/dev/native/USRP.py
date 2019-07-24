@@ -9,8 +9,8 @@ from urh.dev.native.lib import usrp
 
 
 class USRP(Device):
-    DEVICE_METHODS = Device.DEVICE_METHODS
-    DEVICE_METHODS.update({"SET_SUBDEVICE": "set_subdevice"})
+    DEVICE_METHODS = Device.DEVICE_METHODS.copy()
+    DEVICE_METHODS.update({"SET_SUBDEVICE": "set_subdevice", Device.Command.SET_ANTENNA_INDEX.name: "set_antenna"})
 
     SYNC_RX_CHUNK_SIZE = 16384
     SYNC_TX_CHUNK_SIZE = 16384 * 2
@@ -49,7 +49,11 @@ class USRP(Device):
     @classmethod
     def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict):
         usrp.set_tx(is_tx)
-        return super().init_device(ctrl_connection, is_tx, parameters)
+        success = super().init_device(ctrl_connection, is_tx, parameters)
+        if success:
+            ctrl_connection.send("Current antenna is {} (possible antennas: {})".format(usrp.get_antenna(),
+                                                                                        ", ".join(usrp.get_antennas())))
+        return success
 
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):
@@ -88,6 +92,8 @@ class USRP(Device):
                          resume_on_full_receive_buffer=resume_on_full_receive_buffer)
         self.success = 0
 
+        self.error_codes = {4711: "Antenna index not supported on this device"}
+
         self.subdevice = ""
 
     def set_device_gain(self, gain):
@@ -101,6 +107,7 @@ class USRP(Device):
     def device_parameters(self):
         return OrderedDict([
             ("SET_SUBDEVICE", self.subdevice),
+            (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
             (self.Command.SET_FREQUENCY.name, self.frequency),
             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
             (self.Command.SET_BANDWIDTH.name, self.bandwidth),

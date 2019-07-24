@@ -139,6 +139,8 @@ class CompareFrameController(QWidget):
 
         self.message_type_table_model.update()
 
+        self.tab_bar_collapsed = False
+
     # region properties
 
     @property
@@ -319,6 +321,8 @@ class CompareFrameController(QWidget):
         self.proto_tree_model.group_deleted.connect(self.on_group_deleted)
         self.proto_tree_model.proto_to_group_added.connect(self.on_proto_to_group_added)
 
+        self.ui.tabWidget.tabBarDoubleClicked.connect(self.on_tab_bar_double_clicked)
+
     def get_message_type_for_label(self, lbl: ProtocolLabel) -> MessageType:
         return next((msg_type for msg_type in self.proto_analyzer.message_types if lbl in msg_type), None)
 
@@ -351,6 +355,7 @@ class CompareFrameController(QWidget):
 
             self.show_all_cols()
 
+            self.ui.cbDecoding.setToolTip(self.ui.cbDecoding.currentText())
             for msg in messages:
                 msg.decoder = decoding
 
@@ -418,6 +423,7 @@ class CompareFrameController(QWidget):
 
         self.ui.cbDecoding.addItem("...")
         self.ui.cbDecoding.setCurrentIndex(prev_index)
+        self.ui.cbDecoding.setToolTip(self.ui.cbDecoding.currentText())
         self.ui.cbDecoding.blockSignals(False)
 
     def add_protocol(self, protocol: ProtocolAnalyzer, group_id: int = 0) -> ProtocolAnalyzer:
@@ -1102,6 +1108,7 @@ class CompareFrameController(QWidget):
     def on_combobox_decoding_current_index_changed(self):
         new_index = self.ui.cbDecoding.currentIndex()
         if new_index == -1:
+            self.ui.cbDecoding.setToolTip("")
             return
 
         if new_index == self.ui.cbDecoding.count() - 1:
@@ -1486,3 +1493,16 @@ class CompareFrameController(QWidget):
     def on_message_type_name_edited(self, new_name: str):
         if self.ui.lblLabelValues.text().startswith("Labels of"):
             self.ui.lblLabelValues.setText("Labels of {}".format(new_name))
+
+    @pyqtSlot(int)
+    def on_tab_bar_double_clicked(self, index: int):
+        if not self.tab_bar_collapsed:
+            self.ui.tab_participants.hide()
+            self.ui.tab_protocols.hide()
+            self.ui.tabWidget.setMaximumHeight(self.ui.tabWidget.tabBar().height())
+            self.tab_bar_collapsed = True
+        else:
+            self.ui.tab_participants.show()
+            self.ui.tab_protocols.show()
+            self.ui.tabWidget.setMaximumHeight(9000)
+            self.tab_bar_collapsed = False

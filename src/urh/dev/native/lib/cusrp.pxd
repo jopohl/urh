@@ -109,6 +109,11 @@ cdef extern from "uhd/types/string_vector.h":
     uhd_error uhd_string_vector_size(uhd_string_vector_handle h, size_t *size_out)
     uhd_error uhd_string_vector_at(uhd_string_vector_handle h, size_t index, char* value_out, size_t strbuffer_len)
 
+cdef extern from "uhd/usrp/subdev_spec.h":
+    struct uhd_subdev_spec_t
+    ctypedef uhd_subdev_spec_t* uhd_subdev_spec_handle;
+    uhd_error uhd_subdev_spec_make(uhd_subdev_spec_handle* h, const char* markup)
+
 cdef extern from "uhd/usrp/usrp.h":
     struct uhd_rx_streamer
     struct uhd_tx_streamer
@@ -202,3 +207,6 @@ cdef extern from "uhd/usrp/usrp.h":
     uhd_error uhd_usrp_set_tx_antenna(uhd_usrp_handle h, const char* ant, size_t chan)
     uhd_error uhd_usrp_get_tx_antenna(uhd_usrp_handle h, size_t chan, char* ant_out, size_t strbuffer_len)
     uhd_error uhd_usrp_get_tx_antennas(uhd_usrp_handle h, size_t chan, uhd_string_vector_handle *antennas_out)
+
+    uhd_error uhd_usrp_set_rx_subdev_spec(uhd_usrp_handle h, uhd_subdev_spec_handle subdev_spec, size_t mboard)
+    uhd_error uhd_usrp_set_tx_subdev_spec(uhd_usrp_handle h, uhd_subdev_spec_handle subdev_spec, size_t mboard)

@@ -101,7 +101,6 @@ class TestUtil(QtTestCase):
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import usrp
 
-
         if sys.platform != "darwin":
             # noinspection PyUnresolvedReferences
             from urh.dev.native.lib import sdrplay

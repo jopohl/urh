@@ -158,7 +158,6 @@ jobs:
       python data/pyinstaller_helper.py
       for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
       iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
-    condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 
   - task: PublishBuildArtifacts@1

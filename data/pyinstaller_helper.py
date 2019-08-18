@@ -5,7 +5,7 @@ import sys
 from multiprocessing.pool import Pool
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
-                  "numpy.core._methods", "numpy.core._dtype_ctypes"]
+                  "numpy.core._methods", "numpy.core._dtype_ctypes", "numpy.random.common"]
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 

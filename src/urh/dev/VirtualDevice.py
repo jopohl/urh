@@ -401,6 +401,18 @@ class VirtualDevice(QObject):
             raise ValueError("Unsupported Backend")
 
     @property
+    def subdevice(self):
+        if hasattr(self.__dev, "subdevice"):
+            return self.__dev.subdevice
+        else:
+            return None
+
+    @subdevice.setter
+    def subdevice(self, value: str):
+        if hasattr(self.__dev, "subdevice"):
+            self.__dev.subdevice = value
+
+    @property
     def ip(self):
         if self.backend == Backends.grc:
             return self.__dev.device_ip

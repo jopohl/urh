@@ -5,7 +5,8 @@ import sys
 from multiprocessing.pool import Pool
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements",
-                  "numpy.core._methods", "numpy.core._dtype_ctypes"]
+                  "numpy.core._methods", "numpy.core._dtype_ctypes",
+                  "numpy.random.common", "numpy.random.entropy", "numpy.random.bounded_integers"]
 DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
@@ -47,9 +48,14 @@ if __name__ == '__main__':
 
     cmd.extend(["--distpath", "./pyinstaller"])
 
-    urh_cmd = cmd + ["--name=urh", "--windowed", os.path.join(urh_path, "src/urh/main.py")]
-    urh_debug_cmd = cmd + ["--name=urh_debug", os.path.join(urh_path, "src/urh/main.py")]
-    cli_cmd = cmd + [os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
+    urh_cmd = cmd + ["--name=urh", "--windowed", "--workpath", "./urh_build",
+                     os.path.join(urh_path, "src/urh/main.py")]
+
+    urh_debug_cmd = cmd + ["--name=urh_debug", "--workpath", "./urh_debug_build",
+                           os.path.join(urh_path, "src/urh/main.py")]
+
+    cli_cmd = cmd + ["--workpath", "./urh_cli_build",
+                     os.path.join(urh_path, "src/urh/cli/urh_cli.py")]
 
     os.makedirs("./pyinstaller")
     if sys.platform == "darwin":

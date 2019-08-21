@@ -8,7 +8,7 @@ from urh.dev.VirtualDevice import Mode, VirtualDevice
 from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
-
+from datetime import datetime
 
 class ReceiveDialog(SendRecvDialog):
     files_recorded = Signal(list, float)
@@ -94,7 +94,9 @@ class ReceiveDialog(SendRecvDialog):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        initial_name = "{0}-{1}Hz-{2}Sps".format(dev.name, big_val(dev.frequency), big_val(dev.sample_rate))
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        initial_name = "{0}-{1}-{2}Hz-{3}Sps".format(dev.name, timestamp,
+                                                     big_val(dev.frequency), big_val(dev.sample_rate))
 
         if dev.bandwidth_is_adjustable:
             initial_name += "-{}Hz".format(big_val(dev.bandwidth))

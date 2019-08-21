@@ -121,8 +121,14 @@ jobs:
       architecture: '$(python.arch)'
 
   - powershell: |
-      if ("$(python.arch)" -eq "x86") {$url="https://dl.dropboxusercontent.com/s/ky6prqc0zh4wspm/win-32.zip"} else {$url="https://dl.dropboxusercontent.com/s/3pdvo56amjjm7b7/win-64.zip"}
-      Invoke-WebRequest -Uri $url -OutFile "C:\windlls.zip"
+      git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+      if ("$(python.arch)" -eq "x86") {
+      Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
+      }
+      else {
+      Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
+      }
+      Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
     displayName: 'download SDR drivers'
 
   - script: |
@@ -143,8 +149,8 @@ jobs:
   - script: |
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
       pip install "pyaudio; python_version < '3.7'"
-      pip install "https://dl.dropboxusercontent.com/s/ev5gnc0y3u4850y/PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
-      pip install "https://dl.dropboxusercontent.com/s/8dklxnowwn7jxou/PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
+      pip install "C:\PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
+      pip install "C:\PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 
@@ -214,12 +220,12 @@ jobs:
       versionSpec: '$(python.version)'
 
   - script: |
-      wget https://dl.dropboxusercontent.com/s/1kuu0nxj3wsj5ob/osx-64.tar.bz2
+      git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
       mkdir src/urh/dev/native/lib/shared
-      tar xf osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
+      tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
       mkdir /tmp/osx-64
-      tar xf osx-64.tar.bz2 -C /tmp/osx-64
-      rm osx-64.tar.bz2
+      tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
+      rm -rf sdr_drivers
     displayName: "download and unpack SDR drivers"
 
   - script: |

@@ -41,6 +41,23 @@ cpdef uhd_error open(str device_args):
 cpdef uhd_error close():
     return uhd_usrp_free(&_c_device)
 
+cpdef uhd_error set_subdevice(str markup, size_t mboard=0):
+    if not markup:
+        return <uhd_error>0
+
+    py_byte_string = markup.encode("UTF-8")
+    cdef char* c_markup = py_byte_string
+
+    cdef uhd_subdev_spec_handle subdev_handle
+    cdef subdev_make_error = uhd_subdev_spec_make(&subdev_handle, c_markup)
+    if subdev_make_error != 0:
+        return subdev_make_error
+
+    if IS_TX:
+        return uhd_usrp_set_tx_subdev_spec(_c_device, subdev_handle, mboard)
+    else:
+        return uhd_usrp_set_rx_subdev_spec(_c_device, subdev_handle, mboard)
+
 cpdef uhd_error setup_stream():
     cdef uhd_stream_args_t stream_args
     # https://files.ettus.com/manual/structuhd_1_1stream__args__t.html
@@ -186,13 +203,9 @@ cpdef uhd_error set_rf_gain(double normalized_gain):
         return uhd_usrp_set_normalized_rx_gain(_c_device, normalized_gain, CHANNEL)
 
 cpdef uhd_error set_center_freq(double center_freq):
-    cdef uhd_tune_request_t tune_request
-    tune_request.target_freq = center_freq
-    tune_request.rf_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
-    tune_request.dsp_freq_policy = uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO
-
-    # Blocks otherwise
-    time.sleep(0.25)
+    cdef uhd_tune_request_t tune_request = {"target_freq": center_freq,
+                                            "rf_freq_policy": uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO,
+                                            "dsp_freq_policy": uhd_tune_request_policy_t.UHD_TUNE_REQUEST_POLICY_AUTO}
 
     cdef uhd_tune_result_t tune_result
     if IS_TX:
@@ -203,14 +216,69 @@ cpdef uhd_error set_center_freq(double center_freq):
     return result
 
 cpdef str get_last_error():
-    cdef char * error_msg = <char *> malloc(200 * sizeof(char))
+    if _c_device is NULL:
+        return "Could not retrieve more detailed error message from device."
+
+    cdef char * error_msg = <char *> malloc(1024 * sizeof(char))
+    uhd_usrp_last_error(_c_device, error_msg, 1024)
+
+    try:
+        error_msg_py = <bytes>error_msg
+        return error_msg_py.decode("UTF-8")
+    finally:
+        free(error_msg)
+
+cpdef str get_antenna():
+    cdef char* antenna = <char *> malloc(512 * sizeof(char))
+    if IS_TX:
+        uhd_usrp_get_tx_antenna(_c_device, CHANNEL, antenna, 512)
+    else:
+        uhd_usrp_get_rx_antenna(_c_device, CHANNEL, antenna, 512)
+
+    try:
+        antenna_py = <bytes>antenna
+        return antenna_py.decode("UTF-8")
+    finally:
+        free(antenna)
+
+cpdef uhd_error set_antenna(int index):
+    cdef list antennas = get_antennas()
+    if index < 0 or index >= len(antennas):
+        return <uhd_error>4711
+
+    cdef bytes antenna_py_bytes = antennas[index].encode("UTF-8")
+    cdef char* antenna = antenna_py_bytes
 
     if IS_TX:
-        uhd_tx_streamer_last_error(tx_streamer_handle, error_msg, 200)
+        return uhd_usrp_set_tx_antenna(_c_device, antenna, CHANNEL)
     else:
-        uhd_rx_streamer_last_error(rx_streamer_handle, error_msg, 200)
-    error_msg_py = error_msg.decode("UTF-8")
-    return error_msg_py
+        return uhd_usrp_set_rx_antenna(_c_device, antenna, CHANNEL)
+
+cpdef list get_antennas():
+    cdef uhd_string_vector_handle h
+    cdef size_t i, num_antennas
+    cdef char* vector_str_item = <char *> malloc(512 * sizeof(char))
+
+    uhd_string_vector_make(&h)
+
+    result = []
+
+    if IS_TX:
+        uhd_usrp_get_tx_antennas(_c_device, CHANNEL, &h)
+    else:
+        uhd_usrp_get_rx_antennas(_c_device, CHANNEL, &h)
+
+    uhd_string_vector_size(h, &num_antennas)
+    for i in range(num_antennas):
+        uhd_string_vector_at(h, i, vector_str_item, 512)
+        antenna_str = vector_str_item.decode("UTF-8")
+        if antenna_str not in result:
+            result.append(antenna_str)
+
+    free(vector_str_item)
+    uhd_string_vector_free(&h)
+
+    return result
 
 cpdef list find_devices(str args):
     py_byte_string = args.encode('UTF-8')
@@ -224,7 +292,6 @@ cpdef list find_devices(str args):
 
     result = []
 
-    print(num_devices)
     for i in range(num_devices):
         uhd_string_vector_at(h, i, vector_str_item, 512)
         device_str = vector_str_item.decode("UTF-8")

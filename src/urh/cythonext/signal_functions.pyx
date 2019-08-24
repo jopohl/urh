@@ -6,6 +6,7 @@ from libcpp cimport bool
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, int64_t
 from libc.stdio cimport printf
+from libc.stdlib cimport malloc, free
 from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
@@ -62,12 +63,13 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                  float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
                  uint32_t pause, uint32_t start, iq iq_type,
                  float gauss_bt=0.5, float filter_width=1.0):
-    cdef int64_t i = 0, j = 0, index = 0, s_i = 0, num_bits = len(bits)
+    cdef int64_t i = 0, j = 0, index = 0, prev_index=0, s_i = 0, num_bits = len(bits)
     cdef uint32_t total_symbols = int(num_bits // bits_per_symbol)
     cdef int64_t total_samples = total_symbols * samples_per_symbol + pause
 
     cdef float a = carrier_amplitude, f = carrier_frequency, phi = carrier_phase
 
+    cdef float f_previous = 0, phase_correction = 0
     cdef float t = 0, arg = 0
 
     result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
@@ -97,12 +99,32 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                                                                       samples_per_symbol, sample_rate, carrier_phase,
                                                                       start, gauss_bt, filter_width)
 
+
+    cdef float* phase_corrections = NULL
+    if is_fsk and total_symbols > 0:
+        phase_corrections = <float*>malloc(total_symbols * sizeof(float))
+        phase_corrections[0] = 0.0
+        for s_i in range(1, total_symbols):
+            # Add phase correction to FSK modulation in order to prevent spiky jumps
+            index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
+            prev_index = bit_array_to_number(bits, end=s_i*bits_per_symbol, start=(s_i-1)*bits_per_symbol)
+
+            f = parameters[index]
+            f_previous = parameters[prev_index]
+
+            if f != f_previous:
+                t = (s_i*samples_per_symbol+start-1) / sample_rate
+                phase_corrections[s_i] = (phase_corrections[s_i-1] + 2 * M_PI * (f_previous-f) * t) % (2 * M_PI)
+            else:
+                phase_corrections[s_i] = phase_corrections[s_i-1]
+
     for s_i in prange(0, total_symbols, schedule="static", nogil=True):
         index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
 
         a = carrier_amplitude
         f = carrier_frequency
         phi = carrier_phase
+        phase_correction = 0
 
         if is_ask:
             a = parameters[index]
@@ -110,6 +132,8 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                 continue
         elif is_fsk:
             f = parameters[index]
+            phase_correction = phase_corrections[s_i]
+
         elif is_psk or is_oqpsk:
             phi = parameters[index]
 
@@ -118,10 +142,13 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
             if is_gfsk:
                 f = gauss_filtered_freqs_phases[i, 0]
                 phi = gauss_filtered_freqs_phases[i, 1]
-            arg = 2 * M_PI * f * t + phi
+            arg = 2 * M_PI * f * t + phi + phase_correction
 
             result_view[i, 0] = <iq>(a * cosf(arg))
             result_view[i, 1] = <iq>(a * sinf(arg))
+
+    if phase_corrections != NULL:
+        free(phase_corrections)
 
     return result
 

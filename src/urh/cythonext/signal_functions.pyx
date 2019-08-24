@@ -124,6 +124,7 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
         a = carrier_amplitude
         f = carrier_frequency
         phi = carrier_phase
+        phase_correction = 0
 
         if is_ask:
             a = parameters[index]

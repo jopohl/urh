@@ -146,12 +146,16 @@ class Message(object):
     def __delitem__(self, index):
         self._remove_labels_for_range(index)
         del self.plain_bits[index]
+        self.clear_decoded_bits()
+        self.clear_encoded_bits()
 
     def __str__(self):
         return self.bits2string(self.plain_bits)
 
     def delete_range_without_label_range_update(self, start: int, end: int):
         del self.plain_bits[start:end]
+        self.clear_decoded_bits()
+        self.clear_encoded_bits()
 
     def get_byte_length(self, decoded=True) -> int:
         """
@@ -170,7 +174,8 @@ class Message(object):
 
     def insert(self, index: int, item: bool):
         self.plain_bits.insert(index, item)
-        self.__decoded_bits = None
+        self.clear_decoded_bits()
+        self.clear_encoded_bits()
 
     @property
     def decoder(self) -> Encoding:

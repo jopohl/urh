@@ -1,6 +1,8 @@
 import array
 import unittest
 
+import numpy as np
+
 from tests.utils_testing import get_path_for_data_file
 from urh.cythonext.signal_functions import modulate_c
 from urh.signalprocessing.IQArray import IQArray
@@ -43,6 +45,25 @@ class TestDemodulations(unittest.TestCase):
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.plain_bits_str[0],
                          "101010101010101010101010101010101100011000100110110001100010011011110100110111000001110110011000111011101111011110100100001001111001100110011100110100100011100111010011111100011")
+
+    def test_fsk_short_bit_length(self):
+        bits_str = "101010"
+        bits = array.array("B", list(map(int, bits_str)))
+        parameters = array.array("f", [-10e3, 10e3])
+        result = modulate_c(bits, 8, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+
+        signal = Signal("")
+        signal.iq_array = IQArray(result)
+
+        # Ensure we have no spikes
+        self.assertLess(np.max(signal.qad), 1)
+
+        signal.qad_center = 0
+        signal.bit_len = 8
+
+        proto_analyzer = ProtocolAnalyzer(signal)
+        proto_analyzer.get_protocol_from_signal()
+        self.assertEqual(proto_analyzer.plain_bits_str[0], bits_str)
 
     def test_psk(self):
         signal = Signal(get_path_for_data_file("psk_gen_noisy.complex"), "PSK-Test")

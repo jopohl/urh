@@ -59,7 +59,7 @@ class TestDemodulations(unittest.TestCase):
         self.assertLess(np.max(signal.qad), 1)
 
         signal.qad_center = 0
-        signal.bit_len = 8
+        signal.samples_per_symbol = 8
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()

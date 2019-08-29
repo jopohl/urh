@@ -387,7 +387,7 @@ class ModulatorDialog(QDialog):
         elif self.current_modulator.is_frequency_based:
             regex = r"((-?[0-9]+)[.,]?[0-9]*[kKmMgG]?)"
         elif self.current_modulator.is_phase_based:
-            regex = r"(-?36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])"
+            regex = r"(-?(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9]))"
         else:
             raise ValueError("Unknown modulation type")
 

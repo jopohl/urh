@@ -248,8 +248,11 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
     cdef real_float, imag_float
 
     cdef float phi = 0, arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
+    cdef bool is_first_freq = True
     cdef float scalar_prod, vector_prod
     cdef np.complex64_t reference    
+    
+    cdef float alpha = 0.1
 
     for i in range(0, num_samples):
         real = samples[i, 0]
@@ -259,29 +262,28 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK
             continue
+        elif i == 0:
+            result[i] = 0
+            continue
 
         real_float = (real + shift) / scale
         imag_float = (imag + shift) / scale
 
-        if i > 0:
-            prev = complex((samples[i-1, 0] + shift) / scale, (samples[i-1, 1] + shift) / scale)
-            tmp = prev.conjugate() * complex(real_float, imag_float)
+        prev = complex((samples[i-1, 0] + shift) / scale, (samples[i-1, 1] + shift) / scale)
+        tmp = prev.conjugate() * complex(real_float, imag_float)
 
-            f_curr = atan2(tmp.imag, tmp.real)
-            if i == 1:
-                f_prev = f_curr
-                f_avg = f_curr
+        f_curr = atan2(tmp.imag, tmp.real)
+        if is_first_freq:
+            f_prev = f_curr
+            f_avg = f_curr
+            is_first_freq = False
 
-            if 0.9 * abs(f_avg) < abs(f_curr) < 1.1 * abs(f_avg):
-                f_avg += f_curr / 2 - f_prev / 2
-                f_prev = f_curr
-                arg += f_curr
-            else:
-                arg += f_avg
-
-        n = 250 # 25 Samples for one period
-
-        #arg = (2 * M_PI * i / n)
+        if (1-alpha) * abs(f_avg) < abs(f_curr) < (1+alpha) * abs(f_avg):
+            f_avg += f_curr / 2 - f_prev / 2
+            f_prev = f_curr
+            arg += f_curr
+        else:
+            arg += f_avg
 
         reference = cosf(arg) + imag_unit * sinf(arg)
         scalar_prod = real_float * reference.real + imag_float * reference.imag

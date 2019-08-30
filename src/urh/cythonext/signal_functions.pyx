@@ -39,6 +39,15 @@ cdef float get_noise_for_mod_type(str mod_type):
     else:
         return 0
 
+cdef tuple get_value_range_of_mod_type(str mod_type):
+    if mod_type == "ASK":
+        return 0, 1
+    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
+        return -np.pi, np.pi
+
+    printf("Warning unknown mod type for value range")
+    return 0, 0
+
 cdef get_numpy_dtype(iq cython_type):
     if str(cython.typeof(cython_type)) == "char":
         return np.int8
@@ -350,20 +359,19 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
-    cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
-    cdef int i, n = modulation_order // 2
+cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
+    if sample == noise_val:
+        return PAUSE_STATE
 
-    for i in range(0, n):
-        result[i] = center - (n-(i+1)) * spacing
+    cdef int i
+    for i in range(n):
+        if sample <= thresholds[i]:
+            return i
 
-    for i in range(n, modulation_order-1):
-        result[i] = center + (i+1-n) * spacing
-
-    return result
+    return PAUSE_STATE
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
-                                      str modulation_type, uint16_t samples_per_symbol,
+                                      str modulation_type, uint16_t bit_length,
                                       uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
     Get the pulse lengths after quadrature demodulation
@@ -380,10 +388,21 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
     cdef int modulation_order = 2**bits_per_symbol
-    cdef int k
 
+    cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
+    cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
+    cdef float min_of_mod_type = min_max_of_mod_type[0]
+    cdef float max_of_mod_type = min_max_of_mod_type[1]
 
-    cdef np.ndarray[np.float32_t, ndim=1] thresholds = get_center_thresholds(center, center_spacing, modulation_order)
+    cdef int n = modulation_order // 2
+
+    for i in range(0, n):
+        thresholds[i] = center - (n-(i+1)) * center_spacing
+
+    for i in range(n, modulation_order-1):
+        thresholds[i] = center + (i+1-n) * center_spacing
+
+    thresholds[modulation_order-1] = max_of_mod_type
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
@@ -392,27 +411,12 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
 
     s_prev = samples[0]
-    if s_prev == NOISE:
-        cur_state = PAUSE_STATE
-    else:
-        cur_state = modulation_order - 1
-        for k in range(modulation_order - 1):
-            if s <= thresholds[k]:
-                cur_state = k
-                break
+    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-
-        if s == NOISE:
-            tmp_state = PAUSE_STATE
-        else:
-            tmp_state = modulation_order - 1
-            for k in range(modulation_order - 1):
-                if s <= thresholds[k]:
-                    tmp_state = k
-                    break
+        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
 
         if tmp_state == PAUSE_STATE:
             consecutive_pause += 1
@@ -441,7 +445,7 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
         if new_state == -42:
             continue
 
-        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < samples_per_symbol:
+        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < bit_length:
             # Aggregate short pauses for ASK
             cur_state = 0
 

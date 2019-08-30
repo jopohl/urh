@@ -12,9 +12,9 @@ from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 from cython.parallel import prange
 from libc.math cimport atan2, sqrt, M_PI
 
-
 cdef extern from "math.h" nogil:
     float cosf(float x)
+    float acosf(float x)
     float sinf(float x)
 
 # As we do not use any numpy C API functions we do no import_array here,
@@ -38,15 +38,6 @@ cdef float get_noise_for_mod_type(str mod_type):
         return NOISE_ASK * NOISE_FSK_PSK
     else:
         return 0
-
-cdef tuple get_value_range_of_mod_type(str mod_type):
-    if mod_type == "ASK":
-        return 0, 1
-    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
-        return -np.pi, np.pi
-
-    printf("Warning unknown mod type for value range")
-    return 0, 0
 
 cdef get_numpy_dtype(iq cython_type):
     if str(cython.typeof(cython_type)) == "char":
@@ -255,12 +246,59 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
 
 
     cdef real_float, imag_float
+
+    cdef float phi = 0
+
+    cdef float omega, arg, f
+
+    arg = 0
+
+
+
+    f_avg = 0
+    f_curr = 0
+    f_prev = 0
+
     for i in range(0, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
+
+        real_float = (real + shift) / scale
+        imag_float = (imag + shift) / scale
+
+        if i > 0:
+            prev = complex((samples[i-1, 0] + shift) / scale, (samples[i-1, 1] + shift) / scale)
+            tmp = prev.conjugate() * complex(real_float, imag_float)
+
+            f_curr = atan2(tmp.imag, tmp.real)
+            if i == 1:
+                f_prev = f_curr
+                f_avg = f_curr
+
+            if 0.9 * f_avg < f_curr < 1.1 * f_avg:
+                f_avg += f_curr / 2 - f_prev / 2
+                f_prev = f_curr
+                arg += f_curr
+            else:
+                arg += f_avg
+
+        n = 250 # 25 Samples for one period
+
+        #arg = (2 * M_PI * i / n)
+
+        ref = cosf(arg) + imag_unit * sinf(arg)
+        scalar_prod = real_float * ref.real + imag_float * ref.imag
+        vector_prod = real_float * ref.imag - imag_float * ref.real
+
+        # https://math.stackexchange.com/questions/2041099/angle-between-vectors-given-cross-and-dot-product
+        phi = atan2(scalar_prod, vector_prod)
+
         magnitude = real * real + imag * imag
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK
+            continue
+        else:
+            result[i] = phi
             continue
 
         # # NCO Output
@@ -350,19 +388,20 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
-    if sample == noise_val:
-        return PAUSE_STATE
+cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
+    cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
+    cdef int i, n = modulation_order // 2
 
-    cdef int i
-    for i in range(n):
-        if sample <= thresholds[i]:
-            return i
+    for i in range(0, n):
+        result[i] = center - (n-(i+1)) * spacing
 
-    return PAUSE_STATE
+    for i in range(n, modulation_order-1):
+        result[i] = center + (i+1-n) * spacing
+
+    return result
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
-                                      str modulation_type, uint16_t bit_length,
+                                      str modulation_type, uint16_t samples_per_symbol,
                                       uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
     Get the pulse lengths after quadrature demodulation
@@ -379,21 +418,10 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
     cdef int modulation_order = 2**bits_per_symbol
+    cdef int k
 
-    cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
-    cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
-    cdef float min_of_mod_type = min_max_of_mod_type[0]
-    cdef float max_of_mod_type = min_max_of_mod_type[1]
 
-    cdef int n = modulation_order // 2
-
-    for i in range(0, n):
-        thresholds[i] = center - (n-(i+1)) * center_spacing
-
-    for i in range(n, modulation_order-1):
-        thresholds[i] = center + (i+1-n) * center_spacing
-
-    thresholds[modulation_order-1] = max_of_mod_type
+    cdef np.ndarray[np.float32_t, ndim=1] thresholds = get_center_thresholds(center, center_spacing, modulation_order)
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
@@ -402,12 +430,27 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
 
     s_prev = samples[0]
-    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
+    if s_prev == NOISE:
+        cur_state = PAUSE_STATE
+    else:
+        cur_state = modulation_order - 1
+        for k in range(modulation_order - 1):
+            if s <= thresholds[k]:
+                cur_state = k
+                break
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
+
+        if s == NOISE:
+            tmp_state = PAUSE_STATE
+        else:
+            tmp_state = modulation_order - 1
+            for k in range(modulation_order - 1):
+                if s <= thresholds[k]:
+                    tmp_state = k
+                    break
 
         if tmp_state == PAUSE_STATE:
             consecutive_pause += 1
@@ -436,7 +479,7 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
         if new_state == -42:
             continue
 
-        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < bit_length:
+        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < samples_per_symbol:
             # Aggregate short pauses for ASK
             cur_state = 0
 

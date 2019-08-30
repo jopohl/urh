@@ -10,7 +10,7 @@ from libc.stdlib cimport malloc, free
 from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
-from libc.math cimport atan2, sqrt, M_PI
+from libc.math cimport atan2, sqrt, M_PI, abs
 
 cdef extern from "math.h" nogil:
     float cosf(float x)
@@ -247,21 +247,18 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
 
     cdef real_float, imag_float
 
-    cdef float phi = 0
-
-    cdef float omega, arg, f
-
-    arg = 0
-
-
-
-    f_avg = 0
-    f_curr = 0
-    f_prev = 0
+    cdef float phi = 0, arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
+    cdef float scalar_prod, vector_prod
+    cdef np.complex64_t reference    
 
     for i in range(0, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
+        
+        magnitude = real * real + imag * imag
+        if magnitude <= noise_sqrd:  # |c| <= mag_treshold
+            result[i] = NOISE_FSK_PSK
+            continue
 
         real_float = (real + shift) / scale
         imag_float = (imag + shift) / scale
@@ -275,7 +272,7 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
                 f_prev = f_curr
                 f_avg = f_curr
 
-            if 0.9 * f_avg < f_curr < 1.1 * f_avg:
+            if 0.9 * abs(f_avg) < abs(f_curr) < 1.1 * abs(f_avg):
                 f_avg += f_curr / 2 - f_prev / 2
                 f_prev = f_curr
                 arg += f_curr
@@ -286,35 +283,13 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
 
         #arg = (2 * M_PI * i / n)
 
-        ref = cosf(arg) + imag_unit * sinf(arg)
-        scalar_prod = real_float * ref.real + imag_float * ref.imag
-        vector_prod = real_float * ref.imag - imag_float * ref.real
+        reference = cosf(arg) + imag_unit * sinf(arg)
+        scalar_prod = real_float * reference.real + imag_float * reference.imag
+        vector_prod = real_float * reference.imag - imag_float * reference.real
 
         # https://math.stackexchange.com/questions/2041099/angle-between-vectors-given-cross-and-dot-product
         phi = atan2(scalar_prod, vector_prod)
-
-        magnitude = real * real + imag * imag
-        if magnitude <= noise_sqrd:  # |c| <= mag_treshold
-            result[i] = NOISE_FSK_PSK
-            continue
-        else:
-            result[i] = phi
-            continue
-
-        # # NCO Output
-        #nco_out = np.exp(-costa_phase * 1j)
-        nco_out = cosf(-costa_phase) + imag_unit * sinf(-costa_phase)
-
-        real_float = (real + shift) / scale
-        imag_float = (imag + shift) / scale
-        nco_times_sample = nco_out * (real_float + imag_unit * imag_float)
-        phase_error = nco_times_sample.imag * nco_times_sample.real
-        costa_freq += costa_beta * phase_error
-        costa_phase += costa_freq + costa_alpha * phase_error
-        if qam:
-            result[i] = magnitude * nco_times_sample.real
-        else:
-            result[i] = nco_times_sample.real
+        result[i] = phi        
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, str mod_type):
     if len(samples) <= 2:

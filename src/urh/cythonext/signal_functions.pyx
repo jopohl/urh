@@ -205,26 +205,19 @@ cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, uint32_t samp
         -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))
     return h / h.sum()
 
-cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)
-
-    return alpha
-
-cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
-    return beta
-
-cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
-                          float costa_alpha, float costa_beta, bool qam, long long num_samples):
-    cdef float phase_error = 0
+cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam, long long num_samples):
     cdef long long i = 0
-    cdef float costa_freq = 0, costa_phase = 0
-    cdef float complex nco_out = 0, nco_times_sample = 0
     cdef float real = 0, imag = 0, magnitude = 0
 
-    cdef float scale, shift
+    cdef float scale, shift, real_float, imag_float, ref_real, ref_imag
+
+    cdef float phi = 0, arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
+    cdef bool is_first_freq = True
+    cdef float scalar_prod, vector_prod
+
+    cdef float complex current_sample, conj_previous_sample, tmp
+
+    cdef float alpha = 0.1
 
     if str(cython.typeof(samples)) == "char[:, ::1]":
         scale = 127.5
@@ -244,17 +237,7 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
     else:
         raise ValueError("Unsupported dtype")
 
-
-    cdef real_float, imag_float
-
-    cdef float phi = 0, arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
-    cdef bool is_first_freq = True
-    cdef float scalar_prod, vector_prod
-    cdef np.complex64_t reference    
-    
-    cdef float alpha = 0.1
-
-    for i in range(0, num_samples):
+    for i in range(1, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
         
@@ -262,17 +245,15 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
         if magnitude <= noise_sqrd:  # |c| <= mag_treshold
             result[i] = NOISE_FSK_PSK
             continue
-        elif i == 0:
-            result[i] = 0
-            continue
 
         real_float = (real + shift) / scale
         imag_float = (imag + shift) / scale
 
-        prev = complex((samples[i-1, 0] + shift) / scale, (samples[i-1, 1] + shift) / scale)
-        tmp = prev.conjugate() * complex(real_float, imag_float)
-
+        current_sample = real_float + imag_unit * imag_float
+        conj_previous_sample = (samples[i-1, 0] + shift) / scale - imag_unit * ((samples[i-1, 1] + shift) / scale)
+        tmp = current_sample * conj_previous_sample
         f_curr = atan2(tmp.imag, tmp.real)
+
         if is_first_freq:
             f_prev = f_curr
             f_avg = f_curr
@@ -285,13 +266,19 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
         else:
             arg += f_avg
 
-        reference = cosf(arg) + imag_unit * sinf(arg)
-        scalar_prod = real_float * reference.real + imag_float * reference.imag
-        vector_prod = real_float * reference.imag - imag_float * reference.real
+        # Reference oscillator cos(arg) + j * sin(arg)
+        ref_real = cosf(arg)
+        ref_imag = sinf(arg)
+        scalar_prod = real_float * ref_real + imag_float * ref_imag
+        vector_prod = real_float * ref_imag - imag_float * ref_real
 
         # https://math.stackexchange.com/questions/2041099/angle-between-vectors-given-cross-and-dot-product
         phi = atan2(scalar_prod, vector_prod)
-        result[i] = phi        
+
+        if qam:
+            result[i] = phi * magnitude
+        else:
+            result[i] = phi
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, str mod_type):
     if len(samples) <= 2:
@@ -343,9 +330,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
         if mod_type == "QAM":
             qam = True
 
-        costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
-        costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
-        costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
+        phase_demod(samples, result, noise_sqrd, qam, ns)
 
     else:
         for i in prange(1, ns, nogil=True, schedule="static"):

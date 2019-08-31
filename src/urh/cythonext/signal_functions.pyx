@@ -17,6 +17,10 @@ cdef extern from "math.h" nogil:
     float acosf(float x)
     float sinf(float x)
 
+cdef extern from "complex.h" namespace "std" nogil:
+    float arg(float complex x)
+    float complex conj(float complex x)
+
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
 # np.import_array()
@@ -70,7 +74,7 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
     cdef float a = carrier_amplitude, f = carrier_frequency, phi = carrier_phase
 
     cdef float f_previous = 0, phase_correction = 0
-    cdef float t = 0, arg = 0
+    cdef float t = 0, current_arg = 0
 
     result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
     if num_bits == 0:
@@ -142,10 +146,10 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
             if is_gfsk:
                 f = gauss_filtered_freqs_phases[i, 0]
                 phi = gauss_filtered_freqs_phases[i, 1]
-            arg = 2 * M_PI * f * t + phi + phase_correction
+            current_arg = 2 * M_PI * f * t + phi + phase_correction
 
-            result_view[i, 0] = <iq>(a * cosf(arg))
-            result_view[i, 1] = <iq>(a * sinf(arg))
+            result_view[i, 0] = <iq>(a * cosf(current_arg))
+            result_view[i, 1] = <iq>(a * sinf(current_arg))
 
     if phase_corrections != NULL:
         free(phase_corrections)
@@ -220,11 +224,10 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
 
     cdef float scale, shift, real_float, imag_float, ref_real, ref_imag
 
-    cdef float phi = 0, arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
+    cdef float phi = 0, current_arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
     cdef bool is_first_freq = True
-    cdef float scalar_prod, vector_prod
 
-    cdef float complex current_sample, conj_previous_sample, tmp
+    cdef float complex current_sample, conj_previous_sample, current_nco
 
     cdef float alpha = 0.1
 
@@ -260,8 +263,7 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
 
         current_sample = real_float + imag_unit * imag_float
         conj_previous_sample = (samples[i-1, 0] + shift) / scale - imag_unit * ((samples[i-1, 1] + shift) / scale)
-        tmp = current_sample * conj_previous_sample
-        f_curr = atan2(tmp.imag, tmp.real)
+        f_curr = arg(current_sample * conj_previous_sample)
 
         if is_first_freq:
             f_prev = f_curr
@@ -271,18 +273,13 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
         if (1-alpha) * abs(f_avg) < abs(f_curr) < (1+alpha) * abs(f_avg):
             f_avg += f_curr / 2 - f_prev / 2
             f_prev = f_curr
-            arg += f_curr
+            current_arg += f_curr
         else:
-            arg += f_avg
+            current_arg += f_avg
 
-        # Reference oscillator cos(arg) + j * sin(arg)
-        ref_real = cosf(arg)
-        ref_imag = sinf(arg)
-        scalar_prod = real_float * ref_real + imag_float * ref_imag
-        vector_prod = real_float * ref_imag - imag_float * ref_real
-
-        # https://math.stackexchange.com/questions/2041099/angle-between-vectors-given-cross-and-dot-product
-        phi = atan2(scalar_prod, vector_prod)
+        # Reference oscillator cos(current_arg) + j * sin(current_arg)
+        current_nco = cosf(current_arg) + imag_unit * sinf(current_arg)
+        phi = arg(current_sample * conj(current_nco))
 
         if qam:
             result[i] = phi * magnitude
@@ -294,7 +291,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
         return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
-    cdef float arg = 0
+    cdef float current_arg = 0
     cdef float noise_sqrd = 0
     cdef float complex_phase = 0
     cdef float prev_phase = 0

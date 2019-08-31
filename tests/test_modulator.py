@@ -39,8 +39,8 @@ class TestModulator(unittest.TestCase):
                 modulator.param_for_zero = 1000
                 modulator.param_for_one = 2500
             elif modulation == "PSK":
-                modulator.param_for_zero = 0
-                modulator.param_for_one = 180
+                modulator.param_for_zero = -90
+                modulator.param_for_one = 90
 
             modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 

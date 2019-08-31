@@ -224,8 +224,7 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
 
     cdef float scale, shift, real_float, imag_float, ref_real, ref_imag
 
-    cdef float phi = 0, current_arg = 0, f_avg = 0, f_curr = 0, f_prev = 0
-    cdef bool is_first_freq = True
+    cdef float phi = 0, current_arg = 0, f_curr = 0, f_prev = 0
 
     cdef float complex current_sample, conj_previous_sample, current_nco
 
@@ -254,7 +253,7 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
         imag = samples[i, 1]
         
         magnitude = real * real + imag * imag
-        if magnitude <= noise_sqrd:  # |c| <= mag_treshold
+        if magnitude <= noise_sqrd:
             result[i] = NOISE_FSK_PSK
             continue
 
@@ -265,17 +264,11 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
         conj_previous_sample = (samples[i-1, 0] + shift) / scale - imag_unit * ((samples[i-1, 1] + shift) / scale)
         f_curr = arg(current_sample * conj_previous_sample)
 
-        if is_first_freq:
-            f_prev = f_curr
-            f_avg = f_curr
-            is_first_freq = False
-
-        if (1-alpha) * abs(f_avg) < abs(f_curr) < (1+alpha) * abs(f_avg):
-            f_avg += f_curr / 2 - f_prev / 2
+        if abs(f_curr) < M_PI / 4:  # TODO: For PSK with order > 4 this needs to be adapted
             f_prev = f_curr
             current_arg += f_curr
         else:
-            current_arg += f_avg
+            current_arg += f_prev
 
         # Reference oscillator cos(current_arg) + j * sin(current_arg)
         current_nco = cosf(current_arg) + imag_unit * sinf(current_arg)

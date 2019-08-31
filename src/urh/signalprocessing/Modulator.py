@@ -244,11 +244,8 @@ class Modulator(object):
             for i in range(self.modulation_order):
                 parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
         elif self.is_phase_based:
-            if self.modulation_order == 2:
-                parameters = [0, 180]
-            else:
-                step = 360 / self.modulation_order
-                parameters = np.arange(step / 2, 360, step)
+            step = 360 / self.modulation_order
+            parameters = np.arange(step / 2, 360, step) - 180
         else:
             return None
 

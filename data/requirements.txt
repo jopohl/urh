@@ -1,8 +1,8 @@
 numpy>=1.9; sys_platform != 'win32'
 numpy>=1.9,!=1.16.0; sys_platform == 'win32'
-pyqt5!=5.12.3; sys_platform != 'win32' and sys_platform != 'linux'
+pyqt5!=5.12.3,!=5.13.1; sys_platform != 'win32' and sys_platform != 'linux'
 pyqt5!=5.11.1,!=5.11.2,!=5.11.3,!=5.12.3,!=5.13.0; sys_platform == 'win32'
-pyqt5!=5.12,!=5.12.1,!=5.12.2,!=5.12.3,!=5.13.0; sys_platform == 'linux'
+pyqt5!=5.12,!=5.12.1,!=5.12.2,!=5.12.3,!=5.13.0,!=5.13.1; sys_platform == 'linux'
 psutil
 pyzmq
 cython

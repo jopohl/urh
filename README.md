@@ -140,11 +140,11 @@ And start the application by typing ``` urh ``` in a terminal.
 * [Hacking burger pagers](https://www.rtl-sdr.com/using-a-hackrf-to-reverse-engineer-and-control-restaurant-pagers/)
 * [Reverse engineer and clone a remote control](https://www.rtl-sdr.com/video-tutorial-using-universal-radio-hacker-an-rtl-sdr-and-a-microcontroller-to-clone-433-mhz-remotes/)
 * [Reverse engineering weather station RF signals](https://www.rtl-sdr.com/tag/universal-radio-hacker/)
-* [Reverse Engineering Wireless Blinds](https://www.rtl-sdr.com/reverse-engineering-wireless-blinds-with-an-rtl-sdr-and-controlling-them-with-amazon-alexa/)
+* [Reverse engineering wireless blinds](https://www.rtl-sdr.com/reverse-engineering-wireless-blinds-with-an-rtl-sdr-and-controlling-them-with-amazon-alexa/)
 * [Attacking Logitech wireless presenters (german article)](https://www.heise.de/security/meldung/Wireless-Presenter-von-Logitech-und-Inateck-anfaellig-fuer-Angriffe-ueber-Funk-4439795.html)
 * [Reverse engineering a 433MHz remote-controlled power socket for use with Arduino](http://www.ignorantofthings.com/2018/11/reverse-engineering-433mhz-remote.html)
 
-### General presentations and tutorials of URH
+### General presentations and tutorials on URH
 * [Hackaday article](https://hackaday.com/2017/02/23/universal-radio-hacker/)
 * [RTL-SDR.com article](https://www.rtl-sdr.com/reverse-engineering-signals-universal-radio-hacker-software/)
 * [Short tutorial on URH with LimeSDR mini](https://www.crowdsupply.com/lime-micro/limesdr-mini/updates/investigating-wireless-protocols-with-universal-radio-hacker)

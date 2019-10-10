@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -175,8 +176,9 @@ class Ui_SignalFrame(object):
         self.spinBoxCenterSpacing = QtWidgets.QDoubleSpinBox(SignalFrame)
         self.spinBoxCenterSpacing.setDecimals(4)
         self.spinBoxCenterSpacing.setMinimum(0.0001)
-        self.spinBoxCenterSpacing.setMaximum(1.0)
+        self.spinBoxCenterSpacing.setMaximum(5.0)
         self.spinBoxCenterSpacing.setSingleStep(0.0001)
+        self.spinBoxCenterSpacing.setProperty("value", 1.0)
         self.spinBoxCenterSpacing.setObjectName("spinBoxCenterSpacing")
         self.gridLayout_2.addWidget(self.spinBoxCenterSpacing, 4, 1, 1, 1)
         self.lineEditSignalName = QtWidgets.QLineEdit(SignalFrame)
@@ -636,8 +638,6 @@ class Ui_SignalFrame(object):
         self.lStrich.setText(_translate("SignalFrame", "/"))
         self.lSamplesTotal.setText(_translate("SignalFrame", "0"))
         self.lSamplesViewText.setText(_translate("SignalFrame", "Samples in view"))
-
-
 from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
 from urh.ui.views.TextEditProtocolView import TextEditProtocolView

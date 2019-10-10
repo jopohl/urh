@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -359,7 +360,7 @@ class Ui_GeneratorTab(object):
         self.lModTypeValue.setText(_translate("GeneratorTab", "TextLabel"))
         self.label_carrier_phase.setText(_translate("GeneratorTab", "Carrier Phase:"))
         self.lCarrierPhaseValue.setText(_translate("GeneratorTab", "TextLabel"))
-        self.lBitLength.setText(_translate("GeneratorTab", "Bit Length:"))
+        self.lBitLength.setText(_translate("GeneratorTab", "Symbol Length:"))
         self.lBitLenValue.setText(_translate("GeneratorTab", "TextLabel"))
         self.lEncoding.setText(_translate("GeneratorTab", "Encoding:"))
         self.lEncodingValue.setText(_translate("GeneratorTab", "-"))
@@ -392,8 +393,6 @@ class Ui_GeneratorTab(object):
         self.btnRfCatSend.setText(_translate("GeneratorTab", "Send via RfCat"))
         self.lEstimatedTime.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.</p></body></html>"))
         self.lEstimatedTime.setText(_translate("GeneratorTab", "Estimated Time: "))
-
-
 from urh.ui.ElidedLabel import ElidedLabel
 from urh.ui.GeneratorListWidget import GeneratorListWidget
 from urh.ui.views.GeneratorListView import GeneratorListView

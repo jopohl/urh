@@ -245,8 +245,9 @@ class Modulator(object):
                 parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
         elif self.is_phase_based:
             step = 360 / self.modulation_order
-            parameters = np.arange(step / 2, 360, step)
-            parameters = parameters[self.__get_gray_code_indices(self.modulation_order)]
+            parameters = np.arange(step / 2, 360, step) - 180
+            if self.modulation_type == "OQPSK":
+                parameters = parameters[(self.__get_gray_code_indices(self.modulation_order))]
         else:
             return None
 

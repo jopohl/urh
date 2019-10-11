@@ -53,14 +53,20 @@ class QtTestCase(unittest.TestCase):
         if hasattr(self, "dialog"):
             self.dialog.close()
 
-            sip.delete(self.dialog)
+            try:
+                sip.delete(self.dialog)
+            except TypeError:
+                pass
             self.dialog = None
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
 
-            sip.delete(self.form)
+            try:
+                sip.delete(self.form)
+            except TypeError:
+                pass
             self.form = None
 
         gc.collect()

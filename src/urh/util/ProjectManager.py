@@ -166,7 +166,11 @@ class ProjectManager(QObject):
                     value = float(dev_tag.text)
             except ValueError:
                 value = dev_tag.text
-            target_dict[dev_tag.tag] = value
+
+            if dev_tag.tag == "bit_len":
+                target_dict["samples_per_symbol"] = value   # legacy
+            else:
+                target_dict[dev_tag.tag] = value
 
     @staticmethod
     def __device_conf_dict_to_xml(key_name: str, device_conf: dict):
@@ -311,8 +315,9 @@ class ProjectManager(QObject):
 
         signal_tag.set("name", signal.name)
         signal_tag.set("filename", file_path)
-        signal_tag.set("bit_length", str(signal.bit_len))
-        signal_tag.set("qad_center", str(signal.qad_center))
+        signal_tag.set("samples_per_symbol", str(signal.samples_per_symbol))
+        signal_tag.set("center", str(signal.center))
+        signal_tag.set("center_spacing", str(signal.center_spacing))
         signal_tag.set("tolerance", str(signal.tolerance))
         signal_tag.set("noise_threshold", str(signal.noise_threshold))
         signal_tag.set("noise_minimum", str(signal.noise_min_plot))
@@ -321,6 +326,7 @@ class ProjectManager(QObject):
         signal_tag.set("sample_rate", str(signal.sample_rate))
         signal_tag.set("pause_threshold", str(signal.pause_threshold))
         signal_tag.set("message_length_divisor", str(signal.message_length_divisor))
+        signal_tag.set("bits_per_symbol", str(signal.bits_per_symbol))
 
         messages = ET.SubElement(signal_tag, "messages")
         for message in messages:
@@ -481,12 +487,18 @@ class ProjectManager(QObject):
         for sig_tag in root.iter("signal"):
             if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
-                signal.qad_center = float(sig_tag.get("qad_center", 0))
+                center = sig_tag.get("qad_center", None)  # legacy support
+                signal.center = float(sig_tag.get("center", 0)) if center is None else float(center)
+                signal.center_spacing = float(sig_tag.get("center_spacing", 0.1))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
+                signal.bits_per_symbol = int(sig_tag.get("bits_per_symbol", 1))
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
-                signal.bit_len = int(sig_tag.get("bit_length", 100))
+                signal.samples_per_symbol = int(sig_tag.get("bit_length", 0))   # Legacy for old project files
+                if signal.samples_per_symbol == 0:
+                    signal.samples_per_symbol = int(sig_tag.get("samples_per_symbol", 100))
+
                 try:
                     # Legacy support when modulation type was integer
                     signal.modulation_type = Signal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]

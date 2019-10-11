@@ -48,8 +48,8 @@ class TestMessageSegmentation(unittest.TestCase):
     def test_segmentation_ask_50(self):
         modulator = Modulator("ask50")
         modulator.modulation_type = "ASK"
-        modulator.param_for_zero = 50
-        modulator.param_for_one = 100
+        modulator.parameters[0] = 50
+        modulator.parameters[1] = 100
         modulator.samples_per_symbol = 100
 
         msg1 = modulator.modulate("1010101111", pause=10000)

@@ -1,6 +1,5 @@
 import math
 import time
-import traceback
 from multiprocessing import Process, Array
 
 import numpy as np
@@ -21,7 +20,6 @@ from urh.signalprocessing.Signal import Signal
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.actions.ChangeSignalParameter import ChangeSignalParameter
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
-from urh.ui.painting.LegendScene import LegendScene
 from urh.ui.painting.SignalSceneManager import SignalSceneManager
 from urh.ui.ui_signal_frame import Ui_SignalFrame
 from urh.util import FileOperator, util
@@ -136,6 +134,9 @@ class SignalFrame(QFrame):
             self.scene_manager.scene.setParent(self.ui.gvSignal)
             self.ui.gvSignal.setScene(self.scene_manager.scene)
 
+            self.ui.spinBoxCenterSpacing.setValue(self.signal.center_spacing)
+            self.ui.spinBoxBitsPerSymbol.setValue(self.signal.bits_per_symbol)
+
             self.jump_sync = True
             self.on_btn_show_hide_start_end_clicked()
 
@@ -152,6 +153,8 @@ class SignalFrame(QFrame):
             self.ui.lSignalTyp.setText("Protocol")
             self.set_empty_frame_visibilities()
             self.create_connects()
+
+        self.set_center_spacing_visibility()
 
     @property
     def spectrogram_is_active(self) -> bool:
@@ -175,13 +178,15 @@ class SignalFrame(QFrame):
         if self.signal is not None:
             self.ui.gvSignal.save_clicked.connect(self.save_signal)
 
-            self.signal.bit_len_changed.connect(self.ui.spinBoxInfoLen.setValue)
-            self.signal.qad_center_changed.connect(self.on_signal_qad_center_changed)
+            self.signal.samples_per_symbol_changed.connect(self.ui.spinBoxSamplesPerSymbol.setValue)
+            self.signal.center_changed.connect(self.on_signal_center_changed)
             self.signal.noise_threshold_changed.connect(self.on_noise_threshold_changed)
             self.signal.modulation_type_changed.connect(self.ui.cbModulationType.setCurrentText)
             self.signal.tolerance_changed.connect(self.ui.spinBoxTolerance.setValue)
             self.signal.protocol_needs_update.connect(self.refresh_protocol)
             self.signal.data_edited.connect(self.on_signal_data_edited)  # Crop/Delete Mute etc.
+            self.signal.bits_per_symbol_changed.connect(self.ui.spinBoxBitsPerSymbol.setValue)
+            self.signal.center_spacing_changed.connect(self.on_signal_center_spacing_changed)
 
             self.signal.sample_rate_changed.connect(self.on_signal_sample_rate_changed)
 
@@ -209,7 +214,7 @@ class SignalFrame(QFrame):
         self.ui.gvSignal.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.sel_area_start_end_changed.connect(self.update_selection_area)
         self.ui.gvSpectrogram.selection_height_changed.connect(self.update_number_selected_samples)
-        self.ui.gvSignal.sep_area_changed.connect(self.set_qad_center)
+        self.ui.gvSignal.sep_area_changed.connect(self.set_center)
 
         self.ui.sliderYScale.valueChanged.connect(self.on_slider_y_scale_value_changed)
         self.ui.spinBoxXZoom.valueChanged.connect(self.on_spinbox_x_zoom_value_changed)
@@ -236,27 +241,38 @@ class SignalFrame(QFrame):
         self.ui.spinBoxSelectionStart.valueChanged.connect(self.on_spinbox_selection_start_value_changed)
         self.ui.spinBoxSelectionEnd.valueChanged.connect(self.on_spinbox_selection_end_value_changed)
         self.ui.spinBoxCenterOffset.editingFinished.connect(self.on_spinbox_center_editing_finished)
+        self.ui.spinBoxCenterSpacing.valueChanged.connect(self.on_spinbox_spacing_value_changed)
+        self.ui.spinBoxCenterSpacing.editingFinished.connect(self.on_spinbox_spacing_editing_finished)
         self.ui.spinBoxTolerance.editingFinished.connect(self.on_spinbox_tolerance_editing_finished)
         self.ui.spinBoxNoiseTreshold.editingFinished.connect(self.on_spinbox_noise_threshold_editing_finished)
-        self.ui.spinBoxInfoLen.editingFinished.connect(self.on_spinbox_infolen_editing_finished)
+        self.ui.spinBoxSamplesPerSymbol.editingFinished.connect(self.on_spinbox_samples_per_symbol_editing_finished)
+        self.ui.spinBoxBitsPerSymbol.editingFinished.connect(self.on_spinbox_bits_per_symbol_editing_finished)
 
     def refresh_signal_information(self, block=True):
         self.ui.spinBoxTolerance.blockSignals(block)
         self.ui.spinBoxCenterOffset.blockSignals(block)
-        self.ui.spinBoxInfoLen.blockSignals(block)
+        self.ui.spinBoxSamplesPerSymbol.blockSignals(block)
         self.ui.spinBoxNoiseTreshold.blockSignals(block)
+        self.ui.spinBoxBitsPerSymbol.blockSignals(block)
+        self.ui.spinBoxCenterSpacing.blockSignals(block)
 
         self.ui.spinBoxTolerance.setValue(self.signal.tolerance)
-        self.ui.spinBoxCenterOffset.setValue(self.signal.qad_center)
-        self.ui.spinBoxInfoLen.setValue(self.signal.bit_len)
+        self.ui.spinBoxCenterOffset.setValue(self.signal.center)
+        self.ui.spinBoxSamplesPerSymbol.setValue(self.signal.samples_per_symbol)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
         self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
+        self.ui.spinBoxCenterSpacing.setValue(self.signal.center_spacing)
+        self.ui.spinBoxBitsPerSymbol.setValue(self.signal.bits_per_symbol)
 
         self.ui.spinBoxTolerance.blockSignals(False)
         self.ui.spinBoxCenterOffset.blockSignals(False)
-        self.ui.spinBoxInfoLen.blockSignals(False)
+        self.ui.spinBoxSamplesPerSymbol.blockSignals(False)
         self.ui.spinBoxNoiseTreshold.blockSignals(False)
+        self.ui.spinBoxCenterSpacing.blockSignals(False)
+        self.ui.spinBoxBitsPerSymbol.blockSignals(False)
+
+        self.set_center_spacing_visibility()
 
     def set_empty_frame_visibilities(self):
         for widget in dir(self.ui):
@@ -285,7 +301,7 @@ class SignalFrame(QFrame):
             if start < end:
                 max_window_size = 10 ** 5
                 step_size = int(math.ceil((end - start) / max_window_size))
-                power = np.mean(self.signal.iq_array.subarray(start,end,step_size).magnitudes_normalized)
+                power = np.mean(self.signal.iq_array.subarray(start, end, step_size).magnitudes_normalized)
                 if power > 0:
                     power_str = Formatter.big_value_with_suffix(10 * np.log10(power), 2)
 
@@ -334,6 +350,8 @@ class SignalFrame(QFrame):
             gv.scale(1, yscale / current_factor)
             x, w = gv.view_rect().x(), gv.view_rect().width()
             gv.centerOn(x + w / 2, gv.y_center)
+            if gv.scene_type == 1:
+                gv.scene().redraw_legend()
         except ZeroDivisionError:
             pass
 
@@ -415,7 +433,8 @@ class SignalFrame(QFrame):
 
     def save_signal_as(self):
         try:
-            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate, self.signal.wav_mode)
+            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate,
+                                          self.signal.wav_mode)
         except Exception as e:
             Errors.exception(e)
 
@@ -434,7 +453,8 @@ class SignalFrame(QFrame):
                 if filename.endswith(".wav"):
                     data = self.signal.qad.astype(np.float32)
                     data /= np.max(np.abs(data))
-                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate, num_channels=1)
+                FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate,
+                                       num_channels=1)
                 self.unsetCursor()
             except Exception as e:
                 QMessageBox.critical(self, self.tr("Error exporting demodulated data"), e.args[0])
@@ -447,7 +467,7 @@ class SignalFrame(QFrame):
         else:
             self.ui.gvSignal.redraw_view()
 
-        self.ui.gvSignal.y_sep = -self.signal.qad_center
+        self.ui.gvSignal.y_sep = -self.signal.center
 
     def restore_protocol_selection(self, sel_start, sel_end, start_message, end_message, old_protoview):
         if old_protoview == self.proto_view:
@@ -632,6 +652,12 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.unsetCursor()
 
+    @pyqtSlot(float)
+    def on_signal_center_spacing_changed(self, value: float):
+        self.ui.spinBoxCenterSpacing.setValue(value)
+        if self.ui.gvSignal.scene_type == 1:
+            self.ui.gvSignal.scene().redraw_legend()
+
     @pyqtSlot()
     def on_noise_threshold_changed(self):
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
@@ -765,7 +791,7 @@ class SignalFrame(QFrame):
         self.show_protocol(old_view=old_view)
 
     @pyqtSlot(float)
-    def set_qad_center(self, th):
+    def set_center(self, th):
         self.ui.spinBoxCenterOffset.setValue(th)
         self.ui.spinBoxCenterOffset.editingFinished.emit()
 
@@ -963,13 +989,13 @@ class SignalFrame(QFrame):
         self.on_slider_y_scale_value_changed()
 
     @pyqtSlot(float)
-    def on_signal_qad_center_changed(self, qad_center):
-        self.ui.gvSignal.y_sep = -qad_center
+    def on_signal_center_changed(self, center):
+        self.ui.gvSignal.y_sep = -center
 
         if self.ui.cbSignalView.currentIndex() > 0:
-            self.scene_manager.scene.draw_sep_area(-qad_center)
+            self.scene_manager.scene.draw_sep_area(-self.signal.center_thresholds)
         self.ui.spinBoxCenterOffset.blockSignals(False)
-        self.ui.spinBoxCenterOffset.setValue(qad_center)
+        self.ui.spinBoxCenterOffset.setValue(center)
 
     def on_spinbox_noise_threshold_editing_finished(self):
         if self.signal is not None and self.signal.noise_threshold_relative != self.ui.spinBoxNoiseTreshold.value():
@@ -1013,6 +1039,11 @@ class SignalFrame(QFrame):
         # Force update of GVS, when size changed e.g. when Project Tree is opened
         if not self.spectrogram_is_active:
             self.ui.gvSignal.zoom(new_width / old_width, zoom_to_mouse_cursor=False)
+
+    def set_center_spacing_visibility(self):
+        visible = self.ui.spinBoxBitsPerSymbol.value() > 1
+        self.ui.spinBoxCenterSpacing.setVisible(visible)
+        self.ui.lCenterSpacing.setVisible(visible)
 
     @pyqtSlot()
     def on_info_btn_clicked(self):
@@ -1083,23 +1114,58 @@ class SignalFrame(QFrame):
             self.ui.spinBoxTolerance.blockSignals(False)
 
     @pyqtSlot()
-    def on_spinbox_infolen_editing_finished(self):
-        if self.signal.bit_len != self.ui.spinBoxInfoLen.value():
-            self.ui.spinBoxInfoLen.blockSignals(True)
-            bitlen_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="bit_len",
-                                                  parameter_value=self.ui.spinBoxInfoLen.value())
-            self.undo_stack.push(bitlen_action)
-            self.ui.spinBoxInfoLen.blockSignals(False)
+    def on_spinbox_samples_per_symbol_editing_finished(self):
+        if self.signal.samples_per_symbol != self.ui.spinBoxSamplesPerSymbol.value():
+            self.ui.spinBoxSamplesPerSymbol.blockSignals(True)
+            action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                           parameter_name="samples_per_symbol",
+                                           parameter_value=self.ui.spinBoxSamplesPerSymbol.value())
+            self.undo_stack.push(action)
+            self.ui.spinBoxSamplesPerSymbol.blockSignals(False)
+
+    @pyqtSlot()
+    def on_spinbox_bits_per_symbol_editing_finished(self):
+        if self.signal.bits_per_symbol != self.ui.spinBoxBitsPerSymbol.value():
+            self.ui.spinBoxBitsPerSymbol.blockSignals(True)
+            bits_per_symbol_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                           parameter_name="bits_per_symbol",
+                                                           parameter_value=self.ui.spinBoxBitsPerSymbol.value())
+            self.undo_stack.push(bits_per_symbol_action)
+            self.ui.spinBoxBitsPerSymbol.blockSignals(False)
+
+            if self.ui.gvSignal.scene_type == 1:
+                self.ui.gvSignal.scene().draw_sep_area(-self.signal.center_thresholds)
+
+            self.set_center_spacing_visibility()
 
     @pyqtSlot()
     def on_spinbox_center_editing_finished(self):
-        if self.signal.qad_center != self.ui.spinBoxCenterOffset.value():
+        if self.signal.center != self.ui.spinBoxCenterOffset.value():
             self.ui.spinBoxCenterOffset.blockSignals(True)
             center_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
-                                                  parameter_name="qad_center",
+                                                  parameter_name="center",
                                                   parameter_value=self.ui.spinBoxCenterOffset.value())
             self.undo_stack.push(center_action)
+            self.ui.spinBoxCenterOffset.blockSignals(False)
+
+    @pyqtSlot()
+    def on_spinbox_spacing_value_changed(self):
+        if self.ui.gvSignal.scene_type == 1:
+            thresholds = self.signal.get_thresholds_for_center(self.signal.center, self.ui.spinBoxCenterSpacing.value())
+            self.ui.gvSignal.scene().draw_sep_area(-thresholds)
+
+    @pyqtSlot()
+    def on_spinbox_spacing_editing_finished(self):
+        if self.signal.center_spacing != self.ui.spinBoxCenterSpacing.value():
+            self.ui.spinBoxCenterSpacing.blockSignals(True)
+            center_spacing_action = ChangeSignalParameter(signal=self.signal, protocol=self.proto_analyzer,
+                                                          parameter_name="center_spacing",
+                                                          parameter_value=self.ui.spinBoxCenterSpacing.value())
+            self.undo_stack.push(center_spacing_action)
+            self.ui.spinBoxCenterSpacing.blockSignals(False)
+
+            if self.ui.gvSignal.scene_type == 1:
+                self.ui.gvSignal.scene().draw_sep_area(-self.signal.center_thresholds)
 
     @pyqtSlot()
     def refresh(self, draw_full_signal=False):
@@ -1146,7 +1212,8 @@ class SignalFrame(QFrame):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
-        p = Process(target=perform_filter, args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
+        p = Process(target=perform_filter,
+                    args=(filtered, self.signal.iq_array.as_complex64(), f_low, f_high, filter_bw))
         p.daemon = True
         p.start()
 

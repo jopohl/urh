@@ -73,11 +73,14 @@ class TestSimulatorDialog(QtTestCase):
     def test_set_sniff_parameters(self):
         sniff_settings_widget = self.dialog.sniff_settings_widget
         simulator = self.dialog.simulator
-        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_BitLen, 111)
-        self.assertEqual(simulator.sniffer.signal.bit_len, 111)
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol, 111)
+        self.assertEqual(simulator.sniffer.signal.samples_per_symbol, 111)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Center, 0.1337)
-        self.assertEqual(simulator.sniffer.signal.qad_center, 0.1337)
+        self.assertEqual(simulator.sniffer.signal.center, 0.1337)
+
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxCenterSpacing, 0.4)
+        self.assertEqual(simulator.sniffer.signal.center_spacing, 0.4)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_ErrorTolerance, 13)
         self.assertEqual(simulator.sniffer.signal.tolerance, 13)
@@ -87,6 +90,9 @@ class TestSimulatorDialog(QtTestCase):
 
         sniff_settings_widget.ui.combox_sniff_Modulation.setCurrentText("PSK")
         self.assertEqual(simulator.sniffer.signal.modulation_type, "PSK")
+
+        self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxBitsPerSymbol, 5)
+        self.assertEqual(simulator.sniffer.signal.bits_per_symbol, 5)
 
         decodings = [sniff_settings_widget.ui.comboBox_sniff_encoding.itemText(i) for i in
                      range(sniff_settings_widget.ui.comboBox_sniff_encoding.count())]

@@ -289,8 +289,8 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.sniff_settings_widget.ui.checkBoxAdaptiveNoise.click()
         self.assertTrue(sniff_dialog.sniffer.adaptive_noise)
         sniff_dialog.sniff_settings_widget.ui.btn_sniff_use_signal.click()
-        self.assertEqual(sniff_dialog.sniff_settings_widget.ui.spinbox_sniff_BitLen.value(),
-                         self.form.signal_tab_controller.signal_frames[0].signal.bit_len)
+        self.assertEqual(sniff_dialog.sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol.value(),
+                         self.form.signal_tab_controller.signal_frames[0].signal.samples_per_symbol)
 
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.setChecked(False)
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)

@@ -21,11 +21,11 @@ class Message(object):
 
     __slots__ = ["__plain_bits", "__bit_alignments", "pause", "modulator_index", "rssi", "participant", "message_type",
                  "absolute_time", "relative_time", "__decoder", "align_labels", "decoding_state", "timestamp",
-                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "bit_len", "bit_sample_pos",
-                 "alignment_offset"]
+                 "fuzz_created", "__decoded_bits", "__encoded_bits", "decoding_errors", "samples_per_symbol", "bit_sample_pos",
+                 "alignment_offset", "bits_per_symbol"]
 
     def __init__(self, plain_bits, pause: int, message_type: MessageType, rssi=0, modulator_index=0, decoder=None,
-                 fuzz_created=False, bit_sample_pos=None, bit_len=100, participant=None):
+                 fuzz_created=False, bit_sample_pos=None, samples_per_symbol=100, participant=None, bits_per_symbol=1):
         """
 
         :param pause: pause AFTER the message in samples
@@ -33,7 +33,7 @@ class Message(object):
         :type decoder: Encoding
         :type bit_alignment_positions: list of int
         :param bit_alignment_positions: Für Ausrichtung der Hex Darstellung (Leere Liste für Standardverhalten)
-        :param bit_len: Für Übernahme der Bitlänge in Modulator Dialog
+        :param samples_per_symbol: Für Übernahme der Bitlänge in Modulator Dialog
         :param fuzz_created: message was created through fuzzing
         :return:
         """
@@ -61,7 +61,8 @@ class Message(object):
         self.decoding_errors = 0
         self.decoding_state = Encoding.ErrorState.SUCCESS
 
-        self.bit_len = bit_len  # Für Übernahme in Modulator
+        self.samples_per_symbol = samples_per_symbol  # to take over in modulator
+        self.bits_per_symbol = bits_per_symbol # to take over in generator tab (default modulator settings)
 
         if bit_sample_pos is None:
             self.bit_sample_pos = array.array("L", [])

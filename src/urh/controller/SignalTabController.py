@@ -172,8 +172,8 @@ class SignalTabController(QWidget):
                     frame.signal.modulation_type = signal.modulation_type
                     proto_needs_update = True
 
-                if frame.signal.qad_center != signal.qad_center:
-                    frame.signal.qad_center = signal.qad_center
+                if frame.signal.center != signal.center:
+                    frame.signal.center = signal.center
                     proto_needs_update = True
 
                 if frame.signal.tolerance != signal.tolerance:
@@ -184,8 +184,8 @@ class SignalTabController(QWidget):
                     frame.signal.noise_threshold = signal.noise_threshold
                     proto_needs_update = True
 
-                if frame.signal.bit_len != signal.bit_len:
-                    frame.signal.bit_len = signal.bit_len
+                if frame.signal.samples_per_symbol != signal.samples_per_symbol:
+                    frame.signal.samples_per_symbol = signal.samples_per_symbol
                     proto_needs_update = True
 
                 if frame.signal.pause_threshold != signal.pause_threshold:

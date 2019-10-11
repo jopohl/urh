@@ -33,6 +33,7 @@ class TestSimulator(QtTestCase):
     def setUp(self):
         super().setUp()
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+        Modulator.FORCE_DTYPE = np.float32
 
         self.num_zeros_for_pause = 1000
 
@@ -85,6 +86,7 @@ class TestSimulator(QtTestCase):
         checksum_label = next(lbl for lbl in msg.message_type if lbl.is_checksum_label).label  # type: ChecksumLabel
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
+
         preamble_str = "10101010"
         sync_str = "1001"
         preamble = list(map(int, preamble_str))

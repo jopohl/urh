@@ -28,14 +28,17 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
     BUFFER_SIZE_MB = 100
 
-    def __init__(self, bit_len: int, center: float, noise: float, tolerance: int,
-                 modulation_type: str, device: str, backend_handler: BackendHandler, network_raw_mode=False):
+    def __init__(self, samples_per_symbol: int, center: float, center_spacing: float,
+                 noise: float, tolerance: int, modulation_type: str, bits_per_symbol: int,
+                 device: str, backend_handler: BackendHandler, network_raw_mode=False):
         signal = Signal("", "LiveSignal")
-        signal.bit_len = bit_len
-        signal.qad_center = center
+        signal.samples_per_symbol = samples_per_symbol
+        signal.center = center
+        signal.center_spacing = center_spacing
         signal.noise_threshold = noise
         signal.tolerance = tolerance
         signal.silent_set_modulation_type(modulation_type)
+        signal.bits_per_symbol = bits_per_symbol
         ProtocolAnalyzer.__init__(self, signal)
         QObject.__init__(self, None)
 
@@ -186,7 +189,7 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
                 return
         else:
             self.pause_length += len(data)
-            if self.pause_length < 10 * self.signal.bit_len:
+            if self.pause_length < 10 * self.signal.samples_per_symbol:
                 self.__add_to_buffer(data)
                 if not self.__buffer_is_full():
                     return
@@ -199,19 +202,19 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
         self.__clear_buffer()
         self.signal._qad = None
 
-        bit_len = self.signal.bit_len
+        samples_per_symbol = self.signal.samples_per_symbol
         if self.automatic_center:
-            self.signal.qad_center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*self.signal.bit_len)
+            self.signal.center = AutoInterpretation.detect_center(self.signal.qad, max_size=150*samples_per_symbol)
 
-        ppseq = grab_pulse_lens(self.signal.qad, self.signal.qad_center,
-                                self.signal.tolerance, self.signal.modulation_type, self.signal.bit_len,
-                                self.signal.bits_per_symbol)
+        ppseq = grab_pulse_lens(self.signal.qad, self.signal.center,
+                                self.signal.tolerance, self.signal.modulation_type, self.signal.samples_per_symbol,
+                                self.signal.bits_per_symbol, self.signal.center_spacing)
 
-        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, bit_len,
+        bit_data, pauses, bit_sample_pos = self._ppseq_to_bits(ppseq, samples_per_symbol,
                                                                self.signal.bits_per_symbol, write_bit_sample_pos=False)
 
         for bits, pause in zip(bit_data, pauses):
-            message = Message(bits, pause, bit_len=bit_len, message_type=self.default_message_type,
+            message = Message(bits, pause, samples_per_symbol=samples_per_symbol, message_type=self.default_message_type,
                               decoder=self.decoder)
             self.messages.append(message)
             self.message_sniffed.emit(len(self.messages) - 1)

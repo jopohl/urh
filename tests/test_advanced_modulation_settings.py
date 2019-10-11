@@ -25,8 +25,8 @@ class TestAdvancedModulationSettings(QtTestCase):
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         signal_frame.ui.spinBoxCenterOffset.setValue(0.01807)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
-        signal_frame.ui.spinBoxInfoLen.setValue(2900)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(2900)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         signal_frame.ui.spinBoxTolerance.setValue(2)
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 
@@ -43,7 +43,7 @@ class TestAdvancedModulationSettings(QtTestCase):
         self.assertEqual(signal_frame.signal.message_length_divisor, 4)
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits + "000", msg=str(i))
-            self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.bit_len, msg=str(i))
+            self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol, msg=str(i))
 
     def __make_setting(self, signal_frame, pause_threshold=None, message_divisor_length=None):
         def accept_dialog():

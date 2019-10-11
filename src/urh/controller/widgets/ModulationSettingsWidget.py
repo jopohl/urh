@@ -47,15 +47,13 @@ class ModulationSettingsWidget(QWidget):
     def show_selected_modulation_infos(self):
         modulator = self.selected_modulator
         self.ui.labelCarrierFrequencyValue.setText(modulator.carrier_frequency_str)
-        self.ui.labelBitLengthValue.setText(modulator.bit_len_str)
+        self.ui.labelSamplesPerSymbolValue.setText(modulator.samples_per_symbol_str)
         self.ui.labelSampleRateValue.setText(modulator.sample_rate_str)
         self.ui.labelModulationTypeValue.setText(modulator.modulation_type_verbose)
-        prefixes = {"ASK": "Amplitude", "PSK": "Phase", "FSK": "Frequency", "GFSK": "Frequency"}
-        self.ui.labelParamZero.setText(prefixes[modulator.modulation_type] + " for 0:")
-        self.ui.labelParamOne.setText(prefixes[modulator.modulation_type] + " for 1:")
 
-        self.ui.labelParamZeroValue.setText(modulator.param_for_zero_str)
-        self.ui.labelParamOneValue.setText(modulator.param_for_one_str)
+        self.ui.labelParameters.setText(modulator.parameter_type_str)
+        self.ui.labelParameterValues.setText(modulator.parameters_string)
+        self.ui.labelBitsPerSymbol.setText(str(modulator.bits_per_symbol))
 
     @pyqtSlot()
     def on_cb_modulation_type_current_index_changed(self):
@@ -67,7 +65,7 @@ class ModulationSettingsWidget(QWidget):
         dialog.ui.comboBoxCustomModulations.setCurrentIndex(self.ui.comboBoxModulationProfiles.currentIndex())
         dialog.finished.connect(self.refresh_modulators_from_dialog)
         dialog.show()
-        dialog.initialize("101010")
+        dialog.initialize("10101011010010")
 
     @pyqtSlot()
     def refresh_modulators_from_dialog(self):

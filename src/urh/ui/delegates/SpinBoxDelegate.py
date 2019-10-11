@@ -3,15 +3,20 @@ from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, 
 
 
 class SpinBoxDelegate(QStyledItemDelegate):
-    def __init__(self, minimum, maximum, parent=None):
+    def __init__(self, minimum, maximum, parent=None, suffix=""):
         super().__init__(parent)
         self.minimum = minimum
         self.maximum = maximum
+        self.suffix = suffix
+
+    def _get_editor(self, parent) -> QSpinBox:
+        return QSpinBox(parent)
 
     def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
-        editor = QSpinBox(parent)
+        editor = self._get_editor(parent)
         editor.setMinimum(self.minimum)
         editor.setMaximum(self.maximum)
+        editor.setSuffix(self.suffix)
         editor.valueChanged.connect(self.valueChanged)
         return editor
 

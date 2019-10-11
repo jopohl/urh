@@ -56,8 +56,8 @@ class TestUtil(QtTestCase):
     def test_write_pcap(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
         signal.modulation_type = "ASK"
-        signal.bit_len = 295
-        signal.qad_center = -0.1667
+        signal.samples_per_symbol = 295
+        signal.center = -0.1667
         self.assertEqual(signal.num_samples, 13710)
 
         proto_analyzer = ProtocolAnalyzer(signal)
@@ -98,10 +98,10 @@ class TestUtil(QtTestCase):
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import plutosdr
 
-        if sys.platform != "darwin":
-            # noinspection PyUnresolvedReferences
-            from urh.dev.native.lib import usrp
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import usrp
 
+        if sys.platform != "darwin":
             # noinspection PyUnresolvedReferences
             from urh.dev.native.lib import sdrplay
         self.assertTrue(True)

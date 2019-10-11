@@ -28,13 +28,13 @@ class TestFilter(QtTestCase):
 
     def test_filter_full_signal(self):
         expected = "5555599595999995cccaccd"
-        bit_len = 1000
+        samples_per_symbol = 1000
         center = 0
 
         self.sig_frame.ui.btnFilter.click()
         self.sig_frame.ui.cbModulationType.setCurrentText("FSK")
-        self.sig_frame.ui.spinBoxInfoLen.setValue(bit_len)
-        self.sig_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        self.sig_frame.ui.spinBoxSamplesPerSymbol.setValue(samples_per_symbol)
+        self.sig_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         self.sig_frame.ui.spinBoxCenterOffset.setValue(center)
         self.sig_frame.ui.spinBoxCenterOffset.editingFinished.emit()
         self.sig_frame.ui.spinBoxTolerance.setValue(5)

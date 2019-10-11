@@ -61,7 +61,7 @@ class ZoomableGraphicView(SelectableGraphicView):
                 # Normal scene
                 return 0
             else:
-                return -self.signal.qad_center
+                return -self.signal.center
         except Exception as e:
             logger.error("Could not access y_center property: {0}. Falling back to 0".format(e))
             return 0
@@ -181,6 +181,8 @@ class ZoomableGraphicView(SelectableGraphicView):
 
             if self.scene_type == 1:
                 self.scene().redraw_legend()
+            else:
+                self.scene().hide_legend()
 
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
         # Overwritten in Epic Graphic View

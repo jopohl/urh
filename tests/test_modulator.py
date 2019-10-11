@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 from PyQt5.QtCore import QDir
 
-from urh.cythonext.signal_functions import modulate_c
+from urh.cythonext.signal_functions import modulate_c, get_oqpsk_bits
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
@@ -106,6 +106,28 @@ class TestModulator(unittest.TestCase):
         result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
         # result.tofile("/tmp/test_psk.complex")
+
+    def test_get_oqpsk_bits(self):
+        """
+        Should delay the Q stream (odd bits) by one bit. So the sequence
+        11 01 00 10 01 should become:
+        IQ IQ IQ IQ IQ
+
+        1X 01 01 10 00 X1
+
+        whereby the X will set to amplitude zero during modulation so it is not important which bit value gets written
+
+        :return:
+        """
+        bits = array.array("B", [1, 1, 0, 1, 0, 0, 1, 0, 0, 1])
+
+        oqpsk_bits = get_oqpsk_bits(bits)
+
+        self.assertEqual(len(oqpsk_bits), len(bits) + 2)
+
+        self.assertEqual(oqpsk_bits[0], 1)
+        self.assertEqual(oqpsk_bits[-1], 1)
+        self.assertEqual(array.array("B", [0, 1, 0, 1, 1, 0,  0, 0]), array.array("B", oqpsk_bits[2:-2]))
 
     def test_c_modulation_method_oqpsk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])

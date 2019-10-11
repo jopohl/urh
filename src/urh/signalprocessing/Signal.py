@@ -57,7 +57,7 @@ class Signal(QObject):
             modulation = "FSK"
         self.__modulation_type = modulation
         self.__bits_per_symbol = 1
-        self.__center_spacing = 0.1  # required for higher order modulations
+        self.__center_spacing = 1  # required for higher order modulations
 
         self.__parameter_cache = {mod: {"center": None, "samples_per_symbol": None} for mod in self.MODULATION_TYPES}
 

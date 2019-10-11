@@ -85,8 +85,6 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
     if is_oqpsk:
         assert bits_per_symbol == 2
         bits = get_oqpsk_bits(bits)
-        samples_per_symbol = samples_per_symbol // 2
-        total_symbols *= 2
 
     cdef np.ndarray[np.float32_t, ndim=2] gauss_filtered_freqs_phases
     if is_gfsk:
@@ -147,17 +145,20 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
 
     return result
 
-cdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
+cpdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
     cdef int64_t i, num_bits = len(original_bits)
-    result = np.empty(2*num_bits+2, dtype=np.uint8)
+    if num_bits == 0:
+        return np.zeros(0, dtype=np.uint8)
 
-    for i in range(0, num_bits-1, 2):
-        result[2*i] = original_bits[i]
-        result[2*i+2] = original_bits[i]
-        result[2*i+3] = original_bits[i+1]
-        result[2*i+5] = original_bits[i+1]
+    result = np.zeros(num_bits+2, dtype=np.uint8)
+    result[0] = original_bits[0]
+    result[num_bits+2-1] = original_bits[num_bits-1]
 
-    return result[2:len(result)-2]
+    for i in range(2, num_bits-2, 2):
+        result[i] = original_bits[i]
+        result[i+1] = original_bits[i-1]
+
+    return result
 
 
 cdef np.ndarray[np.float32_t, ndim=2] get_gauss_filtered_freqs_phases(uint8_t[:] bits,  float[:] parameters,

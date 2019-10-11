@@ -86,6 +86,7 @@ class TestDemodulations(unittest.TestCase):
         signal.iq_array = IQArray(result)
         signal.bits_per_symbol = 2
         signal.center = 0
+        signal.center_spacing = 0.1
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()

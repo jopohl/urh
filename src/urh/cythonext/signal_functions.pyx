@@ -140,12 +140,19 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
             result_view[i, 0] = <iq>(a * cosf(current_arg))
             result_view[i, 1] = <iq>(a * sinf(current_arg))
 
+    if is_oqpsk:
+        for i in range(0, samples_per_symbol):
+            result_view[i, 1] = 0
+        for i in range(total_samples-pause-samples_per_symbol, total_samples-pause):
+            result_view[i, 0] = 0
+
     if phase_corrections != NULL:
         free(phase_corrections)
 
     return result
 
 cpdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
+    # TODO: This method does not work correctly. Fix it when we have a test signal
     cdef int64_t i, num_bits = len(original_bits)
     if num_bits == 0:
         return np.zeros(0, dtype=np.uint8)

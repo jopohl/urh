@@ -117,6 +117,8 @@ class TestModulator(unittest.TestCase):
 
         whereby the X will set to amplitude zero during modulation so it is not important which bit value gets written
 
+        #TODO: This does not quite work yet. Fix it, when we have a test signal available.
+
         :return:
         """
         bits = array.array("B", [1, 1, 0, 1, 0, 0, 1, 0, 0, 1])

@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -41,7 +42,7 @@ class Ui_DialogModulation(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 965, 989))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 965, 984))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -104,7 +105,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollArea_5.setObjectName("scrollArea_5")
         self.scrollAreaWidgetContents_5 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 323, 364))
+        self.scrollAreaWidgetContents_5.setGeometry(QtCore.QRect(0, 0, 400, 330))
         self.scrollAreaWidgetContents_5.setObjectName("scrollAreaWidgetContents_5")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_5)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -224,7 +225,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 323, 133))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 380, 141))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_3)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -282,7 +283,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 323, 132))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 380, 143))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
@@ -396,7 +397,7 @@ class Ui_DialogModulation(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 323, 202))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 400, 227))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_4)
         self.gridLayout_3.setObjectName("gridLayout_3")
@@ -443,7 +444,6 @@ class Ui_DialogModulation(object):
         self.comboBoxModulationType.setSizePolicy(sizePolicy)
         self.comboBoxModulationType.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.comboBoxModulationType.setObjectName("comboBoxModulationType")
-        self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.addItem("")
@@ -568,15 +568,12 @@ class Ui_DialogModulation(object):
         self.comboBoxModulationType.setItemText(1, _translate("DialogModulation", "Frequency Shift Keying (FSK)"))
         self.comboBoxModulationType.setItemText(2, _translate("DialogModulation", "Gaussian Frequency Shift Keying (GFSK)"))
         self.comboBoxModulationType.setItemText(3, _translate("DialogModulation", "Phase Shift Keying (PSK)"))
-        self.comboBoxModulationType.setItemText(4, _translate("DialogModulation", "Offset Quadrature Phase Shift Keying (OQPSK)"))
         self.labelParameters.setText(_translate("DialogModulation", "Parameters:"))
         self.lSamplesInViewOrigSignalText.setText(_translate("DialogModulation", "Samples in View:"))
         self.lSamplesInViewOrigSignal.setToolTip(_translate("DialogModulation", "<html><head/><body><p>Shown Samples in View:</p><p><span style=\" font-weight:600; color:#ff0000;\">Red</span> - if samples in view differ from original signal</p><p><span style=\" font-weight:600;\">Normal</span> - if samples in view are equal to the original signal</p></body></html>"))
         self.lSamplesInViewOrigSignal.setText(_translate("DialogModulation", "0"))
         self.label_10.setText(_translate("DialogModulation", "Samples selected:"))
         self.lOriginalSignalSamplesSelected.setText(_translate("DialogModulation", "0"))
-
-
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ModulatorTreeView import ModulatorTreeView
 from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView

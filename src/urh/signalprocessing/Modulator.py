@@ -245,11 +245,19 @@ class Modulator(object):
                 parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
         elif self.is_phase_based:
             step = 360 / self.modulation_order
-            parameters = np.arange(step / 2, 360, step) - 180
+            parameters = np.arange(step / 2, 360, step)
+            parameters = parameters[self.__get_gray_code_indices(self.modulation_order)]
         else:
             return None
 
         return array.array("f", parameters)
+
+    @staticmethod
+    def __get_gray_code_indices(n: int):
+        result = []
+        for i in range(0, n):
+            result.append(i ^ (i >> 1))
+        return result
 
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")

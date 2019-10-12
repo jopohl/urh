@@ -147,7 +147,7 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
         # Delay Q by half symbol length (=bit length) https://dsp.stackexchange.com/a/44829
         for i in range(0, total_samples-pause):
             oqpsk_result_view[i, 0] = result_view[i, 0]
-            oqpsk_result_view[i+samples_per_symbol//2, 1] = oqpsk_result_view[i, 1]
+            oqpsk_result_view[i+samples_per_symbol//2, 1] = result_view[i, 1]
 
     if phase_corrections != NULL:
         free(phase_corrections)

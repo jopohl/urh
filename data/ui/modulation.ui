@@ -75,8 +75,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>965</width>
-        <height>984</height>
+        <width>959</width>
+        <height>981</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,1,0,1,0,1,0,0,1,0,0" columnstretch="0,0,0,0">
@@ -240,8 +240,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
-            <height>330</height>
+            <width>297</width>
+            <height>324</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
@@ -485,8 +485,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
-            <height>141</height>
+            <width>297</width>
+            <height>142</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -594,8 +594,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
-            <height>143</height>
+            <width>297</width>
+            <height>142</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -831,8 +831,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
-            <height>227</height>
+            <width>284</width>
+            <height>183</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -961,6 +961,11 @@
              <item>
               <property name="text">
                <string>Phase Shift Keying (PSK)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Offset Quadrature Phase Shift Keying (OQPSK)</string>
               </property>
              </item>
             </widget>

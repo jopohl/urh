@@ -81,11 +81,6 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
 
     assert is_fsk or is_ask or is_psk or is_gfsk or is_oqpsk
 
-    cdef uint8_t[:] oqpsk_bits
-    if is_oqpsk:
-        assert bits_per_symbol == 2
-        bits = get_oqpsk_bits(bits)
-
     cdef np.ndarray[np.float32_t, ndim=2] gauss_filtered_freqs_phases
     if is_gfsk:
         gauss_filtered_freqs_phases = get_gauss_filtered_freqs_phases(bits, parameters, total_symbols,
@@ -140,33 +135,24 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
             result_view[i, 0] = <iq>(a * cosf(current_arg))
             result_view[i, 1] = <iq>(a * sinf(current_arg))
 
+
     if is_oqpsk:
-        for i in range(0, samples_per_symbol):
-            result_view[i, 1] = 0
-        for i in range(total_samples-pause-samples_per_symbol, total_samples-pause):
-            result_view[i, 0] = 0
+        oqpsk_result = np.zeros((total_samples+samples_per_symbol//2, 2), dtype=get_numpy_dtype(iq_type))
+    else:
+        oqpsk_result = np.zeros((0, 2), dtype=get_numpy_dtype(iq_type))
+
+    cdef iq[:, ::1] oqpsk_result_view = oqpsk_result
+
+    if is_oqpsk:
+        # Delay Q by half symbol length (=bit length) https://dsp.stackexchange.com/a/44829
+        for i in range(0, total_samples-pause):
+            oqpsk_result_view[i, 0] = result_view[i, 0]
+            oqpsk_result_view[i+samples_per_symbol//2, 1] = oqpsk_result_view[i, 1]
 
     if phase_corrections != NULL:
         free(phase_corrections)
 
     return result
-
-cpdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
-    # TODO: This method does not work correctly. Fix it when we have a test signal
-    cdef int64_t i, num_bits = len(original_bits)
-    if num_bits == 0:
-        return np.zeros(0, dtype=np.uint8)
-
-    result = np.zeros(num_bits+2, dtype=np.uint8)
-    result[0] = original_bits[0]
-    result[num_bits+2-1] = original_bits[num_bits-1]
-
-    for i in range(2, num_bits-2, 2):
-        result[i] = original_bits[i]
-        result[i+1] = original_bits[i-1]
-
-    return result
-
 
 cdef np.ndarray[np.float32_t, ndim=2] get_gauss_filtered_freqs_phases(uint8_t[:] bits,  float[:] parameters,
                                                                      uint32_t num_symbols, uint32_t samples_per_symbol,

@@ -107,30 +107,6 @@ class TestModulator(unittest.TestCase):
 
         # result.tofile("/tmp/test_psk.complex")
 
-    def test_get_oqpsk_bits(self):
-        """
-        Should delay the Q stream (odd bits) by one bit. So the sequence
-        11 01 00 10 01 should become:
-        IQ IQ IQ IQ IQ
-
-        1X 01 01 10 00 X1
-
-        whereby the X will set to amplitude zero during modulation so it is not important which bit value gets written
-
-        #TODO: This does not quite work yet. Fix it, when we have a test signal available.
-
-        :return:
-        """
-        bits = array.array("B", [1, 1, 0, 1, 0, 0, 1, 0, 0, 1])
-
-        oqpsk_bits = get_oqpsk_bits(bits)
-
-        self.assertEqual(len(oqpsk_bits), len(bits) + 2)
-
-        self.assertEqual(oqpsk_bits[0], 1)
-        self.assertEqual(oqpsk_bits[-1], 1)
-        self.assertEqual(array.array("B", [0, 1, 0, 1, 1, 0,  0, 0]), array.array("B", oqpsk_bits[2:-2]))
-
     def test_c_modulation_method_oqpsk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])
         parameters = array.array("f", [np.pi/4, 3*np.pi/4, 5*np.pi/4, 7*np.pi/4])

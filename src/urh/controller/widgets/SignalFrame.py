@@ -312,7 +312,8 @@ class SignalFrame(QFrame):
             self.ui.labelRSSI.setText("")
 
     def change_signal_name(self):
-        self.signal.name = self.ui.lineEditSignalName.text()
+        if self.signal is not None:
+            self.signal.name = self.ui.lineEditSignalName.text()
 
     def __set_spectrogram_adjust_widgets_visibility(self):
         self.ui.labelFFTWindowSize.setVisible(self.ui.cbSignalView.currentIndex() == 2)

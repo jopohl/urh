@@ -89,7 +89,7 @@ sudo pip3 install urh
 ```
 
 ### Docker Image
-If you use docker you can also run the official URH docker image available [here](https://hub.docker.com/r/jopohl/urh/).
+The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/).
 
 ## MacOS
 ### Using DMG

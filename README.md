@@ -142,6 +142,7 @@ And start the application by typing ``` urh ``` in a terminal.
 * [Reverse engineering weather station RF signals](https://www.rtl-sdr.com/tag/universal-radio-hacker/)
 * [Reverse engineering wireless blinds](https://www.rtl-sdr.com/reverse-engineering-wireless-blinds-with-an-rtl-sdr-and-controlling-them-with-amazon-alexa/)
 * [Attacking Logitech wireless presenters (german article)](https://www.heise.de/security/meldung/Wireless-Presenter-von-Logitech-und-Inateck-anfaellig-fuer-Angriffe-ueber-Funk-4439795.html)
+* [Attacking Wireless Keyboards](https://threatpost.com/fujitsu-wireless-keyboard-unpatched-flaws/149477/)
 * [Reverse engineering a 433MHz remote-controlled power socket for use with Arduino](http://www.ignorantofthings.com/2018/11/reverse-engineering-433mhz-remote.html)
 
 ### General presentations and tutorials on URH

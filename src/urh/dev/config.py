@@ -30,8 +30,8 @@ DEVICE_CONFIG["PlutoSDR"] = {
 
 # http://www.nuand.com/bladeRF-brief.pdf
 DEVICE_CONFIG["BladeRF"] = {
-    "center_freq": dev_range(start=300 * M, stop=3.8 * G, step=1),
-    "sample_rate": dev_range(start=2.5 * M, stop=40 * M, step=1),
+    "center_freq": dev_range(start=47 * M, stop=6 * G, step=1),
+    "sample_rate": dev_range(start=2.5 * M, stop=61.44 * M, step=1),
     "bandwidth": dev_range(start=1.5 * M, stop=28 * M, step=1),
     "rx_channel": ["RX1", "RX2"],
     "tx_channel": ["TX1", "TX2"],

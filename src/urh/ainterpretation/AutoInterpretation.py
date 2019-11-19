@@ -177,9 +177,11 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
 
 
 def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> str:
+    max_messages = 100
+
     modulations_for_messages = []
     complex = signal.as_complex64()
-    for start, end in message_indices:
+    for start, end in message_indices[0:max_messages]:
         mod = detect_modulation(complex[start:end])
         if mod is not None:
             modulations_for_messages.append(mod)

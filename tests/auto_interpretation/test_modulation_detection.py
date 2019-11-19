@@ -33,8 +33,8 @@ class TestModulationDetection(unittest.TestCase):
     def test_psk_detection(self):
         modulator = Modulator("")
         modulator.modulation_type = "PSK"
-        modulator.parameters[0] = 0
-        modulator.parameters[1] = 180
+        modulator.parameters[0] = -90
+        modulator.parameters[1] = 90
 
         data = modulator.modulate("10101010111000")
         mod = AutoInterpretation.detect_modulation(data)

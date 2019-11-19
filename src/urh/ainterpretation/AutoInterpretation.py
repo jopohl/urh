@@ -48,6 +48,16 @@ def get_most_frequent_value(values: list):
     return result
 
 
+def most_common(values: list):
+    """
+    Return the most common value in a list. In case of ties, return the value that appears first in list
+    :param values:
+    :return:
+    """
+    counter = Counter(values)
+    return max(values, key=counter.get)
+
+
 def detect_noise_level(magnitudes):
     if len(magnitudes) <= 3:
         return 0
@@ -189,7 +199,7 @@ def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> st
     if len(modulations_for_messages) == 0:
         return None
 
-    return max(set(modulations_for_messages), key=modulations_for_messages.count)
+    return most_common(modulations_for_messages)
 
 
 def detect_center(rectangular_signal: np.ndarray, max_size=None):

@@ -361,7 +361,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float
     return result
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
-                                      str modulation_type, uint16_t samples_per_symbol,
+                                      str modulation_type, uint32_t samples_per_symbol,
                                       uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
     Get the pulse lengths after quadrature demodulation

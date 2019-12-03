@@ -20,7 +20,7 @@ class ModulationParametersDialog(QDialog):
         self.num_bits = int(math.log2(len(parameters)))
 
         if "FSK" in modulation_type:
-            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, KillerSpinBoxDelegate(0, 1e12, self))
+            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, KillerSpinBoxDelegate(-1e12, 1e12, self))
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Frequency in Hz")
         elif "ASK" in modulation_type:
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Amplitude")

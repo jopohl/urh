@@ -69,7 +69,7 @@ stop:1 rgba(255, 255, 255, 0));
             </font>
            </property>
            <property name="text">
-            <string>View Type:</string>
+            <string>Start/End values refer to view type:</string>
            </property>
           </widget>
          </item>

@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogLabels(object):
     def setupUi(self, DialogLabels):
@@ -72,12 +74,11 @@ class Ui_DialogLabels(object):
         _translate = QtCore.QCoreApplication.translate
         DialogLabels.setWindowTitle(_translate("DialogLabels", "Manage Protocol Labels"))
         self.groupBoxSettings.setTitle(_translate("DialogLabels", "Protocol Label Settings"))
-        self.label.setText(_translate("DialogLabels", "View Type:"))
+        self.label.setText(_translate("DialogLabels", "Start/End values refer to view type:"))
         self.cbProtoView.setItemText(0, _translate("DialogLabels", "Bits"))
         self.cbProtoView.setItemText(1, _translate("DialogLabels", "Hex"))
         self.cbProtoView.setItemText(2, _translate("DialogLabels", "ASCII"))
         self.groupBoxAdvancedSettings.setTitle(_translate("DialogLabels", "Advanced Settings"))
         self.btnConfirm.setText(_translate("DialogLabels", "Confirm"))
-
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
 from . import urh_rc

@@ -102,7 +102,7 @@ def merge_message_segments_for_ook(segments: list):
         return segments
 
     result = []
-    # Get a array of pauses for comparision
+    # Get a array of pauses for comparison
     pauses = np.fromiter(
         (segments[i + 1][0] - segments[i][1] for i in range(len(segments) - 1)),
         count=len(segments) - 1,

@@ -567,7 +567,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Seperate &amp;Protocols in Compare Frame</string>
+    <string>Separate &amp;Protocols in Compare Frame</string>
    </property>
   </action>
   <action name="actionOpenArchive">

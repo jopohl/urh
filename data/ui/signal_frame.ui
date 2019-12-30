@@ -405,7 +405,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;supress noise&lt;/span&gt;. All samples with a magnitude lower than this treshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;suppress noise&lt;/span&gt;. All samples with a magnitude lower than this threshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <item>
         <property name="text">
@@ -571,7 +571,7 @@
        <property name="toolTip">
         <string>Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).
 
-If you want your protocol to be better seperated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.</string>
+If you want your protocol to be better separated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.</string>
        </property>
        <property name="text">
         <string>Show Signal as</string>
@@ -606,7 +606,7 @@ If you want your protocol to be better seperated, edit the PauseLen using right-
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect &lt;span style=&quot; font-weight:600;&quot;&gt;center&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;tolerance&lt;/span&gt;. You can also choose to addtionally detect the &lt;span style=&quot; font-weight:600;&quot;&gt;noise&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;modulation&lt;/span&gt; when clicking this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatically detect &lt;span style=&quot; font-weight:600;&quot;&gt;center&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;bit length&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;tolerance&lt;/span&gt;. You can also choose to additionally detect the &lt;span style=&quot; font-weight:600;&quot;&gt;noise&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;modulation&lt;/span&gt; when clicking this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Autodetect parameters</string>

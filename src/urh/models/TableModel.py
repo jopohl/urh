@@ -157,7 +157,7 @@ class TableModel(QAbstractTableModel):
 
         # Cache background colors for performance
         self.refresh_bgcolors()
-        self.refresh_fonts()  # Will be overriden
+        self.refresh_fonts()  # Will be overridden
         self.refresh_vertical_header()
 
         self.beginResetModel()
@@ -191,7 +191,7 @@ class TableModel(QAbstractTableModel):
 
     def refresh_fonts(self):
         """
-        Will be overriden
+        Will be overridden
 
         :return:
         """

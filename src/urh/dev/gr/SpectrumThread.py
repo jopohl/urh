@@ -18,7 +18,7 @@ class SpectrumThread(AbstractBaseThread):
     def run(self):
         logger.debug("Spectrum Thread: Init Process")
         self.initialize_process()
-        logger.debug("Spectrum Thread: Process Intialized")
+        logger.debug("Spectrum Thread: Process initialized")
         self.init_recv_socket()
         logger.debug("Spectrum Thread: Socket initialized")
 

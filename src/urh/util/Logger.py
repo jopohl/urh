@@ -36,7 +36,7 @@ if hasattr(sys, "frozen"):
     try:
         sys.stdin.isatty()
     except:
-        # STDIN is not useable, so we are running in GUI mode
+        # STDIN is not usable, so we are running in GUI mode
         logfile_name = os.path.join(TMP, "urh.log")
         # Add the log message handler to the logger
         import logging.handlers

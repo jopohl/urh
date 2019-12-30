@@ -70,7 +70,7 @@ class TestInstallation(unittest.TestCase):
             #"ubuntu1404",
             "ubuntu1604",
             #"kali",
-            # "gentoo"   # cant test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
+            # "gentoo"   # can't test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
         ]
 
         for distribution in distributions:

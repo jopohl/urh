@@ -51,7 +51,7 @@ class Ui_DialogMessageType(object):
         _translate = QtCore.QCoreApplication.translate
         DialogMessageType.setWindowTitle(_translate("DialogMessageType", "Dialog"))
         self.cbRulesetMode.setItemText(0, _translate("DialogMessageType", "All rules must apply (AND)"))
-        self.cbRulesetMode.setItemText(1, _translate("DialogMessageType", "At leat one rule must apply (OR)"))
+        self.cbRulesetMode.setItemText(1, _translate("DialogMessageType", "At least one rule must apply (OR)"))
         self.cbRulesetMode.setItemText(2, _translate("DialogMessageType", "No rule must apply (NOR)"))
         self.btnRemoveRule.setToolTip(_translate("DialogMessageType", "Remove ruleset"))
         self.btnRemoveRule.setText(_translate("DialogMessageType", "..."))

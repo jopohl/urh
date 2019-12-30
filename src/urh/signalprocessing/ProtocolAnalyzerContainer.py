@@ -146,7 +146,7 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         return fuz_lbl
 
     def set_decoder_for_messages(self, decoder, messages=None):
-        raise NotImplementedError("Encoding cant be set in Generator!")
+        raise NotImplementedError("Encoding can't be set in Generator!")
 
     def to_xml_file(self, filename: str, decoders, participants, tag_name="fuzz_profile",
                     include_message_types=True, write_bits=True, modulators=None):

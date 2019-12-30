@@ -231,11 +231,11 @@ class AbstractBaseThread(QThread):
         t.start()
 
     def init_recv_socket(self):
-        logger.info("Initalizing receive socket")
+        logger.info("Initializing receive socket")
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
         self.socket.setsockopt(zmq.RCVTIMEO, 90)
-        logger.info("Initalized receive socket")
+        logger.info("Initialized receive socket")
 
         while not self.isInterruptionRequested():
             try:

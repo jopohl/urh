@@ -162,7 +162,7 @@ class MessageType(list):
         if lbl in self:
             super().remove(lbl)
         else:
-            logger.warning(lbl.name + " is not in set, so cant be removed")
+            logger.warning(lbl.name + " is not in set, so can't be removed")
 
     def change_field_type_of_label(self, label: ProtocolLabel, field_type: FieldType):
         if not isinstance(label, ProtocolLabel) and hasattr(label, "field_type"):

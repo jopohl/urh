@@ -48,6 +48,16 @@ def get_most_frequent_value(values: list):
     return result
 
 
+def most_common(values: list):
+    """
+    Return the most common value in a list. In case of ties, return the value that appears first in list
+    :param values:
+    :return:
+    """
+    counter = Counter(values)
+    return max(values, key=counter.get)
+
+
 def detect_noise_level(magnitudes):
     if len(magnitudes) <= 3:
         return 0
@@ -158,7 +168,7 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
         return "ASK"
     else:
         # FSK or PSK
-        if var_mag > 5 * var_filtered_mag:
+        if var_mag > 10 * var_filtered_mag:
             return "PSK"
         else:
             # Now we either have a FSK signal or we a have OOK single pulse
@@ -177,9 +187,11 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
 
 
 def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> str:
+    max_messages = 100
+
     modulations_for_messages = []
     complex = signal.as_complex64()
-    for start, end in message_indices:
+    for start, end in message_indices[0:max_messages]:
         mod = detect_modulation(complex[start:end])
         if mod is not None:
             modulations_for_messages.append(mod)
@@ -187,7 +199,7 @@ def detect_modulation_for_messages(signal: IQArray, message_indices: list) -> st
     if len(modulations_for_messages) == 0:
         return None
 
-    return max(set(modulations_for_messages), key=modulations_for_messages.count)
+    return most_common(modulations_for_messages)
 
 
 def detect_center(rectangular_signal: np.ndarray, max_size=None):

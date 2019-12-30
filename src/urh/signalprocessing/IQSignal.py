@@ -22,10 +22,11 @@ class IQSignal(QObject):
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "QAM"]
 
-    bit_len_changed = Signal(int)
+    samples_per_symbol_changed = Signal(int)
     tolerance_changed = Signal(int)
     noise_threshold_changed = Signal()
-    qad_center_changed = Signal(float)
+    center_changed = Signal(float)
+    center_spacing_changed = Signal(float)
     name_changed = Signal(str)
     sample_rate_changed = Signal(float)
     modulation_type_changed = Signal(str)
@@ -39,11 +40,11 @@ class IQSignal(QObject):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
-        self.__bit_len = 100
+        self.__samples_per_symbol = 100
         self.__pause_threshold = 8
         self.__message_length_divisor = 1
         self._qad = None
-        self.__qad_center = 0
+        self.__center = 0
         self._noise_threshold = 0
         self.__sample_rate = sample_rate
         self.noise_min_plot = 0
@@ -56,8 +57,9 @@ class IQSignal(QObject):
             modulation = "FSK"
         self.__modulation_type = modulation
         self.__bits_per_symbol = 1
+        self.__center_spacing = 1  # required for higher order modulations
 
-        self.__parameter_cache = {mod: {"qad_center": None, "bit_len": None} for mod in self.MODULATION_TYPES}
+        self.__parameter_cache = {mod: {"center": None, "samples_per_symbol": None} for mod in self.MODULATION_TYPES}
 
         if len(filename) > 0:
             if self.wav_mode:
@@ -137,7 +139,7 @@ class IQSignal(QObject):
     @property
     def parameter_cache(self) -> dict:
         """
-        Caching bit_len and qad_center for modulations, so they do not need
+        Caching bit_len and center for modulations, so they do not need
         to be recalculated every time.
 
         :return:
@@ -177,16 +179,20 @@ class IQSignal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
-    def bit_len(self):
-        return self.__bit_len
+    def samples_per_symbol(self):
+        return self.__samples_per_symbol
 
-    @bit_len.setter
-    def bit_len(self, value):
-        if self.__bit_len != value:
-            self.__bit_len = value
-            self.bit_len_changed.emit(value)
+    @samples_per_symbol.setter
+    def samples_per_symbol(self, value):
+        if self.__samples_per_symbol != value:
+            self.__samples_per_symbol = value
+            self.samples_per_symbol_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
+
+    @property
+    def modulation_order(self):
+        return 2 ** self.bits_per_symbol
 
     @property
     def tolerance(self):
@@ -201,16 +207,32 @@ class IQSignal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
-    def qad_center(self):
-        return self.__qad_center
+    def center(self):
+        return self.__center
 
-    @qad_center.setter
-    def qad_center(self, value: float):
-        if self.__qad_center != value:
-            self.__qad_center = value
-            self.qad_center_changed.emit(value)
+    @center.setter
+    def center(self, value: float):
+        if self.__center != value:
+            self.__center = value
+            self.center_changed.emit(value)
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
+
+    @property
+    def center_spacing(self) -> float:
+        return self.__center_spacing
+
+    @center_spacing.setter
+    def center_spacing(self, value: float):
+        if self.__center_spacing != value:
+            self.__center_spacing = value
+            self.center_spacing_changed.emit(value)
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
+    def center_thresholds(self):
+        return self.get_thresholds_for_center(self.center)
 
     @property
     def pause_threshold(self) -> int:
@@ -341,10 +363,15 @@ class IQSignal(QObject):
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot
         new_signal.noise_max_plot = self.noise_max_plot
-        new_signal.__bit_len = self.bit_len
-        new_signal.__qad_center = self.qad_center
+        new_signal.__samples_per_symbol = self.samples_per_symbol
+        new_signal.__bits_per_symbol = self.bits_per_symbol
+        new_signal.__center = self.center
         new_signal.changed = True
         return new_signal
+
+    def get_thresholds_for_center(self, center: float, spacing=None):
+        spacing = self.center_spacing if spacing is None else spacing
+        return signal_functions.get_center_thresholds(center, spacing, self.modulation_order)
 
     def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
         kwargs = {"noise": None if detect_noise else self.noise_threshold,
@@ -365,9 +392,9 @@ class IQSignal(QObject):
         if detect_modulation:
             self.modulation_type = estimated_params["modulation_type"]
 
-        self.qad_center = estimated_params["center"]
+        self.center = estimated_params["center"]
         self.tolerance = estimated_params["tolerance"]
-        self.bit_len = estimated_params["bit_length"]
+        self.samples_per_symbol = estimated_params["bit_length"]
 
         self.block_protocol_update = orig_block
 
@@ -378,8 +405,8 @@ class IQSignal(QObject):
 
     def clear_parameter_cache(self):
         for mod in self.parameter_cache.keys():
-            self.parameter_cache[mod]["bit_len"] = None
-            self.parameter_cache[mod]["qad_center"] = None
+            self.parameter_cache[mod]["samples_per_symbol"] = None
+            self.parameter_cache[mod]["center"] = None
 
     def estimate_frequency(self, start: int, end: int, sample_rate: float):
         """

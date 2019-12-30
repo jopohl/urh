@@ -1,150 +1,210 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/filter_bandwidth_dialog.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/filter_bandwidth_dialog.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'filter_bandwidth_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
 
 class Ui_DialogFilterBandwidth(object):
     def setupUi(self, DialogFilterBandwidth):
-        DialogFilterBandwidth.setObjectName("DialogFilterBandwidth")
+        if DialogFilterBandwidth.objectName():
+            DialogFilterBandwidth.setObjectName(u"DialogFilterBandwidth")
         DialogFilterBandwidth.resize(502, 426)
-        self.verticalLayout = QtWidgets.QVBoxLayout(DialogFilterBandwidth)
+        self.verticalLayout = QVBoxLayout(DialogFilterBandwidth)
         self.verticalLayout.setSpacing(7)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.labelExplanation = QtWidgets.QLabel(DialogFilterBandwidth)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.labelExplanation = QLabel(DialogFilterBandwidth)
+        self.labelExplanation.setObjectName(u"labelExplanation")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.labelExplanation.sizePolicy().hasHeightForWidth())
         self.labelExplanation.setSizePolicy(sizePolicy)
-        self.labelExplanation.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignTop)
+        self.labelExplanation.setAlignment(Qt.AlignJustify|Qt.AlignTop)
         self.labelExplanation.setWordWrap(True)
-        self.labelExplanation.setObjectName("labelExplanation")
+
         self.verticalLayout.addWidget(self.labelExplanation)
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        self.doubleSpinBoxCustomBandwidth = QtWidgets.QDoubleSpinBox(DialogFilterBandwidth)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.doubleSpinBoxCustomBandwidth.sizePolicy().hasHeightForWidth())
-        self.doubleSpinBoxCustomBandwidth.setSizePolicy(sizePolicy)
+
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.doubleSpinBoxCustomBandwidth = QDoubleSpinBox(DialogFilterBandwidth)
+        self.doubleSpinBoxCustomBandwidth.setObjectName(u"doubleSpinBoxCustomBandwidth")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.doubleSpinBoxCustomBandwidth.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxCustomBandwidth.setSizePolicy(sizePolicy1)
         self.doubleSpinBoxCustomBandwidth.setDecimals(4)
-        self.doubleSpinBoxCustomBandwidth.setMinimum(0.0001)
-        self.doubleSpinBoxCustomBandwidth.setMaximum(0.5)
-        self.doubleSpinBoxCustomBandwidth.setObjectName("doubleSpinBoxCustomBandwidth")
+        self.doubleSpinBoxCustomBandwidth.setMinimum(0.000100000000000)
+        self.doubleSpinBoxCustomBandwidth.setMaximum(0.500000000000000)
+
         self.gridLayout.addWidget(self.doubleSpinBoxCustomBandwidth, 7, 1, 1, 1)
-        self.spinBoxCustomKernelLength = QtWidgets.QSpinBox(DialogFilterBandwidth)
+
+        self.spinBoxCustomKernelLength = QSpinBox(DialogFilterBandwidth)
+        self.spinBoxCustomKernelLength.setObjectName(u"spinBoxCustomKernelLength")
         self.spinBoxCustomKernelLength.setMinimum(8)
         self.spinBoxCustomKernelLength.setMaximum(999999999)
-        self.spinBoxCustomKernelLength.setObjectName("spinBoxCustomKernelLength")
+
         self.gridLayout.addWidget(self.spinBoxCustomKernelLength, 7, 2, 1, 1)
-        self.radioButtonCustom = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonCustom.setObjectName("radioButtonCustom")
+
+        self.radioButtonCustom = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonCustom.setObjectName(u"radioButtonCustom")
+
         self.gridLayout.addWidget(self.radioButtonCustom, 7, 0, 1, 1)
-        self.labelMediumKernelLength = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelMediumKernelLength.setObjectName("labelMediumKernelLength")
+
+        self.labelMediumKernelLength = QLabel(DialogFilterBandwidth)
+        self.labelMediumKernelLength.setObjectName(u"labelMediumKernelLength")
+
         self.gridLayout.addWidget(self.labelMediumKernelLength, 4, 2, 1, 1)
-        self.radioButtonWide = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonWide.setObjectName("radioButtonWide")
+
+        self.radioButtonWide = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonWide.setObjectName(u"radioButtonWide")
+
         self.gridLayout.addWidget(self.radioButtonWide, 5, 0, 1, 1)
-        self.labelVeryWideKernelLength = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelVeryWideKernelLength.setObjectName("labelVeryWideKernelLength")
+
+        self.labelVeryWideKernelLength = QLabel(DialogFilterBandwidth)
+        self.labelVeryWideKernelLength.setObjectName(u"labelVeryWideKernelLength")
+
         self.gridLayout.addWidget(self.labelVeryWideKernelLength, 6, 2, 1, 1)
-        self.radioButtonNarrow = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonNarrow.setObjectName("radioButtonNarrow")
+
+        self.radioButtonNarrow = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonNarrow.setObjectName(u"radioButtonNarrow")
+
         self.gridLayout.addWidget(self.radioButtonNarrow, 3, 0, 1, 1)
-        self.labelWideBandwidth = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelWideBandwidth.setObjectName("labelWideBandwidth")
+
+        self.labelWideBandwidth = QLabel(DialogFilterBandwidth)
+        self.labelWideBandwidth.setObjectName(u"labelWideBandwidth")
+
         self.gridLayout.addWidget(self.labelWideBandwidth, 5, 1, 1, 1)
-        self.labelVeryNarrowKernelLength = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelVeryNarrowKernelLength.setObjectName("labelVeryNarrowKernelLength")
+
+        self.labelVeryNarrowKernelLength = QLabel(DialogFilterBandwidth)
+        self.labelVeryNarrowKernelLength.setObjectName(u"labelVeryNarrowKernelLength")
+
         self.gridLayout.addWidget(self.labelVeryNarrowKernelLength, 2, 2, 1, 1)
-        self.labelBandwidthCaption = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelBandwidthCaption.setObjectName("labelBandwidthCaption")
+
+        self.labelBandwidthCaption = QLabel(DialogFilterBandwidth)
+        self.labelBandwidthCaption.setObjectName(u"labelBandwidthCaption")
+
         self.gridLayout.addWidget(self.labelBandwidthCaption, 0, 1, 1, 1)
-        self.labelNarrowBandwidth = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelNarrowBandwidth.setObjectName("labelNarrowBandwidth")
+
+        self.labelNarrowBandwidth = QLabel(DialogFilterBandwidth)
+        self.labelNarrowBandwidth.setObjectName(u"labelNarrowBandwidth")
+
         self.gridLayout.addWidget(self.labelNarrowBandwidth, 3, 1, 1, 1)
-        self.labelNarrowKernelLength = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelNarrowKernelLength.setObjectName("labelNarrowKernelLength")
+
+        self.labelNarrowKernelLength = QLabel(DialogFilterBandwidth)
+        self.labelNarrowKernelLength.setObjectName(u"labelNarrowKernelLength")
+
         self.gridLayout.addWidget(self.labelNarrowKernelLength, 3, 2, 1, 1)
-        self.labelVeryNarrowBandwidth = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelVeryNarrowBandwidth.setObjectName("labelVeryNarrowBandwidth")
+
+        self.labelVeryNarrowBandwidth = QLabel(DialogFilterBandwidth)
+        self.labelVeryNarrowBandwidth.setObjectName(u"labelVeryNarrowBandwidth")
+
         self.gridLayout.addWidget(self.labelVeryNarrowBandwidth, 2, 1, 1, 1)
-        self.labelKernelLengthCaption = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelKernelLengthCaption.setObjectName("labelKernelLengthCaption")
+
+        self.labelKernelLengthCaption = QLabel(DialogFilterBandwidth)
+        self.labelKernelLengthCaption.setObjectName(u"labelKernelLengthCaption")
+
         self.gridLayout.addWidget(self.labelKernelLengthCaption, 0, 2, 1, 1)
-        self.labelWideKernelLength = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelWideKernelLength.setObjectName("labelWideKernelLength")
+
+        self.labelWideKernelLength = QLabel(DialogFilterBandwidth)
+        self.labelWideKernelLength.setObjectName(u"labelWideKernelLength")
+
         self.gridLayout.addWidget(self.labelWideKernelLength, 5, 2, 1, 1)
-        self.radioButtonVery_Wide = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonVery_Wide.setObjectName("radioButtonVery_Wide")
+
+        self.radioButtonVery_Wide = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonVery_Wide.setObjectName(u"radioButtonVery_Wide")
+
         self.gridLayout.addWidget(self.radioButtonVery_Wide, 6, 0, 1, 1)
-        self.radioButtonVery_Narrow = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonVery_Narrow.setObjectName("radioButtonVery_Narrow")
+
+        self.radioButtonVery_Narrow = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonVery_Narrow.setObjectName(u"radioButtonVery_Narrow")
+
         self.gridLayout.addWidget(self.radioButtonVery_Narrow, 2, 0, 1, 1)
-        self.label = QtWidgets.QLabel(DialogFilterBandwidth)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setObjectName("label")
+
+        self.label = QLabel(DialogFilterBandwidth)
+        self.label.setObjectName(u"label")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy2)
+
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.labelVeryWideBandwidth = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelVeryWideBandwidth.setObjectName("labelVeryWideBandwidth")
+
+        self.labelVeryWideBandwidth = QLabel(DialogFilterBandwidth)
+        self.labelVeryWideBandwidth.setObjectName(u"labelVeryWideBandwidth")
+
         self.gridLayout.addWidget(self.labelVeryWideBandwidth, 6, 1, 1, 1)
-        self.radioButtonMedium = QtWidgets.QRadioButton(DialogFilterBandwidth)
-        self.radioButtonMedium.setObjectName("radioButtonMedium")
+
+        self.radioButtonMedium = QRadioButton(DialogFilterBandwidth)
+        self.radioButtonMedium.setObjectName(u"radioButtonMedium")
+
         self.gridLayout.addWidget(self.radioButtonMedium, 4, 0, 1, 1)
-        self.labelMediumBandwidth = QtWidgets.QLabel(DialogFilterBandwidth)
-        self.labelMediumBandwidth.setObjectName("labelMediumBandwidth")
+
+        self.labelMediumBandwidth = QLabel(DialogFilterBandwidth)
+        self.labelMediumBandwidth.setObjectName(u"labelMediumBandwidth")
+
         self.gridLayout.addWidget(self.labelMediumBandwidth, 4, 1, 1, 1)
-        self.line = QtWidgets.QFrame(DialogFilterBandwidth)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
+
+        self.line = QFrame(DialogFilterBandwidth)
+        self.line.setObjectName(u"line")
+        self.line.setFrameShape(QFrame.HLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+
         self.gridLayout.addWidget(self.line, 1, 0, 1, 3)
+
+
         self.verticalLayout.addLayout(self.gridLayout)
-        self.buttonBox = QtWidgets.QDialogButtonBox(DialogFilterBandwidth)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+
+        self.buttonBox = QDialogButtonBox(DialogFilterBandwidth)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
-        self.buttonBox.setObjectName("buttonBox")
+
         self.verticalLayout.addWidget(self.buttonBox)
+
         self.verticalLayout.setStretch(0, 1)
         self.verticalLayout.setStretch(1, 3)
         self.verticalLayout.setStretch(2, 1)
 
         self.retranslateUi(DialogFilterBandwidth)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogFilterBandwidth.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogFilterBandwidth.reject)
+        self.buttonBox.accepted.connect(DialogFilterBandwidth.accept)
+        self.buttonBox.rejected.connect(DialogFilterBandwidth.reject)
+    # setupUi
 
     def retranslateUi(self, DialogFilterBandwidth):
-        DialogFilterBandwidth.setWindowTitle(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Configure Filter Bandwidth", None, -1))
-        self.labelExplanation.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<html><head/><body>To separate the frequency bands from each other a <b>bandpass</b> filter is used. You can configure the <b>bandwidth</b> of this filter here. The bandwidth determines the <b>length N</b> of the<b> filter kernel</b>. Decreasing the bandwidth will increase the accuracy of the filter, at cost of higher computation time.</body></html>", None, -1))
-        self.radioButtonCustom.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Custom", None, -1))
-        self.labelMediumKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.radioButtonWide.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Wide", None, -1))
-        self.labelVeryWideKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.radioButtonNarrow.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Narrow", None, -1))
-        self.labelWideBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.labelVeryNarrowKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.labelBandwidthCaption.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b>Bandwidth (Hz)</b>", None, -1))
-        self.labelNarrowBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.labelNarrowKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.labelVeryNarrowBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.labelKernelLengthCaption.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b >Kernel Length N</b>", None, -1))
-        self.labelWideKernelLength.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.radioButtonVery_Wide.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Very Wide", None, -1))
-        self.radioButtonVery_Narrow.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Very Narrow", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "<b>Choose </b>", None, -1))
-        self.labelVeryWideBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
-        self.radioButtonMedium.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "Medium", None, -1))
-        self.labelMediumBandwidth.setText(QtWidgets.QApplication.translate("DialogFilterBandwidth", "TextLabel", None, -1))
+        DialogFilterBandwidth.setWindowTitle(QCoreApplication.translate("DialogFilterBandwidth", u"Configure Filter Bandwidth", None))
+        self.labelExplanation.setText(QCoreApplication.translate("DialogFilterBandwidth", u"<html><head/><body>To separate the frequency bands from each other a <b>bandpass</b> filter is used. You can configure the <b>bandwidth</b> of this filter here. The bandwidth determines the <b>length N</b> of the<b> filter kernel</b>. Decreasing the bandwidth will increase the accuracy of the filter, at cost of higher computation time.</body></html>", None))
+        self.radioButtonCustom.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Custom", None))
+        self.labelMediumKernelLength.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.radioButtonWide.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Wide", None))
+        self.labelVeryWideKernelLength.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.radioButtonNarrow.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Narrow", None))
+        self.labelWideBandwidth.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.labelVeryNarrowKernelLength.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.labelBandwidthCaption.setText(QCoreApplication.translate("DialogFilterBandwidth", u"<b>Bandwidth (Hz)</b>", None))
+        self.labelNarrowBandwidth.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.labelNarrowKernelLength.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.labelVeryNarrowBandwidth.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.labelKernelLengthCaption.setText(QCoreApplication.translate("DialogFilterBandwidth", u"<b >Kernel Length N</b>", None))
+        self.labelWideKernelLength.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.radioButtonVery_Wide.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Very Wide", None))
+        self.radioButtonVery_Narrow.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Very Narrow", None))
+        self.label.setText(QCoreApplication.translate("DialogFilterBandwidth", u"<b>Choose </b>", None))
+        self.labelVeryWideBandwidth.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+        self.radioButtonMedium.setText(QCoreApplication.translate("DialogFilterBandwidth", u"Medium", None))
+        self.labelMediumBandwidth.setText(QCoreApplication.translate("DialogFilterBandwidth", u"TextLabel", None))
+    # retranslateUi
 

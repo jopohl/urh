@@ -1,79 +1,92 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/tab_interpretation.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/tab_interpretation.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'tab_interpretation.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
+import ScrollArea
 
 class Ui_Interpretation(object):
     def setupUi(self, Interpretation):
-        Interpretation.setObjectName("Interpretation")
+        if Interpretation.objectName():
+            Interpretation.setObjectName(u"Interpretation")
         Interpretation.resize(631, 561)
-        self.horizontalLayout = QtWidgets.QHBoxLayout(Interpretation)
+        self.horizontalLayout = QHBoxLayout(Interpretation)
         self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
         self.scrollArea = ScrollArea(Interpretation)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
         self.scrollArea.setSizePolicy(sizePolicy)
         self.scrollArea.setAcceptDrops(True)
-        self.scrollArea.setStyleSheet("")
-        self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.scrollArea.setStyleSheet(u"")
+        self.scrollArea.setFrameShape(QFrame.NoFrame)
         self.scrollArea.setLineWidth(0)
-        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrlAreaSignals = QtWidgets.QWidget()
-        self.scrlAreaSignals.setGeometry(QtCore.QRect(0, 0, 631, 561))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        self.scrlAreaSignals = QWidget()
+        self.scrlAreaSignals.setObjectName(u"scrlAreaSignals")
+        self.scrlAreaSignals.setGeometry(QRect(0, 0, 631, 561))
         sizePolicy.setHeightForWidth(self.scrlAreaSignals.sizePolicy().hasHeightForWidth())
         self.scrlAreaSignals.setSizePolicy(sizePolicy)
         self.scrlAreaSignals.setAutoFillBackground(True)
-        self.scrlAreaSignals.setStyleSheet("")
-        self.scrlAreaSignals.setObjectName("scrlAreaSignals")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.scrlAreaSignals)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.splitter = QtWidgets.QSplitter(self.scrlAreaSignals)
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+        self.scrlAreaSignals.setStyleSheet(u"")
+        self.verticalLayout = QVBoxLayout(self.scrlAreaSignals)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.splitter = QSplitter(self.scrlAreaSignals)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setStyleSheet(u"QSplitter::handle:vertical {\n"
 "margin: 4px 0px;\n"
 "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+"	image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
 "}")
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setHandleWidth(6)
-        self.splitter.setObjectName("splitter")
-        self.labelGettingStarted = QtWidgets.QLabel(self.splitter)
-        font = QtGui.QFont()
+        self.labelGettingStarted = QLabel(self.splitter)
+        self.labelGettingStarted.setObjectName(u"labelGettingStarted")
+        font = QFont()
         font.setPointSize(32)
         self.labelGettingStarted.setFont(font)
-        self.labelGettingStarted.setStyleSheet("")
-        self.labelGettingStarted.setAlignment(QtCore.Qt.AlignCenter)
+        self.labelGettingStarted.setStyleSheet(u"")
+        self.labelGettingStarted.setAlignment(Qt.AlignCenter)
         self.labelGettingStarted.setWordWrap(True)
-        self.labelGettingStarted.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.labelGettingStarted.setObjectName("labelGettingStarted")
-        self.placeholderLabel = QtWidgets.QLabel(self.splitter)
-        self.placeholderLabel.setText("")
-        self.placeholderLabel.setObjectName("placeholderLabel")
+        self.labelGettingStarted.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.splitter.addWidget(self.labelGettingStarted)
+        self.placeholderLabel = QLabel(self.splitter)
+        self.placeholderLabel.setObjectName(u"placeholderLabel")
+        self.splitter.addWidget(self.placeholderLabel)
+
         self.verticalLayout.addWidget(self.splitter)
+
         self.scrollArea.setWidget(self.scrlAreaSignals)
+
         self.horizontalLayout.addWidget(self.scrollArea)
 
+
         self.retranslateUi(Interpretation)
+    # setupUi
 
     def retranslateUi(self, Interpretation):
-        Interpretation.setWindowTitle(QtWidgets.QApplication.translate("Interpretation", "Form", None, -1))
-        self.labelGettingStarted.setText(QtWidgets.QApplication.translate("Interpretation", "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>", None, -1))
+        Interpretation.setWindowTitle(QCoreApplication.translate("Interpretation", u"Form", None))
+        self.labelGettingStarted.setText(QCoreApplication.translate("Interpretation", u"<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>", None))
+        self.placeholderLabel.setText("")
+    # retranslateUi
 
-from urh.ui.ScrollArea import ScrollArea
-from . import urh_rc

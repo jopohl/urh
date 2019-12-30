@@ -10,7 +10,6 @@ from urh.util import util
 
 
 class SelectableGraphicView(QGraphicsView):
-    sep_area_moving = Signal(float)
     sep_area_changed = Signal(float)
     selection_width_changed = Signal(int)
     selection_height_changed = Signal(int)
@@ -151,9 +150,8 @@ class SelectableGraphicView(QGraphicsView):
             y_sep = self.mapToScene(event.pos()).y()
             y = self.sceneRect().y()
             h = self.sceneRect().height()
-            if y < y_sep < y + h:
-                self.scene().draw_sep_area(y_sep, show_symbols=True)
-                self.sep_area_moving.emit(y_sep)
+            if y < y_sep < y + h and hasattr(self, "signal") and self.signal is not None:
+                self.scene().draw_sep_area(-self.signal.get_thresholds_for_center(-y_sep), show_symbols=True)
         elif self.is_pos_in_separea(self.mapToScene(event.pos())):
             self.setCursor(Qt.SplitVCursor)
         elif cursor == Qt.SplitVCursor and self.has_horizontal_selection:
@@ -228,7 +226,7 @@ class SelectableGraphicView(QGraphicsView):
             self.grab_start = None
             self.setCursor(Qt.OpenHandCursor)
 
-        elif self.separation_area_moving:
+        elif self.separation_area_moving and hasattr(self, "signal") and self.signal is not None:
             y_sep = self.mapToScene(event.pos()).y()
             y = self.sceneRect().y()
             h = self.sceneRect().height()
@@ -237,8 +235,7 @@ class SelectableGraphicView(QGraphicsView):
             elif y_sep > y + h:
                 y_sep = y + h
 
-            self.scene().draw_sep_area(y_sep)
-            self.sep_area_moving.emit(y_sep)
+            self.scene().draw_sep_area(-self.signal.center_thresholds)
             self.separation_area_moving = False
             self.y_sep = y_sep
             self.sep_area_changed.emit(-y_sep)

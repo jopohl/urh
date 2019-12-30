@@ -1,4 +1,9 @@
 # Changelog
+__This changelog file will not be updated anymore__. 
+
+Instead, the recent changes can be found at the releases page: https://github.com/jopohl/urh/releases
+
+
 ## v2.5.3 (19/12/2018)
 ### Bugfixes
 - fix crash when using spectrum analyzer with GNU Radio backend [#588](https://github.com/jopohl/urh/pull/588)

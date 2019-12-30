@@ -276,7 +276,7 @@ class SimulatorTabController(QWidget):
         modulator_dialog = ModulatorDialog(self.project_manager.modulators, tree_model=self.tree_model, parent=self)
         modulator_dialog.ui.comboBoxCustomModulations.setCurrentIndex(preselected_index)
         modulator_dialog.showMaximized()
-        modulator_dialog.initialize(selected_message.encoded_bits_str[0:10])
+        modulator_dialog.initialize(selected_message.encoded_bits_str[0:16])
 
         modulator_dialog.finished.connect(self.refresh_modulators)
         modulator_dialog.finished.connect(self.generator_tab_controller.refresh_pause_list)

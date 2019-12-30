@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsScene
 
 from urh.ui.painting.LabeledArrow import LabeledArrow
 

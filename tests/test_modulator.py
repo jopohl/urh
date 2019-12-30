@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 from PySide2.QtCore import QDir
 
-from urh.cythonext.signal_functions import modulate_c
+from urh.cythonext.signal_functions import modulate_c, get_oqpsk_bits
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.IQSignal import IQSignal
@@ -33,26 +33,26 @@ class TestModulator(unittest.TestCase):
             modulator.samples_per_symbol = self.samples_per_symbol
 
             if modulation == "ASK":
-                modulator.param_for_zero = 0
-                modulator.param_for_one = 100
+                modulator.parameters[0] = 0
+                modulator.parameters[1] = 100
             elif modulation == "FSK":
-                modulator.param_for_zero = 1000
-                modulator.param_for_one = 2500
+                modulator.parameters[0] = 1000
+                modulator.parameters[1] = 2500
             elif modulation == "PSK":
-                modulator.param_for_zero = 0
-                modulator.param_for_one = 180
+                modulator.parameters[0] = -90
+                modulator.parameters[1] = 90
 
             modulator.modulate(self.modulation_data, self.pause).tofile(filename)
 
             signal = IQSignal(filename, modulation)
             signal.modulation_type = modulation
-            signal.bit_len = self.samples_per_symbol
+            signal.samples_per_symbol = self.samples_per_symbol
             if modulation == "ASK":
-                signal.qad_center = 0.5
+                signal.center = 0.5
             elif modulation == "FSK":
-                signal.qad_center = 0.0097
+                signal.center = 0.0097
             elif modulation == "PSK":
-                signal.qad_center = 0
+                signal.center = 0
             self.assertEqual(signal.num_samples, self.total_samples, msg=modulation)
             pa = ProtocolAnalyzer(signal)
             pa.get_protocol_from_signal()
@@ -66,8 +66,8 @@ class TestModulator(unittest.TestCase):
         modulator.modulation_type = "GFSK"
         modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = -10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = -10e3
         data1 = modulator.modulate([True, False, False, True, False], 9437)
         data2 = modulator.modulate([True, False, True], 9845) #, start=len(s))
         data3 = modulator.modulate([True, False, True, False], 8458) #, start=len(s))
@@ -95,10 +95,10 @@ class TestModulator(unittest.TestCase):
 
     def test_c_modulation_method_fsk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
-        parameters = array.array("f", [-10e3, 10e3])
-        result = modulate_c(bits, 100, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+        parameters = array.array("f", [-20e3, -10e3, 10e3, 20e3])
+        result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
-        #result.tofile("/tmp/test_fsk.complex")
+        # result.tofile("/tmp/test_4fsk.complex")
 
     def test_c_modulation_method_psk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])
@@ -106,6 +106,30 @@ class TestModulator(unittest.TestCase):
         result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
 
         # result.tofile("/tmp/test_psk.complex")
+
+    def test_get_oqpsk_bits(self):
+        """
+        Should delay the Q stream (odd bits) by one bit. So the sequence
+        11 01 00 10 01 should become:
+        IQ IQ IQ IQ IQ
+
+        1X 01 01 10 00 X1
+
+        whereby the X will set to amplitude zero during modulation so it is not important which bit value gets written
+
+        #TODO: This does not quite work yet. Fix it, when we have a test signal available.
+
+        :return:
+        """
+        bits = array.array("B", [1, 1, 0, 1, 0, 0, 1, 0, 0, 1])
+
+        oqpsk_bits = get_oqpsk_bits(bits)
+
+        self.assertEqual(len(oqpsk_bits), len(bits) + 2)
+
+        self.assertEqual(oqpsk_bits[0], 1)
+        self.assertEqual(oqpsk_bits[-1], 1)
+        self.assertEqual(array.array("B", [0, 1, 0, 1, 1, 0,  0, 0]), array.array("B", oqpsk_bits[2:-2]))
 
     def test_c_modulation_method_oqpsk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])

@@ -7,7 +7,7 @@ def gen(force=False):
     if sys.platform == "win32":
         bindir = "c:\Python37\Lib\site-packages\PySide2"
     else:
-        bindir = os.path.expanduser("~/GIT/urh/pyside/venv/bin")
+        bindir = os.path.expanduser("~/GIT/urh/venv/bin")
 
     if sys.platform == "win32":
         uic_path = os.path.join(bindir, "pyside2-uic.bat")
@@ -38,14 +38,12 @@ def gen(force=False):
            # Generated file is already there and newer than ui file, no need to recompile it
            continue
 
-        call([uic_path, "--from-imports", file_path, "-o", out_file_path])
+        print("Building ", file_path)
+        call([uic_path, "--no-autoconnection", file_path, "-o", out_file_path])
 
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
         # to avoid useless git updates when working on another computer
         for line in fileinput.input(out_file_path, inplace=True):
-            if line.strip().startswith("QtCore.QMetaObject.connectSlotsByName("):
-                # disable auto slot connection, as we do not use it, and it causes crash on python 3.7
-                continue
             if line.startswith("# Created:") or line.startswith("#      by: pyside2-uic"):
                 continue
             print(line, end='')
@@ -66,4 +64,4 @@ def gen(force=False):
             call([rcc_path, file_path, "-o", out_file_path])
 
 if __name__ == "__main__":
-    gen(force=False)
+    gen(force=True)

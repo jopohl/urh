@@ -1,84 +1,113 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/properties_dialog.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/properties_dialog.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'properties_dialog.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
+import ProtocolLabelTableView
 
 class Ui_DialogLabels(object):
     def setupUi(self, DialogLabels):
-        DialogLabels.setObjectName("DialogLabels")
+        if DialogLabels.objectName():
+            DialogLabels.setObjectName(u"DialogLabels")
         DialogLabels.resize(714, 463)
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(DialogLabels)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.splitter = QtWidgets.QSplitter(DialogLabels)
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+        self.verticalLayout_3 = QVBoxLayout(DialogLabels)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.splitter = QSplitter(DialogLabels)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setStyleSheet(u"QSplitter::handle:vertical {\n"
 "margin: 4px 0px;\n"
 "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
 "stop:0 rgba(255, 255, 255, 0), \n"
 "stop:0.5 rgba(100, 100, 100, 100), \n"
 "stop:1 rgba(255, 255, 255, 0));\n"
-"    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+"	image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
 "}")
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setOrientation(Qt.Vertical)
         self.splitter.setHandleWidth(6)
         self.splitter.setChildrenCollapsible(False)
-        self.splitter.setObjectName("splitter")
-        self.groupBoxSettings = QtWidgets.QGroupBox(self.splitter)
-        self.groupBoxSettings.setObjectName("groupBoxSettings")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBoxSettings)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.groupBoxSettings = QGroupBox(self.splitter)
+        self.groupBoxSettings.setObjectName(u"groupBoxSettings")
+        self.verticalLayout = QVBoxLayout(self.groupBoxSettings)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.tblViewProtoLabels = ProtocolLabelTableView(self.groupBoxSettings)
-        self.tblViewProtoLabels.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.tblViewProtoLabels.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
-        self.tblViewProtoLabels.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.tblViewProtoLabels.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tblViewProtoLabels.setObjectName(u"tblViewProtoLabels")
+        self.tblViewProtoLabels.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.tblViewProtoLabels.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.tblViewProtoLabels.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self.tblViewProtoLabels.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.tblViewProtoLabels.setShowGrid(False)
-        self.tblViewProtoLabels.setObjectName("tblViewProtoLabels")
+
         self.verticalLayout.addWidget(self.tblViewProtoLabels)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label = QtWidgets.QLabel(self.groupBoxSettings)
-        font = QtGui.QFont()
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label = QLabel(self.groupBoxSettings)
+        self.label.setObjectName(u"label")
+        font = QFont()
         font.setUnderline(False)
         self.label.setFont(font)
-        self.label.setObjectName("label")
+
         self.horizontalLayout_2.addWidget(self.label)
-        self.cbProtoView = QtWidgets.QComboBox(self.groupBoxSettings)
-        self.cbProtoView.setObjectName("cbProtoView")
-        self.cbProtoView.addItem("")
-        self.cbProtoView.addItem("")
-        self.cbProtoView.addItem("")
+
+        self.cbProtoView = QComboBox(self.groupBoxSettings)
+        self.cbProtoView.addItem(QString())
+        self.cbProtoView.addItem(QString())
+        self.cbProtoView.addItem(QString())
+        self.cbProtoView.setObjectName(u"cbProtoView")
+
         self.horizontalLayout_2.addWidget(self.cbProtoView)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.groupBoxAdvancedSettings = QtWidgets.QGroupBox(self.splitter)
-        self.groupBoxAdvancedSettings.setObjectName("groupBoxAdvancedSettings")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBoxAdvancedSettings)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.tabWidgetAdvancedSettings = QtWidgets.QTabWidget(self.groupBoxAdvancedSettings)
-        self.tabWidgetAdvancedSettings.setObjectName("tabWidgetAdvancedSettings")
+
+        self.splitter.addWidget(self.groupBoxSettings)
+        self.groupBoxAdvancedSettings = QGroupBox(self.splitter)
+        self.groupBoxAdvancedSettings.setObjectName(u"groupBoxAdvancedSettings")
+        self.verticalLayout_2 = QVBoxLayout(self.groupBoxAdvancedSettings)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.tabWidgetAdvancedSettings = QTabWidget(self.groupBoxAdvancedSettings)
+        self.tabWidgetAdvancedSettings.setObjectName(u"tabWidgetAdvancedSettings")
+
         self.verticalLayout_2.addWidget(self.tabWidgetAdvancedSettings)
+
+        self.splitter.addWidget(self.groupBoxAdvancedSettings)
+
         self.verticalLayout_3.addWidget(self.splitter)
-        self.btnConfirm = QtWidgets.QPushButton(DialogLabels)
-        self.btnConfirm.setObjectName("btnConfirm")
+
+        self.btnConfirm = QPushButton(DialogLabels)
+        self.btnConfirm.setObjectName(u"btnConfirm")
+
         self.verticalLayout_3.addWidget(self.btnConfirm)
 
+
         self.retranslateUi(DialogLabels)
+    # setupUi
 
     def retranslateUi(self, DialogLabels):
-        DialogLabels.setWindowTitle(QtWidgets.QApplication.translate("DialogLabels", "Manage Protocol Labels", None, -1))
-        self.groupBoxSettings.setTitle(QtWidgets.QApplication.translate("DialogLabels", "Protocol Label Settings", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("DialogLabels", "View Type:", None, -1))
-        self.cbProtoView.setItemText(0, QtWidgets.QApplication.translate("DialogLabels", "Bits", None, -1))
-        self.cbProtoView.setItemText(1, QtWidgets.QApplication.translate("DialogLabels", "Hex", None, -1))
-        self.cbProtoView.setItemText(2, QtWidgets.QApplication.translate("DialogLabels", "ASCII", None, -1))
-        self.groupBoxAdvancedSettings.setTitle(QtWidgets.QApplication.translate("DialogLabels", "Advanced Settings", None, -1))
-        self.btnConfirm.setText(QtWidgets.QApplication.translate("DialogLabels", "Confirm", None, -1))
+        DialogLabels.setWindowTitle(QCoreApplication.translate("DialogLabels", u"Manage Protocol Labels", None))
+        self.groupBoxSettings.setTitle(QCoreApplication.translate("DialogLabels", u"Protocol Label Settings", None))
+        self.label.setText(QCoreApplication.translate("DialogLabels", u"Start/End values refer to view type:", None))
+        self.cbProtoView.setItemText(0, QCoreApplication.translate("DialogLabels", u"Bits", None))
+        self.cbProtoView.setItemText(1, QCoreApplication.translate("DialogLabels", u"Hex", None))
+        self.cbProtoView.setItemText(2, QCoreApplication.translate("DialogLabels", u"ASCII", None))
 
-from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
-from . import urh_rc
+        self.groupBoxAdvancedSettings.setTitle(QCoreApplication.translate("DialogLabels", u"Advanced Settings", None))
+        self.btnConfirm.setText(QCoreApplication.translate("DialogLabels", u"Confirm", None))
+    # retranslateUi
+

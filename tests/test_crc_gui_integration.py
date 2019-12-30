@@ -153,8 +153,8 @@ class TestCRCGUIIntegration(QtTestCase):
         signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         signal_frame.ui.spinBoxCenterOffset.setValue(0.3480)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
-        signal_frame.ui.spinBoxInfoLen.setValue(20)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(20)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         signal_frame.ui.spinBoxTolerance.setValue(2)
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 
@@ -170,8 +170,8 @@ class TestCRCGUIIntegration(QtTestCase):
         signal_frame.ui.spinBoxNoiseTreshold.editingFinished.emit()
         signal_frame.ui.spinBoxCenterOffset.setValue(0)
         signal_frame.ui.spinBoxCenterOffset.editingFinished.emit()
-        signal_frame.ui.spinBoxInfoLen.setValue(100)
-        signal_frame.ui.spinBoxInfoLen.editingFinished.emit()
+        signal_frame.ui.spinBoxSamplesPerSymbol.setValue(100)
+        signal_frame.ui.spinBoxSamplesPerSymbol.editingFinished.emit()
         signal_frame.ui.spinBoxTolerance.setValue(5)
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 

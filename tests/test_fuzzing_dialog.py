@@ -16,8 +16,8 @@ class TestFuzzingDialog(QtTestCase):
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxNoiseTreshold.editingFinished.emit()
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0127)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.setValue(100)
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxInfoLen.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxSamplesPerSymbol.setValue(100)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxSamplesPerSymbol.editingFinished.emit()
 
         self.gframe = self.form.generator_tab_controller
         self.gframe.ui.cbViewType.setCurrentIndex(1)  # hex view

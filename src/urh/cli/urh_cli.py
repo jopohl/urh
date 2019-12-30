@@ -8,15 +8,14 @@ from collections import defaultdict
 
 import numpy as np
 
-from urh.signalprocessing.IQArray import IQArray
-
 DEFAULT_CARRIER_FREQUENCY = 1e3
 DEFAULT_CARRIER_AMPLITUDE = 1
 DEFAULT_CARRIER_PHASE = 0
 
-DEFAULT_BIT_LENGTH = 100
+DEFAULT_SAMPLES_PER_SYMBOL = 100
 DEFAULT_NOISE = 0.1
 DEFAULT_CENTER = 0
+DEFAULT_CENTER_SPACING = 0.1
 DEFAULT_TOLERANCE = 5
 
 cli_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
@@ -26,6 +25,7 @@ SRC_DIR = os.path.realpath(os.path.join(cur_dir, "..", ".."))
 if os.path.isdir(SRC_DIR):
     sys.path.insert(0, SRC_DIR)
 
+from urh.signalprocessing.IQArray import IQArray
 from urh.util import util
 
 util.set_shared_library_path()
@@ -78,36 +78,29 @@ def on_fatal_device_error_occurred(error: str):
 def build_modulator_from_args(arguments: argparse.Namespace):
     if arguments.raw:
         return None
+    if arguments.bits_per_symbol is None:
+        arguments.bits_per_symbol = 1
 
-    if arguments.parameter_zero is None:
-        raise ValueError("You need to give a modulation parameter for zero (-p0, --parameter-zero)")
-
-    if arguments.parameter_one is None:
-        raise ValueError("You need to give a modulation parameter for one (-p1, --parameter-one)")
+    n = 2 ** int(arguments.bits_per_symbol)
+    if arguments.parameters is None or len(arguments.parameters) != n:
+        raise ValueError("You need to give {} parameters for {} bits per symbol".format(n, int(arguments.bits_per_symbol)))
 
     result = Modulator("CLI Modulator")
     result.carrier_freq_hz = float(arguments.carrier_frequency)
     result.carrier_amplitude = float(arguments.carrier_amplitude)
     result.carrier_phase_deg = float(arguments.carrier_phase)
-    result.samples_per_symbol = int(arguments.bit_length)
-
-    if arguments.modulation_type == "ASK":
-        if arguments.parameter_zero.endswith("%"):
-            param_zero = float(arguments.parameter_zero[:-1])
-        else:
-            param_zero = float(arguments.parameter_zero) * 100
-        if arguments.parameter_one.endswith("%"):
-            param_one = float(arguments.parameter_one[:-1])
-        else:
-            param_one = float(arguments.parameter_one) * 100
-    else:
-        param_zero = float(arguments.parameter_zero)
-        param_one = float(arguments.parameter_one)
-
-    result.param_for_zero = param_zero
-    result.param_for_one = param_one
+    result.samples_per_symbol = int(arguments.samples_per_symbol)
+    result.bits_per_symbol = int(arguments.bits_per_symbol)
     result.modulation_type = arguments.modulation_type
     result.sample_rate = arguments.sample_rate
+
+    for i, param in enumerate(arguments.parameters):
+        if result.is_amplitude_based and param.endswith("%"):
+            result.parameters[i] = float(param[:-1])
+        elif result.is_amplitude_based and not param.endswith("%"):
+            result.parameters[i] = float(param) * 100
+        else:
+            result.parameters[i] = float(param)
 
     return result
 
@@ -149,8 +142,9 @@ def build_device_from_args(arguments: argparse.Namespace):
 def build_protocol_sniffer_from_args(arguments: argparse.Namespace):
     bh = build_backend_handler_from_args(arguments)
 
-    result = ProtocolSniffer(arguments.bit_length, arguments.center, arguments.noise, arguments.tolerance,
-                             arguments.modulation_type,
+    result = ProtocolSniffer(arguments.samples_per_symbol, arguments.center, arguments.center_spacing,
+                             arguments.noise, arguments.tolerance,
+                             arguments.modulation_type, arguments.bits_per_symbol,
                              arguments.device.lower(), bh)
     result.rcv_device.frequency = arguments.frequency
     result.rcv_device.sample_rate = arguments.sample_rate
@@ -259,8 +253,7 @@ def parse_project_file(file_path: str):
         result["carrier_frequency"] = modulator.carrier_freq_hz
         result["carrier_amplitude"] = modulator.carrier_amplitude
         result["carrier_phase"] = modulator.carrier_phase_deg
-        result["parameter_zero"] = modulator.param_for_zero
-        result["parameter_one"] = modulator.param_for_one
+        result["parameters"] = " ".join(map(str, modulator.parameters))
         result["modulation_type"] = modulator.modulation_type
 
     return result
@@ -298,16 +291,28 @@ def create_parser():
                         help="Carrier phase in degree (default: {})".format(DEFAULT_CARRIER_PHASE))
     group2.add_argument("-mo", "--modulation-type", choices=MODULATIONS, metavar="MOD_TYPE", default="FSK",
                         help="Modulation type must be one of " + ", ".join(MODULATIONS) + " (default: %(default)s)")
-    group2.add_argument("-p0", "--parameter-zero", help="Modulation parameter for zero")
-    group2.add_argument("-p1", "--parameter-one", help="Modulation parameter for one")
-    group2.add_argument("-bl", "--bit-length", type=float,
-                        help="Length of a bit in samples (default: {}).".format(DEFAULT_BIT_LENGTH))
+    group2.add_argument("-bps", "--bits-per-symbol", type=int,
+                        help="Bits per symbol e.g. 1 means binary modulation (default: 1).")
+    group2.add_argument("-pm", "--parameters", nargs='+', help="Parameters for modulation. Separate with spaces")
+
+    # Legacy
+    group2.add_argument("-p0", "--parameter-zero", help=argparse.SUPPRESS)
+    group2.add_argument("-p1", "--parameter-one", help=argparse.SUPPRESS)
+
+    group2.add_argument("-sps", "--samples-per-symbol", type=int,
+                        help="Length of a symbol in samples (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
+    group2.add_argument("-bl", "--bit-length", type=int,
+                        help="Same as samples per symbol, just there for legacy support (default: {}).".format(DEFAULT_SAMPLES_PER_SYMBOL))
 
     group2.add_argument("-n", "--noise", type=float,
                         help="Noise threshold (default: {}). Used for RX only.".format(DEFAULT_NOISE))
     group2.add_argument("-c", "--center", type=float,
-                        help="Center between 0 and 1 for demodulation (default: {}). "
+                        help="Center between symbols for demodulation (default: {}). "
                              "Used for RX only.".format(DEFAULT_CENTER))
+    group2.add_argument("-cs", "--center-spacing", type=float,
+                        help="Center spacing between symbols for demodulation (default: {}). "
+                             "Value has only effect for modulations with more than 1 bit per symbol. "
+                             "Used only for RX.".format(DEFAULT_CENTER_SPACING))
     group2.add_argument("-t", "--tolerance", type=float,
                         help="Tolerance for demodulation in samples (default: {}). "
                              "Used for RX only.".format(DEFAULT_TOLERANCE))
@@ -354,13 +359,16 @@ def main():
             return default
 
     import multiprocessing as mp
-    # allow usage of prange (OpenMP) in Processes
-    mp.set_start_method("spawn")
-    if sys.platform == "win32":
-        mp.freeze_support()
+    mp.set_start_method("spawn")  # allow usage of prange (OpenMP) in Processes
+    mp.freeze_support()
 
     parser = create_parser()
     args = parser.parse_args()
+    if args.parameter_zero is not None or args.parameter_one is not None:
+        print("Options -p0 (--parameter-zero) and -p1 (--parameter-one) are not supported anymore.\n"
+              "Use --parameters instead e.g. --parameters 20K 40K for a binary FSK.")
+        sys.exit(1)
+
     project_params = parse_project_file(args.project_file)
     for argument in ("device", "frequency", "sample_rate"):
         if getattr(args, argument):
@@ -394,18 +402,27 @@ def main():
         except:
             pass
 
-    args.bit_length = get_val(args.bit_length, project_params, "bit_len", DEFAULT_BIT_LENGTH)
+    if args.bit_length is not None and args.samples_per_symbol is None:
+        args.samples_per_symbol = args.bit_length  # legacy
+    else:
+        args.samples_per_symbol = get_val(args.samples_per_symbol, project_params,
+                                          "samples_per_symbol", DEFAULT_SAMPLES_PER_SYMBOL)
+
     args.center = get_val(args.center, project_params, "center", DEFAULT_CENTER)
+    args.center_spacing = get_val(args.center_spacing, project_params, "center_spacing", DEFAULT_CENTER_SPACING)
     args.noise = get_val(args.noise, project_params, "noise", DEFAULT_NOISE)
     args.tolerance = get_val(args.tolerance, project_params, "tolerance", DEFAULT_TOLERANCE)
+    args.bits_per_symbol = get_val(args.bits_per_symbol, project_params, "bits_per_symbol", 1)
 
     args.carrier_frequency = get_val(args.carrier_frequency, project_params, "carrier_frequency",
                                      DEFAULT_CARRIER_FREQUENCY)
     args.carrier_amplitude = get_val(args.carrier_amplitude, project_params, "carrier_amplitude",
                                      DEFAULT_CARRIER_AMPLITUDE)
     args.carrier_phase = get_val(args.carrier_phase, project_params, "carrier_phase", DEFAULT_CARRIER_PHASE)
-    args.parameter_zero = get_val(args.parameter_zero, project_params, "parameter_zero", None)
-    args.parameter_one = get_val(args.parameter_one, project_params, "parameter_one", None)
+    args.parameters = get_val(args.parameters, project_params, "parameters", None)
+    if args.parameters is None:
+        print("You must give modulation parameters (--parameters)")
+        sys.exit(0)
 
     if args.verbose is None:
         logger.setLevel(logging.ERROR)

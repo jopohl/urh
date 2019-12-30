@@ -17,10 +17,13 @@ from urh.util.Formatter import Formatter
 
 
 class Modulator(object):
-    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK"]
+    FORCE_DTYPE = None
+
+    MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK", "OQPSK"]
     MODULATION_TYPES_VERBOSE = {"ASK": "Amplitude Shift Keying (ASK)",
                                 "FSK": "Frequency Shift Keying (FSK)",
                                 "PSK": "Phase Shift Keying (PSK)",
+                                "OQPSK": "Offset Quadrature Phase Shift Keying (OQPSK)",
                                 "GFSK": "Gaussian Frequeny Shift Keying (GFSK)"}
 
     def __init__(self, name: str):
@@ -33,7 +36,7 @@ class Modulator(object):
         self.__sample_rate = None
         self.__modulation_type = "ASK"
 
-        self.bits_per_symbol = 1
+        self.__bits_per_symbol = 1
 
         self.name = name
 
@@ -55,6 +58,9 @@ class Modulator(object):
 
     @staticmethod
     def get_dtype():
+        if Modulator.FORCE_DTYPE is not None:
+            return Modulator.FORCE_DTYPE
+
         dtype_str = util.read_setting("modulation_dtype", "float32", str)
         if dtype_str == "int8":
             return np.int8
@@ -80,24 +86,52 @@ class Modulator(object):
         return self.bits_per_symbol == 1
 
     @property
-    def param_for_zero(self):
-        assert self.is_binary_modulation
-        return self.parameters[0]
-
-    @param_for_zero.setter
-    def param_for_zero(self, value):
-        assert self.is_binary_modulation
-        self.parameters[0] = value
+    def is_amplitude_based(self):
+        return "ASK" in self.modulation_type
 
     @property
-    def param_for_one(self):
-        assert self.is_binary_modulation
-        return self.parameters[1]
+    def is_frequency_based(self):
+        return "FSK" in self.modulation_type
 
-    @param_for_one.setter
-    def param_for_one(self, value):
-        assert self.is_binary_modulation
-        self.parameters[1] = value
+    @property
+    def is_phase_based(self):
+        return "PSK" in self.modulation_type
+
+    @property
+    def bits_per_symbol(self):
+        return self.__bits_per_symbol
+
+    @bits_per_symbol.setter
+    def bits_per_symbol(self, value):
+        if value != self.bits_per_symbol:
+            self.__bits_per_symbol = value
+            self.parameters = array.array("f", [0] * self.modulation_order)
+
+    @property
+    def modulation_order(self):
+        return 2 ** self.bits_per_symbol
+
+    @property
+    def parameter_type_str(self) -> str:
+        if self.is_amplitude_based:
+            return "Amplitudes in %:"
+        if self.is_frequency_based:
+            return "Frequencies in Hz:"
+        if self.is_phase_based:
+            return "Phases in degree:"
+
+        return "Unknown Modulation Type (This should not happen...)"
+
+    @property
+    def parameters_string(self) -> str:
+        if self.is_amplitude_based:
+            return "/".join(map(str, map(int, self.parameters)))
+        elif self.is_frequency_based:
+            return "/".join(map(Formatter.big_value_with_suffix, self.parameters))
+        elif self.is_phase_based:
+            return "/".join(map(str, map(int, self.parameters)))
+        else:
+            raise ValueError("")
 
     @property
     def sample_rate(self):
@@ -127,7 +161,7 @@ class Modulator(object):
         return self.get_value_with_suffix(self.carrier_phase_deg, unit="°")
 
     @property
-    def bit_len_str(self):
+    def samples_per_symbol_str(self):
         return self.get_value_with_suffix(self.samples_per_symbol, unit="")
 
     @property
@@ -137,16 +171,6 @@ class Modulator(object):
     @property
     def modulation_type_verbose(self):
         return self.MODULATION_TYPES_VERBOSE[self.modulation_type]
-
-    @property
-    def param_for_zero_str(self):
-        units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
-        return self.get_value_with_suffix(self.param_for_zero, units[self.modulation_type])
-
-    @property
-    def param_for_one_str(self):
-        units = {"ASK": "%", "FSK": "Hz", "GFSK": "Hz", "PSK": "°"}
-        return self.get_value_with_suffix(self.param_for_one, units[self.modulation_type])
 
     @property
     def carrier_data(self):
@@ -214,6 +238,30 @@ class Modulator(object):
                                              self.gauss_bt, self.gauss_filter_width)
         return IQArray(result)
 
+    def get_default_parameters(self) -> array.array:
+        if self.is_amplitude_based:
+            parameters = np.linspace(0, 100, self.modulation_order, dtype=np.float32)
+        elif self.is_frequency_based:
+            parameters = []
+            for i in range(self.modulation_order):
+                parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
+        elif self.is_phase_based:
+            step = 360 / self.modulation_order
+            parameters = np.arange(step / 2, 360, step) - 180
+            if self.modulation_type == "OQPSK":
+                parameters = parameters[(self.__get_gray_code_indices(self.modulation_order))]
+        else:
+            return None
+
+        return array.array("f", parameters)
+
+    @staticmethod
+    def __get_gray_code_indices(n: int):
+        result = []
+        for i in range(0, n):
+            result.append(i ^ (i >> 1))
+        return result
+
     def to_xml(self, index: int) -> ET.Element:
         root = ET.Element("modulator")
 
@@ -254,6 +302,10 @@ class Modulator(object):
                 result.samples_per_symbol = Formatter.str2val(value, int, 100)
             elif attrib == "sample_rate":
                 result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
+            elif attrib == "param_for_zero":
+                result.parameters[0] = Formatter.str2val(value, float, 0)  # legacy
+            elif attrib == "param_for_one":
+                result.parameters[1] = Formatter.str2val(value, float, 100)  # legacy
             elif attrib == "parameters":
                 try:
                     result.parameters = array.array("f", map(float, value.split(",")))

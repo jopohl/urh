@@ -1,214 +1,333 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/project.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/project.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'project.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
+import ParticipantTableView
+import KillerDoubleSpinBox
 
 class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
-        ProjectDialog.setObjectName("ProjectDialog")
+        if ProjectDialog.objectName():
+            ProjectDialog.setObjectName(u"ProjectDialog")
         ProjectDialog.resize(803, 936)
-        self.verticalLayout = QtWidgets.QVBoxLayout(ProjectDialog)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.lNewProject = QtWidgets.QLabel(ProjectDialog)
-        font = QtGui.QFont()
+        self.verticalLayout = QVBoxLayout(ProjectDialog)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.lNewProject = QLabel(ProjectDialog)
+        self.lNewProject.setObjectName(u"lNewProject")
+        font = QFont()
         font.setPointSize(16)
-        font.setWeight(75)
         font.setBold(True)
+        font.setWeight(75);
         self.lNewProject.setFont(font)
-        self.lNewProject.setObjectName("lNewProject")
+
         self.verticalLayout.addWidget(self.lNewProject)
-        self.lblName = QtWidgets.QLabel(ProjectDialog)
-        self.lblName.setObjectName("lblName")
+
+        self.lblName = QLabel(ProjectDialog)
+        self.lblName.setObjectName(u"lblName")
+
         self.verticalLayout.addWidget(self.lblName)
-        spacerItem = QtWidgets.QSpacerItem(17, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout.addItem(spacerItem)
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        self.label_5 = QtWidgets.QLabel(ProjectDialog)
-        self.label_5.setObjectName("label_5")
+
+        self.verticalSpacer_2 = QSpacerItem(17, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.verticalLayout.addItem(self.verticalSpacer_2)
+
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.label_5 = QLabel(ProjectDialog)
+        self.label_5.setObjectName(u"label_5")
+
         self.gridLayout.addWidget(self.label_5, 3, 4, 1, 2)
-        self.lineEdit_Path = QtWidgets.QLineEdit(ProjectDialog)
-        self.lineEdit_Path.setStatusTip("")
-        self.lineEdit_Path.setObjectName("lineEdit_Path")
+
+        self.lineEdit_Path = QLineEdit(ProjectDialog)
+        self.lineEdit_Path.setObjectName(u"lineEdit_Path")
+
         self.gridLayout.addWidget(self.lineEdit_Path, 0, 3, 1, 1)
-        self.label_7 = QtWidgets.QLabel(ProjectDialog)
-        self.label_7.setText("")
-        self.label_7.setObjectName("label_7")
+
+        self.label_7 = QLabel(ProjectDialog)
+        self.label_7.setObjectName(u"label_7")
+
         self.gridLayout.addWidget(self.label_7, 1, 0, 1, 2)
-        self.lblNewPath = QtWidgets.QLabel(ProjectDialog)
-        self.lblNewPath.setObjectName("lblNewPath")
+
+        self.lblNewPath = QLabel(ProjectDialog)
+        self.lblNewPath.setObjectName(u"lblNewPath")
+
         self.gridLayout.addWidget(self.lblNewPath, 1, 3, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 57, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem1, 15, 4, 1, 2)
-        self.txtEdDescription = QtWidgets.QPlainTextEdit(ProjectDialog)
-        self.txtEdDescription.setObjectName("txtEdDescription")
+
+        self.verticalSpacer_3 = QSpacerItem(20, 57, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer_3, 15, 4, 1, 2)
+
+        self.txtEdDescription = QPlainTextEdit(ProjectDialog)
+        self.txtEdDescription.setObjectName(u"txtEdDescription")
+
         self.gridLayout.addWidget(self.txtEdDescription, 10, 3, 1, 1)
+
         self.tblParticipants = ParticipantTableView(ProjectDialog)
+        self.tblParticipants.setObjectName(u"tblParticipants")
         self.tblParticipants.setAlternatingRowColors(True)
-        self.tblParticipants.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.tblParticipants.setObjectName("tblParticipants")
+        self.tblParticipants.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.tblParticipants.horizontalHeader().setCascadingSectionResizes(False)
         self.tblParticipants.horizontalHeader().setDefaultSectionSize(100)
         self.tblParticipants.horizontalHeader().setStretchLastSection(True)
         self.tblParticipants.verticalHeader().setCascadingSectionResizes(True)
         self.tblParticipants.verticalHeader().setStretchLastSection(False)
+
         self.gridLayout.addWidget(self.tblParticipants, 11, 3, 5, 1)
+
         self.spinBoxBandwidth = KillerDoubleSpinBox(ProjectDialog)
+        self.spinBoxBandwidth.setObjectName(u"spinBoxBandwidth")
         self.spinBoxBandwidth.setDecimals(3)
-        self.spinBoxBandwidth.setMinimum(1.0)
-        self.spinBoxBandwidth.setMaximum(999999999999.0)
-        self.spinBoxBandwidth.setSingleStep(0.001)
-        self.spinBoxBandwidth.setProperty("value", 1000000.0)
-        self.spinBoxBandwidth.setObjectName("spinBoxBandwidth")
+        self.spinBoxBandwidth.setMinimum(1.000000000000000)
+        self.spinBoxBandwidth.setMaximum(999999999999.000000000000000)
+        self.spinBoxBandwidth.setSingleStep(0.001000000000000)
+        self.spinBoxBandwidth.setValue(1000000.000000000000000)
+
         self.gridLayout.addWidget(self.spinBoxBandwidth, 5, 3, 1, 1)
-        self.label_3 = QtWidgets.QLabel(ProjectDialog)
-        self.label_3.setObjectName("label_3")
+
+        self.label_3 = QLabel(ProjectDialog)
+        self.label_3.setObjectName(u"label_3")
+
         self.gridLayout.addWidget(self.label_3, 4, 0, 1, 2)
+
         self.spinBoxFreq = KillerDoubleSpinBox(ProjectDialog)
+        self.spinBoxFreq.setObjectName(u"spinBoxFreq")
         self.spinBoxFreq.setDecimals(3)
-        self.spinBoxFreq.setMinimum(0.01)
-        self.spinBoxFreq.setMaximum(1000000000000.0)
-        self.spinBoxFreq.setSingleStep(0.001)
-        self.spinBoxFreq.setProperty("value", 433920000.0)
-        self.spinBoxFreq.setObjectName("spinBoxFreq")
+        self.spinBoxFreq.setMinimum(0.010000000000000)
+        self.spinBoxFreq.setMaximum(1000000000000.000000000000000)
+        self.spinBoxFreq.setSingleStep(0.001000000000000)
+        self.spinBoxFreq.setValue(433920000.000000000000000)
+
         self.gridLayout.addWidget(self.spinBoxFreq, 4, 3, 1, 1)
+
         self.spinBoxSampleRate = KillerDoubleSpinBox(ProjectDialog)
+        self.spinBoxSampleRate.setObjectName(u"spinBoxSampleRate")
         self.spinBoxSampleRate.setDecimals(3)
-        self.spinBoxSampleRate.setMinimum(0.01)
-        self.spinBoxSampleRate.setMaximum(1000000000000.0)
-        self.spinBoxSampleRate.setSingleStep(0.001)
-        self.spinBoxSampleRate.setProperty("value", 1000000.0)
-        self.spinBoxSampleRate.setObjectName("spinBoxSampleRate")
+        self.spinBoxSampleRate.setMinimum(0.010000000000000)
+        self.spinBoxSampleRate.setMaximum(1000000000000.000000000000000)
+        self.spinBoxSampleRate.setSingleStep(0.001000000000000)
+        self.spinBoxSampleRate.setValue(1000000.000000000000000)
+
         self.gridLayout.addWidget(self.spinBoxSampleRate, 3, 3, 1, 1)
-        self.lineEditBroadcastAddress = QtWidgets.QLineEdit(ProjectDialog)
-        self.lineEditBroadcastAddress.setInputMask("")
-        self.lineEditBroadcastAddress.setObjectName("lineEditBroadcastAddress")
+
+        self.lineEditBroadcastAddress = QLineEdit(ProjectDialog)
+        self.lineEditBroadcastAddress.setObjectName(u"lineEditBroadcastAddress")
+
         self.gridLayout.addWidget(self.lineEditBroadcastAddress, 16, 3, 1, 1)
-        self.line = QtWidgets.QFrame(ProjectDialog)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
+
+        self.line = QFrame(ProjectDialog)
+        self.line.setObjectName(u"line")
+        self.line.setFrameShape(QFrame.HLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+
         self.gridLayout.addWidget(self.line, 9, 0, 1, 6)
-        self.label_10 = QtWidgets.QLabel(ProjectDialog)
-        self.label_10.setObjectName("label_10")
+
+        self.label_10 = QLabel(ProjectDialog)
+        self.label_10.setObjectName(u"label_10")
+
         self.gridLayout.addWidget(self.label_10, 5, 0, 1, 2)
-        self.btnAddParticipant = QtWidgets.QToolButton(ProjectDialog)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+
+        self.btnAddParticipant = QToolButton(ProjectDialog)
+        self.btnAddParticipant.setObjectName(u"btnAddParticipant")
+        icon = QIcon()
+        iconThemeName = u"list-add"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon = QIcon.fromTheme(iconThemeName)
+        else:
+            icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
         self.btnAddParticipant.setIcon(icon)
-        self.btnAddParticipant.setObjectName("btnAddParticipant")
+
         self.gridLayout.addWidget(self.btnAddParticipant, 11, 4, 1, 2)
-        self.btnSelectPath = QtWidgets.QToolButton(ProjectDialog)
-        self.btnSelectPath.setObjectName("btnSelectPath")
+
+        self.btnSelectPath = QToolButton(ProjectDialog)
+        self.btnSelectPath.setObjectName(u"btnSelectPath")
+
         self.gridLayout.addWidget(self.btnSelectPath, 0, 4, 1, 2)
-        self.line_2 = QtWidgets.QFrame(ProjectDialog)
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
+
+        self.line_2 = QFrame(ProjectDialog)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.HLine)
+        self.line_2.setFrameShadow(QFrame.Sunken)
+
         self.gridLayout.addWidget(self.line_2, 2, 0, 1, 6)
-        self.label_6 = QtWidgets.QLabel(ProjectDialog)
-        self.label_6.setObjectName("label_6")
+
+        self.label_6 = QLabel(ProjectDialog)
+        self.label_6.setObjectName(u"label_6")
+
         self.gridLayout.addWidget(self.label_6, 4, 4, 1, 2)
-        self.label_2 = QtWidgets.QLabel(ProjectDialog)
-        self.label_2.setObjectName("label_2")
+
+        self.label_2 = QLabel(ProjectDialog)
+        self.label_2.setObjectName(u"label_2")
+
         self.gridLayout.addWidget(self.label_2, 3, 0, 1, 2)
-        self.label = QtWidgets.QLabel(ProjectDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
+
+        self.label = QLabel(ProjectDialog)
+        self.label.setObjectName(u"label")
+        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setObjectName("label")
+
         self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
-        self.btnRemoveParticipant = QtWidgets.QToolButton(ProjectDialog)
-        self.btnRemoveParticipant.setIcon(icon)
-        self.btnRemoveParticipant.setObjectName("btnRemoveParticipant")
+
+        self.btnRemoveParticipant = QToolButton(ProjectDialog)
+        self.btnRemoveParticipant.setObjectName(u"btnRemoveParticipant")
+        icon1 = QIcon()
+        iconThemeName = u"list-remove"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon1 = QIcon.fromTheme(iconThemeName)
+        else:
+            icon1.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
+        self.btnRemoveParticipant.setIcon(icon1)
+
         self.gridLayout.addWidget(self.btnRemoveParticipant, 12, 4, 1, 2)
-        self.spinBoxGain = QtWidgets.QSpinBox(ProjectDialog)
+
+        self.spinBoxGain = QSpinBox(ProjectDialog)
+        self.spinBoxGain.setObjectName(u"spinBoxGain")
         self.spinBoxGain.setMinimum(1)
-        self.spinBoxGain.setProperty("value", 20)
-        self.spinBoxGain.setObjectName("spinBoxGain")
+        self.spinBoxGain.setValue(20)
+
         self.gridLayout.addWidget(self.spinBoxGain, 6, 3, 1, 1)
-        self.label_4 = QtWidgets.QLabel(ProjectDialog)
-        self.label_4.setObjectName("label_4")
+
+        self.label_4 = QLabel(ProjectDialog)
+        self.label_4.setObjectName(u"label_4")
+
         self.gridLayout.addWidget(self.label_4, 16, 0, 1, 2)
-        self.label_8 = QtWidgets.QLabel(ProjectDialog)
-        self.label_8.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.label_8.setObjectName("label_8")
+
+        self.label_8 = QLabel(ProjectDialog)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
         self.gridLayout.addWidget(self.label_8, 10, 0, 1, 2)
-        self.label_12 = QtWidgets.QLabel(ProjectDialog)
-        self.label_12.setObjectName("label_12")
+
+        self.label_12 = QLabel(ProjectDialog)
+        self.label_12.setObjectName(u"label_12")
+
         self.gridLayout.addWidget(self.label_12, 5, 4, 1, 2)
-        self.label_11 = QtWidgets.QLabel(ProjectDialog)
-        self.label_11.setObjectName("label_11")
+
+        self.label_11 = QLabel(ProjectDialog)
+        self.label_11.setObjectName(u"label_11")
+
         self.gridLayout.addWidget(self.label_11, 6, 0, 1, 2)
-        self.btnUp = QtWidgets.QToolButton(ProjectDialog)
-        self.btnUp.setIcon(icon)
-        self.btnUp.setObjectName("btnUp")
+
+        self.btnUp = QToolButton(ProjectDialog)
+        self.btnUp.setObjectName(u"btnUp")
+        icon2 = QIcon()
+        iconThemeName = u"go-up"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon2 = QIcon.fromTheme(iconThemeName)
+        else:
+            icon2.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
+        self.btnUp.setIcon(icon2)
+
         self.gridLayout.addWidget(self.btnUp, 13, 4, 1, 1)
-        self.lOpenSpectrumAnalyzer = QtWidgets.QLabel(ProjectDialog)
-        self.lOpenSpectrumAnalyzer.setTextFormat(QtCore.Qt.AutoText)
+
+        self.lOpenSpectrumAnalyzer = QLabel(ProjectDialog)
+        self.lOpenSpectrumAnalyzer.setObjectName(u"lOpenSpectrumAnalyzer")
+        self.lOpenSpectrumAnalyzer.setTextFormat(Qt.AutoText)
         self.lOpenSpectrumAnalyzer.setOpenExternalLinks(False)
-        self.lOpenSpectrumAnalyzer.setObjectName("lOpenSpectrumAnalyzer")
+
         self.gridLayout.addWidget(self.lOpenSpectrumAnalyzer, 8, 0, 1, 4)
-        self.label_9 = QtWidgets.QLabel(ProjectDialog)
-        self.label_9.setObjectName("label_9")
+
+        self.label_9 = QLabel(ProjectDialog)
+        self.label_9.setObjectName(u"label_9")
+
         self.gridLayout.addWidget(self.label_9, 11, 0, 5, 2)
-        self.btnDown = QtWidgets.QToolButton(ProjectDialog)
-        self.btnDown.setIcon(icon)
-        self.btnDown.setObjectName("btnDown")
+
+        self.btnDown = QToolButton(ProjectDialog)
+        self.btnDown.setObjectName(u"btnDown")
+        icon3 = QIcon()
+        iconThemeName = u"go-down"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon3 = QIcon.fromTheme(iconThemeName)
+        else:
+            icon3.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
+        self.btnDown.setIcon(icon3)
+
         self.gridLayout.addWidget(self.btnDown, 14, 4, 1, 1)
-        self.buttonBox = QtWidgets.QDialogButtonBox(ProjectDialog)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(ProjectDialog)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.gridLayout.addWidget(self.buttonBox, 17, 3, 1, 1)
+
+
         self.verticalLayout.addLayout(self.gridLayout)
 
+        QWidget.setTabOrder(self.lineEdit_Path, self.btnSelectPath)
+        QWidget.setTabOrder(self.btnSelectPath, self.spinBoxSampleRate)
+        QWidget.setTabOrder(self.spinBoxSampleRate, self.spinBoxFreq)
+        QWidget.setTabOrder(self.spinBoxFreq, self.spinBoxBandwidth)
+        QWidget.setTabOrder(self.spinBoxBandwidth, self.spinBoxGain)
+        QWidget.setTabOrder(self.spinBoxGain, self.txtEdDescription)
+        QWidget.setTabOrder(self.txtEdDescription, self.tblParticipants)
+        QWidget.setTabOrder(self.tblParticipants, self.btnAddParticipant)
+        QWidget.setTabOrder(self.btnAddParticipant, self.btnRemoveParticipant)
+        QWidget.setTabOrder(self.btnRemoveParticipant, self.lineEditBroadcastAddress)
+
         self.retranslateUi(ProjectDialog)
-        ProjectDialog.setTabOrder(self.lineEdit_Path, self.btnSelectPath)
-        ProjectDialog.setTabOrder(self.btnSelectPath, self.spinBoxSampleRate)
-        ProjectDialog.setTabOrder(self.spinBoxSampleRate, self.spinBoxFreq)
-        ProjectDialog.setTabOrder(self.spinBoxFreq, self.spinBoxBandwidth)
-        ProjectDialog.setTabOrder(self.spinBoxBandwidth, self.spinBoxGain)
-        ProjectDialog.setTabOrder(self.spinBoxGain, self.txtEdDescription)
-        ProjectDialog.setTabOrder(self.txtEdDescription, self.tblParticipants)
-        ProjectDialog.setTabOrder(self.tblParticipants, self.btnAddParticipant)
-        ProjectDialog.setTabOrder(self.btnAddParticipant, self.btnRemoveParticipant)
-        ProjectDialog.setTabOrder(self.btnRemoveParticipant, self.lineEditBroadcastAddress)
+    # setupUi
 
     def retranslateUi(self, ProjectDialog):
-        ProjectDialog.setWindowTitle(QtWidgets.QApplication.translate("ProjectDialog", "Create a new project", None, -1))
-        self.lNewProject.setText(QtWidgets.QApplication.translate("ProjectDialog", "New Project", None, -1))
-        self.lblName.setText(QtWidgets.QApplication.translate("ProjectDialog", "<Name>", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("ProjectDialog", "Sps", None, -1))
-        self.lblNewPath.setText(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default frequency:", None, -1))
-        self.lineEditBroadcastAddress.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p>Enter the broadcast address of your protocol in <span style=\" font-weight:600;\">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>", None, -1))
-        self.lineEditBroadcastAddress.setText(QtWidgets.QApplication.translate("ProjectDialog", "ffff", None, -1))
-        self.label_10.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default bandwidth:", None, -1))
-        self.btnAddParticipant.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Add participant", None, -1))
-        self.btnAddParticipant.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
-        self.btnSelectPath.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("ProjectDialog", "Hz", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default sample rate:", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("ProjectDialog", "Choose a path:", None, -1))
-        self.btnRemoveParticipant.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Remove participant", None, -1))
-        self.btnRemoveParticipant.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("ProjectDialog", "Broadcast address (hex):", None, -1))
-        self.label_8.setText(QtWidgets.QApplication.translate("ProjectDialog", "Description:", None, -1))
-        self.label_12.setText(QtWidgets.QApplication.translate("ProjectDialog", "Hz", None, -1))
-        self.label_11.setText(QtWidgets.QApplication.translate("ProjectDialog", "Default gain:", None, -1))
-        self.btnUp.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Move selected participants up", None, -1))
-        self.btnUp.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
-        self.lOpenSpectrumAnalyzer.setText(QtWidgets.QApplication.translate("ProjectDialog", "<html><head/><body><p>Tip: Open <a href=\"open_spectrum_analyzer\">spectrum analyzer</a> to find these values.</p></body></html>", None, -1))
-        self.label_9.setText(QtWidgets.QApplication.translate("ProjectDialog", "Participants:", None, -1))
-        self.btnDown.setToolTip(QtWidgets.QApplication.translate("ProjectDialog", "Move selected participants down", None, -1))
-        self.btnDown.setText(QtWidgets.QApplication.translate("ProjectDialog", "...", None, -1))
+        ProjectDialog.setWindowTitle(QCoreApplication.translate("ProjectDialog", u"Create a new project", None))
+        self.lNewProject.setText(QCoreApplication.translate("ProjectDialog", u"New Project", None))
+        self.lblName.setText(QCoreApplication.translate("ProjectDialog", u"<Name>", None))
+        self.label_5.setText(QCoreApplication.translate("ProjectDialog", u"Sps", None))
+#if QT_CONFIG(statustip)
+        self.lineEdit_Path.setStatusTip("")
+#endif // QT_CONFIG(statustip)
+        self.label_7.setText("")
+        self.lblNewPath.setText(QCoreApplication.translate("ProjectDialog", u"<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>", None))
+        self.label_3.setText(QCoreApplication.translate("ProjectDialog", u"Default frequency:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEditBroadcastAddress.setToolTip(QCoreApplication.translate("ProjectDialog", u"<html><head/><body><p>Enter the broadcast address of your protocol in <span style=\" font-weight:600;\">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEditBroadcastAddress.setInputMask("")
+        self.lineEditBroadcastAddress.setText(QCoreApplication.translate("ProjectDialog", u"ffff", None))
+        self.label_10.setText(QCoreApplication.translate("ProjectDialog", u"Default bandwidth:", None))
+#if QT_CONFIG(tooltip)
+        self.btnAddParticipant.setToolTip(QCoreApplication.translate("ProjectDialog", u"Add participant", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnAddParticipant.setText(QCoreApplication.translate("ProjectDialog", u"...", None))
+        self.btnSelectPath.setText(QCoreApplication.translate("ProjectDialog", u"...", None))
+        self.label_6.setText(QCoreApplication.translate("ProjectDialog", u"Hz", None))
+        self.label_2.setText(QCoreApplication.translate("ProjectDialog", u"Default sample rate:", None))
+        self.label.setText(QCoreApplication.translate("ProjectDialog", u"Choose a path:", None))
+#if QT_CONFIG(tooltip)
+        self.btnRemoveParticipant.setToolTip(QCoreApplication.translate("ProjectDialog", u"Remove participant", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnRemoveParticipant.setText(QCoreApplication.translate("ProjectDialog", u"...", None))
+        self.label_4.setText(QCoreApplication.translate("ProjectDialog", u"Broadcast address (hex):", None))
+        self.label_8.setText(QCoreApplication.translate("ProjectDialog", u"Description:", None))
+        self.label_12.setText(QCoreApplication.translate("ProjectDialog", u"Hz", None))
+        self.label_11.setText(QCoreApplication.translate("ProjectDialog", u"Default gain:", None))
+#if QT_CONFIG(tooltip)
+        self.btnUp.setToolTip(QCoreApplication.translate("ProjectDialog", u"Move selected participants up", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnUp.setText(QCoreApplication.translate("ProjectDialog", u"...", None))
+        self.lOpenSpectrumAnalyzer.setText(QCoreApplication.translate("ProjectDialog", u"<html><head/><body><p>Tip: Open <a href=\"open_spectrum_analyzer\">spectrum analyzer</a> to find these values.</p></body></html>", None))
+        self.label_9.setText(QCoreApplication.translate("ProjectDialog", u"Participants:", None))
+#if QT_CONFIG(tooltip)
+        self.btnDown.setToolTip(QCoreApplication.translate("ProjectDialog", u"Move selected participants down", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnDown.setText(QCoreApplication.translate("ProjectDialog", u"...", None))
+    # retranslateUi
 
-from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
-from urh.ui.views.ParticipantTableView import ParticipantTableView

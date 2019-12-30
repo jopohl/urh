@@ -1,5 +1,3 @@
-import time
-
 from urh.dev.native.lib.cusrp cimport *
 import numpy as np
 # noinspection PyUnresolvedReferences

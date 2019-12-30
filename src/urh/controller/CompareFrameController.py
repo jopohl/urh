@@ -1494,7 +1494,7 @@ class CompareFrameController(QWidget):
         if self.ui.lblLabelValues.text().startswith("Labels of"):
             self.ui.lblLabelValues.setText("Labels of {}".format(new_name))
 
-    @pyqtSlot(int)
+    @Slot(int)
     def on_tab_bar_double_clicked(self, index: int):
         if not self.tab_bar_collapsed:
             self.ui.tab_participants.hide()

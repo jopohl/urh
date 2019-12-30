@@ -16,9 +16,9 @@ from urh.util.ProjectManager import ProjectManager
 import numpy as np
 
 class DeviceSettingsWidget(QWidget):
-    selected_device_changed = pyqtSignal()
-    gain_edited = pyqtSignal()
-    device_parameters_changed = pyqtSignal(dict)
+    selected_device_changed = Signal()
+    gain_edited = Signal()
+    device_parameters_changed = Signal(dict)
 
     def __init__(self, project_manager: ProjectManager, is_tx: bool, backend_handler: BackendHandler = None,
                  continuous_send_mode=False, parent=None):

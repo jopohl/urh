@@ -146,13 +146,13 @@ class RfCatPlugin(SDRPlugin):
     def read_async(self):
         self.set_parameter("d.RFrecv({})[0]".format(500), log=False)
 
-    def configure_rfcat(self, modulation = "MOD_ASK_OOK", freq = 433920000, sample_rate = 2000000, bit_len = 500):
+    def configure_rfcat(self, modulation = "MOD_ASK_OOK", freq = 433920000, sample_rate = 2000000, samples_per_symbol = 500):
         self.set_parameter("d.setMdmModulation({})".format(modulation), log=False)
         self.set_parameter("d.setFreq({})".format(int(freq)), log=False)
         self.set_parameter("d.setMdmSyncMode(0)", log=False)
-        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // bit_len)), log=False)
+        self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // samples_per_symbol)), log=False)
         self.set_parameter("d.setMaxPower()", log=False)
-        logger.info("Configured RfCat to Modulation={}, Freqency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // bit_len)))
+        logger.info("Configured RfCat to Modulation={}, Freqency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // samples_per_symbol)))
 
     def send_data(self, data) -> str:
         prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
@@ -179,7 +179,7 @@ class RfCatPlugin(SDRPlugin):
         else:                   # Fallback
             modulation = "MOD_ASK_OOK"
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
-                             sample_rate=sample_rates[0], bit_len=messages[0].bit_len)
+                             sample_rate=sample_rates[0], samples_per_symbol=messages[0].samples_per_symbol)
 
         repeats_from_settings = util.read_setting('num_sending_repeats', 0, type=int)
         repeats = repeats_from_settings if repeats_from_settings > 0 else -1

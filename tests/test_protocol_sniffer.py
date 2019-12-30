@@ -20,15 +20,17 @@ class TestProtocolSniffer(QtTestCase):
         SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
     def test_protocol_sniffer(self):
-        bit_len = 100
+        samples_per_symbol = 100
         center = 0.0942
         noise = 0.1
         tolerance = 2
         modulation_type = "FSK"
         sample_rate = 1e6
         device_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
-        sniffer = ProtocolSniffer(bit_len=bit_len, center=center, noise=noise, tolerance=tolerance,
-                                  modulation_type=modulation_type, device=device_name, backend_handler=BackendHandler(),
+        sniffer = ProtocolSniffer(samples_per_symbol=samples_per_symbol, center=center, center_spacing=0.1,
+                                  noise=noise, tolerance=tolerance,
+                                  modulation_type=modulation_type, bits_per_symbol=1,
+                                  device=device_name, backend_handler=BackendHandler(),
                                   network_raw_mode=True)
 
         port = self.get_free_port()
@@ -41,13 +43,13 @@ class TestProtocolSniffer(QtTestCase):
         QTest.qWait(10)
 
         data = ["101010", "000111", "1111000"]
-        pause = 10 * bit_len
+        pause = 10 * samples_per_symbol
         modulator = Modulator("test")
-        modulator.samples_per_symbol = bit_len
+        modulator.samples_per_symbol = samples_per_symbol
         modulator.sample_rate = sample_rate
         modulator.modulation_type = modulation_type
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = 10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = 10e3
 
         packages = []
         for d in data:
@@ -58,10 +60,10 @@ class TestProtocolSniffer(QtTestCase):
         signal = IQSignal("", "", sample_rate=sample_rate)
         signal.iq_array = IQArray.concatenate(packages)
         signal.modulation_type = modulation_type
-        signal.bit_len = bit_len
+        signal.samples_per_symbol = samples_per_symbol
         signal.tolerance = tolerance
         signal.noise_threshold = noise
-        signal.qad_center = center
+        signal.center = center
         pa.signal = signal
         pa.get_protocol_from_signal()
         self.assertEqual(pa.plain_bits_str, data)
@@ -72,7 +74,7 @@ class TestProtocolSniffer(QtTestCase):
         time.sleep(1)
 
         # Send enough pauses to end sniffing
-        self.network_sdr_plugin_sender.send_raw_data(IQArray(None, np.float32, 10 * 2 * bit_len), 1)
+        self.network_sdr_plugin_sender.send_raw_data(IQArray(None, np.float32, 10 * 2 * samples_per_symbol), 1)
         time.sleep(1)
 
         sniffer.stop()

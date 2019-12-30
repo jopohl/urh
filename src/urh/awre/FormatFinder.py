@@ -167,7 +167,7 @@ class FormatFinder(object):
                     new_message_type = copy.deepcopy(message_type)  # type: MessageType
 
                     if i > 0:
-                        new_message_type.name = "Inferred #{}".format(i)
+                        new_message_type.name = "Message Type {}.{}".format(self.current_iteration+1, i)
                         new_message_type.give_new_id()
 
                     for rng in container:
@@ -181,6 +181,14 @@ class FormatFinder(object):
         self.current_iteration = 0
         while self.perform_iteration() and self.current_iteration < max_iterations:
             self.current_iteration += 1
+
+        if len(self.message_types) > 0:
+            messages_without_message_type = set(range(len(self.bitvectors))) - set(
+                i for l in self.existing_message_types.values() for i in l)
+
+            # add to default message type
+            self.existing_message_types[self.message_types[0]].extend(list(messages_without_message_type))
+
 
     @staticmethod
     def remove_overlapping_fields(common_ranges, message_type: MessageType):

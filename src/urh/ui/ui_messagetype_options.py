@@ -1,63 +1,106 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/messagetype_options.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/messagetype_options.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'messagetype_options.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
 
 class Ui_DialogMessageType(object):
     def setupUi(self, DialogMessageType):
-        DialogMessageType.setObjectName("DialogMessageType")
+        if DialogMessageType.objectName():
+            DialogMessageType.setObjectName(u"DialogMessageType")
         DialogMessageType.resize(471, 359)
-        self.gridLayout = QtWidgets.QGridLayout(DialogMessageType)
-        self.gridLayout.setObjectName("gridLayout")
-        self.cbRulesetMode = QtWidgets.QComboBox(DialogMessageType)
-        self.cbRulesetMode.setObjectName("cbRulesetMode")
-        self.cbRulesetMode.addItem("")
-        self.cbRulesetMode.addItem("")
-        self.cbRulesetMode.addItem("")
+        self.gridLayout = QGridLayout(DialogMessageType)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.cbRulesetMode = QComboBox(DialogMessageType)
+        self.cbRulesetMode.addItem(QString())
+        self.cbRulesetMode.addItem(QString())
+        self.cbRulesetMode.addItem(QString())
+        self.cbRulesetMode.setObjectName(u"cbRulesetMode")
+
         self.gridLayout.addWidget(self.cbRulesetMode, 1, 0, 1, 2)
-        self.tblViewRuleset = QtWidgets.QTableView(DialogMessageType)
+
+        self.tblViewRuleset = QTableView(DialogMessageType)
+        self.tblViewRuleset.setObjectName(u"tblViewRuleset")
         self.tblViewRuleset.setShowGrid(False)
-        self.tblViewRuleset.setObjectName("tblViewRuleset")
+
         self.gridLayout.addWidget(self.tblViewRuleset, 2, 0, 3, 2)
-        self.btnRemoveRule = QtWidgets.QToolButton(DialogMessageType)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+
+        self.btnRemoveRule = QToolButton(DialogMessageType)
+        self.btnRemoveRule.setObjectName(u"btnRemoveRule")
+        icon = QIcon()
+        iconThemeName = u"list-remove"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon = QIcon.fromTheme(iconThemeName)
+        else:
+            icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
         self.btnRemoveRule.setIcon(icon)
-        self.btnRemoveRule.setObjectName("btnRemoveRule")
+
         self.gridLayout.addWidget(self.btnRemoveRule, 3, 2, 1, 1)
-        self.rbAssignManually = QtWidgets.QRadioButton(DialogMessageType)
-        self.rbAssignManually.setObjectName("rbAssignManually")
+
+        self.rbAssignManually = QRadioButton(DialogMessageType)
+        self.rbAssignManually.setObjectName(u"rbAssignManually")
+
         self.gridLayout.addWidget(self.rbAssignManually, 0, 0, 1, 1)
-        self.rbAssignAutomatically = QtWidgets.QRadioButton(DialogMessageType)
-        self.rbAssignAutomatically.setObjectName("rbAssignAutomatically")
+
+        self.rbAssignAutomatically = QRadioButton(DialogMessageType)
+        self.rbAssignAutomatically.setObjectName(u"rbAssignAutomatically")
+
         self.gridLayout.addWidget(self.rbAssignAutomatically, 0, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 145, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 4, 2, 1, 1)
-        self.btnAddRule = QtWidgets.QToolButton(DialogMessageType)
-        self.btnAddRule.setIcon(icon)
-        self.btnAddRule.setObjectName("btnAddRule")
+
+        self.verticalSpacer = QSpacerItem(20, 145, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.gridLayout.addItem(self.verticalSpacer, 4, 2, 1, 1)
+
+        self.btnAddRule = QToolButton(DialogMessageType)
+        self.btnAddRule.setObjectName(u"btnAddRule")
+        icon1 = QIcon()
+        iconThemeName = u"list-add"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon1 = QIcon.fromTheme(iconThemeName)
+        else:
+            icon1.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
+        self.btnAddRule.setIcon(icon1)
+
         self.gridLayout.addWidget(self.btnAddRule, 2, 2, 1, 1)
-        self.buttonBox = QtWidgets.QDialogButtonBox(DialogMessageType)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(DialogMessageType)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.gridLayout.addWidget(self.buttonBox, 5, 0, 1, 2)
 
+
         self.retranslateUi(DialogMessageType)
+    # setupUi
 
     def retranslateUi(self, DialogMessageType):
-        DialogMessageType.setWindowTitle(QtWidgets.QApplication.translate("DialogMessageType", "Dialog", None, -1))
-        self.cbRulesetMode.setItemText(0, QtWidgets.QApplication.translate("DialogMessageType", "All rules must apply (AND)", None, -1))
-        self.cbRulesetMode.setItemText(1, QtWidgets.QApplication.translate("DialogMessageType", "At leat one rule must apply (OR)", None, -1))
-        self.cbRulesetMode.setItemText(2, QtWidgets.QApplication.translate("DialogMessageType", "No rule must apply (NOR)", None, -1))
-        self.btnRemoveRule.setToolTip(QtWidgets.QApplication.translate("DialogMessageType", "Remove ruleset", None, -1))
-        self.btnRemoveRule.setText(QtWidgets.QApplication.translate("DialogMessageType", "...", None, -1))
-        self.rbAssignManually.setText(QtWidgets.QApplication.translate("DialogMessageType", "Assi&gn manually", None, -1))
-        self.rbAssignAutomatically.setText(QtWidgets.QApplication.translate("DialogMessageType", "Assign a&utomatically", None, -1))
-        self.btnAddRule.setToolTip(QtWidgets.QApplication.translate("DialogMessageType", "Add ruleset", None, -1))
-        self.btnAddRule.setText(QtWidgets.QApplication.translate("DialogMessageType", "...", None, -1))
+        DialogMessageType.setWindowTitle(QCoreApplication.translate("DialogMessageType", u"Dialog", None))
+        self.cbRulesetMode.setItemText(0, QCoreApplication.translate("DialogMessageType", u"All rules must apply (AND)", None))
+        self.cbRulesetMode.setItemText(1, QCoreApplication.translate("DialogMessageType", u"At leat one rule must apply (OR)", None))
+        self.cbRulesetMode.setItemText(2, QCoreApplication.translate("DialogMessageType", u"No rule must apply (NOR)", None))
+
+#if QT_CONFIG(tooltip)
+        self.btnRemoveRule.setToolTip(QCoreApplication.translate("DialogMessageType", u"Remove ruleset", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnRemoveRule.setText(QCoreApplication.translate("DialogMessageType", u"...", None))
+        self.rbAssignManually.setText(QCoreApplication.translate("DialogMessageType", u"Assi&gn manually", None))
+        self.rbAssignAutomatically.setText(QCoreApplication.translate("DialogMessageType", u"Assign a&utomatically", None))
+#if QT_CONFIG(tooltip)
+        self.btnAddRule.setToolTip(QCoreApplication.translate("DialogMessageType", u"Add ruleset", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnAddRule.setText(QCoreApplication.translate("DialogMessageType", u"...", None))
+    # retranslateUi
 

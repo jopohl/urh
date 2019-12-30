@@ -213,7 +213,8 @@ class GeneratorTabController(QWidget):
             return
 
         modulator = self.modulators[0]
-        modulator.samples_per_symbol = protocol.messages[0].bit_len
+        modulator.samples_per_symbol = protocol.messages[0].samples_per_symbol
+        modulator.bits_per_symbol = protocol.messages[0].bits_per_symbol
 
         if protocol.signal:
             modulator.sample_rate = protocol.signal.sample_rate
@@ -222,30 +223,22 @@ class GeneratorTabController(QWidget):
             if auto_freq is not None and auto_freq != 0:
                 modulator.carrier_freq_hz = auto_freq
 
+        modulator.parameters = modulator.get_default_parameters()
         self.show_modulation_info()
 
     def show_modulation_info(self):
         cur_ind = self.ui.cBoxModulations.currentIndex()
-        cur_mod = self.modulators[cur_ind]
-        self.ui.lCarrierFreqValue.setText(cur_mod.carrier_frequency_str)
-        self.ui.lCarrierPhaseValue.setText(cur_mod.carrier_phase_str)
-        self.ui.lBitLenValue.setText(cur_mod.bit_len_str)
-        self.ui.lSampleRateValue.setText(cur_mod.sample_rate_str)
-        mod_type = cur_mod.modulation_type
+        mod = self.modulators[cur_ind]
+        self.ui.lCarrierFreqValue.setText(mod.carrier_frequency_str)
+        self.ui.lCarrierPhaseValue.setText(mod.carrier_phase_str)
+        self.ui.lBitLenValue.setText(mod.samples_per_symbol_str)
+        self.ui.lSampleRateValue.setText(mod.sample_rate_str)
+        mod_type = mod.modulation_type
         self.ui.lModTypeValue.setText(mod_type)
-        if mod_type == "ASK":
-            prefix = "Amplitude"
-        elif mod_type == "PSK":
-            prefix = "Phase"
-        elif mod_type in ("FSK", "GFSK"):
-            prefix = "Frequency"
-        else:
-            prefix = "Unknown Modulation Type (This should not happen...)"
 
-        self.ui.lParamForZero.setText(prefix + " for 0:")
-        self.ui.lParamForZeroValue.setText(cur_mod.param_for_zero_str)
-        self.ui.lParamForOne.setText(prefix + " for 1:")
-        self.ui.lParamForOneValue.setText(cur_mod.param_for_one_str)
+        self.ui.lParamCaption.setText(mod.parameter_type_str)
+        self.ui.labelParameterValues.setText(mod.parameters_string)
+        self.ui.labelBitsPerSymbol.setText(str(mod.bits_per_symbol))
 
     def prepare_modulation_dialog(self) -> (ModulatorDialog, Message):
         preselected_index = self.ui.cBoxModulations.currentIndex()
@@ -256,11 +249,11 @@ class GeneratorTabController(QWidget):
                 selected_message = self.table_model.protocol.messages[min_row]
                 preselected_index = selected_message.modulator_index
             except IndexError:
-                selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
+                selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0], 0, [], MessageType("empty"))
         else:
-            selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0], 0, [], MessageType("empty"))
+            selected_message = Message([1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0], 0, [], MessageType("empty"))
             if len(self.table_model.protocol.messages) > 0:
-                selected_message.bit_len = self.table_model.protocol.messages[0].bit_len
+                selected_message.samples_per_symbol = self.table_model.protocol.messages[0].samples_per_symbol
 
         for m in self.modulators:
             m.default_sample_rate = self.project_manager.device_conf["sample_rate"]
@@ -296,7 +289,7 @@ class GeneratorTabController(QWidget):
         modulator_dialog, message = self.prepare_modulation_dialog()
         modulator_dialog.showMaximized()
 
-        modulator_dialog.initialize(message.encoded_bits_str[0:10])
+        modulator_dialog.initialize(message.encoded_bits_str[0:16])
         self.project_manager.modulation_was_edited = True
 
     @Slot()
@@ -528,10 +521,10 @@ class GeneratorTabController(QWidget):
             return
 
         avg_msg_len = numpy.mean([len(msg.encoded_bits) for msg in c.messages])
-        avg_bit_len = numpy.mean([m.samples_per_symbol for m in self.modulators])
+        avg_samples_per_symbol = numpy.mean([m.samples_per_symbol for m in self.modulators])
         avg_sample_rate = numpy.mean([m.sample_rate for m in self.modulators])
         pause_samples = sum(c.pauses)
-        nsamples = c.num_messages * avg_msg_len * avg_bit_len + pause_samples
+        nsamples = c.num_messages * avg_msg_len * avg_samples_per_symbol + pause_samples
 
         self.ui.lEstimatedTime.setText(
             locale.format_string("Estimated Time: %.04f seconds", nsamples / avg_sample_rate))

@@ -12,7 +12,7 @@ class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_bit_sample_pos(self):
         signal = IQSignal(get_path_for_data_file("ASK_mod.complex"), "Bit sample pos test")
         signal.modulation_type = "ASK"
-        signal.bit_len = 100
+        signal.samples_per_symbol = 100
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
@@ -23,8 +23,8 @@ class TestProtocolAnalyzer(unittest.TestCase):
     def test_fsk_freq_detection(self):
         s = IQSignal(get_path_for_data_file("steckdose_anlernen.complex"), "RWE")
         s.noise_threshold = 0.06
-        s.qad_center = 0
-        s.bit_len = 100
+        s.center = 0
+        s.samples_per_symbol = 100
         pa = ProtocolAnalyzer(s)
         pa.get_protocol_from_signal()
         self.assertEqual(pa.messages[0].plain_bits_str,
@@ -42,8 +42,8 @@ class TestProtocolAnalyzer(unittest.TestCase):
     def test_get_rssi_of_message(self):
         signal = IQSignal(get_path_for_data_file("two_participants.coco"), "RSSI-Test")
         signal.modulation_type = "FSK"
-        signal.bit_len = 100
-        signal.qad_center = -0.0507
+        signal.samples_per_symbol = 100
+        signal.center = -0.0507
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()

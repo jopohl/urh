@@ -32,16 +32,25 @@ class Formatter:
         return result
 
     @staticmethod
-    def big_value_with_suffix(value: float, decimals=3) -> str:
+    def big_value_with_suffix(value: float, decimals=3, strip_zeros=True) -> str:
         fmt_str = "%.{0:d}f".format(decimals)
+        suffix = ""
         if abs(value) >= 1e9:
-            return locale.format_string(fmt_str + "G", value / 1e9)
+            suffix = "G"
+            result = locale.format_string(fmt_str, value / 1e9)
         elif abs(value) >= 1e6:
-            return locale.format_string(fmt_str + "M", value / 1e6)
+            suffix = "M"
+            result = locale.format_string(fmt_str, value / 1e6)
         elif abs(value) >= 1e3:
-            return locale.format_string(fmt_str + "k", value / 1e3)
+            suffix = "K"
+            result = locale.format_string(fmt_str, value / 1e3)
         else:
-            return locale.format_string(fmt_str, value)
+            result = locale.format_string(fmt_str, value)
+
+        if strip_zeros:
+            result = result.rstrip("0").rstrip(Formatter.local_decimal_seperator())
+
+        return result + suffix
 
     @staticmethod
     def str2val(str_val, dtype, default=0):

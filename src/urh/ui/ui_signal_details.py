@@ -1,102 +1,144 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/signal_details.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/signal_details.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'signal_details.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
+
+import KillerDoubleSpinBox
 
 class Ui_SignalDetails(object):
     def setupUi(self, SignalDetails):
-        SignalDetails.setObjectName("SignalDetails")
+        if SignalDetails.objectName():
+            SignalDetails.setObjectName(u"SignalDetails")
         SignalDetails.resize(469, 200)
-        self.verticalLayout = QtWidgets.QVBoxLayout(SignalDetails)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 2, 2, 1, 1)
+        self.verticalLayout = QVBoxLayout(SignalDetails)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer, 2, 2, 1, 1)
+
         self.dsb_sample_rate = KillerDoubleSpinBox(SignalDetails)
+        self.dsb_sample_rate.setObjectName(u"dsb_sample_rate")
         self.dsb_sample_rate.setWrapping(False)
         self.dsb_sample_rate.setProperty("showGroupSeparator", False)
-        self.dsb_sample_rate.setMinimum(0.01)
-        self.dsb_sample_rate.setMaximum(1e+33)
-        self.dsb_sample_rate.setProperty("value", 1000000.0)
-        self.dsb_sample_rate.setObjectName("dsb_sample_rate")
+        self.dsb_sample_rate.setMinimum(0.010000000000000)
+        self.dsb_sample_rate.setMaximum(999999999999999945575230987042816.000000000000000)
+        self.dsb_sample_rate.setValue(1000000.000000000000000)
+
         self.gridLayout.addWidget(self.dsb_sample_rate, 5, 1, 1, 1)
-        self.label = QtWidgets.QLabel(SignalDetails)
-        self.label.setObjectName("label")
+
+        self.label = QLabel(SignalDetails)
+        self.label.setObjectName(u"label")
+
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.lblFile = QtWidgets.QLabel(SignalDetails)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+
+        self.lblFile = QLabel(SignalDetails)
+        self.lblFile.setObjectName(u"lblFile")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblFile.sizePolicy().hasHeightForWidth())
         self.lblFile.setSizePolicy(sizePolicy)
-        self.lblFile.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
-        self.lblFile.setObjectName("lblFile")
+        self.lblFile.setTextInteractionFlags(Qt.LinksAccessibleByMouse|Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
         self.gridLayout.addWidget(self.lblFile, 1, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(SignalDetails)
-        self.label_2.setObjectName("label_2")
+
+        self.label_2 = QLabel(SignalDetails)
+        self.label_2.setObjectName(u"label_2")
+
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
-        self.label_5 = QtWidgets.QLabel(SignalDetails)
-        self.label_5.setObjectName("label_5")
+
+        self.label_5 = QLabel(SignalDetails)
+        self.label_5.setObjectName(u"label_5")
+
         self.gridLayout.addWidget(self.label_5, 4, 0, 1, 1)
-        self.label_6 = QtWidgets.QLabel(SignalDetails)
-        self.label_6.setObjectName("label_6")
+
+        self.label_6 = QLabel(SignalDetails)
+        self.label_6.setObjectName(u"label_6")
+
         self.gridLayout.addWidget(self.label_6, 5, 0, 1, 1)
-        self.lblSamplesTotal = QtWidgets.QLabel(SignalDetails)
-        self.lblSamplesTotal.setObjectName("lblSamplesTotal")
+
+        self.lblSamplesTotal = QLabel(SignalDetails)
+        self.lblSamplesTotal.setObjectName(u"lblSamplesTotal")
+
         self.gridLayout.addWidget(self.lblSamplesTotal, 4, 1, 1, 1)
-        self.label_3 = QtWidgets.QLabel(SignalDetails)
-        self.label_3.setObjectName("label_3")
+
+        self.label_3 = QLabel(SignalDetails)
+        self.label_3.setObjectName(u"label_3")
+
         self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
-        self.lblName = QtWidgets.QLabel(SignalDetails)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+
+        self.lblName = QLabel(SignalDetails)
+        self.lblName.setObjectName(u"lblName")
         sizePolicy.setHeightForWidth(self.lblName.sizePolicy().hasHeightForWidth())
         self.lblName.setSizePolicy(sizePolicy)
-        self.lblName.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
-        self.lblName.setObjectName("lblName")
+        self.lblName.setTextInteractionFlags(Qt.LinksAccessibleByMouse|Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
+
         self.gridLayout.addWidget(self.lblName, 0, 1, 1, 1)
-        self.lblFileSize = QtWidgets.QLabel(SignalDetails)
-        self.lblFileSize.setObjectName("lblFileSize")
+
+        self.lblFileSize = QLabel(SignalDetails)
+        self.lblFileSize.setObjectName(u"lblFileSize")
+
         self.gridLayout.addWidget(self.lblFileSize, 2, 1, 1, 1)
-        self.label_4 = QtWidgets.QLabel(SignalDetails)
-        self.label_4.setObjectName("label_4")
+
+        self.label_4 = QLabel(SignalDetails)
+        self.label_4.setObjectName(u"label_4")
+
         self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
-        self.lFileCreated = QtWidgets.QLabel(SignalDetails)
-        self.lFileCreated.setObjectName("lFileCreated")
+
+        self.lFileCreated = QLabel(SignalDetails)
+        self.lFileCreated.setObjectName(u"lFileCreated")
+
         self.gridLayout.addWidget(self.lFileCreated, 3, 1, 1, 1)
-        self.label_7 = QtWidgets.QLabel(SignalDetails)
-        self.label_7.setObjectName("label_7")
+
+        self.label_7 = QLabel(SignalDetails)
+        self.label_7.setObjectName(u"label_7")
+
         self.gridLayout.addWidget(self.label_7, 6, 0, 1, 1)
-        self.lDuration = QtWidgets.QLabel(SignalDetails)
-        self.lDuration.setObjectName("lDuration")
+
+        self.lDuration = QLabel(SignalDetails)
+        self.lDuration.setObjectName(u"lDuration")
+
         self.gridLayout.addWidget(self.lDuration, 6, 1, 1, 1)
+
+
         self.verticalLayout.addLayout(self.gridLayout)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 135, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem1)
+
+        self.verticalSpacer = QSpacerItem(20, 135, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer)
+
 
         self.retranslateUi(SignalDetails)
+    # setupUi
 
     def retranslateUi(self, SignalDetails):
-        SignalDetails.setWindowTitle(QtWidgets.QApplication.translate("SignalDetails", "Signal details", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("SignalDetails", "Name:", None, -1))
-        self.lblFile.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("SignalDetails", "File:", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("SignalDetails", "Samples:", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("SignalDetails", "Sample Rate (Sps):", None, -1))
-        self.lblSamplesTotal.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("SignalDetails", "File size:", None, -1))
-        self.lblName.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
-        self.lblFileSize.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("SignalDetails", "File created:", None, -1))
-        self.lFileCreated.setText(QtWidgets.QApplication.translate("SignalDetails", "TextLabel", None, -1))
-        self.label_7.setText(QtWidgets.QApplication.translate("SignalDetails", "Duration:", None, -1))
-        self.lDuration.setText(QtWidgets.QApplication.translate("SignalDetails", "42s", None, -1))
+        SignalDetails.setWindowTitle(QCoreApplication.translate("SignalDetails", u"Signal details", None))
+        self.label.setText(QCoreApplication.translate("SignalDetails", u"Name:", None))
+        self.lblFile.setText(QCoreApplication.translate("SignalDetails", u"TextLabel", None))
+        self.label_2.setText(QCoreApplication.translate("SignalDetails", u"File:", None))
+        self.label_5.setText(QCoreApplication.translate("SignalDetails", u"Samples:", None))
+        self.label_6.setText(QCoreApplication.translate("SignalDetails", u"Sample Rate (Sps):", None))
+        self.lblSamplesTotal.setText(QCoreApplication.translate("SignalDetails", u"TextLabel", None))
+        self.label_3.setText(QCoreApplication.translate("SignalDetails", u"File size:", None))
+        self.lblName.setText(QCoreApplication.translate("SignalDetails", u"TextLabel", None))
+        self.lblFileSize.setText(QCoreApplication.translate("SignalDetails", u"TextLabel", None))
+        self.label_4.setText(QCoreApplication.translate("SignalDetails", u"File created:", None))
+        self.lFileCreated.setText(QCoreApplication.translate("SignalDetails", u"TextLabel", None))
+        self.label_7.setText(QCoreApplication.translate("SignalDetails", u"Duration:", None))
+        self.lDuration.setText(QCoreApplication.translate("SignalDetails", u"42s", None))
+    # retranslateUi
 
-from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

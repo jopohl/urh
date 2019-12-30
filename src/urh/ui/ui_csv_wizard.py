@@ -1,149 +1,218 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/joe/GIT/urh/data/ui/csv_wizard.ui',
-# licensing of '/home/joe/GIT/urh/data/ui/csv_wizard.ui' applies.
-#
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'csv_wizard.ui'
+##
+## Created by: Qt User Interface Compiler version 5.14.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
+    QRect, QSize, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+    QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
+    QRadialGradient)
+from PySide2.QtWidgets import *
 
 class Ui_DialogCSVImport(object):
     def setupUi(self, DialogCSVImport):
-        DialogCSVImport.setObjectName("DialogCSVImport")
+        if DialogCSVImport.objectName():
+            DialogCSVImport.setObjectName(u"DialogCSVImport")
         DialogCSVImport.resize(635, 674)
-        self.gridLayout = QtWidgets.QGridLayout(DialogCSVImport)
-        self.gridLayout.setObjectName("gridLayout")
-        self.labelFileNotFound = QtWidgets.QLabel(DialogCSVImport)
-        self.labelFileNotFound.setObjectName("labelFileNotFound")
+        self.gridLayout = QGridLayout(DialogCSVImport)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.labelFileNotFound = QLabel(DialogCSVImport)
+        self.labelFileNotFound.setObjectName(u"labelFileNotFound")
+
         self.gridLayout.addWidget(self.labelFileNotFound, 1, 2, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.comboBoxCSVSeparator = QtWidgets.QComboBox(DialogCSVImport)
-        self.comboBoxCSVSeparator.setObjectName("comboBoxCSVSeparator")
-        self.comboBoxCSVSeparator.addItem("")
-        self.comboBoxCSVSeparator.addItem("")
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.comboBoxCSVSeparator = QComboBox(DialogCSVImport)
+        self.comboBoxCSVSeparator.addItem(QString())
+        self.comboBoxCSVSeparator.addItem(QString())
+        self.comboBoxCSVSeparator.setObjectName(u"comboBoxCSVSeparator")
+
         self.horizontalLayout.addWidget(self.comboBoxCSVSeparator)
-        self.btnAddSeparator = QtWidgets.QToolButton(DialogCSVImport)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("."), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+
+        self.btnAddSeparator = QToolButton(DialogCSVImport)
+        self.btnAddSeparator.setObjectName(u"btnAddSeparator")
+        icon = QIcon()
+        iconThemeName = u"list-add"
+        if QIcon.hasThemeIcon(iconThemeName):
+            icon = QIcon.fromTheme(iconThemeName)
+        else:
+            icon.addFile(u".", QSize(), QIcon.Normal, QIcon.Off)
+        
         self.btnAddSeparator.setIcon(icon)
-        self.btnAddSeparator.setIconSize(QtCore.QSize(16, 16))
-        self.btnAddSeparator.setObjectName("btnAddSeparator")
+        self.btnAddSeparator.setIconSize(QSize(16, 16))
+
         self.horizontalLayout.addWidget(self.btnAddSeparator)
+
+
         self.gridLayout.addLayout(self.horizontalLayout, 3, 2, 1, 1)
-        self.spinBoxTimestampColumn = QtWidgets.QSpinBox(DialogCSVImport)
+
+        self.spinBoxTimestampColumn = QSpinBox(DialogCSVImport)
+        self.spinBoxTimestampColumn.setObjectName(u"spinBoxTimestampColumn")
         self.spinBoxTimestampColumn.setMaximum(999999999)
-        self.spinBoxTimestampColumn.setObjectName("spinBoxTimestampColumn")
+
         self.gridLayout.addWidget(self.spinBoxTimestampColumn, 6, 2, 1, 1)
-        self.label = QtWidgets.QLabel(DialogCSVImport)
-        self.label.setObjectName("label")
+
+        self.label = QLabel(DialogCSVImport)
+        self.label.setObjectName(u"label")
+
         self.gridLayout.addWidget(self.label, 4, 0, 1, 2)
-        self.spinBoxQDataColumn = QtWidgets.QSpinBox(DialogCSVImport)
+
+        self.spinBoxQDataColumn = QSpinBox(DialogCSVImport)
+        self.spinBoxQDataColumn.setObjectName(u"spinBoxQDataColumn")
         self.spinBoxQDataColumn.setMaximum(999999999)
-        self.spinBoxQDataColumn.setObjectName("spinBoxQDataColumn")
+
         self.gridLayout.addWidget(self.spinBoxQDataColumn, 5, 2, 1, 1)
-        self.label_3 = QtWidgets.QLabel(DialogCSVImport)
-        self.label_3.setObjectName("label_3")
+
+        self.label_3 = QLabel(DialogCSVImport)
+        self.label_3.setObjectName(u"label_3")
+
         self.gridLayout.addWidget(self.label_3, 6, 0, 1, 2)
-        self.label_2 = QtWidgets.QLabel(DialogCSVImport)
-        self.label_2.setObjectName("label_2")
+
+        self.label_2 = QLabel(DialogCSVImport)
+        self.label_2.setObjectName(u"label_2")
+
         self.gridLayout.addWidget(self.label_2, 5, 0, 1, 2)
-        self.groupBox = QtWidgets.QGroupBox(DialogCSVImport)
-        self.groupBox.setObjectName("groupBox")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBox)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.tableWidgetPreview = QtWidgets.QTableWidget(self.groupBox)
+
+        self.groupBox = QGroupBox(DialogCSVImport)
+        self.groupBox.setObjectName(u"groupBox")
+        self.verticalLayout_2 = QVBoxLayout(self.groupBox)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.tableWidgetPreview = QTableWidget(self.groupBox)
+        if (self.tableWidgetPreview.columnCount() < 3):
+            self.tableWidgetPreview.setColumnCount(3)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidgetPreview.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidgetPreview.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidgetPreview.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.tableWidgetPreview.setObjectName(u"tableWidgetPreview")
         self.tableWidgetPreview.setAlternatingRowColors(True)
-        self.tableWidgetPreview.setObjectName("tableWidgetPreview")
-        self.tableWidgetPreview.setColumnCount(3)
-        self.tableWidgetPreview.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidgetPreview.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidgetPreview.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidgetPreview.setHorizontalHeaderItem(2, item)
         self.tableWidgetPreview.horizontalHeader().setCascadingSectionResizes(False)
         self.tableWidgetPreview.horizontalHeader().setStretchLastSection(False)
         self.tableWidgetPreview.verticalHeader().setStretchLastSection(False)
+
         self.verticalLayout_2.addWidget(self.tableWidgetPreview)
+
+
         self.gridLayout.addWidget(self.groupBox, 7, 0, 1, 3)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.lineEditFilename = QtWidgets.QLineEdit(DialogCSVImport)
-        self.lineEditFilename.setObjectName("lineEditFilename")
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.lineEditFilename = QLineEdit(DialogCSVImport)
+        self.lineEditFilename.setObjectName(u"lineEditFilename")
+
         self.horizontalLayout_2.addWidget(self.lineEditFilename)
-        self.btnChooseFile = QtWidgets.QToolButton(DialogCSVImport)
-        self.btnChooseFile.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-        self.btnChooseFile.setObjectName("btnChooseFile")
+
+        self.btnChooseFile = QToolButton(DialogCSVImport)
+        self.btnChooseFile.setObjectName(u"btnChooseFile")
+        self.btnChooseFile.setToolButtonStyle(Qt.ToolButtonTextOnly)
+
         self.horizontalLayout_2.addWidget(self.btnChooseFile)
+
+
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 2, 1, 1)
-        self.spinBoxIDataColumn = QtWidgets.QSpinBox(DialogCSVImport)
+
+        self.spinBoxIDataColumn = QSpinBox(DialogCSVImport)
+        self.spinBoxIDataColumn.setObjectName(u"spinBoxIDataColumn")
         self.spinBoxIDataColumn.setMinimum(1)
         self.spinBoxIDataColumn.setMaximum(999999999)
-        self.spinBoxIDataColumn.setProperty("value", 1)
-        self.spinBoxIDataColumn.setObjectName("spinBoxIDataColumn")
+        self.spinBoxIDataColumn.setValue(1)
+
         self.gridLayout.addWidget(self.spinBoxIDataColumn, 4, 2, 1, 1)
-        self.label_4 = QtWidgets.QLabel(DialogCSVImport)
-        self.label_4.setObjectName("label_4")
+
+        self.label_4 = QLabel(DialogCSVImport)
+        self.label_4.setObjectName(u"label_4")
+
         self.gridLayout.addWidget(self.label_4, 3, 0, 1, 2)
-        self.buttonBox = QtWidgets.QDialogButtonBox(DialogCSVImport)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+
+        self.buttonBox = QDialogButtonBox(DialogCSVImport)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+
         self.gridLayout.addWidget(self.buttonBox, 9, 2, 1, 1)
-        self.groupBoxFilePreview = QtWidgets.QGroupBox(DialogCSVImport)
-        self.groupBoxFilePreview.setObjectName("groupBoxFilePreview")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBoxFilePreview)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.plainTextEditFilePreview = QtWidgets.QPlainTextEdit(self.groupBoxFilePreview)
+
+        self.groupBoxFilePreview = QGroupBox(DialogCSVImport)
+        self.groupBoxFilePreview.setObjectName(u"groupBoxFilePreview")
+        self.verticalLayout = QVBoxLayout(self.groupBoxFilePreview)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.plainTextEditFilePreview = QPlainTextEdit(self.groupBoxFilePreview)
+        self.plainTextEditFilePreview.setObjectName(u"plainTextEditFilePreview")
         self.plainTextEditFilePreview.setUndoRedoEnabled(False)
         self.plainTextEditFilePreview.setReadOnly(True)
-        self.plainTextEditFilePreview.setObjectName("plainTextEditFilePreview")
+
         self.verticalLayout.addWidget(self.plainTextEditFilePreview)
+
+
         self.gridLayout.addWidget(self.groupBoxFilePreview, 2, 0, 1, 3)
-        self.label_5 = QtWidgets.QLabel(DialogCSVImport)
-        self.label_5.setObjectName("label_5")
+
+        self.label_5 = QLabel(DialogCSVImport)
+        self.label_5.setObjectName(u"label_5")
+
         self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)
-        self.btnAutoDefault = QtWidgets.QPushButton(DialogCSVImport)
-        self.btnAutoDefault.setDefault(True)
-        self.btnAutoDefault.setObjectName("btnAutoDefault")
+
+        self.btnAutoDefault = QPushButton(DialogCSVImport)
+        self.btnAutoDefault.setObjectName(u"btnAutoDefault")
+
         self.gridLayout.addWidget(self.btnAutoDefault, 10, 2, 1, 1)
 
+        QWidget.setTabOrder(self.lineEditFilename, self.btnChooseFile)
+        QWidget.setTabOrder(self.btnChooseFile, self.plainTextEditFilePreview)
+        QWidget.setTabOrder(self.plainTextEditFilePreview, self.comboBoxCSVSeparator)
+        QWidget.setTabOrder(self.comboBoxCSVSeparator, self.btnAddSeparator)
+        QWidget.setTabOrder(self.btnAddSeparator, self.spinBoxIDataColumn)
+        QWidget.setTabOrder(self.spinBoxIDataColumn, self.spinBoxQDataColumn)
+        QWidget.setTabOrder(self.spinBoxQDataColumn, self.spinBoxTimestampColumn)
+        QWidget.setTabOrder(self.spinBoxTimestampColumn, self.tableWidgetPreview)
+
         self.retranslateUi(DialogCSVImport)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogCSVImport.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogCSVImport.reject)
-        DialogCSVImport.setTabOrder(self.lineEditFilename, self.btnChooseFile)
-        DialogCSVImport.setTabOrder(self.btnChooseFile, self.plainTextEditFilePreview)
-        DialogCSVImport.setTabOrder(self.plainTextEditFilePreview, self.comboBoxCSVSeparator)
-        DialogCSVImport.setTabOrder(self.comboBoxCSVSeparator, self.btnAddSeparator)
-        DialogCSVImport.setTabOrder(self.btnAddSeparator, self.spinBoxIDataColumn)
-        DialogCSVImport.setTabOrder(self.spinBoxIDataColumn, self.spinBoxQDataColumn)
-        DialogCSVImport.setTabOrder(self.spinBoxQDataColumn, self.spinBoxTimestampColumn)
-        DialogCSVImport.setTabOrder(self.spinBoxTimestampColumn, self.tableWidgetPreview)
+        self.buttonBox.accepted.connect(DialogCSVImport.accept)
+        self.buttonBox.rejected.connect(DialogCSVImport.reject)
+
+        self.btnAutoDefault.setDefault(True)
+
+    # setupUi
 
     def retranslateUi(self, DialogCSVImport):
-        DialogCSVImport.setWindowTitle(QtWidgets.QApplication.translate("DialogCSVImport", "CSV Import", None, -1))
-        self.labelFileNotFound.setText(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p><span style=\" color:#ff0000;\">Could not open the selected file.</span></p></body></html>", None, -1))
-        self.comboBoxCSVSeparator.setItemText(0, QtWidgets.QApplication.translate("DialogCSVImport", ",", None, -1))
-        self.comboBoxCSVSeparator.setItemText(1, QtWidgets.QApplication.translate("DialogCSVImport", ";", None, -1))
-        self.btnAddSeparator.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "Add a custom separator.", None, -1))
-        self.btnAddSeparator.setText(QtWidgets.QApplication.translate("DialogCSVImport", "...", None, -1))
-        self.spinBoxTimestampColumn.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None, -1))
-        self.spinBoxTimestampColumn.setSpecialValueText(QtWidgets.QApplication.translate("DialogCSVImport", "Not present", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("DialogCSVImport", "I Data Column:", None, -1))
-        self.spinBoxQDataColumn.setSpecialValueText(QtWidgets.QApplication.translate("DialogCSVImport", "Not present", None, -1))
-        self.label_3.setToolTip(QtWidgets.QApplication.translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Timestamp Column:", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Q Data Column:", None, -1))
-        self.groupBox.setTitle(QtWidgets.QApplication.translate("DialogCSVImport", "Preview", None, -1))
-        self.tableWidgetPreview.horizontalHeaderItem(0).setText(QtWidgets.QApplication.translate("DialogCSVImport", "Timestamp", None, -1))
-        self.tableWidgetPreview.horizontalHeaderItem(1).setText(QtWidgets.QApplication.translate("DialogCSVImport", "I", None, -1))
-        self.tableWidgetPreview.horizontalHeaderItem(2).setText(QtWidgets.QApplication.translate("DialogCSVImport", "Q", None, -1))
-        self.btnChooseFile.setText(QtWidgets.QApplication.translate("DialogCSVImport", "...", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("DialogCSVImport", "CSV Separator:", None, -1))
-        self.groupBoxFilePreview.setTitle(QtWidgets.QApplication.translate("DialogCSVImport", "File Content (at most 100 rows)", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("DialogCSVImport", "File to import:", None, -1))
-        self.btnAutoDefault.setText(QtWidgets.QApplication.translate("DialogCSVImport", "Prevent Dialog From Close with Enter", None, -1))
+        DialogCSVImport.setWindowTitle(QCoreApplication.translate("DialogCSVImport", u"CSV Import", None))
+        self.labelFileNotFound.setText(QCoreApplication.translate("DialogCSVImport", u"<html><head/><body><p><span style=\" color:#ff0000;\">Could not open the selected file.</span></p></body></html>", None))
+        self.comboBoxCSVSeparator.setItemText(0, QCoreApplication.translate("DialogCSVImport", u",", None))
+        self.comboBoxCSVSeparator.setItemText(1, QCoreApplication.translate("DialogCSVImport", u";", None))
+
+#if QT_CONFIG(tooltip)
+        self.btnAddSeparator.setToolTip(QCoreApplication.translate("DialogCSVImport", u"Add a custom separator.", None))
+#endif // QT_CONFIG(tooltip)
+        self.btnAddSeparator.setText(QCoreApplication.translate("DialogCSVImport", u"...", None))
+#if QT_CONFIG(tooltip)
+        self.spinBoxTimestampColumn.setToolTip(QCoreApplication.translate("DialogCSVImport", u"<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.spinBoxTimestampColumn.setSpecialValueText(QCoreApplication.translate("DialogCSVImport", u"Not present", None))
+        self.label.setText(QCoreApplication.translate("DialogCSVImport", u"I Data Column:", None))
+        self.spinBoxQDataColumn.setSpecialValueText(QCoreApplication.translate("DialogCSVImport", u"Not present", None))
+#if QT_CONFIG(tooltip)
+        self.label_3.setToolTip(QCoreApplication.translate("DialogCSVImport", u"<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_3.setText(QCoreApplication.translate("DialogCSVImport", u"Timestamp Column:", None))
+        self.label_2.setText(QCoreApplication.translate("DialogCSVImport", u"Q Data Column:", None))
+        self.groupBox.setTitle(QCoreApplication.translate("DialogCSVImport", u"Preview", None))
+        ___qtablewidgetitem = self.tableWidgetPreview.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("DialogCSVImport", u"Timestamp", None));
+        ___qtablewidgetitem1 = self.tableWidgetPreview.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("DialogCSVImport", u"I", None));
+        ___qtablewidgetitem2 = self.tableWidgetPreview.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("DialogCSVImport", u"Q", None));
+        self.btnChooseFile.setText(QCoreApplication.translate("DialogCSVImport", u"...", None))
+        self.label_4.setText(QCoreApplication.translate("DialogCSVImport", u"CSV Separator:", None))
+        self.groupBoxFilePreview.setTitle(QCoreApplication.translate("DialogCSVImport", u"File Content (at most 100 rows)", None))
+        self.label_5.setText(QCoreApplication.translate("DialogCSVImport", u"File to import:", None))
+        self.btnAutoDefault.setText(QCoreApplication.translate("DialogCSVImport", u"Prevent Dialog From Close with Enter", None))
+    # retranslateUi
 

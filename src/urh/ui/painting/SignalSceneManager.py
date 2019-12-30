@@ -26,7 +26,7 @@ class SignalSceneManager(SceneManager):
         if self.scene_type == 0:
             self.scene.draw_noise_area(self.signal.noise_min_plot, self.signal.noise_max_plot - self.signal.noise_min_plot)
         else:
-            self.scene.draw_sep_area(-self.signal.qad_center)
+            self.scene.draw_sep_area(-self.signal.center_thresholds)
 
     def eliminate(self):
         super().eliminate()

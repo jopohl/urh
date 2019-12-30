@@ -6,15 +6,20 @@ from libcpp cimport bool
 
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, int64_t
 from libc.stdio cimport printf
+from libc.stdlib cimport malloc, free
 from urh.cythonext.util cimport IQ, iq, bit_array_to_number
 
 from cython.parallel import prange
-from libc.math cimport atan2, sqrt, M_PI
-
+from libc.math cimport atan2, sqrt, M_PI, abs
 
 cdef extern from "math.h" nogil:
     float cosf(float x)
+    float acosf(float x)
     float sinf(float x)
+
+cdef extern from "complex.h" namespace "std" nogil:
+    float arg(float complex x)
+    float complex conj(float complex x)
 
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
@@ -38,15 +43,6 @@ cdef float get_noise_for_mod_type(str mod_type):
     else:
         return 0
 
-cdef tuple get_value_range_of_mod_type(str mod_type):
-    if mod_type == "ASK":
-        return 0, 1
-    if mod_type in ("GFSK", "FSK", "OQPSK", "PSK"):
-        return -np.pi, np.pi
-
-    printf("Warning unknown mod type for value range")
-    return 0, 0
-
 cdef get_numpy_dtype(iq cython_type):
     if str(cython.typeof(cython_type)) == "char":
         return np.int8
@@ -62,13 +58,14 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                  float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
                  uint32_t pause, uint32_t start, iq iq_type,
                  float gauss_bt=0.5, float filter_width=1.0):
-    cdef int64_t i = 0, j = 0, index = 0, s_i = 0, num_bits = len(bits)
+    cdef int64_t i = 0, j = 0, index = 0, prev_index=0, s_i = 0, num_bits = len(bits)
     cdef uint32_t total_symbols = int(num_bits // bits_per_symbol)
     cdef int64_t total_samples = total_symbols * samples_per_symbol + pause
 
     cdef float a = carrier_amplitude, f = carrier_frequency, phi = carrier_phase
 
-    cdef float t = 0, arg = 0
+    cdef float f_previous = 0, phase_correction = 0
+    cdef float t = 0, current_arg = 0
 
     result = np.zeros((total_samples, 2), dtype=get_numpy_dtype(iq_type))
     if num_bits == 0:
@@ -88,8 +85,6 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
     if is_oqpsk:
         assert bits_per_symbol == 2
         bits = get_oqpsk_bits(bits)
-        samples_per_symbol = samples_per_symbol // 2
-        total_symbols *= 2
 
     cdef np.ndarray[np.float32_t, ndim=2] gauss_filtered_freqs_phases
     if is_gfsk:
@@ -97,12 +92,32 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                                                                       samples_per_symbol, sample_rate, carrier_phase,
                                                                       start, gauss_bt, filter_width)
 
+
+    cdef float* phase_corrections = NULL
+    if is_fsk and total_symbols > 0:
+        phase_corrections = <float*>malloc(total_symbols * sizeof(float))
+        phase_corrections[0] = 0.0
+        for s_i in range(1, total_symbols):
+            # Add phase correction to FSK modulation in order to prevent spiky jumps
+            index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
+            prev_index = bit_array_to_number(bits, end=s_i*bits_per_symbol, start=(s_i-1)*bits_per_symbol)
+
+            f = parameters[index]
+            f_previous = parameters[prev_index]
+
+            if f != f_previous:
+                t = (s_i*samples_per_symbol+start-1) / sample_rate
+                phase_corrections[s_i] = (phase_corrections[s_i-1] + 2 * M_PI * (f_previous-f) * t) % (2 * M_PI)
+            else:
+                phase_corrections[s_i] = phase_corrections[s_i-1]
+
     for s_i in prange(0, total_symbols, schedule="static", nogil=True):
         index = bit_array_to_number(bits, end=(s_i+1)*bits_per_symbol, start=s_i*bits_per_symbol)
 
         a = carrier_amplitude
         f = carrier_frequency
         phi = carrier_phase
+        phase_correction = 0
 
         if is_ask:
             a = parameters[index]
@@ -110,6 +125,8 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
                 continue
         elif is_fsk:
             f = parameters[index]
+            phase_correction = phase_corrections[s_i]
+
         elif is_psk or is_oqpsk:
             phi = parameters[index]
 
@@ -118,24 +135,37 @@ cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_ty
             if is_gfsk:
                 f = gauss_filtered_freqs_phases[i, 0]
                 phi = gauss_filtered_freqs_phases[i, 1]
-            arg = 2 * M_PI * f * t + phi
+            current_arg = 2 * M_PI * f * t + phi + phase_correction
 
-            result_view[i, 0] = <iq>(a * cosf(arg))
-            result_view[i, 1] = <iq>(a * sinf(arg))
+            result_view[i, 0] = <iq>(a * cosf(current_arg))
+            result_view[i, 1] = <iq>(a * sinf(current_arg))
+
+    if is_oqpsk:
+        for i in range(0, samples_per_symbol):
+            result_view[i, 1] = 0
+        for i in range(total_samples-pause-samples_per_symbol, total_samples-pause):
+            result_view[i, 0] = 0
+
+    if phase_corrections != NULL:
+        free(phase_corrections)
 
     return result
 
-cdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
+cpdef uint8_t[:] get_oqpsk_bits(uint8_t[:] original_bits):
+    # TODO: This method does not work correctly. Fix it when we have a test signal
     cdef int64_t i, num_bits = len(original_bits)
-    result = np.empty(2*num_bits+2, dtype=np.uint8)
+    if num_bits == 0:
+        return np.zeros(0, dtype=np.uint8)
 
-    for i in range(0, num_bits-1, 2):
-        result[2*i] = original_bits[i]
-        result[2*i+2] = original_bits[i]
-        result[2*i+3] = original_bits[i+1]
-        result[2*i+5] = original_bits[i+1]
+    result = np.zeros(num_bits+2, dtype=np.uint8)
+    result[0] = original_bits[0]
+    result[num_bits+2-1] = original_bits[num_bits-1]
 
-    return result[2:len(result)-2]
+    for i in range(2, num_bits-2, 2):
+        result[i] = original_bits[i]
+        result[i+1] = original_bits[i-1]
+
+    return result
 
 
 cdef np.ndarray[np.float32_t, ndim=2] get_gauss_filtered_freqs_phases(uint8_t[:] bits,  float[:] parameters,
@@ -187,26 +217,17 @@ cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, uint32_t samp
         -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))
     return h / h.sum()
 
-cdef float calc_costa_alpha(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float alpha = (4 * damp * bw) / (1 + 2 * damp * bw + bw * bw)
-
-    return alpha
-
-cdef float calc_costa_beta(float bw, float damp=1 / sqrt(2)) nogil:
-    # BW in range((2pi/200), (2pi/100))
-    cdef float beta = (4 * bw * bw) / (1 + 2 * damp * bw + bw * bw)
-    return beta
-
-cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
-                          float costa_alpha, float costa_beta, bool qam, long long num_samples):
-    cdef float phase_error = 0
+cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam, long long num_samples):
     cdef long long i = 0
-    cdef float costa_freq = 0, costa_phase = 0
-    cdef float complex nco_out = 0, nco_times_sample = 0
     cdef float real = 0, imag = 0, magnitude = 0
 
-    cdef float scale, shift
+    cdef float scale, shift, real_float, imag_float, ref_real, ref_imag
+
+    cdef float phi = 0, current_arg = 0, f_curr = 0, f_prev = 0
+
+    cdef float complex current_sample, conj_previous_sample, current_nco
+
+    cdef float alpha = 0.1
 
     if str(cython.typeof(samples)) == "char[:, ::1]":
         scale = 127.5
@@ -226,37 +247,43 @@ cdef void costa_demod(IQ samples, float[::1] result, float noise_sqrd,
     else:
         raise ValueError("Unsupported dtype")
 
-
-    cdef real_float, imag_float
-    for i in range(0, num_samples):
+    for i in range(1, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
+        
         magnitude = real * real + imag * imag
-        if magnitude <= noise_sqrd:  # |c| <= mag_treshold
+        if magnitude <= noise_sqrd:
             result[i] = NOISE_FSK_PSK
             continue
 
-        # # NCO Output
-        #nco_out = np.exp(-costa_phase * 1j)
-        nco_out = cosf(-costa_phase) + imag_unit * sinf(-costa_phase)
-
         real_float = (real + shift) / scale
         imag_float = (imag + shift) / scale
-        nco_times_sample = nco_out * (real_float + imag_unit * imag_float)
-        phase_error = nco_times_sample.imag * nco_times_sample.real
-        costa_freq += costa_beta * phase_error
-        costa_phase += costa_freq + costa_alpha * phase_error
-        if qam:
-            result[i] = magnitude * nco_times_sample.real
+
+        current_sample = real_float + imag_unit * imag_float
+        conj_previous_sample = (samples[i-1, 0] + shift) / scale - imag_unit * ((samples[i-1, 1] + shift) / scale)
+        f_curr = arg(current_sample * conj_previous_sample)
+
+        if abs(f_curr) < M_PI / 4:  # TODO: For PSK with order > 4 this needs to be adapted
+            f_prev = f_curr
+            current_arg += f_curr
         else:
-            result[i] = nco_times_sample.real
+            current_arg += f_prev
+
+        # Reference oscillator cos(current_arg) + j * sin(current_arg)
+        current_nco = cosf(current_arg) + imag_unit * sinf(current_arg)
+        phi = arg(current_sample * conj(current_nco))
+
+        if qam:
+            result[i] = phi * magnitude
+        else:
+            result[i] = phi
 
 cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, str mod_type):
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
-    cdef float arg = 0
+    cdef float current_arg = 0
     cdef float noise_sqrd = 0
     cdef float complex_phase = 0
     cdef float prev_phase = 0
@@ -301,9 +328,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
         if mod_type == "QAM":
             qam = True
 
-        costa_alpha = calc_costa_alpha(<float>(2 * M_PI / 100))
-        costa_beta = calc_costa_beta(<float>(2 * M_PI / 100))
-        costa_demod(samples, result, noise_sqrd, costa_alpha, costa_beta, qam, ns)
+        phase_demod(samples, result, noise_sqrd, qam, ns)
 
     else:
         for i in prange(1, ns, nogil=True, schedule="static"):
@@ -323,19 +348,20 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
 
     return np.asarray(result)
 
-cdef inline int64_t get_current_state(float sample, float[:] thresholds, float noise_val, int n):
-    if sample == noise_val:
-        return PAUSE_STATE
+cpdef np.ndarray[np.float32_t, ndim=1] get_center_thresholds(float center, float spacing, int modulation_order):
+    cdef np.ndarray[np.float32_t, ndim=1] result = np.empty(modulation_order-1, dtype=np.float32)
+    cdef int i, n = modulation_order // 2
 
-    cdef int i
-    for i in range(n):
-        if sample <= thresholds[i]:
-            return i
+    for i in range(0, n):
+        result[i] = center - (n-(i+1)) * spacing
 
-    return PAUSE_STATE
+    for i in range(n, modulation_order-1):
+        result[i] = center + (i+1-n) * spacing
+
+    return result
 
 cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t tolerance,
-                                      str modulation_type, uint16_t bit_length,
+                                      str modulation_type, uint32_t samples_per_symbol,
                                       uint8_t bits_per_symbol=1, float center_spacing=0.1):
     """
     Get the pulse lengths after quadrature demodulation
@@ -352,21 +378,10 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef float NOISE = get_noise_for_mod_type(modulation_type)
 
     cdef int modulation_order = 2**bits_per_symbol
+    cdef int k
 
-    cdef float[:] thresholds = np.empty(modulation_order, dtype=np.float32)
-    cdef tuple min_max_of_mod_type = get_value_range_of_mod_type(modulation_type)
-    cdef float min_of_mod_type = min_max_of_mod_type[0]
-    cdef float max_of_mod_type = min_max_of_mod_type[1]
 
-    cdef int n = modulation_order // 2
-
-    for i in range(0, n):
-        thresholds[i] = center - (n-(i+1)) * center_spacing
-
-    for i in range(n, modulation_order-1):
-        thresholds[i] = center + (i+1-n) * center_spacing
-
-    thresholds[modulation_order-1] = max_of_mod_type
+    cdef np.ndarray[np.float32_t, ndim=1] thresholds = get_center_thresholds(center, center_spacing, modulation_order)
 
     cdef int64_t[:, ::1] result = np.zeros((num_samples, 2), dtype=np.int64, order="C")
     if num_samples == 0:
@@ -375,12 +390,27 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
     cdef int64_t[:] state_count = np.zeros(modulation_order, dtype=np.int64)
 
     s_prev = samples[0]
-    cur_state = get_current_state(s_prev, thresholds, NOISE, modulation_order)
+    if s_prev == NOISE:
+        cur_state = PAUSE_STATE
+    else:
+        cur_state = modulation_order - 1
+        for k in range(modulation_order - 1):
+            if s <= thresholds[k]:
+                cur_state = k
+                break
 
     for i in range(num_samples):
         pulse_length += 1
         s = samples[i]
-        tmp_state = get_current_state(s, thresholds, NOISE, modulation_order)
+
+        if s == NOISE:
+            tmp_state = PAUSE_STATE
+        else:
+            tmp_state = modulation_order - 1
+            for k in range(modulation_order - 1):
+                if s <= thresholds[k]:
+                    tmp_state = k
+                    break
 
         if tmp_state == PAUSE_STATE:
             consecutive_pause += 1
@@ -409,7 +439,7 @@ cpdef int64_t[:, ::1] grab_pulse_lens(float[::1] samples, float center, uint16_t
         if new_state == -42:
             continue
 
-        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < bit_length:
+        if is_ask and cur_state == PAUSE_STATE and (pulse_length - tolerance) < samples_per_symbol:
             # Aggregate short pauses for ASK
             cur_state = 0
 

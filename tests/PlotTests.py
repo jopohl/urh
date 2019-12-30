@@ -17,8 +17,8 @@ class PlotTests(unittest.TestCase):
         modulator.modulation_type = "GFSK"
         modulator.samples_per_symbol = 100
         modulator.sample_rate = 1e6
-        modulator.param_for_one = 20e3
-        modulator.param_for_zero = 10e3
+        modulator.parameters[1] = 20e3
+        modulator.parameters[0] = 10e3
         modulator.carrier_freq_hz = 15e3
         modulator.carrier_phase_deg = 90
 
@@ -44,8 +44,8 @@ class PlotTests(unittest.TestCase):
         signal = IQSignal(get_path_for_data_file("wsp.complex"), "test")
         signal.modulation_type = "ASK"
         signal.noise_threshold = 0.035
-        signal.qad_center = 0.0245
-        signal.bit_len = 25
+        signal.center = 0.0245
+        signal.samples_per_symbol = 25
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
         start, num_samples = pa.get_samplepos_of_bitseq(0, 0, 0, 999999, include_pause=False)

@@ -19,8 +19,8 @@ def demodulate(signal_data, mod_type: str, bit_length, center, noise, tolerance,
         else:
             signal.iq_array = IQArray(signal_data)
     signal.modulation_type = mod_type
-    signal.bit_len = bit_length
-    signal.qad_center = center
+    signal.samples_per_symbol = bit_length
+    signal.center = center
     signal.noise_threshold = noise
     signal.pause_threshold = pause_threshold
     if tolerance is not None:

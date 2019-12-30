@@ -381,7 +381,7 @@ class Ui_MainWindow(object):
         self.actionShow_Compare_Frame.setText(_translate("MainWindow", "Show &Compare Frame"))
         self.actionCloseAllFiles.setText(_translate("MainWindow", "&Close all files"))
         self.actionSaveAllSignals.setText(_translate("MainWindow", "&Save all signals"))
-        self.actionSeperate_Protocols_in_Compare_Frame.setText(_translate("MainWindow", "Seperate &Protocols in Compare Frame"))
+        self.actionSeperate_Protocols_in_Compare_Frame.setText(_translate("MainWindow", "Separate &Protocols in Compare Frame"))
         self.actionOpenArchive.setText(_translate("MainWindow", "&Archive"))
         self.actionOpen.setText(_translate("MainWindow", "&Open..."))
         self.actionOpen_Folder.setText(_translate("MainWindow", "Open &Folder.."))

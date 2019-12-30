@@ -476,7 +476,7 @@ class CompareFrameController(QWidget):
             self.refresh()
 
     def add_protocol_label(self, start: int, end: int, messagenr: int, proto_view: int, edit_label_name=True):
-        # Ensure atleast one Group is active
+        # Ensure at least one Group is active
         start, end = self.proto_analyzer.convert_range(start, end, proto_view, 0, decoded=True, message_indx=messagenr)
         message_type = self.proto_analyzer.messages[messagenr].message_type
         try:

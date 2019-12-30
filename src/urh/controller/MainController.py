@@ -278,7 +278,7 @@ class MainController(QMainWindow):
         sig_name = os.path.splitext(os.path.basename(filename))[0]
 
         # Use default sample rate for signal
-        # Sample rate will be overriden in case of a project later
+        # Sample rate will be overridden in case of a project later
         if enforce_sample_rate is not None:
             sample_rate = enforce_sample_rate
         else:

@@ -151,7 +151,7 @@ class Preprocessor(object):
         additional_syncs = self.__find_additional_sync_words(estimated_sync_length, sync_words, possible_sync_words)
 
         if additional_syncs:
-            self.__debug("Found addtional sync words", additional_syncs)
+            self.__debug("Found additional sync words", additional_syncs)
             sync_words.update(additional_syncs)
 
         result = []

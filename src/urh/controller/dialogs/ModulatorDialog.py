@@ -82,7 +82,7 @@ class ModulatorDialog(QDialog):
         self.set_bits_per_symbol_enabled_status()
         self.set_modulation_profile_status()
 
-        # Ensure full sceen shown after resize
+        # Ensure full srceen shown after resize
         QTimer.singleShot(100, self.show_full_scene)
 
     def __cur_selected_mod_type(self):

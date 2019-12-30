@@ -79,7 +79,7 @@ class BackendHandler(object):
     """
     This class controls the devices backend.
     1) List available backends for devices
-    2) List available devices (atleast one backend)
+    2) List available devices (at least one backend)
     3) Manage the selection of devices backend
 
     """

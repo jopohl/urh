@@ -18,7 +18,7 @@ RUN cmake ../ -DINSTALL_UDEV_RULES=ON\
  && make install\
  && ldconfig
 
-# Install Gnuradio - Doesnt work fails with package uhd-host
+# Install Gnuradio - Doesn't work fails with package uhd-host
 # RUN apt-get -y install gnuradio gnuradio-dev gr-iqbal
 
 ADD install_with_pip.sh /bin/install_with_pip.sh

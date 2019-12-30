@@ -258,7 +258,7 @@ class ProtocolTreeModel(QAbstractItemModel):
         else:
             # Dropped on file
             if contains_groups:
-                # Cant drop groups on files
+                # Can't drop groups on files
                 return False
 
             elif parent_node.containsChilds(drag_nodes) and drop_node in parent_node.children:

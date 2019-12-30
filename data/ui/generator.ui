@@ -160,7 +160,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pauses will be added automatically when you drag a protocol from the tree above to the table on the right.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can see the &lt;span style=&quot; font-weight:600;&quot;&gt;position&lt;/span&gt; of each pause by &lt;span style=&quot; font-weight:600;&quot;&gt;selecting it&lt;/span&gt;. There will be drawn a line in the table indiciating the position of the pause.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Use context menu or double click to &lt;span style=&quot; font-weight:600;&quot;&gt;edit a pauses' length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The pauses will be added automatically when you drag a protocol from the tree above to the table on the right.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can see the &lt;span style=&quot; font-weight:600;&quot;&gt;position&lt;/span&gt; of each pause by &lt;span style=&quot; font-weight:600;&quot;&gt;selecting it&lt;/span&gt;. There will be drawn a line in the table indicating the position of the pause.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Use context menu or double click to &lt;span style=&quot; font-weight:600;&quot;&gt;edit a pauses' length&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="editTriggers">
                   <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>

@@ -158,7 +158,7 @@ class TestAWREPreprocessing(AWRETestCase):
 
     def test_sync_word_finding_common_prefix(self):
         """
-        Messages are very similiar (odd and even ones are the same)
+        Messages are very similar (odd and even ones are the same)
         However, they do not have two different sync words!
         The algorithm needs to check for a common prefix of the two found sync words
 

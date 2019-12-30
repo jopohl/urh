@@ -67,7 +67,7 @@ class SelectableGraphicView(QGraphicsView):
 
     def is_pos_in_separea(self, pos: QPoint):
         """
-        GraphicViews can override this, if they need a seperation area.
+        GraphicViews can override this, if they need a separation area.
         E.g. EpicGraphic View will do for Demodulated View
 
         :param pos:

@@ -151,7 +151,7 @@ class RfCatPlugin(SDRPlugin):
         self.set_parameter("d.setMdmSyncMode(0)", log=False)
         self.set_parameter("d.setMdmDRate({})".format(int(sample_rate // samples_per_symbol)), log=False)
         self.set_parameter("d.setMaxPower()", log=False)
-        logger.info("Configured RfCat to Modulation={}, Freqency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // samples_per_symbol)))
+        logger.info("Configured RfCat to Modulation={}, Frequency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // samples_per_symbol)))
 
     def send_data(self, data) -> str:
         prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)

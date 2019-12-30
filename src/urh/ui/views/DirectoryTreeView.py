@@ -27,7 +27,7 @@ class DirectoryTreeView(QTreeView):
 
         if ok and len(dir_name) > 0:
             if not model.mkdir(index, dir_name).isValid():
-                QMessageBox.information(self, self.tr("Create Directoy"), self.tr("Failed to create the directory"))
+                QMessageBox.information(self, self.tr("Create Directory"), self.tr("Failed to create the directory"))
 
     def remove(self):
         index = self.model().mapToSource(self.currentIndex())  # type: QModelIndex

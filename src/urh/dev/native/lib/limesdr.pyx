@@ -156,7 +156,7 @@ cpdef tuple get_sample_rate_range():
 cpdef int set_center_frequency(float_type frequency):
     """
     Set RF center frequency in Hz. This automatically selects the appropriate
-    antenna (band path) for the desired frequency. In oder to override antenna selection use LMS_SetAntenna().
+    antenna (band path) for the desired frequency. In order to override antenna selection use LMS_SetAntenna().
     :param frequency: Desired RF center frequency in Hz
     :return: 0 on success, (-1) on failure
     """
@@ -253,7 +253,7 @@ cpdef calibrate(double bw):
     """
     Perform the automatic calibration of specified RX/TX channel. The automatic
     calibration must be run after device configuration is finished because
-    calibration values are dependant on various configuration settings.
+    calibration values are dependent on various configuration settings.
 
     automatic RX calibration is not available when RX_LNA_H path is
     selected

@@ -16,7 +16,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
         self.lineEdit().setValidator(None)
 
-        # Cant connect to value changed, as it would delete the number when changing a digit
+        # Can't connect to value changed, as it would delete the number when changing a digit
         # see: https://github.com/jopohl/urh/issues/129
         self.editingFinished.connect(self.adjust_step)
 

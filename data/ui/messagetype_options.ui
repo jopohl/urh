@@ -23,7 +23,7 @@
      </item>
      <item>
       <property name="text">
-       <string>At leat one rule must apply (OR)</string>
+       <string>At least one rule must apply (OR)</string>
       </property>
      </item>
      <item>

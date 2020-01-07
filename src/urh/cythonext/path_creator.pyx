@@ -15,25 +15,6 @@ from urh import settings
 import cython
 import math
 import struct
-import math
-import struct
-
-cimport
-numpy as np
-import cython
-import numpy as np
-from PyQt5.QtCore import QByteArray, QDataStream
-from PyQt5.QtGui import QPainterPath
-from cython.parallel import prange
-
-from urh import settings
-from urh.cythonext.util cimport
-
-iq
-
-# As we do not use any numpy C API functions we do no import_array here,
-# because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
-# np.import_array()
 
 cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ranges=None):
     cdef iq[:] values

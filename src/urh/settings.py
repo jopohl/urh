@@ -10,8 +10,16 @@ from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 
 
+global __qt_settings
 def __get_qt_settings():
-    return QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
+    global __qt_settings
+
+    try:
+        __qt_settings.fileName()
+    except:
+        __qt_settings = QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
+
+    return __qt_settings
 
 
 def get_qt_settings_filename():

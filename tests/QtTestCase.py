@@ -46,6 +46,7 @@ class QtTestCase(unittest.TestCase):
     def setUp(self):
         ProtocolSniffer.BUFFER_SIZE_MB = 0.5
         self.form = MainController()
+        self.form.ui.actionAuto_detect_new_signals.setChecked(True)
         if self.SHOW:
             self.form.show()
 

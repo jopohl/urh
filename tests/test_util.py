@@ -4,8 +4,6 @@ import sys
 import tempfile
 
 from PyQt5.QtGui import QIcon
-from urh.util.settings import settings
-
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import settings

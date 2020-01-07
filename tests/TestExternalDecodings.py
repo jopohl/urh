@@ -2,7 +2,7 @@ import array
 import os
 import unittest
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Encoding import Encoding
 
 
@@ -12,7 +12,7 @@ class TestExternalDecodings(unittest.TestCase):
         path = os.path.realpath(os.path.join(f, "..", ".."))
         code = os.path.join(path, "data", "decodings", "homematic_complete")
 
-        e = Encoding(["test external homematic", constants.DECODING_EXTERNAL,
+        e = Encoding(["test external homematic", settings.DECODING_EXTERNAL,
                       code + " d" + ";" + code + " e"])
 
         data = array.array("B",

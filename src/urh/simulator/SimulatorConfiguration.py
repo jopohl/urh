@@ -1,25 +1,24 @@
 import random
+import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
+from PyQt5.QtCore import pyqtSignal, QObject
+
+from urh import settings
 from urh.signalprocessing.Encoding import Encoding
+from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
+from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
-from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
-from urh.simulator.SimulatorMessage import SimulatorMessage
-from urh.signalprocessing.FieldType import FieldType
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-
-from urh import constants
 from urh.util.ProjectManager import ProjectManager
-
-from PyQt5.QtCore import pyqtSignal, QObject
-import xml.etree.ElementTree as ET
 
 
 class SimulatorConfiguration(QObject):
@@ -165,13 +164,13 @@ class SimulatorConfiguration(QObject):
 
         name = "" if not name else name
         used_colors = [p.color_index for p in parent_item.message_type]
-        avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
+        avail_colors = [i for i, _ in enumerate(settings.LABEL_COLORS) if i not in used_colors]
 
         if color_index is None:
             if len(avail_colors) > 0:
                 color_index = avail_colors[0]
             else:
-                color_index = random.randint(0, len(constants.LABEL_COLORS) - 1)
+                color_index = random.randint(0, len(settings.LABEL_COLORS) - 1)
 
         label = ProtocolLabel(name, start, end, color_index, type)
         sim_label = SimulatorProtocolLabel(label)

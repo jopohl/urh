@@ -6,7 +6,7 @@ from xml.dom import minidom
 import numpy as np
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
-from urh import constants
+from urh import settings
 from urh.cythonext import signal_functions
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
@@ -166,7 +166,7 @@ class ProtocolAnalyzer(object):
 
         :param view: 0 - Bits ## 1 - Hex ## 2 - ASCII
         """
-        time = constants.SETTINGS.value('show_pause_as_time', type=bool)
+        time = settings.read('show_pause_as_time', type=bool)
         if show_pauses and time and self.signal:
             srate = self.signal.sample_rate
         else:
@@ -177,7 +177,7 @@ class ProtocolAnalyzer(object):
                                             ) for msg in self.messages)
 
     def plain_to_html(self, view, show_pauses=True) -> str:
-        time = constants.SETTINGS.value('show_pause_as_time', type=bool)
+        time = settings.read('show_pause_as_time', type=bool)
         if show_pauses and time and self.signal:
             srate = self.signal.sample_rate
         else:
@@ -187,7 +187,7 @@ class ProtocolAnalyzer(object):
         for message in self.messages:
             cur_str = ""
             if message.participant:
-                color = constants.PARTICIPANT_COLORS[message.participant.color_index]
+                color = settings.PARTICIPANT_COLORS[message.participant.color_index]
                 red, green, blue = color.red(), color.green(), color.blue()
                 fgcolor = "#000000" if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else "#ffffff"
                 cur_str += '<span style="background-color: rgb({0},{1},{2}); color: {3}">'.format(red, green, blue,
@@ -686,7 +686,7 @@ class ProtocolAnalyzer(object):
 
             # support pauses given like 100101/10s
             try:
-                data, pause = line.split(constants.PAUSE_SEP)
+                data, pause = line.split(settings.PAUSE_SEP)
             except ValueError:
                 data, pause = line, str(default_pause)
             if pause.endswith("ms"):

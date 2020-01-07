@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
 from PyQt5.QtWidgets import QMessageBox
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import VirtualDevice, Mode
 from urh.signalprocessing.IQArray import IQArray
@@ -46,7 +46,7 @@ class SendDialog(SendRecvDialog):
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
                                                                    QPen(QColor(Qt.transparent), 0),
-                                                                   QBrush(constants.SEND_INDICATOR_COLOR))
+                                                                   QBrush(settings.SEND_INDICATOR_COLOR))
             self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
             self.scene_manager.init_scene()
             self.graphics_view.set_signal(signal)

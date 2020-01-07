@@ -9,11 +9,9 @@ from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
-from urh.signalprocessing.IQArray import IQArray
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import settings
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
@@ -22,9 +20,9 @@ from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogContro
 from urh.dev.BackendHandler import BackendContainer, Backends
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
-from urh.util.SettingsProxy import SettingsProxy
 
 
 def receive(port, current_index, target_index, buffer):
@@ -60,7 +58,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
+        settings.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
         self.signal = Signal(get_path_for_data_file("esaver.coco"), "testsignal")
         self.form.ui.tabWidget.setCurrentIndex(2)
 

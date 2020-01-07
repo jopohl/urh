@@ -1,9 +1,10 @@
 import math
+
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QAction
 
-from urh import constants
+from urh import settings
 from urh.ui.views.EditableGraphicView import EditableGraphicView
 
 
@@ -51,7 +52,7 @@ class EpicGraphicView(EditableGraphicView):
     def is_pos_in_separea(self, pos: QPoint):
         if self.scene_type != 1:
             return False
-        padding = constants.SEPARATION_PADDING * self.view_rect().height()
+        padding = settings.SEPARATION_PADDING * self.view_rect().height()
         return self.y_sep - padding <= pos.y() <= self.y_sep + padding
 
     def _get_sub_path_ranges_and_colors(self, start: float, end: float):
@@ -67,7 +68,7 @@ class EpicGraphicView(EditableGraphicView):
             if message.bit_sample_pos[-2] < start:
                 continue
 
-            color = None if message.participant is None else constants.PARTICIPANT_COLORS[
+            color = None if message.participant is None else settings.PARTICIPANT_COLORS[
                 message.participant.color_index]
 
             if color is None:

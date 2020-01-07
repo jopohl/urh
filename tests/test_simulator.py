@@ -7,24 +7,22 @@ import time
 
 import numpy as np
 # import yappi
-from PyQt5.QtTest import QTest, QSignalSpy
-
-from urh.controller.SimulatorTabController import SimulatorTabController
-from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
-from urh.signalprocessing.IQArray import IQArray
-
-from urh.util.Logger import logger
+from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
+from urh import settings
+from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.controller.dialogs.SimulatorDialog import SimulatorDialog
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem, CounterActionItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.util.SettingsProxy import SettingsProxy
+from urh.util.Logger import logger
 
 
 class TestSimulator(QtTestCase):
@@ -32,7 +30,7 @@ class TestSimulator(QtTestCase):
 
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+        settings.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
         Modulator.FORCE_DTYPE = np.float32
 
         self.num_zeros_for_pause = 1000

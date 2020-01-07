@@ -1,7 +1,6 @@
-from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import QModelIndex, Qt
+from PyQt5.QtGui import QIcon
 
-from urh import constants
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 
 

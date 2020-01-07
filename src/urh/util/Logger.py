@@ -3,7 +3,19 @@ import os
 import sys
 import tempfile
 
-from urh.constants import color
+
+class Color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
 
 TMP = "/tmp" if sys.platform == "darwin" else tempfile.gettempdir()
 
@@ -46,14 +58,14 @@ if hasattr(sys, "frozen"):
 logging.basicConfig(**logger_conf)
 
 logging_colors_per_level = {
-    logging.WARNING: color.YELLOW,
-    logging.ERROR: color.RED,
-    logging.CRITICAL: color.RED
+    logging.WARNING: Color.YELLOW,
+    logging.ERROR: Color.RED,
+    logging.CRITICAL: Color.RED
 }
 
 for level, level_color in logging_colors_per_level.items():
     if sys.platform != "win32":
-        logging.addLevelName(level, "{0}{1}{2}".format(level_color, logging.getLevelName(level), color.END))
+        logging.addLevelName(level, "{0}{1}{2}".format(level_color, logging.getLevelName(level), Color.END))
 
 logger = logging.getLogger("urh")
 

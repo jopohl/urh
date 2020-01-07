@@ -53,7 +53,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.util import Logger
-from urh.constants import PAUSE_SEP
+from urh.settings import PAUSE_SEP
 from urh.util.Logger import logger
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer

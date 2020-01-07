@@ -1,21 +1,21 @@
 # QT5 = True
 import os
+import sys
 
+import psutil
 from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtGui import QColor
 
+from urh.util.Formatter import Formatter
+from urh.util.Logger import logger
 
-class color:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
+
+def __get_qt_settings():
+    return QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
+
+
+def get_qt_settings_filename():
+    return __get_qt_settings().fileName()
 
 
 MAX_RECENT_FILE_NR = 10
@@ -23,7 +23,7 @@ ZOOM_TICKS = 10
 
 PIXELS_PER_PATH = 5000
 
-SPECTRUM_BUFFER_SIZE = 2**15
+SPECTRUM_BUFFER_SIZE = 2 ** 15
 SNIFF_BUFFER_SIZE = 5 * 10 ** 7
 CONTINUOUS_BUFFER_SIZE_MB = 50
 
@@ -63,10 +63,9 @@ PROPERTY_NOT_FOUND_COLOR = QColor.fromRgb(124, 0, 0, 100)
 
 SEPARATION_ROW_HEIGHT = 30
 
-SETTINGS = QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
 PROJECT_FILE = "URHProject.xml"
 DECODINGS_FILE = "decodings.txt"
-FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(SETTINGS.fileName(), "..", "fieldtypes.xml"))
+FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(get_qt_settings_filename(), "..", "fieldtypes.xml"))
 
 # DEVICE SETTINGS
 DEFAULT_IP_USRP = "192.168.10.2"
@@ -135,3 +134,53 @@ INDENT = 8
 
 # Pause separator in message files
 PAUSE_SEP = "/"
+
+
+def read(key: str, default_value=None, type=str):
+    val = __get_qt_settings().value(key, default_value)
+    if type is bool:
+        val = str(val).lower()
+        try:
+            return bool(int(val))
+        except ValueError:
+            return str(val).lower() == "true"
+    else:
+        return type(val)
+
+
+def write(key: str, value):
+    __get_qt_settings().setValue(key, value)
+
+
+def all_keys():
+    return __get_qt_settings().allKeys()
+
+
+def sync():
+    __get_qt_settings().sync()
+
+
+OVERWRITE_RECEIVE_BUFFER_SIZE = None  # for unit tests
+
+
+def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: bool) -> int:
+    if OVERWRITE_RECEIVE_BUFFER_SIZE:
+        return OVERWRITE_RECEIVE_BUFFER_SIZE
+
+    if resume_on_full_receive_buffer:
+        if spectrum_mode:
+            num_samples = SPECTRUM_BUFFER_SIZE
+        else:
+            num_samples = SNIFF_BUFFER_SIZE
+    else:
+        # Take 60% of avail memory
+        threshold = read('ram_threshold', 0.6, float)
+        num_samples = threshold * (psutil.virtual_memory().available / 8)
+
+    # Do not let it allocate too much memory on 32 bit
+    if 8 * 2 * num_samples > sys.maxsize:
+        num_samples = sys.maxsize // (8 * 2 * 1.5)
+        logger.info("Correcting buffer size to {}".format(num_samples))
+
+    logger.info("Allocate receive buffer with {0}B".format(Formatter.big_value_with_suffix(num_samples * 8)))
+    return int(num_samples)

@@ -6,13 +6,13 @@ import time
 import numpy as np
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 
+from urh import settings
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
-from urh.util.SettingsProxy import SettingsProxy
 
 
 class NetworkSDRInterfacePlugin(SDRPlugin):
@@ -88,7 +88,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.raw_mode = raw_mode
         if not sending:
             if self.raw_mode:
-                num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                num_samples = settings.get_receive_buffer_size(self.resume_on_full_receive_buffer,
                                                                     self.is_in_spectrum_mode)
                 try:
                     self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=num_samples)

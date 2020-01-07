@@ -1,11 +1,10 @@
-from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
 from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QFont, QPen, QColor
+from PyQt5.QtGui import QPen, QColor
+from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
 
+from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
-
-from urh import constants
 
 
 class RuleItem(GraphicsItem):
@@ -115,10 +114,10 @@ class RuleConditionItem(GraphicsItem):
         if self.scene().mode == 1:
             self.setOpacity(1 if self.model_item.logging_active else 0.3)
 
-        painter.setOpacity(constants.SELECTION_OPACITY)
+        painter.setOpacity(settings.SELECTION_OPACITY)
 
         if self.hover_active or self.isSelected():
-            painter.setBrush(constants.SELECTION_COLOR)
+            painter.setBrush(settings.SELECTION_COLOR)
         elif not self.is_valid():
             painter.setBrush(QColor(255, 0, 0, 150))
         else:

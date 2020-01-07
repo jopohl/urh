@@ -1,24 +1,21 @@
 import array
-import copy
 from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QColor
 
-from urh import constants
+from urh import settings
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
+from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
-from urh.signalprocessing.Encoding import Encoding
 from urh.ui.actions.Clear import Clear
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 from urh.ui.actions.InsertBitsAndPauses import InsertBitsAndPauses
-from urh.ui.actions.InsertColumn import InsertColumn
 from urh.util import util
-from urh.util.Logger import logger
 
 
 class GeneratorTableModel(TableModel):
@@ -134,7 +131,7 @@ class GeneratorTableModel(TableModel):
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):
         message = Message(plain_bits=[0]*num_bits,
-                          pause=constants.SETTINGS.value("default_fuzzing_pause", 10**6, int),
+                          pause=settings.read("default_fuzzing_pause", 10**6, int),
                           message_type=self.protocol.default_message_type)
 
         tmp_protocol = ProtocolAnalyzer(None)

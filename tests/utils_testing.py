@@ -1,10 +1,6 @@
 import os
-import sys
 
-from PyQt5.QtTest import QSignalSpy
-
-from urh import constants
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+from urh import settings
 
 
 def trace_calls(frame, event, arg):
@@ -47,11 +43,10 @@ def write_settings():
         settings_written
     except NameError:
         settings_written = True
-        settings = constants.SETTINGS
-        settings.setValue("not_show_close_dialog", True)  # prevent interactive close questions
-        settings.setValue("not_show_save_dialog", True)
-        settings.setValue("NetworkSDRInterface", True)
-        settings.setValue("align_labels", True)
+        settings.write("not_show_close_dialog", True)  # prevent interactive close questions
+        settings.write("not_show_save_dialog", True)
+        settings.write("NetworkSDRInterface", True)
+        settings.write("align_labels", True)
 
 
 # sys.settrace(trace_calls)

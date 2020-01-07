@@ -98,9 +98,9 @@ def main():
         os.chdir(old_dir)
 
     from urh.controller.MainController import MainController
-    from urh import constants
+    from urh import settings
 
-    if constants.SETTINGS.value("theme_index", 0, int) > 0:
+    if settings.read("theme_index", 0, int) > 0:
         os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
 
     app = QApplication(["URH"] + sys.argv[1:])
@@ -113,18 +113,18 @@ def main():
 
     util.set_icon_theme()
 
-    font_size = constants.SETTINGS.value("font_size", 0, int)
+    font_size = settings.read("font_size", 0, int)
     if font_size > 0:
         font = app.font()
         font.setPointSize(font_size)
         app.setFont(font)
 
-    constants.SETTINGS.setValue("default_theme", app.style().objectName())
+    settings.write("default_theme", app.style().objectName())
 
-    if constants.SETTINGS.value("theme_index", 0, int) > 0:
+    if settings.read("theme_index", 0, int) > 0:
         app.setStyle(QStyleFactory.create("Fusion"))
 
-        if constants.SETTINGS.value("theme_index", 0, int) == 2:
+        if settings.read("theme_index", 0, int) == 2:
             palette = QPalette()
             background_color = QColor(56, 60, 74)
             text_color = QColor(211, 218, 227).lighter()
@@ -152,10 +152,10 @@ def main():
     bg_color = widget.palette().color(QPalette.Background)
     fg_color = widget.palette().color(QPalette.Foreground)
     selection_color = widget.palette().color(QPalette.Highlight)
-    constants.BGCOLOR = bg_color
-    constants.LINECOLOR = fg_color
-    constants.SELECTION_COLOR = selection_color
-    constants.SEND_INDICATOR_COLOR = selection_color
+    settings.BGCOLOR = bg_color
+    settings.LINECOLOR = fg_color
+    settings.SELECTION_COLOR = selection_color
+    settings.SEND_INDICATOR_COLOR = selection_color
 
     main_window = MainController()
     # allow usage of prange (OpenMP) in Processes

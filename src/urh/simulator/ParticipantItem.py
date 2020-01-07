@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
-from PyQt5.QtGui import QPen, QFont
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPen, QFont
+from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Participant import Participant
 
 
@@ -45,7 +45,7 @@ class ParticipantItem(QGraphicsItem):
             self.line.setPen(QPen(Qt.darkGreen, 2, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
         else:
             self.text.setFont(QFont())
-            self.text.setDefaultTextColor(constants.LINECOLOR)
+            self.text.setDefaultTextColor(settings.LINECOLOR)
             self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):

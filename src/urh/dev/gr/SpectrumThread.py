@@ -1,8 +1,7 @@
-from urh import constants
 import numpy as np
-
 import zmq
 
+from urh import settings
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
 
@@ -10,7 +9,7 @@ from urh.util.Logger import logger
 class SpectrumThread(AbstractBaseThread):
     def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
         super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
-        self.buf_size = constants.SPECTRUM_BUFFER_SIZE
+        self.buf_size = settings.SPECTRUM_BUFFER_SIZE
         self.data = np.zeros(self.buf_size, dtype=np.complex64)
         self.x = None
         self.y = None

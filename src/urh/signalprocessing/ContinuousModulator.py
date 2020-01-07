@@ -1,8 +1,7 @@
 import time
-
 from multiprocessing import Process, Value
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Modulator import Modulator
 from urh.util.Logger import logger
 from urh.util.RingBuffer import RingBuffer
@@ -26,7 +25,7 @@ class ContinuousModulator(object):
         self.modulators = modulators
         self.num_repeats = num_repeats  # -1 or 0 = infinite
 
-        self.ring_buffer = RingBuffer(int(constants.CONTINUOUS_BUFFER_SIZE_MB*10**6)//8, dtype=Modulator.get_dtype())
+        self.ring_buffer = RingBuffer(int(settings.CONTINUOUS_BUFFER_SIZE_MB * 10 ** 6) // 8, dtype=Modulator.get_dtype())
 
         self.current_message_index = Value("L", 0)
 

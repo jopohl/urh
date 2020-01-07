@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QMessageBox, QApplication
 
-from urh import constants
+from urh import settings
 from urh.dev import config
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.Encoding import Encoding
@@ -118,27 +118,27 @@ class ProjectManager(QObject):
         if self.project_file:
             return
         else:
-            prefix = os.path.realpath(os.path.join(constants.SETTINGS.fileName(), ".."))
+            prefix = os.path.realpath(os.path.join(settings.get_qt_settings_filename(), ".."))
 
         fallback = [Encoding(["Non Return To Zero (NRZ)"]),
 
                     Encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              constants.DECODING_INVERT]),
+                              settings.DECODING_INVERT]),
 
                     Encoding(["Manchester I",
-                              constants.DECODING_EDGE]),
+                              settings.DECODING_EDGE]),
 
                     Encoding(["Manchester II",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_INVERT]),
+                              settings.DECODING_EDGE,
+                              settings.DECODING_INVERT]),
 
                     Encoding(["Differential Manchester",
-                              constants.DECODING_EDGE,
-                              constants.DECODING_DIFFERENTIAL])
+                              settings.DECODING_EDGE,
+                              settings.DECODING_DIFFERENTIAL])
                     ]
 
         try:
-            f = open(os.path.join(prefix, constants.DECODINGS_FILE), "r")
+            f = open(os.path.join(prefix, settings.DECODINGS_FILE), "r")
         except FileNotFoundError:
             self.decodings = fallback
             return
@@ -213,7 +213,7 @@ class ProjectManager(QObject):
         FileOperator.RECENT_PATH = path
         util.PROJECT_PATH = path
         self.project_path = path
-        self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
+        self.project_file = os.path.join(self.project_path, settings.PROJECT_FILE)
         collapse_project_tabs = False
         if not os.path.isfile(self.project_file):
             if ask_for_new_project:
@@ -284,7 +284,7 @@ class ProjectManager(QObject):
         self.project_updated.emit()
 
     def convert_folder_to_project(self):
-        self.project_file = os.path.join(self.project_path, constants.PROJECT_FILE)
+        self.project_file = os.path.join(self.project_path, settings.PROJECT_FILE)
         self.main_controller.show_project_settings()
 
     def write_signal_information_to_project_file(self, signal: Signal, tree=None):
@@ -564,7 +564,7 @@ class ProjectManager(QObject):
 
     def from_dialog(self, dialog):
         if dialog.committed:
-            if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, constants.PROJECT_FILE)):
+            if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, settings.PROJECT_FILE)):
                 self.set_project_folder(dialog.path, ask_for_new_project=False, close_all=False)
             self.device_conf["frequency"] = dialog.freq
             self.device_conf["sample_rate"] = dialog.sample_rate

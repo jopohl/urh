@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, QRegExp, QTimer
 from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.ModulationParametersDialog import ModulationParametersDialog
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
@@ -75,7 +75,7 @@ class ModulatorDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -122,7 +122,7 @@ class ModulatorDialog(QDialog):
 
     def closeEvent(self, event: QCloseEvent):
         self.ui.lineEditParameters.editingFinished.emit()
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 
         for gv in (self.ui.gVCarrier, self.ui.gVData, self.ui.gVModulated, self.ui.gVOriginalSignal):
             # Eliminate graphic views to prevent segfaults
@@ -352,7 +352,7 @@ class ModulatorDialog(QDialog):
         self.update_modulation_parameters()
 
     def set_modulation_profile_status(self):
-        visible = constants.SETTINGS.value("multiple_modulations", False, bool)
+        visible = settings.read("multiple_modulations", False, bool)
         self.ui.btnAddModulation.setVisible(visible)
         self.ui.btnRemoveModulation.setVisible(visible)
         self.ui.comboBoxCustomModulations.setVisible(visible)

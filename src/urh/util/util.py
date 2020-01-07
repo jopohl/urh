@@ -15,7 +15,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QSplitter
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 
-from urh import constants
+from urh import settings
 from urh.util.Logger import logger
 
 PROJECT_PATH = None  # for referencing in external program calls
@@ -26,7 +26,6 @@ BCD_REVERSE_LUT = {str(i): "{0:04b}".format(i) for i in range(10)}
 BCD_REVERSE_LUT[BCD_ERROR_SYMBOL] = "0000"
 
 DEFAULT_PROGRAMS_WINDOWS = {}
-
 
 def profile(func):
     def func_wrapper(*args):
@@ -39,7 +38,7 @@ def profile(func):
 
 
 def set_icon_theme():
-    if sys.platform != "linux" or constants.SETTINGS.value("icon_theme_index", 0, int) == 0:
+    if sys.platform != "linux" or settings.read("icon_theme_index", 0, int) == 0:
         # noinspection PyUnresolvedReferences
         import urh.ui.xtra_icons_rc
         QIcon.setThemeName("oxy")
@@ -438,7 +437,7 @@ def validate_command(command: str):
 
 def set_splitter_stylesheet(splitter: QSplitter):
     splitter.setHandleWidth(4)
-    bgcolor = constants.BGCOLOR.lighter(150)
+    bgcolor = settings.BGCOLOR.lighter(150)
     r, g, b, a = bgcolor.red(), bgcolor.green(), bgcolor.blue(), bgcolor.alpha()
     splitter.setStyleSheet("QSplitter::handle:vertical {{margin: 4px 0px; "
                            "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "

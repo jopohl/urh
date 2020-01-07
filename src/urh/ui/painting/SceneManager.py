@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
 
-from urh import constants
+from urh import settings
 from urh.cythonext import path_creator, util
 from urh.ui.painting.ZoomableScene import ZoomableScene
 
@@ -15,7 +15,7 @@ class SceneManager(QObject):
         super().__init__(parent)
         self.scene = ZoomableScene()
         self.__plot_data = None  # type: np.ndarray
-        self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(constants.AXISCOLOR, 0))
+        self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(settings.AXISCOLOR, 0))
         self.minimum = float("nan")  # NaN = AutoDetect
         self.maximum = float("nan")  # NaN = AutoDetect
 
@@ -53,10 +53,10 @@ class SceneManager(QObject):
 
     def set_path(self, paths: list, colors=None):
         self.clear_path()
-        colors = [constants.LINECOLOR] * len(paths) if colors is None else colors
+        colors = [settings.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
-            path_object = self.scene.addPath(path, QPen(color if color else constants.LINECOLOR, 0))
+            path_object = self.scene.addPath(path, QPen(color if color else settings.LINECOLOR, 0))
             if color:
                 path_object.setZValue(1)
 
@@ -85,7 +85,7 @@ class SceneManager(QObject):
             minimum = -padding * maximum
 
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
-        self.scene.setBackgroundBrush(constants.BGCOLOR)
+        self.scene.setBackgroundBrush(settings.BGCOLOR)
 
         if self.line_item is not None:
             self.line_item.setLine(0, 0, self.num_samples, 0)
@@ -122,12 +122,12 @@ class SceneManager(QObject):
         x = np.arange(0, n).astype(np.int64)
         scene = ZoomableScene()
         scene.setSceneRect(0, -1, n, 2)
-        scene.setBackgroundBrush(constants.BGCOLOR)
-        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
+        scene.setBackgroundBrush(settings.BGCOLOR)
+        scene.addLine(0, 0, n, 0, QPen(settings.AXISCOLOR, 0))
         if len(y) > 0:
             y = np.array(y)
         else:
             y = np.array(y).astype(np.float32)
         path = path_creator.array_to_QPath(x, y)
-        scene.addPath(path, QPen(constants.LINECOLOR, 0))
+        scene.addPath(path, QPen(settings.LINECOLOR, 0))
         return scene, n

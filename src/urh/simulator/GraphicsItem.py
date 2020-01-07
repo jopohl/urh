@@ -3,7 +3,7 @@ from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
 from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
     QAbstractItemView
 
-from urh import constants
+from urh import settings
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
 from urh.simulator.SimulatorRule import SimulatorRule
@@ -123,12 +123,12 @@ class GraphicsItem(QGraphicsObject):
             self.setOpacity(1 if self.model_item.logging_active else 0.3)
 
         if self.hover_active or self.isSelected():
-            painter.setOpacity(constants.SELECTION_OPACITY)
-            painter.setBrush(constants.SELECTION_COLOR)
+            painter.setOpacity(settings.SELECTION_OPACITY)
+            painter.setBrush(settings.SELECTION_COLOR)
             painter.setPen(QPen(QColor(Qt.transparent), 0))
             painter.drawRect(self.boundingRect())
         elif not self.is_valid():
-            painter.setOpacity(constants.SELECTION_OPACITY)
+            painter.setOpacity(settings.SELECTION_OPACITY)
             painter.setBrush(QColor(255, 0, 0, 150))
             painter.setPen(QPen(QColor(Qt.transparent), 0))
             painter.drawRect(self.boundingRect())

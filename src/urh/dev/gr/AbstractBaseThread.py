@@ -1,16 +1,15 @@
 import os
 import sys
 import tempfile
+import time
 from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
 
-import time
-
 import zmq
 from PyQt5.QtCore import QThread, pyqtSignal
 
-from urh import constants
+from urh import settings
 from urh.util.Logger import logger
 
 ON_POSIX = 'posix' in sys.builtin_module_names
@@ -46,8 +45,8 @@ class AbstractBaseThread(QThread):
         self.socket = None
 
         gnuradio_path_file = os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")
-        if constants.SETTINGS.value("use_gnuradio_install_dir", False, bool):
-            gnuradio_dir = constants.SETTINGS.value("gnuradio_install_dir", "")
+        if settings.read("use_gnuradio_install_dir", False, bool):
+            gnuradio_dir = settings.read("gnuradio_install_dir", "")
             with open(gnuradio_path_file, "w") as f:
                 f.write(gnuradio_dir)
             if os.path.isfile(os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")):
@@ -59,7 +58,7 @@ class AbstractBaseThread(QThread):
                 os.remove(gnuradio_path_file)
             except OSError:
                 pass
-            self.python2_interpreter = constants.SETTINGS.value("python2_exe", "")
+            self.python2_interpreter = settings.read("python2_exe", "")
 
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread

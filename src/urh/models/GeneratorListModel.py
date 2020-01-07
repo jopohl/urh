@@ -1,10 +1,8 @@
 from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QColor
 
-from urh import constants
-from urh.signalprocessing.ProtocoLabel import ProtocolLabel
-from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
+from urh import settings
 from urh.signalprocessing.Message import Message
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 
 class GeneratorListModel(QAbstractListModel):
@@ -53,7 +51,7 @@ class GeneratorListModel(QAbstractListModel):
         elif role == Qt.CheckStateRole:
             return self.labels[row].fuzz_me
         elif role == Qt.BackgroundColorRole:
-            return constants.LABEL_COLORS[self.labels[row].color_index]
+            return settings.LABEL_COLORS[self.labels[row].color_index]
 
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):

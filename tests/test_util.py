@@ -4,26 +4,26 @@ import sys
 import tempfile
 
 from PyQt5.QtGui import QIcon
+from urh.util.settings import settings
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
+from urh import settings
 from urh.dev.PCAP import PCAP
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.util import util
 from urh.util.Logger import logger
-from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestUtil(QtTestCase):
     def test_set_icon_theme(self):
-        constants.SETTINGS.setValue("icon_theme_index", 0)
+        settings.write("icon_theme_index", 0)
         util.set_icon_theme()
 
         self.assertEqual(QIcon.themeName(), "oxy")
 
-        constants.SETTINGS.setValue("icon_theme_index", 1)
+        settings.write("icon_theme_index", 1)
         util.set_icon_theme()
 
         if sys.platform == "linux":
@@ -42,15 +42,15 @@ class TestUtil(QtTestCase):
         dialog.close()
 
     def test_get_receive_buffer_size(self):
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = None
-        ns = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=True)
-        self.assertEqual(ns, constants.SPECTRUM_BUFFER_SIZE)
+        settings.OVERWRITE_RECEIVE_BUFFER_SIZE = None
+        ns = settings.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=True)
+        self.assertEqual(ns, settings.SPECTRUM_BUFFER_SIZE)
 
-        ns = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=False)
-        self.assertEqual(ns, constants.SNIFF_BUFFER_SIZE)
+        ns = settings.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=False)
+        self.assertEqual(ns, settings.SNIFF_BUFFER_SIZE)
 
-        ns1 = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=True)
-        ns2 = SettingsProxy.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=False)
+        ns1 = settings.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=True)
+        ns2 = settings.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=False)
         self.assertEqual(len(str(ns1)), len(str(ns2)))
 
     def test_write_pcap(self):

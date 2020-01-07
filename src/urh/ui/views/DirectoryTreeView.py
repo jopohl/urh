@@ -4,7 +4,7 @@ from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
 from PyQt5.QtGui import QContextMenuEvent, QIcon, QDesktopServices
 from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
-from urh import constants
+from urh import settings
 from urh.util import util
 
 
@@ -50,7 +50,7 @@ class DirectoryTreeView(QTreeView):
         if index.isValid():
             current_index_info = self.model().sourceModel().fileInfo(index)  # type: QFileInfo
             if current_index_info.isDir():
-                if os.path.isfile(os.path.join(current_index_info.filePath(), constants.PROJECT_FILE)):
+                if os.path.isfile(os.path.join(current_index_info.filePath(), settings.PROJECT_FILE)):
                     open_action = menu.addAction("Open project")
                     open_action.setIcon(QIcon(":/icons/icons/appicon.png"))
                 else:

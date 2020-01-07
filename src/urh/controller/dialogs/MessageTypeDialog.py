@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog
 
-from urh import constants
+from urh import settings
 from urh.models.RulesetTableModel import RulesetTableModel
 from urh.signalprocessing import Ruleset
 from urh.signalprocessing.MessageType import MessageType
@@ -49,7 +49,7 @@ class MessageTypeDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -76,7 +76,7 @@ class MessageTypeDialog(QDialog):
     def closeEvent(self, event: QCloseEvent):
         self.ui.tblViewRuleset.setItemDelegateForColumn(2, None)
         self.ui.tblViewRuleset.setItemDelegateForColumn(3, None)
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
     @pyqtSlot()

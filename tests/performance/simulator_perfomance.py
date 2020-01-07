@@ -2,30 +2,22 @@ import socket
 import time
 from multiprocessing import Value, Process
 
-from urh.util.SettingsProxy import SettingsProxy
-
-from urh.signalprocessing.Modulator import Modulator
-
-from urh.signalprocessing.MessageType import MessageType
-
-from urh.simulator.Simulator import Simulator
-
-from urh.dev.EndlessSender import EndlessSender
-
-from urh.dev.BackendHandler import BackendHandler
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
-
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+import numpy as np
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.dev.BackendHandler import BackendHandler
+from urh.dev.EndlessSender import EndlessSender
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorMessage import SimulatorMessage
-
 from urh.util.Logger import logger
 
-import numpy as np
 
 def receive(port, current_index, target_index, elapsed):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -5,7 +5,7 @@ from PyQt5.QtCore import QRectF
 from PyQt5.QtGui import QPen, QFont, QTransform, QFontMetrics
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
 
-from urh import constants
+from urh import settings
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.util import util
 
@@ -27,8 +27,8 @@ class ZoomableScene(QGraphicsScene):
 
         self.ones_arrow = None
         self.zeros_arrow = None
-        self.selection_area = HorizontalSelection(0, 0, 0, 0, fillcolor=constants.SELECTION_COLOR,
-                                                  opacity=constants.SELECTION_OPACITY)
+        self.selection_area = HorizontalSelection(0, 0, 0, 0, fillcolor=settings.SELECTION_COLOR,
+                                                  opacity=settings.SELECTION_OPACITY)
         self.addItem(self.selection_area)
 
     @property
@@ -43,7 +43,7 @@ class ZoomableScene(QGraphicsScene):
             area.hide()
 
         if self.noise_area is None or self.noise_area.scene() != self:
-            roi = HorizontalSelection(x, y, w, h, fillcolor=constants.NOISE_COLOR, opacity=constants.NOISE_OPACITY)
+            roi = HorizontalSelection(x, y, w, h, fillcolor=settings.NOISE_COLOR, opacity=settings.NOISE_OPACITY)
             self.noise_area = roi
             self.addItem(self.noise_area)
         else:
@@ -107,11 +107,11 @@ class ZoomableScene(QGraphicsScene):
             for i in range(num_areas):
                 area = QGraphicsRectItem(0, 0, 0, 0)
                 if i % 2 == 0:
-                    area.setBrush(constants.ZEROS_AREA_COLOR)
+                    area.setBrush(settings.ZEROS_AREA_COLOR)
                 else:
-                    area.setBrush(constants.ONES_AREA_COLOR)
-                area.setOpacity(constants.SEPARATION_OPACITY)
-                area.setPen(QPen(constants.TRANSPARENT_COLOR, 0))
+                    area.setBrush(settings.ONES_AREA_COLOR)
+                area.setOpacity(settings.SEPARATION_OPACITY)
+                area.setPen(QPen(settings.TRANSPARENT_COLOR, 0))
                 self.addItem(area)
                 self.separation_areas.append(area)
 

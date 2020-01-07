@@ -2,7 +2,7 @@ import xml.etree.cElementTree as ET
 from enum import Enum
 from xml.dom import minidom
 
-from urh import constants
+from urh import settings
 
 
 class FieldType(object):
@@ -66,7 +66,7 @@ class FieldType(object):
         :rtype: list of FieldType
         """
 
-        e = ET.parse(constants.FIELD_TYPE_SETTINGS).getroot()
+        e = ET.parse(settings.FIELD_TYPE_SETTINGS).getroot()
 
         result = []
 
@@ -114,7 +114,7 @@ class FieldType(object):
             root.append(field_type.to_xml())
 
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        with open(constants.FIELD_TYPE_SETTINGS, "w") as f:
+        with open(settings.FIELD_TYPE_SETTINGS, "w") as f:
             for line in xmlstr.split("\n"):
                 if line.strip():
                     f.write(line + "\n")

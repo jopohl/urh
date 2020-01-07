@@ -6,17 +6,15 @@ from array import array
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest, QSignalSpy
+from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
 
-from urh.signalprocessing.IQArray import IQArray
-from urh.util.Logger import logger
-
 from tests.QtTestCase import QtTestCase
-from urh import constants
+from urh import settings
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
 from urh.simulator.MessageItem import MessageItem
@@ -25,14 +23,14 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
-from urh.util.SettingsProxy import SettingsProxy
+from urh.util.Logger import logger
 
 
 class TestSimulatorTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
 
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+        settings.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
         self.carl = Participant("Carl", "C")
         self.dennis = Participant("Dennis", "D")
@@ -147,11 +145,11 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 3)), "")
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
+        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
         model.setData(model.index(0, 3), "item1.preamble + 42", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
+        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
         model.setData(model.index(0, 3), "item1.preamble + 42/", role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), constants.ERROR_BG_COLOR)
+        self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
 
         # external program
         model.setData(model.index(0, 2), 3, role=Qt.EditRole)

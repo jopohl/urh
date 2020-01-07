@@ -5,13 +5,13 @@ from collections import defaultdict
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QUndoStack
-from urh.util.Logger import logger
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.InsertColumn import InsertColumn
 from urh.util import util
+from urh.util.Logger import logger
 
 
 class TableModel(QAbstractTableModel):
@@ -179,7 +179,7 @@ class TableModel(QAbstractTableModel):
 
     def refresh_bgcolors(self):
         self.background_colors.clear()
-        label_colors = constants.LABEL_COLORS
+        label_colors = settings.LABEL_COLORS
 
         for i, message in enumerate(self.protocol.messages):
             for lbl in message.message_type:
@@ -208,7 +208,7 @@ class TableModel(QAbstractTableModel):
                 participant = None
             if participant:
                 self.vertical_header_text[i] = "{0} ({1})".format(i + 1, participant.shortname)
-                self.vertical_header_colors[i] = constants.PARTICIPANT_COLORS[participant.color_index]
+                self.vertical_header_colors[i] = settings.PARTICIPANT_COLORS[participant.color_index]
                 use_colors = True
             else:
                 self.vertical_header_text[i] = str(i + 1)

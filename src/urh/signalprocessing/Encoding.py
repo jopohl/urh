@@ -1,13 +1,10 @@
-import copy
-
 import array
-
-from urh import constants
-from urh.util.GenericCRC import GenericCRC
-from urh.util import util
+import copy
 from xml.etree import ElementTree as ET
 
-from urh.util.Logger import logger
+from urh import settings
+from urh.util import util
+from urh.util.GenericCRC import GenericCRC
 
 
 class Encoding(object):
@@ -95,59 +92,59 @@ class Encoding(object):
 
         i = 1
         while i < len(names):
-            if constants.DECODING_INVERT in names[i]:
+            if settings.DECODING_INVERT in names[i]:
                 self.chain.append(self.code_invert)
-            elif constants.DECODING_ENOCEAN in names[i]:
+            elif settings.DECODING_ENOCEAN in names[i]:
                 self.chain.append(self.code_enocean)
-            elif constants.DECODING_DIFFERENTIAL in names[i]:
+            elif settings.DECODING_DIFFERENTIAL in names[i]:
                 self.chain.append(self.code_differential)
-            elif constants.DECODING_REDUNDANCY in names[i]:
+            elif settings.DECODING_REDUNDANCY in names[i]:
                 self.chain.append(self.code_redundancy)
                 i += 1
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
                     self.chain.append(2)
-            elif constants.DECODING_DATAWHITENING in names[i]:
+            elif settings.DECODING_DATAWHITENING in names[i]:
                 self.chain.append(self.code_data_whitening)
                 i += 1
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("0xe9cae9ca;0x21;0")  # Default Sync Bytes
-            elif constants.DECODING_CARRIER in names[i]:
+            elif settings.DECODING_CARRIER in names[i]:
                 self.chain.append(self.code_carrier)
                 i += 1
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("1_")
-            elif constants.DECODING_BITORDER in names[i]:
+            elif settings.DECODING_BITORDER in names[i]:
                 self.chain.append(self.code_lsb_first)
-            elif constants.DECODING_EDGE in names[i]:
+            elif settings.DECODING_EDGE in names[i]:
                 self.chain.append(self.code_edge)
-            elif constants.DECODING_SUBSTITUTION in names[i]:
+            elif settings.DECODING_SUBSTITUTION in names[i]:
                 self.chain.append(self.code_substitution)
                 i += 1
                 if i < len(names):
                     self.chain.append(self.get_subst_array(names[i]))
                 else:
                     self.chain.append(self.get_subst_array("0:1;1:0;"))
-            elif constants.DECODING_EXTERNAL in names[i]:
+            elif settings.DECODING_EXTERNAL in names[i]:
                 self.chain.append(self.code_externalprogram)
                 i += 1
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("./;./")
-            elif constants.DECODING_CUT in names[i]:
+            elif settings.DECODING_CUT in names[i]:
                 self.chain.append(self.code_cut)
                 i += 1
                 if i < len(names):
                     self.chain.append(names[i])
                 else:
                     self.chain.append("0;1010")
-            elif constants.DECODING_MORSE in names[i]:
+            elif settings.DECODING_MORSE in names[i]:
                 self.chain.append(self.code_morse)
                 i += 1
                 if i < len(names):
@@ -162,41 +159,41 @@ class Encoding(object):
         i = 1
         while i < len(self.chain):
             if self.code_invert == self.chain[i]:
-                chainstr.append(constants.DECODING_INVERT)
+                chainstr.append(settings.DECODING_INVERT)
             elif self.code_enocean == self.chain[i]:
-                chainstr.append(constants.DECODING_ENOCEAN)
+                chainstr.append(settings.DECODING_ENOCEAN)
             elif self.code_differential == self.chain[i]:
-                chainstr.append(constants.DECODING_DIFFERENTIAL)
+                chainstr.append(settings.DECODING_DIFFERENTIAL)
             elif self.code_redundancy == self.chain[i]:
-                chainstr.append(constants.DECODING_REDUNDANCY)
+                chainstr.append(settings.DECODING_REDUNDANCY)
                 i += 1
                 chainstr.append(self.chain[i])
             elif self.code_data_whitening == self.chain[i]:
-                chainstr.append(constants.DECODING_DATAWHITENING)
+                chainstr.append(settings.DECODING_DATAWHITENING)
                 i += 1
                 chainstr.append(self.chain[i])
             elif self.code_carrier == self.chain[i]:
-                chainstr.append(constants.DECODING_CARRIER)
+                chainstr.append(settings.DECODING_CARRIER)
                 i += 1
                 chainstr.append(self.chain[i])
             elif self.code_lsb_first == self.chain[i]:
-                chainstr.append(constants.DECODING_BITORDER)
+                chainstr.append(settings.DECODING_BITORDER)
             elif self.code_edge == self.chain[i]:
-                chainstr.append(constants.DECODING_EDGE)
+                chainstr.append(settings.DECODING_EDGE)
             elif self.code_substitution == self.chain[i]:
-                chainstr.append(constants.DECODING_SUBSTITUTION)
+                chainstr.append(settings.DECODING_SUBSTITUTION)
                 i += 1
                 chainstr.append(self.get_subst_string(self.chain[i]))
             elif self.code_externalprogram == self.chain[i]:
-                chainstr.append(constants.DECODING_EXTERNAL)
+                chainstr.append(settings.DECODING_EXTERNAL)
                 i += 1
                 chainstr.append(self.chain[i])
             elif self.code_cut == self.chain[i]:
-                chainstr.append(constants.DECODING_CUT)
+                chainstr.append(settings.DECODING_CUT)
                 i += 1
                 chainstr.append(self.chain[i])
             elif self.code_morse == self.chain[i]:
-                chainstr.append(constants.DECODING_MORSE)
+                chainstr.append(settings.DECODING_MORSE)
                 i += 1
                 chainstr.append(self.chain[i])
             i += 1

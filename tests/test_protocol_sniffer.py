@@ -4,6 +4,7 @@ import numpy as np
 from PyQt5.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
+from urh import settings
 from urh.dev.BackendHandler import BackendHandler
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.signalprocessing.IQArray import IQArray
@@ -11,13 +12,12 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
-from urh.util.SettingsProxy import SettingsProxy
 
 
 class TestProtocolSniffer(QtTestCase):
     def setUp(self):
         super().setUp()
-        SettingsProxy.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
+        settings.OVERWRITE_RECEIVE_BUFFER_SIZE = 50000
 
     def test_protocol_sniffer(self):
         samples_per_symbol = 100

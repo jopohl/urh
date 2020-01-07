@@ -2,7 +2,7 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import qApp
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -97,11 +97,11 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 return font
         elif role == Qt.BackgroundColorRole:
             if j == 0:
-                return constants.LABEL_COLORS[lbl.color_index]
+                return settings.LABEL_COLORS[lbl.color_index]
             elif j == 3:
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
-                    return constants.ERROR_BG_COLOR
+                    return settings.ERROR_BG_COLOR
         elif role == Qt.TextColorRole:
             if self.link_index(index):
                 return qApp.palette().link().color()

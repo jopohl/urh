@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
 from PyQt5.QtGui import QFont
 
-from urh import constants
+from urh import settings
 from urh.plugins import Plugin
 
 
@@ -25,9 +25,9 @@ class PluginListModel(QAbstractListModel):
         elif role == Qt.CheckStateRole:
             return self.plugins[row].enabled
         elif role == Qt.TextColorRole and self.plugins[row] in self.highlighted_plugins:
-            return constants.HIGHLIGHT_TEXT_FOREGROUND_COLOR
+            return settings.HIGHLIGHT_TEXT_FOREGROUND_COLOR
         elif role == Qt.BackgroundColorRole and self.plugins[row] in self.highlighted_plugins:
-            return constants.HIGHLIGHT_TEXT_BACKGROUND_COLOR
+            return settings.HIGHLIGHT_TEXT_BACKGROUND_COLOR
         elif role == Qt.FontRole and self.plugins[row] in self.highlighted_plugins:
             font = QFont()
             font.setBold(True)

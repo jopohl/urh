@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 from PyQt5.QtCore import Qt
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -131,13 +131,13 @@ class MessageType(list):
 
         name = "" if not name else name
         used_colors = [p.color_index for p in self]
-        avail_colors = [i for i, _ in enumerate(constants.LABEL_COLORS) if i not in used_colors]
+        avail_colors = [i for i, _ in enumerate(settings.LABEL_COLORS) if i not in used_colors]
 
         if color_ind is None:
             if len(avail_colors) > 0:
                 color_ind = avail_colors[0]
             else:
-                color_ind = random.randint(0, len(constants.LABEL_COLORS) - 1)
+                color_ind = random.randint(0, len(settings.LABEL_COLORS) - 1)
 
         proto_label = self.__create_label(name=name, start=start, end=end, color_index=color_ind,
                                           auto_created=auto_created, field_type=type)

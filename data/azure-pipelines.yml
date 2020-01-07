@@ -15,6 +15,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+          python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -65,7 +67,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: QT_DEBUG_PLUGINS=1 pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -187,7 +189,7 @@ jobs:
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest'
 
   - task: PublishTestResults@2
@@ -291,7 +293,7 @@ jobs:
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest'
 
   - task: PublishTestResults@2

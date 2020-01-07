@@ -1,31 +1,28 @@
 import copy
 import os
-import traceback
 
 from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
 from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
-from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QFileDialog, \
-    QMessageBox, QApplication, qApp
+from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QMessageBox, QApplication, qApp
 
-from urh import constants, version
-from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
+from urh import settings, version
 from urh.controller.CompareFrameController import CompareFrameController
-from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.controller.GeneratorTabController import GeneratorTabController
+from urh.controller.SignalTabController import SignalTabController
+from urh.controller.SimulatorTabController import SimulatorTabController
+from urh.controller.dialogs.CSVImportDialog import CSVImportDialog
+from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.controller.dialogs.OptionsDialog import OptionsDialog
 from urh.controller.dialogs.ProjectDialog import ProjectDialog
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
-from urh.controller.widgets.SignalFrame import SignalFrame
-from urh.controller.SignalTabController import SignalTabController
-from urh.controller.SimulatorTabController import SimulatorTabController
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
+from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.models.FileFilterProxyModel import FileFilterProxyModel
 from urh.models.FileIconProvider import FileIconProvider
 from urh.models.FileSystemModel import FileSystemModel
 from urh.models.ParticipantLegendListModel import ParticipantLegendListModel
 from urh.plugins.PluginManager import PluginManager
-from urh.signalprocessing.Message import Message
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_main import Ui_MainWindow
@@ -82,8 +79,7 @@ class MainController(QMainWindow):
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
         self.addAction(self.cancel_action)
 
-        self.ui.actionAuto_detect_new_signals.setChecked(constants.SETTINGS.value("auto_detect_new_signals",
-                                                                                  True, bool))
+        self.ui.actionAuto_detect_new_signals.setChecked(settings.read("auto_detect_new_signals", True, bool))
 
         self.participant_legend_model = ParticipantLegendListModel(self.project_manager.participants)
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
@@ -105,7 +101,7 @@ class MainController(QMainWindow):
 
         self.recentFileActionList = []
         self.create_connects()
-        self.init_recent_file_action_list(constants.SETTINGS.value("recentFiles", []))
+        self.init_recent_file_action_list(settings.read("recentFiles", [], list))
 
         self.filemodel = FileSystemModel(self)
         path = QDir.homePath()
@@ -144,7 +140,7 @@ class MainController(QMainWindow):
         self.ui.splitter.setSizes([0, 1])
         self.refresh_main_menu()
 
-        self.apply_default_view(constants.SETTINGS.value('default_view', type=int))
+        self.apply_default_view(settings.read('default_view', type=int))
         self.project_save_timer.start(ProjectManager.AUTOSAVE_INTERVAL_MINUTES * 60 * 1000)
 
         self.ui.actionProject_settings.setVisible(False)
@@ -152,7 +148,7 @@ class MainController(QMainWindow):
         self.ui.actionClose_project.setVisible(False)
 
     def __set_non_project_warning_visibility(self):
-        show = constants.SETTINGS.value("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
+        show = settings.read("show_non_project_warning", True, bool) and not self.project_manager.project_loaded
         self.ui.labelNonProjectMode.setVisible(show)
 
     def create_connects(self):
@@ -230,7 +226,7 @@ class MainController(QMainWindow):
         self.ui.labelNonProjectMode.linkActivated.connect(self.on_label_non_project_mode_link_activated)
 
         self.ui.menuFile.addSeparator()
-        for i in range(constants.MAX_RECENT_FILE_NR):
+        for i in range(settings.MAX_RECENT_FILE_NR):
             recent_file_action = QAction(self)
             recent_file_action.setVisible(False)
             recent_file_action.triggered.connect(self.on_open_recent_action_triggered)
@@ -398,7 +394,7 @@ class MainController(QMainWindow):
             elif filename.endswith(".csv"):
                 self.__import_csv(filename, group_id)
                 continue
-            elif os.path.basename(filename) == constants.PROJECT_FILE:
+            elif os.path.basename(filename) == settings.PROJECT_FILE:
                 self.project_manager.set_project_folder(os.path.split(filename)[0])
             else:
                 self.add_signalfile(filename, group_id, enforce_sample_rate=enforce_sample_rate)
@@ -508,16 +504,15 @@ class MainController(QMainWindow):
         if file_path in FileOperator.archives.keys():
             file_path = copy.copy(FileOperator.archives[file_path])
 
-        settings = constants.SETTINGS
-        recent_file_paths = settings.value("recentFiles", [])
+        recent_file_paths = settings.read("recentFiles", [], list)
         recent_file_paths = [] if recent_file_paths is None else recent_file_paths  # check None for OSX
         recent_file_paths = [p for p in recent_file_paths if p != file_path and p is not None and os.path.exists(p)]
         recent_file_paths.insert(0, file_path)
-        recent_file_paths = recent_file_paths[:constants.MAX_RECENT_FILE_NR]
+        recent_file_paths = recent_file_paths[:settings.MAX_RECENT_FILE_NR]
 
         self.init_recent_file_action_list(recent_file_paths)
 
-        settings.setValue("recentFiles", recent_file_paths)
+        settings.write("recentFiles", recent_file_paths)
 
     def init_recent_file_action_list(self, recent_file_paths: list):
         for i in range(len(self.recentFileActionList)):
@@ -877,7 +872,7 @@ class MainController(QMainWindow):
 
     @pyqtSlot(bool)
     def on_auto_detect_new_signals_action_triggered(self, checked: bool):
-        constants.SETTINGS.setValue("auto_detect_new_signals", bool(checked))
+        settings.write("auto_detect_new_signals", bool(checked))
 
     def __import_csv(self, file_name, group_id=0):
         def on_data_imported(complex_file, sample_rate):
@@ -892,7 +887,7 @@ class MainController(QMainWindow):
     def on_label_non_project_mode_link_activated(self, link: str):
         if link == "dont_show_non_project_again":
             self.ui.labelNonProjectMode.hide()
-            constants.SETTINGS.setValue("show_non_project_warning", False)
+            settings.write("show_non_project_warning", False)
         elif link == "open_new_project_dialog":
             self.on_new_project_action_triggered()
 

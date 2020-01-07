@@ -1,8 +1,7 @@
 from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
 
-from urh import constants
-
+from urh import settings
 from urh.controller.widgets.SignalFrame import SignalFrame
 from urh.signalprocessing.Signal import Signal
 from urh.ui.ui_tab_interpretation import Ui_Interpretation
@@ -81,7 +80,7 @@ class SignalTabController(QWidget):
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
-        default_view = constants.SETTINGS.value('default_view', 0, int)
+        default_view = settings.read('default_view', 0, int)
         sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
 
         return sig_frame
@@ -111,7 +110,7 @@ class SignalTabController(QWidget):
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):
-        signal_frame.hold_shift = constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
+        signal_frame.hold_shift = settings.read('hold_shift_to_drag', True, type=bool)
         signal_frame.drag_started.connect(self.frame_dragged)
         signal_frame.frame_dropped.connect(self.frame_dropped)
         signal_frame.files_dropped.connect(self.on_files_dropped)
@@ -126,9 +125,8 @@ class SignalTabController(QWidget):
         if self.num_frames == 0:
             return
 
-        settings = constants.SETTINGS
         try:
-            not_show = settings.value('not_show_save_dialog', type=bool, defaultValue=False)
+            not_show = settings.read('not_show_save_dialog', False, type=bool)
         except TypeError:
             not_show = False
 
@@ -142,7 +140,7 @@ class SignalTabController(QWidget):
 
             reply = msg_box.exec()
             not_show_again = cb.isChecked()
-            settings.setValue("not_show_save_dialog", not_show_again)
+            settings.write("not_show_save_dialog", not_show_again)
             self.not_show_again_changed.emit()
 
             if reply != QMessageBox.Yes:

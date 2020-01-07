@@ -2,7 +2,7 @@ import numpy as np
 from PyQt5.QtCore import QRectF, QLineF
 from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
-from urh import constants
+from urh import settings
 from urh.ui.painting.ZoomableScene import ZoomableScene
 from urh.util import util
 from urh.util.Formatter import Formatter
@@ -74,11 +74,11 @@ class GridScene(ZoomableScene):
         y2 = self.sceneRect().y() + self.sceneRect().height()
 
         if self.frequency_marker is None:
-            pen = QPen(constants.LINECOLOR, 0)
+            pen = QPen(settings.LINECOLOR, 0)
             self.frequency_marker = [None, None]
             self.frequency_marker[0] = self.addLine(x_pos, y1, x_pos, y2, pen)
             self.frequency_marker[1] = self.addSimpleText("")
-            self.frequency_marker[1].setBrush(QBrush(constants.LINECOLOR))
+            self.frequency_marker[1].setBrush(QBrush(settings.LINECOLOR))
             font = QFont()
             font.setBold(True)
             font.setPointSize(int(font.pointSize() * 1.25)+1)

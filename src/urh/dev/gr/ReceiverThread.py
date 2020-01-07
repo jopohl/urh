@@ -1,9 +1,9 @@
 import numpy as np
 import zmq
 
+from urh import settings
 from urh.dev.gr.AbstractBaseThread import AbstractBaseThread
 from urh.util.Logger import logger
-from urh.util.SettingsProxy import SettingsProxy
 
 
 class ReceiverThread(AbstractBaseThread):
@@ -15,7 +15,7 @@ class ReceiverThread(AbstractBaseThread):
         self.data = None
 
     def init_recv_buffer(self):
-        n_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
+        n_samples = settings.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
         self.data = np.zeros(n_samples, dtype=np.complex64)
 
     def run(self):

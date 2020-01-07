@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QContextMenuEvent, QKeySequence
 from PyQt5.QtWidgets import QTableView, QMenu, QAction
 
-from urh import constants
+from urh import settings
 from urh.models.LabelValueTableModel import LabelValueTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
@@ -17,8 +17,8 @@ class LabelValueTableView(QTableView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setItemDelegateForColumn(1, ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
-                                                          colors=constants.LABEL_COLORS,
+        self.setItemDelegateForColumn(1, ComboBoxDelegate([""] * len(settings.LABEL_COLORS),
+                                                          colors=settings.LABEL_COLORS,
                                                           parent=self))
         self.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
 

@@ -1,5 +1,4 @@
 import locale
-import traceback
 
 import numpy
 import numpy as np
@@ -7,7 +6,7 @@ from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
 
-from urh import constants
+from urh import settings
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
 from urh.controller.dialogs.FuzzingDialog import FuzzingDialog
@@ -267,7 +266,7 @@ class GeneratorTabController(QWidget):
         return modulator_dialog, selected_message
 
     def set_modulation_profile_status(self):
-        visible = constants.SETTINGS.value("multiple_modulations", False, bool)
+        visible = settings.read("multiple_modulations", False, bool)
         self.ui.cBoxModulations.setVisible(visible)
 
     def init_rfcat_plugin(self):

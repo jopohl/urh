@@ -8,12 +8,12 @@ from pickle import UnpicklingError
 
 import numpy as np
 
+from urh import settings
 from urh.dev.native.SendConfig import SendConfig
 from urh.signalprocessing.IQArray import IQArray
-from urh.util.Logger import logger
-from urh.util.SettingsProxy import SettingsProxy
-
 from urh.util import util
+from urh.util.Logger import logger
+
 # set shared library path when processes spawn so they can also find the .so's in bundled case
 util.set_shared_library_path()
 
@@ -76,9 +76,9 @@ class Device(object):
         if method_name:
             try:
                 try:
-                    check_method_name = cls.DEVICE_METHODS[tag+"_get_allowed_values"]
+                    check_method_name = cls.DEVICE_METHODS[tag + "_get_allowed_values"]
                     allowed_values = getattr(cls.DEVICE_LIB, check_method_name)()
-                    next_allowed = min(allowed_values, key=lambda x: abs(x-value))
+                    next_allowed = min(allowed_values, key=lambda x: abs(x - value))
                     if value != next_allowed:
                         ctrl_connection.send("{}: {} not in range of supported values. Assuming {}".format(
                             tag, value, next_allowed
@@ -350,8 +350,8 @@ class Device(object):
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            num_samples = SettingsProxy.get_receive_buffer_size(self.resume_on_full_receive_buffer,
-                                                                self.is_in_spectrum_mode)
+            num_samples = settings.get_receive_buffer_size(self.resume_on_full_receive_buffer,
+                                                           self.is_in_spectrum_mode)
             self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=int(num_samples))
 
     def log_retcode(self, retcode: int, action: str, msg=""):

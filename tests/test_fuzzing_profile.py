@@ -2,7 +2,7 @@ import os
 import tempfile
 
 from tests.QtTestCase import QtTestCase
-from urh import constants
+from urh import settings
 from urh.controller.MainController import MainController
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
@@ -16,7 +16,7 @@ class TestFuzzingProfile(QtTestCase):
         mod = Modulator("mod 2")
         mod.parameters[1] = 42
 
-        decoders = [Encoding(["NRZ"]), Encoding(["NRZ-I", constants.DECODING_INVERT])]
+        decoders = [Encoding(["NRZ"]), Encoding(["NRZ-I", settings.DECODING_INVERT])]
 
         pac = ProtocolAnalyzerContainer()
         pac.messages.append(

@@ -4,7 +4,7 @@ import numpy as np
 
 from tests.auto_interpretation.auto_interpretation_test_util import demodulate
 from tests.test_util import get_path_for_data_file
-from urh import constants
+from urh import settings
 from urh.ainterpretation import AutoInterpretation
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Signal import Signal
@@ -54,7 +54,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(bit_length, 40)
 
         demod = demodulate(enocean_signal, mod_type, bit_length, center, noise, tolerance,
-                           decoding=Encoding(["WSP", constants.DECODING_ENOCEAN]))
+                           decoding=Encoding(["WSP", settings.DECODING_ENOCEAN]))
         self.assertEqual(len(demod), 3)
         self.assertEqual(demod[0], demod[2])
         self.assertEqual(demod[0], "aa9610002c1c024b")

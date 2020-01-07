@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
-from urh import constants
+from urh import settings
 from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.signalprocessing.Encoding import Encoding
 
@@ -30,7 +30,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
         self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         constants.BG_COLOR_WRONG)
+                         settings.BG_COLOR_WRONG)
 
         # Configure WSP and verify its correct
         proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
@@ -46,7 +46,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
         self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         constants.BG_COLOR_CORRECT)
+                         settings.BG_COLOR_CORRECT)
 
     def test_cc1101_crc(self):
         self.__add_cc1101_signal()
@@ -73,7 +73,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
         self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         constants.BG_COLOR_WRONG)
+                         settings.BG_COLOR_WRONG)
 
         # Configure CC1101 and verify its correct
         proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
@@ -94,7 +94,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
         self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         constants.BG_COLOR_CORRECT)
+                         settings.BG_COLOR_CORRECT)
 
     def test_checksum_in_generation_tab(self):
         self.add_signal_to_form("esaver.coco")
@@ -179,7 +179,7 @@ class TestCRCGUIIntegration(QtTestCase):
 
     def __set_wsp_encoding(self):
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
-        decoding = Encoding(["WSP", constants.DECODING_ENOCEAN])
+        decoding = Encoding(["WSP", settings.DECODING_ENOCEAN])
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.fill_decoding_combobox()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectAll()
@@ -193,7 +193,7 @@ class TestCRCGUIIntegration(QtTestCase):
 
     def __set_cc1101_encoding(self):
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
-        decoding = Encoding(["CC1101", constants.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"])
+        decoding = Encoding(["CC1101", settings.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"])
 
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.fill_decoding_combobox()

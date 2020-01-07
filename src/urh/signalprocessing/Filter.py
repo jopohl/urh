@@ -3,7 +3,7 @@ from enum import Enum
 
 import numpy as np
 
-from urh import constants
+from urh import settings
 from urh.cythonext import signal_functions
 from urh.util import util
 from urh.util.Logger import logger
@@ -45,13 +45,13 @@ class Filter(object):
 
     @staticmethod
     def read_configured_filter_bw() -> float:
-        bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
+        bw_type = settings.read("bandpass_filter_bw_type", "Medium", str)
 
         if bw_type in Filter.BANDWIDTHS:
             return Filter.BANDWIDTHS[bw_type]
 
         if bw_type.lower() == "custom":
-            return constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)
+            return settings.read("bandpass_filter_custom_bw", 0.1, float)
 
         return 0.08
 

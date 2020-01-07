@@ -2,7 +2,7 @@ from PyQt5.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
 from PyQt5.QtGui import QKeySequence, QIcon, QContextMenuEvent
 from PyQt5.QtWidgets import QTableView, QAction, QMenu
 
-from urh import constants
+from urh import settings
 from urh.models.ParticipantTableModel import ParticipantTableModel
 from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 
@@ -72,8 +72,8 @@ class ParticipantTableView(QTableView):
         for row in range(n):
             self.closePersistentEditor(self.model().index(row, 3))
 
-        self.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(constants.PARTICIPANT_COLORS),
-                                                          colors=constants.PARTICIPANT_COLORS,
+        self.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(settings.PARTICIPANT_COLORS),
+                                                          colors=settings.PARTICIPANT_COLORS,
                                                           parent=self))
         self.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
 

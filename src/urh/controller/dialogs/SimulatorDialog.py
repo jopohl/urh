@@ -5,7 +5,7 @@ from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.controller.widgets.ModulationSettingsWidget import ModulationSettingsWidget
@@ -130,7 +130,7 @@ class SimulatorDialog(QDialog):
 
         self.ui.textEditTranscript.setFont(util.get_monospace_font())
 
-        if constants.SETTINGS.value('default_view', 0, int) == 1:
+        if settings.read('default_view', 0, int) == 1:
             self.ui.radioButtonTranscriptHex.setChecked(True)
 
     def create_connects(self):

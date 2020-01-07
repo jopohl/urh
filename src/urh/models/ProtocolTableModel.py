@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from PyQt5.QtCore import pyqtSignal, QModelIndex, Qt
 
-from urh import constants
+from urh import settings
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
@@ -40,11 +40,11 @@ class ProtocolTableModel(TableModel):
         for i in self._diffs.keys():
             for j in self._diffs[i]:
                 self.bold_fonts[i, j] = True
-                self.text_colors[i, j] = constants.DIFFERENCE_CELL_COLOR
+                self.text_colors[i, j] = settings.DIFFERENCE_CELL_COLOR
 
         if self._refindex >= 0:
             for j in range(self.col_count):
-                self.text_colors[self._refindex, j] = constants.SELECTED_ROW_COLOR
+                self.text_colors[self._refindex, j] = settings.SELECTED_ROW_COLOR
 
     def delete_range(self, min_row: int, max_row: int, start: int, end: int):
         if not self.is_writeable:

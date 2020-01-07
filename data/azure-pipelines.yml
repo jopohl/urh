@@ -15,6 +15,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+          python.version: '3.8'
 
   steps:
   - task: UsePythonVersion@0
@@ -25,8 +27,8 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
-      sudo apt-get install libhackrf-dev librtlsdr-dev xvfb
-      pip install twine setuptools wheel pytest pytest-xvfb pytest-cov pytest-xdist
+      sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils
+      pip install twine setuptools wheel pytest pytest-xvfb pytest-cov pytest-faulthandler
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
@@ -65,7 +67,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: pytest --junitxml=junit/test-results.xml tests
+  - script: pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -188,7 +190,7 @@ jobs:
       addChangeLog: true
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
-    displayName: 'Run pytest'
+    displayName: 'Run pytest on windows'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -292,7 +294,7 @@ jobs:
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
-    displayName: 'Run pytest'
+    displayName: 'Run pytest on macOS'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
 from urh.signalprocessing.Modulator import Modulator
 from urh.ui.ui_modulation_settings_widget import Ui_ModulationSettings
@@ -18,8 +18,8 @@ class ModulationSettingsWidget(QWidget):
         self.ui = Ui_ModulationSettings()
         self.ui.setupUi(self)
 
-        self.ui.labelModulationProfile.setVisible(constants.SETTINGS.value("multiple_modulations", False, bool))
-        self.ui.comboBoxModulationProfiles.setVisible(constants.SETTINGS.value("multiple_modulations", False, bool))
+        self.ui.labelModulationProfile.setVisible(settings.read("multiple_modulations", False, bool))
+        self.ui.comboBoxModulationProfiles.setVisible(settings.read("multiple_modulations", False, bool))
 
         self.signal_tree_model = signal_tree_model
         self.modulators = modulators  # type: list[Modulator]

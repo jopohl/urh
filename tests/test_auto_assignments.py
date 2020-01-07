@@ -2,7 +2,7 @@ import copy
 import unittest
 
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
+from urh import settings
 from urh.awre import AutoAssigner
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
@@ -39,8 +39,8 @@ class TestAutoAssignments(unittest.TestCase):
         self.decodings.append(Encoding(['Manchester I', 'Edge Trigger']))
         self.decodings.append(Encoding(['Manchester II', 'Edge Trigger', 'Invert']))
         self.decodings.append(Encoding(['Differential Manchester', 'Edge Trigger', 'Differential Encoding', ]))
-        self.decodings.append(Encoding(['DeWhitening Special', constants.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21;0']))
-        self.decodings.append(Encoding(['DeWhitening', constants.DECODING_DATAWHITENING, '0x67686768;0x21;0']))
+        self.decodings.append(Encoding(['DeWhitening Special', settings.DECODING_DATAWHITENING, '0x9a7d9a7d;0x21;0']))
+        self.decodings.append(Encoding(['DeWhitening', settings.DECODING_DATAWHITENING, '0x67686768;0x21;0']))
 
     def test_message_type_assign_by_value(self):
         start = 8

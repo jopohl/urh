@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor,
     QResizeEvent
 from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
 from urh.controller.dialogs.FilterDialog import FilterDialog
 from urh.controller.dialogs.SendDialog import SendDialog
@@ -405,8 +405,7 @@ class SignalFrame(QFrame):
             Errors.empty_selection()
 
     def my_close(self):
-        settings = constants.SETTINGS
-        not_show = settings.value('not_show_close_dialog', False, type=bool)
+        not_show = settings.read('not_show_close_dialog', False, type=bool)
 
         if not not_show:
             cb = QCheckBox("Do not show this again.")
@@ -419,7 +418,7 @@ class SignalFrame(QFrame):
             reply = msgbox.exec()
 
             not_show_again = bool(cb.isChecked())
-            settings.setValue("not_show_close_dialog", not_show_again)
+            settings.write("not_show_close_dialog", not_show_again)
             self.not_show_again_changed.emit()
             if reply != QMessageBox.Yes:
                 return

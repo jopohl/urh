@@ -5,15 +5,15 @@ from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
 from PyQt5.QtGui import QCloseEvent, QTransform
 from PyQt5.QtWidgets import QDialog, QGraphicsView
 
-from urh import constants
+from urh import settings
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util import util
-from urh.util.Formatter import Formatter
 from urh.util.Errors import Errors
+from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
 
@@ -56,7 +56,7 @@ class SendRecvDialog(QDialog):
         self.timer = QTimer(self)
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -274,7 +274,7 @@ class SendRecvDialog(QDialog):
             logger.debug("Successfully cleaned up device")
             self.device_settings_widget.emit_device_parameters_changed()
 
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
 
         if self.device is not None:
             self.device.free_data()

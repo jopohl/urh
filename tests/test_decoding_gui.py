@@ -5,7 +5,7 @@ from PyQt5.QtCore import QPoint, QTimer
 from PyQt5.QtWidgets import qApp, QInputDialog, QMessageBox
 
 from tests.QtTestCase import QtTestCase
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.DecoderDialog import DecoderDialog
 from urh.signalprocessing.Encoding import Encoding
 
@@ -37,19 +37,19 @@ class TestDecodingGUI(QtTestCase):
 
     def test_build_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        chain = [(constants.DECODING_INVERT,),
-                 (constants.DECODING_ENOCEAN,),
-                 (constants.DECODING_DIFFERENTIAL,),
-                 (constants.DECODING_CARRIER,),
-                 (constants.DECODING_BITORDER,),
-                 (constants.DECODING_EDGE,),
-                 (constants.DECODING_INVERT,),
-                 (constants.DECODING_DATAWHITENING,),
-                 (constants.DECODING_REDUNDANCY, "2"),
-                 (constants.DECODING_MORSE, "1;3;1"),
-                 (constants.DECODING_SUBSTITUTION, "0:1;1:0;"),
-                 (constants.DECODING_EXTERNAL, "./;./"),
-                 (constants.DECODING_CUT, "0;1010")]
+        chain = [(settings.DECODING_INVERT,),
+                 (settings.DECODING_ENOCEAN,),
+                 (settings.DECODING_DIFFERENTIAL,),
+                 (settings.DECODING_CARRIER,),
+                 (settings.DECODING_BITORDER,),
+                 (settings.DECODING_EDGE,),
+                 (settings.DECODING_INVERT,),
+                 (settings.DECODING_DATAWHITENING,),
+                 (settings.DECODING_REDUNDANCY, "2"),
+                 (settings.DECODING_MORSE, "1;3;1"),
+                 (settings.DECODING_SUBSTITUTION, "0:1;1:0;"),
+                 (settings.DECODING_EXTERNAL, "./;./"),
+                 (settings.DECODING_CUT, "0;1010")]
 
         decoding = Encoding(chain=[c for chain_item in chain for c in chain_item])
         self.dialog.decodings[4] = decoding
@@ -85,7 +85,7 @@ class TestDecodingGUI(QtTestCase):
 
     def test_context_menu(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        decoding = Encoding(chain=[constants.DECODING_INVERT])
+        decoding = Encoding(chain=[settings.DECODING_INVERT])
         self.dialog.decodings[4] = decoding
         self.dialog.set_e()
 
@@ -97,16 +97,16 @@ class TestDecodingGUI(QtTestCase):
         self.assertEqual(3, len(menu_actions))
 
     def test_disable_enable_decoding_item(self):
-        self.dialog.ui.decoderchain.addItem(constants.DECODING_INVERT)
+        self.dialog.ui.decoderchain.addItem(settings.DECODING_INVERT)
         self.dialog.decoderchainUpdate()
 
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)
 
         self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
         self.dialog.ui.decoderchain.on_disable_function_triggered()
-        self.assertIn(constants.DECODING_DISABLED_PREFIX, self.dialog.ui.decoderchain.item(0).text())
+        self.assertIn(settings.DECODING_DISABLED_PREFIX, self.dialog.ui.decoderchain.item(0).text())
         self.dialog.ui.decoderchain.on_disable_function_triggered()
-        self.assertNotIn(self.dialog.ui.decoderchain.item(0).text(), constants.DECODING_DISABLED_PREFIX)
+        self.assertNotIn(self.dialog.ui.decoderchain.item(0).text(), settings.DECODING_DISABLED_PREFIX)
 
     def test_save_remove_decoding(self):
         def set_save_name():
@@ -120,7 +120,7 @@ class TestDecodingGUI(QtTestCase):
             message_box = next(w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox))
             message_box.button(QMessageBox.Yes).click()
 
-        self.dialog.ui.decoderchain.addItem(constants.DECODING_CUT)
+        self.dialog.ui.decoderchain.addItem(settings.DECODING_CUT)
         self.dialog.decoderchainUpdate()
 
         self.assertEqual(self.dialog.ui.decoderchain.count(), 1)

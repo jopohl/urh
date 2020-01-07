@@ -1,10 +1,9 @@
-import random
-import string
-
 import itertools
+import random
+
 from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, QModelIndex, Qt, QItemSelection
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Participant import Participant
 
 
@@ -100,11 +99,11 @@ class ParticipantTableModel(QAbstractTableModel):
 
     def add_participant(self):
         used_colors = set(p.color_index for p in self.participants)
-        avail_colors = set(range(0, len(constants.PARTICIPANT_COLORS))) - used_colors
+        avail_colors = set(range(0, len(settings.PARTICIPANT_COLORS))) - used_colors
         if len(avail_colors) > 0:
             color_index = avail_colors.pop()
         else:
-            color_index = random.choice(range(len(constants.PARTICIPANT_COLORS)))
+            color_index = random.choice(range(len(settings.PARTICIPANT_COLORS)))
 
         name, shortname = self.__get_initial_name()
         participant = Participant(name, shortname=shortname, color_index=color_index)

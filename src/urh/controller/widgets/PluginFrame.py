@@ -1,8 +1,7 @@
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QFrame, QVBoxLayout
 
-from urh import constants
+from urh import settings
 from urh.models.PluginListModel import PluginListModel
 from urh.ui.ui_plugins import Ui_FramePlugins
 
@@ -23,7 +22,7 @@ class PluginFrame(QFrame):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -36,7 +35,7 @@ class PluginFrame(QFrame):
 
     def save_enabled_states(self):
         for plugin in self.model.plugins:
-            constants.SETTINGS.setValue(plugin.name, plugin.enabled)
+            settings.write(plugin.name, plugin.enabled)
 
     @pyqtSlot()
     def on_list_selection_changed(self):

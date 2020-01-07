@@ -3,7 +3,7 @@ import os
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QCompleter, QDirModel
 
-from urh import constants
+from urh import settings
 from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.ui.ui_send_recv_sniff_settings import Ui_SniffSettings
@@ -47,7 +47,7 @@ class SniffSettingsWidget(QWidget):
 
         self.create_connects()
         self.ui.comboBox_sniff_encoding.currentIndexChanged.emit(self.ui.comboBox_sniff_encoding.currentIndex())
-        self.ui.comboBox_sniff_viewtype.setCurrentIndex(constants.SETTINGS.value('default_view', 0, int))
+        self.ui.comboBox_sniff_viewtype.setCurrentIndex(settings.read('default_view', 0, int))
 
         # Auto Complete like a Boss
         completer = QCompleter()

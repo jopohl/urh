@@ -1,7 +1,6 @@
 import locale
 import math
 import os
-import traceback
 from collections import defaultdict
 from datetime import datetime
 
@@ -10,9 +9,8 @@ from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItem
     QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QIcon
 from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
-from urh.util.Errors import Errors
 
-from urh import constants
+from urh import settings
 from urh.awre import AutoAssigner
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
 from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
@@ -32,6 +30,7 @@ from urh.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 from urh.ui.delegates.MessageTypeButtonDelegate import MessageTypeButtonDelegate
 from urh.ui.ui_analysis import Ui_TabAnalysis
 from urh.util import FileOperator, util
+from urh.util.Errors import Errors
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
 from urh.util.ProjectManager import ProjectManager
@@ -533,7 +532,7 @@ class CompareFrameController(QWidget):
         # self.protocol_undo_stack.clear()
         self.proto_analyzer.messages[:] = []
         self.rows_for_protocols.clear()
-        align_labels = constants.SETTINGS.value("align_labels", True, bool)
+        align_labels = settings.read("align_labels", True, bool)
         line = 0
         first_msg_indices = []
         prev_line = 0
@@ -602,7 +601,7 @@ class CompareFrameController(QWidget):
                     pass
 
         for line in first_msg_indices:
-            self.ui.tblViewProtocol.setRowHeight(line, constants.SEPARATION_ROW_HEIGHT)
+            self.ui.tblViewProtocol.setRowHeight(line, settings.SEPARATION_ROW_HEIGHT)
 
         self.protocol_model.first_messages = first_msg_indices[:]
 

@@ -7,7 +7,7 @@ import numpy as np
 from PyQt5.QtGui import QPen
 from PyQt5.QtWidgets import QGraphicsScene
 
-from urh import constants
+from urh import settings
 from urh.cythonext import path_creator, signal_functions
 from urh.signalprocessing.IQArray import IQArray
 from urh.ui.painting.ZoomableScene import ZoomableScene
@@ -59,7 +59,7 @@ class Modulator(object):
         if Modulator.FORCE_DTYPE is not None:
             return Modulator.FORCE_DTYPE
 
-        dtype_str = constants.SETTINGS.value("modulation_dtype", "float32", str)
+        dtype_str = settings.read("modulation_dtype", "float32", str)
         if dtype_str == "int8":
             return np.int8
         elif dtype_str == "int16":
@@ -193,11 +193,11 @@ class Modulator(object):
 
         scene = ZoomableScene()
         scene.setSceneRect(0, -1.25, n, 2.5)
-        scene.setBackgroundBrush(constants.BGCOLOR)
-        scene.addLine(0, 0, n, 0, QPen(constants.AXISCOLOR, 0))
+        scene.setBackgroundBrush(settings.BGCOLOR)
+        scene.addLine(0, 0, n, 0, QPen(settings.AXISCOLOR, 0))
 
         path = path_creator.array_to_QPath(x, y)
-        scene.addPath(path, QPen(constants.LINECOLOR, 0))
+        scene.addPath(path, QPen(settings.LINECOLOR, 0))
 
         return scene
 

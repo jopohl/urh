@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QDialog, QLabel, QRadioButton
 
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Filter import Filter
 from urh.ui.ui_filter_bandwidth_dialog import Ui_DialogFilterBandwidth
 
@@ -13,8 +13,8 @@ class FilterBandwidthDialog(QDialog):
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.Window)
 
-        bw_type = constants.SETTINGS.value("bandpass_filter_bw_type", "Medium", str)
-        custom_bw = constants.SETTINGS.value("bandpass_filter_custom_bw", 0.1, float)
+        bw_type = settings.read("bandpass_filter_bw_type", "Medium", str)
+        custom_bw = settings.read("bandpass_filter_custom_bw", 0.1, float)
 
         for item in dir(self.ui):
             item = getattr(self.ui, item)
@@ -62,6 +62,6 @@ class FilterBandwidthDialog(QDialog):
     def on_accepted(self):
         if self.checked_radiobutton is not None:
             bw_type = self.checked_radiobutton.objectName().replace("radioButton", "").replace("_", " ")
-            constants.SETTINGS.setValue("bandpass_filter_bw_type", bw_type)
+            settings.write("bandpass_filter_bw_type", bw_type)
 
-        constants.SETTINGS.setValue("bandpass_filter_custom_bw", self.ui.doubleSpinBoxCustomBandwidth.value())
+        settings.write("bandpass_filter_custom_bw", self.ui.doubleSpinBoxCustomBandwidth.value())

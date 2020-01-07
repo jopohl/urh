@@ -1,10 +1,11 @@
 from statistics import median
 
+import numpy as np
 from PyQt5.QtCore import QRegExp, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
 
-from urh import constants
+from urh import settings
 from urh.dev import config
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
@@ -12,7 +13,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.plugins.PluginManager import PluginManager
 from urh.ui.ui_send_recv_device_settings import Ui_FormDeviceSettings
 from urh.util.ProjectManager import ProjectManager
-import numpy as np
+
 
 class DeviceSettingsWidget(QWidget):
     selected_device_changed = pyqtSignal()
@@ -41,7 +42,7 @@ class DeviceSettingsWidget(QWidget):
             self.ui.labelDCCorrection.hide()
             self.ui.checkBoxDCCorrection.hide()
 
-        self.bw_sr_are_locked = constants.SETTINGS.value("lock_bandwidth_sample_rate", True, bool)
+        self.bw_sr_are_locked = settings.read("lock_bandwidth_sample_rate", True, bool)
         self.ui.cbDevice.clear()
         items = self.get_devices_for_combobox(continuous_send_mode)
         self.ui.cbDevice.addItems(items)
@@ -83,8 +84,7 @@ class DeviceSettingsWidget(QWidget):
         set_val(self.ui.spinBoxIFGain, self.rx_tx_prefix + "if_gain", config.DEFAULT_IF_GAIN)
         set_val(self.ui.spinBoxBasebandGain, self.rx_tx_prefix + "baseband_gain", config.DEFAULT_BB_GAIN)
         set_val(self.ui.spinBoxFreqCorrection, "freq_correction", config.DEFAULT_FREQ_CORRECTION)
-        set_val(self.ui.spinBoxNRepeat, "num_sending_repeats",
-                constants.SETTINGS.value('num_sending_repeats', 1, type=int))
+        set_val(self.ui.spinBoxNRepeat, "num_sending_repeats", settings.read('num_sending_repeats', 1, type=int))
 
         self.ui.lineEditSubdevice.setText(conf_dict.get("subdevice", ""))
 
@@ -370,7 +370,7 @@ class DeviceSettingsWidget(QWidget):
     @pyqtSlot()
     def on_btn_lock_bw_sr_clicked(self):
         self.bw_sr_are_locked = self.ui.btnLockBWSR.isChecked()
-        constants.SETTINGS.setValue("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
+        settings.write("lock_bandwidth_sample_rate", self.bw_sr_are_locked)
         if self.bw_sr_are_locked:
             self.ui.btnLockBWSR.setIcon(QIcon(":/icons/icons/lock.svg"))
             self.ui.spinBoxBandwidth.setValue(self.ui.spinBoxSampleRate.value())

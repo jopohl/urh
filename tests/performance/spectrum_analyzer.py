@@ -1,10 +1,10 @@
 import socket
+from multiprocessing import Process
 
 import numpy as np
 from PyQt5.QtWidgets import QApplication
-from multiprocessing import Process
 
-from urh import constants
+from urh import settings
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.util.ProjectManager import ProjectManager
@@ -19,7 +19,7 @@ def get_free_port():
 
 
 def send_data(port):
-    num_samples = constants.SPECTRUM_BUFFER_SIZE
+    num_samples = settings.SPECTRUM_BUFFER_SIZE
     frequency = 0.1
     divisor = 200
     pos = 0

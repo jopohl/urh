@@ -1,4 +1,3 @@
-import struct
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
@@ -12,9 +11,10 @@ from PyQt5.QtGui import QPainterPath
 from cython.parallel import prange
 from urh.cythonext.util cimport iq
 
-from urh import constants
-import math
+from urh import settings
 import cython
+import math
+import struct
 
 cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ranges=None):
     cdef iq[:] values
@@ -30,7 +30,7 @@ cpdef create_path(iq[:] samples, long long start, long long end, list subpath_ra
                              "float[:]": np.float32, "double[:]": np.float64}
 
     subpath_ranges = [(start, end)] if subpath_ranges is None else subpath_ranges
-    pixels_on_path = constants.PIXELS_PER_PATH
+    pixels_on_path = settings.PIXELS_PER_PATH
 
     samples_per_pixel = <long long>(num_samples / pixels_on_path)
 

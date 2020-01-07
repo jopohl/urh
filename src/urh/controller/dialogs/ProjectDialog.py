@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QRegExpValidator, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
 
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.dev import config
 from urh.models.ParticipantTableModel import ParticipantTableModel
@@ -77,7 +77,7 @@ class ProjectDialog(QDialog):
         self.on_line_edit_path_text_edited()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -117,7 +117,7 @@ class ProjectDialog(QDialog):
         self.ui.lblNewPath.setVisible(not os.path.isdir(self.path))
 
     def closeEvent(self, event: QCloseEvent):
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
     @pyqtSlot(float)

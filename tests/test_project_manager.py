@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
+from urh import settings
 from urh.controller.dialogs.ProjectDialog import ProjectDialog
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Modulator import Modulator
@@ -75,8 +75,8 @@ class TestProjectManager(QtTestCase):
     def test_save_and_load_participants(self):
         target_dir = os.path.join(tempfile.gettempdir(), "urh", "multi_participant_test")
         os.makedirs(target_dir, exist_ok=True)
-        if os.path.isfile(os.path.join(target_dir, constants.PROJECT_FILE)):
-            os.remove(os.path.join(target_dir, constants.PROJECT_FILE))
+        if os.path.isfile(os.path.join(target_dir, settings.PROJECT_FILE)):
+            os.remove(os.path.join(target_dir, settings.PROJECT_FILE))
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
         self.form.project_manager.participants = [Participant("Alice", "A"), Participant("Bob", "B")]
 
@@ -121,8 +121,8 @@ class TestProjectManager(QtTestCase):
     def test_save_and_load_with_fieldtypes(self):
         target_dir = os.path.join(tempfile.gettempdir(), "urh", "project_fieldtype_test")
         os.makedirs(target_dir, exist_ok=True)
-        if os.path.isfile(os.path.join(target_dir, constants.PROJECT_FILE)):
-            os.remove(os.path.join(target_dir, constants.PROJECT_FILE))
+        if os.path.isfile(os.path.join(target_dir, settings.PROJECT_FILE)):
+            os.remove(os.path.join(target_dir, settings.PROJECT_FILE))
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
 
         self.add_signal_to_form("esaver.coco")

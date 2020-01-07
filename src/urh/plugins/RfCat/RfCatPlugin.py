@@ -1,14 +1,17 @@
 import os
+import time
 from subprocess import PIPE, Popen
 from threading import Thread
-import time
+
 import numpy as np
 from PyQt5.QtCore import pyqtSignal
+
+from urh import settings
 from urh.plugins.Plugin import SDRPlugin
 from urh.signalprocessing.Message import Message
 from urh.util.Errors import Errors
 from urh.util.Logger import logger
-from urh import constants
+
 
 ## rfcat commands
 # freq = 433920000
@@ -180,7 +183,7 @@ class RfCatPlugin(SDRPlugin):
         self.configure_rfcat(modulation=modulation, freq=self.project_manager.device_conf["frequency"],
                              sample_rate=sample_rates[0], samples_per_symbol=messages[0].samples_per_symbol)
 
-        repeats_from_settings = constants.SETTINGS.value('num_sending_repeats', type=int)
+        repeats_from_settings = settings.read('num_sending_repeats', type=int)
         repeats = repeats_from_settings if repeats_from_settings > 0 else -1
         while (repeats > 0 or repeats == -1) and self.__sending_interrupt_requested == False:
             logger.debug("Start iteration ({} left)".format(repeats if repeats > 0 else "infinite"))

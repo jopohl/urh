@@ -2,7 +2,7 @@ from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
 from PyQt5.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
 from PyQt5.QtWidgets import QGraphicsView, QAction
 
-from urh import constants
+from urh import settings
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.ui.painting.SceneManager import SceneManager
 from urh.ui.painting.ZoomableScene import ZoomableScene
@@ -59,7 +59,7 @@ class SelectableGraphicView(QGraphicsView):
 
     @property
     def hold_shift_to_drag(self) -> bool:
-        return constants.SETTINGS.value('hold_shift_to_drag', True, type=bool)
+        return settings.read('hold_shift_to_drag', True, type=bool)
 
     @property
     def something_is_selected(self) -> bool:

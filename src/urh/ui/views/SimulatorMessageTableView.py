@@ -1,17 +1,13 @@
-from PyQt5.QtGui import QContextMenuEvent, QIcon
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtWidgets import QMenu, QActionGroup
 
-from urh import constants
+from urh import settings
+from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
+from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.ui.views.TableView import TableView
-
-from urh.simulator.SimulatorItem import SimulatorItem
-
-from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
-
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QHeaderView
 
 
 class SimulatorMessageTableView(TableView):
@@ -75,7 +71,7 @@ class SimulatorMessageTableView(TableView):
             ea.setData(decoding)
             ea.triggered.connect(self.on_encoding_action_triggered)
 
-        if constants.SETTINGS.value("multiple_modulations", False, bool):
+        if settings.read("multiple_modulations", False, bool):
             selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
 
             if not all(self.model().protocol.messages[i].modulator_index == selected_modulation

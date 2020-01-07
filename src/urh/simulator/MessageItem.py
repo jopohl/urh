@@ -1,13 +1,13 @@
-from urh import constants
+import math
+
+from PyQt5.QtCore import QPointF, Qt
+from PyQt5.QtGui import QPen, QPolygonF
+from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
+
+from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.UnlabeledRangeItem import UnlabeledRangeItem
-
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QPen, QPolygonF
-
-import math
 
 
 class MessageItem(GraphicsItem):
@@ -136,9 +136,9 @@ class MessageArrowItem(QGraphicsLineItem):
             return
 
         pen = self.pen()
-        pen.setColor(constants.LINECOLOR)
+        pen.setColor(settings.LINECOLOR)
         painter.setPen(pen)
-        painter.setBrush(constants.LINECOLOR)
+        painter.setBrush(settings.LINECOLOR)
 
         arrow_size = 10.0
 

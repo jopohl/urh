@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
-from urh import constants
+from urh import settings
 from urh.controller.widgets.ChecksumWidget import ChecksumWidget
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -39,8 +39,8 @@ class ProtocolLabelDialog(QDialog):
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, len(message), self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, len(message), self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(3,
-                                                            ComboBoxDelegate([""] * len(constants.LABEL_COLORS),
-                                                                             colors=constants.LABEL_COLORS,
+                                                            ComboBoxDelegate([""] * len(settings.LABEL_COLORS),
+                                                                             colors=settings.LABEL_COLORS,
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
@@ -65,7 +65,7 @@ class ProtocolLabelDialog(QDialog):
         self.setWindowFlags(Qt.Window)
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -107,7 +107,7 @@ class ProtocolLabelDialog(QDialog):
             event.accept()
 
     def closeEvent(self, event: QCloseEvent):
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
     @pyqtSlot()

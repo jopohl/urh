@@ -1,11 +1,10 @@
-import copy
 import math
 
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import QDialog, QInputDialog
 
-from urh import constants
+from urh import settings
 from urh.models.FuzzingTableModel import FuzzingTableModel
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerContainer
@@ -46,7 +45,7 @@ class FuzzingDialog(QDialog):
         self.create_connects()
 
         try:
-            self.restoreGeometry(constants.SETTINGS.value("{}/geometry".format(self.__class__.__name__)))
+            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
         except TypeError:
             pass
 
@@ -148,7 +147,7 @@ class FuzzingDialog(QDialog):
         self.set_add_spinboxes_maximum_on_label_change()
 
     def closeEvent(self, event: QCloseEvent):
-        constants.SETTINGS.setValue("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
         super().closeEvent(event)
 
     @pyqtSlot(int)

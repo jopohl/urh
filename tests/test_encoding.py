@@ -2,13 +2,12 @@ import array
 import copy
 import os
 import shutil
-import tempfile
-
 import sys
+import tempfile
 import unittest
 
 from tests.utils_testing import get_path_for_data_file
-from urh import constants
+from urh import settings
 from urh.signalprocessing.Encoding import Encoding
 from urh.util import util
 from urh.util.WSPChecksum import WSPChecksum
@@ -176,7 +175,7 @@ class TestDecoding(unittest.TestCase):
         encoder = '{} "{}"'.format(sys.executable, encoder)
         decoder = '{} "{}"'.format(sys.executable, decoder)
 
-        e = Encoding(["test external", constants.DECODING_EXTERNAL, decoder + ";" + encoder])
+        e = Encoding(["test external", settings.DECODING_EXTERNAL, decoder + ";" + encoder])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
         encoded = e.encode(data)
@@ -201,7 +200,7 @@ class TestDecoding(unittest.TestCase):
         encoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, encoder_in_dir_with_spaces)
         decoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, decoder_in_dir_with_spaces)
 
-        e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
+        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
                       decoder_in_dir_with_spaces + ";" + encoder_in_dir_with_spaces])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
@@ -229,7 +228,7 @@ class TestDecoding(unittest.TestCase):
 
         coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
 
-        e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
+        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
@@ -257,7 +256,7 @@ class TestDecoding(unittest.TestCase):
 
         coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
 
-        e = Encoding(["test external with spaces", constants.DECODING_EXTERNAL,
+        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
                       coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])

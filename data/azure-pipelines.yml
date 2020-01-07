@@ -65,7 +65,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: QT_DEBUG_PLUGINS=1 pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 

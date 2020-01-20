@@ -96,10 +96,10 @@ class TestUtil(QtTestCase):
         # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import plutosdr
 
-        if sys.platform != "darwin":
-            # noinspection PyUnresolvedReferences
-            from urh.dev.native.lib import usrp
+        # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import usrp
 
+        if sys.platform != "darwin":
             # noinspection PyUnresolvedReferences
             from urh.dev.native.lib import sdrplay
         self.assertTrue(True)

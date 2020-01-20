@@ -99,9 +99,11 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
                     ld_path = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get(path, "")
                     env[path] = ld_path
 
-            return float(check_output(check_api_program, env=env))
+            result = float(check_output(check_api_program, env=env))
+            print("    Automatic API version check succeeded.")
+            return result
         except Exception as e:
-            print("API version check failed: {}".format(e))
+            print("    API version check failed: {}".format(e))
             return 0.0
     finally:
         if old_stderr is not None:
@@ -172,10 +174,23 @@ def get_device_extensions_and_extras(library_dirs=None):
 
         device_extras.update(get_device_extras(compiler, dev_name, [params["lib"]], library_dirs, include_dirs))
         if "api_version_check_code" in params:
-            ver = check_api_version(compiler, params["api_version_check_code"], (params["lib"], ),
-                                    library_dirs, include_dirs)
-            device_extras[dev_name.upper() + "_API_VERSION"] = ver
-            print("    Detected {} v{}".format(dev_name.upper() + "_API_VERSION", ver))
+            env_name = dev_name.upper() + "_API_VERSION"
+            ver = os.getenv(env_name)
+            if ver is not None:
+                try:
+                    ver = float(ver)
+                except Exception as e:
+                    print("    Could not convert content of {} to float: {}".format(env_name, e))
+                    print("    Will now try to automatically detect API version.")
+                    ver = None
+            else:
+                print("    Environment variable {} is unset, try to automatically detect API version".format(env_name))
+
+            if ver is None:
+                ver = check_api_version(compiler, params["api_version_check_code"], (params["lib"], ),
+                                        library_dirs, include_dirs)
+            device_extras[env_name] = ver
+            print("    Using {}={}".format(env_name, ver))
 
         extension = get_device_extension(dev_name, [params["lib"]], library_dirs, include_dirs)
         result.append(extension)

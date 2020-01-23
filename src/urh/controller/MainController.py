@@ -304,7 +304,12 @@ class MainController(QMainWindow):
 
         self.signal_protocol_dict[sig_frame] = pa
 
-        sig_frame.refresh(draw_full_signal=True)  # protocol is derived here
+        sig_frame.refresh_signal(draw_full_signal=True)
+        sig_frame.refresh_signal_information(block=True)
+
+        qApp.processEvents()
+        sig_frame.show_protocol(refresh=True)
+
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
             sig_frame.ui.gvSignal.redraw_view()
 

@@ -506,6 +506,9 @@ class SignalFrame(QFrame):
 
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
+        self.ui.txtEdProto.setText("Demodulating...")
+        qApp.processEvents()
+
         self.proto_analyzer.get_protocol_from_signal()
 
     def show_protocol(self, old_view=-1, refresh=False):

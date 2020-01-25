@@ -171,7 +171,7 @@ class Signal(QObject):
     @bits_per_symbol.setter
     def bits_per_symbol(self, value: int):
         if self.__bits_per_symbol != value:
-            self.__bits_per_symbol = value
+            self.__bits_per_symbol = int(value)
             self._qad = None
 
             self.bits_per_symbol_changed.emit(self.__bits_per_symbol)

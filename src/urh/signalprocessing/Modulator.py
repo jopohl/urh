@@ -101,6 +101,7 @@ class Modulator(object):
 
     @bits_per_symbol.setter
     def bits_per_symbol(self, value):
+        value = int(value)
         if value != self.bits_per_symbol:
             self.__bits_per_symbol = value
             self.parameters = array.array("f", [0] * self.modulation_order)
@@ -265,13 +266,14 @@ class Modulator(object):
 
         for attr, val in vars(self).items():
             if attr not in ("data", "_Modulator__sample_rate", "_Modulator__modulation_type",
-                            "default_sample_rate", "parameters"):
+                            "_Modulator__bits_per_symbol", "default_sample_rate", "parameters"):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
         root.set("modulation_type", self.__modulation_type)
         root.set("index", str(index))
         root.set("parameters", ",".join(map(str, self.parameters)))
+        root.set("bits_per_symbol", str(self.bits_per_symbol))
 
         return root
 
@@ -290,7 +292,7 @@ class Modulator(object):
     @staticmethod
     def from_xml(tag: ET.Element):
         result = Modulator("")
-        for attrib, value in tag.attrib.items():
+        for attrib, value in sorted(tag.attrib.items()):
             if attrib == "index":
                 continue
             elif attrib == "name" or attrib == "modulation_type":
@@ -304,12 +306,14 @@ class Modulator(object):
                 result.parameters[0] = Formatter.str2val(value, float, 0)  # legacy
             elif attrib == "param_for_one":
                 result.parameters[1] = Formatter.str2val(value, float, 100)  # legacy
+            elif attrib == "bits_per_symbol":
+                result.bits_per_symbol = Formatter.str2val(value, int, 1)
             elif attrib == "parameters":
                 try:
                     result.parameters = array.array("f", map(float, value.split(",")))
                 except ValueError:
                     continue
-            else:
+            elif not attrib.startswith("_Modulator__"):
                 setattr(result, attrib, Formatter.str2val(value, float, 1))
         return result
 

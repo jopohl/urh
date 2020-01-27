@@ -1,3 +1,5 @@
+import string
+
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator
@@ -40,13 +42,22 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def textFromValue(self, value: float):
         if abs(value) >= 10 ** 9:
-            return super().textFromValue(value / 10 ** 9) + "G"
+            result, suffix = super().textFromValue(value / 10 ** 9), "G"
         elif abs(value) >= 10 ** 6:
-            return super().textFromValue(value / 10 ** 6) + "M"
+            result, suffix = super().textFromValue(value / 10 ** 6), "M"
         elif abs(value) >= 10 ** 3:
-            return super().textFromValue(value / 10 ** 3) + "K"
+            result, suffix = super().textFromValue(value / 10 ** 3), "K"
         else:
-            return super().textFromValue(value)
+            result, suffix = super().textFromValue(value), ""
+
+        result = result.rstrip("0")
+        if len(result) == 0:
+            return result
+
+        if result[-1] not in string.digits:
+            result += "0"
+
+        return result + suffix
 
     def valueFromText(self, text: str):
         if text.endswith("G") or text.endswith("g"):

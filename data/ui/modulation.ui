@@ -240,7 +240,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
+            <width>373</width>
             <height>330</height>
            </rect>
           </property>
@@ -485,7 +485,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
+            <width>373</width>
             <height>141</height>
            </rect>
           </property>
@@ -499,7 +499,7 @@
               </sizepolicy>
              </property>
              <property name="decimals">
-              <number>3</number>
+              <number>10</number>
              </property>
              <property name="minimum">
               <double>0.001000000000000</double>
@@ -594,7 +594,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
+            <width>353</width>
             <height>143</height>
            </rect>
           </property>
@@ -624,7 +624,7 @@
               <string/>
              </property>
              <property name="decimals">
-              <number>3</number>
+              <number>10</number>
              </property>
              <property name="minimum">
               <double>0.000000000000000</double>
@@ -831,7 +831,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
+            <width>353</width>
             <height>227</height>
            </rect>
           </property>
@@ -1085,14 +1085,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZoomableGraphicView</class>
-   <extends>QGraphicsView</extends>
-   <header>urh.ui.views.ZoomableGraphicView.h</header>
-  </customwidget>
-  <customwidget>
    <class>KillerDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
    <header>urh.ui.KillerDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZoomableGraphicView</class>
+   <extends>QGraphicsView</extends>
+   <header>urh.ui.views.ZoomableGraphicView.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomAndDropableGraphicView</class>

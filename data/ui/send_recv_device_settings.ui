@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>860</width>
-    <height>711</height>
+    <height>754</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -230,13 +230,16 @@ QGroupBox::indicator:checked {
          <item row="7" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxFreq">
            <property name="decimals">
-            <number>3</number>
+            <number>10</number>
            </property>
            <property name="minimum">
             <double>0.001000000000000</double>
            </property>
            <property name="maximum">
             <double>1000000000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>433920000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -483,7 +486,7 @@ QGroupBox::indicator:checked {
          <item row="8" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxSampleRate">
            <property name="decimals">
-            <number>3</number>
+            <number>10</number>
            </property>
            <property name="minimum">
             <double>0.001000000000000</double>
@@ -496,7 +499,7 @@ QGroupBox::indicator:checked {
          <item row="9" column="1">
           <widget class="KillerDoubleSpinBox" name="spinBoxBandwidth">
            <property name="decimals">
-            <number>3</number>
+            <number>10</number>
            </property>
            <property name="minimum">
             <double>0.001000000000000</double>

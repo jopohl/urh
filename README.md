@@ -20,7 +20,7 @@ The Universal Radio Hacker (URH) is a software for investigating unknown wireles
 * __modulation support__ to send the data back to the target
 * __simulation environment__ to perform stateful attacks
 
-#### Getting started
+### Getting started
 In order to get started
  - view the [installation instructions](#Installation) on this page,
  - download the [official userguide (PDF)](https://github.com/jopohl/urh/releases/download/v2.0.0/userguide.pdf), 
@@ -33,10 +33,10 @@ If URH is useful for you, please consider giving this repository a :star: or [ma
 Want to stay in touch? :speech_balloon: [Join our Slack channel!](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LTk3NmE4MGVjYjEyYTMzYTdmN2RlNzUzYzg0NTNjNTQ2ODBkMzI3MDZlOWY3MjE4YjBkNTM4ZjJlNTJlZmJhNDg) 
 
 
-#### Citing URH
+### Citing URH
 We encourage researchers who work with URH to cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper or directly use the following BibTeX entry.
   
- ```latex
+ ```bibtex
 @inproceedings {220562,
 author = {Johannes Pohl and Andreas Noack},
 title = {Universal Radio Hacker: A Suite for Analyzing and Attacking Stateful Wireless Protocols},

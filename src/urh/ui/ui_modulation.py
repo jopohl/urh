@@ -3,22 +3,24 @@
 ################################################################################
 ## Form generated from reading UI file 'modulation.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ZoomableGraphicView
-import KillerDoubleSpinBox
-import ZoomAndDropableGraphicView
-import ModulatorTreeView
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
+from urh.ui.views.ZoomAndDropableGraphicView import ZoomAndDropableGraphicView
+from urh.ui.views.ModulatorTreeView import ModulatorTreeView
+
+import urh.ui.urh_rc
 
 class Ui_DialogModulation(object):
     def setupUi(self, DialogModulation):
@@ -33,7 +35,7 @@ class Ui_DialogModulation(object):
         self.gridLayout_5 = QGridLayout()
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.comboBoxCustomModulations = QComboBox(DialogModulation)
-        self.comboBoxCustomModulations.addItem(QString())
+        self.comboBoxCustomModulations.addItem("")
         self.comboBoxCustomModulations.setObjectName(u"comboBoxCustomModulations")
         self.comboBoxCustomModulations.setEditable(True)
         self.comboBoxCustomModulations.setInsertPolicy(QComboBox.InsertAtCurrent)
@@ -83,7 +85,7 @@ class Ui_DialogModulation(object):
         self.label_5.setObjectName(u"label_5")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.label_5.setFont(font)
         self.label_5.setMargin(4)
 
@@ -523,10 +525,10 @@ class Ui_DialogModulation(object):
         self.gridLayout_3.addWidget(self.lineEditParameters, 2, 1, 1, 1)
 
         self.comboBoxModulationType = QComboBox(self.scrollAreaWidgetContents_4)
-        self.comboBoxModulationType.addItem(QString())
-        self.comboBoxModulationType.addItem(QString())
-        self.comboBoxModulationType.addItem(QString())
-        self.comboBoxModulationType.addItem(QString())
+        self.comboBoxModulationType.addItem("")
+        self.comboBoxModulationType.addItem("")
+        self.comboBoxModulationType.addItem("")
+        self.comboBoxModulationType.addItem("")
         self.comboBoxModulationType.setObjectName(u"comboBoxModulationType")
         sizePolicy1.setHeightForWidth(self.comboBoxModulationType.sizePolicy().hasHeightForWidth())
         self.comboBoxModulationType.setSizePolicy(sizePolicy1)

@@ -3,22 +3,24 @@
 ################################################################################
 ## Form generated from reading UI file 'analysis.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ProtocolTableView
-import LabelValueTableView
-import ProtocolTreeView
-import MessageTypeTableView
+from urh.ui.views.ProtocolTableView import ProtocolTableView
+from urh.ui.views.LabelValueTableView import LabelValueTableView
+from urh.ui.views.ProtocolTreeView import ProtocolTreeView
+from urh.ui.views.MessageTypeTableView import MessageTypeTableView
+
+import urh.ui.urh_rc
 
 class Ui_TabAnalysis(object):
     def setupUi(self, TabAnalysis):
@@ -112,7 +114,7 @@ class Ui_TabAnalysis(object):
 
         self.verticalLayout_3.addWidget(self.treeViewProtocols)
 
-        self.tabWidget.addTab(self.tab_protocols, QString())
+        self.tabWidget.addTab(self.tab_protocols, "")
         self.tab_participants = QWidget()
         self.tab_participants.setObjectName(u"tab_participants")
         self.verticalLayout_11 = QVBoxLayout(self.tab_participants)
@@ -130,7 +132,7 @@ class Ui_TabAnalysis(object):
 
         self.verticalLayout_11.addWidget(self.listViewParticipants)
 
-        self.tabWidget.addTab(self.tab_participants, QString())
+        self.tabWidget.addTab(self.tab_participants, "")
 
         self.verticalLayout_2.addWidget(self.tabWidget)
 
@@ -140,7 +142,7 @@ class Ui_TabAnalysis(object):
         self.label_5.setObjectName(u"label_5")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.label_5.setFont(font)
 
         self.gridLayout_3.addWidget(self.label_5, 1, 0, 1, 1)
@@ -160,11 +162,11 @@ class Ui_TabAnalysis(object):
         self.gridLayout_3.addWidget(self.lEncodingErrors, 2, 0, 1, 1)
 
         self.cbDecoding = QComboBox(self.layoutWidget)
-        self.cbDecoding.addItem(QString())
-        self.cbDecoding.addItem(QString())
-        self.cbDecoding.addItem(QString())
-        self.cbDecoding.addItem(QString())
-        self.cbDecoding.addItem(QString())
+        self.cbDecoding.addItem("")
+        self.cbDecoding.addItem("")
+        self.cbDecoding.addItem("")
+        self.cbDecoding.addItem("")
+        self.cbDecoding.addItem("")
         self.cbDecoding.setObjectName(u"cbDecoding")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -183,9 +185,9 @@ class Ui_TabAnalysis(object):
         self.gridLayout_3.addWidget(self.chkBoxShowOnlyDiffs, 4, 0, 1, 2)
 
         self.cbProtoView = QComboBox(self.layoutWidget)
-        self.cbProtoView.addItem(QString())
-        self.cbProtoView.addItem(QString())
-        self.cbProtoView.addItem(QString())
+        self.cbProtoView.addItem("")
+        self.cbProtoView.addItem("")
+        self.cbProtoView.addItem("")
         self.cbProtoView.setObjectName(u"cbProtoView")
         sizePolicy3.setHeightForWidth(self.cbProtoView.sizePolicy().hasHeightForWidth())
         self.cbProtoView.setSizePolicy(sizePolicy3)

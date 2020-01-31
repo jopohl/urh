@@ -3,23 +3,25 @@
 ################################################################################
 ## Form generated from reading UI file 'generator.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ElidedLabel
-import GeneratorTreeView
-import GeneratorTableView
-import GeneratorListWidget
-import GeneratorListView
+from urh.ui.ElidedLabel import ElidedLabel
+from urh.ui.views.GeneratorTreeView import GeneratorTreeView
+from urh.ui.views.GeneratorTableView import GeneratorTableView
+from urh.ui.GeneratorListWidget import GeneratorListWidget
+from urh.ui.views.GeneratorListView import GeneratorListView
+
+import urh.ui.urh_rc
 
 class Ui_GeneratorTab(object):
     def setupUi(self, GeneratorTab):
@@ -82,7 +84,7 @@ class Ui_GeneratorTab(object):
 
         self.verticalLayout_4.addWidget(self.treeProtocols)
 
-        self.tabWidget.addTab(self.tab_proto, QString())
+        self.tabWidget.addTab(self.tab_proto, "")
         self.tab_pauses = QWidget()
         self.tab_pauses.setObjectName(u"tab_pauses")
         self.gridLayout_5 = QGridLayout(self.tab_pauses)
@@ -98,7 +100,7 @@ class Ui_GeneratorTab(object):
 
         self.gridLayout_5.addWidget(self.lWPauses, 0, 0, 1, 2)
 
-        self.tabWidget.addTab(self.tab_pauses, QString())
+        self.tabWidget.addTab(self.tab_pauses, "")
         self.tab_fuzzing = QWidget()
         self.tab_fuzzing.setObjectName(u"tab_fuzzing")
         self.verticalLayout_9 = QVBoxLayout(self.tab_fuzzing)
@@ -167,7 +169,7 @@ class Ui_GeneratorTab(object):
 
         self.verticalLayout_9.addWidget(self.groupBox)
 
-        self.tabWidget.addTab(self.tab_fuzzing, QString())
+        self.tabWidget.addTab(self.tab_fuzzing, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -279,7 +281,7 @@ class Ui_GeneratorTab(object):
         self.gridLayout_6.addWidget(self.line, 1, 0, 1, 3)
 
         self.cBoxModulations = QComboBox(self.layoutWidget_2)
-        self.cBoxModulations.addItem(QString())
+        self.cBoxModulations.addItem("")
         self.cBoxModulations.setObjectName(u"cBoxModulations")
 
         self.gridLayout_6.addWidget(self.cBoxModulations, 2, 1, 1, 1)
@@ -343,9 +345,9 @@ class Ui_GeneratorTab(object):
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(11, 11, 11, 11)
         self.cbViewType = QComboBox(self.layoutWidget)
-        self.cbViewType.addItem(QString())
-        self.cbViewType.addItem(QString())
-        self.cbViewType.addItem(QString())
+        self.cbViewType.addItem("")
+        self.cbViewType.addItem("")
+        self.cbViewType.addItem("")
         self.cbViewType.setObjectName(u"cbViewType")
 
         self.gridLayout_2.addWidget(self.cbViewType, 2, 6, 1, 1)
@@ -387,7 +389,7 @@ class Ui_GeneratorTab(object):
         self.labelGeneratedData.setSizePolicy(sizePolicy3)
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.labelGeneratedData.setFont(font)
         self.labelGeneratedData.setAlignment(Qt.AlignCenter)
 

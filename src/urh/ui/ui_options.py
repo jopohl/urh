@@ -3,19 +3,20 @@
 ################################################################################
 ## Form generated from reading UI file 'options.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import KillerDoubleSpinBox
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
+
 
 class Ui_DialogOptions(object):
     def setupUi(self, DialogOptions):
@@ -91,7 +92,7 @@ class Ui_DialogOptions(object):
 
         self.verticalLayout_9.addItem(self.verticalSpacer)
 
-        self.tabWidget.addTab(self.tabGeneration, QString())
+        self.tabWidget.addTab(self.tabGeneration, "")
         self.tabView = QWidget()
         self.tabView.setObjectName(u"tabView")
         self.verticalLayout = QVBoxLayout(self.tabView)
@@ -104,9 +105,9 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_2.addWidget(self.label_7)
 
         self.comboBoxDefaultView = QComboBox(self.tabView)
-        self.comboBoxDefaultView.addItem(QString())
-        self.comboBoxDefaultView.addItem(QString())
-        self.comboBoxDefaultView.addItem(QString())
+        self.comboBoxDefaultView.addItem("")
+        self.comboBoxDefaultView.addItem("")
+        self.comboBoxDefaultView.addItem("")
         self.comboBoxDefaultView.setObjectName(u"comboBoxDefaultView")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -165,9 +166,9 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_4.addWidget(self.label_9)
 
         self.comboBoxTheme = QComboBox(self.tabView)
-        self.comboBoxTheme.addItem(QString())
-        self.comboBoxTheme.addItem(QString())
-        self.comboBoxTheme.addItem(QString())
+        self.comboBoxTheme.addItem("")
+        self.comboBoxTheme.addItem("")
+        self.comboBoxTheme.addItem("")
         self.comboBoxTheme.setObjectName(u"comboBoxTheme")
 
         self.horizontalLayout_4.addWidget(self.comboBoxTheme)
@@ -183,8 +184,8 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_5.addWidget(self.labelIconTheme)
 
         self.comboBoxIconTheme = QComboBox(self.tabView)
-        self.comboBoxIconTheme.addItem(QString())
-        self.comboBoxIconTheme.addItem(QString())
+        self.comboBoxIconTheme.addItem("")
+        self.comboBoxIconTheme.addItem("")
         self.comboBoxIconTheme.setObjectName(u"comboBoxIconTheme")
 
         self.horizontalLayout_5.addWidget(self.comboBoxIconTheme)
@@ -211,7 +212,7 @@ class Ui_DialogOptions(object):
 
         self.verticalLayout.addWidget(self.groupBoxSpectrogramColormap)
 
-        self.tabWidget.addTab(self.tabView, QString())
+        self.tabWidget.addTab(self.tabView, "")
         self.tabFieldtypes = QWidget()
         self.tabFieldtypes.setObjectName(u"tabFieldtypes")
         self.verticalLayout_5 = QVBoxLayout(self.tabFieldtypes)
@@ -266,10 +267,10 @@ class Ui_DialogOptions(object):
 
         self.verticalLayout_5.addItem(self.verticalSpacer_4)
 
-        self.tabWidget.addTab(self.tabFieldtypes, QString())
+        self.tabWidget.addTab(self.tabFieldtypes, "")
         self.tab_plugins = QWidget()
         self.tab_plugins.setObjectName(u"tab_plugins")
-        self.tabWidget.addTab(self.tab_plugins, QString())
+        self.tabWidget.addTab(self.tab_plugins, "")
         self.tabDevices = QWidget()
         self.tabDevices.setObjectName(u"tabDevices")
         self.verticalLayout_8 = QVBoxLayout(self.tabDevices)
@@ -458,7 +459,7 @@ class Ui_DialogOptions(object):
 
         self.verticalLayout_8.addLayout(self.gridLayout_3)
 
-        self.tabWidget.addTab(self.tabDevices, QString())
+        self.tabWidget.addTab(self.tabDevices, "")
 
         self.verticalLayout_6.addWidget(self.tabWidget)
 

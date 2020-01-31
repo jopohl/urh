@@ -3,20 +3,21 @@
 ################################################################################
 ## Form generated from reading UI file 'decoding.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ZoomableGraphicView
-import ListWidget
+from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.ui.ListWidget import ListWidget
+
 
 class Ui_Decoder(object):
     def setupUi(self, Decoder):
@@ -30,8 +31,8 @@ class Ui_Decoder(object):
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.combobox_decodings = QComboBox(Decoder)
-        self.combobox_decodings.addItem(QString())
-        self.combobox_decodings.addItem(QString())
+        self.combobox_decodings.addItem("")
+        self.combobox_decodings.addItem("")
         self.combobox_decodings.setObjectName(u"combobox_decodings")
 
         self.horizontalLayout_2.addWidget(self.combobox_decodings)
@@ -98,7 +99,7 @@ class Ui_Decoder(object):
         font = QFont()
         font.setPointSize(11)
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.label.setFont(font)
         self.label.setAlignment(Qt.AlignCenter)
 
@@ -329,9 +330,9 @@ class Ui_Decoder(object):
 
         self.verticalLayout_5.addWidget(self.btnAddtoYourDecoding)
 
-        self.optionWidget.raise()
-        self.info.raise()
-        self.btnAddtoYourDecoding.raise()
+        self.optionWidget.raise_()
+        self.info.raise_()
+        self.btnAddtoYourDecoding.raise_()
 
         self.verticalLayout_3.addWidget(self.gb_infoandoptions)
 
@@ -354,7 +355,7 @@ class Ui_Decoder(object):
         self.gridLayout_2.addWidget(self.inpt, 1, 1, 1, 1)
 
         self.combobox_signals = QComboBox(Decoder)
-        self.combobox_signals.addItem(QString())
+        self.combobox_signals.addItem("")
         self.combobox_signals.setObjectName(u"combobox_signals")
 
         self.gridLayout_2.addWidget(self.combobox_signals, 1, 0, 1, 1)

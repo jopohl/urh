@@ -3,21 +3,23 @@
 ################################################################################
 ## Form generated from reading UI file 'signal_frame.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import EpicGraphicView
-import TextEditProtocolView
-import SpectrogramGraphicView
+from urh.ui.views.EpicGraphicView import EpicGraphicView
+from urh.ui.views.TextEditProtocolView import TextEditProtocolView
+from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
+
+import urh.ui.urh_rc
 
 class Ui_SignalFrame(object):
     def setupUi(self, SignalFrame):
@@ -164,9 +166,9 @@ class Ui_SignalFrame(object):
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 2)
 
         self.cbProtoView = QComboBox(SignalFrame)
-        self.cbProtoView.addItem(QString())
-        self.cbProtoView.addItem(QString())
-        self.cbProtoView.addItem(QString())
+        self.cbProtoView.addItem("")
+        self.cbProtoView.addItem("")
+        self.cbProtoView.addItem("")
         self.cbProtoView.setObjectName(u"cbProtoView")
 
         self.gridLayout_2.addWidget(self.cbProtoView, 23, 1, 1, 1)
@@ -216,9 +218,9 @@ class Ui_SignalFrame(object):
         self.gridLayout_2.addWidget(self.labelModulation, 10, 0, 1, 1)
 
         self.cbSignalView = QComboBox(SignalFrame)
-        self.cbSignalView.addItem(QString())
-        self.cbSignalView.addItem(QString())
-        self.cbSignalView.addItem(QString())
+        self.cbSignalView.addItem("")
+        self.cbSignalView.addItem("")
+        self.cbSignalView.addItem("")
         self.cbSignalView.setObjectName(u"cbSignalView")
         sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -263,9 +265,9 @@ class Ui_SignalFrame(object):
         self.horizontalLayout_5.setSpacing(7)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.cbModulationType = QComboBox(SignalFrame)
-        self.cbModulationType.addItem(QString())
-        self.cbModulationType.addItem(QString())
-        self.cbModulationType.addItem(QString())
+        self.cbModulationType.addItem("")
+        self.cbModulationType.addItem("")
+        self.cbModulationType.addItem("")
         self.cbModulationType.setObjectName(u"cbModulationType")
 
         self.horizontalLayout_5.addWidget(self.cbModulationType)
@@ -505,7 +507,6 @@ class Ui_SignalFrame(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.lYScale = QLabel(self.layoutWidget)
         self.lYScale.setObjectName(u"lYScale")
-        self.lYScale.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
 
         self.verticalLayout_5.addWidget(self.lYScale)
 

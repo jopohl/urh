@@ -3,19 +3,21 @@
 ################################################################################
 ## Form generated from reading UI file 'send_recv_device_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import KillerDoubleSpinBox
+from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
+
+import urh.ui.urh_rc
 
 class Ui_FormDeviceSettings(object):
     def setupUi(self, FormDeviceSettings):
@@ -29,7 +31,7 @@ class Ui_FormDeviceSettings(object):
         self.groupBoxDeviceSettings.setObjectName(u"groupBoxDeviceSettings")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.groupBoxDeviceSettings.setFont(font)
         self.groupBoxDeviceSettings.setStyleSheet(u"QGroupBox\n"
 "{\n"
@@ -54,7 +56,7 @@ class Ui_FormDeviceSettings(object):
         self.frame_2.setObjectName(u"frame_2")
         font1 = QFont()
         font1.setBold(False)
-        font1.setWeight(50);
+        font1.setWeight(50)
         self.frame_2.setFont(font1)
         self.frame_2.setFrameShape(QFrame.NoFrame)
         self.frame_2.setFrameShadow(QFrame.Raised)
@@ -174,8 +176,8 @@ class Ui_FormDeviceSettings(object):
         self.gridLayout.addWidget(self.btnRefreshDeviceIdentifier, 1, 2, 1, 1)
 
         self.cbDevice = QComboBox(self.frame_2)
-        self.cbDevice.addItem(QString())
-        self.cbDevice.addItem(QString())
+        self.cbDevice.addItem("")
+        self.cbDevice.addItem("")
         self.cbDevice.setObjectName(u"cbDevice")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)

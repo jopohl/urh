@@ -3,17 +3,18 @@
 ################################################################################
 ## Form generated from reading UI file 'modulation_parameters_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
+
 
 class Ui_DialogModulationParameters(object):
     def setupUi(self, DialogModulationParameters):
@@ -24,13 +25,13 @@ class Ui_DialogModulationParameters(object):
         self.verticalLayout = QVBoxLayout(DialogModulationParameters)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tblSymbolParameters = QTableWidget(DialogModulationParameters)
-        if (self.tblSymbolParameters.columnCount() < 2)
+        if (self.tblSymbolParameters.columnCount() < 2):
             self.tblSymbolParameters.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
         self.tblSymbolParameters.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
         self.tblSymbolParameters.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        if (self.tblSymbolParameters.rowCount() < 2)
+        if (self.tblSymbolParameters.rowCount() < 2):
             self.tblSymbolParameters.setRowCount(2)
         self.tblSymbolParameters.setObjectName(u"tblSymbolParameters")
         self.tblSymbolParameters.setShowGrid(False)

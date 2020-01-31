@@ -3,19 +3,21 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import DirectoryTreeView
+from urh.ui.views.DirectoryTreeView import DirectoryTreeView
+
+import urh.ui.urh_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -349,7 +351,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.listViewParticipants)
 
-        self.tabWidget_Project.addTab(self.tabParticipants, QString())
+        self.tabWidget_Project.addTab(self.tabParticipants, "")
         self.tabDescription = QWidget()
         self.tabDescription.setObjectName(u"tabDescription")
         self.horizontalLayout_2 = QHBoxLayout(self.tabDescription)
@@ -360,7 +362,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.textEditProjectDescription)
 
-        self.tabWidget_Project.addTab(self.tabDescription, QString())
+        self.tabWidget_Project.addTab(self.tabDescription, "")
 
         self.verticalLayout_3.addWidget(self.tabWidget_Project)
 
@@ -379,27 +381,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.tabWidget.addTab(self.tab_interpretation, QString())
+        self.tabWidget.addTab(self.tab_interpretation, "")
         self.tab_protocol = QWidget()
         self.tab_protocol.setObjectName(u"tab_protocol")
         self.verticalLayout = QVBoxLayout(self.tab_protocol)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.tabWidget.addTab(self.tab_protocol, QString())
+        self.tabWidget.addTab(self.tab_protocol, "")
         self.tab_generator = QWidget()
         self.tab_generator.setObjectName(u"tab_generator")
         self.verticalLayout_5 = QVBoxLayout(self.tab_generator)
         self.verticalLayout_5.setSpacing(0)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.tabWidget.addTab(self.tab_generator, QString())
+        self.tabWidget.addTab(self.tab_generator, "")
         self.tab_simulator = QWidget()
         self.tab_simulator.setObjectName(u"tab_simulator")
         self.verticalLayout_7 = QVBoxLayout(self.tab_simulator)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.tabWidget.addTab(self.tab_simulator, QString())
+        self.tabWidget.addTab(self.tab_simulator, "")
         self.splitter.addWidget(self.tabWidget)
 
         self.verticalLayout_4.addWidget(self.splitter)

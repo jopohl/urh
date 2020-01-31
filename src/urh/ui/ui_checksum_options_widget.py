@@ -3,17 +3,18 @@
 ################################################################################
 ## Form generated from reading UI file 'checksum_options_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
+
 
 class Ui_ChecksumOptions(object):
     def setupUi(self, ChecksumOptions):
@@ -37,8 +38,8 @@ class Ui_ChecksumOptions(object):
         self.verticalLayout_3.addWidget(self.label_4)
 
         self.comboBoxCategory = QComboBox(self.scrollAreaWidgetContents)
-        self.comboBoxCategory.addItem(QString())
-        self.comboBoxCategory.addItem(QString())
+        self.comboBoxCategory.addItem("")
+        self.comboBoxCategory.addItem("")
         self.comboBoxCategory.setObjectName(u"comboBoxCategory")
 
         self.verticalLayout_3.addWidget(self.comboBoxCategory)

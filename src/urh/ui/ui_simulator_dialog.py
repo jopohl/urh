@@ -3,20 +3,22 @@
 ################################################################################
 ## Form generated from reading UI file 'simulator_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import LiveGraphicView
-import LoggingGraphicsView
+from urh.ui.views.LiveGraphicView import LiveGraphicView
+from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView
+
+import urh.ui.urh_rc
 
 class Ui_DialogSimulator(object):
     def setupUi(self, DialogSimulator):
@@ -62,7 +64,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout)
 
-        self.tabWidgetSimulatorSettings.addTab(self.tabLog, QString())
+        self.tabWidgetSimulatorSettings.addTab(self.tabLog, "")
         self.tabRX = QWidget()
         self.tabRX.setObjectName(u"tabRX")
         self.verticalLayout_5 = QVBoxLayout(self.tabRX)
@@ -94,7 +96,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_5.addWidget(self.scrollAreaRX)
 
-        self.tabWidgetSimulatorSettings.addTab(self.tabRX, QString())
+        self.tabWidgetSimulatorSettings.addTab(self.tabRX, "")
         self.tabTX = QWidget()
         self.tabTX.setObjectName(u"tabTX")
         self.verticalLayout_7 = QVBoxLayout(self.tabTX)
@@ -117,7 +119,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_7.addWidget(self.scrollAreaTX)
 
-        self.tabWidgetSimulatorSettings.addTab(self.tabTX, QString())
+        self.tabWidgetSimulatorSettings.addTab(self.tabTX, "")
         self.tabSimulation = QWidget()
         self.tabSimulation.setObjectName(u"tabSimulation")
         self.verticalLayout_9 = QVBoxLayout(self.tabSimulation)
@@ -176,7 +178,7 @@ class Ui_DialogSimulator(object):
         self.lblCurrentRepeatValue.setObjectName(u"lblCurrentRepeatValue")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.lblCurrentRepeatValue.setFont(font)
         self.lblCurrentRepeatValue.setAlignment(Qt.AlignCenter)
 
@@ -274,7 +276,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_15.addWidget(self.groupBoxRXStatus)
 
-        self.tabWidget.addTab(self.tab_simulation, QString())
+        self.tabWidget.addTab(self.tab_simulation, "")
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
         self.verticalLayout = QVBoxLayout(self.tab)
@@ -316,7 +318,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_3)
 
-        self.tabWidget.addTab(self.tab, QString())
+        self.tabWidget.addTab(self.tab, "")
         self.tab_device = QWidget()
         self.tab_device.setObjectName(u"tab_device")
         self.verticalLayout_10 = QVBoxLayout(self.tab_device)
@@ -327,7 +329,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_10.addWidget(self.textEditDevices)
 
-        self.tabWidget.addTab(self.tab_device, QString())
+        self.tabWidget.addTab(self.tab_device, "")
 
         self.verticalLayout_9.addWidget(self.tabWidget)
 
@@ -344,7 +346,7 @@ class Ui_DialogSimulator(object):
 
         self.verticalLayout_9.addWidget(self.btnStartStop)
 
-        self.tabWidgetSimulatorSettings.addTab(self.tabSimulation, QString())
+        self.tabWidgetSimulatorSettings.addTab(self.tabSimulation, "")
 
         self.verticalLayout_4.addWidget(self.tabWidgetSimulatorSettings)
 

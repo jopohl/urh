@@ -1,8 +1,8 @@
 from array import array
 
 import numpy
-from PySide2.QtCore import Qt, Slot, QTimer
-from PySide2.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon
+from PySide2.QtCore import Qt, Slot, QTimer, QRegExp
+from PySide2.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegExpValidator
 from PySide2.QtWidgets import QDialog, QMessageBox, QLineEdit
 
 from urh import constants

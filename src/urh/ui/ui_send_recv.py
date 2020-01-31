@@ -3,20 +3,22 @@
 ################################################################################
 ## Form generated from reading UI file 'send_recv.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import LiveGraphicView
-import EditableGraphicView
+from urh.ui.views.LiveGraphicView import LiveGraphicView
+from urh.ui.views.EditableGraphicView import EditableGraphicView
+
+import urh.ui.urh_rc
 
 class Ui_SendRecvDialog(object):
     def setupUi(self, SendRecvDialog):
@@ -114,7 +116,7 @@ class Ui_SendRecvDialog(object):
         self.lSamplesCaptured.setSizePolicy(sizePolicy1)
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.lSamplesCaptured.setFont(font)
         self.lSamplesCaptured.setAlignment(Qt.AlignCenter)
 

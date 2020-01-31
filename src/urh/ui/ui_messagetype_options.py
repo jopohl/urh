@@ -3,17 +3,18 @@
 ################################################################################
 ## Form generated from reading UI file 'messagetype_options.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
+
 
 class Ui_DialogMessageType(object):
     def setupUi(self, DialogMessageType):
@@ -23,9 +24,9 @@ class Ui_DialogMessageType(object):
         self.gridLayout = QGridLayout(DialogMessageType)
         self.gridLayout.setObjectName(u"gridLayout")
         self.cbRulesetMode = QComboBox(DialogMessageType)
-        self.cbRulesetMode.addItem(QString())
-        self.cbRulesetMode.addItem(QString())
-        self.cbRulesetMode.addItem(QString())
+        self.cbRulesetMode.addItem("")
+        self.cbRulesetMode.addItem("")
+        self.cbRulesetMode.addItem("")
         self.cbRulesetMode.setObjectName(u"cbRulesetMode")
 
         self.gridLayout.addWidget(self.cbRulesetMode, 1, 0, 1, 2)

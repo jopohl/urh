@@ -3,24 +3,26 @@
 ################################################################################
 ## Form generated from reading UI file 'simulator.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ParticipantTableView
-import GeneratorTreeView
-import SimulatorGraphicsView
-import SimulatorMessageTableView
-import ExpressionLineEdit
-import SimulatorLabelTableView
+from urh.ui.views.ParticipantTableView import ParticipantTableView
+from urh.ui.views.GeneratorTreeView import GeneratorTreeView
+from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
+from urh.ui.views.SimulatorMessageTableView import SimulatorMessageTableView
+from urh.ui.ExpressionLineEdit import ExpressionLineEdit
+from urh.ui.views.SimulatorLabelTableView import SimulatorLabelTableView
+
+import urh.ui.urh_rc
 
 class Ui_SimulatorTab(object):
     def setupUi(self, SimulatorTab):
@@ -116,9 +118,9 @@ class Ui_SimulatorTab(object):
         self.gridLayout.addWidget(self.label_7, 2, 0, 1, 1)
 
         self.comboBoxError = QComboBox(self.layoutWidget)
-        self.comboBoxError.addItem(QString())
-        self.comboBoxError.addItem(QString())
-        self.comboBoxError.addItem(QString())
+        self.comboBoxError.addItem("")
+        self.comboBoxError.addItem("")
+        self.comboBoxError.addItem("")
         self.comboBoxError.setObjectName(u"comboBoxError")
         sizePolicy.setHeightForWidth(self.comboBoxError.sizePolicy().hasHeightForWidth())
         self.comboBoxError.setSizePolicy(sizePolicy)
@@ -198,7 +200,7 @@ class Ui_SimulatorTab(object):
 
         self.verticalLayout.addWidget(self.gvSimulator)
 
-        self.tabWidget.addTab(self.tab, QString())
+        self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
         self.verticalLayout_6 = QVBoxLayout(self.tab_2)
@@ -240,9 +242,9 @@ class Ui_SimulatorTab(object):
         self.horizontalLayout_3.addWidget(self.label_5)
 
         self.cbViewType = QComboBox(self.tab_2)
-        self.cbViewType.addItem(QString())
-        self.cbViewType.addItem(QString())
-        self.cbViewType.addItem(QString())
+        self.cbViewType.addItem("")
+        self.cbViewType.addItem("")
+        self.cbViewType.addItem("")
         self.cbViewType.setObjectName(u"cbViewType")
 
         self.horizontalLayout_3.addWidget(self.cbViewType)
@@ -250,7 +252,7 @@ class Ui_SimulatorTab(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_3)
 
-        self.tabWidget.addTab(self.tab_2, QString())
+        self.tabWidget.addTab(self.tab_2, "")
         self.tabParticipants = QWidget()
         self.tabParticipants.setObjectName(u"tabParticipants")
         self.horizontalLayout = QHBoxLayout(self.tabParticipants)
@@ -322,7 +324,7 @@ class Ui_SimulatorTab(object):
 
         self.horizontalLayout.addLayout(self.verticalLayout_9)
 
-        self.tabWidget.addTab(self.tabParticipants, QString())
+        self.tabWidget.addTab(self.tabParticipants, "")
 
         self.verticalLayout_2.addWidget(self.tabWidget)
 
@@ -341,7 +343,7 @@ class Ui_SimulatorTab(object):
         self.lblMsgFieldsValues.setSizePolicy(sizePolicy3)
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.lblMsgFieldsValues.setFont(font)
         self.lblMsgFieldsValues.setAlignment(Qt.AlignCenter)
 

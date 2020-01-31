@@ -3,19 +3,20 @@
 ################################################################################
 ## Form generated from reading UI file 'fuzzing.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import FuzzingTableView
+from urh.ui.views.FuzzingTableView import FuzzingTableView
+
 
 class Ui_FuzzingDialog(object):
     def setupUi(self, FuzzingDialog):
@@ -102,7 +103,7 @@ class Ui_FuzzingDialog(object):
         self.lFuzzedValues.setSizePolicy(sizePolicy1)
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.lFuzzedValues.setFont(font)
         self.lFuzzedValues.setAlignment(Qt.AlignCenter)
 

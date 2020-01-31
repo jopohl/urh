@@ -44,9 +44,12 @@ def gen(force=False):
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
         # to avoid useless git updates when working on another computer
         for line in fileinput.input(out_file_path, inplace=True):
-            if line.startswith("# Created:") or line.startswith("#      by: pyside2-uic"):
+            if line.startswith("# Created:") or line.startswith("#      by: pyside2-uic") or "setLocale" in line:
                 continue
-            print(line, end='')
+            elif line.strip() == "import urh_rc":
+                print("import urh.ui.urh_rc")
+            else:
+                print(line, end='')
 
     for f in rc_files:
         file_path = os.path.join(rc_path, f)

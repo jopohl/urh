@@ -3,17 +3,19 @@
 ################################################################################
 ## Form generated from reading UI file 'send_recv_sniff_settings.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
+
+import urh.ui.urh_rc
 
 class Ui_SniffSettings(object):
     def setupUi(self, SniffSettings):
@@ -27,7 +29,7 @@ class Ui_SniffSettings(object):
         self.groupBoxSniffSettings.setObjectName(u"groupBoxSniffSettings")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.groupBoxSniffSettings.setFont(font)
         self.groupBoxSniffSettings.setStyleSheet(u"QGroupBox\n"
 "{\n"
@@ -100,9 +102,9 @@ class Ui_SniffSettings(object):
         self.gridLayout.addWidget(self.spinbox_sniff_ErrorTolerance, 5, 1, 1, 1)
 
         self.combox_sniff_Modulation = QComboBox(self.frame)
-        self.combox_sniff_Modulation.addItem(QString())
-        self.combox_sniff_Modulation.addItem(QString())
-        self.combox_sniff_Modulation.addItem(QString())
+        self.combox_sniff_Modulation.addItem("")
+        self.combox_sniff_Modulation.addItem("")
+        self.combox_sniff_Modulation.addItem("")
         self.combox_sniff_Modulation.setObjectName(u"combox_sniff_Modulation")
 
         self.gridLayout.addWidget(self.combox_sniff_Modulation, 6, 1, 1, 1)
@@ -196,9 +198,9 @@ class Ui_SniffSettings(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.comboBox_sniff_viewtype = QComboBox(self.frame)
-        self.comboBox_sniff_viewtype.addItem(QString())
-        self.comboBox_sniff_viewtype.addItem(QString())
-        self.comboBox_sniff_viewtype.addItem(QString())
+        self.comboBox_sniff_viewtype.addItem("")
+        self.comboBox_sniff_viewtype.addItem("")
+        self.comboBox_sniff_viewtype.addItem("")
         self.comboBox_sniff_viewtype.setObjectName(u"comboBox_sniff_viewtype")
 
         self.horizontalLayout.addWidget(self.comboBox_sniff_viewtype)

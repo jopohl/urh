@@ -3,19 +3,21 @@
 ################################################################################
 ## Form generated from reading UI file 'modulation_settings_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.14.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
 from PySide2.QtCore import (QCoreApplication, QMetaObject, QObject, QPoint,
     QRect, QSize, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QFont,
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QFontDatabase, QIcon, QLinearGradient, QPalette, QPainter, QPixmap,
     QRadialGradient)
 from PySide2.QtWidgets import *
 
-import ElidedLabel
+from urh.ui.ElidedLabel import ElidedLabel
+
+import urh.ui.urh_rc
 
 class Ui_ModulationSettings(object):
     def setupUi(self, ModulationSettings):
@@ -29,7 +31,7 @@ class Ui_ModulationSettings(object):
         self.groupBoxSniffSettings.setObjectName(u"groupBoxSniffSettings")
         font = QFont()
         font.setBold(True)
-        font.setWeight(75);
+        font.setWeight(75)
         self.groupBoxSniffSettings.setFont(font)
         self.groupBoxSniffSettings.setStyleSheet(u"QGroupBox\n"
 "{\n"

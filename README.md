@@ -58,8 +58,6 @@ Below you find more specific installation instructions for:
   - [Docker Image](#docker-image)
 - [MacOS](#macos)
 - [Updating your installation](#update-your-installation)
-  - [Updating with pip](#updating-with-pip)
-  - [Updating with MSI](#updating-with-msi)
 - [Running from source](#running-from-source)
 
 
@@ -108,11 +106,7 @@ corresponding native device support.
 
 
 ### Update your installation
-#### Updating with pip
 If you installed URH via pip you can keep it up to date with ```pip3 install --upgrade urh```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
-
-#### Updating with MSI
-If you experience issues after updating URH using the ```.msi``` installer on Windows, please perform a __full uninstallation__. That is, uninstall URH via Windows and after that remove the installation folder (something like ```C:\Program Files\Universal Radio Hacker```). Now, install the new version using the recent ```.msi```.
 
 ### Running from source
 If you like to live on bleeding edge, you can run URH from source.

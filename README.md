@@ -62,7 +62,7 @@ Below you find more specific installation instructions for:
 
 
 ### Windows
-On Windows, URH can be installed with its [MSI Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
+On Windows, URH can be installed with its [Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
  
 If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 

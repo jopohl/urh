@@ -63,7 +63,7 @@ class SimulatorTabController(QWidget):
         util.set_splitter_stylesheet(self.ui.splitter)
         util.set_splitter_stylesheet(self.ui.splitterLeftRight)
 
-        self.ui.splitter.setSizes([self.width() / 0.7, self.width() / 0.3])
+        self.ui.splitter.setSizes([int(self.width() / 0.7), int(self.width() / 0.3)])
 
         self.ui.treeProtocols.setHeaderHidden(True)
         self.tree_model = self.generator_tab_controller.tree_model
@@ -120,7 +120,7 @@ class SimulatorTabController(QWidget):
         frame.layout().setContentsMargins(0, 0, 0, 0)
         self.ui.tabWidget.setCornerWidget(frame)
 
-        self.ui.splitterLeftRight.setSizes([0.2 * self.width(), 0.8 * self.width()])
+        self.ui.splitterLeftRight.setSizes([int(0.2 * self.width()), int(0.8 * self.width())])
 
         self.create_connects()
 

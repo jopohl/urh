@@ -53,7 +53,7 @@ class ProtocolLabelDialog(QDialog):
         self.setWindowTitle(self.tr("Edit Protocol Labels From Message Type %s") % message.message_type.name)
 
         self.configure_special_config_tabs()
-        self.ui.splitter.setSizes([self.height() / 2, self.height() / 2])
+        self.ui.splitter.setSizes([int(self.height() / 2), int(self.height() / 2)])
 
         self.create_connects()
 

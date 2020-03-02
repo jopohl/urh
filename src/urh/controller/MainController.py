@@ -85,7 +85,7 @@ class MainController(QMainWindow):
         self.ui.listViewParticipants.setModel(self.participant_legend_model)
 
         gtc = self.generator_tab_controller
-        gtc.ui.splitter.setSizes([gtc.width() / 0.7, gtc.width() / 0.3])
+        gtc.ui.splitter.setSizes([int(gtc.width() / 0.7), int(gtc.width() / 0.3)])
 
         self.ui.tab_generator.layout().addWidget(self.generator_tab_controller)
 

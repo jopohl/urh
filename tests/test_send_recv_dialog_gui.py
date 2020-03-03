@@ -25,13 +25,14 @@ from urh.signalprocessing.Signal import Signal
 from urh.util.Logger import logger
 
 
-def receive(port, current_index, target_index, buffer):
+def receive(port, current_index, target_index, buffer, ready):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     s.bind(("", port))
     s.listen(1)
 
+    ready.value = 1
     conn, addr = s.accept()
 
     while True:
@@ -46,7 +47,7 @@ def receive(port, current_index, target_index, buffer):
             data[current_index.value:current_index.value + len(arr)] = arr
             current_index.value += len(arr)
 
-        if current_index.value == target_index:
+        if current_index.value >= target_index - 1:
             break
 
     conn.close()
@@ -54,8 +55,6 @@ def receive(port, current_index, target_index, buffer):
 
 
 class TestSendRecvDialog(QtTestCase):
-    SEND_RECV_TIMEOUT = 1000
-
     def setUp(self):
         super().setUp()
         settings.OVERWRITE_RECEIVE_BUFFER_SIZE = 600000
@@ -146,8 +145,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
-        QApplication.instance().processEvents()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
+        QTest.qWait(100)
 
         self.assertEqual(receive_dialog.device.current_index, 3)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:3].flatten(), data.view(np.float32)))
@@ -176,8 +174,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
-        QApplication.instance().processEvents()
-        QTest.qWait(5*self.SEND_RECV_TIMEOUT)
+        QTest.qWait(100)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
         self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
@@ -188,9 +185,7 @@ class TestSendRecvDialog(QtTestCase):
         event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
-        QApplication.instance().processEvents()
-        QTest.qWait(500)
-        QApplication.instance().processEvents()
+        QTest.qWait(100)
 
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 
@@ -212,8 +207,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.device.set_client_port(port)
         send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
-        QApplication.instance().processEvents()
-        QTest.qWait(5 * self.SEND_RECV_TIMEOUT)
+        QTest.qWait(100)
 
         self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
@@ -238,11 +232,15 @@ class TestSendRecvDialog(QtTestCase):
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
         buffer = Array("f", 4 * len(expected))
+        ready = Value("i", 0)
 
-        process = Process(target=receive, args=(port, current_index, 2 * len(expected), buffer))
+        process = Process(target=receive, args=(port, current_index, len(expected), buffer, ready))
         process.daemon = True
         process.start()
-        time.sleep(1)  # ensure server is up
+        n = 0
+        while ready.value == 0 and n < 50:  # ensure server is up
+            time.sleep(0.1)
+            n += 1
 
         ContinuousModulator.BUFFER_SIZE_MB = 10
 
@@ -250,9 +248,7 @@ class TestSendRecvDialog(QtTestCase):
         continuous_send_dialog.device.set_client_port(port)
         continuous_send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         continuous_send_dialog.ui.btnStart.click()
-        QTest.qWait(1000)
-        time.sleep(1)
-        process.join(1)
+        process.join(10)
 
         # CI sometimes swallows a sample
         self.assertGreaterEqual(current_index.value, len(expected) - 1)
@@ -305,8 +301,12 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        time.sleep(2)
-        QTest.qWait(100)
+        n = 0
+        while generator_frame.network_sdr_plugin.is_sending and n < 50:
+            time.sleep(0.1)
+            n += 1
+
+        QTest.qWait(10)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 
@@ -339,8 +339,6 @@ class TestSendRecvDialog(QtTestCase):
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())
 
         generator_frame.ui.btnNetworkSDRSend.click()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.SEND_RECV_TIMEOUT)
 
         with open(target_file, "r") as f:
             for i, line in enumerate(f):
@@ -358,12 +356,8 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
         view_width = send_dialog.graphics_view.view_rect().width()
         send_dialog.graphics_view.zoom(1.1)
-        QApplication.instance().processEvents()
-        QTest.qWait(50)
         self.assertLess(send_dialog.graphics_view.view_rect().width(), view_width)
         send_dialog.graphics_view.zoom(0.8)
-        QApplication.instance().processEvents()
-        QTest.qWait(50)
         self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
 
         send_dialog.close()

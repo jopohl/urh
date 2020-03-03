@@ -297,8 +297,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                     time.sleep(wait_time)
                 else:
                     self.is_sending = False
-                    Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port),
-                                         msg=error)
+                    logger.critical("Could not connect to {0}:{1}".format(self.client_ip, self.client_port))
                     break
             logger.debug("Sending finished")
             self.is_sending = False

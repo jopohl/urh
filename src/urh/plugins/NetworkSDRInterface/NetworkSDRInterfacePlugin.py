@@ -215,7 +215,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.connect((self.client_ip, self.client_port))
-            self.send_connection_established.emit()
             return sock
         except Exception as e:
             msg = "Could not establish connection " + str(e)
@@ -320,6 +319,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
+        self.send_connection_established.emit()
+
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
         if self.sending_is_continuous:
@@ -332,6 +333,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.sending_thread.daemon = True
         self.sending_thread.start()
+
+        self.send_connection_established.emit()
 
     def stop_sending_thread(self):
         self.__sending_interrupt_requested = True

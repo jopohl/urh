@@ -185,7 +185,7 @@ class TestSendRecvDialog(QtTestCase):
         event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 

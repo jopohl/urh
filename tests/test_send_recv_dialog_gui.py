@@ -178,19 +178,6 @@ class TestSendRecvDialog(QtTestCase):
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)
         self.assertIsNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
-        w = spectrum_dialog.ui.graphicsViewFFT.viewport()
-
-        # this actually gets the click to the view
-        # QTest.mouseMove(w, QPoint(80,80))
-        event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
-                            Qt.LeftButton, Qt.NoModifier)
-        QApplication.postEvent(w, event)
-        QApplication.instance().processEvents()
-        QTest.qWait(250)
-        QApplication.instance().processEvents()
-
-        self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
-
         spectrum_dialog.ui.btnStop.click()
 
         self.assertGreater(len(spectrum_dialog.ui.graphicsViewSpectrogram.items()), 0)

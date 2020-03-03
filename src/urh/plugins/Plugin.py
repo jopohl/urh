@@ -1,9 +1,11 @@
+import logging
 import os
 
 from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QUndoCommand, QUndoStack
+
+from urh.util.Logger import logger
 
 
 class Plugin(QObject):
@@ -21,7 +23,10 @@ class Plugin(QObject):
     @property
     def settings_frame(self):
         if self.__settings_frame is None:
+            logging.getLogger().setLevel(logging.WARNING)
             self.__settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
+            logging.getLogger().setLevel(logger.level)
+
             self.create_connects()
         return self.__settings_frame
 

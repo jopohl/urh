@@ -185,11 +185,7 @@ class TestSendRecvDialog(QtTestCase):
         event = QMouseEvent(QEvent.MouseMove, QPoint(80, 80), w.mapToGlobal(QPoint(80, 80)), Qt.LeftButton,
                             Qt.LeftButton, Qt.NoModifier)
         QApplication.postEvent(w, event)
-
-        n = 0
-        while spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker is None and n < 20:
-            QTest.qWait(100)
-            n += 1
+        QApplication.instance().processEvents()
 
         self.assertIsNotNone(spectrum_dialog.ui.graphicsViewFFT.scene().frequency_marker)
 

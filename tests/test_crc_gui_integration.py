@@ -97,7 +97,7 @@ class TestCRCGUIIntegration(QtTestCase):
                          settings.BG_COLOR_CORRECT)
 
     def test_checksum_in_generation_tab(self):
-        self.add_signal_to_form("esaver.coco")
+        self.add_signal_to_form("esaver.complex16s")
         self.form.compare_frame_controller.add_protocol_label(4, 6, 0, 1, edit_label_name=False)
         checksum_fieldtype = next(
             ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)

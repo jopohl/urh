@@ -179,7 +179,7 @@ class SignalTabController(QWidget):
                     proto_needs_update = True
 
                 if frame.signal.noise_threshold != signal.noise_threshold:
-                    frame.signal.noise_threshold = signal.noise_threshold
+                    frame.signal.noise_threshold_relative = signal.noise_threshold_relative
                     proto_needs_update = True
 
                 if frame.signal.samples_per_symbol != signal.samples_per_symbol:

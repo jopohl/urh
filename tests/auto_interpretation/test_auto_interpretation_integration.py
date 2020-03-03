@@ -74,7 +74,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             self.assertTrue(demod[i].startswith("aaaaaaaa"))
 
     def test_auto_interpretation_elektromaten(self):
-        data = Signal(get_path_for_data_file("elektromaten.coco"), "").iq_array
+        data = Signal(get_path_for_data_file("elektromaten.complex16s"), "").iq_array
         result = AutoInterpretation.estimate(data)
 
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
@@ -84,23 +84,6 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(bit_length, 600)
 
         demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
-        self.assertEqual(len(demodulated), 11)
-        for i in range(11):
-            self.assertTrue(demodulated[i].startswith("8"))
-
-        # Test with added 20% noise
-        np.random.seed(5)
-        noise = np.random.normal(loc=0, scale=1, size=2 * len(data)).astype(np.float32).view(np.complex64)
-        noised_data = data.as_complex64() + 0.2 * np.mean(data.magnitudes) * noise
-        result = AutoInterpretation.estimate(noised_data)
-
-        mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
-
-        self.assertEqual(mod_type, "ASK")
-        self.assertEqual(bit_length, 600)
-
-        demodulated = demodulate(noised_data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
         self.assertEqual(len(demodulated), 11)
         for i in range(11):
             self.assertTrue(demodulated[i].startswith("8"))

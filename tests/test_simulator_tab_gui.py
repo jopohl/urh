@@ -359,7 +359,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to wait for message 1")
-            time.sleep(1)
+            time.sleep(0.1)
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
@@ -371,14 +371,14 @@ class TestSimulatorTabGUI(QtTestCase):
 
         while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator wait for message 2")
-            time.sleep(1)
+            time.sleep(0.1)
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.5)
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
         while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for mismatching message")
-            time.sleep(1)
+            time.sleep(0.1)
 
         dialog.on_timer_timeout()  # enforce writing to text view
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
@@ -409,7 +409,7 @@ class TestSimulatorTabGUI(QtTestCase):
         self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
         self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
-        self.add_signal_to_form("esaver.coco")
+        self.add_signal_to_form("esaver.complex16s")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
 

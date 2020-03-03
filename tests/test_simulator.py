@@ -26,7 +26,7 @@ from urh.util.Logger import logger
 
 
 class TestSimulator(QtTestCase):
-    TIMEOUT = 0.5
+    TIMEOUT = 0.25
 
     def setUp(self):
         super().setUp()
@@ -72,11 +72,10 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
-        QTest.qWait(250)
 
         while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to wait for message")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         conn, addr = s.accept()
 
@@ -104,7 +103,7 @@ class TestSimulator(QtTestCase):
 
         while not any("Sending message 2" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 2")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         bits = self.__demodulate(conn)
 
@@ -124,7 +123,7 @@ class TestSimulator(QtTestCase):
 
         while not any("Sending message 4" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 4")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         bits = self.__demodulate(conn)
 
@@ -144,7 +143,7 @@ class TestSimulator(QtTestCase):
 
         while not any("Sending message 6" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message 6")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         bits = self.__demodulate(conn)
 
@@ -228,7 +227,7 @@ class TestSimulator(QtTestCase):
         name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
         dialog.device_settings_tx_widget.ui.cbDevice.setCurrentText(name)
-        QTest.qWait(100)
+
         simulator = dialog.simulator
         simulator.sniffer.rcv_device.set_server_port(port)
 
@@ -241,11 +240,10 @@ class TestSimulator(QtTestCase):
 
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
-        QTest.qWait(250)
 
         while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to wait for message")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         conn, addr = s.accept()
 
@@ -257,7 +255,7 @@ class TestSimulator(QtTestCase):
 
         while not any("Sending message" in msg for msg in dialog.simulator.log_messages):
             logger.debug("Waiting for simulator to send message")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         time.sleep(self.TIMEOUT)
         bits = self.__demodulate(conn)
@@ -265,7 +263,7 @@ class TestSimulator(QtTestCase):
 
         while simulator.is_simulating:
             logger.debug("Wait for simulator to finish")
-            time.sleep(1)
+            time.sleep(self.TIMEOUT)
 
         NetworkSDRInterfacePlugin.shutdown_socket(conn)
         NetworkSDRInterfacePlugin.shutdown_socket(s)
@@ -273,7 +271,7 @@ class TestSimulator(QtTestCase):
         self.assertTrue(os.path.isfile(file_name))
 
     def __demodulate(self, connection: socket.socket):
-        connection.settimeout(0.5)
+        connection.settimeout(self.TIMEOUT)
         time.sleep(self.TIMEOUT)
 
         total_data = []

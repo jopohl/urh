@@ -215,7 +215,6 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.connect((self.client_ip, self.client_port))
-            self.send_connection_established.emit()
             return sock
         except Exception as e:
             msg = "Could not establish connection " + str(e)
@@ -298,8 +297,7 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                     time.sleep(wait_time)
                 else:
                     self.is_sending = False
-                    Errors.generic_error("Could not connect to {0}:{1}".format(self.client_ip, self.client_port),
-                                         msg=error)
+                    logger.critical("Could not connect to {0}:{1}".format(self.client_ip, self.client_port))
                     break
             logger.debug("Sending finished")
             self.is_sending = False
@@ -320,6 +318,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
         self.sending_thread.daemon = True
         self.sending_thread.start()
 
+        self.send_connection_established.emit()
+
     def start_raw_sending_thread(self):
         self.__sending_interrupt_requested = False
         if self.sending_is_continuous:
@@ -332,6 +332,8 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
 
         self.sending_thread.daemon = True
         self.sending_thread.start()
+
+        self.send_connection_established.emit()
 
     def stop_sending_thread(self):
         self.__sending_interrupt_requested = True

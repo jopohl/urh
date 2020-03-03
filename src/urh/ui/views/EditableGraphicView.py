@@ -8,6 +8,7 @@ from urh.signalprocessing.Signal import Signal
 from urh.ui.actions.EditSignalAction import EditSignalAction, EditAction
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
+from urh.util.Logger import logger
 
 
 class EditableGraphicView(ZoomableGraphicView):
@@ -237,6 +238,10 @@ class EditableGraphicView(ZoomableGraphicView):
             num_samples = None
 
         original_data = self.signal.iq_array.data if self.signal is not None else None
+        if original_data is None:
+            logger.critical("No data to insert a sine wave to")
+            return
+
         dialog = self.insert_sine_plugin.get_insert_sine_dialog(original_data=original_data,
                                                                 position=self.paste_position,
                                                                 sample_rate=self.sample_rate,
@@ -245,8 +250,9 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_insert_sine_wave_clicked(self):
-        if self.insert_sine_plugin.complex_wave is not None:
+        if self.insert_sine_plugin.complex_wave is not None and self.signal is not None:
             self.clear_horizontal_selection()
+
             insert_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
                                              data_to_insert=self.insert_sine_plugin.complex_wave,
                                              position=self.paste_position,
@@ -298,7 +304,7 @@ class EditableGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_create_action_triggered(self):
-        self.create_clicked.emit(self.selection_area.start, self.selection_area.end)
+        self.create_clicked.emit(int(self.selection_area.start), int(self.selection_area.end))
 
     @pyqtSlot()
     def on_none_participant_action_triggered(self):

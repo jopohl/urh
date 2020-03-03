@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import QRectF, QLineF
+from PyQt5.QtCore import QRectF, QLineF, QPointF
 from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
 from urh import settings
@@ -63,7 +63,7 @@ class GridScene(ZoomableScene):
                     counter = 0
                     value = Formatter.big_value_with_suffix(self.center_freq)
                 font_width = self.font_metrics.width(value)
-                painter.drawText(x / scale_x - font_width / 2, bottom / scale_y, value)
+                painter.drawText(QPointF(x / scale_x - font_width / 2, bottom / scale_y), value)
 
     def draw_frequency_marker(self, x_pos, frequency):
         if frequency is None:

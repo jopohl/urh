@@ -200,6 +200,7 @@ class Signal(QObject):
 
     @tolerance.setter
     def tolerance(self, value):
+        value = int(value)
         if self.__tolerance != value:
             self.__tolerance = value
             self.tolerance_changed.emit(value)

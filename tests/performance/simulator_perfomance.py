@@ -63,7 +63,7 @@ class TestSimulatorPerfomance(QtTestCase):
         self.stc = self.form.simulator_tab_controller
         self.gtc = self.form.generator_tab_controller
 
-        self.form.add_signalfile(get_path_for_data_file("esaver.coco"))
+        self.form.add_signalfile(get_path_for_data_file("esaver.complex16s"))
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.sim_frame = self.form.simulator_tab_controller
         self.form.ui.tabWidget.setCurrentIndex(3)

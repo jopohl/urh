@@ -57,7 +57,7 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      pytest -s --fulltrace --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
@@ -67,7 +67,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest -s --fulltrace --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -189,7 +189,7 @@ jobs:
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest -s --fulltrace --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on windows'
 
   - task: PublishTestResults@2
@@ -204,19 +204,14 @@ jobs:
       urh autoclose
     displayName: 'Testrun'
 
-- job: 'OSX'
+- job: 'macOS'
   pool:
     vmImage: 'macOS-10.14'
-
-  strategy:
-    matrix:
-      Python37:
-        python.version: '3.7'
 
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '$(python.version)'
+      versionSpec: '3.7'
 
   - script: |
       git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
@@ -229,13 +224,13 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install -r data/requirements.txt
-      pip install pytest pytest-faulthandler
+      python -m pip install --upgrade -r data/requirements.txt
+      python -m pip install --upgrade pytest pytest-faulthandler pytest-timeout
     displayName: 'Install dependencies'
 
   - script: |
       brew install portaudio hackrf librtlsdr airspy
-      pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
+      python -m pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 
@@ -293,7 +288,7 @@ jobs:
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
-  - script: pytest -s -v --junitxml=junit/test-results.xml tests
+  - script: pytest -s --fulltrace --timeout=600 --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on macOS'
 
   - task: PublishTestResults@2

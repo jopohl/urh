@@ -162,6 +162,8 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxDeviceIdentifier.currentIndexChanged.connect(
             self.on_combo_box_device_identifier_current_index_changed)
 
+        self.ui.comboBoxDeviceIdentifier.editTextChanged.connect(self.on_combo_box_device_identifier_edit_text_changed)
+
         self.ui.checkBoxDCCorrection.clicked.connect(self.on_check_box_dc_correction_clicked)
 
     def set_gain_defaults(self):
@@ -517,6 +519,10 @@ class DeviceSettingsWidget(QWidget):
         if self.device is not None:
             self.device.device_serial = self.ui.comboBoxDeviceIdentifier.currentText()
             self.device.device_number = self.ui.comboBoxDeviceIdentifier.currentIndex()
+
+    @pyqtSlot(str)
+    def on_combo_box_device_identifier_edit_text_changed(self, new_text: str):
+        self.device.device_serial = new_text
 
 
 if __name__ == '__main__':

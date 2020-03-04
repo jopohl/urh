@@ -231,6 +231,8 @@ class TestSendRecvDialog(QtTestCase):
             time.sleep(0.1)
             n += 1
 
+        self.assertTrue(ready.value)
+
         ContinuousModulator.BUFFER_SIZE_MB = 10
 
         continuous_send_dialog = self.__get_continuous_send_dialog()
@@ -290,8 +292,12 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        while generator_frame.network_sdr_plugin.is_sending:
-            time.sleep(0.1)
+        n = 0
+        while generator_frame.network_sdr_plugin.is_sending and n < 30:
+            time.sleep(1)
+            print("Waiting for messages")
+
+        self.assertFalse(generator_frame.network_sdr_plugin.is_sending)
 
         QTest.qWait(50)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")

@@ -296,12 +296,11 @@ class NetworkSDRInterfacePlugin(SDRPlugin):
                         break
                     time.sleep(wait_time)
                 else:
-                    self.is_sending = False
                     logger.critical("Could not connect to {0}:{1}".format(self.client_ip, self.client_port))
                     break
             logger.debug("Sending finished")
-            self.is_sending = False
         finally:
+            self.is_sending = False
             self.shutdown_socket(sock)
 
     def start_message_sending_thread(self, messages, sample_rates):

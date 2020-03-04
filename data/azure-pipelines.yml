@@ -160,13 +160,12 @@ jobs:
       python data/pyinstaller_helper.py
       for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
       iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
-      dir dist
+      dir
+      cd pyinstaller
+      dir
+      cd urh
+      urh_debug.exe
 
-      dir urh_debug_build
-      cd urh_debug_build
-      cd urh_debug
-      dir dist
-      urh_debug.exe autoclose
     condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 

@@ -167,7 +167,7 @@ jobs:
       cd pyinstaller\urh
       urh_debug.exe autoclose
     condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
-    displayName: "Test .exe"
+    displayName: "Test urh_debug.exe"
 
   - task: PublishBuildArtifacts@1
     inputs:

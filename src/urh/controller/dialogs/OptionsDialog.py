@@ -443,7 +443,10 @@ class OptionsDialog(QDialog):
     def on_btn_rebuild_native_clicked(self):
         library_dirs = None if not self.ui.lineEditLibDirs.text() \
             else list(map(str.strip, self.ui.lineEditLibDirs.text().split(",")))
-        extensions, _ = ExtensionHelper.get_device_extensions_and_extras(library_dirs=library_dirs)
+        include_dirs = None if not self.ui.lineEditIncludeDirs.text() \
+            else list(map(str.strip, self.ui.lineEditIncludeDirs.text().split(",")))
+
+        extensions, _ = ExtensionHelper.get_device_extensions_and_extras(library_dirs=library_dirs, include_dirs=include_dirs)
 
         self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
         QApplication.instance().processEvents()
@@ -451,6 +454,8 @@ class OptionsDialog(QDialog):
                      "build_ext", "--inplace", "-t", tempfile.gettempdir()]
         if library_dirs:
             build_cmd.extend(["-L", ":".join(library_dirs)])
+        if include_dirs:
+            build_cmd.extend(["-I", ":".join(include_dirs)])
 
         subprocess.call([sys.executable, os.path.realpath(ExtensionHelper.__file__), "clean", "--all"])
         p = subprocess.Popen(build_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

@@ -11,6 +11,12 @@ from setuptools import Extension
 
 USE_RELATIVE_PATHS = False
 
+COMPILER_DIRECTIVES = {'language_level': 3,
+                       'cdivision': True,
+                       'wraparound': False,
+                       'boundscheck': False,
+                       'initializedcheck': False,
+                       }
 
 
 DEVICES = {
@@ -113,11 +119,11 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
         shutil.rmtree(tmp_dir)
 
 
-def get_device_extensions_and_extras(library_dirs=None):
+def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
     library_dirs = [] if library_dirs is None else library_dirs
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
-    include_dirs = []
+    include_dirs = [] if include_dirs is None else include_dirs
 
     device_extras = dict()
 
@@ -255,6 +261,14 @@ if __name__ == "__main__":
     else:
         library_directories = None
 
+    if "-I" in sys.argv:
+        include_directories = sys.argv[sys.argv.index("-I") + 1].split(":")
+    else:
+        include_directories = []
+
+    import numpy as np
+    include_directories.append(np.get_include())
+
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     os.chdir(os.path.join(cur_dir, "..", "..", ".."))
 
@@ -266,8 +280,10 @@ if __name__ == "__main__":
               file=sys.stderr)
         sys.exit(1)
 
-    dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories)
+    dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories,
+                                                                  include_dirs=include_directories)
     setup(
         name="urh",
-        ext_modules=cythonize(dev_extensions, force=True, compile_time_env=dev_extras),
+        ext_modules=cythonize(dev_extensions, force=True,
+                              compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES),
     )

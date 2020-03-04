@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -206,19 +207,13 @@ class Ui_DialogOptions(object):
         self.groupBoxNativeOptions.setObjectName("groupBoxNativeOptions")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBoxNativeOptions)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.labelRebuildNativeStatus = QtWidgets.QLabel(self.groupBoxNativeOptions)
-        self.labelRebuildNativeStatus.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.labelRebuildNativeStatus.setObjectName("labelRebuildNativeStatus")
-        self.gridLayout_5.addWidget(self.labelRebuildNativeStatus, 3, 2, 1, 1)
         self.labelLibDirs = QtWidgets.QLabel(self.groupBoxNativeOptions)
         self.labelLibDirs.setObjectName("labelLibDirs")
         self.gridLayout_5.addWidget(self.labelLibDirs, 2, 0, 1, 1)
-        self.btnRebuildNative = QtWidgets.QPushButton(self.groupBoxNativeOptions)
-        self.btnRebuildNative.setEnabled(True)
-        icon = QtGui.QIcon.fromTheme("view-refresh")
-        self.btnRebuildNative.setIcon(icon)
-        self.btnRebuildNative.setObjectName("btnRebuildNative")
-        self.gridLayout_5.addWidget(self.btnRebuildNative, 3, 0, 1, 1)
+        self.labelRebuildNativeStatus = QtWidgets.QLabel(self.groupBoxNativeOptions)
+        self.labelRebuildNativeStatus.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.labelRebuildNativeStatus.setObjectName("labelRebuildNativeStatus")
+        self.gridLayout_5.addWidget(self.labelRebuildNativeStatus, 4, 2, 1, 1)
         self.labelNativeRebuildInfo = QtWidgets.QLabel(self.groupBoxNativeOptions)
         self.labelNativeRebuildInfo.setWordWrap(True)
         self.labelNativeRebuildInfo.setObjectName("labelNativeRebuildInfo")
@@ -230,7 +225,19 @@ class Ui_DialogOptions(object):
         icon = QtGui.QIcon.fromTheme("utilities-log-viewer")
         self.btnViewBuildLog.setIcon(icon)
         self.btnViewBuildLog.setObjectName("btnViewBuildLog")
-        self.gridLayout_5.addWidget(self.btnViewBuildLog, 3, 1, 1, 1)
+        self.gridLayout_5.addWidget(self.btnViewBuildLog, 4, 1, 1, 1)
+        self.btnRebuildNative = QtWidgets.QPushButton(self.groupBoxNativeOptions)
+        self.btnRebuildNative.setEnabled(True)
+        icon = QtGui.QIcon.fromTheme("view-refresh")
+        self.btnRebuildNative.setIcon(icon)
+        self.btnRebuildNative.setObjectName("btnRebuildNative")
+        self.gridLayout_5.addWidget(self.btnRebuildNative, 4, 0, 1, 1)
+        self.labelIncludeDirs = QtWidgets.QLabel(self.groupBoxNativeOptions)
+        self.labelIncludeDirs.setObjectName("labelIncludeDirs")
+        self.gridLayout_5.addWidget(self.labelIncludeDirs, 3, 0, 1, 1)
+        self.lineEditIncludeDirs = QtWidgets.QLineEdit(self.groupBoxNativeOptions)
+        self.lineEditIncludeDirs.setObjectName("lineEditIncludeDirs")
+        self.gridLayout_5.addWidget(self.lineEditIncludeDirs, 3, 2, 1, 1)
         self.verticalLayout_8.addWidget(self.groupBoxNativeOptions)
         self.line_2 = QtWidgets.QFrame(self.tabDevices)
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
@@ -300,7 +307,7 @@ class Ui_DialogOptions(object):
         self.verticalLayout_6.addWidget(self.tabWidget)
 
         self.retranslateUi(DialogOptions)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(4)
 
     def retranslateUi(self, DialogOptions):
         _translate = QtCore.QCoreApplication.translate
@@ -341,13 +348,15 @@ class Ui_DialogOptions(object):
         self.labelInfoDeviceTable.setText(_translate("DialogOptions", "<html><head/><body><p>Use the checkboxes in the table below to choose device backends and enable or disable devices. Disabled devices will not show up in device related dialogs such as send or receive.</p></body></html>"))
         self.labelDeviceMissingInfo.setText(_translate("DialogOptions", "<html><head/><body><p>Missing a native backend? Perform a <a href=\"health_check\"><span style=\" text-decoration: underline; color:#0000ff;\">health check</span></a>! If GNU Radio backend is not available double check the GNU Radio settings below.</p></body></html>"))
         self.groupBoxNativeOptions.setTitle(_translate("DialogOptions", "Native options"))
-        self.labelRebuildNativeStatus.setText(_translate("DialogOptions", "Rebuild <x> new device extensions. Please restart URH to use them."))
         self.labelLibDirs.setText(_translate("DialogOptions", "Library directories:"))
-        self.btnRebuildNative.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Rebuild the native device extensions. You need to restart URH after this, to use new extensions.</p></body></html>"))
-        self.btnRebuildNative.setText(_translate("DialogOptions", "Rebuild"))
+        self.labelRebuildNativeStatus.setText(_translate("DialogOptions", "Rebuild <x> new device extensions. Please restart URH to use them."))
         self.labelNativeRebuildInfo.setText(_translate("DialogOptions", "You can rebuild the native device extensions here. This is useful, when you installed a device driver afterwards or your drivers are stored in an unusual location."))
         self.lineEditLibDirs.setPlaceholderText(_translate("DialogOptions", "Comma separated list of additional library directories"))
         self.btnViewBuildLog.setText(_translate("DialogOptions", "View log"))
+        self.btnRebuildNative.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Rebuild the native device extensions. You need to restart URH after this, to use new extensions.</p></body></html>"))
+        self.btnRebuildNative.setText(_translate("DialogOptions", "Rebuild"))
+        self.labelIncludeDirs.setText(_translate("DialogOptions", "Include directories:"))
+        self.lineEditIncludeDirs.setPlaceholderText(_translate("DialogOptions", "Comma separated list of additional include directories"))
         self.groupBox_3.setTitle(_translate("DialogOptions", "Gnuradio options"))
         self.label_11.setText(_translate("DialogOptions", "Needed for Gnuradio backend only"))
         self.lineEditPython2Interpreter.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.</p></body></html>"))
@@ -366,6 +375,4 @@ class Ui_DialogOptions(object):
         self.label_5.setText(_translate("DialogOptions", "Use this percentage of available RAM for buffer allocation:"))
         self.doubleSpinBoxRAMThreshold.setSuffix(_translate("DialogOptions", "%"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDevices), _translate("DialogOptions", "Device"))
-
-
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

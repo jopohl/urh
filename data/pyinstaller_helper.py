@@ -61,7 +61,9 @@ if __name__ == '__main__':
     if sys.platform == "darwin":
         run_pyinstaller(urh_cmd, env=["DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared"])
     else:
-        with Pool(3) as p:
-            p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
+        for cmd in [urh_cmd, cli_cmd, urh_debug_cmd]:
+            run_pyinstaller(cmd)
+        # with Pool(3) as p:# Parallel builds sometimes not work due to PyInstallers cache, so do not take any risk here
+        #     p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
         shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
         shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

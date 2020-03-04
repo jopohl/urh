@@ -80,7 +80,7 @@ class InputHandlerThread(Thread):
                             v = 1
                         self.device.set_freq_correction(v)
                     elif i.startswith("DSM:"):
-                        print("Gnuradio does not support setting direct sampling mode live.")
+                        print("GNU Radio does not support setting direct sampling mode live.")
 
             time.sleep(0.1)
 

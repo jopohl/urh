@@ -96,7 +96,7 @@ if __name__ == '__main__':
     parser.add_option("-a", "--baseband-gain", dest="baseband_gain", help="Baseband Gain", default=30)
     parser.add_option("-b", "--bandwidth", dest="bw", help="Bandwidth", default=200000)
     parser.add_option("-p", "--port", dest="port", help="Port", default=1337)
-    parser.add_option("-r", "--gnuradio-dir", dest="gnuradio_dir", help="Install Directory for Gnuradio (Windows only)", default=None)
+    parser.add_option("-r", "--gnuradio-dir", dest="gnuradio_dir", help="Install Directory for GNU Radio (Windows only)", default=None)
     (options, args) = parser.parse_args()
     tb = top_block(float(options.samplerate), float(options.freq),
                    int(options.gain), int(options.if_gain), int(options.baseband_gain),

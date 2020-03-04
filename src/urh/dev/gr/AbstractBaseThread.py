@@ -206,7 +206,7 @@ class AbstractBaseThread(QThread):
         filename = self.device.lower().split(" ")[0] + suffix
 
         if not self.python2_interpreter:
-            self.stop("FATAL: Could not find python 2 interpreter. Make sure you have a running gnuradio installation.")
+            self.stop("FATAL: Could not find python 2 interpreter. Make sure you have a running GNU Radio installation.")
             return
 
         options = [self.python2_interpreter, os.path.join(rp, filename),
@@ -221,10 +221,10 @@ class AbstractBaseThread(QThread):
             options.extend(["--freq-correction", str(self.freq_correction),
                             "--direct-sampling", str(self.direct_sampling_mode)])
 
-        logger.info("Starting Gnuradio")
+        logger.info("Starting GNU Radio")
         logger.debug(" ".join(options))
         self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
-        logger.info("Started Gnuradio")
+        logger.info("Started GNU Radio")
         t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
         t.daemon = True  # thread dies with the program
         t.start()
@@ -239,7 +239,7 @@ class AbstractBaseThread(QThread):
         while not self.isInterruptionRequested():
             try:
                 time.sleep(0.1)
-                logger.info("Trying to get a connection to gnuradio...")
+                logger.info("Trying to get a connection to GNU Radio...")
                 self.socket.connect("tcp://{0}:{1}".format(self.ip, self.gr_port))
                 logger.info("Got connection")
                 break

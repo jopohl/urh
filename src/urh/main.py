@@ -171,7 +171,6 @@ def main():
 
     if "autoclose" in sys.argv[1:]:
         # Autoclose after 1 second, this is useful for automated testing
-        print("Started URH and will automatically close it in 1s (CI testing)")
         timer = QTimer()
         timer.timeout.connect(app.quit)
         timer.start(1000)

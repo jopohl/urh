@@ -2,7 +2,6 @@ import multiprocessing
 import os
 import shutil
 import sys
-from multiprocessing.pool import Pool
 
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements", "pkg_resources.py2_warn",
                   "numpy.core._methods", "numpy.core._dtype_ctypes",
@@ -13,8 +12,8 @@ EXCLUDE = ["matplotlib"]
 
 def run_pyinstaller(cmd_list: list, env: list=None):
     cmd = " ".join(cmd_list)
-    print(cmd)
-    sys.stdout.flush()
+    print(cmd, flush=True)
+
     env = [] if env is None else env
     if env:
         os.system(" ".join(env) + " " + cmd)
@@ -61,7 +60,8 @@ if __name__ == '__main__':
     if sys.platform == "darwin":
         run_pyinstaller(urh_cmd, env=["DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared"])
     else:
-        with Pool(3) as p:
-            p.map(run_pyinstaller, [urh_cmd, cli_cmd, urh_debug_cmd])
+        for cmd in [urh_cmd, cli_cmd, urh_debug_cmd]:
+            run_pyinstaller(cmd)
+
         shutil.copy("./pyinstaller/urh_cli/urh_cli.exe", "./pyinstaller/urh/urh_cli.exe")
         shutil.copy("./pyinstaller/urh_debug/urh_debug.exe", "./pyinstaller/urh/urh_debug.exe")

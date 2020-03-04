@@ -264,11 +264,11 @@ class OptionsDialog(QDialog):
 
         if self.backend_handler.gnuradio_is_installed:
             self.ui.lGnuradioInstalled.setStyleSheet("")
-            self.ui.lGnuradioInstalled.setText(self.tr("Gnuradio interface is working."))
+            self.ui.lGnuradioInstalled.setText(self.tr("GNU Radio interface is working."))
         else:
             self.ui.lGnuradioInstalled.setStyleSheet("color: red")
             self.ui.lGnuradioInstalled.setText(
-                self.tr("Gnuradio is not installed or incompatible with python2 interpreter."))
+                self.tr("GNU Radio is not installed or incompatible with python2 interpreter."))
 
     def read_options(self):
         self.ui.comboBoxDefaultView.setCurrentIndex(settings.read('default_view', 0, type=int))

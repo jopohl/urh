@@ -161,7 +161,7 @@ jobs:
       for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
       iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
       dir dist
-      dir urh_debug_build
+      urh_debug_build/urh_debug autoclose
     condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 

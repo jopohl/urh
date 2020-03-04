@@ -163,7 +163,8 @@ jobs:
       dir dist
 
       dir urh_debug_build
-      ./urh_debug_build/urh_debug autoclose
+      cd urh_debug_build
+      urh_debug autoclose
     condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 

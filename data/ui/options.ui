@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabGeneration">
       <attribute name="title">
@@ -436,16 +436,6 @@
           <string>Native options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="3" column="2">
-           <widget class="QLabel" name="labelRebuildNativeStatus">
-            <property name="text">
-             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelLibDirs">
             <property name="text">
@@ -453,20 +443,13 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="btnRebuildNative">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rebuild the native device extensions. You need to restart URH after this, to use new extensions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+          <item row="4" column="2">
+           <widget class="QLabel" name="labelRebuildNativeStatus">
             <property name="text">
-             <string>Rebuild</string>
+             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
             </property>
-            <property name="icon">
-             <iconset theme="view-refresh">
-              <normaloff>.</normaloff>.</iconset>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -487,7 +470,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QPushButton" name="btnViewBuildLog">
             <property name="text">
              <string>View log</string>
@@ -495,6 +478,37 @@
             <property name="icon">
              <iconset theme="utilities-log-viewer">
               <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnRebuildNative">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rebuild the native device extensions. You need to restart URH after this, to use new extensions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Rebuild</string>
+            </property>
+            <property name="icon">
+             <iconset theme="view-refresh">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelIncludeDirs">
+            <property name="text">
+             <string>Include directories:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditIncludeDirs">
+            <property name="placeholderText">
+             <string>Comma separated list of additional include directories</string>
             </property>
            </widget>
           </item>
@@ -511,7 +525,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>Gnuradio options</string>
+          <string>GNU Radio options</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0" colspan="2">
@@ -522,14 +536,14 @@
              </font>
             </property>
             <property name="text">
-             <string>Needed for Gnuradio backend only</string>
+             <string>Needed for GNU Radio backend only</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="lineEditPython2Interpreter">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed GNU Radio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="placeholderText">
              <string>/usr/bin/python2</string>
@@ -542,7 +556,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Gnuradio installation found</string>
+             <string>GNU Radio installation found</string>
             </property>
            </widget>
           </item>
@@ -554,15 +568,18 @@
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
+            <property name="text">
+             <string/>
+            </property>
             <property name="placeholderText">
-             <string>C:\...\Gnuradio</string>
+             <string>C:\Program Files\GNURadio</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QRadioButton" name="radioButtonPython2Interpreter">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed Gnuradio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed GNU Radio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>&amp;Python2 interpreter</string>
@@ -575,7 +592,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Gn&amp;uradio Directory</string>
+             <string>GNU Radio Directory</string>
             </property>
            </widget>
           </item>

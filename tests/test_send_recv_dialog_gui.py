@@ -196,7 +196,7 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.device.set_client_port(port)
         send_dialog.device_settings_widget.ui.spinBoxNRepeat.setValue(2)
         send_dialog.ui.btnStart.click()
-        QTest.qWait(100)
+        QTest.qWait(250)
 
         #self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
         self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
@@ -290,12 +290,10 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        n = 0
-        while generator_frame.network_sdr_plugin.is_sending and n < 50:
+        while generator_frame.network_sdr_plugin.is_sending:
             time.sleep(0.1)
-            n += 1
 
-        QTest.qWait(10)
+        QTest.qWait(50)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

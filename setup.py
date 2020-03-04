@@ -18,6 +18,7 @@ except ImportError:
     sys.exit(1)
 
 from src.urh.dev.native import ExtensionHelper
+from src.urh.dev.native.ExtensionHelper import COMPILER_DIRECTIVES
 import src.urh.version as version
 
 if sys.platform == "win32":
@@ -30,12 +31,6 @@ else:
     OPEN_MP_FLAG = "-fopenmp"
     NO_NUMPY_WARNINGS_FLAG = "-Wno-cpp"
 
-COMPILER_DIRECTIVES = {'language_level': 3,
-                       'cdivision': True,
-                       'wraparound': False,
-                       'boundscheck': False,
-                       'initializedcheck': False,
-                       }
 
 UI_SUBDIRS = ("actions", "delegates", "views")
 PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]

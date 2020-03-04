@@ -146,6 +146,9 @@ PAUSE_SEP = "/"
 
 def read(key: str, default_value=None, type=str):
     val = __get_qt_settings().value(key, default_value)
+    if val is None:
+        val = type()
+
     if type is bool:
         val = str(val).lower()
         try:

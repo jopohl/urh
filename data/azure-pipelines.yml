@@ -57,7 +57,7 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      pytest -s --fulltrace --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      pytest -s --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
@@ -67,7 +67,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: pytest -s --fulltrace --junitxml=junit/test-results.xml tests
+  - script: pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -189,7 +189,7 @@ jobs:
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: pytest -s --fulltrace --junitxml=junit/test-results.xml tests
+  - script: pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on windows'
 
   - task: PublishTestResults@2
@@ -225,7 +225,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade pytest pytest-faulthandler pytest-timeout
+      python -m pip install --upgrade pytest pytest-faulthandler
     displayName: 'Install dependencies'
 
   - script: |
@@ -288,7 +288,7 @@ jobs:
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
-  - script: pytest -s --fulltrace --timeout=600 --junitxml=junit/test-results.xml tests
+  - script: pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on macOS'
 
   - task: PublishTestResults@2

@@ -72,8 +72,8 @@ class Errors:
     @staticmethod
     def gnuradio_not_installed():
         w = QWidget()
-        QMessageBox.critical(w, w.tr("Gnuradio not found"),
-                             w.tr("You need to install Gnuradio for this "
+        QMessageBox.critical(w, w.tr("GNU Radio not found"),
+                             w.tr("You need to install GNU Radio for this "
                                   "feature."))
 
     @staticmethod

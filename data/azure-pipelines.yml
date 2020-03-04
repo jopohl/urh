@@ -163,6 +163,12 @@ jobs:
     condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
     displayName: "Create setup.exe"
 
+  - script: |
+      cd pyinstaller\urh
+      urh_debug.exe autoclose
+    condition: or(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['python.arch'], 'x64'))
+    displayName: "Test urh_debug.exe"
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: dist/
@@ -301,4 +307,4 @@ jobs:
       pip install .
       urh --version
       urh autoclose
-    displayName: 'Test run'
+    displayName: 'Testrun'

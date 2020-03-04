@@ -290,12 +290,10 @@ class TestSendRecvDialog(QtTestCase):
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
-        n = 0
-        while generator_frame.network_sdr_plugin.is_sending and n < 50:
+        while generator_frame.network_sdr_plugin.is_sending:
             time.sleep(0.1)
-            n += 1
 
-        QTest.qWait(10)
+        QTest.qWait(50)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

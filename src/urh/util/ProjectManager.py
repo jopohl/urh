@@ -159,6 +159,9 @@ class ProjectManager(QObject):
             return
 
         for dev_tag in tag:
+            if dev_tag.text is None:
+                logger.warn("{} has None text".format(str(dev_tag)))
+                continue
             try:
                 try:
                     value = int(dev_tag.text)

@@ -728,7 +728,6 @@ class MainController(QMainWindow):
 
     @pyqtSlot()
     def on_new_project_action_triggered(self):
-        self.close_project()
         pdc = ProjectDialog(parent=self)
         pdc.finished.connect(self.on_project_dialog_finished)
         pdc.show()
@@ -754,6 +753,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
+            self.close_project()
             self.project_manager.from_dialog(self.sender())
 
     @pyqtSlot()

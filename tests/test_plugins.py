@@ -4,9 +4,12 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
+from urh.controller.CompareFrameController import CompareFrameController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
+from urh.signalprocessing.MessageType import MessageType
+from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView
 from urh.util.Formatter import Formatter
 
@@ -16,18 +19,35 @@ class TestPlugins(QtTestCase):
         super().setUp()
         self.add_signal_to_form("esaver.complex16s")
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
-        self.cframe = self.form.compare_frame_controller
+        self.cframe = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
     def test_message_break_plugin(self):
         bp = MessageBreakPlugin()
-        action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,
-                               (1, 1, 4, 4), self.cframe.proto_analyzer, 0)
-        self.assertEqual(self.cframe.protocol_model.row_count, 3)
-        action.trigger()
-        self.assertEqual(self.cframe.protocol_model.row_count, 4)
 
+        n = 1
+        action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,
+                               (n, n, 4, 4), self.cframe.proto_analyzer, 0)
+        self.assertEqual(self.cframe.protocol_model.row_count, 3)
+
+        original_msg = self.cframe.proto_analyzer.messages[n]
+        original_msg.message_type = MessageType("Test", [ProtocolLabel("Test Label", 2, 42, 0)])
+        msg_type = original_msg.message_type
+        old_msg_len = len(original_msg)
+
+        action.trigger()
+
+        # Now we have two messages: One before and including selection and one behind selection
+        msg_1 = self.cframe.proto_analyzer.messages[n]
+        msg_2 = self.cframe.proto_analyzer.messages[n + 1]
+
+        self.assertEqual(len(msg_1), 4)
+        self.assertEqual(len(msg_2), old_msg_len - 4)
+        self.assertEqual(msg_type, msg_1.message_type)
+        self.assertEqual(msg_type, msg_2.message_type)
+
+        self.assertEqual(self.cframe.protocol_model.row_count, 4)
         self.cframe.protocol_undo_stack.undo()
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 

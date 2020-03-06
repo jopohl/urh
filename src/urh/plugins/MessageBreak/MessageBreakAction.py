@@ -17,12 +17,12 @@ class MessageBreakAction(QUndoCommand):
         self.setText("Break message behind selection")
 
     def redo(self):
-        message = copy.deepcopy(self.proto_analyzer.messages[self.msg_nr])
+        message = self.proto_analyzer.messages[self.msg_nr]
         message1 = Message(plain_bits=message.plain_bits[:self.pos], pause=0,
-                           rssi=0, decoder=message.decoder, message_type=message.message_type,
+                           rssi=message.rssi, decoder=message.decoder, message_type=message.message_type,
                            samples_per_symbol=message.samples_per_symbol)
         message2 = Message(plain_bits=message.plain_bits[self.pos:], pause=message.pause,
-                           rssi=0, decoder=message.decoder, message_type=message.message_type,
+                           rssi=message.rssi, decoder=message.decoder, message_type=message.message_type,
                            samples_per_symbol=message.samples_per_symbol)
         self.proto_analyzer.messages[self.msg_nr] = message1
         self.proto_analyzer.messages.insert(self.msg_nr + 1, message2)

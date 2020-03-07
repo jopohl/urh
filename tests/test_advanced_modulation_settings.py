@@ -19,7 +19,7 @@ class TestAdvancedModulationSettings(QtTestCase):
     def test_message_length_divisor(self):
         assert isinstance(self.form, MainController)
         self.form.ui.actionAuto_detect_new_signals.setChecked(False)
-        self.add_signal_to_form("pwm.coco")
+        self.add_signal_to_form("pwm.complex16s")
         signal_frame = self.form.signal_tab_controller.signal_frames[0]  # type: SignalFrame
         signal_frame.ui.spinBoxNoiseTreshold.setValue(0.0525)
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
@@ -34,7 +34,7 @@ class TestAdvancedModulationSettings(QtTestCase):
         protocol = signal_frame.proto_analyzer
 
         bits = "1000100010001110100011101000111010001000100011101000111010001110100011101000111010001110111011101"
-        pauses = [77114, 77112, 58221]
+        pauses = [77114, 77112, 58220]
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits, msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i], msg=str(i))

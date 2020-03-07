@@ -18,6 +18,9 @@ class TestPlugins(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("esaver.complex16s")
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0.3692)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
+
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller  # type: CompareFrameController
         self.form.ui.tabWidget.setCurrentIndex(1)
@@ -68,6 +71,14 @@ class TestPlugins(QtTestCase):
         zh = ZeroHidePlugin()
         zh.following_zeros = 3
         self.add_signal_to_form("ask.complex")
+        self.form.signal_tab_controller.signal_frames[1].ui.cbModulationType.setCurrentText("ASK")
+
+        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset.setValue(-0.3938)
+        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset.editingFinished.emit()
+
+        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxSamplesPerSymbol.setValue(300)
+        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxSamplesPerSymbol.editingFinished.emit()
+
         self.form.ui.tabWidget.setCurrentIndex(1)
         test_bits = "1011001001011011011011011011011011001000000"
         self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits)

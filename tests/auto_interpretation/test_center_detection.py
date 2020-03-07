@@ -62,7 +62,7 @@ class TestCenterDetection(unittest.TestCase):
             self.assertLessEqual(center, 0.65, msg="{}/{}".format(start, end))
 
     def test_homematic_center_detection(self):
-        data = Signal(get_path_for_data_file("homematic.coco"), "").iq_array.data
+        data = Signal(get_path_for_data_file("homematic.complex32s"), "").iq_array.data
         rect = afp_demod(data, 0.0012, "FSK")
 
         msg1 = rect[17719:37861]

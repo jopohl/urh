@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
 from urh import settings
+from urh.controller.GeneratorTabController import GeneratorTabController
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.ContinuousSendDialog import ContinuousSendDialog
 from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
@@ -216,7 +217,10 @@ class TestSendRecvDialog(QtTestCase):
 
         port = self.get_free_port()
 
-        gframe = self.form.generator_tab_controller
+        gframe = self.form.generator_tab_controller # type: GeneratorTabController
+        for msg in gframe.table_model.protocol.messages:
+            msg.pause = 5000
+
         expected = IQArray(None, np.float32, gframe.total_modulated_samples)
         expected = gframe.modulate_data(expected)
         current_index = Value("L", 0)
@@ -288,13 +292,13 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.ui.btnStart.click()
 
         for msg in generator_frame.table_model.protocol.messages:
-            msg.pause = 500e3
+            msg.pause = 100e3
 
         generator_frame.ui.btnNetworkSDRSend.click()
 
         n = 0
-        while generator_frame.network_sdr_plugin.is_sending and n < 30:
-            time.sleep(1)
+        while generator_frame.network_sdr_plugin.is_sending and n < 50:
+            time.sleep(0.25)
             print("Waiting for messages")
 
         self.assertFalse(generator_frame.network_sdr_plugin.is_sending)

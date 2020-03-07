@@ -327,6 +327,16 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(stc.ui.goto_combobox.count(), 5 + 1)  # select item... also in combobox
 
     def test_open_simulator_dialog_and_send_mismatching_message(self):
+        def __wait_for_simulator_log_message(dialog, log_message):
+
+            n = 0
+            while not any(log_message in msg for msg in dialog.simulator.log_messages):
+                if n < 50:
+                    time.sleep(0.2)
+                else:
+                    self.fail("Did not receive log message \"{}\"".format(log_message))
+                n += 1
+
         stc = self.form.simulator_tab_controller
         assert isinstance(stc, SimulatorTabController)
 
@@ -357,9 +367,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         dialog.ui.btnStartStop.click()
 
-        while not any("Waiting for message 1" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to wait for message 1")
-            time.sleep(0.1)
+        __wait_for_simulator_log_message(dialog, "Waiting for message 1")
 
         modulator = dialog.project_manager.modulators[0]  # type: Modulator
         sender = NetworkSDRInterfacePlugin(raw_mode=True, sending=True)
@@ -369,16 +377,12 @@ class TestSimulatorTabGUI(QtTestCase):
         time.sleep(0.5)
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
 
-        while not any("Waiting for message 2" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator wait for message 2")
-            time.sleep(0.1)
+        __wait_for_simulator_log_message(dialog, "Waiting for message 2")
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.5)
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
-        while not any("Mismatch for label:" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for mismatching message")
-            time.sleep(0.1)
+        __wait_for_simulator_log_message(dialog, "Mismatch for label:")
 
         dialog.on_timer_timeout()  # enforce writing to text view
         simulator_log = dialog.ui.textEditSimulation.toPlainText()

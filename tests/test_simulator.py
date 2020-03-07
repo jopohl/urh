@@ -26,7 +26,7 @@ from urh.util.Logger import logger
 
 
 class TestSimulator(QtTestCase):
-    TIMEOUT = 0.25
+    TIMEOUT = 0.2
 
     def setUp(self):
         super().setUp()
@@ -34,6 +34,16 @@ class TestSimulator(QtTestCase):
         Modulator.FORCE_DTYPE = np.float32
 
         self.num_zeros_for_pause = 1000
+
+    def __wait_for_simulator_log_message(self, dialog, log_message):
+
+        n = 0
+        while not any(log_message in msg for msg in dialog.simulator.log_messages):
+            if n < 50:
+                time.sleep(self.TIMEOUT)
+            else:
+                self.fail("Did not receive log message \"{}\"".format(log_message))
+            n += 1
 
     def test_simulation_flow(self):
         """
@@ -73,9 +83,7 @@ class TestSimulator(QtTestCase):
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
 
-        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to wait for message")
-            time.sleep(self.TIMEOUT)
+        self.__wait_for_simulator_log_message(dialog, "Waiting for message")
 
         conn, addr = s.accept()
 
@@ -101,10 +109,7 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
-        while not any("Sending message 2" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to send message 2")
-            time.sleep(self.TIMEOUT)
-
+        self.__wait_for_simulator_log_message(dialog, "Sending message 2")
         bits = self.__demodulate(conn)
 
         self.assertEqual(len(bits), 1)
@@ -121,9 +126,7 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
-        while not any("Sending message 4" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to send message 4")
-            time.sleep(self.TIMEOUT)
+        self.__wait_for_simulator_log_message(dialog, "Sending message 4")
 
         bits = self.__demodulate(conn)
 
@@ -141,9 +144,7 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(IQArray(None, np.float32, self.num_zeros_for_pause), 1)
 
-        while not any("Sending message 6" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to send message 6")
-            time.sleep(self.TIMEOUT)
+        self.__wait_for_simulator_log_message(dialog, "Sending message 6")
 
         bits = self.__demodulate(conn)
 
@@ -241,9 +242,7 @@ class TestSimulator(QtTestCase):
         simulator.sender.device.set_client_port(port)
         dialog.ui.btnStartStop.click()
 
-        while not any("Waiting for message" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to wait for message")
-            time.sleep(self.TIMEOUT)
+        self.__wait_for_simulator_log_message(dialog, "Waiting for message")
 
         conn, addr = s.accept()
 
@@ -253,17 +252,18 @@ class TestSimulator(QtTestCase):
         time.sleep(self.TIMEOUT)
         self.alice.send_raw_data(IQArray(None, np.float32, 2*self.num_zeros_for_pause), 1)
 
-        while not any("Sending message" in msg for msg in dialog.simulator.log_messages):
-            logger.debug("Waiting for simulator to send message")
-            time.sleep(self.TIMEOUT)
+        self.__wait_for_simulator_log_message(dialog, "Sending message")
 
-        time.sleep(self.TIMEOUT)
         bits = self.__demodulate(conn)
         self.assertEqual(bits[0].rstrip("0"), "101010101")
 
+        n = 0
         while simulator.is_simulating:
-            logger.debug("Wait for simulator to finish")
-            time.sleep(self.TIMEOUT)
+            if n < 20:
+                time.sleep(self.TIMEOUT)
+            else:
+                self.fail("Simulator did not finish")
+            n += 1
 
         NetworkSDRInterfacePlugin.shutdown_socket(conn)
         NetworkSDRInterfacePlugin.shutdown_socket(s)

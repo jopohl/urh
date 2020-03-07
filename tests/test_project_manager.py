@@ -82,7 +82,7 @@ class TestProjectManager(QtTestCase):
 
         self.add_signal_to_form("esaver.complex16s")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.messages), 3)
-        self.add_signal_to_form("two_participants.coco")
+        self.add_signal_to_form("two_participants.complex16s")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[1].proto_analyzer.messages), 18)
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames[2].proto_analyzer.messages), 1)

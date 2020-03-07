@@ -98,6 +98,9 @@ class TestCRCGUIIntegration(QtTestCase):
 
     def test_checksum_in_generation_tab(self):
         self.add_signal_to_form("esaver.complex16s")
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0.3692)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
+
         self.form.compare_frame_controller.add_protocol_label(4, 6, 0, 1, edit_label_name=False)
         checksum_fieldtype = next(
             ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)

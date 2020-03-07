@@ -16,11 +16,13 @@ from urh.ui.views.LabelValueTableView import LabelValueTableView
 class TestAnalysisTabGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.add_signal_to_form("two_participants.coco")
+        self.add_signal_to_form("two_participants.complex16s")
         assert isinstance(self.form, MainController)
         self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0574)
         self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxTolerance.setValue(10)
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxTolerance.editingFinished.emit()
 
     def test_analyze_button_fsk(self):
         assert isinstance(self.cfc, CompareFrameController)

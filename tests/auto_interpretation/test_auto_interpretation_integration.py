@@ -37,7 +37,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0], "b25b6db6c80")
 
     def test_auto_interpretation_overshoot_ook(self):
-        data = Signal(get_path_for_data_file("ook_overshoot.coco"), "").iq_array
+        data = Signal(get_path_for_data_file("ook_overshoot.complex16s"), "").iq_array
         result = AutoInterpretation.estimate(data)
         self.assertEqual(result["modulation_type"], "ASK")
         self.assertEqual(result["bit_length"], 500)
@@ -89,7 +89,7 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
             self.assertTrue(demodulated[i].startswith("8"))
 
     def test_auto_interpretation_homematic(self):
-        data = Signal(get_path_for_data_file("homematic.coco"), "").iq_array
+        data = Signal(get_path_for_data_file("homematic.complex32s"), "").iq_array
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]

@@ -71,21 +71,13 @@ If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run W
 URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__. If available, simply use your package manager to install URH. 
 
 #### Generic Installation with pip (Ubuntu/Debian)
-URH you can also be installed with using ```python3 -m pip install urh```. 
-In case you are running __Ubuntu__ or __Debian__ read on for more specific instructions.
-
-In order to use native device backends, make sure you install the __-dev__ package for your desired SDRs, that is ```libairspy-dev```, ```libhackrf-dev```, ```librtlsdr-dev```, ```libuhd-dev```.
-
-If your device does not have a ```-dev``` package, e.g. LimeSDR, you need to manually create a symlink to the ```.so```, like this:
-```bash
-sudo ln -s /usr/lib/x86_64-linux-gnu/libLimeSuite.so.17.02.2 /usr/lib/x86_64-linux-gnu/libLimeSuite.so
-```
-
-__before__ installing URH, using:
+URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with ``` pip ``` . For Ubuntu/Debian use the following commands to install URH including extensions for native SDR support.
 
 ```bash
-sudo apt-get update
-sudo apt-get install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip cython3
+sudo apt update
+sudo apt install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip cython3
+# Install following packages for native support of corresponding SDR (before installing URH)
+sudo apt install libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev
 sudo pip3 install urh
 ```
 

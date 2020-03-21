@@ -59,7 +59,7 @@ class TestAdvancedModulationSettings(QtTestCase):
         timer = QTimer(self.form)
         timer.setSingleShot(True)
         timer.timeout.connect(accept_dialog)
-        timer.setInterval(10)
+        timer.setInterval(100)
         timer.start()
 
         signal_frame.ui.btnAdvancedModulationSettings.click()

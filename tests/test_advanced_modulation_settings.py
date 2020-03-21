@@ -14,10 +14,10 @@ class TestAdvancedModulationSettings(QtTestCase):
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         self.assertGreater(signal_frame.proto_analyzer.num_messages, 1)
+        logger.debug("test_pause_threshold: Call make setting")
         self.__make_setting(signal_frame, pause_threshold=0)
+        logger.debug("test_pause_threshold: Finished make setting")
         self.assertEqual(signal_frame.proto_analyzer.num_messages, 1)
-
-        logger.debug("Finished pause threshold test")
 
     def test_message_length_divisor(self):
         assert isinstance(self.form, MainController)
@@ -42,13 +42,13 @@ class TestAdvancedModulationSettings(QtTestCase):
             self.assertEqual(protocol.plain_bits_str[i], bits, msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i], msg=str(i))
 
+        logger.debug("test_message_length_divisor: Call make setting")
         self.__make_setting(signal_frame, message_divisor_length=4)
+        logger.debug("test_message_length_divisor: Finished make setting")
         self.assertEqual(signal_frame.signal.message_length_divisor, 4)
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits + "000", msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol, msg=str(i))
-
-        logger.debug("Finished length divisor test")
 
     def __make_setting(self, signal_frame, pause_threshold=None, message_divisor_length=None):
         def accept_dialog():
@@ -59,7 +59,6 @@ class TestAdvancedModulationSettings(QtTestCase):
                     if message_divisor_length is not None:
                         widget.ui.spinBoxMessageLengthDivisor.setValue(message_divisor_length)
                     widget.ui.buttonBox.accepted.emit()
-                    logger.info("Accepted dialog")
                     return
 
         timer = QTimer(self.form)
@@ -68,5 +67,4 @@ class TestAdvancedModulationSettings(QtTestCase):
         timer.setInterval(250)
         timer.start()
 
-        logger.info("Opening dialog")
         signal_frame.ui.btnAdvancedModulationSettings.click()

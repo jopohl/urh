@@ -5,6 +5,7 @@ from tests.QtTestCase import QtTestCase
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
 from urh.controller.widgets.SignalFrame import SignalFrame
+from urh.util.Logger import logger
 
 
 class TestAdvancedModulationSettings(QtTestCase):
@@ -54,12 +55,14 @@ class TestAdvancedModulationSettings(QtTestCase):
                     if message_divisor_length is not None:
                         widget.ui.spinBoxMessageLengthDivisor.setValue(message_divisor_length)
                     widget.ui.buttonBox.accepted.emit()
+                    logger.info("Accepted dialog")
                     return
 
         timer = QTimer(self.form)
-        #timer.setSingleShot(True)
+        timer.setSingleShot(True)
         timer.timeout.connect(accept_dialog)
-        timer.setInterval(100)
+        timer.setInterval(250)
         timer.start()
 
+        logger.info("Opening dialog")
         signal_frame.ui.btnAdvancedModulationSettings.click()

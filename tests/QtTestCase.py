@@ -1,19 +1,18 @@
 import faulthandler
 import gc
 import os
-import sip
-import sys
 import time
 import unittest
 
+import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
 
@@ -103,11 +102,3 @@ class QtTestCase(unittest.TestCase):
                                 mimedata, Qt.LeftButton, Qt.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)
-
-    def get_free_port(self):
-        import socket
-        s = socket.socket()
-        s.bind(("", 0))
-        port = s.getsockname()[1]
-        s.close()
-        return port

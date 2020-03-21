@@ -7,16 +7,8 @@ from PyQt5.QtWidgets import QApplication
 from urh import settings
 from urh.controller.MainController import MainController
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
+from urh.util import util
 from urh.util.ProjectManager import ProjectManager
-
-
-def get_free_port():
-    s = socket.socket()
-    s.bind(("", 0))
-    port = s.getsockname()[1]
-    s.close()
-    return port
-
 
 def send_data(port):
     num_samples = settings.SPECTRUM_BUFFER_SIZE
@@ -55,7 +47,7 @@ def close_socket(sock):
 if __name__ == '__main__':
     app = QApplication(["test"])
     main = MainController()
-    port = get_free_port()
+    port = util.get_free_port()
     dialog = SpectrumDialogController(ProjectManager(main))
     dialog.showMaximized()
     dialog.ui.cbDevice.setCurrentText("Network SDR")

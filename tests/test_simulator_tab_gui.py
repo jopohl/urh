@@ -23,6 +23,7 @@ from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorRule import ConditionType
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -359,7 +360,7 @@ class TestSimulatorTabGUI(QtTestCase):
         network_sdr_name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(network_sdr_name)
 
-        rcv_port = self.get_free_port()
+        rcv_port = util.get_free_port()
         dialog.simulator.sniffer.rcv_device.set_server_port(rcv_port)
 
         dialog.simulator.sniffer.adaptive_noise = False

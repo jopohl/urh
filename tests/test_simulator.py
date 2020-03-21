@@ -22,6 +22,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.simulator.ActionItem import TriggerCommandActionItem, SleepActionItem, CounterActionItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -60,7 +61,7 @@ class TestSimulator(QtTestCase):
         self.form.add_files([profile])
         self.assertEqual(len(self.form.simulator_tab_controller.simulator_scene.get_all_message_items()), 6)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port
 
@@ -73,7 +74,7 @@ class TestSimulator(QtTestCase):
         simulator = dialog.simulator
         simulator.sniffer.rcv_device.set_server_port(port)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -220,7 +221,7 @@ class TestSimulator(QtTestCase):
         stc.ui.lineEditTriggerCommand.setText(external_command)
         self.assertEqual(action.model_item.command, external_command)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         self.alice = NetworkSDRInterfacePlugin(raw_mode=True)
         self.alice.client_port = port
 
@@ -232,7 +233,7 @@ class TestSimulator(QtTestCase):
         simulator = dialog.simulator
         simulator.sniffer.rcv_device.set_server_port(port)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)

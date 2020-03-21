@@ -41,7 +41,6 @@ class AbstractBaseThread(QThread):
 
         self.is_in_spectrum_mode = False
 
-        self.context = None
         self.socket = None
 
         gnuradio_path_file = os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")

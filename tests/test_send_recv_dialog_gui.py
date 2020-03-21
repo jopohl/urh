@@ -23,6 +23,7 @@ from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDR
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Signal import Signal
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -131,7 +132,7 @@ class TestSendRecvDialog(QtTestCase):
             dialog.close()
 
     def test_receive(self):
-        port = self.get_free_port()
+        port = util.get_free_port()
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
@@ -159,7 +160,7 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog.close()
 
     def test_spectrum(self):
-        port = self.get_free_port()
+        port = util.get_free_port()
         spectrum_dialog = self.__get_spectrum_dialog()
         spectrum_dialog.device.set_server_port(port)
         spectrum_dialog.ui.btnStart.click()
@@ -188,7 +189,7 @@ class TestSendRecvDialog(QtTestCase):
         spectrum_dialog.close()
 
     def test_send(self):
-        port = self.get_free_port()
+        port = util.get_free_port()
         receive_dialog = self.__get_recv_dialog()
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
@@ -215,7 +216,7 @@ class TestSendRecvDialog(QtTestCase):
         self.add_signal_to_form("esaver.complex16s")
         self.__add_first_signal_to_generator()
 
-        port = self.get_free_port()
+        port = util.get_free_port()
 
         gframe = self.form.generator_tab_controller # type: GeneratorTabController
         for msg in gframe.table_model.protocol.messages:
@@ -285,7 +286,7 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
         sniff_dialog.sniff_settings_widget.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
 
         sniff_dialog.device.set_server_port(port)
         generator_frame.network_sdr_plugin.client_port = port

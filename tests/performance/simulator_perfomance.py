@@ -16,6 +16,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.Simulator import Simulator
 from urh.simulator.SimulatorMessage import SimulatorMessage
+from urh.util import util
 from urh.util.Logger import logger
 
 
@@ -99,14 +100,14 @@ class TestSimulatorPerfomance(QtTestCase):
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         sniffer = simulator.sniffer
         sniffer.rcv_device.set_server_port(port)
 
         self.network_sdr_plugin_sender.client_port = port
 
         sender = simulator.sender
-        port = self.get_free_port()
+        port = util.get_free_port()
         sender.device.set_client_port(port)
         sender.device._VirtualDevice__dev.name = "simulator_sender"
 

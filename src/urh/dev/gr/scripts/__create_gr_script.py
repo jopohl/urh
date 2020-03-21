@@ -2,7 +2,7 @@ import re
 import sys
 
 #TARGET = sys.argv[1]  # e.g. airspy_recv.py
-TARGET = "airspy_recv.py"
+TARGET = "hackrf_send.py"
 
 variables = []
 used_variables = []
@@ -32,7 +32,7 @@ used_variables = list(filter(None, used_variables))
 start_vars = False
 imports_written = False
 with open("top_block.py", "r") as r:
-    with open("airspy_recv.py", "w") as f:
+    with open(TARGET, "w") as f:
         for line in r:
             if line.strip().startswith("#"):
                 if not imports_written:

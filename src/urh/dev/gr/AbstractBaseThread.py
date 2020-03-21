@@ -64,7 +64,7 @@ class AbstractBaseThread(QThread):
         self.data = None  # Placeholder for SenderThread
         self.current_iteration = 0  # Counts number of Sendings in SenderThread
 
-        self.tb_process = None
+        self.gr_process = None
 
     @property
     def sample_rate(self):
@@ -73,10 +73,10 @@ class AbstractBaseThread(QThread):
     @sample_rate.setter
     def sample_rate(self, value):
         self._sample_rate = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'SR:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'SR:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -87,10 +87,10 @@ class AbstractBaseThread(QThread):
     @freq.setter
     def freq(self, value):
         self._freq = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'F:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'F:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -101,10 +101,10 @@ class AbstractBaseThread(QThread):
     @gain.setter
     def gain(self, value):
         self._gain = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'G:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'G:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -115,10 +115,10 @@ class AbstractBaseThread(QThread):
     @if_gain.setter
     def if_gain(self, value):
         self._if_gain = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'IFG:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'IFG:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -129,10 +129,10 @@ class AbstractBaseThread(QThread):
     @baseband_gain.setter
     def baseband_gain(self, value):
         self._baseband_gain = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'BBG:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'BBG:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -143,10 +143,10 @@ class AbstractBaseThread(QThread):
     @bandwidth.setter
     def bandwidth(self, value):
         self._bandwidth = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'BW:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'BW:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -157,10 +157,10 @@ class AbstractBaseThread(QThread):
     @freq_correction.setter
     def freq_correction(self, value):
         self._freq_correction = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'FC:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'FC:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -187,10 +187,10 @@ class AbstractBaseThread(QThread):
     @direct_sampling_mode.setter
     def direct_sampling_mode(self, value):
         self._direct_sampling_mode = value
-        if self.tb_process:
+        if self.gr_process:
             try:
-                self.tb_process.stdin.write(b'DSM:' + bytes(str(value), "utf8") + b'\n')
-                self.tb_process.stdin.flush()
+                self.gr_process.stdin.write(b'DSM:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
 
@@ -224,9 +224,9 @@ class AbstractBaseThread(QThread):
 
         logger.info("Starting GNU Radio")
         logger.debug(" ".join(options))
-        self.tb_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
+        self.gr_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
         logger.info("Started GNU Radio")
-        t = Thread(target=self.enqueue_output, args=(self.tb_process.stderr, self.queue))
+        t = Thread(target=self.enqueue_output, args=(self.gr_process.stderr, self.queue))
         t.daemon = True  # thread dies with the program
         t.start()
 
@@ -278,10 +278,10 @@ class AbstractBaseThread(QThread):
 
         try:
             logger.info("Kill grc process")
-            self.tb_process.kill()
+            self.gr_process.kill()
             logger.info("Term grc process")
-            self.tb_process.terminate()
-            self.tb_process = None
+            self.gr_process.terminate()
+            self.gr_process = None
         except AttributeError:
             pass
 

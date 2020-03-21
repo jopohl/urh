@@ -1,4 +1,5 @@
 from optparse import OptionParser
+from InputHandlerThread import InputHandlerThread
 import Initializer
 
 Initializer.init_path()
@@ -116,20 +117,23 @@ class top_block(gr.top_block):
         self.antenna_index = antenna_index
 
 
-def main(top_block_cls=top_block, options=None):
-    tb = top_block_cls()
+if __name__ == '__main__':
+    parser = OptionParser(usage='%prog: [options]')
+    parser.add_option('-s', '--sample-rate', dest='sample_rate', default=100000)
+    parser.add_option('-f', '--frequency', dest='frequency', default=433000)
+    parser.add_option('-g', '--gain', dest='rf_gain', default=30)
+    parser.add_option('-i', '--if-gain', dest='if_gain', default=30)
+    parser.add_option('-b', '--bb-gain', dest='bb_gain', default=30)
+    parser.add_option('-w', '--bandwidth', dest='bandwidth', default=250000)
+    parser.add_option('-c', '--freq-correction', dest='freq_correction', default=0)
+    parser.add_option('-d', '--direct-sampling', dest='direct_sampling', default=0)
+    parser.add_option('-n', '--channel-index', dest='channel_index', default=0)
+    parser.add_option('-a', '--antenna-index', dest='antenna_index', default=0)
+    parser.add_option('-p', '--port', dest='port', default=1234)
 
-    def sig_handler(sig=None, frame=None):
-        tb.stop()
-        tb.wait()
-        sys.exit(0)
-
-    signal.signal(signal.SIGINT, sig_handler)
-    signal.signal(signal.SIGTERM, sig_handler)
-
+    (options, args) = parser.parse_args()
+    tb = top_block(int(options.sample_rate), int(options.frequency), int(options.freq_correction), int(options.rf_gain), int(options.if_gain), int(options.bb_gain), int(options.bandwidth), int(options.port))
+    iht = InputHandlerThread(tb)
+    iht.start()
     tb.start()
     tb.wait()
-
-
-if __name__ == '__main__':
-    main()

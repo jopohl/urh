@@ -206,7 +206,8 @@ class AbstractBaseThread(QThread):
         filename = self.device.lower().split(" ")[0] + suffix
 
         if not self.python2_interpreter:
-            self.stop("FATAL: Could not find python 2 interpreter. Make sure you have a running GNU Radio installation.")
+            self.stop(
+                "FATAL: Could not find python 2 interpreter. Make sure you have a running GNU Radio installation.")
             return
 
         options = [self.python2_interpreter, os.path.join(rp, filename),

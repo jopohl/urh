@@ -17,6 +17,8 @@ class TestAdvancedModulationSettings(QtTestCase):
         self.__make_setting(signal_frame, pause_threshold=0)
         self.assertEqual(signal_frame.proto_analyzer.num_messages, 1)
 
+        logger.debug("Finished pause threshold test")
+
     def test_message_length_divisor(self):
         assert isinstance(self.form, MainController)
         self.form.ui.actionAuto_detect_new_signals.setChecked(False)
@@ -45,6 +47,8 @@ class TestAdvancedModulationSettings(QtTestCase):
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits + "000", msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol, msg=str(i))
+
+        logger.debug("Finished length divisor test")
 
     def __make_setting(self, signal_frame, pause_threshold=None, message_divisor_length=None):
         def accept_dialog():

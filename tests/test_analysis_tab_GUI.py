@@ -11,6 +11,7 @@ from urh.controller.CompareFrameController import CompareFrameController
 from urh.controller.MainController import MainController
 from urh.signalprocessing.FieldType import FieldType
 from urh.ui.views.LabelValueTableView import LabelValueTableView
+from urh.util.Logger import logger
 
 
 class TestAnalysisTabGUI(QtTestCase):
@@ -348,6 +349,7 @@ class TestAnalysisTabGUI(QtTestCase):
             context_menu = next(w for w in QApplication.topLevelWidgets()
                                 if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
             context_menu.close()
+            logger.debug("Closed context menu")
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         self.cfc.add_message_type()
@@ -360,8 +362,10 @@ class TestAnalysisTabGUI(QtTestCase):
         timer = QTimer(self.cfc)
         timer.setSingleShot(True)
         timer.timeout.connect(on_timeout)
-        timer.start(1)
+        timer.setInterval(250)
+        timer.start()
 
+        logger.info("Opening context menu")
         self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]

@@ -1,4 +1,5 @@
 import os
+import socket
 import sys
 import tempfile
 import time
@@ -6,7 +7,6 @@ from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
 
-import zmq
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from urh import settings
@@ -211,16 +211,11 @@ class AbstractBaseThread(QThread):
             return
 
         options = [self.python2_interpreter, os.path.join(rp, filename),
-                   "--samplerate", str(self.sample_rate), "--freq", str(self.frequency),
-                   "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
+                   "--sample-rate", str(int(self.sample_rate)), "--frequency", str(int(self.frequency)),
+                   "--gain", str(self.gain), "--if-gain", str(self.if_gain), "--bb-gain", str(self.baseband_gain),
+                   "--bandwidth", str(int(self.bandwidth)), "--freq-correction", str(self.freq_correction),
+                   "--direct-sampling", str(self.direct_sampling_mode),  "--channel-index", str(self.channel_index),
                    "--port", str(self.gr_port)]
-
-        if self.device.upper() == "HACKRF":
-            options.extend(["--if-gain", str(self.if_gain), "--baseband-gain", str(self.baseband_gain)])
-
-        if self.device.upper() == "RTL-SDR":
-            options.extend(["--freq-correction", str(self.freq_correction),
-                            "--direct-sampling", str(self.direct_sampling_mode)])
 
         logger.info("Starting GNU Radio")
         logger.debug(" ".join(options))
@@ -232,16 +227,16 @@ class AbstractBaseThread(QThread):
 
     def init_recv_socket(self):
         logger.info("Initializing receive socket")
-        self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PULL)
-        self.socket.setsockopt(zmq.RCVTIMEO, 90)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         logger.info("Initialized receive socket")
 
         while not self.isInterruptionRequested():
             try:
                 time.sleep(0.1)
                 logger.info("Trying to get a connection to GNU Radio...")
-                self.socket.connect("tcp://{0}:{1}".format(self.ip, self.gr_port))
+                self.socket.connect((self.ip, self.gr_port))
                 logger.info("Got connection")
                 break
             except (ConnectionRefusedError, ConnectionResetError):

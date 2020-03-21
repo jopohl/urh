@@ -175,7 +175,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     port: port
-    psize: '32768'
+    psize: '65536'
     type: complex
     vlen: '1'
   states:

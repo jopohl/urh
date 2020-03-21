@@ -36,7 +36,7 @@ class top_block(gr.top_block):
         self.osmosdr_sink_0.set_bb_gain(bb_gain, 0)
         self.osmosdr_sink_0.set_antenna('', 0)
         self.osmosdr_sink_0.set_bandwidth(bandwidth, 0)
-        self.blocks_udp_source_0 = blocks.udp_source(gr.sizeof_gr_complex * 1, '127.0.0.1', port, 32768, False)
+        self.blocks_udp_source_0 = blocks.udp_source(gr.sizeof_gr_complex * 1, '127.0.0.1', port, 65536, False)
 
         self.connect((self.blocks_udp_source_0, 0), (self.osmosdr_sink_0, 0))
 

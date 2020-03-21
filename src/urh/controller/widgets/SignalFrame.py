@@ -1267,12 +1267,16 @@ class SignalFrame(QFrame):
                                                                   parameter_value=message_length_divisor)
             self.undo_stack.push(message_length_divisor_action)
 
-    @pyqtSlot()
-    def on_btn_advanced_modulation_settings_clicked(self):
+    def get_advanced_modulation_settings_dialog(self):
         dialog = AdvancedModulationOptionsDialog(self.signal.pause_threshold, self.signal.message_length_divisor,
                                                  parent=self)
         dialog.pause_threshold_edited.connect(self.on_pause_threshold_edited)
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
+        return dialog
+
+    @pyqtSlot()
+    def on_btn_advanced_modulation_settings_clicked(self):
+        dialog = self.get_advanced_modulation_settings_dialog()
         dialog.exec_()
 
     @pyqtSlot()

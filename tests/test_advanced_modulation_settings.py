@@ -1,11 +1,6 @@
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication
-
 from tests.QtTestCase import QtTestCase
 from urh.controller.MainController import MainController
-from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
 from urh.controller.widgets.SignalFrame import SignalFrame
-from urh.util.Logger import logger
 
 
 class TestAdvancedModulationSettings(QtTestCase):
@@ -14,9 +9,11 @@ class TestAdvancedModulationSettings(QtTestCase):
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         self.assertGreater(signal_frame.proto_analyzer.num_messages, 1)
-        logger.debug("test_pause_threshold: Call make setting")
-        self.__make_setting(signal_frame, pause_threshold=0)
-        logger.debug("test_pause_threshold: Finished make setting")
+
+        dialog = signal_frame.get_advanced_modulation_settings_dialog()
+        dialog.ui.spinBoxPauseThreshold.setValue(0)
+        dialog.on_accept_clicked()
+
         self.assertEqual(signal_frame.proto_analyzer.num_messages, 1)
 
     def test_message_length_divisor(self):
@@ -33,7 +30,6 @@ class TestAdvancedModulationSettings(QtTestCase):
         signal_frame.ui.spinBoxTolerance.setValue(2)
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 
-
         protocol = signal_frame.proto_analyzer
 
         bits = "1000100010001110100011101000111010001000100011101000111010001110100011101000111010001110111011101"
@@ -42,29 +38,11 @@ class TestAdvancedModulationSettings(QtTestCase):
             self.assertEqual(protocol.plain_bits_str[i], bits, msg=str(i))
             self.assertEqual(protocol.messages[i].pause, pauses[i], msg=str(i))
 
-        logger.debug("test_message_length_divisor: Call make setting")
-        self.__make_setting(signal_frame, message_divisor_length=4)
-        logger.debug("test_message_length_divisor: Finished make setting")
+        dialog = signal_frame.get_advanced_modulation_settings_dialog()
+        dialog.ui.spinBoxMessageLengthDivisor.setValue(4)
+        dialog.on_accept_clicked()
         self.assertEqual(signal_frame.signal.message_length_divisor, 4)
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits + "000", msg=str(i))
-            self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol, msg=str(i))
-
-    def __make_setting(self, signal_frame, pause_threshold=None, message_divisor_length=None):
-        def accept_dialog():
-            for widget in QApplication.instance().topLevelWidgets():
-                if isinstance(widget, AdvancedModulationOptionsDialog):
-                    if pause_threshold is not None:
-                        widget.ui.spinBoxPauseThreshold.setValue(pause_threshold)
-                    if message_divisor_length is not None:
-                        widget.ui.spinBoxMessageLengthDivisor.setValue(message_divisor_length)
-                    widget.ui.buttonBox.accepted.emit()
-                    return
-
-        timer = QTimer(self.form)
-        timer.setSingleShot(True)
-        timer.timeout.connect(accept_dialog)
-        timer.setInterval(250)
-        timer.start()
-
-        signal_frame.ui.btnAdvancedModulationSettings.click()
+            self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol,
+                             msg=str(i))

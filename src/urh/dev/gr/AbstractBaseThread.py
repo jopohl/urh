@@ -26,7 +26,7 @@ class AbstractBaseThread(QThread):
         self.ip = ip
         self.gr_port = 1337
         self._sample_rate = sample_rate
-        self.frequency = frequency
+        self._frequency = frequency
         self._gain = gain
         self._if_gain = if_gain
         self._baseband_gain = baseband_gain
@@ -82,11 +82,11 @@ class AbstractBaseThread(QThread):
 
     @property
     def frequency(self):
-        return self.frequency
+        return self._frequency
 
     @frequency.setter
     def frequency(self, value):
-        self.frequency = value
+        self._frequency = value
         if self.gr_process:
             try:
                 self.gr_process.stdin.write(b'F:' + bytes(str(value), "utf8") + b'\n')

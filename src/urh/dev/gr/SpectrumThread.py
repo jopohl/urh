@@ -7,8 +7,8 @@ from urh.util.Logger import logger
 
 
 class SpectrumThread(AbstractBaseThread):
-    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
-        super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
+    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
+        super().__init__(frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
         self.buf_size = settings.SPECTRUM_BUFFER_SIZE
         self.data = np.zeros(self.buf_size, dtype=np.complex64)
         self.x = None

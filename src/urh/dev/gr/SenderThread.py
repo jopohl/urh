@@ -13,8 +13,8 @@ from urh.util.Logger import logger
 class SenderThread(AbstractBaseThread):
     MAX_SAMPLES_PER_TRANSMISSION = 65536
 
-    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
-        super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, False, ip, parent)
+    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1', parent=None):
+        super().__init__(frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, False, ip, parent)
 
         self.data = numpy.empty(1, dtype=numpy.complex64)
         self.context = zmq.Context()

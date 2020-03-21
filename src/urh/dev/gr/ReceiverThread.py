@@ -7,9 +7,9 @@ from urh.util.Logger import logger
 
 
 class ReceiverThread(AbstractBaseThread):
-    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
+    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
                  parent=None, resume_on_full_receive_buffer=False):
-        super().__init__(freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
+        super().__init__(frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
 
         self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
         self.data = None

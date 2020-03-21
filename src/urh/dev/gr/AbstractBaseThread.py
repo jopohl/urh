@@ -20,13 +20,13 @@ class AbstractBaseThread(QThread):
     stopped = pyqtSignal()
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, freq, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
+    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
                  ip='127.0.0.1', parent=None):
         super().__init__(parent)
         self.ip = ip
         self.gr_port = 1337
         self._sample_rate = sample_rate
-        self._freq = freq
+        self.frequency = frequency
         self._gain = gain
         self._if_gain = if_gain
         self._baseband_gain = baseband_gain
@@ -81,12 +81,12 @@ class AbstractBaseThread(QThread):
                 pass
 
     @property
-    def freq(self):
-        return self._freq
+    def frequency(self):
+        return self.frequency
 
-    @freq.setter
-    def freq(self, value):
-        self._freq = value
+    @frequency.setter
+    def frequency(self, value):
+        self.frequency = value
         if self.gr_process:
             try:
                 self.gr_process.stdin.write(b'F:' + bytes(str(value), "utf8") + b'\n')
@@ -211,7 +211,7 @@ class AbstractBaseThread(QThread):
             return
 
         options = [self.python2_interpreter, os.path.join(rp, filename),
-                   "--samplerate", str(self.sample_rate), "--freq", str(self.freq),
+                   "--samplerate", str(self.sample_rate), "--freq", str(self.frequency),
                    "--gain", str(self.gain), "--bandwidth", str(self.bandwidth),
                    "--port", str(self.gr_port)]
 

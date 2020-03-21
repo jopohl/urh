@@ -231,7 +231,6 @@ jobs:
     displayName: "download and unpack SDR drivers"
 
   - script: |
-      echo $PYTHONUNBUFFERED
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
       python -m pip install --upgrade pytest pytest-faulthandler

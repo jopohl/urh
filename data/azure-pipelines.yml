@@ -57,7 +57,7 @@ jobs:
   - script: |
       touch tests/show_gui
       cp tests/.coveragerc .
-      python -u pytest -s --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
+      python -u -m pytest -s --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
     displayName: 'Run pytest with coverage'
     condition: eq(variables['python.version'], '3.7')
 
@@ -67,7 +67,7 @@ jobs:
     displayName: 'Generate coverage report'
     condition: eq(variables['python.version'], '3.7')
 
-  - script: python -u pytest -s --junitxml=junit/test-results.xml tests
+  - script: python -u -m pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
     condition: ne(variables['python.version'], '3.7')
 
@@ -195,7 +195,7 @@ jobs:
       assetUploadMode: 'replace'
       addChangeLog: true
 
-  - script: python -u pytest -s --junitxml=junit/test-results.xml tests
+  - script: python -u -m pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on windows'
 
   - task: PublishTestResults@2
@@ -294,7 +294,7 @@ jobs:
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
-  - script: python -u pytest -s --junitxml=junit/test-results.xml tests
+  - script: python -u -m pytest -s --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest on macOS'
 
   - task: PublishTestResults@2

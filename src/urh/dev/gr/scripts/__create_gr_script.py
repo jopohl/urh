@@ -2,7 +2,7 @@ import re
 import sys
 
 #TARGET = sys.argv[1]  # e.g. airspy_recv.py
-TARGET = "hackrf_send.py"
+TARGET = "usrp_recv.py"
 
 variables = []
 used_variables = []

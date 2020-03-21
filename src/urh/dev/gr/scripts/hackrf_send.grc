@@ -182,7 +182,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [350, 257]
+    coordinate: [349, 269]
     rotation: 0
     state: true
 - name: osmosdr_sink_0
@@ -222,7 +222,7 @@ blocks:
     ant7: ''
     ant8: ''
     ant9: ''
-    args: ''
+    args: hackrf
     bb_gain0: bb_gain
     bb_gain1: '20'
     bb_gain10: '20'

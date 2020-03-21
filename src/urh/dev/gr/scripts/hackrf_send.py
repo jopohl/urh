@@ -25,7 +25,7 @@ class top_block(gr.top_block):
         self.bandwidth = bandwidth
 
         self.osmosdr_sink_0 = osmosdr.sink(
-            args="numchan=" + str(1) + " " + ''
+            args="numchan=" + str(1) + " " + 'hackrf'
         )
         self.osmosdr_sink_0.set_time_unknown_pps(osmosdr.time_spec_t())
         self.osmosdr_sink_0.set_sample_rate(sample_rate)

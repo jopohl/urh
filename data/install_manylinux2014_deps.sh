@@ -13,21 +13,21 @@ wget https://github.com/airspy/airspyone_host/archive/v$AIRSPY_VERSION.tar.gz
 tar xf v$AIRSPY_VERSION.tar.gz && rm v$AIRSPY_VERSION.tar.gz
 cd /tmp/airspyone_host-$AIRSPY_VERSION
 mkdir build_airspy && cd build_airspy
-cmake .. && make -j$(nproc) && make install
+cmake3 .. && make -j$(nproc) && make install
 
 cd /tmp
 wget https://github.com/Nuand/bladeRF/archive/$BLADERF_VERSION.tar.gz
-tar xf v$BLADERF_VERSION.tar.gz && rm v$BLADERF_VERSION.tar.gz
+tar xf $BLADERF_VERSION.tar.gz && rm v$BLADERF_VERSION.tar.gz
 cd /tmp/bladeRF-$BLADERF_VERSION
 mkdir build_bladeRF && cd build_bladeRF
-cmake .. && make -j$(nproc) && make install
+cmake3 .. && make -j$(nproc) && make install
 
 cd /tmp
-wget https://github.com/myriadrf/LimeSuite/archive/$LIMESUITE_VERSION.tar.gz
+wget https://github.com/myriadrf/LimeSuite/archive/v$LIMESUITE_VERSION.tar.gz
 tar xf v$LIMESUITE_VERSION.tar.gz && rm v$LIMESUITE_VERSION.tar.gz
 cd /tmp/LimeSuite-$LIMESUITE_VERSION
 mkdir build_lime && cd build_lime
-cmake .. && make -j$(nproc) && make install
+cmake3 .. && make -j$(nproc) && make install
 
 
 cd /tmp

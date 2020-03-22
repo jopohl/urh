@@ -32,6 +32,7 @@ jobs:
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils
       pip install twine setuptools wheel pytest pytest-xvfb pytest-cov pytest-faulthandler
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+      python -c "import os; print('Number of Cores', os.cpu_count())"
     displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py
@@ -136,6 +137,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
+      python -c "import os; print('Number of Cores', os.cpu_count())"
     displayName: 'Install dependencies'
 
   - task: ExtractFiles@1
@@ -234,6 +236,7 @@ jobs:
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
       python -m pip install --upgrade pytest pytest-faulthandler
+      python -c "import os; print('Number of Cores', os.cpu_count())"
     displayName: 'Install dependencies'
 
   - script: |

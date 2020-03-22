@@ -46,6 +46,7 @@ for PYBIN in /opt/python/*/bin; do
      echo -e "\033[36mCompiling wheel for $PYBIN\033[0m"
     "${PYBIN}/pip" install -r /io/data/requirements.txt
     cd /io
+    echo -e "\033[36mBuilding extentions for $PYBIN\033[0m"
     "${PYBIN}/python3" setup.py build_ext -j$(nproc)
     "${PYBIN}/pip" wheel --no-deps /io/ -w /wheelhouse/
 done

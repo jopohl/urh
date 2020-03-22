@@ -94,8 +94,7 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES,
-                           quiet=True, compile_time_env=device_extras)
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, compile_time_env=device_extras)
     return extensions
 
 

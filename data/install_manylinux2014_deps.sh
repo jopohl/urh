@@ -34,3 +34,4 @@ wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-$SDRPLAY_VERSION.1.ru
 bash sdrplay.run --tar xf
 mv mirsdrapi-rsp.h /usr/include
 mv x86_64/* /usr/lib64
+ln -s /usr/lib64/libmirsdrapi-rsp.so.$SDRPLAY_VERSION /usr/lib64/libmirsdrapi-rsp.so

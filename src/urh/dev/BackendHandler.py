@@ -308,18 +308,3 @@ class BackendHandler(object):
             return result + "OK"
         except Exception as e:
             return result + str(e)
-
-    def __auto_detect_gr_python_interpreter(self):
-        paths = os.get_exec_path()
-
-        for p in paths:
-            try:
-                for program in os.listdir(p):
-                    if program.startswith("python") and not program.endswith("-config"):
-                        interpreter = os.path.join(p, program)
-                        if self.__check_gr_python_interpreter(interpreter):
-                            return interpreter
-            except FileNotFoundError:
-                pass
-
-        return ""

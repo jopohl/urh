@@ -95,11 +95,7 @@ class BackendHandler(object):
 
         settings.write("gr_python_interpreter", self.__gr_python_interpreter)
 
-        self.gnuradio_is_installed = settings.read('gnuradio_is_installed', -1, int)
-        if self.gnuradio_is_installed == -1:
-            self.set_gnuradio_installed_status()
-        else:
-            self.gnuradio_is_installed = bool(self.gnuradio_is_installed)
+        self.set_gnuradio_installed_status()
 
         if not hasattr(sys, 'frozen'):
             self.path = os.path.dirname(os.path.realpath(__file__))
@@ -227,8 +223,6 @@ class BackendHandler(object):
                 self.gnuradio_is_installed = True
         else:
             self.gnuradio_is_installed = False
-
-        settings.write("gnuradio_is_installed", int(self.gnuradio_is_installed))
 
     def __device_has_gr_scripts(self, devname: str):
         if not hasattr(sys, "frozen"):

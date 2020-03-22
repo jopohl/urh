@@ -318,7 +318,7 @@ class BackendHandler(object):
         for p in paths:
             try:
                 for program in os.listdir(p):
-                    if program.startswith("python"):
+                    if program.startswith("python") and not program.endswith("-config"):
                         interpreter = os.path.join(p, program)
                         if self.__check_gr_python_interpreter(interpreter):
                             return interpreter

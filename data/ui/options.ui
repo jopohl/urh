@@ -443,13 +443,10 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QLabel" name="labelRebuildNativeStatus">
-            <property name="text">
-             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditIncludeDirs">
+            <property name="placeholderText">
+             <string>Comma separated list of additional include directories</string>
             </property>
            </widget>
           </item>
@@ -467,6 +464,13 @@
            <widget class="QLineEdit" name="lineEditLibDirs">
             <property name="placeholderText">
              <string>Comma separated list of additional library directories</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelIncludeDirs">
+            <property name="text">
+             <string>Include directories:</string>
             </property>
            </widget>
           </item>
@@ -498,17 +502,13 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelIncludeDirs">
+          <item row="4" column="2">
+           <widget class="QLabel" name="labelRebuildNativeStatus">
             <property name="text">
-             <string>Include directories:</string>
+             <string>Rebuild &lt;x&gt; new device extensions. Please restart URH to use them.</string>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lineEditIncludeDirs">
-            <property name="placeholderText">
-             <string>Comma separated list of additional include directories</string>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -525,86 +525,31 @@
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>GNU Radio options</string>
+          <string>GNU Radio options (optional)</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_11">
-            <property name="font">
-             <font>
-              <italic>true</italic>
-             </font>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose a python interpreter which has access to your GNU Radio installation, that is, you can do &lt;span style=&quot; font-weight:600;&quot;&gt;python -c &amp;quot;import gnuradio&amp;quot;&lt;/span&gt; with it on the command line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Needed for GNU Radio backend only</string>
+             <string>Python Interpreter:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEditPython2Interpreter">
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditGRPythonInterpreter">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed GNU Radio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose a python interpreter which has access to your GNU Radio installation, that is, you can do &lt;span style=&quot; font-weight:600;&quot;&gt;python -c &amp;quot;import gnuradio&amp;quot;&lt;/span&gt; with it on the command line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="placeholderText">
-             <string>/usr/bin/python2</string>
+             <string>/usr/bin/python</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QLabel" name="lGnuradioInstalled">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>GNU Radio installation found</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEditGnuradioDirectory">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="placeholderText">
-             <string>C:\Program Files\GNURadio</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButtonPython2Interpreter">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this option if you installed GNU Radio with your package manager e.g. on Linux and Mac OS X.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>&amp;Python2 interpreter</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="radioButtonGnuradioDirectory">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you installed Gnuradio with a bundled python interpreter, you need to enter the site-packages path of the installation here. The path should be something like &lt;span style=&quot; font-style:italic;&quot;&gt;C:\Program Files\GNURadio-3.7&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>GNU Radio Directory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QToolButton" name="btnChoosePython2Interpreter">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QToolButton" name="btnChooseGnuRadioDirectory">
+          <item row="0" column="2">
+           <widget class="QToolButton" name="btnChooseGRPythonInterpreter">
             <property name="text">
              <string>...</string>
             </property>

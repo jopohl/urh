@@ -43,21 +43,7 @@ class AbstractBaseThread(QThread):
 
         self.socket = None
 
-        gnuradio_path_file = os.path.join(tempfile.gettempdir(), "gnuradio_path.txt")
-        if settings.read("use_gnuradio_install_dir", False, bool):
-            gnuradio_dir = settings.read("gnuradio_install_dir", "")
-            with open(gnuradio_path_file, "w") as f:
-                f.write(gnuradio_dir)
-            if os.path.isfile(os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")):
-                self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "pythonw.exe")
-            else:
-                self.python2_interpreter = os.path.join(gnuradio_dir, "gr-python27", "python.exe")
-        else:
-            try:
-                os.remove(gnuradio_path_file)
-            except OSError:
-                pass
-            self.python2_interpreter = settings.read("python2_exe", "")
+        self.gr_python_interpreter = settings.read("gr_python_interpreter", "")
 
         self.queue = Queue()
         self.data = None  # Placeholder for SenderThread
@@ -204,12 +190,13 @@ class AbstractBaseThread(QThread):
         suffix = "_recv.py" if self._receiving else "_send.py"
         filename = self.device.lower().split(" ")[0] + suffix
 
-        if not self.python2_interpreter:
+        if not self.gr_python_interpreter:
             self.stop(
-                "FATAL: Could not find python 2 interpreter. Make sure you have a running GNU Radio installation.")
+                "FATAL: Could not find a GR compatible Python interpreter. "
+                "Make sure you have a running GNU Radio installation.")
             return
 
-        options = [self.python2_interpreter, os.path.join(rp, filename),
+        options = [self.gr_python_interpreter, os.path.join(rp, filename),
                    "--sample-rate", str(int(self.sample_rate)), "--frequency", str(int(self.frequency)),
                    "--gain", str(self.gain), "--if-gain", str(self.if_gain), "--bb-gain", str(self.baseband_gain),
                    "--bandwidth", str(int(self.bandwidth)), "--freq-correction", str(self.freq_correction),

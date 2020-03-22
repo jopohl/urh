@@ -86,17 +86,14 @@ class BackendHandler(object):
 
     def __init__(self):
 
-        python2_exe = settings.read('python2_exe', '')
-        if not python2_exe:
-            self.__python2_exe = self.__get_python2_interpreter()
-            settings.write("python2_exe", self.__python2_exe)
+        gr_python_interpreter = settings.read('gr_python_interpreter', '')
+        if not gr_python_interpreter:
+            self.__gr_python_interpreter = self.__auto_detect_gr_python_interpreter()
+            settings.write("gr_python_interpreter", self.__gr_python_interpreter)
         else:
-            self.__python2_exe = python2_exe
+            self.__gr_python_interpreter = gr_python_interpreter
 
-        settings.write("python2_exe", self.__python2_exe)
-
-        self.gnuradio_install_dir = settings.read('gnuradio_install_dir', "")
-        self.use_gnuradio_install_dir = settings.read('use_gnuradio_install_dir', os.name == "nt", bool)
+        settings.write("gr_python_interpreter", self.__gr_python_interpreter)
 
         self.gnuradio_is_installed = settings.read('gnuradio_is_installed', -1, int)
         if self.gnuradio_is_installed == -1:
@@ -115,14 +112,15 @@ class BackendHandler(object):
         self.get_backends()
 
     @property
-    def python2_exe(self):
-        return self.__python2_exe
+    def gr_python_interpreter(self):
+        return self.__gr_python_interpreter
 
-    @python2_exe.setter
-    def python2_exe(self, value):
-        if value != self.__python2_exe:
-            self.__python2_exe = value
-            settings.write("python2_exe", value)
+    @gr_python_interpreter.setter
+    def gr_python_interpreter(self, value):
+        if value != self.__gr_python_interpreter:
+            self.__gr_python_interpreter = value
+            self.set_gnuradio_installed_status()
+            settings.write("gr_python_interpreter", value)
 
     @property
     def num_native_backends(self):
@@ -215,26 +213,20 @@ class BackendHandler(object):
         except ImportError:
             return False
 
+    def __check_gr_python_interpreter(self, interpreter):
+        # Use shell=True to prevent console window popping up on windows
+        return call('"{0}" -c "import gnuradio"'.format(interpreter), shell=True, stderr=DEVNULL) == 0
+
     def set_gnuradio_installed_status(self):
-        if self.use_gnuradio_install_dir:
-            # We are probably on windows with a bundled gnuradio installation
-            bin_dir = os.path.join(self.gnuradio_install_dir, "bin")
-            site_packages_dir = os.path.join(self.gnuradio_install_dir, "lib", "site-packages")
-            if all(os.path.isdir(dir) for dir in [self.gnuradio_install_dir, bin_dir, site_packages_dir]):
+        if os.path.isfile(self.gr_python_interpreter) and os.access(self.gr_python_interpreter, os.X_OK):
+            try:
+
+                self.gnuradio_is_installed = self.__check_gr_python_interpreter(self.gr_python_interpreter)
+            except OSError as e:
+                logger.error("Could not determine GNU Radio install status. Assuming true. Error: " + str(e))
                 self.gnuradio_is_installed = True
-            else:
-                self.gnuradio_is_installed = False
         else:
-            if os.path.isfile(self.python2_exe) and os.access(self.python2_exe, os.X_OK):
-                try:
-                    # Use shell=True to prevent console window popping up on windows
-                    self.gnuradio_is_installed = call('"{0}" -c "import gnuradio"'.format(self.python2_exe),
-                                                      shell=True, stderr=DEVNULL) == 0
-                except OSError as e:
-                    logger.error("Could not determine GNU Radio install status. Assuming true. Error: " + str(e))
-                    self.gnuradio_is_installed = True
-            else:
-                self.gnuradio_is_installed = False
+            self.gnuradio_is_installed = False
 
         settings.write("gnuradio_is_installed", int(self.gnuradio_is_installed))
 
@@ -326,13 +318,14 @@ class BackendHandler(object):
         except Exception as e:
             return result + str(e)
 
-    def __get_python2_interpreter(self):
+    def __auto_detect_gr_python_interpreter(self):
         paths = os.get_exec_path()
 
         for p in paths:
-            for prog in ["python2", "python2.exe"]:
-                attempt = os.path.join(p, prog)
-                if os.path.isfile(attempt):
-                    return attempt
+            for program in os.listdir(p):
+                if program.startswith("python"):
+                    interpreter = os.path.join(p, program)
+                    if self.__check_gr_python_interpreter(interpreter):
+                        return interpreter
 
         return ""

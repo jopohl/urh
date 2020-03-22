@@ -2,6 +2,12 @@ import os
 import sys
 import tempfile
 
+if sys.platform == "win32":
+    import multiprocessing
+
+    multiprocessing.freeze_support()
+
+
 if sys.version_info < (3, 4):
     print("You need at least Python 3.4 for this application!")
     if sys.version_info[0] < 3:
@@ -94,7 +100,7 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, nthreads=os.cpu_count(),
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES,
                            quiet=True, compile_time_env=device_extras)
     return extensions
 

@@ -7,8 +7,6 @@ from urh import settings
 from urh.util.Logger import logger
 
 
-AUTO_DETECT_GR_PYTHON = False
-
 class Backends(Enum):
     none = "no available backend"
     native = "native backend"
@@ -88,15 +86,7 @@ class BackendHandler(object):
 
     def __init__(self):
 
-        gr_python_interpreter = settings.read('gr_python_interpreter', '')
-        if not gr_python_interpreter and AUTO_DETECT_GR_PYTHON:
-            self.__gr_python_interpreter = self.__auto_detect_gr_python_interpreter()
-            settings.write("gr_python_interpreter", self.__gr_python_interpreter)
-        else:
-            self.__gr_python_interpreter = gr_python_interpreter
-
-        settings.write("gr_python_interpreter", self.__gr_python_interpreter)
-
+        self.__gr_python_interpreter = settings.read('gr_python_interpreter', '')
         self.set_gnuradio_installed_status()
 
         if not hasattr(sys, 'frozen'):
@@ -117,7 +107,7 @@ class BackendHandler(object):
     def gr_python_interpreter(self, value):
         if value != self.__gr_python_interpreter:
             self.__gr_python_interpreter = value
-            self.set_gnuradio_installed_status()
+            self.set_gnuradio_installed_status(force=True)
             settings.write("gr_python_interpreter", value)
 
     @property
@@ -215,16 +205,21 @@ class BackendHandler(object):
         # Use shell=True to prevent console window popping up on windows
         return call('"{0}" -c "import gnuradio"'.format(interpreter), shell=True, stderr=DEVNULL) == 0
 
-    def set_gnuradio_installed_status(self):
+    def set_gnuradio_installed_status(self, force=False):
+        current_setting = settings.read('gnuradio_is_installed', -1, int)
+        if not force and current_setting != -1:
+            self.gnuradio_is_installed = bool(current_setting)
+            return
+
         if os.path.isfile(self.gr_python_interpreter) and os.access(self.gr_python_interpreter, os.X_OK):
             try:
-
                 self.gnuradio_is_installed = self.__check_gr_python_interpreter(self.gr_python_interpreter)
-            except OSError as e:
-                logger.error("Could not determine GNU Radio install status. Assuming true. Error: " + str(e))
-                self.gnuradio_is_installed = True
+            except OSError:
+                self.gnuradio_is_installed = False
         else:
             self.gnuradio_is_installed = False
+
+        settings.write("gnuradio_is_installed", int(self.gnuradio_is_installed))
 
     def __device_has_gr_scripts(self, devname: str):
         if not hasattr(sys, "frozen"):

@@ -32,8 +32,6 @@ class QtTestCase(unittest.TestCase):
             pass
         assert mp.get_start_method() == "spawn"
 
-        BackendHandler.AUTO_DETECT_GR_PYTHON = False
-
         write_settings()
         cls.app = QApplication([cls.__name__])
 

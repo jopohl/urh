@@ -544,7 +544,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose a python interpreter which has access to your GNU Radio installation, that is, you can do &lt;span style=&quot; font-weight:600;&quot;&gt;python -c &amp;quot;import gnuradio&amp;quot;&lt;/span&gt; with it on the command line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="placeholderText">
-             <string>/usr/bin/python</string>
+             <string>Enter python interpreter path e.g. /usr/bin/python</string>
             </property>
            </widget>
           </item>

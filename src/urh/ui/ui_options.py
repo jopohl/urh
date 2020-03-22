@@ -341,7 +341,7 @@ class Ui_DialogOptions(object):
         self.label.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=\" font-weight:600;\">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>"))
         self.label.setText(_translate("DialogOptions", "Python Interpreter:"))
         self.lineEditGRPythonInterpreter.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=\" font-weight:600;\">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>"))
-        self.lineEditGRPythonInterpreter.setPlaceholderText(_translate("DialogOptions", "/usr/bin/python"))
+        self.lineEditGRPythonInterpreter.setPlaceholderText(_translate("DialogOptions", "Enter python interpreter path e.g. /usr/bin/python"))
         self.btnChooseGRPythonInterpreter.setText(_translate("DialogOptions", "..."))
         self.label_8.setText(_translate("DialogOptions", "Default sending repititions:"))
         self.spinBoxNumSendingRepeats.setSpecialValueText(_translate("DialogOptions", "Infinite"))

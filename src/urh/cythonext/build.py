@@ -14,4 +14,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        import multiprocessing
+        multiprocessing.freeze_support()
+
     main()

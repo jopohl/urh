@@ -1,7 +1,7 @@
 #!/bin/bash
 
 AIRSPY_VERSION="1.0.9"
-BLADERF_VERSION="2019.07"
+BLADERF_VERSION="2018.08"
 LIMESUITE_VERSION="20.01.0"
 SDRPLAY_VERSION="2.13"
 
@@ -19,11 +19,11 @@ cmake .. && make -j$(nproc) && make install
 
 echo -e '\n\033[92mCompiling BladeRF...\033[0m'
 cd /tmp
-git clone https://github.com/Nuand/bladeRF
-cd bladeRF
-git checkout $BLADERF_VERSION
-mkdir build && cd build
-cmake .. && make -j$(nproc) && make install
+wget https://github.com/Nuand/bladeRF/archive/$BLADERF_VERSION.tar.gz
+tar xf $BLADERF_VERSION.tar.gz && rm $BLADERF_VERSION.tar.gz
+cd /tmp/bladeRF-$BLADERF_VERSION
+mkdir build_blade && cd build_blade
+cmake3 .. && make -j$(nproc) && make install
 
 echo -e '\n\033[92mCompiling LimeSuite...\033[0m'
 cd /tmp

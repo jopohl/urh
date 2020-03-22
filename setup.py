@@ -2,10 +2,10 @@ import os
 import sys
 import tempfile
 
-if sys.platform == "win32":
-    import multiprocessing
-
-    multiprocessing.freeze_support()
+# if sys.platform == "win32":
+#     import multiprocessing
+#
+#     multiprocessing.freeze_support()
 
 
 if sys.version_info < (3, 4):

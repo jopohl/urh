@@ -283,8 +283,9 @@ if __name__ == "__main__":
     dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories,
                                                                   include_dirs=include_directories)
     sys.argv.append("-j{}".format(os.cpu_count()))
+
     setup(
         name="urh",
-        ext_modules=cythonize(dev_extensions, force=True, nthreads=os.cpu_count(),
+        ext_modules=cythonize(dev_extensions, force=True,
                               compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES),
     )

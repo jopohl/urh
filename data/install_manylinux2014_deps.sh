@@ -1,9 +1,9 @@
 #!/bin/bash
 
-AIRSPY_VERSION=1.0.9
-BLADERF_VERSION=2019.07
-LIMESUITE_VERSION=20.01.0
-SDRPLAY_VERSION=2.13
+AIRSPY_VERSION="1.0.9"
+BLADERF_VERSION="2019.07"
+LIMESUITE_VERSION="20.01.0"
+SDRPLAY_VERSION="2.13"
 
 yum -y install wget cmake3 rtl-sdr-devel hackrf-devel uhd-devel
 yum -y install https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm

@@ -287,5 +287,6 @@ if __name__ == "__main__":
     setup(
         name="urh",
         ext_modules=cythonize(dev_extensions, force=True,
-                              compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES),
+                              compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES,
+                              nthreads=0 if sys.platform == "win32" else os.cpu_count()),
     )

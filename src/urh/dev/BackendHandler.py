@@ -7,7 +7,7 @@ from urh import settings
 from urh.util.Logger import logger
 
 
-AUTO_DETECT_GR_PYTHON = True
+AUTO_DETECT_GR_PYTHON = False
 
 class Backends(Enum):
     none = "no available backend"

@@ -316,10 +316,13 @@ class BackendHandler(object):
         paths = os.get_exec_path()
 
         for p in paths:
-            for program in os.listdir(p):
-                if program.startswith("python"):
-                    interpreter = os.path.join(p, program)
-                    if self.__check_gr_python_interpreter(interpreter):
-                        return interpreter
+            try:
+                for program in os.listdir(p):
+                    if program.startswith("python"):
+                        interpreter = os.path.join(p, program)
+                        if self.__check_gr_python_interpreter(interpreter):
+                            return interpreter
+            except FileNotFoundError:
+                continue
 
         return ""

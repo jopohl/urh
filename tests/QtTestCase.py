@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
+from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
@@ -30,6 +31,8 @@ class QtTestCase(unittest.TestCase):
         except RuntimeError:
             pass
         assert mp.get_start_method() == "spawn"
+
+        BackendHandler.AUTO_DETECT_GR_PYTHON = False
 
         write_settings()
         cls.app = QApplication([cls.__name__])

@@ -7,6 +7,8 @@ from urh import settings
 from urh.util.Logger import logger
 
 
+AUTO_DETECT_GR_PYTHON = True
+
 class Backends(Enum):
     none = "no available backend"
     native = "native backend"
@@ -87,7 +89,7 @@ class BackendHandler(object):
     def __init__(self):
 
         gr_python_interpreter = settings.read('gr_python_interpreter', '')
-        if not gr_python_interpreter:
+        if not gr_python_interpreter and AUTO_DETECT_GR_PYTHON:
             self.__gr_python_interpreter = self.__auto_detect_gr_python_interpreter()
             settings.write("gr_python_interpreter", self.__gr_python_interpreter)
         else:

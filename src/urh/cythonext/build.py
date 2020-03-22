@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+import multiprocessing
 from subprocess import call
 
 build_dir = os.path.join(tempfile.gettempdir(), "build")
@@ -10,7 +11,7 @@ def main():
     cur_dir = os.path.realpath(__file__)
     os.chdir(os.path.realpath(os.path.join(cur_dir, "..", "..", "..", "..")))
     #call([sys.executable, "setup.py", "clean", "--all"])
-    call([sys.executable, "setup.py", "build_ext", "--inplace"])
+    call([sys.executable, "setup.py", "build_ext", "--inplace", "-j{}".format(multiprocessing.cpu_count())])
 
 
 if __name__ == "__main__":

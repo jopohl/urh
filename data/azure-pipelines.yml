@@ -34,7 +34,7 @@ jobs:
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
-  - script: python setup.py build_ext --inplace
+  - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"
   
   - script: python setup.py sdist
@@ -144,7 +144,7 @@ jobs:
       destinationFolder: src\urh\dev\native\lib\shared
       #cleanDestinationFolder: true
 
-  - script: python setup.py build_ext --inplace
+  - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"
 
   - script: |
@@ -253,7 +253,7 @@ jobs:
       sudo make install
     displayName: "Install libusb and boost"
 
-  - script: python setup.py build_ext --inplace
+  - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"
 
   - script: python setup.py bdist_wheel

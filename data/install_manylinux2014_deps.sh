@@ -29,9 +29,8 @@ cd /tmp/LimeSuite-$LIMESUITE_VERSION
 mkdir build_lime && cd build_lime
 cmake3 .. && make -j$(nproc) && make install
 
-
 cd /tmp
 wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-$SDRPLAY_VERSION.1.run -O sdrplay.run
 bash sdrplay.run --tar xf
 mv mirsdrapi-rsp.h /usr/include
-mv x86_64/* /usr/lib
+mv x86_64/* /usr/lib64

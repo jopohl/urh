@@ -322,7 +322,7 @@ class BackendHandler(object):
                         interpreter = os.path.join(p, program)
                         if self.__check_gr_python_interpreter(interpreter):
                             return interpreter
-            except Exception as e:
-                logger.debug(e)
+            except FileNotFoundError:
+                pass
 
         return ""

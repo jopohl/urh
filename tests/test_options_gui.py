@@ -45,7 +45,6 @@ class TestOptionsGUI(QtTestCase):
         self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
         self.assertEqual(self.dialog.ui.tblDevices.model().rowCount(), len(BackendHandler.DEVICE_NAMES))
-        self.dialog.ui.radioButtonPython2Interpreter.click()
 
 
     def test_field_type_tab(self):

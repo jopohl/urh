@@ -87,6 +87,9 @@ class BackendHandler(object):
     def __init__(self):
 
         self.__gr_python_interpreter = settings.read('gr_python_interpreter', '')
+        if not self.__gr_python_interpreter:
+            self.__gr_python_interpreter = settings.read("python2_exe", '')  # legacy
+
         self.set_gnuradio_installed_status()
 
         if not hasattr(sys, 'frozen'):

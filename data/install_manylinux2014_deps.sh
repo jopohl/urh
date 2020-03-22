@@ -16,10 +16,10 @@ mkdir build_airspy && cd build_airspy
 cmake .. && make -j$(nproc) && make install
 
 cd /tmp
-wget https://github.com/Nuand/bladeRF/archive/$BLADERF_VERSION.tar.gz
-tar xf $BLADERF_VERSION.tar.gz && rm v$BLADERF_VERSION.tar.gz
-cd /tmp/bladeRF-$BLADERF_VERSION
-mkdir build_bladeRF && cd build_bladeRF
+git clone https://github.com/Nuand/bladeRF
+cd bladeRF
+git checkout $BLADERF_VERSION
+mkdir build && cd build
 cmake .. && make -j$(nproc) && make install
 
 cd /tmp

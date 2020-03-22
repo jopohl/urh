@@ -5,58 +5,15 @@ from InputHandlerThread import InputHandlerThread
 
 Initializer.init_path()
 
-from distutils.version import StrictVersion
-
-if __name__ == '__main__':
-    import ctypes
-    import sys
-
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print("Warning: failed to XInitThreads()")
-
 from gnuradio import blocks
 from gnuradio import gr
-from PyQt5 import Qt
 import osmosdr
-from gnuradio import qtgui
 
 
-class top_block(gr.top_block, Qt.QWidget):
+class top_block(gr.top_block):
 
     def __init__(self, sample_rate, frequency, freq_correction, rf_gain, if_gain, bb_gain, bandwidth, port):
         gr.top_block.__init__(self, "Top Block")
-        Qt.QWidget.__init__(self)
-        self.setWindowTitle("Top Block")
-        qtgui.util.check_set_qss()
-        try:
-            self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except:
-            pass
-        self.top_scroll_layout = Qt.QVBoxLayout()
-        self.setLayout(self.top_scroll_layout)
-        self.top_scroll = Qt.QScrollArea()
-        self.top_scroll.setFrameStyle(Qt.QFrame.NoFrame)
-        self.top_scroll_layout.addWidget(self.top_scroll)
-        self.top_scroll.setWidgetResizable(True)
-        self.top_widget = Qt.QWidget()
-        self.top_scroll.setWidget(self.top_widget)
-        self.top_layout = Qt.QVBoxLayout(self.top_widget)
-        self.top_grid_layout = Qt.QGridLayout()
-        self.top_layout.addLayout(self.top_grid_layout)
-
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
-
-        try:
-            if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
-                self.restoreGeometry(self.settings.value("geometry").toByteArray())
-            else:
-                self.restoreGeometry(self.settings.value("geometry"))
-        except:
-            pass
 
         self.sample_rate = sample_rate
         self.rf_gain = rf_gain
@@ -82,11 +39,6 @@ class top_block(gr.top_block, Qt.QWidget):
         self.blocks_tcp_server_sink_0 = blocks.tcp_server_sink(gr.sizeof_gr_complex * 1, '127.0.0.1', port, False)
 
         self.connect((self.osmosdr_source_0, 0), (self.blocks_tcp_server_sink_0, 0))
-
-    def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "top_block")
-        self.settings.setValue("geometry", self.saveGeometry())
-        event.accept()
 
     def get_sample_rate(self):
         return self.sample_rate

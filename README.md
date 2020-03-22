@@ -75,7 +75,7 @@ URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it 
 
 ```bash
 sudo apt update
-sudo apt install python3-numpy python3-psutil python3-zmq python3-pyqt5 g++ libpython3-dev python3-pip cython3
+sudo apt install python3-numpy python3-psutil python3-pyqt5 g++ libpython3-dev python3-pip cython3
 # Install following packages for native support of corresponding SDR (before installing URH)
 sudo apt install libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev
 sudo pip3 install urh

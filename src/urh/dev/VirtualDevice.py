@@ -226,18 +226,14 @@ class VirtualDevice(QObject):
 
     @property
     def frequency(self):
-        if self.backend == Backends.grc:
-            return self.__dev.freq
-        elif self.backend == Backends.native:
+        if self.backend in (Backends.grc, Backends.native):
             return self.__dev.frequency
         else:
             raise ValueError("Unsupported Backend")
 
     @frequency.setter
     def frequency(self, value):
-        if self.backend == Backends.grc:
-            self.__dev.freq = value
-        elif self.backend == Backends.native:
+        if self.backend in (Backends.grc, Backends.native):
             self.__dev.frequency = value
         elif self.backend == Backends.network:
             pass

@@ -145,7 +145,6 @@ class OptionsDialog(QDialog):
         super().__init__(parent)
 
         self.backend_handler = BackendHandler()
-        self.backend_handler.set_gnuradio_installed_status()
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
@@ -182,12 +181,8 @@ class OptionsDialog(QDialog):
 
         self.ui.doubleSpinBoxRAMThreshold.setValue(100 * settings.read('ram_threshold', 0.6, float))
 
-        self.ui.radioButtonGnuradioDirectory.setChecked(self.backend_handler.use_gnuradio_install_dir)
-        self.ui.radioButtonPython2Interpreter.setChecked(not self.backend_handler.use_gnuradio_install_dir)
-        if self.backend_handler.gnuradio_install_dir:
-            self.ui.lineEditGnuradioDirectory.setText(self.backend_handler.gnuradio_install_dir)
-        if self.backend_handler.python2_exe:
-            self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
+        if self.backend_handler.gr_python_interpreter:
+            self.ui.lineEditGRPythonInterpreter.setText(self.backend_handler.gr_python_interpreter)
 
         self.ui.doubleSpinBoxFuzzingPause.setValue(settings.read("default_fuzzing_pause", 10 ** 6, int))
         self.ui.doubleSpinBoxFuzzingPause.setEnabled(settings.read('use_default_fuzzing_pause', True, bool))
@@ -200,8 +195,7 @@ class OptionsDialog(QDialog):
 
         completer = QCompleter()
         completer.setModel(QDirModel(completer))
-        self.ui.lineEditPython2Interpreter.setCompleter(completer)
-        self.ui.lineEditGnuradioDirectory.setCompleter(completer)
+        self.ui.lineEditGRPythonInterpreter.setCompleter(completer)
 
         self.ui.spinBoxFontSize.setValue(qApp.font().pointSize())
 
@@ -233,10 +227,8 @@ class OptionsDialog(QDialog):
 
     def create_connects(self):
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)
-        self.ui.lineEditPython2Interpreter.editingFinished.connect(self.on_python2_exe_path_edited)
-        self.ui.btnChoosePython2Interpreter.clicked.connect(self.on_btn_choose_python2_interpreter_clicked)
-        self.ui.btnChooseGnuRadioDirectory.clicked.connect(self.on_btn_choose_gnuradio_directory_clicked)
-        self.ui.lineEditGnuradioDirectory.editingFinished.connect(self.on_gnuradio_install_dir_edited)
+        self.ui.lineEditGRPythonInterpreter.editingFinished.connect(self.on_gr_python_interpreter_path_edited)
+        self.ui.btnChooseGRPythonInterpreter.clicked.connect(self.on_btn_choose_gr_python_interpreter_clicked)
         self.ui.comboBoxTheme.currentIndexChanged.connect(self.on_combo_box_theme_index_changed)
         self.ui.checkBoxShowConfirmCloseDialog.clicked.connect(self.on_checkbox_confirm_close_dialog_clicked)
         self.ui.checkBoxHoldShiftToDrag.clicked.connect(self.on_checkbox_hold_shift_to_drag_clicked)
@@ -244,8 +236,6 @@ class OptionsDialog(QDialog):
         self.ui.checkBoxDefaultFuzzingPause.clicked.connect(self.on_checkbox_default_fuzzing_pause_clicked)
         self.ui.btnAddLabelType.clicked.connect(self.on_btn_add_label_type_clicked)
         self.ui.btnRemoveLabeltype.clicked.connect(self.on_btn_remove_label_type_clicked)
-        self.ui.radioButtonPython2Interpreter.clicked.connect(self.on_radio_button_python2_interpreter_clicked)
-        self.ui.radioButtonGnuradioDirectory.clicked.connect(self.on_radio_button_gnuradio_directory_clicked)
         self.ui.radioButtonLowModulationAccuracy.clicked.connect(self.on_radio_button_low_modulation_accuracy_clicked)
         self.ui.radioButtonMediumModulationAccuracy.clicked.connect(self.on_radio_button_medium_modulation_accuracy_clicked)
         self.ui.radioButtonHighModulationAccuracy.clicked.connect(self.on_radio_button_high_modulation_accuracy_clicked)
@@ -259,16 +249,15 @@ class OptionsDialog(QDialog):
         self.ui.spinBoxFontSize.editingFinished.connect(self.on_spin_box_font_size_editing_finished)
 
     def show_gnuradio_infos(self):
-        self.ui.lineEditPython2Interpreter.setText(self.backend_handler.python2_exe)
-        self.ui.lineEditGnuradioDirectory.setText(self.backend_handler.gnuradio_install_dir)
+        self.ui.lineEditGRPythonInterpreter.setText(self.backend_handler.gr_python_interpreter)
 
         if self.backend_handler.gnuradio_is_installed:
-            self.ui.lGnuradioInstalled.setStyleSheet("")
-            self.ui.lGnuradioInstalled.setText(self.tr("GNU Radio interface is working."))
+            self.ui.lineEditGRPythonInterpreter.setStyleSheet("background-color: lightgreen")
+            self.ui.lineEditGRPythonInterpreter.setToolTip("GNU Radio interface is working.")
         else:
-            self.ui.lGnuradioInstalled.setStyleSheet("color: red")
-            self.ui.lGnuradioInstalled.setText(
-                self.tr("GNU Radio is not installed or incompatible with python2 interpreter."))
+            self.ui.lineEditGRPythonInterpreter.setStyleSheet("background-color: orange")
+            self.ui.lineEditGRPythonInterpreter.setToolTip("GNU Radio is not installed or incompatible with "
+                                                           "the configured python interpreter.")
 
     def read_options(self):
         self.ui.comboBoxDefaultView.setCurrentIndex(settings.read('default_view', 0, type=int))
@@ -284,9 +273,6 @@ class OptionsDialog(QDialog):
         self.backend_handler.get_backends()
         self.show_gnuradio_infos()
         self.device_options_model.update()
-
-        self.ui.lineEditGnuradioDirectory.setEnabled(self.backend_handler.use_gnuradio_install_dir)
-        self.ui.lineEditPython2Interpreter.setDisabled(self.backend_handler.use_gnuradio_install_dir)
 
     def show_available_colormaps(self):
         height = 50
@@ -335,15 +321,7 @@ class OptionsDialog(QDialog):
         super().closeEvent(event)
 
     def set_gnuradio_status(self):
-        self.backend_handler.python2_exe = self.ui.lineEditPython2Interpreter.text()
-
-        self.backend_handler.gnuradio_install_dir = self.ui.lineEditGnuradioDirectory.text()
-        settings.write("gnuradio_install_dir", self.ui.lineEditGnuradioDirectory.text())
-
-        self.backend_handler.use_gnuradio_install_dir = self.ui.radioButtonGnuradioDirectory.isChecked()
-        self.backend_handler.set_gnuradio_installed_status()
-        settings.write("use_gnuradio_install_dir", self.backend_handler.use_gnuradio_install_dir)
-
+        self.backend_handler.gr_python_interpreter = self.ui.lineEditGRPythonInterpreter.text()
         self.refresh_device_tab()
 
     @pyqtSlot()
@@ -402,42 +380,23 @@ class OptionsDialog(QDialog):
         settings.write("default_fuzzing_pause", int(value))
 
     @pyqtSlot()
-    def on_python2_exe_path_edited(self):
+    def on_gr_python_interpreter_path_edited(self):
         self.set_gnuradio_status()
 
     @pyqtSlot()
-    def on_btn_choose_python2_interpreter_clicked(self):
+    def on_btn_choose_gr_python_interpreter_clicked(self):
         if sys.platform == "win32":
             dialog_filter = "Executable (*.exe);;All files (*.*)"
         else:
             dialog_filter = ""
-        filename, _ = QFileDialog.getOpenFileName(self, self.tr("Choose python2 interpreter"), filter=dialog_filter)
+        filename, _ = QFileDialog.getOpenFileName(self, self.tr("Choose python interpreter"), filter=dialog_filter)
         if filename:
-            self.ui.lineEditPython2Interpreter.setText(filename)
-            self.set_gnuradio_status()
-
-    @pyqtSlot()
-    def on_btn_choose_gnuradio_directory_clicked(self):
-        directory = QFileDialog.getExistingDirectory(self, "Choose GNU Radio directory")
-        if directory:
-            self.ui.lineEditGnuradioDirectory.setText(directory)
+            self.ui.lineEditGRPythonInterpreter.setText(filename)
             self.set_gnuradio_status()
 
     @pyqtSlot(bool)
     def on_checkbox_align_labels_clicked(self, checked: bool):
         settings.write("align_labels", checked)
-
-    @pyqtSlot(bool)
-    def on_radio_button_gnuradio_directory_clicked(self, checked: bool):
-        self.set_gnuradio_status()
-
-    @pyqtSlot(bool)
-    def on_radio_button_python2_interpreter_clicked(self, checked: bool):
-        self.set_gnuradio_status()
-
-    @pyqtSlot()
-    def on_gnuradio_install_dir_edited(self):
-        self.set_gnuradio_status()
 
     @pyqtSlot()
     def on_btn_rebuild_native_clicked(self):

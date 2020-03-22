@@ -27,6 +27,7 @@ BCD_REVERSE_LUT[BCD_ERROR_SYMBOL] = "0000"
 
 DEFAULT_PROGRAMS_WINDOWS = {}
 
+
 def profile(func):
     def func_wrapper(*args):
         t = time.perf_counter()
@@ -44,6 +45,15 @@ def set_icon_theme():
         QIcon.setThemeName("oxy")
     else:
         QIcon.setThemeName("")
+
+
+def get_free_port():
+    import socket
+    s = socket.socket()
+    s.bind(("", 0))
+    port = s.getsockname()[1]
+    s.close()
+    return port
 
 
 def set_shared_library_path():

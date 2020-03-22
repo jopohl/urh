@@ -12,6 +12,7 @@ from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.signalprocessing.Signal import Signal
+from urh.util import util
 
 
 class TestProtocolSniffer(QtTestCase):
@@ -33,7 +34,7 @@ class TestProtocolSniffer(QtTestCase):
                                   device=device_name, backend_handler=BackendHandler(),
                                   network_raw_mode=True)
 
-        port = self.get_free_port()
+        port = util.get_free_port()
         sniffer.rcv_device.set_server_port(port)
 
         self.network_sdr_plugin_sender = NetworkSDRInterfacePlugin(raw_mode=True)

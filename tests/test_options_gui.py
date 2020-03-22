@@ -45,19 +45,7 @@ class TestOptionsGUI(QtTestCase):
         self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
         self.assertEqual(self.dialog.ui.tblDevices.model().rowCount(), len(BackendHandler.DEVICE_NAMES))
-        self.dialog.ui.radioButtonPython2Interpreter.click()
 
-        self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
-        self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
-
-        self.dialog.ui.radioButtonGnuradioDirectory.click()
-        self.assertFalse(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
-        self.assertTrue(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
-
-        self.dialog.ui.radioButtonPython2Interpreter.click()
-        self.assertFalse(self.dialog.ui.radioButtonGnuradioDirectory.isChecked())
-        self.assertFalse(self.dialog.ui.lineEditGnuradioDirectory.isEnabled())
-        self.assertTrue(self.dialog.ui.lineEditPython2Interpreter.isEnabled())
 
     def test_field_type_tab(self):
         self.dialog.ui.tabWidget.setCurrentWidget(self.dialog.ui.tabFieldtypes)

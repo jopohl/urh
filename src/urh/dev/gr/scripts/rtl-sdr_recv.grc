@@ -1,7 +1,7 @@
 options:
   parameters:
     author: ''
-    category: Custom
+    category: '[GRC Hier Blocks]'
     cmake_opt: ''
     comment: ''
     copyright: ''
@@ -219,7 +219,7 @@ blocks:
     ant7: ''
     ant8: ''
     ant9: ''
-    args: bladerf
+    args: rtl
     bb_gain0: bb_gain
     bb_gain1: '20'
     bb_gain10: '20'

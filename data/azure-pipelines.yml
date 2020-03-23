@@ -46,8 +46,6 @@ jobs:
     displayName: "Build wheels"
     condition: eq(variables['python.version'], '3.8')
 
-  - script: ls -a dist
-
   - script: twine upload --skip-existing dist/*
     displayName: "PyPi Upload"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')

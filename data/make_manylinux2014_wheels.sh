@@ -74,5 +74,7 @@ done
 # Bundle external libs into wheels
 echo -e '\033[92mRepairing wheels...\033[0m'
 for whl in /wheelhouse/*.whl; do
-    auditwheel repair "$whl" -w /io/dist/
+    auditwheel repair "$whl" -w /io/dist/ &
 done
+wait
+echo -e '\033[92mFinished repairing wheels\033[0m'

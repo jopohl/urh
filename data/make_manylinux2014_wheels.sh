@@ -58,6 +58,7 @@ build_rtlsdr &
 build_sdrplay &
 wait
 
+touch /tmp/urh_releasing
 for PYBIN in /opt/python/*/bin; do
     echo -e "\033[36mInstalling requirements for $PYBIN\033[0m"
     "${PYBIN}/pip" install -r /io/data/requirements.txt > /dev/null

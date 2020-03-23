@@ -55,7 +55,7 @@ jobs:
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - task: PublishBuildArtifacts@1
-    condition: eq(variables['python.version'], '3.7')
+    condition: or(eq(variables['python.version'], '3.7'), eq(variables['python.version'], '3.8'))
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'

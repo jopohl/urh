@@ -37,7 +37,7 @@ build_limesdr() {
 build_rtlsdr() {
   wget https://github.com/osmocom/rtl-sdr/archive/$RTLSDR_VERSION.tar.gz -O /tmp/rtlsdr.tar.gz &> /dev/null
   tar xf /tmp/rtlsdr.tar.gz -C /tmp
-  cmake3 -Wno-dev -S /tmp/rtl-sdr-$RTLSDR_VERSION -B /tmp/build_rtlsdr > /dev/null
+  cmake3 -Wno-dev -DDETACH_KERNEL_DRIVER=ON -S /tmp/rtl-sdr-$RTLSDR_VERSION -B /tmp/build_rtlsdr > /dev/null
   make --silent -C /tmp/build_rtlsdr > /dev/null
   make --silent -C /tmp/build_rtlsdr install > /dev/null
 }

@@ -76,8 +76,8 @@ sudo python3 -m pip install urh
 This is the recommended way to install URH on Linux because it comes with __all native extensions__ precompiled.
 
 ##### udev rules
-If you can't access your SDR as a non-root user you need to install the according __udev rules__. 
-For example, you can install the udev rules for HackRF with the following commands.
+In order to access your SDR as non-root user, install the according __udev rules__. 
+For example, you can install the HackRF udev rules with the following commands.
 
 ```bash
 sudo tee -a /etc/udev/rules.d/52-hackrf.rules >/dev/null <<-EOF
@@ -88,12 +88,12 @@ EOF
 sudo udevadm control --reload-rules
 ```
 Make sure your current user is in the ```plugdev``` group to make these rules work.
-You can find rules for other SDRs by searching for "```<SDR name>``` udev rules" in your favorite search engine.
+You find rules for other SDRs by searching for "```<SDR name>``` udev rules" in your favorite search engine.
 
 #### Install via Package Manager
 URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__.  If available, simply use your package manager to install URH.
 
-__Note__: You will need to install the according ```-dev``` package(s) of your SDR(s) such as ```hackrf-dev``` when going this way __before__ installing URH.
+__Note__: For native support, you must install the according ```-dev``` package(s) of your SDR(s) such as ```hackrf-dev``` __before__ installing URH.
 
 #### Docker Image
 The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/). It has all native backends included and ready to operate. 

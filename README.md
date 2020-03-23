@@ -70,8 +70,9 @@ If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run W
 #### Generic Installation with pip (recommended)
 URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with 
 ```bash 
-sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install urh
+# IMPORTANT: Make sure your pip is up to date
+sudo python3 -m pip install --upgrade pip  # Update your pip installation
+sudo python3 -m pip install urh            # Install URH
 ``` 
 This is the recommended way to install URH on Linux because it comes with __all native extensions__ precompiled.
 

@@ -332,14 +332,11 @@ class Encoding(object):
         for i in range(0, clock):
             # Determine first bit with polynomial
             first_bit = -1
-            for j in range(len_pol - 1, 0, -1):
+            for j in range(len_pol - 1, -1, -1):
                 if poly[j] and self.lfsr_state[j]:
-                    if first_bit == -1:
-                        first_bit = True
-                    else:
-                        first_bit = not first_bit
-            if first_bit == -1:
-                first_bit = False
+                    first_bit = True if first_bit == -1 else not first_bit
+            first_bit = False if first_bit == -1 else first_bit
+
             # Clock
             for j in range(len_pol - 1, 0, -1):
                 self.lfsr_state[j] = self.lfsr_state[j - 1]

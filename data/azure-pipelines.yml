@@ -42,6 +42,10 @@ jobs:
     displayName: "Build sdist"
     condition: eq(variables['python.version'], '3.7')
 
+  - script: docker run --rm  -v `pwd`:/io quay.io/pypa/manylinux2014_x86_64 /io/data/make_manylinux2014_wheels.sh
+    displayName: "Build wheels"
+    condition: eq(variables['python.version'], '3.8')
+
   - script: twine upload --skip-existing dist/*.gz
     displayName: "Upload sdist to PyPi"
     condition: and(eq(variables['python.version'], '3.7'), contains(variables['Build.SourceBranch'], 'refs/tags/'))

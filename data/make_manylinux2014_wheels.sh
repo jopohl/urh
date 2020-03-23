@@ -53,5 +53,5 @@ done
 
 # Bundle external libs into wheels
 for whl in /wheelhouse/*.whl; do
-    auditwheel repair "$whl" -w /io/wheelhouse/
+    auditwheel repair "$whl" -w /io/dist/
 done

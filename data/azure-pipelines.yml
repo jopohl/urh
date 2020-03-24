@@ -43,7 +43,7 @@ jobs:
 
   - script: |
       docker run --rm \
-      -e PYVER=$(python -c "import sys; print('%s%s' % (sys.version_info.major, sys.version_info.minor), end='')") \
+      -e PYVER=$(python -c "import sys; print('%s%s' % (sys.version_info.major, sys.version_info.minor))") \
       -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
     displayName: "Build wheel"
 

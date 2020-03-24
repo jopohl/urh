@@ -3,7 +3,7 @@
 # for adapted jopohl/urh_manylinux
 
 touch /tmp/urh_releasing
-for PYBIN in /opt/python/*/bin; do
+for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
     echo -e "\033[1mInstalling requirements for $PYBIN\033[0m"
     "${PYBIN}/pip" install -r /io/data/requirements.txt
 

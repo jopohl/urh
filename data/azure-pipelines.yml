@@ -41,9 +41,11 @@ jobs:
     displayName: "Build sdist"
     condition: eq(variables['python.version'], '3.7')
 
-  - script: docker run --rm  -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
-    displayName: "Build wheels"
-    condition: eq(variables['python.version'], '3.8')
+  - script: |
+      docker run --rm \
+      -e PYVER=$(python -c "import sys; print('%s%s' % (sys.version_info.major, sys.version_info.minor), end='')") \
+      -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
+    displayName: "Build wheel"
 
   - script: twine upload --skip-existing dist/*
     displayName: "PyPi Upload"
@@ -54,7 +56,6 @@ jobs:
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - task: PublishBuildArtifacts@1
-    condition: or(eq(variables['python.version'], '3.7'), eq(variables['python.version'], '3.8'))
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'

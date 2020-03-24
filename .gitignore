@@ -48,6 +48,9 @@ src/urh/dev/native/lib/*.cpp
 
 /tests/show_gui
 
-
+src/urh/*.txt
+src/urh/URHProject.xml
+.coverage*
+src/urh/dev/gr/scripts/top_block.py
 
 misc/*

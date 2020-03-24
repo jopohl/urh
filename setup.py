@@ -1,5 +1,4 @@
 import os
-import shutil
 import sys
 import tempfile
 
@@ -30,7 +29,6 @@ elif sys.platform == "darwin":
 else:
     OPEN_MP_FLAG = "-fopenmp"
     NO_NUMPY_WARNINGS_FLAG = "-Wno-cpp"
-
 
 UI_SUBDIRS = ("actions", "delegates", "views")
 PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]
@@ -96,7 +94,8 @@ def get_extensions():
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, quiet=True, compile_time_env=device_extras)
+    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, compile_time_env=device_extras,
+                           nthreads=0 if sys.platform == "win32" else os.cpu_count())
     return extensions
 
 
@@ -107,6 +106,7 @@ def read_long_description():
         return text
     except:
         return ""
+
 
 install_requires = ["numpy", "psutil", "cython"]
 if IS_RELEASE:
@@ -119,7 +119,6 @@ else:
 
 if sys.version_info < (3, 4):
     install_requires.append('enum34')
-
 
 setup(
     name="urh",

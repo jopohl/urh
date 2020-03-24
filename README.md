@@ -67,22 +67,37 @@ On Windows, URH can be installed with its [Installer](https://github.com/jopohl/
 If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
 ### Linux
-#### Install via Package Manager
-URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__. If available, simply use your package manager to install URH. 
+#### Generic Installation with pip (recommended)
+URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with 
+```bash 
+# IMPORTANT: Make sure your pip is up to date
+sudo python3 -m pip install --upgrade pip  # Update your pip installation
+sudo python3 -m pip install urh            # Install URH
+``` 
+This is the recommended way to install URH on Linux because it comes with __all native extensions__ precompiled.
 
-#### Generic Installation with pip (Ubuntu/Debian)
-URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with ``` pip ``` . For Ubuntu/Debian use the following commands to install URH including extensions for native SDR support.
+##### udev rules
+In order to access your SDR as non-root user, install the according __udev rules__. 
+For example, you can install the HackRF udev rules with the following commands.
 
 ```bash
-sudo apt update
-sudo apt install python3-numpy python3-psutil python3-pyqt5 g++ libpython3-dev python3-pip cython3
-# Install following packages for native support of corresponding SDR (before installing URH)
-sudo apt install libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev
-sudo pip3 install urh
+sudo tee -a /etc/udev/rules.d/52-hackrf.rules >/dev/null <<-EOF
+ATTR{idVendor}=="1d50", ATTR{idProduct}=="604b", SYMLINK+="hackrf-jawbreaker-%k", MODE="660", GROUP="plugdev"
+ATTR{idVendor}=="1d50", ATTR{idProduct}=="6089", SYMLINK+="hackrf-one-%k", MODE="660", GROUP="plugdev"
+ATTR{idVendor}=="1fc9", ATTR{idProduct}=="000c", SYMLINK+="hackrf-dfu-%k", MODE="660", GROUP="plugdev"
+EOF
+sudo udevadm control --reload-rules
 ```
+Make sure your current user is in the ```plugdev``` group to make these rules work.
+You find rules for other SDRs by searching for "```<SDR name>``` udev rules" in your favorite search engine.
+
+#### Install via Package Manager
+URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__.  If available, simply use your package manager to install URH.
+
+__Note__: For native support, you must install the according ```-dev``` package(s) of your SDR(s) such as ```hackrf-dev``` __before__ installing URH.
 
 #### Docker Image
-The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/).
+The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/). It has all native backends included and ready to operate. 
 
 ### MacOS
 #### Using DMG

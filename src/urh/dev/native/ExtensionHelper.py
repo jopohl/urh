@@ -18,7 +18,6 @@ COMPILER_DIRECTIVES = {'language_level': 3,
                        'initializedcheck': False,
                        }
 
-
 DEVICES = {
     "airspy": {"lib": "airspy", "test_function": "open"},
     "bladerf": {"lib": "bladeRF", "test_function": "bladerf_open",
@@ -44,11 +43,11 @@ DEVICES = {
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
                 "test_function": "mir_sdr_ApiVersion",
                 "api_version_check_code":
-                """
-                #include<stdio.h>
-                int main(void) {
-                float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
-                """}
+                    """
+                    #include<stdio.h>
+                    int main(void) {
+                    float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
+                    """}
 }
 
 
@@ -193,7 +192,7 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
                 print("    Environment variable {} is unset, try to automatically detect API version".format(env_name))
 
             if ver is None:
-                ver = check_api_version(compiler, params["api_version_check_code"], (params["lib"], ),
+                ver = check_api_version(compiler, params["api_version_check_code"], (params["lib"],),
                                         library_dirs, include_dirs)
             device_extras[env_name] = ver
             print("    Using {}={}".format(env_name, ver))
@@ -267,6 +266,7 @@ if __name__ == "__main__":
         include_directories = []
 
     import numpy as np
+
     include_directories.append(np.get_include())
 
     cur_dir = os.path.dirname(os.path.realpath(__file__))
@@ -282,8 +282,11 @@ if __name__ == "__main__":
 
     dev_extensions, dev_extras = get_device_extensions_and_extras(library_dirs=library_directories,
                                                                   include_dirs=include_directories)
+    sys.argv.append("-j{}".format(os.cpu_count()))
+
     setup(
         name="urh",
         ext_modules=cythonize(dev_extensions, force=True,
-                              compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES),
+                              compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES,
+                              nthreads=0 if sys.platform == "win32" else os.cpu_count()),
     )

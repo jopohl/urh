@@ -91,6 +91,9 @@ sudo udevadm control --reload-rules
 Make sure your current user is in the ```plugdev``` group to make these rules work.
 You find rules for other SDRs by searching for "```<SDR name>``` udev rules" in your favorite search engine.
 
+If you still have problems accessing your SDR the Linux __USB autosuspend__ feature might be interfering.
+You can disable it by editing your ```/etc/default/grub``` as shown [here](https://unix.stackexchange.com/a/175035). 
+
 #### Install via Package Manager
 URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__.  If available, simply use your package manager to install URH.
 

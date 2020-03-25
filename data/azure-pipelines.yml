@@ -51,6 +51,7 @@ jobs:
       pip install dist/*.whl
       urh --version
       xvfb-run urh autoclose
+      python data/check_native_backends.py
     displayName: 'Testrun'
 
   - script: twine upload --skip-existing dist/*

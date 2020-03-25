@@ -47,14 +47,14 @@ jobs:
       -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
     displayName: "Build wheel"
 
-  - script: python data/check_native_backends.py
-    displayName: 'Check native backends'
-
   - script: |
       pip install dist/*.whl
       urh --version
       xvfb-run urh autoclose
-    displayName: 'Testrun'
+    displayName: 'Test Run'
+
+  - script: python data/check_native_backends.py
+    displayName: 'Check native backends'
 
   - script: twine upload --skip-existing dist/*
     displayName: "PyPi Upload"

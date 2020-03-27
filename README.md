@@ -1,4 +1,4 @@
-![URH image](https://raw.githubusercontent.com/jopohl/urh/master/data/icons/appicon_big.png)
+![URH image](https://raw.githubusercontent.com/jopohl/urh/master/data/icons/banner.png)
 
 [![Tests status](https://img.shields.io/azure-devops/tests/jopohl/urh/2/master.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)
 [![Coverage](https://img.shields.io/azure-devops/coverage/jopohl/urh/2/master.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)

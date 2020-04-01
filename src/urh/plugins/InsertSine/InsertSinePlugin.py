@@ -138,7 +138,7 @@ class InsertSinePlugin(SignalEditorPlugin):
 
     def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
         if sample_rate is not None:
-            self.sample_rate = sample_rate
+            self.__sample_rate = sample_rate
             self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)
 
         if num_samples is not None:

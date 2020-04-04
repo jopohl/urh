@@ -222,8 +222,8 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="567.62604"
-     inkscape:cy="315.42346"
+     inkscape:cx="780.73769"
+     inkscape:cy="343.70773"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -260,17 +260,21 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:22.57777786px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="204.86308"
-       y="235.0119"
-       id="text6945"><tspan
+       y="235.01187"
+       id="text6945"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          sodipodi:role="line"
          id="tspan6943"
          x="204.86308"
-         y="254.76746"
+         y="254.76743"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro Semi-Bold';fill:#ffffff;stroke-width:0.26458332" /></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot7231"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:85.33333588px;line-height:1.25;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"><flowRegion
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:85.33333588px;line-height:1.25;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><flowRegion
          id="flowRegion7233"><rect
            id="rect7235"
            width="40"
@@ -284,32 +288,40 @@
        height="53.400391"
        x="-0.2006578"
        y="128.24081"
-       transform="matrix(1.0189264,-0.00172372,0,0.75342456,-3.2034235,48.675962)" />
+       transform="matrix(1.0189264,-0.00172372,0,0.75342456,-3.2034235,48.675964)"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:22.57777786px;line-height:1.25;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="55.906116"
-       y="169.89371"
-       id="text17"><tspan
+       y="169.89368"
+       id="text17"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          sodipodi:role="line"
          id="tspan15"
          x="55.906116"
-         y="169.89371"
+         y="169.89368"
          style="font-size:22.57777977px;fill:#ffffff;stroke-width:0.26458332">Universal Radio Hacker</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:9.87777805px;line-height:1.25;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Semi-Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="81.418678"
-       y="182.26888"
-       id="text4616"><tspan
+       y="182.26884"
+       id="text4616"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          sodipodi:role="line"
          id="tspan4614"
          x="81.418678"
-         y="182.26888"
+         y="182.26884"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Semi-Bold';fill:#ffffff;stroke-width:0.26458335">Investigate Wireless Protocols Like A Boss</tspan></text>
     <g
        id="g1647"
-       transform="matrix(0.3234132,0,0,0.3234132,121.29732,201.76565)">
+       transform="matrix(0.24049274,0,0,0.24049274,132.49935,202.39619)"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
       <g
          transform="translate(0,60.933324)"
          style="display:inline;filter:url(#filter3109)"
@@ -391,24 +403,28 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333397px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="221.19046"
-       y="247.39062"
-       id="text1663"><tspan
+       x="213.78223"
+       y="236.27824"
+       id="text1663"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          sodipodi:role="line"
          id="tspan1661"
-         x="221.19046"
-         y="247.39062"
+         x="213.78223"
+         y="236.27824"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.26458335">ergonomic</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333397px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="64.559631"
-       y="247.67638"
-       id="text1663-7"><tspan
+       x="72.497139"
+       y="236.564"
+       id="text1663-7"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
          sodipodi:role="line"
          id="tspan1661-5"
-         x="64.559631"
-         y="247.67638"
+         x="72.497139"
+         y="236.564"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Source Sans Pro';-inkscape-font-specification:'Source Sans Pro Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.26458335">complete</tspan></text>
   </g>
 </svg>

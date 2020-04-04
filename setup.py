@@ -95,7 +95,7 @@ def get_extensions():
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
     extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, compile_time_env=device_extras,
-                           nthreads=0 if sys.platform == "win32" else os.cpu_count())
+                           nthreads=0 if sys.platform in ("win32", "darwin") else os.cpu_count())
     return extensions
 
 

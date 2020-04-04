@@ -288,5 +288,5 @@ if __name__ == "__main__":
         name="urh",
         ext_modules=cythonize(dev_extensions, force=True,
                               compile_time_env=dev_extras, compiler_directives=COMPILER_DIRECTIVES,
-                              nthreads=0 if sys.platform == "win32" else os.cpu_count()),
+                              nthreads=0 if sys.platform in ("win32", "darwin") else os.cpu_count()),
     )

@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -62,5 +63,3 @@ class Ui_DialogAdvancedModSettings(object):
         self.spinBoxPauseThreshold.setSpecialValueText(_translate("DialogAdvancedModSettings", "Disable"))
         self.groupBox_2.setTitle(_translate("DialogAdvancedModSettings", "Message Length Divisor"))
         self.label_2.setText(_translate("DialogAdvancedModSettings", "<html><head/><body><p>With the message <span style=\" font-weight:600;\">divisor length</span> you can control the minimum message length in a flexible way. URH will try to demodulate signals in such a way, that the resulting message has a number of bits that is divisble by the configured divisor. <br/><br/><span style=\" font-style:italic;\">How does the zero padding work? Remaining zero bits are taken from the pause behind the message if possible.</span></p></body></html>"))
-
-

@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -40,5 +41,3 @@ class Ui_DialogModulationParameters(object):
         item.setText(_translate("DialogModulationParameters", "Symbol"))
         item = self.tblSymbolParameters.horizontalHeaderItem(1)
         item.setText(_translate("DialogModulationParameters", "Amplitude"))
-
-

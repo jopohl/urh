@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -623,8 +624,6 @@ class Ui_TabAnalysis(object):
         self.lblLabelValues.setText(_translate("TabAnalysis", "Labels for message"))
         self.btnAddMessagetype.setToolTip(_translate("TabAnalysis", "Add a new message type"))
         self.btnAddMessagetype.setText(_translate("TabAnalysis", "Add new message type"))
-
-
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.ui.views.ProtocolTableView import ProtocolTableView

@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -404,6 +406,5 @@ class Ui_MainWindow(object):
         self.actionSamples_from_csv.setText(_translate("MainWindow", "IQ samples from csv"))
         self.actionClose_project.setText(_translate("MainWindow", "Close project"))
         self.actionAuto_detect_new_signals.setText(_translate("MainWindow", "Auto detect signals on loading"))
-
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

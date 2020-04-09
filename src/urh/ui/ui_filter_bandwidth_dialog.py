@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogFilterBandwidth(object):
     def setupUi(self, DialogFilterBandwidth):
@@ -146,4 +148,3 @@ class Ui_DialogFilterBandwidth(object):
         self.labelVeryWideBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
         self.radioButtonMedium.setText(_translate("DialogFilterBandwidth", "Medium"))
         self.labelMediumBandwidth.setText(_translate("DialogFilterBandwidth", "TextLabel"))
-

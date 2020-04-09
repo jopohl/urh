@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_ChecksumOptions(object):
     def setupUi(self, ChecksumOptions):
@@ -161,4 +163,3 @@ class Ui_ChecksumOptions(object):
         self.radioButtonWSPChecksum4.setText(_translate("ChecksumOptions", "Force Checksum4"))
         self.radioButtonWSPChecksum8.setText(_translate("ChecksumOptions", "Force Checksum8"))
         self.radioButtonWSPCRC8.setText(_translate("ChecksumOptions", "Force CRC8"))
-

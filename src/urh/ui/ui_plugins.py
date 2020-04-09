@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_FramePlugins(object):
     def setupUi(self, FramePlugins):
@@ -68,4 +70,3 @@ class Ui_FramePlugins(object):
         self.label.setText(_translate("FramePlugins", "Available Plugins"))
         self.label_2.setText(_translate("FramePlugins", "Description"))
         self.groupBoxSettings.setTitle(_translate("FramePlugins", "Settings"))
-

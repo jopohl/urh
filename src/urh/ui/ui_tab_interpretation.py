@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Interpretation(object):
     def setupUi(self, Interpretation):
@@ -74,6 +76,5 @@ class Ui_Interpretation(object):
         _translate = QtCore.QCoreApplication.translate
         Interpretation.setWindowTitle(_translate("Interpretation", "Form"))
         self.labelGettingStarted.setText(_translate("Interpretation", "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>"))
-
 from urh.ui.ScrollArea import ScrollArea
 from . import urh_rc

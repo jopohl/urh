@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_SendRecvDialog(object):
     def setupUi(self, SendRecvDialog):
@@ -322,7 +324,6 @@ class Ui_SendRecvDialog(object):
         self.btnAccept.setToolTip(_translate("SendRecvDialog", "<html><head/><body><p>Accept the sniffed data and load it into <span style=\" font-weight:600;\">Analysis</span> tab.</p></body></html>"))
         self.btnAccept.setText(_translate("SendRecvDialog", "Accept data (Open in Analysis)"))
         self.label_y_scale.setText(_translate("SendRecvDialog", "Y-Scale"))
-
 from urh.ui.views.EditableGraphicView import EditableGraphicView
 from urh.ui.views.LiveGraphicView import LiveGraphicView
 from . import urh_rc

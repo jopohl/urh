@@ -4,7 +4,7 @@ from subprocess import call
 import fileinput
 
 
-def gen():
+def gen(force=False):
     if sys.platform == "win32":
         bindir = "c:\Python34\Lib\site-packages\PyQt5"
     else:
@@ -35,7 +35,7 @@ def gen():
         except os.error:
             time_generated_file = 0
 
-        if time_generated_file >= time_ui_file:
+        if time_generated_file >= time_ui_file and not force:
             # Generated file is already there and newer than ui file, no need to recompile it
             continue
 
@@ -63,7 +63,7 @@ def gen():
         except os.error:
             time_generated_file = 0
 
-        if time_generated_file < time_rc_file:
+        if time_generated_file < time_rc_file or force:
             # Only create, when generated file is old than rc file to prevent unneeded git pushes
             call([rcc_path, file_path, "-o", out_file_path])
 

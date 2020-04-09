@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -11,7 +12,7 @@ class Ui_Decoder(object):
     def setupUi(self, Decoder):
         Decoder.setObjectName("Decoder")
         Decoder.setWindowModality(QtCore.Qt.WindowModal)
-        Decoder.resize(1018, 590)
+        Decoder.resize(2200, 1398)
         Decoder.setModal(False)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(Decoder)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -201,16 +202,16 @@ class Ui_Decoder(object):
         self.datawhitening_sync.setGeometry(QtCore.QRect(0, 0, 171, 23))
         self.datawhitening_sync.setObjectName("datawhitening_sync")
         self.label_13 = QtWidgets.QLabel(self.page_data_whitening)
-        self.label_13.setGeometry(QtCore.QRect(180, 0, 231, 20))
+        self.label_13.setGeometry(QtCore.QRect(180, 0, 1461, 20))
         self.label_13.setObjectName("label_13")
         self.datawhitening_polynomial = QtWidgets.QLineEdit(self.page_data_whitening)
         self.datawhitening_polynomial.setGeometry(QtCore.QRect(0, 30, 171, 23))
         self.datawhitening_polynomial.setObjectName("datawhitening_polynomial")
         self.label_14 = QtWidgets.QLabel(self.page_data_whitening)
-        self.label_14.setGeometry(QtCore.QRect(180, 30, 341, 21))
+        self.label_14.setGeometry(QtCore.QRect(180, 30, 1461, 21))
         self.label_14.setObjectName("label_14")
         self.datawhitening_overwrite_crc = QtWidgets.QCheckBox(self.page_data_whitening)
-        self.datawhitening_overwrite_crc.setGeometry(QtCore.QRect(0, 60, 491, 20))
+        self.datawhitening_overwrite_crc.setGeometry(QtCore.QRect(0, 60, 1641, 31))
         self.datawhitening_overwrite_crc.setObjectName("datawhitening_overwrite_crc")
         self.optionWidget.addWidget(self.page_data_whitening)
         self.page_cut = QtWidgets.QWidget()
@@ -352,7 +353,5 @@ class Ui_Decoder(object):
         self.label_2.setText(_translate("Decoder", "Signal {0,1}:"))
         self.label_3.setText(_translate("Decoder", "Decoded Bits:"))
         self.decoding_errors_label.setText(_translate("Decoder", "[Decoding Errors = 0]"))
-
-
 from urh.ui.ListWidget import ListWidget
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView

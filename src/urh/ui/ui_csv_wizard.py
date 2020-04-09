@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogCSVImport(object):
     def setupUi(self, DialogCSVImport):
@@ -147,4 +149,3 @@ class Ui_DialogCSVImport(object):
         self.groupBoxFilePreview.setTitle(_translate("DialogCSVImport", "File Content (at most 100 rows)"))
         self.label_5.setText(_translate("DialogCSVImport", "File to import:"))
         self.btnAutoDefault.setText(_translate("DialogCSVImport", "Prevent Dialog From Close with Enter"))
-

@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogSimulator(object):
     def setupUi(self, DialogSimulator):
@@ -293,7 +295,6 @@ class Ui_DialogSimulator(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_device), _translate("DialogSimulator", "Devices"))
         self.btnStartStop.setText(_translate("DialogSimulator", "Start"))
         self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabSimulation), _translate("DialogSimulator", "Simulation"))
-
 from urh.ui.views.LiveGraphicView import LiveGraphicView
 from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView
 from . import urh_rc

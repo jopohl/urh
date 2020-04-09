@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -224,6 +225,4 @@ class Ui_SniffSettings(object):
         self.label_sniff_Noise.setText(_translate("SniffSettings", "Noise:"))
         self.labelCenterSpacing.setText(_translate("SniffSettings", "Center Spacing:"))
         self.labelBitsPerSymbol.setText(_translate("SniffSettings", "Bits per Symbol:"))
-
-
 from . import urh_rc

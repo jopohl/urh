@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_FuzzingDialog(object):
     def setupUi(self, FuzzingDialog):
@@ -319,5 +321,4 @@ class Ui_FuzzingDialog(object):
         self.lPreBits.setText(_translate("FuzzingDialog", "1111"))
         self.lFuzzedBits.setText(_translate("FuzzingDialog", "1010"))
         self.lPostBits.setText(_translate("FuzzingDialog", "010101"))
-
 from urh.ui.views.FuzzingTableView import FuzzingTableView

@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_DialogMessageType(object):
     def setupUi(self, DialogMessageType):
@@ -59,4 +61,3 @@ class Ui_DialogMessageType(object):
         self.rbAssignAutomatically.setText(_translate("DialogMessageType", "Assign a&utomatically"))
         self.btnAddRule.setToolTip(_translate("DialogMessageType", "Add ruleset"))
         self.btnAddRule.setText(_translate("DialogMessageType", "..."))
-

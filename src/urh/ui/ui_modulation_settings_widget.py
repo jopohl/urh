@@ -4,6 +4,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -139,7 +140,5 @@ class Ui_ModulationSettings(object):
         self.label.setText(_translate("ModulationSettings", "Bits per Symbol:"))
         self.labelBitsPerSymbol.setText(_translate("ModulationSettings", "1"))
         self.btnConfigurationDialog.setText(_translate("ModulationSettings", "Open modulation configuration dialog..."))
-
-
 from urh.ui.ElidedLabel import ElidedLabel
 from . import urh_rc

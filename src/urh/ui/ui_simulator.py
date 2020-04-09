@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_SimulatorTab(object):
     def setupUi(self, SimulatorTab):
@@ -449,7 +451,6 @@ class Ui_SimulatorTab(object):
         self.label_15.setText(_translate("SimulatorTab", "Start:"))
         self.label_16.setText(_translate("SimulatorTab", "Step:"))
         self.label_17.setText(_translate("SimulatorTab", "<html><head/><body><p>This counter will increase by <span style=\" font-weight:600;\">step</span> each time it gets hit during simulation. It will preserve it\'s value during simulation repeats and retries. To reset all counters stop the simulation and start it again.</p><p>Access the value of this counter using item&lt;Number&gt;.counter_value in <span style=\" font-weight:600;\">Formulas</span> or as parameter in <span style=\" font-weight:600;\">external programs</span> e.g. <span style=\" font-style:italic;\">external_py -c item5.counter_value</span>. The value of this counter will be inserted during simulation time.</p></body></html>"))
-
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.ParticipantTableView import ParticipantTableView

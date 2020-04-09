@@ -4,7 +4,9 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_ProjectDialog(object):
     def setupUi(self, ProjectDialog):
@@ -210,6 +212,5 @@ class Ui_ProjectDialog(object):
         self.label_9.setText(_translate("ProjectDialog", "Participants:"))
         self.btnDown.setToolTip(_translate("ProjectDialog", "Move selected participants down"))
         self.btnDown.setText(_translate("ProjectDialog", "..."))
-
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ParticipantTableView import ParticipantTableView

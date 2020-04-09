@@ -441,3 +441,13 @@ class TestSendRecvDialog(QtTestCase):
             self.assertEqual(dialog.device.num_sending_repeats, 10)
 
             dialog.close()
+
+    def test_device_discovery_button(self):
+        dialog = self.__get_recv_dialog()
+        dialog.device_settings_widget.ui.cbDevice.setCurrentText("HackRF")
+        # Check for segfaults https://github.com/jopohl/urh/issues/758
+        dialog.device_settings_widget.ui.btnRefreshDeviceIdentifier.click()
+
+        QApplication.instance().processEvents()
+        QTest.qWait(100)
+        self.assertTrue(True)

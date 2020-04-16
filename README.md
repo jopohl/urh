@@ -36,7 +36,7 @@ Want to stay in touch? :speech_balloon: [Join our Slack channel!](https://join.s
 
 
 ### Citing URH
-We encourage researchers who work with URH to cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper or directly use the following BibTeX entry.
+We encourage researchers working with URH to cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper or directly use the following BibTeX entry.
   
  ```bibtex
 @inproceedings {220562,
@@ -51,25 +51,24 @@ publisher = {{USENIX} Association},
 ```
 
 ## Installation
-Universal Radio Hacker can be installed via __pip__ or using the __package manager__ of your distribution (if included).
-Below you find more specific installation instructions for:
-- [Windows](#windows)
-- [Linux](#linux)
-  - [Install via Package Manager](#install-via-package-manager)
-  - [Generic Installation with pip (Ubuntu/Debian)](#generic-installation-with-pip-ubuntudebian)
-  - [Docker Image](#docker-image)
-- [MacOS](#macos)
-- [Updating your installation](#update-your-installation)
-- [Running from source](#running-from-source)
+URH runs on Windows, macOS and Linux. Below you find installation instructions for your operating system.
 
+<details>
+ <summary><b>Windows</b></summary>
 
-### Windows
-On Windows, URH can be installed with its [Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
+ On Windows, URH can be installed with its [Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
  
 If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run Windows Update or directly install [KB2999226](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
-### Linux
-#### Generic Installation with pip (recommended)
+</details>
+
+<details>
+<summary><b>Linux</b></summary>
+
+
+<details open>
+<summary><i>Generic Installation with pip (recommended)</i></summary>
+
 URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with 
 ```bash 
 # IMPORTANT: Make sure your pip is up to date
@@ -78,37 +77,40 @@ sudo python3 -m pip install urh            # Install URH
 ``` 
 This is the recommended way to install URH on Linux because it comes with __all native extensions__ precompiled.
 
-##### udev rules
-In order to access your SDR as non-root user, install the according __udev rules__. 
-For example, you can install the HackRF udev rules with the following commands.
+In order to access your SDR as non-root user, install the according __udev rules__. You can find them [in the wiki](https://github.com/jopohl/urh/wiki/SDR-udev-rules).
 
-```bash
-sudo tee -a /etc/udev/rules.d/52-hackrf.rules >/dev/null <<-EOF
-ATTR{idVendor}=="1d50", ATTR{idProduct}=="604b", SYMLINK+="hackrf-jawbreaker-%k", MODE="660", GROUP="plugdev"
-ATTR{idVendor}=="1d50", ATTR{idProduct}=="6089", SYMLINK+="hackrf-one-%k", MODE="660", GROUP="plugdev"
-ATTR{idVendor}=="1fc9", ATTR{idProduct}=="000c", SYMLINK+="hackrf-dfu-%k", MODE="660", GROUP="plugdev"
-EOF
-sudo udevadm control --reload-rules
-```
-Make sure your current user is in the ```plugdev``` group to make these rules work.
-You find rules for other SDRs by searching for "```<SDR name>``` udev rules" in your favorite search engine.
+</details>
 
-If you still have problems accessing your SDR the Linux __USB autosuspend__ feature might be interfering.
-You can disable it by editing your ```/etc/default/grub``` as shown [here](https://unix.stackexchange.com/a/175035). 
+<details>
+<summary><i>Install via Package Manager</i></summary>
 
-#### Install via Package Manager
 URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__.  If available, simply use your package manager to install URH.
 
 __Note__: For native support, you must install the according ```-dev``` package(s) of your SDR(s) such as ```hackrf-dev``` __before__ installing URH.
+</details>
 
-#### Docker Image
+<details>
+<summary><i>Docker Image</i></summary>
+
 The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/). It has all native backends included and ready to operate. 
+</details>
 
-### MacOS
-#### Using DMG
+</details>
+
+
+<details>
+<summary><b>macOS</b></summary>
+
+<details open>
+<summary><i>Using DMG</i></summary>
+
 It is recommended to use __at least macOS 10.14__ when using the DMG available [here](https://github.com/jopohl/urh/releases).
 
-#### With pip
+</details>
+
+<details>
+<summary><i>With pip</i></summary>
+
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 
    _If you experience issues with preinstalled Python, make sure you update to a recent version using the given link._
 2. (Optional) Install desired native libs e.g. ```brew install librtlsdr``` for 
@@ -116,14 +118,23 @@ corresponding native device support.
 3. In a terminal, type: ```pip3 install urh```.
 4. Type ```urh``` in a terminal to get it started.
 
+</details>
 
-### Update your installation
-If you installed URH via pip you can keep it up to date with ```pip3 install --upgrade urh```, or, if this should not work ``` python3 -m pip install --upgrade urh ```.
+</details>
 
-### Running from source
-If you like to live on bleeding edge, you can run URH from source.
+<details>
+<summary><b>Update your installation</b></summary>
 
-#### Without installation
+If you installed URH via pip you can keep it up to date with ``` python3 -m pip install --upgrade urh ```.
+
+</details>
+
+<details>
+<summary><b>Running from source</b></summary>
+
+<details>
+<summary><i>Without installation</i></summary>
+
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
 git clone https://github.com/jopohl/urh/
@@ -133,7 +144,12 @@ cd urh/src/urh
 
 Note, before first usage the C++ extensions will be built.
 
-#### Installing from source
+
+</details>
+
+<details>
+<summary><i>Installing from source</i></summary>
+
 To install from source you need to have ```python-setuptools``` installed. You can get it e.g. with ```pip install setuptools```. 
 Once the setuptools are installed use: 
 ```bash
@@ -143,6 +159,10 @@ python setup.py install
 ```
 
 And start the application by typing ```urh``` in a terminal.
+
+</details>
+
+</details>
 
 ## Articles
 ### Hacking stuff with URH

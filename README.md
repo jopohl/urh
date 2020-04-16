@@ -51,7 +51,7 @@ publisher = {{USENIX} Association},
 ```
 
 ## Installation
-URH runs on Windows, macOS and Linux. Below you find installation instructions for your operating system.
+URH runs on Windows, Linux and macOS. Click on your operating system below to view installation instructions.
 
 <details>
  <summary><b>Windows</b></summary>

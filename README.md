@@ -10,17 +10,15 @@
  [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/) [![Blackhat Arsenal 2018](https://rawgit.com/toolswatch/badges/master/arsenal/europe/2018.svg)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/) [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LTk3NmE4MGVjYjEyYTMzYTdmN2RlNzUzYzg0NTNjNTQ2ODBkMzI3MDZlOWY3MjE4YjBkNTM4ZjJlNTJlZmJhNDg)
 
 
-The Universal Radio Hacker (URH) is a software for investigating unknown wireless protocols. Features include
+The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation.
+It offers __hardware interfaces__ for [a wide range](https://github.com/jopohl/urh/wiki/Supported-devices) of Software Defined Radios.
+URH allows __easy demodulation__ of signals paired with an [automatic detection of modulation parameters](https://dl.acm.org/doi/10.1145/3375894.3375896) making it a breeze to see the bits and bytes that fly over the air. 
 
-* __hardware interfaces__ for common Software Defined Radios
-* __easy demodulation__ of signals
-* __assigning participants__ to keep an overview of your data
-* __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening
-* __assign labels__ to reveal the logic of the protocol
-* __automatic reverse engineering__ of protocol fields
-* __fuzzing component__ to find security leaks
-* __modulation support__ to send the data back to the target
-* __simulation environment__ to perform stateful attacks
+Wireless protocols often _encode_ data before transmission.
+URH offers __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening.
+Moreover, URH supports __reverse-engineering__ of wireless protocols with visual features such as __assigment of labels__ to message ranges.
+As a highlight, URH is able to __automatically infer protocol fields__ by using a [rule-based intelligence](https://www.usenix.org/conference/woot19/presentation/pohl).
+Finally, URH entails a __fuzzing component__ aimed at stateless protocols and a __simulation environment__ to perform stateful attacks.
 
 ### Getting started
 In order to get started
@@ -54,7 +52,7 @@ publisher = {{USENIX} Association},
 URH runs on Windows, Linux and macOS. Click on your operating system below to view installation instructions.
 
 <details>
- <summary><b>Windows</b></summary>
+ <summary><b>Windows</b></summary><br/>
 
  On Windows, URH can be installed with its [Installer](https://github.com/jopohl/urh/releases). No further dependencies are required.
  
@@ -67,7 +65,7 @@ If you get an error about missing ```api-ms-win-crt-runtime-l1-1-0.dll```, run W
 
 
 <details open>
-<summary><i>Generic Installation with pip (recommended)</i></summary>
+<summary><i>Generic Installation with pip (recommended)</i></summary><br/>
 
 URH is available on [PyPi](https://pypi.org/project/urh/) so you can install it with 
 ```bash 
@@ -82,7 +80,7 @@ In order to access your SDR as non-root user, install the according __udev rules
 </details>
 
 <details>
-<summary><i>Install via Package Manager</i></summary>
+<summary><i>Install via Package Manager</i></summary><br/>
 
 URH is included in the repositories of many linux distributions such as __Arch Linux__, __Gentoo__, __Fedora__, __openSUSE__ or __NixOS__. There is also a package for __FreeBSD__.  If available, simply use your package manager to install URH.
 
@@ -90,7 +88,7 @@ __Note__: For native support, you must install the according ```-dev``` package(
 </details>
 
 <details>
-<summary><i>Docker Image</i></summary>
+<summary><i>Docker Image</i></summary><br/>
 
 The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/). It has all native backends included and ready to operate. 
 </details>
@@ -102,14 +100,14 @@ The official URH docker image is available [here](https://hub.docker.com/r/jopoh
 <summary><b>macOS</b></summary>
 
 <details open>
-<summary><i>Using DMG</i></summary>
+<summary><i>Using DMG</i></summary><br/>
 
 It is recommended to use __at least macOS 10.14__ when using the DMG available [here](https://github.com/jopohl/urh/releases).
 
 </details>
 
 <details>
-<summary><i>With pip</i></summary>
+<summary><i>With pip</i></summary><br/>
 
 1. Install [Python 3 for Mac OS X](https://www.python.org/downloads/mac-osx/). 
    _If you experience issues with preinstalled Python, make sure you update to a recent version using the given link._
@@ -123,7 +121,7 @@ corresponding native device support.
 </details>
 
 <details>
-<summary><b>Update your installation</b></summary>
+<summary><b>Update your installation</b></summary><br/>
 
 If you installed URH via pip you can keep it up to date with ``` python3 -m pip install --upgrade urh ```.
 
@@ -133,7 +131,7 @@ If you installed URH via pip you can keep it up to date with ``` python3 -m pip 
 <summary><b>Running from source</b></summary>
 
 <details>
-<summary><i>Without installation</i></summary>
+<summary><i>Without installation</i></summary><br/>
 
 To execute the Universal Radio Hacker without installation, just run:
 ```bash
@@ -148,7 +146,7 @@ Note, before first usage the C++ extensions will be built.
 </details>
 
 <details>
-<summary><i>Installing from source</i></summary>
+<summary><i>Installing from source</i></summary><br/>
 
 To install from source you need to have ```python-setuptools``` installed. You can get it e.g. with ```pip install setuptools```. 
 Once the setuptools are installed use: 

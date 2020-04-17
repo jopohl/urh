@@ -199,7 +199,7 @@ class Simulator(QObject):
 
     def __fill_counter_values(self, command: str):
         result = []
-        regex = "(item[0-9]+\.counter_value)"
+        regex = r"(item[0-9]+\.counter_value)"
         for token in re.split(regex, command):
             if re.match(regex, token) is not None:
                 try:

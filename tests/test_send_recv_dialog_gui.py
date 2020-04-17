@@ -305,7 +305,7 @@ class TestSendRecvDialog(QtTestCase):
 
         self.assertFalse(generator_frame.network_sdr_plugin.is_sending)
 
-        QTest.qWait(50)
+        QTest.qWait(250)
         received_msgs = sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().split("\n")
         orig_msgs = generator_frame.table_model.protocol.plain_bits_str
 

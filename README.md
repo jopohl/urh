@@ -12,12 +12,10 @@
 
 The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation.
 It offers __hardware interfaces__ for [a wide range](https://github.com/jopohl/urh/wiki/Supported-devices) of Software Defined Radios.
-URH allows __easy demodulation__ of signals paired with an [automatic detection of modulation parameters](https://dl.acm.org/doi/10.1145/3375894.3375896) making it a breeze to see the bits and bytes that fly over the air. 
-
+URH allows __easy demodulation__ of signals paired with an [automatic](https://dl.acm.org/doi/10.1145/3375894.3375896) detection of modulation parameters making it a breeze to identify the bits and bytes that fly over the air. 
 Wireless protocols often _encode_ data before transmission.
-URH offers __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening.
-Moreover, URH supports __reverse-engineering__ of wireless protocols with visual features such as __assigment of labels__ to message ranges.
-As a highlight, URH is able to __automatically infer protocol fields__ by using a [rule-based intelligence](https://www.usenix.org/conference/woot19/presentation/pohl).
+Therefore, URH offers __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening.
+When it comes to __protocol reverse-engineering__, URH is helpful in two ways. You can either manually assign protocol fields and message types or let URH do the work for you as it is able to __automatically infer protocol fields__ by using a [rule-based intelligence](https://www.usenix.org/conference/woot19/presentation/pohl).
 Finally, URH entails a __fuzzing component__ aimed at stateless protocols and a __simulation environment__ to perform stateful attacks.
 
 ### Getting started

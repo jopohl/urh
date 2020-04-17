@@ -1,13 +1,10 @@
 ![URH image](https://raw.githubusercontent.com/jopohl/urh/master/data/icons/banner.png)
 
-[![Tests status](https://img.shields.io/azure-devops/tests/jopohl/urh/2/master.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)
-[![Coverage](https://img.shields.io/azure-devops/coverage/jopohl/urh/2/master.svg)](https://dev.azure.com/jopohl/urh/_build?definitionId=2)
+[![Build Status](https://dev.azure.com/jopohl/urh/_apis/build/status/jopohl.urh?branchName=master)](https://dev.azure.com/jopohl/urh/_build/latest?definitionId=2&branchName=master)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
 [![Packaging status](https://repology.org/badge/tiny-repos/urh.svg)](https://repology.org/project/urh/versions)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/jopohl/urh.svg)](http://isitmaintained.com/project/jopohl/urh "Percentage of issues still open")
-
- [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/) [![Blackhat Arsenal 2018](https://rawgit.com/toolswatch/badges/master/arsenal/europe/2018.svg)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/) [![Slack](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LTk3NmE4MGVjYjEyYTMzYTdmN2RlNzUzYzg0NTNjNTQ2ODBkMzI3MDZlOWY3MjE4YjBkNTM4ZjJlNTJlZmJhNDg)
+ [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
+ [![Blackhat Arsenal 2018](https://rawgit.com/toolswatch/badges/master/arsenal/europe/2018.svg)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/)
 
 
 The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation.
@@ -26,15 +23,15 @@ In order to get started
  - check out the [wiki](https://github.com/jopohl/urh/wiki) for more information such as supported devices or
  - read some [articles about URH](#Articles) for inspiration.
 
-If URH is useful for you, please consider giving this repository a :star: or [make donation via PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6WDFF59DL56Z2). We appreciate your support!
-
-Want to stay in touch? :speech_balloon: [Join our Slack channel!](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LTk3NmE4MGVjYjEyYTMzYTdmN2RlNzUzYzg0NTNjNTQ2ODBkMzI3MDZlOWY3MjE4YjBkNTM4ZjJlNTJlZmJhNDg) 
-
+If you like URH, please :star: this repository and [join our Slack channel](https://join.slack.com/t/stralsundsecurity/shared_invite/enQtMjEwOTIxNzMzODc3LTk3NmE4MGVjYjEyYTMzYTdmN2RlNzUzYzg0NTNjNTQ2ODBkMzI3MDZlOWY3MjE4YjBkNTM4ZjJlNTJlZmJhNDg). We appreciate your support!
 
 ### Citing URH
 We encourage researchers working with URH to cite [this](https://www.usenix.org/conference/woot18/presentation/pohl) WOOT'18 paper or directly use the following BibTeX entry.
-  
- ```bibtex
+ 
+ <details>
+ <summary> <b>URH BibTeX entry for your research paper</b> </summary>
+ 
+  ```bibtex
 @inproceedings {220562,
 author = {Johannes Pohl and Andreas Noack},
 title = {Universal Radio Hacker: A Suite for Analyzing and Attacking Stateful Wireless Protocols},
@@ -45,6 +42,8 @@ url = {https://www.usenix.org/conference/woot18/presentation/pohl},
 publisher = {{USENIX} Association},
 }
 ```
+
+ </details> 
 
 ## Installation
 URH runs on Windows, Linux and macOS. Click on your operating system below to view installation instructions.

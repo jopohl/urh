@@ -176,6 +176,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
+        time.sleep(0.1)
         QTest.qWait(100)
 
         self.assertGreater(len(spectrum_dialog.scene_manager.peak), 0)

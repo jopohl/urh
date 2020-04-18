@@ -7,8 +7,7 @@
  [![Blackhat Arsenal 2018](https://rawgit.com/toolswatch/badges/master/arsenal/europe/2018.svg)](http://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/)
 
 
-The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation.
-It offers __hardware interfaces__ for a [wide range](https://github.com/jopohl/urh/wiki/Supported-devices) of Software Defined Radios.
+The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation with native support for [many](https://github.com/jopohl/urh/wiki/Supported-devices) common __Software Defined Radios__.
 URH allows __easy demodulation__ of signals combined with an [automatic](https://dl.acm.org/doi/10.1145/3375894.3375896) detection of modulation parameters making it a breeze to identify the bits and bytes that fly over the air. 
 As data often gets _encoded_ before transmission, URH offers __customizable decodings__ to crack even sophisticated encodings like CC1101 data whitening.
 When it comes to __protocol reverse-engineering__, URH is helpful in two ways. You can either manually assign protocol fields and message types or let URH __automatically infer protocol fields__ with a [rule-based intelligence](https://www.usenix.org/conference/woot19/presentation/pohl).

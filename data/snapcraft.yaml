@@ -1,0 +1,186 @@
+name: urh
+title: Universal Radio Hacker
+version: git
+summary: Investigate Wireless Protocols Like A Boss
+description: |
+  The Universal Radio Hacker (URH) is a complete suite for wireless protocol investigation with native support for many common **Software Defined Radios**.
+  URH allows **easy demodulation** of signals combined with an automatic detection of modulation parameters making it a breeze to identify the bits and bytes that fly over the air.
+  As data often gets _encoded_ before transmission, URH offers **customizable decodings** to crack even sophisticated encodings like CC1101 data whitening.
+  When it comes to **protocol reverse-engineering**, URH is helpful in two ways. You can either manually assign protocol fields and message types or let URH **automatically infer protocol fields** with a rule-based intelligence.
+  Finally, URH entails a **fuzzing component** aimed at stateless protocols and a **simulation environment** to perform stateful attacks.
+
+  After installation, give URH access to your USB in order to access your USB based SDRs:
+
+     sudo snap connect urh:raw-usb
+
+  In order to access your SDR as non-root user, install the according **udev rules** available at https://github.com/jopohl/urh/wiki/SDR-udev-rules.
+
+  If you want to use your Soundcard as an SDR for receiving please execute:
+
+     sudo snap connect urh:audio-record
+
+icon: data/icons/appicon.png
+
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+base: core18
+
+plugs: # plugs for theming, font settings, cursor and to use gtk3 file chooser
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes:gtk-3-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes:icon-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes:sounds-themes
+
+
+apps:
+  urh:
+    adapter: full
+    command: snap/command-chain/alsa-launch desktop-launch snapcraft-preload $SNAP/bin/urh
+    plugs:
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - unity7
+      - gsettings
+      - home
+      - opengl
+      - raw-usb
+      - audio-playback
+      - audio-record
+      - network
+    environment:
+      QT_QPA_PLATFORMTHEME: gtk3
+
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
+
+parts:
+  snapcraft-preload:
+    source: https://github.com/sergiusens/snapcraft-preload.git
+    plugin: cmake
+    build-packages:
+      - on amd64:
+        - gcc-multilib
+        - g++-multilib
+    stage-packages: [lib32stdc++6]
+
+  alsa-mixin:
+    plugin: dump
+    source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    source-subdir: snapcraft-assets
+    build-packages:
+      - libasound2-dev
+    stage-packages:
+      - libasound2
+      - libasound2-plugins
+
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - libgstreamer-plugins-base1.0-0
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libgomp1
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+      - libatk1.0-0
+      - libgtk2.0-0
+      - libxcomposite1
+      - libxcursor1
+      - libxinerama1
+      - libxrandr2
+      - libasyncns0                                                                             
+      - libatk-bridge2.0-0                                                                      
+      - libatspi2.0-0                                                                           
+      - libcairo-gobject2                                                                       
+      - libepoxy0                                                                               
+      - libflac8                                                                                
+      - libgtk-3-0                                                                              
+      - libogg0                                                                                 
+      - libpulse0                                                                               
+      - libsndfile1                                                                             
+      - libvorbis0a                                                                             
+      - libvorbisenc2                                                                           
+      - libwayland-cursor0                                                                      
+      - libwayland-egl1
+      - libodbc1
+      - libpq5
+      - libpulse-mainloop-glib0
+      - libspeechd2
+      
+  urh:
+    after: [desktop-qt5, sdrplay, alsa-mixin]
+    plugin: python
+    python-version: python3
+    requirements: [data/requirements.txt]
+    source: .
+    build-packages:
+      - python3
+      - python3-pyqt5
+      - libairspy-dev
+      - libbladerf-dev
+      - libhackrf-dev
+      - libiio-dev
+      - liblimesuite-dev
+      - librtlsdr-dev
+      - libuhd-dev
+      - wget
+      - execstack
+    stage-packages:
+      - python3
+      - python3-pyqt5
+      - python3-pyaudio
+      - libairspy-dev
+      - libbladerf-dev
+      - libhackrf-dev
+      - libiio-dev
+      - liblimesuite-dev
+      - librtlsdr-dev
+      - libuhd-dev
+      - libc-bin
+      - dbus
+      - qtwayland5
+      - qt5-gtk-platformtheme
+      - libqt5x11extras5
+      - locales
+
+  sdrplay:
+    plugin: dump
+    source: /lib
+    stage: [libmirsdrapi-rsp.so.2.13]
+    override-build: |
+      wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-2.13.1.run -O sdrplay.run
+      bash sdrplay.run --tar xf
+      cp mirsdrapi-rsp.h /usr/include
+      cp x86_64/* /lib
+      cp x86_64/* .
+      ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
+      snapcraftctl build

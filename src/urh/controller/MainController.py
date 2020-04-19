@@ -753,8 +753,11 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_project_dialog_finished(self):
         if self.sender().committed:
-            self.close_project()
-            self.project_manager.from_dialog(self.sender())
+            if self.sender().new_project:
+                self.close_project()
+                self.project_manager.from_dialog(self.sender())
+            else:
+                self.project_manager.project_updated.emit()
 
     @pyqtSlot()
     def on_open_file_action_triggered(self):

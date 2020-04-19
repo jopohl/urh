@@ -83,6 +83,13 @@ __Note__: For native support, you must install the according ```-dev``` package(
 </details>
 
 <details>
+<summary><i>Snap</i></summary><br/>
+
+URH is available as a snap: https://snapcraft.io/urh
+
+</details>
+
+<details>
 <summary><i>Docker Image</i></summary><br/>
 
 The official URH docker image is available [here](https://hub.docker.com/r/jopohl/urh/). It has all native backends included and ready to operate. 

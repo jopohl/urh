@@ -56,6 +56,15 @@ if __name__ == '__main__':
     os.makedirs("./pyinstaller")
     if sys.platform == "darwin":
         run_pyinstaller(urh_cmd, env=["DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared"])
+
+        import plistlib
+        with open("pyinstaller/urh.app/Contents/Info.plist", "rb") as f:
+            p = plistlib.load(f)
+        p["NSHighResolutionCapable"] = True
+        with open("pyinstaller/urh.app/Contents/Info.plist", "wb") as f:
+            plistlib.dump(p, f)
+
+
     else:
         for cmd in [urh_cmd, cli_cmd, urh_debug_cmd]:
             run_pyinstaller(cmd)

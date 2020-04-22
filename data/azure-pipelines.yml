@@ -272,7 +272,8 @@ jobs:
 
   - script: |
       mkdir -p dist
-      cat pyinstaller/urh.app/Contents/Info.plist
+      ls *
+      cat *.spec
       hdiutil create -volname Universal.Radio.Hacker \
                      -srcfolder pyinstaller/urh.app \
                      -ov -format UDZO \

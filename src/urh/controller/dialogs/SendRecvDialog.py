@@ -36,6 +36,8 @@ class SendRecvDialog(QDialog):
         self.ui.setupUi(self)
         util.set_splitter_stylesheet(self.ui.splitter)
 
+        self.ui.txtEditErrors.setFont(util.get_monospace_font())
+
         self.graphics_view = None  # type: QGraphicsView
 
         self.backend_handler = BackendHandler()

@@ -7,6 +7,7 @@ from multiprocessing.connection import Connection
 from pickle import UnpicklingError
 
 import numpy as np
+from urh.util.Formatter import Formatter
 
 from urh import settings
 from urh.dev.native.SendConfig import SendConfig
@@ -88,6 +89,8 @@ class Device(object):
                     pass
 
                 ret = getattr(cls.DEVICE_LIB, method_name)(value)
+                if isinstance(value, int) or isinstance(value, float):
+                    value = Formatter.big_value_with_suffix(value)
                 ctrl_connection.send("{0} to {1}:{2}".format(tag, value, ret))
             except AttributeError as e:
                 logger.warning(str(e))

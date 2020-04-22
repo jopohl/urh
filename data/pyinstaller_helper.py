@@ -1,4 +1,3 @@
-import multiprocessing
 import os
 import shutil
 import sys
@@ -22,11 +21,9 @@ def run_pyinstaller(cmd_list: list, env: list=None):
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
-    cmd = ["pyinstaller"]
+    cmd = ["pyinstaller", "--clean"]
     if sys.platform == "darwin":
         cmd.append("--onefile")
-        cmd.append("--clean")
 
     for hidden_import in HIDDEN_IMPORTS:
         cmd.append("--hidden-import={}".format(hidden_import))

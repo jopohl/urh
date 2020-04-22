@@ -58,7 +58,7 @@ if __name__ == '__main__':
         run_pyinstaller(urh_cmd, env=["DYLD_LIBRARY_PATH=src/urh/dev/native/lib/shared"])
 
         import plistlib
-        with open("pyinstaller/urh.app/Contents/Info.plist", "r") as f:
+        with open("pyinstaller/urh.app/Contents/Info.plist", "rb") as f:
             p = plistlib.load(f)
         p["NSHighResolutionCapable"] = True
         with open("pyinstaller/urh.app/Contents/Info.plist", "wb") as f:

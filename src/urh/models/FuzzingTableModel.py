@@ -67,6 +67,8 @@ class FuzzingTableModel(QAbstractTableModel):
                 font = QFont()
                 font.setBold(True)
                 return font
+        elif role == Qt.TextAlignmentRole:
+            return Qt.AlignCenter
 
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()

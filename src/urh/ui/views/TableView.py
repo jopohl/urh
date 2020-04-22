@@ -45,6 +45,8 @@ class TableView(QTableView):
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 
+        self.horizontalHeader().setMinimumSectionSize(0)
+
     def _add_insert_column_menu(self, menu):
         column_menu = menu.addMenu("Insert column")
 
@@ -164,9 +166,7 @@ class TableView(QTableView):
         if not self.isVisible():
             return
 
-        f = QFontMetrics(self.font())
-        w = f.widthChar("0") + 2
-
+        w = QFontMetrics(self.font()).widthChar("0") + 2
         for i in range(10):
             self.setColumnWidth(i, 3 * w)
 

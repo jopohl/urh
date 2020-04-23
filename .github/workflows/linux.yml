@@ -43,4 +43,4 @@ jobs:
         run: python src/urh/cythonext/build.py
       - name: Create sdist
         run: python setup.py sdist
-        if: ${{ matrix.python-version }} == "3.7"
+        if: matrix.python-version == 3.7

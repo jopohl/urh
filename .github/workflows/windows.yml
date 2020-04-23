@@ -32,6 +32,7 @@ jobs:
       - name: Download SDR Drivers
         run: |
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          echo "Variable is"
           echo "$(PY_ARCH)"
           if ("$(PY_ARCH)" -eq "x86") {
           echo "Using 32-bit SDR libraries..."

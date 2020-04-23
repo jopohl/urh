@@ -69,8 +69,10 @@ jobs:
         run: |
           python data/pyinstaller_helper.py
           for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
-          iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
+          iscc /dMyAppVersion=%URHVERSION% /dArch=$(PYARCH) data/inno.iss
         shell: cmd
+        env:
+          PYARCH: ${{ matrix.architecture }}
 
       - name: Check urh_debug.exe
         run: |

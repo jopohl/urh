@@ -33,7 +33,7 @@ jobs:
         run: |
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
           echo "Downloaded SDR drivers"
-          echo "test $TEST"
+          echo "test $env:TEST"
           if ("$(PYARCH)" -eq "x86") {
           echo "Using 32-bit SDR libraries..."
           Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"

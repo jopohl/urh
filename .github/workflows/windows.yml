@@ -33,11 +33,11 @@ jobs:
         run: |
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
           if ("$(ARCH)" -eq "x86") {
-          echo "Using 32-bit libs"
+          echo "Using 32-bit libraries"
           Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
           }
           else {
-          echo "Using 64-bit libs"
+          echo "Using 64-bit libraries"
           Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
           }
           Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"

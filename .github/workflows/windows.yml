@@ -1,0 +1,53 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Windows
+
+env:
+  PYTHONUNBUFFERED: 1
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: [3.7]
+        architecture: [x64, x86]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
+
+    - name: Download SDR Drivers
+      run: |
+        git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+        if ("$(python.arch)" -eq "x86") {
+        Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
+        }
+        else {
+        Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
+        }
+        Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
+
+    - name: Install Dependencies
+    - run: |
+        python -m pip install --upgrade pip
+        pip install -r data/requirements.txt
+        pip install pytest pytest-faulthandler
+
+    - name: Unzip DLLs
+      run: 7z x C:\windlls.zip -osrc\urh\dev\native\lib\shared
+
+    - name: Build Cython Extensions
+      run: python src/urh/cythonext/build.py

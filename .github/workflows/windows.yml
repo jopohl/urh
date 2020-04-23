@@ -48,8 +48,35 @@ jobs:
           pip install -r data/requirements.txt
           pip install pytest pytest-faulthandler
 
+          pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
+          pip install "pyaudio; python_version < '3.7'"
+          pip install "C:\PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
+          pip install "C:\PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
+          python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+
       - name: Unzip DLLs
         run: 7z x C:\windlls.zip -osrc\urh\dev\native\lib\shared
 
       - name: Build Cython Extensions
         run: python src/urh/cythonext/build.py
+
+      - name: Build Wheel
+        run: python setup.py bdist_wheel
+
+      - name: Build .exe Installer
+        run: |
+          python data/pyinstaller_helper.py
+          for /f %%i in ('python src/urh/version.py') do set URHVERSION=%%i
+          iscc /dMyAppVersion=%URHVERSION% /dArch=$(python.arch) data/inno.iss
+        shell: cmd
+
+      - name: Check urh_debug.exe
+        run: |
+          cd pyinstaller\urh
+          urh_debug.exe autoclose
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist

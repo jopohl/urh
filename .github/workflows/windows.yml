@@ -32,6 +32,7 @@ jobs:
       - name: Download SDR Drivers
         run: |
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          echo "$(ARCH)"
           if ("$(ARCH)" -eq "x86") {
           echo "Using 32-bit SDR libraries..."
           Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"

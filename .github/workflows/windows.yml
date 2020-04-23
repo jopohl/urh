@@ -27,26 +27,27 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
 
-    - name: Download SDR Drivers
-      run: |
-        git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-        if ("$(python.arch)" -eq "x86") {
-        Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
-        }
-        else {
-        Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
-        }
-        Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
+      - name: Download SDR Drivers
+        run: |
+          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          if ("$(python.arch)" -eq "x86") {
+          Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
+          }
+          else {
+          Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
+          }
+          Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
 
-    - name: Install Dependencies
-    - run: |
-        python -m pip install --upgrade pip
-        pip install -r data/requirements.txt
-        pip install pytest pytest-faulthandler
+      - name: Install Dependencies
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r data/requirements.txt
+          pip install pytest pytest-faulthandler
 
-    - name: Unzip DLLs
-      run: 7z x C:\windlls.zip -osrc\urh\dev\native\lib\shared
+      - name: Unzip DLLs
+        run: 7z x C:\windlls.zip -osrc\urh\dev\native\lib\shared
 
-    - name: Build Cython Extensions
-      run: python src/urh/cythonext/build.py
+      - name: Build Cython Extensions
+        run: python src/urh/cythonext/build.py

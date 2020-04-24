@@ -1,0 +1,46 @@
+env:
+  PYTHONUNBUFFERED: 1
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latex, macos-latest]
+        architecture: [x64, x86]
+        python-version: [3.5, 3.6, 3.7, 3.8]
+        exclude:
+          - os: macos-latest
+            python-version: [3.5, 3.6, 3.8]
+            architecture: x86
+          - os: windows-latest
+            python-version: [3.5, 3.6, 3.8]
+          - os: ubuntu-latest
+            architecture: x86
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Install Dependencies
+        run: |
+          pip install -r data/requirements.txt
+          pip install pytest-xvfb pytest-cov pytest-faulthandler
+          touch tests/show_gui
+
+      - name: Build Cython Extensions
+        run: python src/urh/cythonext/build.py
+
+      - name: Run PyTest
+        run: pytest -s -v --cov=src --cov-config=.coveragerc tests
+

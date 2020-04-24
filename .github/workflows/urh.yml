@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latex, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         architecture: [x64, x86]
         python-version: [3.5, 3.6, 3.7, 3.8]
         exclude:

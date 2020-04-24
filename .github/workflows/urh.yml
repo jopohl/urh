@@ -18,6 +18,14 @@ jobs:
         exclude:
           - os: macos-latest
             architecture: x86
+          - os: macos-latest
+            python-version: 3.5
+          - os: macos-latest
+            python-version: 3.6
+          - os: windows-latest
+            python-version: 3.5
+          - os: windows-latest
+            python-version: 3.6
           - os: ubuntu-latest
             architecture: x86
     steps:
@@ -28,6 +36,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
+
+      - name: Install xvfb and libs
+        run: sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils
+        if: matrix.os == ubuntu-latest
 
       - name: Install Dependencies
         run: |

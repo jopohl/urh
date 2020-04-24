@@ -46,6 +46,7 @@ jobs:
           pip install -r data/requirements.txt
           pip install pytest-xvfb pytest-cov pytest-faulthandler
           touch tests/show_gui
+          cp tests/.coveragerc .
 
       - name: Build Cython Extensions
         run: python src/urh/cythonext/build.py

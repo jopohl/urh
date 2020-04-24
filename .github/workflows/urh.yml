@@ -17,14 +17,7 @@ jobs:
         python-version: [3.5, 3.6, 3.7, 3.8]
         exclude:
           - os: macos-latest
-            python-version: 3.5
             architecture: x86
-          - os: windows-latest
-            python-version: 3.5
-          - os: windows-latest
-            python-version: 3.6
-          - os: windows-latest
-            python-version: 3.8
           - os: ubuntu-latest
             architecture: x86
     steps:

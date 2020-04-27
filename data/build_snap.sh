@@ -9,6 +9,6 @@ cd ..
 sed -i "s/version\: git/version\: $(python3 src/urh/version.py)/" snapcraft.yaml
 
 
-SNAPCRAFT_BUILD_ENVIRONMENT_CPU=4 SNAPCRAFT_BUILD_ENVIRONMENT_MEMORY=5G snapcraft
+SNAPCRAFT_BUILD_ENVIRONMENT_CPU=4 SNAPCRAFT_BUILD_ENVIRONMENT_MEMORY=6G snapcraft
 sudo snap install --dangerous urh*.snap
 urh

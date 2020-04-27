@@ -171,6 +171,7 @@ parts:
       - qt5-gtk-platformtheme
       - libqt5x11extras5
       - locales
+      - libcanberra-gtk3-module
 
   sdrplay:
     plugin: dump

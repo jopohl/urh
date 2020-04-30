@@ -252,9 +252,8 @@ jobs:
 
   - script: |
       brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8d748e26ccc9afc8ea0d0201ae234fda35de721e/Formula/boost.rb
-      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/896d1018c7a4906f2c3fa1386aaf283497db60a2/Formula/icu4c.rb
+      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/a806a621ed3722fb580a58000fb274a2f2d86a6d/Formula/icu4c.rb
       brew link icu4c --force
-      ls -l /usr/local/opt/icu4c/lib/libicudata.64.dylib
       cd /tmp
       wget https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
       tar xf libusb-1.0.22.tar.bz2

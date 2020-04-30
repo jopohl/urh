@@ -334,6 +334,7 @@ class TestSimulatorTabGUI(QtTestCase):
             while not any(log_message in msg for msg in dialog.simulator.log_messages):
                 if n < 50:
                     time.sleep(0.5)
+                    QTest.qWait(100)
                 else:
                     self.fail("Did not receive log message \"{}\"".format(log_message))
                 n += 1

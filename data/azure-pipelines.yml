@@ -251,7 +251,7 @@ jobs:
     displayName: "Install build dependencies"
 
   - script: |
-      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/44895fce117ab92a44d733315b702c48dbb3898d/Formula/icu4c.rb
+      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/896d1018c7a4906f2c3fa1386aaf283497db60a2/Formula/icu4c.rb
       brew link icu4c --force
       ls -l /usr/local/opt/icu4c/lib/libicudata.64.dylib
       brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8d748e26ccc9afc8ea0d0201ae234fda35de721e/Formula/boost.rb

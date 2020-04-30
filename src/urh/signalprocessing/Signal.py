@@ -51,6 +51,8 @@ class Signal(QObject):
         self.noise_max_plot = 0
         self.block_protocol_update = False
 
+        self.iq_array = IQArray(None, np.int8, 1)
+
         self.wav_mode = filename.endswith(".wav")
         self.__changed = False
         if modulation is None:

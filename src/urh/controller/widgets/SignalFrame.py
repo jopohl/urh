@@ -731,6 +731,7 @@ class SignalFrame(QFrame):
         else:
             self.ui.stackedWidget.setCurrentWidget(self.ui.pageSignal)
             self.ui.gvSignal.scene_type = self.ui.cbSignalView.currentIndex()
+            self.scene_manager.mod_type = self.signal.modulation_type
             self.ui.gvSignal.redraw_view(reinitialize=True)
             self.ui.labelRSSI.show()
 
@@ -1062,6 +1063,7 @@ class SignalFrame(QFrame):
 
             self.undo_stack.push(modulation_action)
 
+            self.scene_manager.mod_type = txt
             if self.ui.cbSignalView.currentIndex() == 1:
                 self.scene_manager.init_scene()
                 self.on_slider_y_scale_value_changed()

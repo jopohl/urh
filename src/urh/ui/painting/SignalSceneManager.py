@@ -19,7 +19,7 @@ class SignalSceneManager(SceneManager):
         else:
             self.plot_data = self.signal.qad
 
-        super().init_scene(apply_padding=self.scene_type == 0)
+        super().init_scene()
 
         self.line_item.setLine(0, 0, 0, 0)  # Hide Axis
 

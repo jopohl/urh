@@ -10,8 +10,6 @@ class SniffSceneManager(SceneManager):
         self.__end = 0
         self.window_length = window_length
 
-        self.minimum, self.maximum = IQArray.min_max_for_dtype(data_array.dtype)
-
     @property
     def plot_data(self):
         return self.data_array[self.__start:self.end]

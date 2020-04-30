@@ -341,8 +341,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
     else:
         raise ValueError("Unsupported dtype")
 
-    # Atan2 liefert Werte im Bereich von -Pi bis Pi
-    # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
+    # Atan2 yields values from -Pi to Pi
+    # We use the Magic Constant NOISE_FSK_PSK to cut off noise
     noise_sqrd = noise_mag * noise_mag
     NOISE = get_noise_for_mod_type(mod_type)
     result[0] = NOISE

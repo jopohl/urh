@@ -281,19 +281,32 @@ class Signal(QObject):
             self._qad = None
             self.clear_parameter_cache()
             self._noise_threshold = value
-            self.noise_min_plot = -value
-            self.noise_max_plot = value
+
+            middle = 0.5*sum(IQArray.min_max_for_dtype(self.iq_array.dtype))
+            a = self.max_amplitude * value / self.max_magnitude
+            self.noise_min_plot = middle - a
+            self.noise_max_plot = middle + a
             self.noise_threshold_changed.emit()
             if not self.block_protocol_update:
                 self.protocol_needs_update.emit()
 
     @property
+    def max_magnitude(self):
+        mi, ma = IQArray.min_max_for_dtype(self.iq_array.dtype)
+        return (2 * max(mi**2, ma**2))**0.5
+
+    @property
+    def max_amplitude(self):
+        mi, ma = IQArray.min_max_for_dtype(self.iq_array.dtype)
+        return 0.5 * (ma - mi)
+
+    @property
     def noise_threshold_relative(self):
-        return self.noise_threshold / (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+        return self.noise_threshold / self.max_magnitude
 
     @noise_threshold_relative.setter
     def noise_threshold_relative(self, value: float):
-        self.noise_threshold = value * (self.iq_array.maximum**2.0 + self.iq_array.minimum**2.0)**0.5
+        self.noise_threshold = value * self.max_magnitude
 
     @property
     def qad(self):

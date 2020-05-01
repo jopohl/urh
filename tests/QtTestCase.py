@@ -36,10 +36,7 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-
         cls.app = None
-        QTest.qWait(10)
-        time.sleep(0.1)
 
     def setUp(self):
         ProtocolSniffer.BUFFER_SIZE_MB = 0.5

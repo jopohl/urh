@@ -192,8 +192,8 @@ class ModulatorDialog(QDialog):
         if end == -1:
             end = scene_manager.signal.num_samples
 
-        y = scene_manager.scene.sceneRect().y()
-        h = scene_manager.scene.sceneRect().height()
+        y = self.ui.gVOriginalSignal.view_rect().y()
+        h = self.ui.gVOriginalSignal.view_rect().height()
         self.ui.gVOriginalSignal.setSceneRect(start, y, end - start, h)
         self.ui.gVOriginalSignal.fitInView(self.ui.gVOriginalSignal.sceneRect())
         scene_manager.show_scene_section(start, end)

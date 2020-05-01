@@ -20,7 +20,6 @@ faulthandler.enable()
 
 class QtTestCase(unittest.TestCase):
     CLOSE_TIMEOUT = 10
-    WAIT_TIMEOUT_BEFORE_NEW = 10
     SHOW = os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui"))
 
     @classmethod

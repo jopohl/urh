@@ -59,15 +59,13 @@ class TestProjectManager(QtTestCase):
 
     def test_close_all(self):
         self.form.close_project()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.add_signal_to_form("ask.complex")
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_project()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 

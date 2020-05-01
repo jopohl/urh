@@ -15,8 +15,7 @@ class TestSignalTabGUI(QtTestCase):
         self.add_signal_to_form("esaver.complex16s")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         self.form.close_all_files()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
 
         # Add a bunch of signals
@@ -27,8 +26,6 @@ class TestSignalTabGUI(QtTestCase):
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames)
 
         self.form.close_project()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
 
         self.add_signal_to_form("ask.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)

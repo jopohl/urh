@@ -57,7 +57,6 @@ class TestMaincontrollerGUI(QtTestCase):
             f.write(os.linesep.join(bits))
 
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentIndex(0)
-        self.wait_before_new_file()
         self.form.add_files([filename])
 
         for i, bit_seq in enumerate(bits):

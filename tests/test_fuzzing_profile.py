@@ -28,7 +28,6 @@ class TestFuzzingProfile(QtTestCase):
         pac.to_xml_file(filename, decoders=decoders,
                         participants=self.form.project_manager.participants)
 
-        self.wait_before_new_file()
         self.form.add_files([os.path.join(tempfile.gettempdir(), "test.fuzz.xml")])
 
         self.assertEqual(self.form.ui.tabWidget.currentWidget(), self.form.ui.tab_generator)

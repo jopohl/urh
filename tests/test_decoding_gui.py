@@ -18,7 +18,6 @@ class TestDecodingGUI(QtTestCase):
         # add empty signal
         path = os.path.join(tempfile.gettempdir(), "empty.complex")
         open(path, "w").close()
-        self.wait_before_new_file()
         self.form.add_signalfile(path)
 
         signal = self.form.signal_tab_controller.signal_frames[0].signal

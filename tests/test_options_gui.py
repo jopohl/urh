@@ -52,7 +52,6 @@ class TestOptionsGUI(QtTestCase):
         n_rows = self.dialog.ui.tblLabeltypes.model().rowCount()
         self.assertGreater(n_rows, 1)
         self.dialog.ui.btnAddLabelType.click()
-        self.wait_before_new_file()
         self.assertEqual(n_rows + 1, self.dialog.ui.tblLabeltypes.model().rowCount())
         self.dialog.ui.btnRemoveLabeltype.click()
         self.assertEqual(n_rows, self.dialog.ui.tblLabeltypes.model().rowCount())

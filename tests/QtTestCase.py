@@ -73,6 +73,8 @@ class QtTestCase(unittest.TestCase):
         gc.collect()
 
     def wait_before_new_file(self):
+        return
+
         QApplication.instance().processEvents()
         QTest.qWait(self.WAIT_TIMEOUT_BEFORE_NEW)
 

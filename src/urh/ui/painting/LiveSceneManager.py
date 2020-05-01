@@ -8,8 +8,6 @@ class LiveSceneManager(SceneManager):
         self.plot_data = data_array
         self.end = 0
 
-        self.minimum, self.maximum = IQArray.min_max_for_dtype(data_array.dtype)
-
     @property
     def num_samples(self):
         return self.end

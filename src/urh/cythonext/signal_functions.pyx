@@ -56,6 +56,31 @@ cdef get_numpy_dtype(iq cython_type):
 cpdef modulate_c(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_type,
                  float[:] parameters, uint16_t bits_per_symbol,
                  float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
+                 uint32_t pause, uint32_t start, dtype=np.float32,
+                 float gauss_bt=0.5, float filter_width=1.0):
+
+    if dtype == np.int8:
+        return __modulate(
+            bits, samples_per_symbol, modulation_type, parameters, bits_per_symbol, carrier_amplitude,
+            carrier_frequency, carrier_phase, sample_rate, pause, start, <char>0, gauss_bt, filter_width
+        )
+    elif dtype == np.int16:
+        return __modulate(
+            bits, samples_per_symbol, modulation_type, parameters, bits_per_symbol, carrier_amplitude,
+            carrier_frequency, carrier_phase, sample_rate, pause, start, <short>0, gauss_bt, filter_width
+        )
+    elif dtype == np.float32:
+        return __modulate(
+            bits, samples_per_symbol, modulation_type, parameters, bits_per_symbol, carrier_amplitude,
+            carrier_frequency, carrier_phase, sample_rate, pause, start, <float>0.0, gauss_bt, filter_width
+        )
+    else:
+        raise ValueError("Unsupported dtype for modulation {}".format(dtype))
+
+
+cpdef __modulate(uint8_t[:] bits, uint32_t samples_per_symbol, str modulation_type,
+                 float[:] parameters, uint16_t bits_per_symbol,
+                 float carrier_amplitude, float carrier_frequency, float carrier_phase, float sample_rate,
                  uint32_t pause, uint32_t start, iq iq_type,
                  float gauss_bt=0.5, float filter_width=1.0):
     cdef int64_t i = 0, j = 0, index = 0, prev_index=0, s_i = 0, num_bits = len(bits)
@@ -316,8 +341,8 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
     else:
         raise ValueError("Unsupported dtype")
 
-    # Atan2 liefert Werte im Bereich von -Pi bis Pi
-    # Wir nutzen die Magic Constant NOISE_FSK_PSK um Rauschen abzuschneiden
+    # Atan2 yields values from -Pi to Pi
+    # We use the Magic Constant NOISE_FSK_PSK to cut off noise
     noise_sqrd = noise_mag * noise_mag
     NOISE = get_noise_for_mod_type(mod_type)
     result[0] = NOISE

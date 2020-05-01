@@ -50,7 +50,7 @@ class TestDemodulations(unittest.TestCase):
         bits_str = "101010"
         bits = array.array("B", list(map(int, bits_str)))
         parameters = array.array("f", [-10e3, 10e3])
-        result = modulate_c(bits, 8, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+        result = modulate_c(bits, 8, "FSK", parameters, 1, 1, 40e3, 0, 1e6, 1000, 0)
 
         signal = Signal("")
         signal.iq_array = IQArray(result)
@@ -80,7 +80,7 @@ class TestDemodulations(unittest.TestCase):
     def test_4_fsk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
         parameters = array.array("f", [-20e3, -10e3, 10e3, 20e3])
-        result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0, parameters[0])
+        result = modulate_c(bits, 100, "FSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
 
         signal = Signal("")
         signal.iq_array = IQArray(result)

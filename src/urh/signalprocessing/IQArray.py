@@ -189,13 +189,13 @@ class IQArray(object):
     def from_file(filename: str):
         if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
-            return IQArray(data=np.fromfile(filename, dtype=np.uint8))
+            return IQArray(IQArray(data=np.fromfile(filename, dtype=np.uint8)).convert_to(np.int8))
         elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
             return IQArray(data=np.fromfile(filename, dtype=np.int8))
         elif filename.endswith(".complex32u") or filename.endswith(".cu16"):
             # two 16 bit unsigned integers
-            return IQArray(data=np.fromfile(filename, dtype=np.uint16))
+            return IQArray(IQArray(data=np.fromfile(filename, dtype=np.uint16)).convert_to(np.int16))
         elif filename.endswith(".complex32s") or filename.endswith(".cs16"):
             # two 16 bit signed integers
             return IQArray(data=np.fromfile(filename, dtype=np.int16))

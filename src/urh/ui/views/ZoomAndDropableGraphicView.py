@@ -1,5 +1,8 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from urh.signalprocessing.IQArray import IQArray
+
+from urh.cythonext import util
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
@@ -44,9 +47,6 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         if signal is None:
             return
 
-        self.draw_signal(signal, proto_analyzer)
-
-    def draw_signal(self, signal, proto_analyzer):
         if signal is None:
             return
 
@@ -59,6 +59,15 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
         self.auto_fit_view()
 
         self.signal_loaded.emit(self.proto_analyzer)
+
+    def auto_fit_view(self):
+        super().auto_fit_view()
+
+        plot_min, plot_max = util.minmax(self.signal.real_plot_data)
+        data_min, data_max = IQArray.min_max_for_dtype(self.signal.real_plot_data.dtype)
+        self.scale(1, (data_max - data_min) / (plot_max-plot_min))
+
+        self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
 
     def eliminate(self):
         # Do _not_ call eliminate() for self.signal and self.proto_analyzer

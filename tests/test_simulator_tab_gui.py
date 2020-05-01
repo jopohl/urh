@@ -377,12 +377,15 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(modulator.modulate("1" * 352), 1)
         time.sleep(0.5)
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
+        time.sleep(0.5)
 
         __wait_for_simulator_log_message(dialog, "Waiting for message 2")
 
         sender.send_raw_data(modulator.modulate("10" * 176), 1)
         time.sleep(0.5)
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
+        time.sleep(0.5)
+
         __wait_for_simulator_log_message(dialog, "Mismatch for label:")
 
         dialog.on_timer_timeout()  # enforce writing to text view

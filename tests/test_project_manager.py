@@ -24,7 +24,6 @@ class TestProjectManager(QtTestCase):
         self.gframe = self.form.generator_tab_controller
 
     def test_load_protocol_file(self):
-        self.wait_before_new_file()
         self.form.add_protocol_file(self.get_path_for_filename("protocol_wsp.proto.xml"))
         self.assertEqual(len(self.form.compare_frame_controller.proto_analyzer.messages), 6)
 
@@ -60,15 +59,13 @@ class TestProjectManager(QtTestCase):
 
     def test_close_all(self):
         self.form.close_project()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.add_signal_to_form("ask.complex")
         self.add_signal_to_form("fsk.complex")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.form.close_project()
-        QApplication.instance().processEvents()
-        QTest.qWait(self.CLOSE_TIMEOUT)
+
         self.assertEqual(self.form.signal_tab_controller.num_frames, 0)
         self.assertEqual(self.form.project_manager.project_file, None)
 
@@ -109,7 +106,6 @@ class TestProjectManager(QtTestCase):
 
         self.form.save_project()
         self.form.close_all_files()
-        self.wait_before_new_file()
         self.assertEqual(self.form.compare_frame_controller.protocol_model.row_count, 0)
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
 
@@ -152,7 +148,6 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(self.form.compare_frame_controller.active_message_type[2].field_type, checksum_field_type)
 
         self.form.close_project()
-        self.wait_before_new_file()
         self.assertEqual(len(self.form.compare_frame_controller.active_message_type), 0)
         self.form.project_manager.set_project_folder(target_dir, ask_for_new_project=False)
 

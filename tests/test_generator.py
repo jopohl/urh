@@ -233,7 +233,6 @@ class TestGenerator(QtTestCase):
         with open(filename, "w") as f:
             f.writelines("\n".join(data))
 
-        self.wait_before_new_file()
         self.form.add_files([filename])
         self.add_signal_to_generator(signal_index=0)
         self.form.generator_tab_controller.ui.cbViewType.setCurrentText("Bit")

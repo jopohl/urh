@@ -10,8 +10,6 @@ class ContinuousSceneManager(SceneManager):
         self.__start = 0
         self.__end = 0
 
-        self.minimum, self.maximum = IQArray.min_max_for_dtype(self.ring_buffer.dtype)
-
     @property
     def plot_data(self):
         return self.ring_buffer.view_data.real

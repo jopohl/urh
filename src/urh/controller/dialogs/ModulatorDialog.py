@@ -41,16 +41,6 @@ class ModulatorDialog(QDialog):
 
         self.modulators = modulators
 
-        for graphic_view in (self.ui.gVCarrier, self.ui.gVData):
-            graphic_view.scene_y_min = -1
-            graphic_view.scene_y_max = 1
-            graphic_view.scene_x_zoom_stretch = 1.1
-
-        min_max_mod = IQArray.min_max_for_dtype(self.current_modulator.get_dtype())
-        self.ui.gVModulated.scene_y_min = min_max_mod[0]
-        self.ui.gVModulated.scene_y_max = min_max_mod[1]
-        self.ui.gVModulated.scene_x_zoom_stretch = 1.1
-
         self.set_ui_for_current_modulator()
 
         self.ui.cbShowDataBitsOnly.setText(self.tr("Show Only Data Sequence\n"))
@@ -132,8 +122,7 @@ class ModulatorDialog(QDialog):
 
     @property
     def current_modulator(self):
-        mod = self.modulators[self.ui.comboBoxCustomModulations.currentIndex()]
-        return mod
+        return self.modulators[self.ui.comboBoxCustomModulations.currentIndex()]
 
     def set_ui_for_current_modulator(self):
         index = self.ui.comboBoxModulationType.findText("*(" + self.current_modulator.modulation_type + ")",
@@ -188,7 +177,7 @@ class ModulatorDialog(QDialog):
         self.ui.gVData.update()
 
     def draw_modulated(self):
-        self.ui.gVModulated.plot_data(self.current_modulator.modulate(pause=0).imag.astype(numpy.float32))
+        self.ui.gVModulated.plot_data(self.current_modulator.modulate(pause=0).imag)
         if self.lock_samples_in_view:
             siv = self.ui.gVOriginalSignal.view_rect().width()
             self.adjust_samples_in_view(siv)
@@ -203,8 +192,8 @@ class ModulatorDialog(QDialog):
         if end == -1:
             end = scene_manager.signal.num_samples
 
-        y = scene_manager.scene.sceneRect().y()
-        h = scene_manager.scene.sceneRect().height()
+        y = self.ui.gVOriginalSignal.view_rect().y()
+        h = self.ui.gVOriginalSignal.view_rect().height()
         self.ui.gVOriginalSignal.setSceneRect(start, y, end - start, h)
         self.ui.gVOriginalSignal.fitInView(self.ui.gVOriginalSignal.sceneRect())
         scene_manager.show_scene_section(start, end)

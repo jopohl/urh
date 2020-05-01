@@ -220,9 +220,6 @@ class Modulator(object):
         dtype = self.get_dtype()
         a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
 
-        type_code = "b" if dtype == np.int8 else "h" if dtype == np.int16 else "f"
-        type_val = array.array(type_code, [0])[0]
-
         parameters = self.parameters
         if self.modulation_type == "ASK":
             parameters = array.array("f", [a*p/100 for p in parameters])
@@ -233,7 +230,7 @@ class Modulator(object):
                                              self.modulation_type, parameters, self.bits_per_symbol,
                                              a, self.carrier_freq_hz,
                                              self.carrier_phase_deg * (np.pi / 180),
-                                             self.sample_rate, pause, start, type_val,
+                                             self.sample_rate, pause, start, dtype,
                                              self.gauss_bt, self.gauss_filter_width)
         return IQArray(result)
 

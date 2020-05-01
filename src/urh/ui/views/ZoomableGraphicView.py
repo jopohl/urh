@@ -49,9 +49,6 @@ class ZoomableGraphicView(SelectableGraphicView):
 
         self.zoomed.connect(self.on_signal_zoomed)
 
-        self.scene_y_min = float("nan")  # NaN = AutoDetect
-        self.scene_y_max = float("nan")  # NaN = AutoDetect
-
         self.scene_x_zoom_stretch = 1
 
     @property
@@ -161,8 +158,6 @@ class ZoomableGraphicView(SelectableGraphicView):
     def plot_data(self, data):
         if self.scene_manager is None:
             self.scene_manager = SceneManager(self)
-            self.scene_manager.minimum = self.scene_y_min
-            self.scene_manager.maximum = self.scene_y_max
 
         self.scene_manager.plot_data = data
         self.scene_manager.init_scene()

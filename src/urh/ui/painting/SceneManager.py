@@ -4,6 +4,7 @@ import numpy as np
 from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QPen, QColor
 from PyQt5.QtWidgets import QGraphicsPathItem
+from urh.signalprocessing.IQArray import IQArray
 
 from urh import settings
 from urh.cythonext import path_creator, util
@@ -16,10 +17,6 @@ class SceneManager(QObject):
         self.scene = ZoomableScene()
         self.__plot_data = None  # type: np.ndarray
         self.line_item = self.scene.addLine(0, 0, 0, 0, QPen(settings.AXISCOLOR, 0))
-        self.minimum = float("nan")  # NaN = AutoDetect
-        self.maximum = float("nan")  # NaN = AutoDetect
-
-        self.padding = 1.25
 
     @property
     def plot_data(self):
@@ -66,24 +63,11 @@ class SceneManager(QObject):
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)
 
-    def init_scene(self, apply_padding=True):
+    def init_scene(self):
         if self.num_samples == 0:
             return
 
-        if math.isnan(self.minimum) or math.isnan(self.maximum):
-            minimum, maximum = util.minmax(self.plot_data)
-        else:
-            minimum, maximum = self.minimum, self.maximum
-
-        padding = self.padding if apply_padding else 1
-
-        if abs(minimum) > abs(maximum):
-            minimum = -padding * abs(minimum)
-            maximum = -padding * minimum
-        else:
-            maximum = padding * abs(maximum)
-            minimum = -padding * maximum
-
+        minimum, maximum = IQArray.min_max_for_dtype(self.plot_data.dtype)
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
         self.scene.setBackgroundBrush(settings.BGCOLOR)
 

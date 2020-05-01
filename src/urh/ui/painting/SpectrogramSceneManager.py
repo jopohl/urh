@@ -67,7 +67,7 @@ class SpectrogramSceneManager(SceneManager):
         # after we know how wide the spectrogram actually is
         self.scene.setSceneRect(0, 0, x_pos, self.spectrogram.freq_bins)
 
-    def init_scene(self, apply_padding=True):
+    def init_scene(self):
         pass
 
     def eliminate(self):

@@ -76,7 +76,7 @@ class Encoding(object):
 
     @property
     def is_nrzi(self) -> bool:
-        return len(self.chain) == 2 and self.chain[1] == self.code_invert
+        return len(self.chain) == 2 and self.chain[1] == self.code_differential
 
     @property
     def contains_cut(self) -> bool:

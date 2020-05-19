@@ -125,9 +125,6 @@ class ProjectManager(QObject):
                     Encoding(["Non Return To Zero + Invert",
                               settings.DECODING_INVERT]),
 
-                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              settings.DECODING_DIFFERENTIAL]),
-
                     Encoding(["Manchester I",
                               settings.DECODING_EDGE]),
 

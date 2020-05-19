@@ -122,8 +122,8 @@ class ProjectManager(QObject):
 
         fallback = [Encoding(["Non Return To Zero (NRZ)"]),
 
-                    Encoding(["Non Return To Zero Inverted (NRZ-I)",
-                              settings.DECODING_DIFFERENTIAL]),
+                    Encoding(["Non Return To Zero + Invert",
+                              settings.DECODING_INVERT]),
 
                     Encoding(["Manchester I",
                               settings.DECODING_EDGE]),

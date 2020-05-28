@@ -243,6 +243,17 @@ class TestSignalTabGUI(QtTestCase):
         menu = text_edit.create_context_menu()
         self.assertEqual(len([action for action in menu.actions() if action.text() == "Participant"]), 1)
 
+    def test_load_already_demodulated(self):
+        self.add_signal_to_form("demodulated.wav")
+        assert isinstance(self.form, MainController)
+
+        sig_frame = self.form.signal_tab_controller.signal_frames[0]
+        sig_frame.ui.cbProtoView.setCurrentText("Hex")
+        sig_frame.ui.spinBoxCenterOffset.setValue(0.0459)
+        sig_frame.ui.spinBoxCenterOffset.editingFinished.emit()
+
+        self.assertTrue(sig_frame.ui.txtEdProto.toPlainText().startswith("abcd"))
+
     def test_export_demodulated(self):
         self.add_signal_to_form("esaver.complex16s")
         assert isinstance(self.form, MainController)

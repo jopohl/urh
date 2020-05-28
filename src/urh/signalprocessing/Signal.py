@@ -63,6 +63,8 @@ class Signal(QObject):
 
         self.__parameter_cache = {mod: {"center": None, "samples_per_symbol": None} for mod in self.MODULATION_TYPES}
 
+        self.__already_demodulated = False
+
         if len(filename) > 0:
             if self.wav_mode:
                 self.__load_wav_file(filename)
@@ -110,6 +112,7 @@ class Signal(QObject):
         self.iq_array = IQArray(None, np.float32, n=num_frames)
         if num_channels == 1:
             self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+            self.__already_demodulated = True
         elif num_channels == 2:
             self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
             self.iq_array.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
@@ -127,6 +130,10 @@ class Signal(QObject):
         extracted_filename = os.path.join(QDir.tempPath(), obj.getnames()[0])
         self.__load_complex_file(extracted_filename)
         os.remove(extracted_filename)
+
+    @property
+    def already_demodulated(self) -> bool:
+        return self.__already_demodulated
 
     @property
     def sample_rate(self):
@@ -313,7 +320,10 @@ class Signal(QObject):
     @property
     def qad(self):
         if self._qad is None:
-            self._qad = self.quad_demod()
+            if self.already_demodulated:
+                self._qad = np.ascontiguousarray(self.real_plot_data, dtype=self.real_plot_data.dtype)
+            else:
+                self._qad = self.quad_demod()
 
         return self._qad
 

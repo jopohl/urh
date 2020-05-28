@@ -297,7 +297,8 @@ class MainController(QMainWindow):
         if self.ui.actionAuto_detect_new_signals.isChecked() and not has_entry and not signal.changed:
             sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageLoading)
             qApp.processEvents()
-            signal.auto_detect(detect_modulation=True, detect_noise=False)
+            if not signal.already_demodulated:
+                signal.auto_detect(detect_modulation=True, detect_noise=False)
             sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageSignal)
 
         signal.blockSignals(False)

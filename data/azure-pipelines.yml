@@ -4,7 +4,6 @@ trigger:
 
 variables:
   PYTHONUNBUFFERED: '1'
-  QT_DEBUG_PLUGINS: '1'
 
 jobs:
 - job: 'Linux'

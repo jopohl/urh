@@ -31,7 +31,7 @@ jobs:
       python -m pip install --upgrade pip twine
       pip install -r data/requirements.txt
       sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
-      pip install PyVirtualDisplay<1.0
+      pip install PyVirtualDisplay==0.2.5
       pip install twine setuptools wheel pytest pytest-xvfb pytest-cov pytest-faulthandler
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'

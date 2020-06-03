@@ -113,9 +113,7 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxRandomMinimum.valueChanged.connect(self.on_random_range_min_changed)
         self.ui.spinBoxRandomMaximum.valueChanged.connect(self.on_random_range_max_changed)
         self.ui.spinBoxFuzzMessage.valueChanged.connect(self.on_fuzz_msg_changed)
-        self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
-        self.ui.btnAddBoundaries.clicked.connect(self.on_btn_add_boundaries_clicked)
-        self.ui.btnAddRandom.clicked.connect(self.on_btn_add_random_clicked)
+        self.ui.btnAddFuzzingValues.clicked.connect(self.on_btn_add_fuzzing_values_clicked)
         self.ui.comboBoxFuzzingLabel.editTextChanged.connect(self.set_current_label_name)
 
     def update_message_data_string(self):
@@ -288,14 +286,23 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxRandomMinimum.setMaximum(self.ui.spinBoxRandomMaximum.value() - 1)
 
     @pyqtSlot()
-    def on_btn_add_range_clicked(self):
+    def on_btn_add_fuzzing_values_clicked(self):
+        if self.ui.comboBoxStrategy.currentIndex() == 0:
+            self.__add_fuzzing_range()
+        elif self.ui.comboBoxStrategy.currentIndex() == 1:
+            self.__add_fuzzing_boundaries()
+        elif self.ui.comboBoxStrategy.currentIndex() == 2:
+            self.__add_random_fuzzing_values()
+        elif self.ui.comboBoxStrategy.currentIndex() == 3:
+            self.__add_de_brujin_fuzzing_values()
+
+    def __add_fuzzing_range(self):
         start = self.ui.sBAddRangeStart.value()
         end = self.ui.sBAddRangeEnd.value()
         step = self.ui.sBAddRangeStep.value()
         self.fuzz_table_model.add_range(start, end + 1, step)
 
-    @pyqtSlot()
-    def on_btn_add_boundaries_clicked(self):
+    def __add_fuzzing_boundaries(self):
         lower_bound = -1
         if self.ui.spinBoxLowerBound.isEnabled():
             lower_bound = self.ui.spinBoxLowerBound.value()
@@ -307,12 +314,14 @@ class FuzzingDialog(QDialog):
         num_vals = self.ui.spinBoxBoundaryNumber.value()
         self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
 
-    @pyqtSlot()
-    def on_btn_add_random_clicked(self):
+    def __add_random_fuzzing_values(self):
         n = self.ui.spinBoxNumberRandom.value()
         minimum = self.ui.spinBoxRandomMinimum.value()
         maximum = self.ui.spinBoxRandomMaximum.value()
         self.fuzz_table_model.add_random(n, minimum, maximum)
+
+    def __add_de_brujin_fuzzing_values(self):
+        raise NotImplementedError()
 
     def remove_duplicates(self):
         if self.ui.chkBRemoveDuplicates.isChecked():

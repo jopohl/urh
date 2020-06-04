@@ -472,3 +472,30 @@ def calc_x_y_scale(rect, parent):
     scale_y = view_rect.height() / parent_height
 
     return scale_x, scale_y
+
+
+def de_bruijn(n: int) -> array.array:
+    """
+    de Bruijn sequence for alphabet k and subsequences of length n.
+
+    https://www.wikiwand.com/en/De_Bruijn_sequence
+    """
+    alphabet = array.array("B", [0, 1])
+    k = len(alphabet)
+
+    a = [0] * k * n
+    sequence = []
+
+    def db(t, p):
+        if t > n:
+            if n % p == 0:
+                sequence.extend(a[1:p + 1])
+        else:
+            a[t] = a[t - p]
+            db(t + 1, p)
+            for j in range(a[t - p] + 1, k):
+                a[t] = j
+                db(t + 1, t)
+
+    db(1, 1)
+    return array.array("B", [alphabet[i] for i in sequence])

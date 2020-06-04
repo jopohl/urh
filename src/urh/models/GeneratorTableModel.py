@@ -1,4 +1,5 @@
 import array
+import time
 from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
@@ -131,6 +132,28 @@ class GeneratorTableModel(TableModel):
 
     def add_empty_row_behind(self, row_index: int, num_bits: int):
         message = Message(plain_bits=[0]*num_bits,
+                          pause=settings.read("default_fuzzing_pause", 10**6, int),
+                          message_type=self.protocol.default_message_type)
+
+        tmp_protocol = ProtocolAnalyzer(None)
+        tmp_protocol.messages = [message]
+        undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
+        self.undo_stack.push(undo_action)
+
+    def generate_de_bruijn(self, row_index: int, start: int, end: int):
+        if start < 0 or end < 0:
+            return
+
+        f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
+        start, end = f * start, f * end
+
+        t = time.time()
+        de_bruijn_seq = util.de_bruijn(end-start)
+        print(time.time()-t)
+
+        orig_message = self.protocol.messages[row_index]
+
+        message = Message(plain_bits=orig_message[:start] + de_bruijn_seq + orig_message[end:],
                           pause=settings.read("default_fuzzing_pause", 10**6, int),
                           message_type=self.protocol.default_message_type)
 

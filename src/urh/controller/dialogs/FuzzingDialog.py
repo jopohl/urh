@@ -290,8 +290,6 @@ class FuzzingDialog(QDialog):
             self.__add_fuzzing_boundaries()
         elif self.ui.comboBoxStrategy.currentIndex() == 2:
             self.__add_random_fuzzing_values()
-        elif self.ui.comboBoxStrategy.currentIndex() == 3:
-            self.__add_de_brujin_fuzzing_values()
 
     def __add_fuzzing_range(self):
         start = self.ui.sBAddRangeStart.value()
@@ -316,9 +314,6 @@ class FuzzingDialog(QDialog):
         minimum = self.ui.spinBoxRandomMinimum.value()
         maximum = self.ui.spinBoxRandomMaximum.value()
         self.fuzz_table_model.add_random(n, minimum, maximum)
-
-    def __add_de_brujin_fuzzing_values(self):
-        raise NotImplementedError()
 
     def remove_duplicates(self):
         if self.ui.chkBRemoveDuplicates.isChecked():

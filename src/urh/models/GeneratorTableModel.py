@@ -147,13 +147,9 @@ class GeneratorTableModel(TableModel):
         f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
         start, end = f * start, f * end
 
-        t = time.time()
         de_bruijn_seq = util.de_bruijn(end-start)
-        print(time.time()-t)
 
-        orig_message = self.protocol.messages[row_index]
-
-        message = Message(plain_bits=orig_message[:start] + de_bruijn_seq + orig_message[end:],
+        message = Message(plain_bits=de_bruijn_seq,
                           pause=settings.read("default_fuzzing_pause", 10**6, int),
                           message_type=self.protocol.default_message_type)
 

@@ -12,7 +12,8 @@ from urh.ui.ui_fuzzing import Ui_FuzzingDialog
 
 
 class FuzzingDialog(QDialog):
-    def __init__(self, protocol: ProtocolAnalyzerContainer, label_index: int, msg_index: int, proto_view: int, parent=None):
+    def __init__(self, protocol: ProtocolAnalyzerContainer, label_index: int, msg_index: int, proto_view: int,
+                 parent=None):
         super().__init__(parent)
         self.ui = Ui_FuzzingDialog()
         self.ui.setupUi(self)
@@ -243,11 +244,9 @@ class FuzzingDialog(QDialog):
     def on_lower_bound_checked_changed(self):
         if self.ui.checkBoxLowerBound.isChecked():
             self.ui.spinBoxLowerBound.setEnabled(True)
-            self.ui.btnAddBoundaries.setEnabled(True)
             self.ui.spinBoxBoundaryNumber.setEnabled(True)
         elif not self.ui.checkBoxUpperBound.isChecked():
             self.ui.spinBoxLowerBound.setEnabled(False)
-            self.ui.btnAddBoundaries.setEnabled(False)
             self.ui.spinBoxBoundaryNumber.setEnabled(False)
         else:
             self.ui.spinBoxLowerBound.setEnabled(False)
@@ -256,11 +255,9 @@ class FuzzingDialog(QDialog):
     def on_upper_bound_checked_changed(self):
         if self.ui.checkBoxUpperBound.isChecked():
             self.ui.spinBoxUpperBound.setEnabled(True)
-            self.ui.btnAddBoundaries.setEnabled(True)
             self.ui.spinBoxBoundaryNumber.setEnabled(True)
         elif not self.ui.checkBoxLowerBound.isChecked():
             self.ui.spinBoxUpperBound.setEnabled(False)
-            self.ui.btnAddBoundaries.setEnabled(False)
             self.ui.spinBoxBoundaryNumber.setEnabled(False)
         else:
             self.ui.spinBoxUpperBound.setEnabled(False)
@@ -363,7 +360,7 @@ class FuzzingDialog(QDialog):
     @pyqtSlot()
     def on_btn_repeat_values_clicked(self):
         num_repeats, ok = QInputDialog.getInt(self, self.tr("How many times shall values be repeated?"),
-                                                    self.tr("Number of repeats:"), 1, 1)
+                                              self.tr("Number of repeats:"), 1, 1)
         if ok:
             self.ui.chkBRemoveDuplicates.setChecked(False)
             min_row, max_row, _, _ = self.ui.tblFuzzingValues.selection_range()

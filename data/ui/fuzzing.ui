@@ -170,7 +170,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Number Values:</string>
+          <string>Values per Boundary:</string>
          </property>
         </widget>
        </item>
@@ -216,6 +216,7 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="pageDeBruijnLabel"/>
     </widget>
    </item>
    <item row="1" column="1">
@@ -501,6 +502,20 @@
          </property>
          <property name="maximum">
           <number>999999999</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageDeBruijn">
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QLabel" name="labelDeBruijn">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A nice text describing it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

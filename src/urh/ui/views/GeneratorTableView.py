@@ -184,6 +184,10 @@ class GeneratorTableView(TableView):
                 self.encoding_actions[ea] = decoding
                 ea.triggered.connect(self.on_encoding_action_triggered)
 
+            menu.addSeparator()
+            de_bruijn_action = menu.addAction("Generate De Bruijn Sequence from Selection")
+            de_bruijn_action.triggered.connect(self.on_de_bruijn_action_triggered)
+
         return menu
 
     @pyqtSlot()
@@ -199,6 +203,16 @@ class GeneratorTableView(TableView):
         for row in self.selected_rows:
             self.model().protocol.messages[row].decoder = self.encoding_actions[self.sender()]
         self.encodings_updated.emit()
+
+    @pyqtSlot()
+    def on_de_bruijn_action_triggered(self):
+        self.setCursor(Qt.WaitCursor)
+
+        row = self.rowAt(self.context_menu_pos.y())
+        _, _, start, end = self.selection_range()
+        self.model().generate_de_bruijn(row, start, end)
+
+        self.unsetCursor()
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):

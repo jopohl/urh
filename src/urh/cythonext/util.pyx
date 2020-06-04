@@ -12,6 +12,9 @@ from cython.parallel import prange
 from libc.math cimport log10,pow
 from libcpp cimport bool
 
+from cpython cimport array
+import array
+
 from urh.cythonext.util cimport iq
 
 cpdef tuple minmax(iq[:] arr):
@@ -288,3 +291,39 @@ cpdef tuple get_crc_datarange(uint8_t[:] inpt, uint8_t[:] polynomial, uint64_t v
         return 0, 0
     finally:
         free(steps)
+
+cdef db(unsigned int t, unsigned int p, unsigned int k, unsigned int n,
+        uint8_t* a, uint8_t* sequence, uint64_t* current_index):
+    cdef unsigned int i,j
+
+    if t > n:
+        if n % p == 0:
+            for i in range(1, p+1):
+                sequence[current_index[0]] = a[i]
+                current_index[0] += 1
+    else:
+        a[t] = a[t - p]
+        db(t + 1, p, k, n, a, sequence, current_index)
+        for j in range(a[t - p] + 1, k):
+            a[t] = j
+            db(t+1, t, k, n, a, sequence, current_index)
+
+cpdef array.array de_bruijn(unsigned int n):
+    cdef unsigned int k = 2  #  Alphabet size is 2 because our alphabet is [0, 1]
+    cdef uint64_t len_sequence = k ** n
+
+    cdef uint8_t* a = <uint8_t*>calloc(k*n, sizeof(uint8_t))
+
+    cdef array.array array_template = array.array('B', [])
+    cdef array.array sequence
+    sequence = array.clone(array_template, len_sequence, zero=False)
+
+    cdef uint64_t* current_index = <uint64_t*>calloc(1, sizeof(uint64_t))
+
+    db(1, 1, k, n, a, sequence.data.as_uchars, current_index)
+
+    try:
+        return sequence
+    finally:
+        free(a)
+        free(current_index)

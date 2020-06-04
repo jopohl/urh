@@ -12,7 +12,8 @@ from urh.ui.ui_fuzzing import Ui_FuzzingDialog
 
 
 class FuzzingDialog(QDialog):
-    def __init__(self, protocol: ProtocolAnalyzerContainer, label_index: int, msg_index: int, proto_view: int, parent=None):
+    def __init__(self, protocol: ProtocolAnalyzerContainer, label_index: int, msg_index: int, proto_view: int,
+                 parent=None):
         super().__init__(parent)
         self.ui = Ui_FuzzingDialog()
         self.ui.setupUi(self)
@@ -113,9 +114,7 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxRandomMinimum.valueChanged.connect(self.on_random_range_min_changed)
         self.ui.spinBoxRandomMaximum.valueChanged.connect(self.on_random_range_max_changed)
         self.ui.spinBoxFuzzMessage.valueChanged.connect(self.on_fuzz_msg_changed)
-        self.ui.btnAddRange.clicked.connect(self.on_btn_add_range_clicked)
-        self.ui.btnAddBoundaries.clicked.connect(self.on_btn_add_boundaries_clicked)
-        self.ui.btnAddRandom.clicked.connect(self.on_btn_add_random_clicked)
+        self.ui.btnAddFuzzingValues.clicked.connect(self.on_btn_add_fuzzing_values_clicked)
         self.ui.comboBoxFuzzingLabel.editTextChanged.connect(self.set_current_label_name)
 
     def update_message_data_string(self):
@@ -245,11 +244,9 @@ class FuzzingDialog(QDialog):
     def on_lower_bound_checked_changed(self):
         if self.ui.checkBoxLowerBound.isChecked():
             self.ui.spinBoxLowerBound.setEnabled(True)
-            self.ui.btnAddBoundaries.setEnabled(True)
             self.ui.spinBoxBoundaryNumber.setEnabled(True)
         elif not self.ui.checkBoxUpperBound.isChecked():
             self.ui.spinBoxLowerBound.setEnabled(False)
-            self.ui.btnAddBoundaries.setEnabled(False)
             self.ui.spinBoxBoundaryNumber.setEnabled(False)
         else:
             self.ui.spinBoxLowerBound.setEnabled(False)
@@ -258,11 +255,9 @@ class FuzzingDialog(QDialog):
     def on_upper_bound_checked_changed(self):
         if self.ui.checkBoxUpperBound.isChecked():
             self.ui.spinBoxUpperBound.setEnabled(True)
-            self.ui.btnAddBoundaries.setEnabled(True)
             self.ui.spinBoxBoundaryNumber.setEnabled(True)
         elif not self.ui.checkBoxLowerBound.isChecked():
             self.ui.spinBoxUpperBound.setEnabled(False)
-            self.ui.btnAddBoundaries.setEnabled(False)
             self.ui.spinBoxBoundaryNumber.setEnabled(False)
         else:
             self.ui.spinBoxUpperBound.setEnabled(False)
@@ -288,14 +283,21 @@ class FuzzingDialog(QDialog):
         self.ui.spinBoxRandomMinimum.setMaximum(self.ui.spinBoxRandomMaximum.value() - 1)
 
     @pyqtSlot()
-    def on_btn_add_range_clicked(self):
+    def on_btn_add_fuzzing_values_clicked(self):
+        if self.ui.comboBoxStrategy.currentIndex() == 0:
+            self.__add_fuzzing_range()
+        elif self.ui.comboBoxStrategy.currentIndex() == 1:
+            self.__add_fuzzing_boundaries()
+        elif self.ui.comboBoxStrategy.currentIndex() == 2:
+            self.__add_random_fuzzing_values()
+
+    def __add_fuzzing_range(self):
         start = self.ui.sBAddRangeStart.value()
         end = self.ui.sBAddRangeEnd.value()
         step = self.ui.sBAddRangeStep.value()
         self.fuzz_table_model.add_range(start, end + 1, step)
 
-    @pyqtSlot()
-    def on_btn_add_boundaries_clicked(self):
+    def __add_fuzzing_boundaries(self):
         lower_bound = -1
         if self.ui.spinBoxLowerBound.isEnabled():
             lower_bound = self.ui.spinBoxLowerBound.value()
@@ -307,8 +309,7 @@ class FuzzingDialog(QDialog):
         num_vals = self.ui.spinBoxBoundaryNumber.value()
         self.fuzz_table_model.add_boundaries(lower_bound, upper_bound, num_vals)
 
-    @pyqtSlot()
-    def on_btn_add_random_clicked(self):
+    def __add_random_fuzzing_values(self):
         n = self.ui.spinBoxNumberRandom.value()
         minimum = self.ui.spinBoxRandomMinimum.value()
         maximum = self.ui.spinBoxRandomMaximum.value()
@@ -354,7 +355,7 @@ class FuzzingDialog(QDialog):
     @pyqtSlot()
     def on_btn_repeat_values_clicked(self):
         num_repeats, ok = QInputDialog.getInt(self, self.tr("How many times shall values be repeated?"),
-                                                    self.tr("Number of repeats:"), 1, 1)
+                                              self.tr("Number of repeats:"), 1, 1)
         if ok:
             self.ui.chkBRemoveDuplicates.setChecked(False)
             min_row, max_row, _, _ = self.ui.tblFuzzingValues.selection_range()

@@ -1,3 +1,4 @@
+import array
 import copy
 import os
 import sys
@@ -68,6 +69,10 @@ class TestUtil(QtTestCase):
 
         pcap = PCAP()
         pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
+
+    def test_de_bruijn_fuzzing(self):
+        self.assertEqual(util.de_bruijn(3), array.array("B", [0, 0, 0, 1, 0, 1, 1, 1]))
+        self.assertEqual(util.de_bruijn(4), array.array("B", [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]))
 
     def test_native_backends_installed(self):
         from urh.util import util

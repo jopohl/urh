@@ -7,6 +7,7 @@ import sys
 import time
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
+import urh.cythonext.util as c_util
 
 import numpy as np
 from PyQt5.QtCore import Qt
@@ -472,3 +473,7 @@ def calc_x_y_scale(rect, parent):
     scale_y = view_rect.height() / parent_height
 
     return scale_x, scale_y
+
+
+def de_bruijn(n: int) -> array.array:
+    return c_util.de_bruijn(n)

@@ -110,7 +110,7 @@ class TestFuzzingDialog(QtTestCase):
         self.dialog.ui.sBAddRangeStart.setValue(10)
         self.dialog.ui.sBAddRangeEnd.setValue(100)
         self.dialog.ui.sBAddRangeStep.setValue(20)
-        self.dialog.ui.btnAddRange.click()
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(6, self.dialog.fuzz_table_model.rowCount())
 
     def test_adding_fuzzing_boundaries(self):
@@ -118,13 +118,15 @@ class TestFuzzingDialog(QtTestCase):
         self.dialog.ui.spinBoxLowerBound.setValue(2)
         self.dialog.ui.spinBoxUpperBound.setValue(200)
         self.dialog.ui.spinBoxBoundaryNumber.setValue(2)
-        self.dialog.ui.btnAddBoundaries.click()
+        self.dialog.ui.comboBoxStrategy.setCurrentIndex(1)
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(5, self.dialog.fuzz_table_model.rowCount())
 
     def test_adding_fuzzing_random_values(self):
         self.assertEqual(self.dialog.fuzz_table_model.data[0], "00010110010100010100")  # serial part 1
         self.dialog.ui.spinBoxNumberRandom.setValue(10)
-        self.dialog.ui.btnAddRandom.click()
+        self.dialog.ui.comboBoxStrategy.setCurrentIndex(2)
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(11, self.dialog.fuzz_table_model.rowCount())
 
     def test_remove_duplicates(self):
@@ -132,12 +134,12 @@ class TestFuzzingDialog(QtTestCase):
         self.dialog.ui.sBAddRangeStart.setValue(10)
         self.dialog.ui.sBAddRangeEnd.setValue(50)
         self.dialog.ui.sBAddRangeStep.setValue(5)
-        self.dialog.ui.btnAddRange.click()
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())
-        self.dialog.ui.btnAddRange.click()
-        self.dialog.ui.btnAddRange.click()
+        self.dialog.ui.btnAddFuzzingValues.click()
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(28, self.dialog.fuzz_table_model.rowCount())
         self.dialog.ui.chkBRemoveDuplicates.click()
         self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())
-        self.dialog.ui.btnAddRange.click()
+        self.dialog.ui.btnAddFuzzingValues.click()
         self.assertEqual(10, self.dialog.fuzz_table_model.rowCount())

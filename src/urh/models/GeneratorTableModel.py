@@ -1,4 +1,5 @@
 import array
+import time
 from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
@@ -136,6 +137,27 @@ class GeneratorTableModel(TableModel):
 
         tmp_protocol = ProtocolAnalyzer(None)
         tmp_protocol.messages = [message]
+        undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
+        self.undo_stack.push(undo_action)
+
+    def generate_de_bruijn(self, row_index: int, start: int, end: int):
+        if start < 0 or end < 0:
+            return
+
+        f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
+        start, end = f * start, f * end
+
+        de_bruijn_seq = util.de_bruijn(end-start)
+
+        tmp_protocol = ProtocolAnalyzer(None)
+        tmp_protocol.messages = []
+        LINE_BREAK_AFTER = 5000 * f
+        for i in range(0, len(de_bruijn_seq), LINE_BREAK_AFTER):
+            message = Message(plain_bits=de_bruijn_seq[i:i+LINE_BREAK_AFTER],
+                              pause=0,
+                              message_type=self.protocol.default_message_type)
+            tmp_protocol.messages.append(message)
+
         undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
         self.undo_stack.push(undo_action)
 

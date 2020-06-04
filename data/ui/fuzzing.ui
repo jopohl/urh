@@ -6,56 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>666</height>
+    <width>523</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Fuzzing</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <item row="3" column="0">
-    <widget class="QLabel" name="lFuzzingStart">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Fuzzing Label Start Index:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QSpinBox" name="spinBoxFuzzingStart">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>999999999</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="lFuzzingLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Fuzzing Label:</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1">
     <widget class="QSpinBox" name="spinBoxFuzzMessage">
      <property name="sizePolicy">
@@ -69,63 +27,252 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="lSourceBlock">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="comboBoxStrategy">
+     <item>
+      <property name="text">
+       <string>Add Range of Values</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add Boundaries</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add Random Values from Range</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Add De Bruijn Sequence</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QPushButton" name="btnAddFuzzingValues">
      <property name="text">
-      <string>Source Message:</string>
+      <string>Add to Fuzzed Values</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="lFuzzingReferenceBlock">
+   <item row="7" column="0" rowspan="2">
+    <widget class="QStackedWidget" name="stackedWidgetLabels">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
-      <string>Message to fuzz:</string>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="pageAddRangeLabel">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="lStart">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Start (Decimal):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lEnd">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>End (Decimal):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lStep">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Step (Decimal):</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageAddBoundariesLabel">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="checkBoxLowerBound">
+         <property name="text">
+          <string>Lower Bound</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxUpperBound">
+         <property name="text">
+          <string>Upper Bound</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lNumberBoundaries">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Values per Boundary:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageAddRandomLabel">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="lRandomMin">
+         <property name="text">
+          <string>Range Minimum:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lRandomMax">
+         <property name="text">
+          <string>Range Maximum:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lNumRandom">
+         <property name="text">
+          <string>Number Values:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="lFuzzingEnd">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Fuzzing Label End Index:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="comboBoxFuzzingLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="editable">
-      <bool>true</bool>
-     </property>
-    </widget>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="lPreBits">
+       <property name="text">
+        <string>1111</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lFuzzedBits">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>1010</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lPostBits">
+       <property name="text">
+        <string>010101</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item row="5" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -247,257 +394,184 @@
      </item>
     </layout>
    </item>
-   <item row="6" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
+   <item row="7" column="1" rowspan="2">
+    <widget class="QStackedWidget" name="stackedWidgetSpinboxes">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <item>
-      <widget class="QGroupBox" name="groupBoxAddRange">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+     <widget class="QWidget" name="pageAddRange">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>6</number>
        </property>
-       <property name="title">
-        <string>Add Range</string>
+       <property name="leftMargin">
+        <number>0</number>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="lStart">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Start (Decimal):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="sBAddRangeStart"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="lEnd">
-          <property name="text">
-           <string>End (Decimal):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="sBAddRangeEnd"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="lStep">
-          <property name="text">
-           <string>Step (Decimal):</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="sBAddRangeStep">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="btnAddRange">
-          <property name="text">
-           <string>Add to Fuzzed Values</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+       <property name="topMargin">
+        <number>0</number>
        </property>
-       <property name="title">
-        <string>Add Boundaries</string>
+       <property name="rightMargin">
+        <number>0</number>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="checkBoxLowerBound">
-          <property name="text">
-           <string>Lower Bound</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="spinBoxLowerBound"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBoxUpperBound">
-          <property name="text">
-           <string>Upper Bound</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBoxUpperBound"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="lNumberBoundaries">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Border Values:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBoxBoundaryNumber">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="btnAddBoundaries">
-          <property name="text">
-           <string>Add to Fuzzed Values</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBoxxRandom">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
-       <property name="title">
-        <string>Add random values from range</string>
+       <item>
+        <widget class="QSpinBox" name="sBAddRangeStart"/>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="sBAddRangeEnd"/>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="sBAddRangeStep">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageAddBoundaries">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="spacing">
+        <number>6</number>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="lNumRandom">
-          <property name="text">
-           <string>Number:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="spinBoxNumberRandom">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>999999999</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="lRandomMin">
-          <property name="text">
-           <string>Range Minimum:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBoxRandomMinimum"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="lRandomMax">
-          <property name="text">
-           <string>Range Maximum:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBoxRandomMaximum"/>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="btnAddRandom">
-          <property name="text">
-           <string>Add to Fuzzed Values</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QSpinBox" name="spinBoxLowerBound"/>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxUpperBound">
+         <property name="value">
+          <number>13</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxBoundaryNumber">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageAddRandom">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QSpinBox" name="spinBoxRandomMinimum"/>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxRandomMaximum">
+         <property name="value">
+          <number>42</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBoxNumberRandom">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>999999999</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
-   <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="lPreBits">
-       <property name="text">
-        <string>1111</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lFuzzedBits">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>1010</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lPostBits">
-       <property name="text">
-        <string>010101</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lSourceBlock">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Source Message:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="lFuzzingReferenceBlock">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Message to fuzz:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="lFuzzingEnd">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Fuzzing Label End Index:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="lStrategy">
+     <property name="text">
+      <string>Strategy:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBoxFuzzingLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="4" column="1">
     <widget class="QSpinBox" name="spinBoxFuzzingEnd">
@@ -515,6 +589,48 @@
      </property>
     </widget>
    </item>
+   <item row="3" column="1">
+    <widget class="QSpinBox" name="spinBoxFuzzingStart">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="lFuzzingStart">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Fuzzing Label Start Index:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="lFuzzingLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Fuzzing Label:</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -525,5 +641,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>comboBoxStrategy</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidgetLabels</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>201</x>
+     <y>593</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>100</x>
+     <y>614</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxStrategy</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidgetSpinboxes</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>444</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>809</x>
+     <y>616</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -441,9 +441,14 @@ class GeneratorTabController(QWidget):
             fdc = FuzzingDialog(protocol=self.table_model.protocol, label_index=label_index,
                                 msg_index=msg_index, proto_view=view, parent=self)
             fdc.show()
-            fdc.finished.connect(self.refresh_label_list)
-            fdc.finished.connect(self.refresh_table)
-            fdc.finished.connect(self.set_fuzzing_ui_status)
+            fdc.finished.connect(self.on_fuzzing_dialog_finished)
+
+    @pyqtSlot()
+    def on_fuzzing_dialog_finished(self):
+        self.refresh_label_list()
+        self.refresh_table()
+        self.set_fuzzing_ui_status()
+        self.ui.tabWidget.setCurrentIndex(2)
 
     @pyqtSlot()
     def handle_plabel_fuzzing_state_changed(self):

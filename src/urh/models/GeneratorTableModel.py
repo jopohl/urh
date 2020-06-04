@@ -149,12 +149,15 @@ class GeneratorTableModel(TableModel):
 
         de_bruijn_seq = util.de_bruijn(end-start)
 
-        message = Message(plain_bits=de_bruijn_seq,
-                          pause=settings.read("default_fuzzing_pause", 10**6, int),
-                          message_type=self.protocol.default_message_type)
-
         tmp_protocol = ProtocolAnalyzer(None)
-        tmp_protocol.messages = [message]
+        tmp_protocol.messages = []
+        LINE_BREAK_AFTER = 5000 * f
+        for i in range(0, len(de_bruijn_seq), LINE_BREAK_AFTER):
+            message = Message(plain_bits=de_bruijn_seq[i:i+LINE_BREAK_AFTER],
+                              pause=0,
+                              message_type=self.protocol.default_message_type)
+            tmp_protocol.messages.append(message)
+
         undo_action = InsertBitsAndPauses(self.protocol, row_index+1, tmp_protocol)
         self.undo_stack.push(undo_action)
 

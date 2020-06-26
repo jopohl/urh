@@ -21,10 +21,7 @@ class PluginFrame(QFrame):
         self.ui.groupBoxSettings.setLayout(self.settings_layout)
         self.create_connects()
 
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
 
     def create_connects(self):

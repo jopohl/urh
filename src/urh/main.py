@@ -166,8 +166,10 @@ def main():
         import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
 
-    main_window.showMaximized()
-    # main_window.setFixedSize(1920, 1080 - 30)  # Youtube
+    if settings.read("MainController/geometry", type=bytes):
+        main_window.show()
+    else:
+        main_window.showMaximized()
 
     if "autoclose" in sys.argv[1:]:
         # Autoclose after 1 second, this is useful for automated testing

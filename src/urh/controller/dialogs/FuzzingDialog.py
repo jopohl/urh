@@ -44,11 +44,7 @@ class FuzzingDialog(QDialog):
         self.ui.tblFuzzingValues.resize_me()
 
         self.create_connects()
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
     @property
     def message(self):

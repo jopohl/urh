@@ -219,11 +219,7 @@ class OptionsDialog(QDialog):
         self.ui.labelRebuildNativeStatus.setText("")
 
         self.show_available_colormaps()
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
     def create_connects(self):
         self.ui.doubleSpinBoxFuzzingPause.valueChanged.connect(self.on_spinbox_fuzzing_pause_value_changed)

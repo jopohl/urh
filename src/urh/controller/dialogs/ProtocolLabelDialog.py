@@ -64,10 +64,7 @@ class ProtocolLabelDialog(QDialog):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setWindowFlags(Qt.Window)
 
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
         for i in range(self.model.rowCount()):
             self.open_editors(i)

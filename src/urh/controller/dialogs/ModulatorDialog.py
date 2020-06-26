@@ -63,11 +63,7 @@ class ModulatorDialog(QDialog):
                                                                                 QLineEdit.TrailingPosition)
 
         self.create_connects()
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
         self.set_bits_per_symbol_enabled_status()
         self.set_modulation_profile_status()

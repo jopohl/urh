@@ -38,11 +38,7 @@ class SignalDetailsDialog(QDialog):
         self.set_duration()
 
         self.ui.dsb_sample_rate.valueChanged.connect(self.on_dsb_sample_rate_value_changed)
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
     def closeEvent(self, event: QCloseEvent):
         settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())

@@ -75,11 +75,7 @@ class ProjectDialog(QDialog):
             self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
 
         self.on_line_edit_path_text_edited()
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
     @property
     def participants(self):

@@ -56,11 +56,7 @@ class SendRecvDialog(QDialog):
             self.device_settings_widget.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
 
         self.timer = QTimer(self)
-
-        try:
-            self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__)))
-        except TypeError:
-            pass
+        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
 
         self.ui.splitter.setSizes([int(0.4 * self.width()), int(0.6 * self.width())])
 

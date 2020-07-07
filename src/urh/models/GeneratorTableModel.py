@@ -1,5 +1,4 @@
 import array
-import time
 from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
@@ -17,6 +16,7 @@ from urh.ui.actions.Clear import Clear
 from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 from urh.ui.actions.InsertBitsAndPauses import InsertBitsAndPauses
 from urh.util import util
+from urh.cythonext import util as c_util
 
 
 class GeneratorTableModel(TableModel):
@@ -147,7 +147,7 @@ class GeneratorTableModel(TableModel):
         f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
         start, end = f * start, f * end
 
-        de_bruijn_seq = util.de_bruijn(end-start)
+        de_bruijn_seq = c_util.de_bruijn(end-start)
 
         tmp_protocol = ProtocolAnalyzer(None)
         tmp_protocol.messages = []

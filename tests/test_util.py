@@ -13,6 +13,7 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 from urh.util import util
 from urh.util.Logger import logger
+from urh.cythonext import util as c_util
 
 
 class TestUtil(QtTestCase):
@@ -71,8 +72,8 @@ class TestUtil(QtTestCase):
         pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
 
     def test_de_bruijn_fuzzing(self):
-        self.assertEqual(util.de_bruijn(3), array.array("B", [0, 0, 0, 1, 0, 1, 1, 1]))
-        self.assertEqual(util.de_bruijn(4), array.array("B", [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]))
+        self.assertEqual(c_util.de_bruijn(3), array.array("B", [0, 0, 0, 1, 0, 1, 1, 1]))
+        self.assertEqual(c_util.de_bruijn(4), array.array("B", [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]))
 
     def test_native_backends_installed(self):
         from urh.util import util

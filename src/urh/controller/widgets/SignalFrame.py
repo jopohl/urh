@@ -448,8 +448,8 @@ class SignalFrame(QFrame):
 
     def save_signal_as(self):
         try:
-            FileOperator.save_data_dialog(self.signal.name, self.signal.iq_array, self.signal.sample_rate,
-                                          self.signal.wav_mode)
+            FileOperator.ask_signal_file_name_and_save(self.signal.name, self.signal.iq_array, self.signal.sample_rate,
+                                                       self.signal.wav_mode)
         except Exception as e:
             Errors.exception(e)
 
@@ -460,7 +460,7 @@ class SignalFrame(QFrame):
             logger.exception(e)
             initial_name = "demodulated.complex"
 
-        filename = FileOperator.get_save_file_name(initial_name)
+        filename = FileOperator.ask_save_file_name(initial_name)
         if filename:
             try:
                 self.setCursor(Qt.WaitCursor)
@@ -1314,7 +1314,7 @@ class SignalFrame(QFrame):
             logger.exception(e)
             initial_name = "spectrogram.ft"
 
-        filename = FileOperator.get_save_file_name(initial_name, caption="Export spectrogram")
+        filename = FileOperator.ask_save_file_name(initial_name, caption="Export spectrogram")
         if not filename:
             return
         QApplication.setOverrideCursor(Qt.WaitCursor)

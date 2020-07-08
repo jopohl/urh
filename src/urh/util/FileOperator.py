@@ -66,6 +66,8 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
             name_filter = __get__name_filter_for_signals() + ";;" \
                           + ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER, PLAIN_BITS_FILE_FILTER,
                                        FUZZING_FILE_FILTER, SIMULATOR_FILE_FILTER, TAR_FILE_FILTER, ZIP_FILE_FILTER])
+        elif name_filter == "signals_only":
+            name_filter = __get__name_filter_for_signals()
         elif name_filter == "proto":
             name_filter = ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER])
         elif name_filter == "fuzz":

@@ -8,10 +8,7 @@ import numpy as np
 from PyQt5.QtCore import QDir
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from urh.models.FileIconProvider import FileIconProvider
 from urh.signalprocessing.IQArray import IQArray
-
-VIEW_TYPES = ["Bits", "Hex", "ASCII"]
 
 archives = {}
 """:type: dict of [str, str]

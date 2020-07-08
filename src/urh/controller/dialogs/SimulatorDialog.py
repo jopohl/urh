@@ -418,8 +418,8 @@ class SimulatorDialog(QDialog):
         rx_device = self.simulator.sniffer.rcv_device
         if isinstance(rx_device.data, np.ndarray) or isinstance(rx_device.data, IQArray):
             data = IQArray(rx_device.data[:rx_device.current_index])
-            filename = FileOperator.save_data_dialog("simulation_capture", data,
-                                                     sample_rate=rx_device.sample_rate, parent=self)
+            filename = FileOperator.ask_signal_file_name_and_save("simulation_capture", data,
+                                                                  sample_rate=rx_device.sample_rate, parent=self)
             if filename:
                 data.tofile(filename)
                 self.rx_file_saved.emit(filename)

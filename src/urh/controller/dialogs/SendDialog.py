@@ -94,7 +94,7 @@ class SendDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_graphics_view_save_as_clicked(self):
-        filename = FileOperator.get_save_file_name("signal.complex")
+        filename = FileOperator.ask_save_file_name("signal.complex")
         if filename:
             try:
                 try:

@@ -507,7 +507,7 @@ class SimulatorTabController(QWidget):
 
     @pyqtSlot()
     def on_btn_save_clicked(self):
-        filename = FileOperator.get_save_file_name(initial_name="myprofile.sim.xml", caption="Save simulator profile")
+        filename = FileOperator.ask_save_file_name(initial_name="myprofile.sim.xml", caption="Save simulator profile")
         if filename:
             self.save_simulator_file(filename)
 

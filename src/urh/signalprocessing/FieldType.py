@@ -1,4 +1,4 @@
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 from enum import Enum
 from xml.dom import minidom
 

@@ -19,7 +19,7 @@ with open("top_block.py", "r") as f:
             start_vars, start_blocks = False, True
         elif start_blocks and line.strip().startswith("self."):
             try:
-                used_variables.append(re.search("\(([a-z\_0-9]*)[\)\,]", line).group(1))
+                used_variables.append(re.search(r"\(([a-z\_0-9]*)[\)\,]", line).group(1))
             except AttributeError:
                 pass
         elif line.strip().startswith("# Connections"):

@@ -6,7 +6,7 @@ import fileinput
 
 def gen(force=False):
     if sys.platform == "win32":
-        bindir = "c:\Python34\Lib\site-packages\PyQt5"
+        bindir = r"c:\Python34\Lib\site-packages\PyQt5"
     else:
         bindir = "/usr/bin"
 

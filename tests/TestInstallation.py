@@ -77,7 +77,7 @@ class TestInstallation(unittest.TestCase):
             self.assertTrue(docker_util.run_image(distribution, rebuild=False), msg=distribution)
 
     def test_windows(self):
-        """
+        r"""
         Run the unittests on Windows + Install via Pip
 
         To Fix Windows Error in Guest OS:

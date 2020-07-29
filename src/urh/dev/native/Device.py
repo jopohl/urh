@@ -39,6 +39,7 @@ class Device(object):
         SET_FREQUENCY_CORRECTION = 8
         SET_CHANNEL_INDEX = 9
         SET_ANTENNA_INDEX = 10
+        SET_BIAS_TEE_ENABLED = 11
 
     ASYNCHRONOUS = False
 
@@ -250,6 +251,7 @@ class Device(object):
         self.__antenna_index = 0
 
         self.__freq_correction = 0
+        self.__bias_tee_enabled = False
         self.__direct_sampling_mode = 0
         self.bandwidth_is_adjustable = True
 
@@ -520,6 +522,23 @@ class Device(object):
     def set_device_antenna_index(self, value):
         try:
             self.parent_ctrl_conn.send((self.Command.SET_ANTENNA_INDEX.name, int(value)))
+        except (BrokenPipeError, OSError):
+            pass
+
+    @property
+    def bias_tee_enabled(self):
+        return self.__bias_tee_enabled
+
+    @bias_tee_enabled.setter
+    def bias_tee_enabled(self, value: bool):
+        value = bool(value)
+        if value != self.__bias_tee_enabled:
+            self.__bias_tee_enabled = value
+            self.set_device_bias_tee_enabled(value)
+
+    def set_device_bias_tee_enabled(self, value):
+        try:
+            self.parent_ctrl_conn.send((self.Command.SET_BIAS_TEE_ENABLED.name, int(value)))
         except (BrokenPipeError, OSError):
             pass
 

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from multiprocessing import Array
 from multiprocessing.connection import Connection
 
@@ -13,7 +14,8 @@ class HackRF(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
         Device.Command.SET_FREQUENCY.name: "set_freq",
-        Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth"
+        Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth",
+        Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee"
     })
 
     DATA_TYPE = np.int8
@@ -31,7 +33,7 @@ class HackRF(Device):
         msg = "SETUP"
         if device_identifier:
             msg += " ({})".format(device_identifier)
-        msg += ": "+str(ret)
+        msg += ": " + str(ret)
         ctrl_connection.send(msg)
 
         return ret == 0
@@ -86,6 +88,17 @@ class HackRF(Device):
             -4242: "HACKRF NOT OPEN",
             -9999: "HACKRF_ERROR_OTHER"
         }
+
+    @property
+    def device_parameters(self) -> OrderedDict:
+        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
+                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                            (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_IF_GAIN.name, self.if_gain),
+                            (self.Command.SET_BB_GAIN.name, self.baseband_gain),
+                            (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
+                            ("identifier", self.device_serial)])
 
     @property
     def has_multi_device_support(self):

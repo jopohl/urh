@@ -1,3 +1,5 @@
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
+
 cdef extern from "libhackrf/hackrf.h":
     enum hackrf_error:
         HACKRF_SUCCESS = 0
@@ -40,11 +42,6 @@ cdef extern from "libhackrf/hackrf.h":
     ctypedef struct hackrf_device:
         pass
 
-    ctypedef unsigned char uint8_t
-    ctypedef unsigned short uint16_t
-    ctypedef unsigned int  uint32_t
-    ctypedef unsigned long long uint64_t
-
     ctypedef struct hackrf_transfer:
         hackrf_device* device
         uint8_t* buffer
@@ -81,7 +78,7 @@ cdef extern from "libhackrf/hackrf.h":
     int hackrf_open(hackrf_device** device);
 
     IF HACKRF_MULTI_DEVICE_SUPPORT == 1:
-        int hackrf_open_by_serial(const char* const desired_serial_number, hackrf_device** device)
+        int hackrf_open_by_serial(const char* desired_serial_number, hackrf_device** device)
         hackrf_device_list_t* hackrf_device_list()
 
 
@@ -108,12 +105,11 @@ cdef extern from "libhackrf/hackrf.h":
     int hackrf_rffc5071_write(hackrf_device* device, uint8_t register_number, uint16_t value)
      
     int hackrf_spiflash_erase(hackrf_device* device)
-    int hackrf_spiflash_write(hackrf_device* device, const uint32_t address, const uint16_t length, unsigned char* const data)
+    int hackrf_spiflash_write(hackrf_device* device, const uint32_t address, const uint16_t length, const unsigned char* data)
     int hackrf_spiflash_read(hackrf_device* device, const uint32_t address, const uint16_t length, unsigned char* data)
     
     # device will need to be reset after hackrf_cpld_write
-    int hackrf_cpld_write(hackrf_device* device,
-            unsigned char* const data, const unsigned int total_length)
+    int hackrf_cpld_write(hackrf_device* device, const unsigned char* data, const unsigned int total_length)
             
     int hackrf_board_id_read(hackrf_device* device, uint8_t* value)
     int hackrf_version_string_read(hackrf_device* device, char* version, uint8_t length)
@@ -130,7 +126,10 @@ cdef extern from "libhackrf/hackrf.h":
     
     # external amp, bool on/off
     int hackrf_set_amp_enable(hackrf_device* device, const uint8_t value)
-    
+
+    # Bias Tee, bool on/off
+    int hackrf_set_antenna_enable(hackrf_device* device, const uint8_t value)
+
     int hackrf_board_partid_serialno_read(hackrf_device* device, read_partid_serialno_t* read_partid_serialno)
     
     # range 0-40 step 8d, IF gain in osmosdr

@@ -1,4 +1,5 @@
 cimport urh.dev.native.lib.chackrf as chackrf
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 from libc.stdlib cimport malloc
 import time
 
@@ -70,7 +71,7 @@ ELSE:
     cpdef get_device_list():
         return None
 
-cpdef setup(str serial):
+cpdef int setup(str serial):
     """
     Convenience method for init + open. This one is used by HackRF class.
     :return: 
@@ -78,13 +79,13 @@ cpdef setup(str serial):
     init()
     return open(serial)
 
-cpdef init():
+cpdef int init():
     return chackrf.hackrf_init()
 
-cpdef exit():
+cpdef int exit():
     return chackrf.hackrf_exit()
 
-cpdef close():
+cpdef int close():
     return chackrf.hackrf_close(_c_device)
 
 cpdef int start_rx_mode(callback):
@@ -93,42 +94,25 @@ cpdef int start_rx_mode(callback):
     f = callback
     return chackrf.hackrf_start_rx(_c_device, _c_callback_recv, NULL)
 
-cpdef stop_rx_mode():
+cpdef int stop_rx_mode():
     global RUNNING
     RUNNING = -1
     time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_rx(_c_device)
 
-cpdef start_tx_mode(callback):
+cpdef int start_tx_mode(callback):
     global f, RUNNING
     RUNNING = 0
     f = callback
     return chackrf.hackrf_start_tx(_c_device, _c_callback_send, NULL)
 
-cpdef stop_tx_mode():
+cpdef int stop_tx_mode():
     global RUNNING
     RUNNING = -1
     time.sleep(TIMEOUT)
     return chackrf.hackrf_stop_tx(_c_device)
 
-cpdef board_id_read():
-    cdef unsigned char value
-    ret = chackrf.hackrf_board_id_read(_c_device, &value)
-    if ret == hackrf_success:
-        return value
-    else:
-        return ""
-
-cpdef version_string_read():
-    cdef char*version = <char *> malloc(20 * sizeof(char))
-    cdef unsigned char length = 20
-    ret = chackrf.hackrf_version_string_read(_c_device, version, length)
-    if ret == hackrf_success:
-        return version.decode('UTF-8')
-    else:
-        return ""
-
-cpdef set_freq(freq_hz):
+cpdef int set_freq(freq_hz):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_freq(_c_device, freq_hz)
 
@@ -140,35 +124,39 @@ cpdef is_streaming():
     else:
         return False
 
-cpdef set_rf_gain(value):
-    """ Enable or disable RF amplifier """
+cpdef int set_amp_enable(value):
     time.sleep(TIMEOUT)
+    cdef uint8_t val = 1 if value else 0
+    return chackrf.hackrf_set_amp_enable(_c_device, val)
+
+cpdef int set_rf_gain(value):
+    """ Enable or disable RF amplifier """
     return set_amp_enable(value)
 
-cpdef set_if_rx_gain(value):
+cpdef int set_if_rx_gain(value):
     """ Sets the LNA gain, in 8Db steps, maximum value of 40 """
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_lna_gain(_c_device, value)
 
-cpdef set_if_tx_gain(value):
+cpdef int set_if_tx_gain(value):
     """ Sets the txvga gain, in 1db steps, maximum value of 47 """
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_txvga_gain(_c_device, value)
 
-cpdef set_baseband_gain(value):
+cpdef int set_baseband_gain(value):
     """ Sets the vga gain, in 2db steps, maximum value of 62 """
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_vga_gain(_c_device, value)
 
-cpdef set_sample_rate(sample_rate):
+cpdef int set_sample_rate(sample_rate):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_sample_rate(_c_device, sample_rate)
 
-cpdef set_amp_enable(value):
+cpdef int set_bias_tee(on_or_off):
     time.sleep(TIMEOUT)
-    cdef bint val = 1 if value else 0
-    return chackrf.hackrf_set_amp_enable(_c_device, val)
+    cdef uint8_t bias_tee = 1 if on_or_off else 0
+    return chackrf.hackrf_set_antenna_enable(_c_device, bias_tee)
 
-cpdef set_baseband_filter_bandwidth(bandwidth_hz):
+cpdef int set_baseband_filter_bandwidth(bandwidth_hz):
     time.sleep(TIMEOUT)
     return chackrf.hackrf_set_baseband_filter_bandwidth(_c_device, bandwidth_hz)

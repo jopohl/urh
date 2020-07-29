@@ -159,6 +159,10 @@ class VirtualDevice(QObject):
             self.__dev.is_in_spectrum_mode = True
 
     @property
+    def backend_is_native(self) -> bool:
+        return self.backend == Backends.native
+
+    @property
     def data_type(self):
         if self.backend == Backends.native:
             return self.__dev.DATA_TYPE
@@ -212,6 +216,18 @@ class VirtualDevice(QObject):
     def apply_dc_correction(self, value: bool):
         if self.backend == Backends.native:
             self.__dev.apply_dc_correction = bool(value)
+
+    @property
+    def bias_tee_enabled(self):
+        if self.backend_is_native:
+            return self.__dev.bias_tee_enabled
+        else:
+            return None
+
+    @bias_tee_enabled.setter
+    def bias_tee_enabled(self, value: bool):
+        if self.backend_is_native:
+            self.__dev.bias_tee_enabled = value
 
     @property
     def bandwidth_is_adjustable(self):

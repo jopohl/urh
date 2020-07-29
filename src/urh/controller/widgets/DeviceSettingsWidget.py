@@ -106,6 +106,11 @@ class DeviceSettingsWidget(QWidget):
                 checked = True if checked == "True" else False
             self.ui.checkBoxDCCorrection.setChecked(checked)
 
+        checked = conf_dict.get("bias_tee_enabled", False)
+        if isinstance(checked, str):
+            checked = True if checked == "True" else False
+        self.ui.checkBoxBiasTee.setChecked(checked)
+
         self.emit_editing_finished_signals()
 
     @property
@@ -164,6 +169,7 @@ class DeviceSettingsWidget(QWidget):
 
         self.ui.comboBoxDeviceIdentifier.editTextChanged.connect(self.on_combo_box_device_identifier_edit_text_changed)
 
+        self.ui.checkBoxBiasTee.clicked.connect(self.on_check_box_bias_tee_clicked)
         self.ui.checkBoxDCCorrection.clicked.connect(self.on_check_box_dc_correction_clicked)
 
     def set_gain_defaults(self):
@@ -307,6 +313,10 @@ class DeviceSettingsWidget(QWidget):
         self.ui.checkBoxDCCorrection.setVisible(show_dc_correction)
         self.ui.labelDCCorrection.setVisible(show_dc_correction)
 
+        show_bias_tee = "bias_tee_enabled" in conf and self.device is not None and self.device.bias_tee_enabled is not None
+        self.ui.labelBiasTee.setVisible(show_bias_tee)
+        self.ui.checkBoxBiasTee.setVisible(show_bias_tee)
+
     def get_devices_for_combobox(self, continuous_send_mode):
         items = []
         for device_name in self.backend_handler.DEVICE_NAMES:
@@ -357,7 +367,7 @@ class DeviceSettingsWidget(QWidget):
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}
         for attrib in ("frequency", "sample_rate", "bandwidth", "gain", "if_gain", "baseband_gain", "freq_correction",
-                       "antenna_index", "num_sending_repeats", "apply_dc_correction", "subdevice"):
+                       "antenna_index", "num_sending_repeats", "apply_dc_correction", "subdevice", "bias_tee_enabled"):
             try:
                 value = getattr(self.device, attrib, None)
                 if value is not None:
@@ -509,6 +519,11 @@ class DeviceSettingsWidget(QWidget):
             return
         self.ui.comboBoxDeviceIdentifier.clear()
         self.ui.comboBoxDeviceIdentifier.addItems(self.device.get_device_list())
+
+    @pyqtSlot(bool)
+    def on_check_box_bias_tee_clicked(self, checked: bool):
+        if self.device is not None:
+            self.device.bias_tee_enabled = bool(checked)
 
     @pyqtSlot(bool)
     def on_check_box_dc_correction_clicked(self, checked: bool):

@@ -48,7 +48,8 @@ DEVICE_CONFIG["HackRF"] = {
     "rx_rf_gain": [0, 14],
     "rx_if_gain": [0, 8, 16, 24, 32, 40],
     "tx_if_gain": list(range(0, 48)),
-    "rx_baseband_gain": list(range(0, 63, 2))  # only available in RX
+    "rx_baseband_gain": list(range(0, 63, 2)),  # only available in RX
+    "bias_tee_enabled": [False, True]
 }
 
 # https://kb.ettus.com/About_USRP_Bandwidths_and_Sampling_Rates

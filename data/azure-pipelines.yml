@@ -252,14 +252,15 @@ jobs:
     displayName: "Install build dependencies"
 
   - script: |
-      echo "Install boost"
-      brew install --ignore-dependencies https://raw.githubusercontent.com/Homebrew/homebrew-core/8d748e26ccc9afc8ea0d0201ae234fda35de721e/Formula/boost.rb
       echo "Reinstall icu4c"
-      brew uninstall --ignore-dependencies icu4c
-      brew remove icu4c
-      brew install --ignore-dependencies https://raw.githubusercontent.com/Homebrew/homebrew-core/a806a621ed3722fb580a58000fb274a2f2d86a6d/Formula/icu4c.rb
+      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/a806a621ed3722fb580a58000fb274a2f2d86a6d/Formula/icu4c.rb
+
       echo "Link icu4c"
       brew link icu4c --force
+
+      echo "Install boost"
+      brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/8d748e26ccc9afc8ea0d0201ae234fda35de721e/Formula/boost.rb
+
       cd /tmp
       wget https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
       tar xf libusb-1.0.22.tar.bz2

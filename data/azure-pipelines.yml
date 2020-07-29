@@ -262,6 +262,8 @@ jobs:
       ./configure
       make
       sudo make install
+      ls /usr/local/opt/boost/lib/
+      otool -L /usr/local/opt/boost/lib/libboost_filesystem.dylib
     displayName: "Install libusb and boost"
 
   - script: python src/urh/cythonext/build.py

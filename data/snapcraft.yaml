@@ -186,7 +186,7 @@ parts:
       ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
       snapcraftctl build
 
-  bladerf-fpga:
+  bladerf-fpgas:
     plugin: dump
     source: /usr/share
     stage: [Nuand/bladeRF/hostedxA4.rbf, Nuand/bladeRF/hostedxA9.rbf, Nuand/bladeRF/hostedx40.rbf, Nuand/bladeRF/hostedx115.rbf]

@@ -185,7 +185,6 @@ parts:
   bladerf:
     plugin: cmake
     source: https://github.com/Nuand/bladeRF.git
-    source-tag: "2019.07"
     source-subdir: host
 
   bladerf-fpga:

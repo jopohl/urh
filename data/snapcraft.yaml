@@ -137,15 +137,24 @@ parts:
       - libspeechd2
 
   urh:
-    after: [desktop-qt5, sdrplay, alsa-mixin, bladerf]
+    after: [desktop-qt5, sdrplay, alsa-mixin]
     plugin: python
     python-version: python3
     requirements: [data/requirements.txt]
     source: .
+    override-build: |
+      git clone https://github.com/Nuand/bladeRF.git
+      cd bladeRF/host
+      mkdir build
+      cmake ..
+      make -j4
+      make install
+      snapcraftctl build
     build-packages:
       - python3
       - python3-pyqt5
       - libairspy-dev
+      - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
       - librtlsdr-dev
@@ -157,6 +166,7 @@ parts:
       - python3-pyqt5
       - python3-pyaudio
       - libairspy-dev
+      - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
       - librtlsdr-dev
@@ -181,11 +191,6 @@ parts:
       cp x86_64/* .
       ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
       snapcraftctl build
-
-  bladerf:
-    plugin: cmake
-    source: https://github.com/Nuand/bladeRF.git
-    source-subdir: host
 
   bladerf-fpga:
     plugin: dump

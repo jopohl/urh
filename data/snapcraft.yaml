@@ -117,25 +117,25 @@ parts:
       - libxcursor1
       - libxinerama1
       - libxrandr2
-      - libasyncns0                                                                             
-      - libatk-bridge2.0-0                                                                      
-      - libatspi2.0-0                                                                           
-      - libcairo-gobject2                                                                       
-      - libepoxy0                                                                               
-      - libflac8                                                                                
-      - libgtk-3-0                                                                              
-      - libogg0                                                                                 
-      - libpulse0                                                                               
-      - libsndfile1                                                                             
-      - libvorbis0a                                                                             
-      - libvorbisenc2                                                                           
-      - libwayland-cursor0                                                                      
+      - libasyncns0
+      - libatk-bridge2.0-0
+      - libatspi2.0-0
+      - libcairo-gobject2
+      - libepoxy0
+      - libflac8
+      - libgtk-3-0
+      - libogg0
+      - libpulse0
+      - libsndfile1
+      - libvorbis0a
+      - libvorbisenc2
+      - libwayland-cursor0
       - libwayland-egl1
       - libodbc1
       - libpq5
       - libpulse-mainloop-glib0
       - libspeechd2
-      
+
   urh:
     after: [desktop-qt5, sdrplay, alsa-mixin]
     plugin: python
@@ -186,11 +186,10 @@ parts:
       ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
       snapcraftctl build
 
-  bladerf-fpgas:
+  bladerf-fpga:
     plugin: dump
-    after: [urh]
-    source: /usr/share/Nuand/bladeRF
-    stage: [hostedxA4.rbf, hostedxA9.rbf, hostedx40.rbf, hostedx115.rbf]
+    source: .
+    stage: [usr/share/Nuand/bladeRF/*]
     override-build: |
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P /usr/share/Nuand/bladeRF/
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P /usr/share/Nuand/bladeRF/

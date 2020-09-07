@@ -161,8 +161,6 @@ parts:
       - libairspy-dev
       - libbladerf-dev
       - libhackrf-dev
-      - bladerf-fpga-hostedx40
-      - bladerf-fpga-hostedx115
       - libiio-dev
       - liblimesuite-dev
       - librtlsdr-dev
@@ -186,4 +184,15 @@ parts:
       cp x86_64/* /lib
       cp x86_64/* .
       ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
+      snapcraftctl build
+
+  bladerf-fpga:
+    plugin: dump
+    source: /usr/share/Nuand/bladeRF/
+    stage: [hostedxA4.rbf, hostedxA9.rbf, hostedx40.rbf, hostedx115.rbf]
+    override-build: |
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P /usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P /usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P /usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P /usr/share/Nuand/bladeRF/
       snapcraftctl build

@@ -188,8 +188,9 @@ parts:
 
   bladerf-fpgas:
     plugin: dump
-    source: /usr/share
-    stage: [Nuand/bladeRF/hostedxA4.rbf, Nuand/bladeRF/hostedxA9.rbf, Nuand/bladeRF/hostedx40.rbf, Nuand/bladeRF/hostedx115.rbf]
+    after: [urh]
+    source: /usr/share/Nuand/bladeRF
+    stage: [hostedxA4.rbf, hostedxA9.rbf, hostedx40.rbf, hostedx115.rbf]
     override-build: |
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P /usr/share/Nuand/bladeRF/
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P /usr/share/Nuand/bladeRF/

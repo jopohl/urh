@@ -161,6 +161,8 @@ parts:
       - libairspy-dev
       - libbladerf-dev
       - libhackrf-dev
+      - bladerf-fpga-hostedx40
+      - bladerf-fpga-hostedx115
       - libiio-dev
       - liblimesuite-dev
       - librtlsdr-dev

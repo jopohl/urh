@@ -44,7 +44,7 @@ plugs: # plugs for theming, font settings, cursor and to use gtk3 file chooser
 apps:
   urh:
     adapter: full
-    command: snap/command-chain/alsa-launch desktop-launch snapcraft-preload $SNAP/bin/urh
+    command: snap/command-chain/alsa-launch desktop-launch $SNAP/bin/urh
     plugs:
       - desktop
       - desktop-legacy
@@ -66,15 +66,6 @@ layout:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
 
 parts:
-  snapcraft-preload:
-    source: https://github.com/sergiusens/snapcraft-preload.git
-    plugin: cmake
-    build-packages:
-      - on amd64:
-        - gcc-multilib
-        - g++-multilib
-    stage-packages: [lib32stdc++6]
-
   alsa-mixin:
     plugin: dump
     source: https://github.com/diddlesnaps/snapcraft-alsa.git
@@ -142,18 +133,11 @@ parts:
     python-version: python3
     requirements: [data/requirements.txt]
     source: .
-    override-build: |
-      git clone https://github.com/Nuand/bladeRF.git
-      cd bladeRF/host
-      mkdir build
-      cmake ..
-      make -j4
-      make install
-      snapcraftctl build
     build-packages:
       - python3
       - python3-pyqt5
       - libairspy-dev
+      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -166,6 +150,7 @@ parts:
       - python3-pyqt5
       - python3-pyaudio
       - libairspy-dev
+      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -197,8 +182,8 @@ parts:
     source: .
     stage: [usr/share/Nuand/bladeRF/*]
     override-build: |
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P /usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P /usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P /usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P /usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
       snapcraftctl build

@@ -44,7 +44,7 @@ plugs: # plugs for theming, font settings, cursor and to use gtk3 file chooser
 apps:
   urh:
     adapter: full
-    command: snap/command-chain/alsa-launch desktop-launch snapcraft-preload $SNAP/bin/urh
+    command: snap/command-chain/alsa-launch desktop-launch $SNAP/bin/urh
     plugs:
       - desktop
       - desktop-legacy
@@ -60,21 +60,14 @@ apps:
       - network
     environment:
       QT_QPA_PLATFORMTHEME: gtk3
+      LD_PRELOAD: $SNAP/lib/semwraplib.so
+      BLADERF_SEARCH_DIR: $SNAP/bladefpgas
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib
 
 parts:
-  snapcraft-preload:
-    source: https://github.com/sergiusens/snapcraft-preload.git
-    plugin: cmake
-    build-packages:
-      - on amd64:
-        - gcc-multilib
-        - g++-multilib
-    stage-packages: [lib32stdc++6]
-
   alsa-mixin:
     plugin: dump
     source: https://github.com/diddlesnaps/snapcraft-alsa.git
@@ -84,6 +77,16 @@ parts:
     stage-packages:
       - libasound2
       - libasound2-plugins
+
+  semwraplib:
+    plugin: nil
+    source: data
+    override-build: |
+      snapcraftctl build
+      mkdir -p $SNAPCRAFT_PART_INSTALL/lib
+      gcc -g -O0 -Wall -Wstrict-prototypes -fPIC -shared semwraplib.c -o $SNAPCRAFT_PART_INSTALL/lib/semwraplib.so -ldl
+    build-packages:
+      - build-essential
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -117,36 +120,44 @@ parts:
       - libxcursor1
       - libxinerama1
       - libxrandr2
-      - libasyncns0                                                                             
-      - libatk-bridge2.0-0                                                                      
-      - libatspi2.0-0                                                                           
-      - libcairo-gobject2                                                                       
-      - libepoxy0                                                                               
-      - libflac8                                                                                
-      - libgtk-3-0                                                                              
-      - libogg0                                                                                 
-      - libpulse0                                                                               
-      - libsndfile1                                                                             
-      - libvorbis0a                                                                             
-      - libvorbisenc2                                                                           
-      - libwayland-cursor0                                                                      
+      - libasyncns0
+      - libatk-bridge2.0-0
+      - libatspi2.0-0
+      - libcairo-gobject2
+      - libepoxy0
+      - libflac8
+      - libgtk-3-0
+      - libogg0
+      - libpulse0
+      - libsndfile1
+      - libvorbis0a
+      - libvorbisenc2
+      - libwayland-cursor0
       - libwayland-egl1
       - libodbc1
       - libpq5
       - libpulse-mainloop-glib0
       - libspeechd2
-      
+
   urh:
     after: [desktop-qt5, sdrplay, alsa-mixin]
     plugin: python
-    python-version: python3
     requirements: [data/requirements.txt]
     source: .
+    override-build: |
+      git clone https://github.com/Nuand/bladeRF.git
+      cd bladeRF/host
+      mkdir build
+      cmake -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL ..
+      make -j$(nproc)
+      make install
+      cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+      make install
+      snapcraftctl build
     build-packages:
       - python3
       - python3-pyqt5
       - libairspy-dev
-      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -154,12 +165,14 @@ parts:
       - libuhd-dev
       - wget
       - execstack
+      - build-essential
+      - cmake
+      - pkg-config
     stage-packages:
       - python3
       - python3-pyqt5
       - python3-pyaudio
       - libairspy-dev
-      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -185,3 +198,13 @@ parts:
       cp x86_64/* .
       ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
       snapcraftctl build
+
+  bladerf-fpga:
+    plugin: dump
+    source: .
+    override-build: |
+      snapcraftctl build
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL/bladefpgas

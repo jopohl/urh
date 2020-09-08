@@ -61,6 +61,7 @@ apps:
     environment:
       QT_QPA_PLATFORMTHEME: gtk3
       LD_PRELOAD: $SNAP/lib/semwraplib.so
+      BLADERF_SEARCH_DIR: $SNAP/bladefpgas
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
@@ -147,7 +148,7 @@ parts:
       git clone https://github.com/Nuand/bladeRF.git
       cd bladeRF/host
       mkdir build
-      cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+      cmake -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL ..
       make -j$(nproc)
       make install
       snapcraftctl build
@@ -199,14 +200,9 @@ parts:
   bladerf-fpga:
     plugin: dump
     source: .
-    organize:
-      hostedxA4.rbf: usr/share/Nuand/bladeRF/hostedxA4.rbf
-      hostedxA9.rbf: usr/share/Nuand/bladeRF/hostedxA9.rbf
-      hostedx40.rbf: usr/share/Nuand/bladeRF/hostedx40.rbf
-      hostedx115.rbf: usr/share/Nuand/bladeRF/hostedx115.rbf
     override-build: |
       snapcraftctl build
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL/bladefpgas
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL/bladefpgas

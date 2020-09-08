@@ -148,9 +148,10 @@ parts:
       git clone https://github.com/Nuand/bladeRF.git
       cd bladeRF/host
       mkdir build
-      cmake -DCMAKE_INSTALL_PREFIX="$SNAPCRAFT_PART_INSTALL;/usr" ..
+      cmake -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL ..
       make -j$(nproc)
       make install
+      make DESTDIR=/usr install
       snapcraftctl build
     build-packages:
       - python3

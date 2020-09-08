@@ -84,6 +84,7 @@ parts:
     override-build: |
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/lib
+      cd src
       gcc -g -O0 -Wall -Wstrict-prototypes -fPIC -shared lib.c -o $SNAPCRAFT_PART_INSTALL/lib/semwraplib.so -ldl
     build-packages:
       - build-essential
@@ -144,11 +145,18 @@ parts:
     plugin: python
     requirements: [data/requirements.txt]
     source: .
+    override-build: |
+      git clone https://github.com/Nuand/bladeRF.git
+      cd bladeRF/host
+      mkdir build
+      cmake ..
+      make -j$(nproc)
+      make install
+      snapcraftctl build
     build-packages:
       - python3
       - python3-pyqt5
       - libairspy-dev
-      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -161,7 +169,6 @@ parts:
       - python3-pyqt5
       - python3-pyaudio
       - libairspy-dev
-      - libbladerf-dev
       - libhackrf-dev
       - libiio-dev
       - liblimesuite-dev
@@ -197,8 +204,8 @@ parts:
       hostedx40.rbf: usr/share/Nuand/bladeRF/hostedx40.rbf
       hostedx115.rbf: usr/share/Nuand/bladeRF/hostedx115.rbf
     override-build: |
+      snapcraftctl build
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL
       wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL
       wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL
       wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL
-      snapcraftctl build

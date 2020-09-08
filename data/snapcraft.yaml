@@ -147,7 +147,7 @@ parts:
       git clone https://github.com/Nuand/bladeRF.git
       cd bladeRF/host
       mkdir build
-      cmake ..
+      cmake -DCMAKE_INSTALL_PREFIX=/usr ..
       make -j$(nproc)
       make install
       snapcraftctl build
@@ -164,6 +164,7 @@ parts:
       - execstack
       - build-essential
       - cmake
+      - pkg-config
     stage-packages:
       - python3
       - python3-pyqt5

@@ -78,14 +78,12 @@ parts:
       - libasound2-plugins
 
   semwraplib:
-    plugin: dump
-    source: https://github.com/canonical-web-and-design/dotrun.git
-    source-subdir: src
+    plugin: nil
+    source: data
     override-build: |
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/lib
-      cd src
-      gcc -g -O0 -Wall -Wstrict-prototypes -fPIC -shared lib.c -o $SNAPCRAFT_PART_INSTALL/lib/semwraplib.so -ldl
+      gcc -g -O0 -Wall -Wstrict-prototypes -fPIC -shared semwraplib.c -o $SNAPCRAFT_PART_INSTALL/lib/semwraplib.so -ldl
     build-packages:
       - build-essential
 

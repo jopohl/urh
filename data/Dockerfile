@@ -12,12 +12,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && apt-get -qq install software-properties-common \
  && add-apt-repository -y ppa:myriadrf/drivers && apt-get -qq update \
  && apt-get -qq install wget gcc g++ git \
-                       python-pip \
                        python3 python3-pip python3-pyaudio python3-pyqt5 python3-numpy python3-psutil \
                        fonts-dejavu-core libgles2-mesa libusb-1.0-0 \
                        gr-osmosdr \
                        libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev \
- && python2 -m pip install pyusb \
  && python3 -m pip install setuptools cython \
  && mkdir /tmp/sdrplay \
  && wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-2.13.1.run -O /tmp/sdrplay/sdrplay.run \
@@ -31,11 +29,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && cd /tmp/urh \
  && python3 setup.py install \
  && rm -rf /tmp/urh \
- \
- && cd /tmp && git clone --depth=1 https://github.com/atlas0fd00m/rfcat \
- && cd rfcat \
- && python setup.py install \
- && rm -rf ../rfcat \
  \
  && apt-get -qq remove wget gcc g++ git ttf-bitstream-vera \
  && apt-get -qq autoremove \

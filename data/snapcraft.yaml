@@ -60,6 +60,7 @@ apps:
       - network
     environment:
       QT_QPA_PLATFORMTHEME: gtk3
+      LD_PRELOAD: $SNAP/bin/semwraplib.so
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
@@ -130,7 +131,6 @@ parts:
   urh:
     after: [desktop-qt5, sdrplay, alsa-mixin]
     plugin: python
-    python-version: python3
     requirements: [data/requirements.txt]
     source: .
     build-packages:
@@ -180,10 +180,14 @@ parts:
   bladerf-fpga:
     plugin: dump
     source: .
-    stage: [usr/share/Nuand/bladeRF/*]
+    organize:
+      hostedxA4.rbf: usr/share/Nuand/bladeRF/hostedxA4.rbf
+      hostedxA9.rbf: usr/share/Nuand/bladeRF/hostedxA9.rbf
+      hostedx40.rbf: usr/share/Nuand/bladeRF/hostedx40.rbf
+      hostedx115.rbf: usr/share/Nuand/bladeRF/hostedx115.rbf
     override-build: |
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
-      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL/usr/share/Nuand/bladeRF/
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA4.rbf  -P $SNAPCRAFT_PART_INSTALL
+      wget https://www.nuand.com/fpga/v0.11.0/hostedxA9.rbf  -P $SNAPCRAFT_PART_INSTALL
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx40.rbf  -P $SNAPCRAFT_PART_INSTALL
+      wget https://www.nuand.com/fpga/v0.11.0/hostedx115.rbf -P $SNAPCRAFT_PART_INSTALL
       snapcraftctl build

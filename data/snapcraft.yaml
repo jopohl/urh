@@ -148,7 +148,7 @@ parts:
       git clone https://github.com/Nuand/bladeRF.git
       cd bladeRF/host
       mkdir build
-      cmake -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL ..
+      cmake -DCMAKE_INSTALL_PREFIX="$SNAPCRAFT_PART_INSTALL;/usr" ..
       make -j$(nproc)
       make install
       snapcraftctl build
@@ -182,7 +182,6 @@ parts:
       - qt5-gtk-platformtheme
       - libqt5x11extras5
       - locales
-      - libcanberra-gtk-module
       - libcanberra-gtk3-module
 
   sdrplay:

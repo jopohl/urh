@@ -151,7 +151,8 @@ parts:
       cmake -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL ..
       make -j$(nproc)
       make install
-      make DESTDIR=/usr install
+      cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+      make install
       snapcraftctl build
     build-packages:
       - python3

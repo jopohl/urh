@@ -60,7 +60,7 @@ apps:
       - network
     environment:
       QT_QPA_PLATFORMTHEME: gtk3
-      LD_PRELOAD: $SNAP/bin/semwraplib.so
+      LD_PRELOAD: $SNAP/lib/semwraplib.so
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib:
@@ -76,6 +76,17 @@ parts:
     stage-packages:
       - libasound2
       - libasound2-plugins
+
+  semwraplib:
+    plugin: dump
+    source: https://github.com/canonical-web-and-design/dotrun.git
+    source-subdir: src
+    override-build: |
+      snapcraftctl build
+      mkdir -p $SNAPCRAFT_PART_INSTALL/lib
+      gcc -g -O0 -Wall -Wstrict-prototypes -fPIC -shared lib.c -o $SNAPCRAFT_PART_INSTALL/lib/semwraplib.so -ldl
+    build-packages:
+      - build-essential
 
   desktop-qt5:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git

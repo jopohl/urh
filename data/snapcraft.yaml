@@ -162,6 +162,8 @@ parts:
       - libuhd-dev
       - wget
       - execstack
+      - build-essential
+      - cmake
     stage-packages:
       - python3
       - python3-pyqt5

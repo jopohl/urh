@@ -237,6 +237,8 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
+      brew tap pothosware/homebrew-pothos
+      brew update
       brew install airspy hackrf limesuite librtlsdr portaudio uhd
       python -m pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"

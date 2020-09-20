@@ -231,41 +231,16 @@ jobs:
       versionSpec: '3.7'
 
   - script: |
-      git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-      mkdir src/urh/dev/native/lib/shared
-      tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
-      mkdir /tmp/osx-64
-      tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
-      rm -rf sdr_drivers
-    displayName: "download and unpack SDR drivers"
-
-  - script: |
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
       python -m pip install --upgrade pytest pytest-faulthandler
     displayName: 'Install dependencies'
 
   - script: |
-      brew install portaudio hackrf librtlsdr airspy
+      brew install airspy hackrf limesuite librtlsdr portaudio uhd
       python -m pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
-
-  - script: |
-      echo "Reinstall icu4c"
-      brew reinstall https://raw.githubusercontent.com/Homebrew/homebrew-core/a806a621ed3722fb580a58000fb274a2f2d86a6d/Formula/icu4c.rb
-      echo "Link icu4c"
-      brew link icu4c --force
-      echo "Install boost"
-      brew install --force --ignore-dependencies https://raw.githubusercontent.com/Homebrew/homebrew-core/8d748e26ccc9afc8ea0d0201ae234fda35de721e/Formula/boost.rb
-      cd /tmp
-      wget https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2
-      tar xf libusb-1.0.22.tar.bz2
-      cd libusb-1.0.22
-      ./configure
-      make
-      sudo make install
-    displayName: "Install libusb and boost"
 
   - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"

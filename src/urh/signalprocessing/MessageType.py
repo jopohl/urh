@@ -1,3 +1,4 @@
+import copy
 import random
 import uuid
 import xml.etree.ElementTree as ET
@@ -154,9 +155,15 @@ class MessageType(list):
 
     def add_label(self, lbl: ProtocolLabel, allow_overlapping=True):
         if allow_overlapping or not any(lbl.overlaps_with(l) for l in self):
-            added = self.add_protocol_label(lbl.start, lbl.end - 1, name=lbl.name, color_ind=lbl.color_index)
+            added = self.add_protocol_label(lbl.start, lbl.end - 1,
+                                            name=lbl.name, color_ind=lbl.color_index,
+                                            type=lbl.field_type)
             added.display_format_index = lbl.display_format_index
             added.display_bit_order_index = lbl.display_bit_order_index
+            if isinstance(lbl, ChecksumLabel) and isinstance(added, ChecksumLabel):
+                added.data_ranges = copy.copy(lbl.data_ranges)
+                added.category = copy.copy(lbl.category)
+                added.checksum = copy.copy(lbl.checksum)
 
     def remove(self, lbl: ProtocolLabel):
         if lbl in self:

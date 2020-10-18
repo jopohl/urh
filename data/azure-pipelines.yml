@@ -240,11 +240,12 @@ jobs:
     displayName: "download and unpack SDR drivers"
 
   - script: |
-      python -m pip install --upgrade pip
+      python -m pip install --upgrade pip wheel setuptools
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade wheel pytest pytest-faulthandler twine six appdirs packaging setuptools pyinstaller pyaudio
+      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
       brew install airspy hackrf librtlsdr portaudio uhd
+      python -m pip install --upgrade pyaudio
     displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py

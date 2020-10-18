@@ -242,7 +242,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade pytest pytest-faulthandler
+      python -m pip install --upgrade wheel pytest pytest-faulthandler
     displayName: 'Install dependencies'
 
   - script: |

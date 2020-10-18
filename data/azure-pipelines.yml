@@ -244,7 +244,7 @@ jobs:
       python -m pip install --upgrade -r data/requirements.txt
       python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
-      brew install airspy hackrf librtlsdr portaudio uhd
+      HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
       python -m pip install --upgrade pyaudio
     displayName: 'Install dependencies'
 

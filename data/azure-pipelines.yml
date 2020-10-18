@@ -242,14 +242,10 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade wheel pytest pytest-faulthandler
-    displayName: 'Install dependencies'
-
-  - script: |
-      brew install airspy hackrf librtlsdr portaudio uhd
-      python -m pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
+      python -m pip install --upgrade wheel pytest pytest-faulthandler twine six appdirs packaging setuptools pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
-    displayName: "Install build dependencies"
+      brew install airspy hackrf librtlsdr portaudio uhd
+    displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"

@@ -242,10 +242,9 @@ jobs:
   - script: |
       python -m pip install --upgrade pip wheel setuptools
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller
-      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
       HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
-      python -m pip install --upgrade pyaudio
+      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio
+      python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py

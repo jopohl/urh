@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCh
 
 from urh import settings
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
+from urh.controller.dialogs.CostaOptionsDialog import CostaOptionsDialog
 from urh.controller.dialogs.FilterDialog import FilterDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SignalDetailsDialog import SignalDetailsDialog
@@ -276,7 +277,7 @@ class SignalFrame(QFrame):
         self.ui.spinBoxSamplesPerSymbol.setValue(self.signal.samples_per_symbol)
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         self.ui.cbModulationType.setCurrentText(self.signal.modulation_type)
-        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() in ("ASK", "PSK"))
         self.ui.spinBoxCenterSpacing.setValue(self.signal.center_spacing)
         self.ui.spinBoxBitsPerSymbol.setValue(self.signal.bits_per_symbol)
 
@@ -524,7 +525,10 @@ class SignalFrame(QFrame):
         self.ui.txtEdProto.setText("Demodulating...")
         qApp.processEvents()
 
-        self.proto_analyzer.get_protocol_from_signal()
+        try:
+            self.proto_analyzer.get_protocol_from_signal()
+        except Exception as e:
+            Errors.exception(e)
 
     def show_protocol(self, old_view=-1, refresh=False):
         if not self.proto_analyzer:
@@ -1093,7 +1097,7 @@ class SignalFrame(QFrame):
                 self.scene_manager.init_scene()
                 self.on_slider_y_scale_value_changed()
 
-        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() == "ASK")
+        self.ui.btnAdvancedModulationSettings.setVisible(self.ui.cbModulationType.currentText() in ("ASK", "PSK"))
 
     @pyqtSlot()
     def on_signal_data_changed_before_save(self):
@@ -1301,9 +1305,25 @@ class SignalFrame(QFrame):
         dialog.message_length_divisor_edited.connect(self.on_message_length_divisor_edited)
         return dialog
 
+    def get_costas_dialog(self):
+        dialog = CostaOptionsDialog(self.signal.costas_loop_bandwidth, parent=self)
+        dialog.accepted.connect(self.on_costas_dialog_accepted)
+        return dialog
+
+    @pyqtSlot()
+    def on_costas_dialog_accepted(self):
+        sender = self.sender()
+        assert isinstance(sender, CostaOptionsDialog)
+        self.signal.costas_loop_bandwidth = sender.costas_loop_bandwidth
+
     @pyqtSlot()
     def on_btn_advanced_modulation_settings_clicked(self):
-        dialog = self.get_advanced_modulation_settings_dialog()
+        if self.ui.cbModulationType.currentText() == "ASK":
+            dialog = self.get_advanced_modulation_settings_dialog()
+        elif self.ui.cbModulationType.currentText() == "PSK":
+            dialog = self.get_costas_dialog()
+        else:
+            raise ValueError("No additional settings available")
         dialog.exec_()
 
     @pyqtSlot()

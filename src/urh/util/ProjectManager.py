@@ -330,6 +330,7 @@ class ProjectManager(QObject):
         signal_tag.set("pause_threshold", str(signal.pause_threshold))
         signal_tag.set("message_length_divisor", str(signal.message_length_divisor))
         signal_tag.set("bits_per_symbol", str(signal.bits_per_symbol))
+        signal_tag.set("costas_loop_bandwidth", str(signal.costas_loop_bandwidth))
 
         messages = ET.SubElement(signal_tag, "messages")
         for message in messages:
@@ -495,6 +496,7 @@ class ProjectManager(QObject):
                 signal.center_spacing = float(sig_tag.get("center_spacing", 0.1))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
                 signal.bits_per_symbol = int(sig_tag.get("bits_per_symbol", 1))
+                signal.costas_loop_bandwidth = float(sig_tag.get("costas_loop_bandwidth", 0.1))
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))

@@ -43,6 +43,7 @@ class Signal(QObject):
         self.__samples_per_symbol = 100
         self.__pause_threshold = 8
         self.__message_length_divisor = 1
+        self.__costas_loop_bandwidth = 0.1
         self._qad = None
         self.__center = 0
         self._noise_threshold = 0
@@ -256,6 +257,18 @@ class Signal(QObject):
                 self.protocol_needs_update.emit()
 
     @property
+    def costas_loop_bandwidth(self):
+        return self.__costas_loop_bandwidth
+
+    @costas_loop_bandwidth.setter
+    def costas_loop_bandwidth(self, value: float):
+        if self.__costas_loop_bandwidth != value:
+            self.__costas_loop_bandwidth = value
+            self._qad = None
+            if not self.block_protocol_update:
+                self.protocol_needs_update.emit()
+
+    @property
     def message_length_divisor(self) -> int:
         return self.__message_length_divisor
 
@@ -362,7 +375,9 @@ class Signal(QObject):
         QApplication.instance().restoreOverrideCursor()
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold, self.modulation_type)
+        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold,
+                                          self.modulation_type, self.modulation_order,
+                                          self.costas_loop_bandwidth)
 
     def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4
@@ -501,7 +516,10 @@ class Signal(QObject):
     def filter_range(self, start: int, end: int, fir_filter: Filter):
         self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
         self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
-                                                          self.noise_threshold, self.modulation_type)
+                                                          self.noise_threshold,
+                                                          self.modulation_type,
+                                                          self.modulation_order,
+                                                          self.costas_loop_bandwidth)
         self.__invalidate_after_edit()
 
     def __invalidate_after_edit(self):

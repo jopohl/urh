@@ -69,7 +69,7 @@ class TestDemodulations(unittest.TestCase):
         signal = Signal(get_path_for_data_file("psk_gen_noisy.complex"), "PSK-Test")
         signal.modulation_type = "PSK"
         signal.samples_per_symbol = 300
-        signal.center = -1.2886
+        signal.center = 0
         signal.noise_threshold = 0
         signal.tolerance = 10
 

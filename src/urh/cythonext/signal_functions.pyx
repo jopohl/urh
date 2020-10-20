@@ -282,6 +282,10 @@ cdef float[::1] costa_demod(IQ samples, float noise_sqrd, int loop_order, float 
     else:
         raise ValueError("Unsupported dtype")
 
+    if loop_order > 4:
+        # TODO: Adapt this when PSK demodulation with order > 4 shall be supported
+        loop_order = 4
+
     for i in range(1, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
@@ -303,8 +307,6 @@ cdef float[::1] costa_demod(IQ samples, float noise_sqrd, int loop_order, float 
             f1 = 1.0 if nco_times_sample.real > 0.0 else -1.0
             f2 = 1.0 if nco_times_sample.imag > 0.0 else -1.0
             costa_error = f1 * nco_times_sample.imag - f2 * nco_times_sample.real
-        else:
-            raise NotImplementedError("PSK Demodulation of order {} is currently unsupported".format(loop_order))
 
         costa_error = clamp(costa_error)
 

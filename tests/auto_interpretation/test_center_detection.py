@@ -26,7 +26,7 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_noisy_rect(self):
         data = Signal(get_path_for_data_file("fsk.complex")).iq_array.data
-        rect = afp_demod(data, 0.008, "FSK")[5:15000]
+        rect = afp_demod(data, 0.008, "FSK", 2)[5:15000]
 
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.0587)
@@ -34,7 +34,7 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_ask_center_detection(self):
         data = Signal(get_path_for_data_file("ask.complex")).iq_array.data
-        rect = afp_demod(data, 0.01111, "ASK")
+        rect = afp_demod(data, 0.01111, "ASK", 2)
 
         center = detect_center(rect)
         self.assertGreaterEqual(center, 0)
@@ -42,7 +42,7 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_enocean_center_detection(self):
         data = Signal(get_path_for_data_file("enocean.complex")).iq_array.data
-        rect = afp_demod(data, 0.05, "ASK")
+        rect = afp_demod(data, 0.05, "ASK", 2)
         messages = [rect[2107:5432], rect[20428:23758], rect[44216:47546]]
 
         for i, msg in enumerate(messages):
@@ -54,7 +54,7 @@ class TestCenterDetection(unittest.TestCase):
         message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
 
         data = Signal(get_path_for_data_file("ask50.complex")).iq_array.data
-        rect = afp_demod(data, 0.0509, "ASK")
+        rect = afp_demod(data, 0.0509, "ASK", 2)
 
         for start, end in message_indices:
             center = detect_center(rect[start:end])
@@ -63,7 +63,7 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_homematic_center_detection(self):
         data = Signal(get_path_for_data_file("homematic.complex32s"), "").iq_array.data
-        rect = afp_demod(data, 0.0012, "FSK")
+        rect = afp_demod(data, 0.0012, "FSK", 2)
 
         msg1 = rect[17719:37861]
         msg2 = rect[70412:99385]
@@ -78,7 +78,7 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_noised_homematic_center_detection(self):
         data = Signal(get_path_for_data_file("noised_homematic.complex"), "").iq_array.data
-        rect = afp_demod(data, 0.0,  "FSK")
+        rect = afp_demod(data, 0.0,  "FSK", 2)
 
         center = detect_center(rect)
 
@@ -87,14 +87,14 @@ class TestCenterDetection(unittest.TestCase):
 
     def test_fsk_15db_center_detection(self):
         data = Signal(get_path_for_data_file("FSK15.complex"), "").iq_array.data
-        rect = afp_demod(data, 0, "FSK")
+        rect = afp_demod(data, 0, "FSK", 2)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1979)
         self.assertLessEqual(center, 0.1131)
 
     def test_fsk_10db_center_detection(self):
         data = Signal(get_path_for_data_file("FSK10.complex"), "").iq_array.data
-        rect = afp_demod(data, 0, "FSK")
+        rect = afp_demod(data, 0, "FSK", 2)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.1413)
         self.assertLessEqual(center, 0.05)
@@ -107,12 +107,12 @@ class TestCenterDetection(unittest.TestCase):
         filtered_data = moving_average_filter.apply_fir_filter(data.flatten()).view(np.float32)
         filtered_data = filtered_data.reshape((len(filtered_data)//2, 2))
 
-        rect = afp_demod(filtered_data, 0.0175, "FSK")
+        rect = afp_demod(filtered_data, 0.0175, "FSK", 2)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.0148, msg="Filtered")
         self.assertLessEqual(center, 0.01, msg="Filtered")
 
-        rect = afp_demod(data, 0.0175, "FSK")
+        rect = afp_demod(data, 0.0175, "FSK", 2)
         center = detect_center(rect)
         self.assertGreaterEqual(center, -0.02, msg="Original")
         self.assertLessEqual(center, 0.01, msg="Original")

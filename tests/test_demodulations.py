@@ -69,13 +69,44 @@ class TestDemodulations(unittest.TestCase):
         signal = Signal(get_path_for_data_file("psk_gen_noisy.complex"), "PSK-Test")
         signal.modulation_type = "PSK"
         signal.samples_per_symbol = 300
-        signal.center = -1.2886
+        signal.center = 0
         signal.noise_threshold = 0
         signal.tolerance = 10
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
         self.assertTrue(proto_analyzer.plain_bits_str[0].startswith("1011"), msg=proto_analyzer.plain_bits_str[0])
+
+    def test_4_psk(self):
+        bits = array.array("B", [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1])
+        angles_degree = [-135, -45, 45, 135]
+
+        parameters = array.array("f", [np.pi*a/180 for a in angles_degree])
+        result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
+
+        signal = Signal("")
+        signal.iq_array = IQArray(result)
+        signal.bits_per_symbol = 2
+        signal.center = 0
+        signal.center_spacing = 1
+        signal.modulation_type = "PSK"
+
+        proto_analyzer = ProtocolAnalyzer(signal)
+        proto_analyzer.get_protocol_from_signal()
+        demod_bits = proto_analyzer.plain_bits_str[0]
+        self.assertEqual(len(demod_bits), len(bits))
+        self.assertTrue(demod_bits.startswith("10101010"))
+
+        np.random.seed(42)
+        noised = result + 0.1 * np.random.normal(loc=0, scale=np.sqrt(2)/2, size=(len(result), 2))
+        signal.iq_array = IQArray(noised.astype(np.float32))
+        signal.center_spacing = 1.5
+        signal.noise_threshold = 0.2
+        signal._qad = None
+        proto_analyzer.get_protocol_from_signal()
+        demod_bits = proto_analyzer.plain_bits_str[0]
+        self.assertEqual(len(demod_bits), len(bits))
+        self.assertTrue(demod_bits.startswith("10101010"))
 
     def test_4_fsk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])

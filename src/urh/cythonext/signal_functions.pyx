@@ -242,17 +242,27 @@ cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, uint32_t samp
         -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))
     return h / h.sum()
 
-cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam, long long num_samples):
-    cdef long long i = 0
-    cdef float real = 0, imag = 0, magnitude = 0
+cdef float clamp(float x) nogil:
+    if x < -1.0:
+        x = -1.0
+    elif x > 1.0:
+        x = 1.0
+    return x
+
+cdef float[::1] costa_demod(IQ samples, float noise_sqrd, int loop_order, float bandwidth=0.1, float damping=sqrt(2.0) / 2.0):
+    cdef float alpha = (4 * damping * bandwidth) / (1.0 + 2.0 * damping * bandwidth + bandwidth * bandwidth)
+    cdef float beta = (4 * bandwidth * bandwidth) / (1.0 + 2.0 * damping * bandwidth + bandwidth * bandwidth)
+
+    cdef long long i = 0, num_samples = len(samples)
+    cdef float real = 0, imag = 0
 
     cdef float scale, shift, real_float, imag_float, ref_real, ref_imag
 
-    cdef float phi = 0, current_arg = 0, f_curr = 0, f_prev = 0
+    cdef float f1, f2, costa_freq = 0, costa_error = 0, costa_phase = 1.5
 
-    cdef float complex current_sample, conj_previous_sample, current_nco
+    cdef float complex current_sample, nco_out, nco_times_sample
 
-    cdef float alpha = 0.1
+    cdef float[::1] result = np.empty(num_samples, dtype=np.float32)
 
     if str(cython.typeof(samples)) == "char[:, ::1]":
         scale = 127.5
@@ -272,12 +282,15 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
     else:
         raise ValueError("Unsupported dtype")
 
+    if loop_order > 4:
+        # TODO: Adapt this when PSK demodulation with order > 4 shall be supported
+        loop_order = 4
+
     for i in range(1, num_samples):
         real = samples[i, 0]
         imag = samples[i, 1]
-        
-        magnitude = real * real + imag * imag
-        if magnitude <= noise_sqrd:
+
+        if real * real + imag * imag <= noise_sqrd:
             result[i] = NOISE_FSK_PSK
             continue
 
@@ -285,49 +298,48 @@ cdef void phase_demod(IQ samples, float[::1] result, float noise_sqrd, bool qam,
         imag_float = (imag + shift) / scale
 
         current_sample = real_float + imag_unit * imag_float
-        conj_previous_sample = (samples[i-1, 0] + shift) / scale - imag_unit * ((samples[i-1, 1] + shift) / scale)
-        f_curr = arg(current_sample * conj_previous_sample)
+        nco_out = cosf(-costa_phase) + imag_unit * sinf(-costa_phase)
+        nco_times_sample = nco_out * current_sample
 
-        if abs(f_curr) < M_PI / 4:  # TODO: For PSK with order > 4 this needs to be adapted
-            f_prev = f_curr
-            current_arg += f_curr
-        else:
-            current_arg += f_prev
+        if loop_order == 2:
+            costa_error = nco_times_sample.imag * nco_times_sample.real
+        elif loop_order == 4:
+            f1 = 1.0 if nco_times_sample.real > 0.0 else -1.0
+            f2 = 1.0 if nco_times_sample.imag > 0.0 else -1.0
+            costa_error = f1 * nco_times_sample.imag - f2 * nco_times_sample.real
 
-        # Reference oscillator cos(current_arg) + j * sin(current_arg)
-        current_nco = cosf(current_arg) + imag_unit * sinf(current_arg)
-        phi = arg(current_sample * conj(current_nco))
+        costa_error = clamp(costa_error)
 
-        if qam:
-            result[i] = phi * magnitude
-        else:
-            result[i] = phi
+        # advance the loop
+        costa_freq += beta * costa_error
+        costa_phase += costa_freq + alpha * costa_error
 
-cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, str mod_type):
+        # wrap the phase
+        while costa_phase > (2 * M_PI):
+            costa_phase -= 2 * M_PI
+        while costa_phase < (-2 * M_PI):
+            costa_phase += 2 * M_PI
+
+        costa_freq = clamp(costa_freq)
+
+        if loop_order == 2:
+            result[i] = nco_times_sample.real
+        elif loop_order == 4:
+            result[i] = 2 * nco_times_sample.real + nco_times_sample.imag
+
+    return result
+
+
+cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag,
+                                                 str mod_type, int mod_order, float costas_loop_bandwidth=0.1):
     if len(samples) <= 2:
         return np.zeros(len(samples), dtype=np.float32)
 
     cdef long long i = 0, ns = len(samples)
-    cdef float current_arg = 0
-    cdef float noise_sqrd = 0
-    cdef float complex_phase = 0
-    cdef float prev_phase = 0
-    cdef float NOISE = 0
-    cdef float real = 0
-    cdef float imag = 0
-
-    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
-    cdef float costa_freq = 0
-    cdef float costa_phase = 0
-    cdef complex nco_out = 0
+    cdef float NOISE = get_noise_for_mod_type(mod_type)
+    cdef float noise_sqrd = noise_mag * noise_mag, real = 0, imag = 0, magnitude = 0, max_magnitude
     cdef float complex tmp
-    cdef float phase_error = 0
-    cdef float costa_alpha = 0
-    cdef float costa_beta = 0
-    cdef complex nco_times_sample = 0
-    cdef float magnitude = 0
 
-    cdef float max_magnitude   # ensure all magnitudes of ASK demod between 0 and 1
     if str(cython.typeof(samples)) == "char[:, ::1]":
         max_magnitude = sqrt(127*127 + 128*128)
     elif str(cython.typeof(samples)) == "unsigned char[:, ::1]":
@@ -341,35 +353,27 @@ cpdef np.ndarray[np.float32_t, ndim=1] afp_demod(IQ samples, float noise_mag, st
     else:
         raise ValueError("Unsupported dtype")
 
-    # Atan2 yields values from -Pi to Pi
-    # We use the Magic Constant NOISE_FSK_PSK to cut off noise
-    noise_sqrd = noise_mag * noise_mag
-    NOISE = get_noise_for_mod_type(mod_type)
+
+    if mod_type == "PSK":
+        return np.asarray(costa_demod(samples, noise_sqrd, mod_order, bandwidth=costas_loop_bandwidth))
+
+    cdef float[::1] result = np.zeros(ns, dtype=np.float32, order="C")
     result[0] = NOISE
 
-    cdef bool qam = False
+    for i in prange(1, ns, nogil=True, schedule="static"):
+        real = samples[i, 0]
+        imag = samples[i, 1]
+        magnitude = real * real + imag * imag
+        if magnitude <= noise_sqrd:  # |c| <= mag_treshold
+            result[i] = NOISE
+            continue
 
-    if mod_type in ("PSK", "QAM", "OQPSK"):
-        if mod_type == "QAM":
-            qam = True
-
-        phase_demod(samples, result, noise_sqrd, qam, ns)
-
-    else:
-        for i in prange(1, ns, nogil=True, schedule="static"):
-            real = samples[i, 0]
-            imag = samples[i, 1]
-            magnitude = real * real + imag * imag
-            if magnitude <= noise_sqrd:  # |c| <= mag_treshold
-                result[i] = NOISE
-                continue
-
-            if mod_type == "ASK":
-                result[i] = sqrt(magnitude) / max_magnitude
-            elif mod_type == "FSK":
-                #tmp = samples[i - 1].conjugate() * c
-                tmp = (samples[i-1, 0] - imag_unit * samples[i-1, 1]) * (real + imag_unit * imag)
-                result[i] = atan2(tmp.imag, tmp.real)  # Freq
+        if mod_type == "ASK":
+            result[i] = sqrt(magnitude) / max_magnitude
+        elif mod_type == "FSK":
+            #tmp = samples[i - 1].conjugate() * c
+            tmp = (samples[i-1, 0] - imag_unit * samples[i-1, 1]) * (real + imag_unit * imag)
+            result[i] = atan2(tmp.imag, tmp.real)  # Freq
 
     return np.asarray(result)
 

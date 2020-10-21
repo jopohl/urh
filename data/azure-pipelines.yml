@@ -19,6 +19,8 @@ jobs:
         python.version: '3.7'
       Python38:
           python.version: '3.8'
+      Python39:
+          python.version: '3.9'
 
   steps:
   - task: UsePythonVersion@0
@@ -114,7 +116,7 @@ jobs:
 
 - job: 'Windows'
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   strategy:
     matrix:
       Python37-64:
@@ -240,16 +242,12 @@ jobs:
     displayName: "download and unpack SDR drivers"
 
   - script: |
-      python -m pip install --upgrade pip
+      python -m pip install --upgrade pip wheel setuptools
       python -m pip install --upgrade -r data/requirements.txt
-      python -m pip install --upgrade pytest pytest-faulthandler
-    displayName: 'Install dependencies'
-
-  - script: |
-      brew install airspy hackrf librtlsdr portaudio uhd
-      python -m pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pyaudio
+      HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
+      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
-    displayName: "Install build dependencies"
+    displayName: 'Install dependencies'
 
   - script: python src/urh/cythonext/build.py
     displayName: "Build extensions"

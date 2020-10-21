@@ -13,7 +13,6 @@ from urh.dev.EndlessSender import EndlessSender
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.Modulator import Modulator
-from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
@@ -52,6 +51,8 @@ class Simulator(QObject):
         self.do_restart = False
         self.current_repeat = 0
         self.log_messages = []
+
+        self.lock = threading.Lock()
 
         self.sniffer_ready = False
         self.sender_ready = False
@@ -148,7 +149,9 @@ class Simulator(QObject):
         self.is_simulating = True
         self.do_restart = False
         self.current_repeat = 0
+        self.lock.acquire()
         self.log_messages[:] = []
+        self.lock.release()
 
     @property
     def devices(self):
@@ -163,8 +166,10 @@ class Simulator(QObject):
         return [device.read_messages() for device in self.devices]
 
     def read_log_messages(self):
+        self.lock.acquire()
         result = self.log_messages[:]
         self.log_messages.clear()
+        self.lock.release()
         return result
 
     def cleanup(self):
@@ -376,6 +381,7 @@ class Simulator(QObject):
     def log_message(self, message):
         timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(datetime.datetime.now())
 
+        self.lock.acquire()
         if isinstance(message, list) and len(message) > 0:
             self.log_messages.append(timestamp + ": " + message[0])
             self.log_messages.extend(message[1:])
@@ -383,6 +389,7 @@ class Simulator(QObject):
         else:
             self.log_messages.append(timestamp + ": " + message)
             logger.debug(message)
+        self.lock.release()
 
     def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
         if len(received_msg.decoded_bits) == 0:
@@ -435,7 +442,9 @@ class Simulator(QObject):
                 continue
 
             log_msg = lbl.name + ": " + HTMLFormatter.monospace(data)
+            self.lock.acquire()
             self.log_messages.append(HTMLFormatter.indent_string(log_msg))
+            self.lock.release()
 
     def resend_last_message(self):
         self.log_message("Resending last message")

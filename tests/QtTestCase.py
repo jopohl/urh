@@ -1,10 +1,7 @@
 import faulthandler
-import gc
 import os
-import time
 import unittest
 
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest
@@ -12,7 +9,6 @@ from PyQt5.QtWidgets import QApplication
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
-from urh.dev.BackendHandler import BackendHandler
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
@@ -36,7 +32,6 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
-        cls.app = None
 
     def setUp(self):
         ProtocolSniffer.BUFFER_SIZE_MB = 0.5
@@ -49,23 +44,9 @@ class QtTestCase(unittest.TestCase):
         if hasattr(self, "dialog"):
             self.dialog.close()
 
-            try:
-                sip.delete(self.dialog)
-            except TypeError:
-                pass
-            self.dialog = None
-
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
-
-            try:
-                sip.delete(self.form)
-            except TypeError:
-                pass
-            self.form = None
-
-        gc.collect()
 
     def add_signal_to_form(self, filename: str):
         self.form.add_signalfile(get_path_for_data_file(filename))

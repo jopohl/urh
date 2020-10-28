@@ -46,23 +46,11 @@ class QtTestCase(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, "dialog"):
             self.dialog.close()
-
-            try:
-                sip.delete(self.dialog)
-            except TypeError:
-                pass
-
             del self.dialog
 
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
-
-            try:
-                sip.delete(self.form)
-            except TypeError:
-                pass
-
             del self.form
 
         gc.collect()

@@ -1,4 +1,5 @@
 import faulthandler
+import gc
 import os
 import unittest
 
@@ -33,6 +34,7 @@ class QtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.app.quit()
+        del cls.app
 
     def setUp(self):
         ProtocolSniffer.BUFFER_SIZE_MB = 0.5
@@ -50,6 +52,8 @@ class QtTestCase(unittest.TestCase):
             except TypeError:
                 pass
 
+            del self.dialog
+
         if hasattr(self, "form"):
             self.form.close_all_files()
             self.form.close()
@@ -58,6 +62,10 @@ class QtTestCase(unittest.TestCase):
                 sip.delete(self.form)
             except TypeError:
                 pass
+
+            del self.form
+
+        gc.collect()
 
     def add_signal_to_form(self, filename: str):
         self.form.add_signalfile(get_path_for_data_file(filename))

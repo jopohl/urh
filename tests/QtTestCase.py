@@ -3,7 +3,6 @@ import gc
 import os
 import unittest
 
-import sip
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDropEvent
 from PyQt5.QtTest import QTest

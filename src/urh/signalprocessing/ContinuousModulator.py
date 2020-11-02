@@ -30,7 +30,7 @@ class ContinuousModulator(object):
         self.current_message_index = Value("L", 0)
 
         self.abort = Value("i", 0)
-        self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
+        self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ), daemon=True)
 
     @property
     def is_running(self):
@@ -39,7 +39,7 @@ class ContinuousModulator(object):
     def start(self):
         self.abort.value = 0
         try:
-            self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
+            self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ), daemon=True)
             self.process.start()
         except RuntimeError as e:
             logger.exception(e)

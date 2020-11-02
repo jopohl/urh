@@ -353,6 +353,7 @@ class Simulator(QObject):
                 received_msg.decoder = new_message.decoder
                 received_msg.message_type = new_message.message_type
 
+                self.log_message("Message {}: Check whether received data matches".format(msg.index()))
                 check_result, error_msg = self.check_message(received_msg, new_message, retry=retry,
                                                              msg_index=msg.index())
 

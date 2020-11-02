@@ -80,7 +80,7 @@ class ContinuousModulator(object):
                     if self.abort.value:
                         return
 
-                    # Wait till there is space in buffer
+                    logger.debug("Wait till there is space in buffer")
                     time.sleep(self.WAIT_TIMEOUT)
                 self.ring_buffer.push(modulated)
             self.current_message_index.value = 0

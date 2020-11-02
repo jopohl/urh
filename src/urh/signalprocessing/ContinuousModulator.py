@@ -31,7 +31,6 @@ class ContinuousModulator(object):
 
         self.abort = Value("i", 0)
         self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
-        self.process.daemon = True
 
     @property
     def is_running(self):
@@ -41,26 +40,22 @@ class ContinuousModulator(object):
         self.abort.value = 0
         try:
             self.process = Process(target=self.modulate_continuously, args=(self.num_repeats, ))
-            self.process.daemon = True
             self.process.start()
         except RuntimeError as e:
-            logger.debug(str(e))
+            logger.exception(e)
 
     def stop(self, clear_buffer=True):
         self.abort.value = 1
-        if clear_buffer:
-            self.ring_buffer.clear()
-        if not self.process.is_alive():
-            return
-
-        try:
-            self.process.join(0.1)
-        except RuntimeError as e:
-            logger.debug(str(e))
 
         if self.process.is_alive():
-            self.process.terminate()
-            self.process.join()
+            try:
+                self.process.join(1.5)
+            except RuntimeError as e:
+                logger.exception(e)
+                self.process.terminate()
+
+        if clear_buffer:
+            self.ring_buffer.clear()
 
         logger.debug("Stopped continuous modulation")
 

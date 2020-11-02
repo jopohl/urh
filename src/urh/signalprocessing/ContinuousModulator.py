@@ -62,7 +62,11 @@ class ContinuousModulator(object):
     def modulate_continuously(self, num_repeats):
         rng = iter(int, 1) if num_repeats <= 0 else range(0, num_repeats)  # <= 0 = forever
         for _ in rng:
+            if self.abort.value:
+                return
+
             start = self.current_message_index.value
+
             for i in range(start, len(self.messages)):
                 if self.abort.value:
                     return
@@ -77,5 +81,7 @@ class ContinuousModulator(object):
 
                     logger.debug("Wait till there is space in buffer")
                     time.sleep(self.WAIT_TIMEOUT)
+
                 self.ring_buffer.push(modulated)
+
             self.current_message_index.value = 0

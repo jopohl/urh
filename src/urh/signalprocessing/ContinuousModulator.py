@@ -79,7 +79,7 @@ class ContinuousModulator(object):
                     if self.abort.value:
                         return
 
-                    logger.debug("Wait till there is space in buffer")
+                    # Wait till there is space in buffer
                     time.sleep(self.WAIT_TIMEOUT)
 
                 self.ring_buffer.push(modulated)

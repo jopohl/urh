@@ -57,11 +57,13 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
     try:
         try:
             file_name = os.path.join(tmp_dir, '{}.c'.format(function_name))
-            f = open(file_name, 'w')
-            f.write('int main(void) {\n')
-            f.write('    %s();\n' % function_name)
-            f.write('}\n')
-            f.close()
+            with open(file_name, 'w') as f:
+                # declare function in order to prevent Clang 12 error (https://github.com/jopohl/urh/issues/811)
+                f.write('void %s();\n' % function_name)
+                f.write('int main(void) {\n')
+                f.write('    %s();\n' % function_name)
+                f.write('}\n')
+
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
             devnull = open(os.devnull, 'w')
             old_stderr = os.dup(sys.stderr.fileno())

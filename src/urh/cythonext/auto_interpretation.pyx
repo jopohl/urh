@@ -5,6 +5,9 @@ from cpython cimport array
 import array
 import cython
 
+from cython.parallel import prange
+from libc.stdlib cimport malloc, free
+from libcpp.algorithm cimport sort
 from libc.stdint cimport uint64_t
 
 cpdef tuple k_means(float[:] data, unsigned int k=2):
@@ -107,7 +110,7 @@ def segment_messages_from_magnitudes(cython.floating[:] magnitudes, float noise_
 
     return result
 
-cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:] plateau_lengths, float threshold=0.2):
+cpdef uint64_t[:] get_threshold_divisor_histogram(uint64_t[:] plateau_lengths, float threshold=0.2):
     """
     Get a histogram (i.e. count) how many times a value is a threshold divisor for other values in given data
     
@@ -116,11 +119,9 @@ cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:
     :param plateau_lengths: 
     :return: 
     """
-    cdef unsigned long long num_lengths = len(plateau_lengths)
+    cdef uint64_t i, j, x, y, minimum, maximum, num_lengths = len(plateau_lengths)
 
     cdef np.ndarray[np.uint64_t, ndim=1] histogram = np.zeros(int(np.max(plateau_lengths)) + 1, dtype=np.uint64)
-
-    cdef unsigned long long i, j, x, y, minimum, maximum
 
     for i in range(0, num_lengths):
         for j in range(i+1, num_lengths):
@@ -141,7 +142,9 @@ cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:
 
     return histogram
 
-cpdef np.ndarray[np.uint64_t, ndim=1] merge_plateaus(np.ndarray[np.uint64_t, ndim=1] plateaus, uint64_t tolerance):
+cpdef np.ndarray[np.uint64_t, ndim=1] merge_plateaus(np.ndarray[np.uint64_t, ndim=1] plateaus,
+                                                     uint64_t tolerance,
+                                                     uint64_t max_count):
     cdef uint64_t j, n, L = len(plateaus), current = 0, i = 1, tmp_sum
     if L == 0:
         return np.zeros(0, dtype=np.uint64)
@@ -152,7 +155,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] merge_plateaus(np.ndarray[np.uint64_t, ndi
     else:
         result[0] = plateaus[0]
 
-    while i < L:
+    while i < L and current < max_count:
         if plateaus[i] <= tolerance:
             # Look ahead to see whether we need to merge a larger window e.g. for 67, 1, 10, 1, 21
             n = 2
@@ -204,10 +207,6 @@ cpdef np.ndarray[np.uint64_t, ndim=1] get_plateau_lengths(float[:] rect_data, fl
 
     return np.array(result, dtype=np.uint64)
 
-
-from cython.parallel import prange
-from libc.stdlib cimport malloc, free
-from libcpp.algorithm cimport sort
 
 cdef float median(double[:] data, unsigned long start, unsigned long data_len, unsigned int k=3) nogil:
     cdef unsigned long i, j

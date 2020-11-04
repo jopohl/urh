@@ -280,7 +280,8 @@ def merge_plateau_lengths(plateau_lengths, tolerance=None) -> list:
     if tolerance == 0 or tolerance is None:
         return plateau_lengths
 
-    return c_auto_interpretation.merge_plateaus(plateau_lengths, tolerance)
+    return c_auto_interpretation.merge_plateaus(plateau_lengths, tolerance, max_count=10000)
+
 
 def round_plateau_lengths(plateau_lengths: list):
     """
@@ -321,8 +322,8 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(merged_plateau_lengths[0])
 
     round_plateau_lengths(merged_plateau_lengths)
-
     histogram = c_auto_interpretation.get_threshold_divisor_histogram(merged_plateau_lengths)
+
     if len(histogram) == 0:
         return 0
     else:

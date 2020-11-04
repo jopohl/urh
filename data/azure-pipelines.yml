@@ -154,9 +154,6 @@ jobs:
       destinationFolder: src\urh\dev\native\lib\shared
       #cleanDestinationFolder: true
 
-  - script: python src/urh/cythonext/build.py
-    displayName: "Build extensions"
-
   - script: |
       pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
       pip install "pyaudio; python_version < '3.7'"

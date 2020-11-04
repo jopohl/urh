@@ -154,7 +154,7 @@ jobs:
       destinationFolder: src\urh\dev\native\lib\shared
       #cleanDestinationFolder: true
 
-  - script: python src/urh/cythonext/build.py
+  - script: python setup.py build_ext --inplace
     displayName: "Build extensions"
 
   - script: |

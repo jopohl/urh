@@ -5,6 +5,8 @@ from cpython cimport array
 import array
 import cython
 
+from libc.stdint cimport uint64_t
+
 cpdef tuple k_means(float[:] data, unsigned int k=2):
     cdef float[:] centers = np.empty(k, dtype=np.float32)
     cdef list clusters = []
@@ -138,6 +140,38 @@ cpdef unsigned long long[:] get_threshold_divisor_histogram(unsigned long long[:
                 histogram[minimum] += 1
 
     return histogram
+
+cpdef np.ndarray[np.uint64_t, ndim=1] merge_plateaus(np.ndarray[np.uint64_t, ndim=1] plateaus, uint64_t tolerance):
+    cdef uint64_t j, n, L = len(plateaus), current = 0, i = 1, tmp_sum
+    if L == 0:
+        return np.zeros(0, dtype=np.uint64)
+
+    cdef np.ndarray[np.uint64_t, ndim=1] result = np.empty(L, dtype=np.uint64)
+    if plateaus[0] <= tolerance:
+        result[0] = 0
+    else:
+        result[0] = plateaus[0]
+
+    while i < L:
+        if plateaus[i] <= tolerance:
+            # Look ahead to see whether we need to merge a larger window e.g. for 67, 1, 10, 1, 21
+            n = 2
+            while i + n < L and plateaus[i + n] <= tolerance:
+                n += 2
+
+            tmp_sum = 0
+            for j in range(i - 1, i + n):
+                tmp_sum += plateaus[j]
+
+            result[current] = tmp_sum
+            i += n
+        else:
+            current += 1
+            result[current] = plateaus[i]
+            i += 1
+
+    return result[:current+1]
+
 
 cpdef np.ndarray[np.uint64_t, ndim=1] get_plateau_lengths(float[:] rect_data, float center, int percentage=25):
     if len(rect_data) == 0 or center is None:

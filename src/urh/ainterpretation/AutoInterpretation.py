@@ -280,28 +280,7 @@ def merge_plateau_lengths(plateau_lengths, tolerance=None) -> list:
     if tolerance == 0 or tolerance is None:
         return plateau_lengths
 
-    result = []
-    if len(plateau_lengths) == 0:
-        return result
-
-    if plateau_lengths[0] <= tolerance:
-        result.append(0)
-
-    i = 0
-    while i < len(plateau_lengths):
-        if plateau_lengths[i] <= tolerance:
-            # Look forward to see if we need to merge a larger window e.g. for 67, 1, 10, 1, 21
-            n = 2
-            while i + n < len(plateau_lengths) and plateau_lengths[i + n] <= tolerance:
-                n += 2
-
-            result[-1] = sum(plateau_lengths[max(i - 1, 0):i + n])
-            i += n
-        else:
-            result.append(plateau_lengths[i])
-            i += 1
-
-    return result
+    return c_auto_interpretation.merge_plateaus(plateau_lengths, tolerance, max_count=10000)
 
 
 def round_plateau_lengths(plateau_lengths: list):
@@ -343,8 +322,8 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(merged_plateau_lengths[0])
 
     round_plateau_lengths(merged_plateau_lengths)
+    histogram = c_auto_interpretation.get_threshold_divisor_histogram(merged_plateau_lengths)
 
-    histogram = c_auto_interpretation.get_threshold_divisor_histogram(np.array(merged_plateau_lengths, dtype=np.uint64))
     if len(histogram) == 0:
         return 0
     else:

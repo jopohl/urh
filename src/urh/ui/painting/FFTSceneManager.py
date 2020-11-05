@@ -33,11 +33,9 @@ class FFTSceneManager(SceneManager):
 
     def init_scene(self, draw_grid=True):
         self.scene.draw_grid = draw_grid
-        minimum = -4.5
-        maximum = 2
 
         self.peak = self.plot_data if len(self.peak) < self.num_samples else np.maximum(self.peak, self.plot_data)
-        self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
+        self.scene.setSceneRect(0, -5, self.num_samples, 10)
 
     def clear_path(self):
         for item in self.scene.items():

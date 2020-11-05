@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtCore import QRectF, QLineF, QPointF
+from PyQt5.QtCore import QRectF, QLineF, QPointF, Qt
 from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
 from urh import settings
@@ -16,10 +16,9 @@ class GridScene(ZoomableScene):
         self.frequencies = []
         self.frequency_marker = None
         super().__init__(parent)
-        self.setSceneRect(0,0,10,10)
+        self.setSceneRect(0, 0, 10, 10)
 
     def drawBackground(self, painter: QPainter, rect: QRectF):
-        # freqs = np.fft.fftfreq(len(w), 1 / self.sample_rate)
         if self.draw_grid and len(self.frequencies) > 0:
             painter.setPen(QPen(painter.pen().color(), 0))
             parent_width = self.parent().width() if hasattr(self.parent(), "width") else 750
@@ -39,29 +38,30 @@ class GridScene(ZoomableScene):
             bottom = rect.bottom() - (rect.bottom() % y_grid_size)
             right_border = int(rect.right()) if rect.right() < len(self.frequencies) else len(self.frequencies)
 
-            x_range = list(range(x_mid, left, -x_grid_size)) + list(range(x_mid, right_border, x_grid_size))
-            lines = [QLineF(x, rect.top(), x, bottom) for x in x_range] \
-                    + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
-
-            painter.drawLines(lines)
             scale_x, scale_y = util.calc_x_y_scale(rect, self.parent())
 
+            fh = self.font_metrics.height()
+            x_range = list(range(x_mid, left, -x_grid_size)) + list(range(x_mid, right_border, x_grid_size))
+            lines = [QLineF(x, rect.top(), x, bottom-fh*scale_y) for x in x_range] \
+                    + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
+
+            pen = painter.pen()
+            pen.setStyle(Qt.DotLine)
+            painter.setPen(pen)
+            painter.drawLines(lines)
             painter.scale(scale_x, scale_y)
             counter = -1  # Counter for Label for every second line
 
             for x in x_range:
                 freq = self.frequencies[x]
                 counter += 1
+                if freq == 0:
+                    counter = 0
 
-                if freq != 0 and (counter % 2 != 0): # Label for every second line
+                if freq != 0 and (counter % 2 != 0):  # Label for every second line
                     continue
 
-                if freq != 0:
-                    prefix = "+" if freq > 0 else ""
-                    value = prefix+Formatter.big_value_with_suffix(freq, 2)
-                else:
-                    counter = 0
-                    value = Formatter.big_value_with_suffix(self.center_freq)
+                value = Formatter.big_value_with_suffix(self.center_freq + freq, 2)
                 font_width = self.font_metrics.width(value)
                 painter.drawText(QPointF(x / scale_x - font_width / 2, bottom / scale_y), value)
 

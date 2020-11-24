@@ -74,9 +74,6 @@ parts:
     source-subdir: snapcraft-assets
     build-packages:
       - libasound2-dev
-    stage-packages:
-      - libasound2
-      - libasound2-plugins
 
   semwraplib:
     plugin: nil
@@ -138,6 +135,25 @@ parts:
       - libpq5
       - libpulse-mainloop-glib0
       - libspeechd2
+      - python3
+      - python3-pyqt5
+      - python3-pyaudio
+      - dbus
+      - qtwayland5
+      - qt5-gtk-platformtheme
+      - libqt5x11extras5
+      - locales
+      - libcanberra-gtk3-module
+      - libairspy-dev
+      - libhackrf-dev
+      - libiio-dev
+      - liblimesuite-dev
+      - librtlsdr-dev
+      - libuhd-dev
+      - libc-bin
+      - libasound2
+      - libasound2-plugins
+      - python3-distutils
 
   urh:
     after: [desktop-qt5, sdrplay, alsa-mixin]
@@ -155,8 +171,6 @@ parts:
       make install
       snapcraftctl build
     build-packages:
-      - python3
-      - python3-pyqt5
       - libairspy-dev
       - libhackrf-dev
       - libiio-dev
@@ -168,23 +182,6 @@ parts:
       - build-essential
       - cmake
       - pkg-config
-    stage-packages:
-      - python3
-      - python3-pyqt5
-      - python3-pyaudio
-      - libairspy-dev
-      - libhackrf-dev
-      - libiio-dev
-      - liblimesuite-dev
-      - librtlsdr-dev
-      - libuhd-dev
-      - libc-bin
-      - dbus
-      - qtwayland5
-      - qt5-gtk-platformtheme
-      - libqt5x11extras5
-      - locales
-      - libcanberra-gtk3-module
 
   sdrplay:
     plugin: dump

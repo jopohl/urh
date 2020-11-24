@@ -176,7 +176,6 @@ def main():
         timer = QTimer()
         timer.timeout.connect(app.quit)
         timer.start(1000)
-        print("Will automatically close after 1 second...")
 
     return_code = app.exec_()
     app.closeAllWindows()

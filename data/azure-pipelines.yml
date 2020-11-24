@@ -47,19 +47,19 @@ jobs:
       docker run --rm \
       -e PYVER=$(python -c "import sys; print('%s%s' % (sys.version_info.major, sys.version_info.minor))") \
       -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
-    displayName: "Build wheel"
+    displayName: "Build manylinux wheel"
 
   - script: |
       pip install dist/*.whl
       urh --version
       xvfb-run urh autoclose
-    displayName: 'Test Run'
+    displayName: 'Perform test run'
 
   - script: python data/check_native_backends.py
     displayName: 'Check native backends'
 
   - script: twine upload --skip-existing dist/*
-    displayName: "PyPi Upload"
+    displayName: "Upload to PyPi"
     condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
     env:
       TWINE_USERNAME: $(twine.username)
@@ -70,7 +70,7 @@ jobs:
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'
-    displayName: "Publish Build Artifacts"
+    displayName: "Publish build artifacts"
 
   - script: |
       touch tests/show_gui
@@ -140,10 +140,9 @@ jobs:
       Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
       }
       Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
-    displayName: 'download SDR drivers'
+    displayName: 'Download SDR drivers'
 
   - script: |
-      python -m pip install --upgrade pip
       pip install -r data/requirements.txt
       pip install pytest pytest-faulthandler
     displayName: 'Install dependencies'
@@ -185,7 +184,7 @@ jobs:
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'
-    displayName: "Publish Build Artifacts"
+    displayName: "Publish build artifacts"
 
   - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"
@@ -208,7 +207,7 @@ jobs:
       addChangeLog: true
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
-    displayName: 'Run pytest on windows'
+    displayName: 'Run pytest'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -220,7 +219,7 @@ jobs:
       pip install .
       urh --version
       urh autoclose
-    displayName: 'Testrun'
+    displayName: 'Perform a testrun'
 
 - job: 'macOS'
   pool:
@@ -238,10 +237,9 @@ jobs:
       mkdir /tmp/osx-64
       tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
       rm -rf sdr_drivers
-    displayName: "download and unpack SDR drivers"
+    displayName: "Download and unpack SDR drivers"
 
   - script: |
-      python -m pip install --upgrade pip wheel setuptools
       python -m pip install --upgrade -r data/requirements.txt
       HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
       python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio
@@ -305,4 +303,4 @@ jobs:
       pip install .
       urh --version
       urh autoclose
-    displayName: 'Testrun'
+    displayName: 'Perform a Testrun'

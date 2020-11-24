@@ -345,7 +345,6 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
 
         stc.simulator_scene.select_all_items()
-        stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
 
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis

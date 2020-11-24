@@ -463,8 +463,7 @@ class Simulator(QObject):
         if len(sniffer.messages) > 0:
             return sniffer.messages.pop(0)
 
-        spy = QSignalSpy(sniffer.message_sniffed)
-        if spy.wait(self.project_manager.simulator_timeout_ms):
+        if QSignalSpy(sniffer.message_sniffed).wait(self.project_manager.simulator_timeout_ms):
             try:
                 return sniffer.messages.pop(0)
             except IndexError:

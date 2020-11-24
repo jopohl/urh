@@ -66,7 +66,6 @@ class TestSimulator(QtTestCase):
         self.alice.client_port = port
 
         dialog = self.form.simulator_tab_controller.get_simulator_dialog()  # type: SimulatorDialog
-        dialog.project_manager.simulator_timeout_ms = 999999999
 
         name = NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
         dialog.device_settings_rx_widget.ui.cbDevice.setCurrentText(name)
@@ -168,8 +167,6 @@ class TestSimulator(QtTestCase):
         stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         stc.ui.btnAddParticipant.click()
         stc.ui.btnAddParticipant.click()
-
-        stc.project_manager.simulator_timeout_ms = 999999999
 
         stc.simulator_scene.add_counter_action(None, 0)
         action = next(item for item in stc.simulator_scene.items() if isinstance(item, CounterActionItem))

@@ -327,7 +327,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         self.assertEqual(stc.ui.goto_combobox.count(), 5 + 1)  # select item... also in combobox
 
-    def test_open_simulator_dialog_and_send_mismatching_message(self):
+    def test_open_simulator_dialog_and_send_message(self):
         def __wait_for_simulator_log_message(dialog, log_message):
 
             n = 0
@@ -345,7 +345,6 @@ class TestSimulatorTabGUI(QtTestCase):
         self.add_all_signals_to_simulator()
 
         stc.simulator_scene.select_all_items()
-        stc.simulator_config.project_manager.simulator_timeout_ms = 999999999
 
         for msg in stc.simulator_scene.get_selected_messages():
             msg.destination = self.dennis
@@ -379,20 +378,10 @@ class TestSimulatorTabGUI(QtTestCase):
         sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
         time.sleep(0.5)
 
-        __wait_for_simulator_log_message(dialog, "Waiting for message 2")
-
-        sender.send_raw_data(modulator.modulate("10" * 176), 1)
-        time.sleep(0.5)
-        sender.send_raw_data(IQArray(None, np.float32, 2000), 1)
-        time.sleep(0.5)
-
-        __wait_for_simulator_log_message(dialog, "Mismatch for label:")
-
         dialog.on_timer_timeout()  # enforce writing to text view
         simulator_log = dialog.ui.textEditSimulation.toPlainText()
         self.assertIn("Received message 1", simulator_log)
         self.assertIn("preamble: 11111111", simulator_log)
-        self.assertIn("Mismatch for label: preamble", simulator_log)
 
         dialog.close()
 

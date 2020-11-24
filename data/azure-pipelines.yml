@@ -222,8 +222,15 @@ jobs:
     displayName: 'Perform a testrun'
 
 - job: 'macOS'
+  strategy:
+    matrix:
+      10.14:
+        imageName: 'macos-10.14'
+      10.15:
+        imageName: 'macos-10.15'
+
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: $(imageName)
 
   steps:
   - task: UsePythonVersion@0
@@ -254,6 +261,7 @@ jobs:
 
   - script: python data/pyinstaller_helper.py
     displayName: "Run PyInstaller"
+    condition: eq(variables['imageName'], 'macos-10.14')
 
   - script: |
       mkdir -p dist
@@ -263,16 +271,18 @@ jobs:
                      -ov -format UDZO \
                      dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
     displayName: "Build DMG"
+    condition: eq(variables['imageName'], 'macos-10.14')
 
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: dist/
       artifactName: 'dist'
     displayName: "Publish Build Artifacts"
+    condition: eq(variables['imageName'], 'macos-10.14')
 
   - task: GitHubRelease@0
     displayName: 'GitHub release'
-    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: and(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['imageName'], 'macos-10.14'))
     inputs:
       gitHubConnection: 'github connection 1'
       action: 'edit'
@@ -284,14 +294,14 @@ jobs:
 
   - script: twine upload --skip-existing dist/*.whl
     displayName: "Upload wheel to PyPi"
-    condition: contains(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: and(contains(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['imageName'], 'macos-10.14'))
     env:
       TWINE_USERNAME: $(twine.username)
       TWINE_PASSWORD: $(twine.password)
       TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
-    displayName: 'Run pytest on macOS'
+    displayName: 'Run pytest'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

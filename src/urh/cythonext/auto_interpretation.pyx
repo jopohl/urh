@@ -163,7 +163,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] merge_plateaus(np.ndarray[np.uint64_t, ndi
                 n += 2
 
             tmp_sum = 0
-            for j in range(i - 1, i + n):
+            for j in range(i - 1, min(L, i + n)):
                 tmp_sum += plateaus[j]
 
             result[current] = tmp_sum

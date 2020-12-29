@@ -407,6 +407,8 @@ class Signal(QObject):
         new_signal.__samples_per_symbol = self.samples_per_symbol
         new_signal.__bits_per_symbol = self.bits_per_symbol
         new_signal.__center = self.center
+        new_signal.wav_mode = self.wav_mode
+        new_signal.__already_demodulated = self.__already_demodulated
         new_signal.changed = True
         return new_signal
 

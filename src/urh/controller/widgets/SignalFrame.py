@@ -456,12 +456,12 @@ class SignalFrame(QFrame):
 
     def export_demodulated(self):
         try:
-            initial_name = self.signal.name + "-demodulated.complex"
+            initial_name = self.signal.name + "-demodulated.wav"
         except Exception as e:
             logger.exception(e)
-            initial_name = "demodulated.complex"
+            initial_name = "demodulated.wav"
 
-        filename = FileOperator.ask_save_file_name(initial_name)
+        filename = FileOperator.ask_save_file_name(initial_name, caption="Export demodulated")
         if filename:
             try:
                 self.setCursor(Qt.WaitCursor)

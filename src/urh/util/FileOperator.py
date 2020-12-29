@@ -94,6 +94,8 @@ def ask_save_file_name(initial_name: str, caption="Save signal", selected_name_f
         name_filter = "Frequency Time (*.ft);;Frequency Time Amplitude (*.fta)"
     elif caption == "Save protocol":
         name_filter = ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER])
+    elif caption == "Export demodulated":
+        name_filter = WAV_FILE_FILTER
     else:
         name_filter = EVERYTHING_FILE_FILTER
 

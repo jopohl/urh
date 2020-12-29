@@ -95,8 +95,9 @@ class ZoomableScene(QGraphicsScene):
     def draw_sep_area(self, centers: np.ndarray, show_symbols=False):
         x = self.sceneRect().x()
         y = self.sceneRect().y()
-        h = self.sceneRect().height()
         w = self.sceneRect().width()
+        h = self.sceneRect().height()
+        reversed_centers = list(reversed(centers))
 
         num_areas = len(centers) + 1
         if num_areas != len(self.separation_areas):
@@ -115,15 +116,15 @@ class ZoomableScene(QGraphicsScene):
                 self.addItem(area)
                 self.separation_areas.append(area)
 
-        start = y + h
+        start = y
 
         for i, area in enumerate(self.separation_areas):
             area.show()
             try:
-                self.separation_areas[i].setRect(x, start, w, -(start - centers[i]))
-                start -= (start - centers[i])
+                self.separation_areas[i].setRect(x, start, w, abs(start - reversed_centers[i]))
+                start += abs(start - reversed_centers[i])
             except IndexError:
-                self.separation_areas[i].setRect(x, start, w, -(start - y))
+                self.separation_areas[i].setRect(x, start, w, abs(start - h))
 
         if self.noise_area is not None:
             self.noise_area.hide()

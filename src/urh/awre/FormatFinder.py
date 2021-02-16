@@ -244,7 +244,7 @@ class FormatFinder(object):
         if field_type.function == FieldType.Function.CHECKSUM:
             assert isinstance(label, ChecksumLabel)
             assert isinstance(common_range, ChecksumRange)
-            label.data_ranges = [(common_range.data_range_bit_start, common_range.data_range_bit_end)]
+            label.data_ranges = [[common_range.data_range_bit_start, common_range.data_range_bit_end]]
 
             if isinstance(common_range.crc, WSPChecksum):
                 label.category = ChecksumLabel.Category.wsp

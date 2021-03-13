@@ -209,7 +209,10 @@ class IQArray(object):
                 arr = arr.view(np.float32)
             elif arr.dtype == np.complex128:
                 arr = arr.view(np.float64)
-            return arr.reshape((-1, 2), order="C")
+            if len(arr) % 2 == 0:
+                return arr.reshape((-1, 2), order="C")
+            else: # ignore the last half sample to avoid a conversion error
+                return arr[:-1].reshape((-1, 2), order="C")
         elif arr.ndim == 2:
             return arr
         else:

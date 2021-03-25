@@ -95,11 +95,8 @@ cdef extern from "libbladeRF.h":
         int bladerf_get_bandwidth(bladerf *dev, bladerf_module module, unsigned int *bandwidth)
 
     IF BLADERF_API_VERSION >= 2:
-      ctypedef uint64_t bladerf_frequency
       int bladerf_set_bias_tee(bladerf *dev, bladerf_channel ch, bool enable)
       int bladerf_get_bias_tee(bladerf *dev, bladerf_channel ch, bool *enable)
-    ELSE:
-      ctypedef unsigned int bladerf_frequency
 
     IF BLADERF_API_VERSION >= 1.91:
         int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, uint64_t frequency)
@@ -128,6 +125,11 @@ cdef extern from "libbladeRF.h":
 
     int bladerf_sync_rx(bladerf *dev, void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
     int bladerf_sync_tx(bladerf *dev, const void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
+
+IF BLADERF_API_VERSION >= 1.91:
+  ctypedef uint64_t bladerf_frequency
+ELSE:
+  ctypedef unsigned int bladerf_frequency
 
 ctypedef unsigned int bladerf_sample_rate
 ctypedef unsigned int bladerf_bandwidth

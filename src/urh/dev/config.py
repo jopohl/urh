@@ -37,6 +37,7 @@ DEVICE_CONFIG["BladeRF"] = {
     "tx_channel": ["TX1", "TX2"],
     "tx_rf_gain": list(range(0, 61)),
     "rx_rf_gain": list(range(0, 61)),
+    "bias_tee_enabled": [False, True]
 }
 
 # https://github.com/mossmann/hackrf/wiki/HackRF-One#features

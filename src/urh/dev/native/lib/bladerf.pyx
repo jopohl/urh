@@ -138,10 +138,12 @@ cpdef bladerf_frequency get_center_freq():
     return result
 
 cpdef int set_bias_tee(on_or_off):
+  IF BLADERF_API_VERSION >= 1.91:
     cdef bool bias_tee = 1 if on_or_off else 0
     return bladerf_set_bias_tee(_c_device, get_current_bladerf_channel(), bias_tee)
 
 cpdef int get_bias_tee():
+  IF BLADERF_API_VERSION >= 1.91:
     cdef bool result = 0
     err = bladerf_get_bias_tee(_c_device, get_current_bladerf_channel(), &result)
 

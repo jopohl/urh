@@ -95,11 +95,11 @@ cdef extern from "libbladeRF.h":
         int bladerf_get_bandwidth(bladerf *dev, bladerf_module module, unsigned int *bandwidth)
 
     IF BLADERF_API_VERSION >= 2:
+        int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency frequency)
+        int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency *frequency)
+    IF BLADERF_API_VERSION >= 1.91:
         int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, uint64_t frequency)
         int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, uint64_t *frequency)
-    ELIF BLADERF_API_VERSION >= 1.91:
-        int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, unsigned int frequency)
-        int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, unsigned int *frequency)
     ELSE:
         int bladerf_set_frequency(bladerf *dev, bladerf_module module, unsigned int frequency)
         int bladerf_get_frequency(bladerf *dev, bladerf_module module, unsigned int *frequency)

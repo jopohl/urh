@@ -1,6 +1,11 @@
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t
 from libcpp cimport bool
 
+IF BLADERF_API_VERSION >= 1.91:
+    ctypedef uint64_t bladerf_frequency
+ELSE:
+    ctypedef unsigned int bladerf_frequency
+    
 cdef extern from "libbladeRF.h":
     struct bladerf
 
@@ -94,9 +99,6 @@ cdef extern from "libbladeRF.h":
         int bladerf_set_bandwidth(bladerf *dev, bladerf_module module, unsigned int bandwidth, unsigned int *actual)
         int bladerf_get_bandwidth(bladerf *dev, bladerf_module module, unsigned int *bandwidth)
 
-    IF BLADERF_API_VERSION >= 2:
-        int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency frequency)
-        int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, bladerf_frequency *frequency)
     IF BLADERF_API_VERSION >= 1.91:
         int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, uint64_t frequency)
         int bladerf_get_frequency(bladerf *dev, bladerf_channel ch, uint64_t *frequency)
@@ -128,11 +130,6 @@ cdef extern from "libbladeRF.h":
 
     int bladerf_sync_rx(bladerf *dev, void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
     int bladerf_sync_tx(bladerf *dev, const void *samples, unsigned int num_samples, bladerf_metadata *metadata, unsigned int timeout_ms)
-
-IF BLADERF_API_VERSION >= 2:
-    ctypedef uint64_t bladerf_frequency
-ELSE:
-    ctypedef unsigned int bladerf_frequency
 
 ctypedef unsigned int bladerf_sample_rate
 ctypedef unsigned int bladerf_bandwidth

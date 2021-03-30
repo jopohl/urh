@@ -129,12 +129,7 @@ cpdef int set_center_freq(bladerf_frequency frequency):
     return bladerf_set_frequency(_c_device, get_current_bladerf_channel(), frequency)
 
 cpdef bladerf_frequency get_center_freq():
-  IF BLADERF_API_VERSION >= 2:
-    cdef bladerf_frequency result = 0
-  ELIF BLADERF_API_VERSION >= 1.91:
-    cdef uint64_t result = 0
-  ELSE:
-    cdef unsigned int result = 0
+  cdef bladerf_frequency result = 0
   err = bladerf_get_frequency(_c_device, get_current_bladerf_channel(), &result)
 
   if err != 0:

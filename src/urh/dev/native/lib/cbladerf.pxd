@@ -95,8 +95,8 @@ cdef extern from "libbladeRF.h":
         int bladerf_get_bandwidth(bladerf *dev, bladerf_module module, unsigned int *bandwidth)
 
     IF BLADERF_API_VERSION >= 2:
-      int bladerf_set_bias_tee(bladerf *dev, bladerf_channel ch, bool enable)
-      int bladerf_get_bias_tee(bladerf *dev, bladerf_channel ch, bool *enable)
+        int bladerf_set_bias_tee(bladerf *dev, bladerf_channel ch, bool enable)
+        int bladerf_get_bias_tee(bladerf *dev, bladerf_channel ch, bool *enable)
 
     IF BLADERF_API_VERSION >= 1.91:
         int bladerf_set_frequency(bladerf *dev, bladerf_channel ch, uint64_t frequency)

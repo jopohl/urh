@@ -226,20 +226,13 @@ jobs:
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.7'
-
-  - script: |
-      git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-      mkdir src/urh/dev/native/lib/shared
-      tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
-      mkdir /tmp/osx-64
-      tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
-      rm -rf sdr_drivers
-    displayName: "Download and unpack SDR drivers"
+      versionSpec: '3.8'
 
   - script: |
       python -m pip install --upgrade -r data/requirements.txt
-      HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
+      brew tap pothosware/homebrew-pothos
+      brew update
+      HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf libbladerf librtlsdr limesuite portaudio uhd
       python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio wheel setuptools
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'

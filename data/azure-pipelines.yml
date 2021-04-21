@@ -240,7 +240,7 @@ jobs:
   - script: |
       python -m pip install --upgrade -r data/requirements.txt
       HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
-      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller-hooks-contrib pyinstaller pyaudio wheel setuptools
+      python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio wheel setuptools
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 

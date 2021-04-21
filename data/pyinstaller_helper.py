@@ -5,7 +5,10 @@ import sys
 HIDDEN_IMPORTS = ["packaging.specifiers", "packaging.requirements", "pkg_resources.py2_warn",
                   "numpy.core._methods", "numpy.core._dtype_ctypes",
                   "numpy.random.common", "numpy.random.entropy", "numpy.random.bounded_integers"]
-DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
+if sys.platform != "darwin":
+    DATA = [("src/urh/dev/native/lib/shared", "."), ("src/urh/plugins", "urh/plugins"), ]
+else:
+    DATA = [("src/urh/plugins", "urh/plugins"), ]
 EXCLUDE = ["matplotlib"]
 
 
@@ -61,6 +64,7 @@ if __name__ == '__main__':
         with open("pyinstaller/urh.app/Contents/Info.plist", "rb") as f:
             p = plistlib.load(f)
         p["NSHighResolutionCapable"] = True
+        p["NSRequiresAquaSystemAppearance"] = True
         with open("pyinstaller/urh.app/Contents/Info.plist", "wb") as f:
             plistlib.dump(p, f)
 

@@ -61,6 +61,7 @@ if __name__ == '__main__':
         with open("pyinstaller/urh.app/Contents/Info.plist", "rb") as f:
             p = plistlib.load(f)
         p["NSHighResolutionCapable"] = True
+        p["NSRequiresAquaSystemAppearance"] = True
         with open("pyinstaller/urh.app/Contents/Info.plist", "wb") as f:
             plistlib.dump(p, f)
 

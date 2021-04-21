@@ -2,5 +2,6 @@ numpy>=1.9; sys_platform != 'win32'
 numpy>=1.9,!=1.16.0,!=1.19.4; sys_platform == 'win32'
 pyqt5; sys_platform != 'win32'
 pyqt5!=5.14.2; sys_platform == 'win32'
+pyqt5<5.15.4; sys_platform == 'darwin'
 psutil
 cython!=0.29.18

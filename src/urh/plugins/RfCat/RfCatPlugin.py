@@ -157,7 +157,7 @@ class RfCatPlugin(SDRPlugin):
         logger.info("Configured RfCat to Modulation={}, Frequency={} Hz, Datarate={} baud".format(modulation, int(freq), int(sample_rate // samples_per_symbol)))
 
     def send_data(self, data) -> str:
-        prepared_data = "d.RFxmit({})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
+        prepared_data = "d.RFxmit(b{})".format(str(data)[11:-1]) #[11:-1] Removes "bytearray(b...)
         self.set_parameter(prepared_data, log=False)
 
     def __send_messages(self, messages, sample_rates):

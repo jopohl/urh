@@ -363,6 +363,7 @@ class DeviceSettingsWidget(QWidget):
         self.ui.comboBoxAntenna.currentIndexChanged.emit(self.ui.comboBoxAntenna.currentIndex())
         self.ui.comboBoxChannel.currentIndexChanged.emit(self.ui.comboBoxChannel.currentIndex())
         self.ui.checkBoxDCCorrection.clicked.emit(self.ui.checkBoxDCCorrection.isChecked())
+        self.ui.checkBoxBiasTee.clicked.emit(self.ui.checkBoxBiasTee.isChecked())
 
     def emit_device_parameters_changed(self):
         settings = {"name": str(self.device.name)}

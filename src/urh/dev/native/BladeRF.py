@@ -17,7 +17,8 @@ class BladeRF(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
     DEVICE_METHODS.update({
         Device.Command.SET_RF_GAIN.name: "set_gain",
-        Device.Command.SET_CHANNEL_INDEX.name: "set_channel"
+        Device.Command.SET_CHANNEL_INDEX.name: "set_channel",
+        Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee"
     })
 
     DATA_TYPE = np.int16
@@ -96,6 +97,7 @@ class BladeRF(Device):
                             (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
                             (self.Command.SET_BANDWIDTH.name, self.bandwidth),
                             (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
                             ("identifier", self.device_serial)])
 
     @staticmethod

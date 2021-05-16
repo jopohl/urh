@@ -129,13 +129,32 @@ cpdef int set_center_freq(bladerf_frequency frequency):
     return bladerf_set_frequency(_c_device, get_current_bladerf_channel(), frequency)
 
 cpdef bladerf_frequency get_center_freq():
-    cdef bladerf_frequency result = 0
-    err = bladerf_get_frequency(_c_device, get_current_bladerf_channel(), &result)
+  cdef bladerf_frequency result = 0
+  err = bladerf_get_frequency(_c_device, get_current_bladerf_channel(), &result)
 
-    if err != 0:
-        return 0
+  if err != 0:
+      return 0
+
+  return result
+
+cpdef int set_bias_tee(on_or_off):
+  IF BLADERF_API_VERSION >= 2:
+    cdef bool bias_tee = 1 if on_or_off else 0
+    return bladerf_set_bias_tee(_c_device, get_current_bladerf_channel(), bias_tee)
+  ELSE:
+    return -1
+
+cpdef int get_bias_tee():
+  IF BLADERF_API_VERSION >= 2:
+    cdef bool result = 0
+    err = bladerf_get_bias_tee(_c_device, get_current_bladerf_channel(), &result)
+    if err < 0:
+      return err
 
     return result
+  ELSE:
+    return -1
+
 
 cpdef int prepare_sync():
     enable_module()

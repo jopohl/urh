@@ -410,6 +410,7 @@ class Signal(QObject):
         new_signal.wav_mode = self.wav_mode
         new_signal.__already_demodulated = self.__already_demodulated
         new_signal.changed = True
+        new_signal.sample_rate = self.sample_rate
         return new_signal
 
     def get_thresholds_for_center(self, center: float, spacing=None):

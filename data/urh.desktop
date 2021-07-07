@@ -5,3 +5,4 @@ Comment=investigate wireless protocols like a boss
 Exec=/usr/bin/urh
 Icon=urh
 Terminal=false
+Categories=HamRadio

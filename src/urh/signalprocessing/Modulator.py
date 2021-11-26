@@ -202,7 +202,7 @@ class Modulator(object):
 
         return scene
 
-    def modulate(self, data=None, pause=0, start=0) -> IQArray:
+    def modulate(self, data=None, pause=0, start=0, dtype=None) -> IQArray:
         assert pause >= 0
         if data is None:
             data = self.data
@@ -217,7 +217,7 @@ class Modulator(object):
         if len(data) == 0:
             return IQArray(None, np.float32, 0)
 
-        dtype = self.get_dtype()
+        dtype = dtype or self.get_dtype()
         a = self.carrier_amplitude * IQArray.min_max_for_dtype(dtype)[1]
 
         parameters = self.parameters

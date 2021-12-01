@@ -102,17 +102,6 @@ jobs:
       reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
     condition: eq(variables['python.version'], '3.7')
 
-  - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@5
-    displayName: 'Check coverage'
-    condition: eq(variables['python.version'], '3.7')
-    inputs:
-      checkCoverage: true
-      allowCoverageVariance: true
-      coverageVariance: 0.4
-      coverageDeltaType: percentage
-      coverageType: lines
-      baseBranchRef: refs/heads/master
-
 - job: 'Windows'
   pool:
     vmImage: 'windows-2019'

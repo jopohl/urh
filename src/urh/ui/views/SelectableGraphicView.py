@@ -181,7 +181,7 @@ class SelectableGraphicView(QGraphicsView):
                 return
 
             if self.selection_area.selected_edge == 1:
-                start = QPoint(self.selection_area.x, self.selection_area.y)
+                start = QPoint(int(self.selection_area.x), int(self.selection_area.y))
                 end = self.mapToScene(event.pos())
 
                 self.__set_selection_area(w=end.x() - start.x(), h=end.y() - start.y())

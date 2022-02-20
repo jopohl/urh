@@ -102,14 +102,14 @@ jobs:
 
 - job: 'Windows'
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   strategy:
     matrix:
-      Python37-64:
-        python.version: '3.7'
+      Python39-64:
+        python.version: '3.9'
         python.arch: 'x64'
-      Python37-32:
-        python.version: '3.7'
+      Python39-32:
+        python.version: '3.9'
         python.arch: 'x86'
 
   steps:

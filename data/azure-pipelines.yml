@@ -11,8 +11,6 @@ jobs:
     vmImage: 'Ubuntu-20.04'
   strategy:
     matrix:
-      Python35:
-        python.version: '3.5'
       Python36:
         python.version: '3.6'
       Python37:
@@ -41,7 +39,7 @@ jobs:
   
   - script: python setup.py sdist
     displayName: "Build sdist"
-    condition: eq(variables['python.version'], '3.7')
+    condition: eq(variables['python.version'], '3.9')
 
   - script: |
       docker run --rm \
@@ -77,17 +75,17 @@ jobs:
       cp tests/.coveragerc .
       pytest -s -v --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
     displayName: 'Run pytest with coverage'
-    condition: eq(variables['python.version'], '3.7')
+    condition: eq(variables['python.version'], '3.9')
 
   - script: |
       coverage xml
       coverage html
     displayName: 'Generate coverage report'
-    condition: eq(variables['python.version'], '3.7')
+    condition: eq(variables['python.version'], '3.9')
 
   - script: pytest -s -v --junitxml=junit/test-results.xml tests
     displayName: 'Run pytest without coverage'
-    condition: ne(variables['python.version'], '3.7')
+    condition: ne(variables['python.version'], '3.9')
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -100,7 +98,7 @@ jobs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
       reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
-    condition: eq(variables['python.version'], '3.7')
+    condition: eq(variables['python.version'], '3.9')
 
 - job: 'Windows'
   pool:
@@ -146,10 +144,8 @@ jobs:
     displayName: "Build extensions"
 
   - script: |
-      pip install --upgrade wheel twine six appdirs packaging setuptools pyinstaller pywin32
-      pip install "pyaudio; python_version < '3.7'"
-      pip install "C:\PyAudio-0.2.11-cp37-cp37m-win_amd64.whl; python_version == '3.7'"
-      pip install "C:\PyAudio-0.2.11-cp37-cp37m-win32.whl; python_version == '3.7'"
+      pip install --upgrade wheel twine six appdirs packaging setuptools==59.8.0 pyinstaller pywin32 pipwin
+      pipwin install pyaudio
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: "Install build dependencies"
 
@@ -210,12 +206,12 @@ jobs:
 
 - job: 'macOS'
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-10.15'
 
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.7'
+      versionSpec: '3.9'
 
   - script: |
       git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
@@ -233,7 +229,7 @@ jobs:
       python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
     displayName: 'Install dependencies'
 
-  - script: python src/urh/cythonext/build.py
+  - script: SDRPLAY_API_VERSION=2.13 python src/urh/cythonext/build.py
     displayName: "Build extensions"
 
   - script: python setup.py bdist_wheel

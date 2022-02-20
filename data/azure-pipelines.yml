@@ -105,11 +105,11 @@ jobs:
     vmImage: 'windows-2019'
   strategy:
     matrix:
-      Python39-64:
-        python.version: '3.9'
+      Python38-64:
+        python.version: '3.8'
         python.arch: 'x64'
-      Python39-32:
-        python.version: '3.9'
+      Python38-32:
+        python.version: '3.8'
         python.arch: 'x86'
 
   steps:

@@ -41,13 +41,7 @@ DEVICES = {
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
-                "test_function": "mir_sdr_ApiVersion",
-                "api_version_check_code":
-                    """
-                    #include<stdio.h>
-                    int main(void) {
-                    float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
-                    """}
+                "test_function": "mir_sdr_ApiVersion"}
 }
 
 
@@ -65,9 +59,9 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
                 f.write('}\n')
 
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
-            #devnull = open(os.devnull, 'w')
-            #old_stderr = os.dup(sys.stderr.fileno())
-            #os.dup2(devnull.fileno(), sys.stderr.fileno())
+            devnull = open(os.devnull, 'w')
+            old_stderr = os.dup(sys.stderr.fileno())
+            os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs,
                                      libraries=libraries)
@@ -75,10 +69,10 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             return False
         return True
     finally:
-        # if old_stderr is not None:
-        #     os.dup2(old_stderr, sys.stderr.fileno())
-        # if devnull is not None:
-        #     devnull.close()
+        if old_stderr is not None:
+            os.dup2(old_stderr, sys.stderr.fileno())
+        if devnull is not None:
+            devnull.close()
         shutil.rmtree(tmp_dir)
 
 

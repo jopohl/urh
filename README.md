@@ -1,6 +1,6 @@
 ![URH image](https://raw.githubusercontent.com/jopohl/urh/master/data/icons/banner.png)
 
-[![Build Status](https://dev.azure.com/jopohl/urh/_apis/build/status/jopohl.urh?branchName=master)](https://dev.azure.com/jopohl/urh/_build/latest?definitionId=2&branchName=master)
+[![CI](https://github.com/jopohl/urh/actions/workflows/ci.yml/badge.svg)](https://github.com/jopohl/urh/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/urh.svg)](https://badge.fury.io/py/urh)
 [![Packaging status](https://repology.org/badge/tiny-repos/urh.svg)](https://repology.org/project/urh/versions)
  [![Blackhat Arsenal 2017](https://rawgit.com/toolswatch/badges/master/arsenal/usa/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)

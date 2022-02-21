@@ -10,7 +10,7 @@ RUN export AIRSPY_VERSION="1.0.9" \
  # UHD
  && wget https://github.com/EttusResearch/uhd/archive/v$UHD_VERSION.tar.gz -O /tmp/uhd.tar.gz \
  && tar xf /tmp/uhd.tar.gz -C /tmp \
- && python3 -m pip install mako \
+ && python3.9 -m pip install mako \
  && cmake3 -DBOOST_INCLUDEDIR=/usr/include/boost169/ -DBOOST_LIBRARYDIR=/usr/lib64/boost169/ -DENABLE_EXAMPLES=OFF -DENABLE_UTILS=OFF -DENABLE_C_API=ON -DENABLE_TESTS=OFF -DENABLE_MAN_PAGES=OFF -S /tmp/uhd-$UHD_VERSION/host -B /tmp/build_uhd \
  && make -j$(nproc) -C /tmp/build_uhd \
  && make -C /tmp/build_uhd install \

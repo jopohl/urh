@@ -41,13 +41,7 @@ DEVICES = {
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {"lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
-                "test_function": "mir_sdr_ApiVersion",
-                "api_version_check_code":
-                    """
-                    #include<stdio.h>
-                    int main(void) {
-                    float version=0.0; mir_sdr_ApiVersion(&version); printf("%f", version); return 0;}
-                    """}
+                "test_function": "mir_sdr_ApiVersion"}
 }
 
 

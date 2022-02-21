@@ -65,6 +65,9 @@ jobs:
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
           mkdir src/urh/dev/native/lib/shared
           tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
+          mkdir /tmp/osx-64
+          tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
+          rm -rf sdr_drivers
 
       - name: Install Dependencies
         run: |

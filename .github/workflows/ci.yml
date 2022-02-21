@@ -98,7 +98,7 @@ jobs:
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel
-        if: !startsWith(matrix.os, 'ubuntu')
+        if: ${{ !startsWith(matrix.os, 'ubuntu') }}
 
       - name: Build manylinux2014
         if: startsWith(matrix.os, 'ubuntu')

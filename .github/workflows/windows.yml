@@ -1,4 +1,4 @@
-name: Windows
+name: CI
 
 env:
   PYTHONUNBUFFERED: 1
@@ -11,9 +11,10 @@ on:
 
 jobs:
   ci:
-    runs-on: windows-2019
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [windows-2019]
         python-version: [3.7]
         architecture: [x64, x86]
 

@@ -79,7 +79,8 @@ jobs:
           then
             pip install pywin32 pipwin
             pipwin install pyaudio
-          elif [[ $OS == mac* ]] then
+          elif [[ $OS == mac* ]] 
+          then
             HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
             pip install pyaudio
           fi

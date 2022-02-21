@@ -18,7 +18,8 @@ jobs:
         architecture: [x64]
         python-version: ['3.7']
         include:
-          - architecture: x86
+          - python-version: '3.7'
+            architecture: x86
             os: windows-2019
           - python-version: '3.8'
             os: ubuntu-latest

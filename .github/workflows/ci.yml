@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9, 3.10]
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
     steps:
       - uses: actions/checkout@v2
 
@@ -36,7 +36,7 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == 3.9 }}
+        if: ${{ matrix.python-version == '3.9' }}
         run: python setup.py sdist
 
       - name: Build manylinux2014
@@ -61,7 +61,7 @@ jobs:
           path: dist
 
       - name: Run pytest with coverage
-        if: ${{ matrix.python-version == 3.9 }}
+        if: ${{ matrix.python-version == '3.9' }}
         run: |
           touch tests/show_gui
           cp tests/.coveragerc .
@@ -70,5 +70,5 @@ jobs:
           coverage html
 
       - name: Run pytest without coverage
-        if: ${{ matrix.python-version != 3.9 }}
+        if: ${{ matrix.python-version != '3.9' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests

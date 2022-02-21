@@ -99,4 +99,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           generateReleaseNotes: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
           tag: test

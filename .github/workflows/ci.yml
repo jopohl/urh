@@ -28,36 +28,39 @@ jobs:
             os: ubuntu-latest
       fail-fast: false
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-        architecture: ${{ matrix.architecture }}
+    steps:
+      - uses: actions/checkout@v2
 
-    - name: Setup SDR Drivers (Win)
-      if: startsWith(matrix.os, 'windows')
-      run: |
-        git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-        if ("$env:PYARCH" -eq "x86") {
-        echo "Using 32-bit SDR libraries..."
-        Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
-        }
-        else {
-        echo "Using 64-bit SDR libraries..."
-        Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
-        }
-        Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
-      shell: powershell
-      env:
-        PYARCH: ${{ matrix.architecture }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Setup SDR Drivers (Win)
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          if ("$env:PYARCH" -eq "x86") {
+          echo "Using 32-bit SDR libraries..."
+          Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
+          }
+          else {
+          echo "Using 64-bit SDR libraries..."
+          Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
+          }
+          Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
+        shell: powershell
+        env:
+          PYARCH: ${{ matrix.architecture }}
 
 
-    - name: Setup SDR Drivers (mac)
-      if: startsWith(matrix.os, 'macos')
-      run: |
-        git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-        mkdir src/urh/dev/native/lib/shared
-        tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
-        mkdir /tmp/osx-64
-        tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
-        rm -rf sdr_drivers
+      - name: Setup SDR Drivers (mac)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          mkdir src/urh/dev/native/lib/shared
+          tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
+          mkdir /tmp/osx-64
+          tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
+          rm -rf sdr_drivers

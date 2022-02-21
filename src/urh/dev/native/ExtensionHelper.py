@@ -65,9 +65,9 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
                 f.write('}\n')
 
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
-            devnull = open(os.devnull, 'w')
-            old_stderr = os.dup(sys.stderr.fileno())
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
+            #devnull = open(os.devnull, 'w')
+            #old_stderr = os.dup(sys.stderr.fileno())
+            #os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             compiler.link_executable(objects, os.path.join(tmp_dir, "a.out"), library_dirs=library_dirs,
                                      libraries=libraries)
@@ -75,10 +75,10 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
             return False
         return True
     finally:
-        if old_stderr is not None:
-            os.dup2(old_stderr, sys.stderr.fileno())
-        if devnull is not None:
-            devnull.close()
+        # if old_stderr is not None:
+        #     os.dup2(old_stderr, sys.stderr.fileno())
+        # if devnull is not None:
+        #     devnull.close()
         shutil.rmtree(tmp_dir)
 
 

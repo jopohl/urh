@@ -1,0 +1,84 @@
+name: macOS
+
+env:
+  PYTHONUNBUFFERED: 1
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ci:
+    runs-on: macos-10.15
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup SDR Drivers
+        run: |
+          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
+          mkdir src/urh/dev/native/lib/shared
+          tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
+          mkdir /tmp/osx-64
+          tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
+          rm -rf sdr_drivers
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade -r data/requirements.txt
+          HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
+          python -m pip install --upgrade pytest pytest-faulthandler twine six appdirs packaging pyinstaller pyaudio wheel setuptools
+          python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+
+      - name: Build Cython Extensions
+        run: SDRPLAY_API_VERSION=2.13 python src/urh/cythonext/build.py
+
+      - name: Run pytest
+        run: pytest -s -v --junitxml=junit/test-results.xml tests
+
+      - name: Build Wheel
+        run: python setup.py bdist_wheel
+
+      - name: Build DMG
+        run: |
+          python data/pyinstaller_helper.py
+          mkdir -p dist
+          cat pyinstaller/urh.app/Contents/Info.plist
+          hdiutil create -volname Universal.Radio.Hacker \
+                         -srcfolder pyinstaller/urh.app \
+                         -ov -format UDZO \
+                         dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
+
+      - name: Upload to PyPi
+        if: startsWith(github.ref, 'refs/tags/')
+        run: twine upload --skip-existing dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+
+      - uses: ncipollo/release-action@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          artifacts: "dist/*.dmg"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          generateReleaseNotes: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true

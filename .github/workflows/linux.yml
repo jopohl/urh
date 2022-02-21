@@ -77,7 +77,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
-          files: test-results/**/*.xml
+          files: junit/**/*.xml
 
       - name: Upload to PyPi
         if: startsWith(github.ref, 'refs/tags/')

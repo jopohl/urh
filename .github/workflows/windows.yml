@@ -45,6 +45,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          pip install -r data/requirements.txt
+          pip install pytest pytest-faulthandler
           pip install --upgrade wheel twine six appdirs packaging setuptools==59.8.0 pyinstaller pywin32 pipwin
           pipwin install pyaudio
           python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"

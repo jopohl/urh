@@ -93,7 +93,7 @@ jobs:
           TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
       - uses: ncipollo/release-action@v1
-        #if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           artifacts: "dist/*.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -101,4 +101,3 @@ jobs:
           generateReleaseNotes: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          tag: test

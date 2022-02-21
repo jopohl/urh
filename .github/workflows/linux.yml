@@ -73,6 +73,12 @@ jobs:
         if: ${{ matrix.python-version != '3.9' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: test-results/**/*.xml
+
       - name: Upload to PyPi
         if: startsWith(github.ref, 'refs/tags/')
         run: twine upload --skip-existing dist/*

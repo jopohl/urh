@@ -55,7 +55,7 @@ jobs:
         run: python data/check_native_backends.py
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: dist
           path: dist

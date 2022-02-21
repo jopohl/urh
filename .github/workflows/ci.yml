@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-2019, macos-10.15]
-        architecture: [x64]
         python-version: ['3.7']
         include:
           - python-version: '3.7'
@@ -44,14 +43,12 @@ jobs:
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
           if ("$env:PYARCH" -eq "x86") {
           echo "Using 32-bit SDR libraries..."
-          Copy-Item "sdr_drivers\win-32.zip" -Destination "C:\windlls.zip"
+          7z x "sdr_drivers\win-32.zip" -osrc\urh\dev\native\lib\shared
           }
           else {
           echo "Using 64-bit SDR libraries..."
-          Copy-Item "sdr_drivers\win-64.zip" -Destination "C:\windlls.zip"
+          7z x "sdr_drivers\win-64.zip" -osrc\urh\dev\native\lib\shared
           }
-          Copy-Item "sdr_drivers\*.whl"  -Destination "C:\"
-          7z x C:\windlls.zip -osrc\urh\dev\native\lib\shared
         shell: powershell
         env:
           PYARCH: ${{ matrix.architecture }}
@@ -63,9 +60,6 @@ jobs:
           git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
           mkdir src/urh/dev/native/lib/shared
           tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
-          mkdir /tmp/osx-64
-          tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
-          rm -rf sdr_drivers
 
       - name: Install Dependencies
         run: |

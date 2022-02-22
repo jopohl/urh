@@ -382,9 +382,12 @@ class Signal(QObject):
         QApplication.instance().restoreOverrideCursor()
 
     def quad_demod(self):
-        return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold,
-                                          self.modulation_type, self.modulation_order,
-                                          self.costas_loop_bandwidth)
+        if self.noise_threshold < self.max_magnitude:
+            return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold,
+                                              self.modulation_type, self.modulation_order,
+                                              self.costas_loop_bandwidth)
+        else:
+            return np.zeros(2, dtype=np.float32)
 
     def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
         num_digits = 4

@@ -118,6 +118,7 @@ class Simulator(QObject):
             self.log_message("Stop simulation" + (" ({})".format(msg.strip()) if msg else ""))
             self.is_simulating = False
             self.do_restart = False
+            self.simulation_thread.join(2.5)
 
         # stop devices
         if self.sniffer:

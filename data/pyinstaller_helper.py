@@ -62,9 +62,9 @@ if __name__ == '__main__':
             p = plistlib.load(f)
         p["NSHighResolutionCapable"] = True
         p["NSRequiresAquaSystemAppearance"] = True
+        p["NSMicrophoneUsageDescription"] = "URH needs access to your microphone to capture signals via Soundcard."
         with open("pyinstaller/urh.app/Contents/Info.plist", "wb") as f:
             plistlib.dump(p, f)
-
 
     else:
         for cmd in [urh_cmd, cli_cmd, urh_debug_cmd]:

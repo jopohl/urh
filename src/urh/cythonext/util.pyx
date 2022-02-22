@@ -9,7 +9,7 @@ import numpy as np
 from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int64_t
 from libc.stdlib cimport malloc, calloc, free
 from cython.parallel import prange
-from libc.math cimport log10,pow
+from libc.math cimport log10,pow,sqrt
 from libcpp cimport bool
 
 from cpython cimport array
@@ -123,6 +123,17 @@ cpdef uint64_t crc(uint8_t[:] inpt, uint8_t[:] polynomial, uint8_t[:] start_valu
               | ((crc << 8)  & <uint64_t>0x000000FF00000000) | ((crc >> 8)  & <uint64_t>0x00000000FF000000)
 
     return crc & crc_mask
+
+
+cpdef np.ndarray[np.double_t, ndim=1] get_magnitudes(IQ arr):
+    cdef uint64_t i, n = len(arr)
+
+    cdef np.ndarray[np.double_t, ndim=1] result = np.zeros(n, dtype = np.double)
+
+    for i in range(0, n):
+        result[i] = sqrt(arr[i][0] * arr[i][0] + arr[i][1] * arr[i][1])
+
+    return result
 
 cpdef np.ndarray[np.uint64_t, ndim=1] calculate_cache(uint8_t[:] polynomial, bool reverse_polynomial=False, uint8_t bits=8):
     cdef uint8_t j, poly_order = len(polynomial)

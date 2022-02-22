@@ -5,6 +5,8 @@ import wave
 
 import numpy as np
 
+from urh.cythonext.util import get_magnitudes
+
 
 class IQArray(object):
     def __init__(self, data: np.ndarray, dtype=None, n=None, skip_conversion=False):
@@ -76,12 +78,8 @@ class IQArray(object):
         self.__data[:, 1] = value
 
     @property
-    def magnitudes_squared(self):
-        return self.real**2.0 + self.imag**2.0
-
-    @property
     def magnitudes(self):
-        return np.sqrt(self.magnitudes_squared)
+        return get_magnitudes(self.__data)
 
     @property
     def magnitudes_normalized(self):

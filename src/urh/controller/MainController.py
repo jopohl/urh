@@ -99,6 +99,19 @@ class MainController(QMainWindow):
         self.ui.actionNone.setActionGroup(group)
         self.ui.actionPSK.setActionGroup(group)
 
+        noise_threshold_setting = settings.read("default_noise_threshold", "automatic")
+        noise_threshold_group = QActionGroup(self)
+        self.ui.actionAutomaticNoiseThreshold.setActionGroup(noise_threshold_group)
+        self.ui.actionAutomaticNoiseThreshold.setChecked(noise_threshold_setting == "automatic")
+        self.ui.action1NoiseThreshold.setActionGroup(noise_threshold_group)
+        self.ui.action1NoiseThreshold.setChecked(noise_threshold_setting == "1")
+        self.ui.action5NoiseThreshold.setActionGroup(noise_threshold_group)
+        self.ui.action5NoiseThreshold.setChecked(noise_threshold_setting == "5")
+        self.ui.action10NoiseThreshold.setActionGroup(noise_threshold_group)
+        self.ui.action10NoiseThreshold.setChecked(noise_threshold_setting == "10")
+        self.ui.action100NoiseThreshold.setActionGroup(noise_threshold_group)
+        self.ui.action100NoiseThreshold.setChecked(noise_threshold_setting == "100")
+
         self.recentFileActionList = []
         self.create_connects()
         self.init_recent_file_action_list(settings.read("recentFiles", [], list))
@@ -181,6 +194,12 @@ class MainController(QMainWindow):
         self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
         self.ui.actionSamples_from_csv.triggered.connect(self.on_import_samples_from_csv_action_triggered)
         self.ui.actionAuto_detect_new_signals.triggered.connect(self.on_auto_detect_new_signals_action_triggered)
+
+        self.ui.actionAutomaticNoiseThreshold.triggered.connect(self.on_action_automatic_noise_threshold_triggered)
+        self.ui.action1NoiseThreshold.triggered.connect(self.on_action_1_noise_threshold_triggered)
+        self.ui.action5NoiseThreshold.triggered.connect(self.on_action_5_noise_threshold_triggered)
+        self.ui.action10NoiseThreshold.triggered.connect(self.on_action_10_noise_threshold_triggered)
+        self.ui.action100NoiseThreshold.triggered.connect(self.on_action_100_noise_threshold_triggered)
 
         self.ui.btnFileTreeGoUp.clicked.connect(self.on_btn_file_tree_go_up_clicked)
         self.ui.fileTree.directory_open_wanted.connect(self.project_manager.set_project_folder)
@@ -926,3 +945,23 @@ class MainController(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(1)
         self.compare_frame_controller.add_protocol(protocol)
         self.compare_frame_controller.refresh()
+
+    @pyqtSlot()
+    def on_action_automatic_noise_threshold_triggered(self):
+        settings.write("default_noise_threshold", "automatic")
+
+    @pyqtSlot()
+    def on_action_1_noise_threshold_triggered(self):
+        settings.write("default_noise_threshold", "1")
+
+    @pyqtSlot()
+    def on_action_5_noise_threshold_triggered(self):
+        settings.write("default_noise_threshold", "5")
+
+    @pyqtSlot()
+    def on_action_10_noise_threshold_triggered(self):
+        settings.write("default_noise_threshold", "10")
+
+    @pyqtSlot()
+    def on_action_100_noise_threshold_triggered(self):
+        settings.write("default_noise_threshold", "100")

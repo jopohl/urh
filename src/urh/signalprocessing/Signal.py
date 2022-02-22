@@ -8,6 +8,8 @@ from PyQt5.QtCore import pyqtSignal, QObject, QDir, Qt
 from PyQt5.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
+
+from urh import settings
 from urh.ainterpretation import AutoInterpretation
 from urh.signalprocessing.Filter import Filter
 from urh.signalprocessing.IQArray import IQArray
@@ -75,7 +77,12 @@ class Signal(QObject):
                 self.__load_complex_file(filename)
 
             self.filename = filename
-            self.noise_threshold = AutoInterpretation.detect_noise_level(self.iq_array.magnitudes)
+
+            default_noise_threshold = settings.read("default_noise_threshold", "automatic")
+            if default_noise_threshold == "automatic":
+                self.noise_threshold = AutoInterpretation.detect_noise_level(self.iq_array.magnitudes)
+            else:
+                self.noise_threshold = float(default_noise_threshold) / 100 * self.max_magnitude
         else:
             self.filename = ""
 

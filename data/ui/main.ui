@@ -341,7 +341,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -380,6 +380,16 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <property name="title">
      <string>Edi&amp;t</string>
     </property>
+    <widget class="QMenu" name="menuDefault_noise_threshold">
+     <property name="title">
+      <string>Default noise threshold</string>
+     </property>
+     <addaction name="actionAutomaticNoiseThreshold"/>
+     <addaction name="action1NoiseThreshold"/>
+     <addaction name="action5NoiseThreshold"/>
+     <addaction name="action10NoiseThreshold"/>
+     <addaction name="action100NoiseThreshold"/>
+    </widget>
     <addaction name="actionDecoding"/>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
@@ -387,6 +397,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionFullscreen_mode"/>
     <addaction name="separator"/>
     <addaction name="actionAuto_detect_new_signals"/>
+    <addaction name="menuDefault_noise_threshold"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -766,6 +777,49 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    </property>
    <property name="text">
     <string>Auto detect signals on loading</string>
+   </property>
+  </action>
+  <action name="actionAutomaticNoiseThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Automatic</string>
+   </property>
+  </action>
+  <action name="action1NoiseThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1%</string>
+   </property>
+  </action>
+  <action name="action5NoiseThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>5%</string>
+   </property>
+  </action>
+  <action name="action10NoiseThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>10%</string>
+   </property>
+  </action>
+  <action name="action100NoiseThreshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>100% (disables demodulation)</string>
    </property>
   </action>
  </widget>

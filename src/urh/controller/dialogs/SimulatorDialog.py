@@ -230,7 +230,6 @@ class SimulatorDialog(QDialog):
     def closeEvent(self, event: QCloseEvent):
         self.timer.stop()
         self.simulator.stop()
-        self.simulator.simulation_thread.join(2.5)
 
         self.simulator.cleanup()
 

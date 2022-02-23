@@ -9,8 +9,8 @@ from urh.util.Logger import logger
 cdef lms_device_t *_c_device
 cdef lms_stream_t stream
 
-cpdef size_t CHANNEL = 0
-cpdef bool IS_TX = False
+cdef size_t CHANNEL = 0
+cdef bool IS_TX = False
 
 cpdef set_tx(bool is_tx):
     global IS_TX

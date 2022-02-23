@@ -7,7 +7,7 @@ from libc.stdlib cimport malloc, free
 cdef bladerf* _c_device
 
 cdef int CHANNEL = 0
-cpdef bool IS_TX = False
+cdef bool IS_TX = False
 
 cpdef set_tx(bool is_tx):
     global IS_TX

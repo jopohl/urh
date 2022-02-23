@@ -15,8 +15,8 @@ cdef uhd_tx_streamer_handle tx_streamer_handle
 cdef uhd_rx_metadata_handle rx_metadata_handle
 cdef uhd_tx_metadata_handle tx_metadata_handle
 
-cpdef bint IS_TX = False
-cpdef size_t CHANNEL = 0
+cdef bint IS_TX = False
+cdef size_t CHANNEL = 0
 cdef size_t max_num_rx_samples = 300
 cdef size_t max_num_tx_samples = 300
 

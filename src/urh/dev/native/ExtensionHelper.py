@@ -138,7 +138,6 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
         if os.path.isdir("/opt/local/include"):
             include_dirs.append("/opt/local/include")
 
-    print("INCLUDE_DIRS", include_dirs)
     result = []
 
     # None = automatic (depending on lib is installed)

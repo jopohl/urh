@@ -282,13 +282,6 @@ class SendRecvDialog(QDialog):
 
     @pyqtSlot(int)
     def on_slider_y_scale_value_changed(self, new_value: int):
-        if new_value == 1:
-            self.graphics_view.auto_fit_view()
-        elif new_value > self.current_y_slider_value:
-            scale = new_value + 1 - self.current_y_slider_value
-            self.graphics_view.scale(1, scale)
-        else:
-            scale = 1 / (self.current_y_slider_value + 1 - new_value)
-            self.graphics_view.scale(1, scale)
+        self.graphics_view.scale(1, new_value / self.current_y_slider_value)
         self.graphics_view.centerOn(0, 0)
         self.current_y_slider_value = new_value

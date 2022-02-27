@@ -28,7 +28,8 @@ DEVICES = {
                     #include<libbladeRF.h>
                     
                     int main(void) {
-                    struct bladerf_version result; bladerf_version(&result);
+                    struct bladerf_version result={0,0,0}; 
+                    bladerf_version(&result);
                     printf("%f", result.major + result.minor/10.0 + result.patch/100.0);
                     return 0;}
                     """},

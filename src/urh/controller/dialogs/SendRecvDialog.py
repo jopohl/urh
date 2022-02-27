@@ -60,6 +60,8 @@ class SendRecvDialog(QDialog):
 
         self.ui.splitter.setSizes([int(0.4 * self.width()), int(0.6 * self.width())])
 
+        self.current_y_slider_value = 1
+
     @property
     def is_rx(self) -> bool:
         return not self.is_tx
@@ -212,11 +214,6 @@ class SendRecvDialog(QDialog):
             self._restart_device_thread()
 
     def update_view(self):
-        try:
-            self.ui.sliderYscale.setValue(int(self.graphics_view.transform().m22()))
-        except AttributeError:
-            return
-
         txt = self.ui.txtEditErrors.toPlainText()
         new_messages = self.device.read_messages()
 
@@ -285,8 +282,13 @@ class SendRecvDialog(QDialog):
 
     @pyqtSlot(int)
     def on_slider_y_scale_value_changed(self, new_value: int):
-        # Scale Up = Top Half, Scale Down = Lower Half
-        transform = self.graphics_view.transform()
-        self.graphics_view.setTransform(QTransform(transform.m11(), transform.m12(), transform.m13(),
-                                                   transform.m21(), new_value, transform.m23(),
-                                                   transform.m31(), transform.m32(), transform.m33()))
+        if new_value == 1:
+            self.graphics_view.auto_fit_view()
+        elif new_value > self.current_y_slider_value:
+            scale = new_value + 1 - self.current_y_slider_value
+            self.graphics_view.scale(1, scale)
+        else:
+            scale = 1 / (self.current_y_slider_value + 1 - new_value)
+            self.graphics_view.scale(1, scale)
+        self.graphics_view.centerOn(0, 0)
+        self.current_y_slider_value = new_value

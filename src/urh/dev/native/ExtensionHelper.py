@@ -97,8 +97,9 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
             if sys.platform == "darwin":
                 for path in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
-                    ld_path = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get(path, "")
+                    ld_path = os.environ.get(path, "") + os.pathsep + os.pathsep.join(library_dirs)
                     env[path] = ld_path
+                    print(env)
 
             result = float(check_output(check_api_program, env=env))
             print("    Automatic API version check succeeded.")
@@ -129,6 +130,7 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
 
     if sys.platform == "darwin":
         include_dirs.append("/usr/local/include")
+        library_dirs.append("/usr/local/lib")
 
     result = []
 

@@ -120,12 +120,6 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
         include_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared/include")))
         library_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared")))
 
-    if sys.platform == "darwin":
-        # On Mac OS X clang is by default not smart enough to search in the lib dir
-        # see: https://github.com/jopohl/urh/issues/173
-        library_dirs.append("/usr/local/lib")
-        include_dirs.append("/usr/local/include")
-
     result = []
 
     # None = automatic (depending on lib is installed)

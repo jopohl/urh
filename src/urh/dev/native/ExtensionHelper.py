@@ -86,10 +86,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             with open(file_name, 'w') as f:
                 f.write(api_version_code)
 
-            # Redirect stderr to /dev/null to hide any error messages from the compiler.
-            devnull = open(os.devnull, 'w')
-            old_stderr = os.dup(sys.stderr.fileno())
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             check_api_program = os.path.join(tmp_dir, "check_api")
             compiler.link_executable(objects, check_api_program, library_dirs=library_dirs, libraries=libraries)
@@ -108,10 +104,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             print("    API version check failed: {}".format(e))
             return 0.0
     finally:
-        if old_stderr is not None:
-            os.dup2(old_stderr, sys.stderr.fileno())
-        if devnull is not None:
-            devnull.close()
         shutil.rmtree(tmp_dir)
 
 

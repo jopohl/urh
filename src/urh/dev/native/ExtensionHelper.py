@@ -78,27 +78,18 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
 
 def check_api_version(compiler, api_version_code, libraries, library_dirs, include_dirs) -> float:
     tmp_dir = tempfile.mkdtemp(prefix='urh-')
-    devnull = old_stderr = None
     try:
         try:
             file_name = os.path.join(tmp_dir, 'get_api_version.c')
             with open(file_name, 'w') as f:
                 f.write(api_version_code)
 
-            # Redirect stderr to /dev/null to hide any error messages from the compiler.
-            devnull = open(os.devnull, 'w')
-            old_stderr = os.dup(sys.stderr.fileno())
-            os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             check_api_program = os.path.join(tmp_dir, "check_api")
             compiler.link_executable(objects, check_api_program, library_dirs=library_dirs, libraries=libraries)
 
             env = os.environ.copy()
             env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
-            if sys.platform == "darwin":
-                for path in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
-                    ld_path = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get(path, "")
-                    env[path] = ld_path
 
             result = float(check_output(check_api_program, env=env))
             print("    Automatic API version check succeeded.")
@@ -107,10 +98,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             print("    API version check failed: {}".format(e))
             return 0.0
     finally:
-        if old_stderr is not None:
-            os.dup2(old_stderr, sys.stderr.fileno())
-        if devnull is not None:
-            devnull.close()
         shutil.rmtree(tmp_dir)
 
 
@@ -128,15 +115,8 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
         library_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared")))
 
     if sys.platform == "darwin":
-        # On Mac OS X clang is by default not smart enough to search in the lib dir
-        # see: https://github.com/jopohl/urh/issues/173
-        library_dirs.append("/usr/local/lib")
         include_dirs.append("/usr/local/include")
-
-        if os.path.isdir("/opt/local/lib"):
-            library_dirs.append("/opt/local/lib")
-        if os.path.isdir("/opt/local/include"):
-            include_dirs.append("/opt/local/include")
+        library_dirs.append("/usr/local/lib")
 
     result = []
 

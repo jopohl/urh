@@ -78,7 +78,6 @@ def compiler_has_function(compiler, function_name, libraries, library_dirs, incl
 
 def check_api_version(compiler, api_version_code, libraries, library_dirs, include_dirs) -> float:
     tmp_dir = tempfile.mkdtemp(prefix='urh-')
-    devnull = old_stderr = None
     try:
         try:
             file_name = os.path.join(tmp_dir, 'get_api_version.c')
@@ -87,7 +86,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
 
             # Redirect stderr to /dev/null to hide any error messages from the compiler.
             devnull = open(os.devnull, 'w')
-            old_stderr = os.dup(sys.stderr.fileno())
             os.dup2(devnull.fileno(), sys.stderr.fileno())
             objects = compiler.compile([file_name], include_dirs=include_dirs)
             check_api_program = os.path.join(tmp_dir, "check_api")
@@ -95,11 +93,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
 
             env = os.environ.copy()
             env["PATH"] = os.pathsep.join(library_dirs) + os.pathsep + os.environ.get("PATH", "")
-            if sys.platform == "darwin":
-                for path in ("LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH"):
-                    ld_path = os.environ.get(path, "") + os.pathsep + os.pathsep.join(library_dirs)
-                    env[path] = ld_path
-                    print(env)
 
             result = float(check_output(check_api_program, env=env))
             print("    Automatic API version check succeeded.")
@@ -108,10 +101,6 @@ def check_api_version(compiler, api_version_code, libraries, library_dirs, inclu
             print("    API version check failed: {}".format(e))
             return 0.0
     finally:
-        if old_stderr is not None:
-            os.dup2(old_stderr, sys.stderr.fileno())
-        if devnull is not None:
-            devnull.close()
         shutil.rmtree(tmp_dir)
 
 

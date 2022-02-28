@@ -46,18 +46,13 @@ jobs:
       - name: Setup SDR Drivers (Windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-          if ("$env:PYARCH" -eq "x86") {
-          echo "Using 32-bit SDR libraries..."
-          7z x "sdr_drivers\win-32.zip" -osrc\urh\dev\native\lib\shared
-          }
-          else {
-          echo "Using 64-bit SDR libraries..."
-          7z x "sdr_drivers\win-64.zip" -osrc\urh\dev\native\lib\shared
-          }
-        shell: powershell
+          choco install wget --no-progress
+          wget -nv -O windrivers.zip https://github.com/jopohl/sdrbuild/releases/download/v1.1/win-$ARCH.zip
+          7z x windrivers.zip -osrc/urh/dev/native/lib/shared
+          ls src/urh/dev/native/lib/shared
+        shell: bash
         env:
-          PYARCH: ${{ matrix.architecture }}
+          ARCH: ${{ matrix.architecture }}
 
 
       - name: Setup SDR Drivers (macOS)
@@ -76,6 +71,7 @@ jobs:
           pip install -r data/requirements.txt
           if [[ $OS == ubuntu* ]]
           then
+            sudo apt-get update
             sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
             pip install PyVirtualDisplay==0.2.5
           elif [[ $OS == windows* ]]

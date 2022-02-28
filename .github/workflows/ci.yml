@@ -145,6 +145,8 @@ jobs:
                       --distpath ./pyinstaller --workpath ./urh_build \
                       ./src/urh/main.py
           mkdir -p dist
+          plutil -replace NSRequiresAquaSystemAppearance -bool true pyinstaller/main.app/Contents/Info.plist
+          plutil -replace NSMicrophoneUsageDescription -string "URH needs access to your microphone to capture signals via Soundcard." pyinstaller/main.app/Contents/Info.plist
           cat pyinstaller/main.app/Contents/Info.plist
           hdiutil create -volname Universal.Radio.Hacker \
                          -srcfolder pyinstaller/main.app \

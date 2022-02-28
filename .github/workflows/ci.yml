@@ -138,11 +138,16 @@ jobs:
       - name: Build DMG
         if: startsWith(matrix.os, 'macos')
         run: |
-          python data/pyinstaller_helper.py
+          pyinstaller --clean --onedir --windowed \
+                      --add-data "src/urh/plugins:urh/plugins" \
+                      --exclude-module=matplotlib \
+                      --icon=./data/icons/appicon.icns \
+                      --distpath ./pyinstaller --workpath ./urh_build \ 
+                      ./src/urh/main.py
           mkdir -p dist
-          cat pyinstaller/urh.app/Contents/Info.plist
+          cat pyinstaller/main.app/Contents/Info.plist
           hdiutil create -volname Universal.Radio.Hacker \
-                         -srcfolder pyinstaller/urh.app \
+                         -srcfolder pyinstaller/main.app \
                          -ov -format UDZO \
                          dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
 

@@ -138,7 +138,8 @@ jobs:
       - name: Build DMG
         if: startsWith(matrix.os, 'macos')
         run: |
-          pyinstaller --clean --distpath ./pyinstaller --workpath ./urh_build data/pyinstaller_macos.spec
+          cp data/pyinstaller_macos.spec urh.spec
+          pyinstaller --clean --distpath ./pyinstaller --workpath ./urh_build urh.spec
           mkdir -p dist
           cat pyinstaller/main.app/Contents/Info.plist
           hdiutil create -volname Universal.Radio.Hacker \
@@ -149,7 +150,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: dist
+          name: dist-${{ matrix.os }}
           path: dist
 
       - name: Run pytest with coverage

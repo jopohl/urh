@@ -142,7 +142,7 @@ jobs:
                       --add-data "src/urh/plugins:urh/plugins" \
                       --exclude-module=matplotlib \
                       --icon=./data/icons/appicon.icns \
-                      --distpath ./pyinstaller --workpath ./urh_build \ 
+                      --distpath ./pyinstaller --workpath ./urh_build \
                       ./src/urh/main.py
           mkdir -p dist
           cat pyinstaller/main.app/Contents/Info.plist

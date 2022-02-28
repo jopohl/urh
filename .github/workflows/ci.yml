@@ -58,17 +58,6 @@ jobs:
         env:
           ARCH: ${{ matrix.architecture }}
 
-
-      - name: Setup SDR Drivers (macOS)
-        if: startsWith(matrix.os, 'macos')
-        run: |
-          git clone --depth 1 https://gitlab.com/jopohl/sdr_drivers
-          mkdir src/urh/dev/native/lib/shared
-          tar xf sdr_drivers/osx-64.tar.bz2 -C src/urh/dev/native/lib/shared
-          mkdir /tmp/osx-64
-          tar xf sdr_drivers/osx-64.tar.bz2 -C /tmp/osx-64
-          rm -rf sdr_drivers
-
       - name: Install Dependencies
         run: |
           pip install wheel
@@ -84,7 +73,20 @@ jobs:
             pipwin install pyaudio
           elif [[ $OS == mac* ]] 
           then
-            HOMEBREW_NO_INSTALL_CLEANUP=TRUE brew install airspy hackrf librtlsdr portaudio uhd
+            brew tap pothosware/homebrew-pothos
+            brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd
+            
+            wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg
+            sudo installer -pkg macOS-10.15.pkg -target /
+            sudo cp /Library/Frameworks/iio.framework/iio /usr/local/lib/libiio.dylib
+            sudo install_name_tool -id "/usr/local/lib/libiio.dylib" /usr/local/lib/libiio.dylib
+            file /usr/local/lib/libiio.dylib
+            otool -L /usr/local/lib/libiio.dylib
+            sudo cp /Library/Frameworks/iio.framework/Versions/0.23/Headers/iio.h /usr/local/include
+            
+            wget -nv https://www.sdrplay.com/software/SDRplay_RSP_API-MacOSX-2.13.2.pkg
+            sudo installer -pkg SDRplay_RSP_API-MacOSX-2.13.2.pkg -target /  
+          
             pip install pyaudio
           fi
           pip install twine setuptools pytest pytest-xvfb pytest-cov pytest-faulthandler six appdirs packaging pyinstaller

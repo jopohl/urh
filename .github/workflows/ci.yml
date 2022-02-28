@@ -31,6 +31,8 @@ jobs:
         exclude:
           - os: windows-2019
             python-version: '3.9'
+          - os: macOS-10.15
+            python-version: '3.7'
 
       fail-fast: false
 

@@ -99,7 +99,7 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == '3.8' }}
+        if: ${{ matrix.python-version == '3.9' && startsWith(matrix.os, 'ubuntu') }}
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel

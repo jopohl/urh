@@ -138,17 +138,8 @@ jobs:
       - name: Build DMG
         if: startsWith(matrix.os, 'macos')
         run: |
-          pyinstaller --clean --onedir --windowed \
-                      --add-data "src/urh/plugins:urh/plugins" \
-                      --exclude-module=matplotlib \
-                      --icon=./data/icons/appicon.icns \
-                      --distpath ./pyinstaller --workpath ./urh_build \
-                      ./src/urh/main.py
+          pyinstaller --clean --distpath ./pyinstaller --workpath ./urh_build data/pyinstaller_macos.spec
           mkdir -p dist
-          plutil -replace CFBundleDisplayName -string "URH" pyinstaller/main.app/Contents/Info.plist
-          plutil -replace CFBundleName -string "URH" pyinstaller/main.app/Contents/Info.plist
-          plutil -replace NSRequiresAquaSystemAppearance -bool true pyinstaller/main.app/Contents/Info.plist
-          #plutil -replace NSMicrophoneUsageDescription -string "URH needs access to your microphone to capture signals via Soundcard." pyinstaller/main.app/Contents/Info.plist
           cat pyinstaller/main.app/Contents/Info.plist
           hdiutil create -volname Universal.Radio.Hacker \
                          -srcfolder pyinstaller/main.app \

@@ -187,6 +187,7 @@ jobs:
           else
             twine upload --skip-existing dist/*.whl
           fi
+        shell: bash
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}

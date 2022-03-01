@@ -168,14 +168,6 @@ jobs:
         if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.9' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
-      - name: Upload to PyPi
-        if: startsWith(github.ref, 'refs/tags/')
-        run: twine upload --skip-existing dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
-
       - uses: ncipollo/release-action@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
@@ -185,3 +177,17 @@ jobs:
           generateReleaseNotes: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
+
+      - name: Upload to PyPi
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          if [[ $OS == ubuntu* ]]
+          then
+            twine upload --skip-existing dist/*
+          else
+            twine upload --skip-existing dist/*.whl
+          fi
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"

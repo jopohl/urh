@@ -60,6 +60,7 @@ class VirtualDevice(QObject):
         self.name = name
         self.mode = mode
         self.backend_handler = backend_handler
+        self.__data_timestamp = 0
 
         freq = config.DEFAULT_FREQUENCY if freq is None else freq
         sample_rate = config.DEFAULT_SAMPLE_RATE if sample_rate is None else sample_rate
@@ -493,7 +494,10 @@ class VirtualDevice(QObject):
 
     @property
     def sample_rate(self):
-        return self.__dev.sample_rate
+        try:
+            return self.__dev.sample_rate
+        except:
+            return 1e6
 
     @sample_rate.setter
     def sample_rate(self, value):
@@ -631,6 +635,23 @@ class VirtualDevice(QObject):
                 "{}:{} has no data".format(self.__class__.__name__, self.backend.name)
             )
 
+    @property
+    def data_timestamp(self):
+        if self.backend == Backends.native:
+            try:
+                self.__data_timestamp = (
+                    self.__dev.first_data_timestamp
+                )  # more accurate timestamp
+            except:
+                pass
+        return self.__data_timestamp
+
+    def reset_data_timestamp(self):
+        if self.backend == Backends.native:
+            self.__dev.reset_first_data_timestamp()
+        else:
+            self.__data_timestamp = time.time()
+
     def free_data(self):
         if self.backend == Backends.grc:
             self.__dev.data = None
@@ -740,6 +761,7 @@ class VirtualDevice(QObject):
             raise ValueError("Spectrum x only available in spectrum mode")
 
     def start(self):
+        self.__data_timestamp = time.time()
         if self.backend == Backends.grc:
             self.__dev.setTerminationEnabled(True)
             self.__dev.terminate()

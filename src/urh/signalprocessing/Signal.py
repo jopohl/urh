@@ -45,6 +45,7 @@ class Signal(QObject):
         name="Signal",
         modulation: str = None,
         sample_rate: float = 1e6,
+        timestamp: float = 0,
         parent=None,
     ):
         super().__init__(parent)
@@ -58,6 +59,7 @@ class Signal(QObject):
         self.__center = 0
         self._noise_threshold = 0
         self.__sample_rate = sample_rate
+        self.__timestamp = timestamp
         self.noise_min_plot = 0
         self.noise_max_plot = 0
         self.block_protocol_update = False
@@ -224,6 +226,10 @@ class Signal(QObject):
             self.__sample_rate = val
             self.sample_rate_changed.emit(val)
 
+    @property
+    def timestamp(self):
+        return self.__timestamp
+    
     @property
     def parameter_cache(self) -> dict:
         """

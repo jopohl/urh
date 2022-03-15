@@ -56,6 +56,7 @@ class Message(object):
         samples_per_symbol=100,
         participant=None,
         bits_per_symbol=1,
+        timestamp=0,
     ):
         """
 
@@ -75,7 +76,12 @@ class Message(object):
         self.participant = participant  # type: Participant
         self.message_type = message_type  # type: MessageType
 
-        self.timestamp = time.time()
+        if timestamp == 0:
+            self.timestamp = time.time()
+        else:
+            # Caller passed specific timestamp for this message
+            self.timestamp = timestamp
+
         self.absolute_time = 0  # set in Compare Frame
         self.relative_time = 0  # set in Compare Frame
 

@@ -42,6 +42,7 @@ COMPRESSED_COMPLEX_FILE_FILTER = "Compressed Complex File (*.coco)"
 WAV_FILE_FILTER = "Waveform Audio File Format (*.wav *.wave)"
 PROTOCOL_FILE_FILTER = "Protocol (*.proto.xml *.proto)"
 BINARY_PROTOCOL_FILE_FILTER = "Binary Protocol (*.bin)"
+WIRESHARK_FILE_FILTER = "Wireshark File (*.pcapng)"
 PLAIN_BITS_FILE_FILTER = "Plain Bits (*.txt)"
 FUZZING_FILE_FILTER = "Fuzzing Profile (*.fuzz.xml *.fuzz)"
 SIMULATOR_FILE_FILTER = "Simulator Profile (*.sim.xml *.sim)"
@@ -93,7 +94,7 @@ def ask_save_file_name(initial_name: str, caption="Save signal", selected_name_f
     elif caption == "Export spectrogram":
         name_filter = "Frequency Time (*.ft);;Frequency Time Amplitude (*.fta)"
     elif caption == "Save protocol":
-        name_filter = ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER])
+        name_filter = ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER, WIRESHARK_FILE_FILTER])
     elif caption == "Export demodulated":
         name_filter = ";;".join([WAV_FILE_FILTER, SUB_FILE_FILTER])
     else:

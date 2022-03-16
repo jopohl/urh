@@ -8,7 +8,7 @@ import numpy
 from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
     QModelIndex
 from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView
+from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView, QInputDialog
 
 from urh import settings
 from urh.awre import AutoAssigner
@@ -864,6 +864,11 @@ class CompareFrameController(QWidget):
 
         if filename.endswith(".bin"):
             self.proto_analyzer.to_binary(filename, use_decoded=True)
+        elif filename.endswith(".pcapng"):
+            data_link_type, ok = QInputDialog.getInt(self, "Link type", 
+                "Interface Link Type to use (probably one between DLT_USER0-DLT_USER15 (147-162)):", 147, 0, 65535)
+            if ok:
+                self.proto_analyzer.to_pcapng(filename=filename, link_type=data_link_type)
         else:
             self.proto_analyzer.to_xml_file(filename=filename, decoders=self.decodings,
                                             participants=self.project_manager.participants, write_bits=True)

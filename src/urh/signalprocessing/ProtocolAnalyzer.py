@@ -8,6 +8,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, Qt
 
 from urh import settings
 from urh.cythonext import signal_functions
+import urh.dev.PCAPNG as PCAPNG
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -644,6 +645,13 @@ class ProtocolAnalyzer(object):
 
         root = tree.getroot()
         self.from_xml_tag(root, read_bits=read_bits)
+
+    def to_pcapng(self, filename : str, hardware_desc_name: str = "", link_type: int = 147):
+        PCAPNG.create_pcapng_file(filename=filename, shb_userappl="Universal Radio Hacker", shb_hardware=hardware_desc_name, link_type=link_type)
+        PCAPNG.append_packets_to_pcapng(
+            filename=filename,
+            packets=(msg.decoded_ascii_buffer for msg in self.messages),
+            timestamps=(msg.timestamp for msg in self.messages))
 
     def eliminate(self):
         self.message_types = None

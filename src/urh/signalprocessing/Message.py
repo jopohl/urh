@@ -302,6 +302,10 @@ class Message(object):
     def decoded_ascii_str(self) -> str:
         return "".join(map(chr, self.decoded_ascii_array))
 
+    @property
+    def decoded_ascii_buffer(self) -> bytes:
+        return self.decoded_ascii_array.tobytes()
+
     def __get_bit_range_from_hex_or_ascii_index(self, from_index: int, decoded: bool, is_hex: bool) -> tuple:
         bits = self.decoded_bits if decoded else self.plain_bits
         factor = 4 if is_hex else 8

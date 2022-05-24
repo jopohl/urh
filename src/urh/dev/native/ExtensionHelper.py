@@ -115,8 +115,9 @@ def get_device_extensions_and_extras(library_dirs=None, include_dirs=None):
         library_dirs.insert(0, os.path.realpath(os.path.join(cur_dir, "lib/shared")))
 
     if sys.platform == "darwin":
-        include_dirs.append("/usr/local/include")
-        library_dirs.append("/usr/local/lib")
+        for prefix in ["/usr/local", "/opt/homebrew"]:
+            include_dirs.append(prefix + "/include")
+            library_dirs.append(prefix + "/lib")
 
     result = []
 

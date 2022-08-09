@@ -427,19 +427,20 @@ class Encoding(object):
             # Add carrier if encoding
             if len(self.carrier) > 0:
                 x = 0
-                while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
-                    output.append(False if self.carrier[x % len(self.carrier)] in (
-                    "0", "*") else True)  # Add 0 when there is a wildcard (*) in carrier description
-                    x += 1
                 for i in inpt:
-                    tmp = self.carrier[x % len(self.carrier)]
-                    if not tmp in ("0", "1", "*"):
-                        output.append(i)
-                        x += 1
                     while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
                         output.append(False if self.carrier[x % len(self.carrier)] in (
                         "0", "*") else True)  # Add 0 when there is a wildcard (*) in carrier description
                         x += 1
+                    tmp = self.carrier[x % len(self.carrier)]
+                    if not tmp in ("0", "1", "*"):
+                        output.append(i)
+                        x += 1
+                # Consume the trailing carrier pattern avoiding any wrap around
+                while x % len(self.carrier) > 0 and self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
+                    output.append(False if self.carrier[x % len(self.carrier)] in (
+                    "0", "*") else True)  # Add 0 when there is a wildcard (*) in carrier description
+                    x += 1
         return output, errors, self.ErrorState.SUCCESS
 
     def code_data_whitening(self, decoding, inpt):

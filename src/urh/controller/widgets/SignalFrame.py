@@ -466,7 +466,7 @@ class SignalFrame(QFrame):
             try:
                 self.setCursor(Qt.WaitCursor)
                 data = self.signal.qad
-                if filename.endswith(".wav"):
+                if filename.endswith(".wav") or filename.endswith(".sub"):
                     data = self.signal.qad.astype(np.float32)
                     data /= np.max(np.abs(data))
                 FileOperator.save_data(IQArray(data, skip_conversion=True), filename, self.signal.sample_rate,

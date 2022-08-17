@@ -241,3 +241,48 @@ class IQArray(object):
         f.setframerate(sample_rate)
         f.writeframes(self.convert_to(np.int16))
         f.close()
+
+    def export_to_sub(self, filename, frequency=433920000, preset="FuriHalSubGhzPresetOok650Async"):
+        arr = []
+        counter = 0
+
+        for value in self.convert_to(np.uint8):
+            # if origin was a sub-file value is uint8, else value is [uint8, uint8]
+            # TODO: export only works with sub files. Idea: Export from bit stream?
+            try:
+                value = np.linalg.norm(value)
+            except:
+                pass
+
+            # set lastvalue to value for first run
+            try:
+                lastvalue
+            except:
+                lastvalue = value
+
+            # increase counter while values do not change
+            if value == lastvalue:
+                counter += 1
+            else:
+                # add number of same value as positive int when value > 127 else as negative int
+                if counter > 1:
+                    arr.append(counter if lastvalue > 127 else -counter)
+                    counter = 1
+                    lastvalue = value
+        # save last value
+        arr.append(counter if lastvalue > 127 else -counter)
+
+        with open(filename, 'w') as subfile:
+            subfile.write("Filetype: Flipper SubGhz RAW File\n")
+            subfile.write("Version: 1\n")
+            subfile.write("Frequency: {}\n".format(frequency))
+            subfile.write("Preset: {}\n".format(preset))
+            subfile.write("Protocol: RAW") # Skip last \n
+            # Write data
+            for idx in range(len(arr)):
+                if idx % 512 == 0:
+                    subfile.write("\n")
+                    subfile.write("RAW_Data: {}".format(arr[idx]))
+                else:
+                    subfile.write(" {}".format(arr[idx]))
+            subfile.write("\n")

@@ -1,5 +1,6 @@
 import math
 import os
+import re
 import tarfile
 import wave
 
@@ -57,6 +58,7 @@ class Signal(QObject):
         self.iq_array = IQArray(None, np.int8, 1)
 
         self.wav_mode = filename.endswith(".wav")
+        self.flipper_raw_mode = filename.endswith(".sub")
         self.__changed = False
         if modulation is None:
             modulation = "FSK"
@@ -71,6 +73,8 @@ class Signal(QObject):
         if len(filename) > 0:
             if self.wav_mode:
                 self.__load_wav_file(filename)
+            elif self.flipper_raw_mode:
+                self.__load_sub_file(filename)
             elif filename.endswith(".coco"):
                 self.__load_compressed_complex(filename)
             else:
@@ -130,6 +134,27 @@ class Signal(QObject):
         wav.close()
 
         self.sample_rate = sample_rate
+
+    def __load_sub_file(self, filename: str):
+        # Flipper RAW file format (OOK): space separated values, number of samples above (positive value -> 1)
+        # or below (negative value -> 0) center
+        params = {"min": 0, "max": 255, "fmt": np.uint8}
+        params["center"] = (params["min"] + params["max"]) / 2
+        arr = []
+        with open(filename, 'r') as subfile:
+            for line in subfile:
+                dataline = re.match(r'RAW_Data:\s*([-0-9 ]+)\s*$', line)
+                if dataline:
+                    values = dataline[1].split(r' ')
+                    for value in values:
+                        intval = int(value)
+                        if intval > 0:
+                            arr.extend(np.full(intval, params["max"], dtype=params["fmt"]))
+                        else:
+                            arr.extend(np.zeros(-intval, dtype=params["fmt"]))
+        self.iq_array = IQArray(None, np.float32, n=len(arr))
+        self.iq_array.real = np.multiply(1 / params["max"], np.subtract(arr, params["center"]))
+        self.__already_demodulated = True
 
     def __load_compressed_complex(self, filename: str):
         obj = tarfile.open(filename, "r")
@@ -418,6 +443,7 @@ class Signal(QObject):
         new_signal.__bits_per_symbol = self.bits_per_symbol
         new_signal.__center = self.center
         new_signal.wav_mode = self.wav_mode
+        new_signal.flipper_raw_mode = self.flipper_raw_mode
         new_signal.__already_demodulated = self.__already_demodulated
         new_signal.changed = True
         new_signal.sample_rate = self.sample_rate

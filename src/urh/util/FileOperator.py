@@ -47,7 +47,7 @@ FUZZING_FILE_FILTER = "Fuzzing Profile (*.fuzz.xml *.fuzz)"
 SIMULATOR_FILE_FILTER = "Simulator Profile (*.sim.xml *.sim)"
 TAR_FILE_FILTER = "Tar Archive (*.tar *.tar.gz *.tar.bz2)"
 ZIP_FILE_FILTER = "Zip Archive (*.zip)"
-
+SUB_FILE_FILTER = "Flipper SubGHz RAW (*.sub)"
 
 def __get__name_filter_for_signals() -> str:
     return ";;".join([EVERYTHING_FILE_FILTER] + SIGNAL_NAME_FILTERS + [COMPRESSED_COMPLEX_FILE_FILTER, WAV_FILE_FILTER])
@@ -95,7 +95,7 @@ def ask_save_file_name(initial_name: str, caption="Save signal", selected_name_f
     elif caption == "Save protocol":
         name_filter = ";;".join([PROTOCOL_FILE_FILTER, BINARY_PROTOCOL_FILE_FILTER])
     elif caption == "Export demodulated":
-        name_filter = WAV_FILE_FILTER
+        name_filter = ";;".join([WAV_FILE_FILTER, SUB_FILE_FILTER])
     else:
         name_filter = EVERYTHING_FILE_FILTER
 
@@ -157,6 +157,8 @@ def save_data(data, filename: str, sample_rate=1e6, num_channels=2):
         data.export_to_wav(filename, num_channels, sample_rate)
     elif filename.endswith(".coco"):
         data.save_compressed(filename)
+    elif filename.endswith(".sub"):
+        data.export_to_sub(filename, 433920000, "FuriHalSubGhzPresetOok650Async")
     else:
         data.tofile(filename)
 

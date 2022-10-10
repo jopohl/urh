@@ -42,6 +42,8 @@ BIT_SCENE_HEIGHT = 100
 TRANSPARENT_COLOR = QColor(Qt.transparent)
 
 LINECOLOR = QColor.fromRgb(225, 225, 225)
+LINECOLOR_I = QColor.fromRgb(50, 50, 225)
+LINECOLOR_Q = QColor.fromRgb(55, 53, 53)
 BGCOLOR = QColor.fromRgb(55, 53, 53)
 AXISCOLOR = QColor.fromRgb(200, 200, 200, 100)
 ARROWCOLOR = QColor.fromRgb(204, 120, 50)

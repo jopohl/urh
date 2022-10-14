@@ -505,13 +505,15 @@ class Signal(QObject):
             )
             return self.noise_threshold_relative
 
-    def create_new(self, start=0, end=0, new_data=None):
+    def create_new(self, start=0, end=0, new_data=None, new_timestamp=0):
         new_signal = Signal("", "New " + self.name)
 
         if new_data is None:
             new_signal.iq_array = IQArray(self.iq_array[start:end])
+            new_signal.__timestamp = self.timestamp + (start / self.sample_rate)
         else:
             new_signal.iq_array = IQArray(new_data)
+            new_signal.__timestamp = new_timestamp
 
         new_signal._noise_threshold = self.noise_threshold
         new_signal.noise_min_plot = self.noise_min_plot

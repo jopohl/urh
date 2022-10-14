@@ -28,11 +28,12 @@ class SceneManager(QObject):
 
     @property
     def num_samples(self):
+        if isinstance(self.plot_data, list):
+            return len(self.plot_data[0])
         return len(self.plot_data)
 
     def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
         """
-
         :param x1: start of section to show
         :param x2: end of section to show
         :param subpath_ranges: for coloring subpaths
@@ -44,12 +45,21 @@ class SceneManager(QObject):
         start, end = self.__limit_value(x1), self.__limit_value(x2)
 
         if end > start:
-            paths = path_creator.create_path(self.plot_data, start=start, end=end,
-                                             subpath_ranges=subpath_ranges)
-            self.set_path(paths, colors=colors)
+            if isinstance(self.plot_data, list):
+                paths_i = path_creator.create_path(self.plot_data[0], start=start, end=end,
+                                            subpath_ranges=subpath_ranges)
+                paths_q = path_creator.create_path(self.plot_data[1], start=start, end=end,
+                                            subpath_ranges=subpath_ranges)
+                self.set_path(paths_i, colors=[settings.LINECOLOR_I] * len(paths_i))
+                self.set_path(paths_q, colors=[settings.LINECOLOR_Q] * len(paths_q), run_clear_path=False)
+            else:
+                paths = path_creator.create_path(self.plot_data, start=start, end=end,
+                                            subpath_ranges=subpath_ranges)
+                self.set_path(paths, colors=colors)
 
-    def set_path(self, paths: list, colors=None):
-        self.clear_path()
+    def set_path(self, paths: list, colors=None, run_clear_path=True):
+        if run_clear_path:
+            self.clear_path()
         colors = [settings.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
@@ -67,7 +77,10 @@ class SceneManager(QObject):
         if self.num_samples == 0:
             return
 
-        minimum, maximum = IQArray.min_max_for_dtype(self.plot_data.dtype)
+        if isinstance(self.plot_data, list):
+            minimum, maximum = IQArray.min_max_for_dtype(self.plot_data[0].dtype)
+        else:
+            minimum, maximum = IQArray.min_max_for_dtype(self.plot_data.dtype)
         self.scene.setSceneRect(0, minimum, self.num_samples, maximum - minimum)
         self.scene.setBackgroundBrush(settings.BGCOLOR)
 

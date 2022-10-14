@@ -380,6 +380,13 @@ class Signal(QObject):
             return np.zeros(0, dtype=np.float32)
 
     @property
+    def imag_plot_data(self):
+        try:
+            return self.iq_array.imag
+        except AttributeError:
+            return np.zeros(0, dtype=np.float32)
+
+    @property
     def changed(self) -> bool:
         """
         Determines whether the signal was changed (e.g. cropped/muted) and not saved yet

@@ -84,7 +84,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Signal View:</string>
+        <string>Signal view:</string>
        </property>
       </widget>
      </item>
@@ -282,7 +282,7 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For &lt;span style=&quot; font-weight:600;&quot;&gt;higher order&lt;/span&gt; modulations (&amp;gt; 1 Bits/Symbol), there are &lt;span style=&quot; font-weight:600;&quot;&gt;multiple&lt;/span&gt; centers. We assume that the &lt;span style=&quot; font-weight:600;&quot;&gt;spacing&lt;/span&gt; between all possible symbols is &lt;span style=&quot; font-weight:600;&quot;&gt;constant&lt;/span&gt;. Therefore you configure the spacing between centers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Center Spacing:</string>
+        <string>Center spacing:</string>
        </property>
       </widget>
      </item>
@@ -351,7 +351,7 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the error tolerance for determining the &lt;span style=&quot; font-weight:600;&quot;&gt;pulse lengths&lt;/span&gt; in the demodulated signal.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400; font-style:italic;&quot;&gt;Example:&lt;/span&gt; Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.&lt;/p&gt;&lt;p&gt;Tune this value if you have &lt;span style=&quot; font-weight:600;&quot;&gt;spiky data&lt;/span&gt; after demodulation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Error Tolerance:</string>
+        <string>Error tolerance:</string>
        </property>
       </widget>
      </item>
@@ -405,7 +405,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated or Spectrogram.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;suppress noise&lt;/span&gt;. All samples with a magnitude lower than this threshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the view of your signal. Analog, Demodulated, Spectrogram or I/Q view.&lt;/p&gt;&lt;p&gt;The quadrature demodulation uses a &lt;span style=&quot; font-weight:600;&quot;&gt;threshold of magnitudes,&lt;/span&gt; to &lt;span style=&quot; font-weight:600;&quot;&gt;suppress noise&lt;/span&gt;. All samples with a magnitude lower than this threshold will be eliminated after demodulation.&lt;/p&gt;&lt;p&gt;Tune this value by selecting a &lt;span style=&quot; font-style:italic;&quot;&gt;noisy area&lt;/span&gt; and mark it as noise using &lt;span style=&quot; font-weight:600;&quot;&gt;context menu&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Signal colors&lt;/span&gt;:&lt;br/&gt;I =&amp;gt; &lt;span style=&quot; font-weight:600; color:#3232e1;&quot;&gt;blue&lt;/span&gt;&lt;br/&gt;Q =&amp;gt; &lt;span style=&quot; font-weight:600;&quot;&gt;black&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <item>
         <property name="text">
@@ -420,6 +420,11 @@
        <item>
         <property name="text">
          <string>Spectrogram</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>I/Q view</string>
         </property>
        </item>
       </widget>
@@ -545,7 +550,7 @@
         <string>If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.</string>
        </property>
        <property name="text">
-        <string>Sync Selection</string>
+        <string>Sync selection</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -574,7 +579,7 @@
 If you want your protocol to be better separated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.</string>
        </property>
        <property name="text">
-        <string>Show Signal as</string>
+        <string>Show data as</string>
        </property>
       </widget>
      </item>
@@ -660,7 +665,7 @@ If you want your protocol to be better separated, edit the PauseLen using right-
      <item row="20" column="0">
       <widget class="QLabel" name="labelFFTWindowSize">
        <property name="text">
-        <string>FFT Window Size:</string>
+        <string>FFT window size:</string>
        </property>
       </widget>
      </item>

@@ -685,8 +685,8 @@ class SignalFrame(QFrame):
         self.ui.spinBoxNoiseTreshold.setValue(self.signal.noise_threshold_relative)
         minimum = self.signal.noise_min_plot
         maximum = self.signal.noise_max_plot
-        if self.ui.cbSignalView.currentIndex() == 0:
-            # Draw Noise only in Analog View
+        if self.ui.cbSignalView.currentIndex() == 0 or self.ui.cbSignalView.currentIndex() == 3:
+            # Draw Noise only in analog and I/Q view
             self.ui.gvSignal.scene().draw_noise_area(minimum, maximum - minimum)
 
     @pyqtSlot(int)

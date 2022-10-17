@@ -738,6 +738,9 @@ class SignalFrame(QFrame):
             self.ui.chkBoxSyncSelection.hide()
             self.ui.cbProtoView.setEnabled(False)
 
+        qApp.processEvents()
+        self.on_slider_y_scale_value_changed()
+
     @pyqtSlot()
     def on_cb_signal_view_index_changed(self):
         self.setCursor(Qt.WaitCursor)

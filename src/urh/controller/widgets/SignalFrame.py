@@ -535,6 +535,8 @@ class SignalFrame(QFrame):
             return
 
         if not self.ui.chkBoxShowProtocol.isChecked():
+            if refresh:
+                self.update_protocol()
             return
 
         if old_view == -1:

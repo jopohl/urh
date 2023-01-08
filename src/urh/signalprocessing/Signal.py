@@ -145,13 +145,16 @@ class Signal(QObject):
             for line in subfile:
                 dataline = re.match(r'RAW_Data:\s*([-0-9 ]+)\s*$', line)
                 if dataline:
-                    values = dataline[1].split(r' ')
+                    values = dataline[1].strip().split(' ')
                     for value in values:
-                        intval = int(value)
-                        if intval > 0:
-                            arr.extend(np.full(intval, params["max"], dtype=params["fmt"]))
-                        else:
-                            arr.extend(np.zeros(-intval, dtype=params["fmt"]))
+                        try:
+                            intval = int(value)
+                            if intval > 0:
+                                arr.extend(np.full(intval, params["max"], dtype=params["fmt"]))
+                            else:
+                                arr.extend(np.zeros(-intval, dtype=params["fmt"]))
+                        except ValueError:
+                            logger.warning("Skipped invalid value {0} in sub file {1}.\nLine <{2}>\nValues:<{3}>\n".format(value, filename, line, values))
         self.iq_array = IQArray(None, np.float32, n=len(arr))
         self.iq_array.real = np.multiply(1 / params["max"], np.subtract(arr, params["center"]))
         self.__already_demodulated = True

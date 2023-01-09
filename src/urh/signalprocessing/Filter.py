@@ -123,4 +123,4 @@ class Filter(object):
 
         # https://dsp.stackexchange.com/questions/41361/how-to-implement-bandpass-filter-on-complex-valued-signal
         return Filter.design_windowed_sinc_lpf(f_c, bw=bw) * \
-               np.exp(np.complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))
+               np.exp(complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))

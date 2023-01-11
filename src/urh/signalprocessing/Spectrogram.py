@@ -169,7 +169,7 @@ class Spectrogram(object):
         else:
             normalized_values = data.T
 
-        return np.take(colormap, normalized_values.astype(np.int), axis=0, mode='clip')
+        return np.take(colormap, normalized_values.astype(np.int_), axis=0, mode='clip')
 
     @staticmethod
     def create_image(data: np.ndarray, colormap, data_min=None, data_max=None, normalize=True) -> QImage:

@@ -90,6 +90,11 @@ class VirtualDevice(QObject):
                     self.__dev = HackRF(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,
                                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
                                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+                elif name == "rad1o":
+                    from urh.dev.native.Rad1o import Rad1o
+                    self.__dev = Rad1o(center_freq=freq, sample_rate=sample_rate, bandwidth=bandwidth,
+                                        gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
+                                        resume_on_full_receive_buffer=resume_on_full_receive_buffer)
                 elif name.replace("-", "") == "rtlsdr":
                     from urh.dev.native.RTLSDR import RTLSDR
                     self.__dev = RTLSDR(freq=freq, gain=gain, srate=sample_rate, device_number=0,

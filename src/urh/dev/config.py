@@ -53,6 +53,17 @@ DEVICE_CONFIG["HackRF"] = {
     "bias_tee_enabled": [False, True]
 }
 
+DEVICE_CONFIG["Rad1o"] = {
+    "center_freq": dev_range(start=10, stop=6 * G, step=1),
+    "sample_rate": dev_range(start=2 * M, stop=20 * M, step=1),
+    "bandwidth": dev_range(start=2 * M, stop=20 * M, step=1),
+    "tx_rf_gain": [0, 14],
+    "rx_rf_gain": [0, 14],
+    "rx_if_gain": [0, 8, 16, 24, 32, 40],
+    "tx_if_gain": list(range(0, 48)),
+    "rx_baseband_gain": list(range(0, 63, 2))  # only available in RX
+}
+
 # https://kb.ettus.com/About_USRP_Bandwidths_and_Sampling_Rates
 DEVICE_CONFIG["USRP"] = {
     "center_freq": dev_range(start=0, stop=6 * G, step=1),

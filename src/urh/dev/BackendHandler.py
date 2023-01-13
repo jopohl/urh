@@ -81,7 +81,7 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF",
+    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF", "Rad1o",
                     "LimeSDR", "PlutoSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
 
     def __init__(self):
@@ -255,6 +255,10 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower() == "hackrf" and self.__hackrf_native_enabled:
+            supports_rx, supports_tx = True, True
+            backends.add(Backends.native)
+
+        if devname.lower() == "rad1o" and self.__hackrf_native_enabled:
             supports_rx, supports_tx = True, True
             backends.add(Backends.native)
 

@@ -69,8 +69,7 @@ jobs:
             pip install PyVirtualDisplay==0.2.5
           elif [[ $OS == windows* ]]
           then
-            pip install pywin32 pipwin
-            pipwin install pyaudio
+            pip install pywin32 pyaudio
           elif [[ $OS == mac* ]] 
           then
             brew tap pothosware/homebrew-pothos

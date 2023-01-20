@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+enum Modulation {
+  MOD_ASK = 0;
+  MOD_FSK = 1;
+  MOD_PSK = 2;
+}
+
+
+enum EncodingFormat {
+  CODE_NRZ = 0;
+  CODE_NRZ_INVERT = 1;
+  CODE_MANCHESTER_1 = 2;
+  CODE_MANCHESTER_2 = 3;
+  CODE_DIFF_MANCHESTER = 4;
+}
+
+
+message MessageLabel {
+  string name = 1;
+  int32 start = 2;
+  int32 end = 3;
+  int32 color_index = 4;
+  bool apply_decoding = 5;
+  int32 show = 6;
+  int32 display_format_index = 7;
+  int32 display_bit_order_index = 8;
+  string display_endianness = 9;
+  int32 fuzz_me = 10;
+  int32 fuzz_values = 12;
+  bool auto_created = 13;
+}
+
+
+message MessageType {
+  string name = 1;
+  string id = 2;
+  bool assigned_by_ruleset = 3;
+  bool assigned_by_logic_analyzer = 4;
+  repeated MessageLabel label = 5;
+  int32 ruleset_mode = 6;
+}
+
+message Message {
+  string message_type_id = 1;
+  int32 modulator_index = 2;
+  int32 pause_ms = 3;
+  float timestamp = 4;
+  repeated bool bit_array = 5;
+  int32 bit_array_length = 6;
+  int32 decoding_index = 7;
+}
+
+message Signal {
+  string name = 1;
+  float freq = 2;
+  float deviation = 3;
+  Modulation modulation = 4;
+  repeated Message message = 5;
+}

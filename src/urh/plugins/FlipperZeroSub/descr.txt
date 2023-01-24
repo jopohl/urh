@@ -1,0 +1,1 @@
+This plugin adds support for saving as a Flipper Zero SubGHz (.sub) protocol in Generator.

@@ -4,7 +4,7 @@ import numpy
 import numpy as np
 from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication
+from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication, QFileDialog
 
 from urh import settings
 from urh.controller.CompareFrameController import CompareFrameController
@@ -18,6 +18,7 @@ from urh.models.GeneratorTreeModel import GeneratorTreeModel
 from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
 from urh.plugins.PluginManager import PluginManager
 from urh.plugins.RfCat.RfCatPlugin import RfCatPlugin
+from urh.plugins.FlipperZeroSub.FlipperZeroSubPlugin import FlipperZeroSubPlugin
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -62,6 +63,10 @@ class GeneratorTabController(QWidget):
         self.network_sdr_plugin = NetworkSDRInterfacePlugin()
         self.rfcat_plugin = RfCatPlugin()
         self.init_rfcat_plugin()
+
+        # Flipper Zero Sub Plugin
+        self.set_FZSave_button_visibility()
+        self.flipperzerosub_plugin = FlipperZeroSubPlugin()
 
         self.modulation_msg_indices = []
 
@@ -155,6 +160,9 @@ class GeneratorTabController(QWidget):
         self.network_sdr_plugin.sending_status_changed.connect(self.on_network_sdr_sending_status_changed)
         self.network_sdr_plugin.sending_stop_requested.connect(self.on_network_sdr_sending_stop_requested)
         self.network_sdr_plugin.current_send_message_changed.connect(self.on_send_message_changed)
+
+        # Flipper Zero
+        self.ui.btnFZSave.clicked.connect(self.on_btn_FZSave_clicked)
 
     @pyqtSlot()
     def refresh_tree(self):
@@ -646,6 +654,24 @@ class GeneratorTabController(QWidget):
     def set_rfcat_button_visibility(self):
         is_plugin_enabled = PluginManager().is_plugin_enabled("RfCat")
         self.ui.btnRfCatSend.setVisible(is_plugin_enabled)
+
+    def set_FZSave_button_visibility(self):
+        is_plugin_enabled = PluginManager().is_plugin_enabled("FlipperZeroSub")
+        self.ui.btnFZSave.setVisible(is_plugin_enabled)
+
+    @pyqtSlot()
+    def on_btn_FZSave_clicked(self):
+        filename, _ = QFileDialog.getSaveFileName(self, self.tr("Choose file"), directory=FileOperator.RECENT_PATH,
+                                                  filter="SUB files (*.sub);;All files (*.*)")
+        if len(filename) > 0:
+            if not filename.endswith(".sub"):
+                filename = filename+".sub"
+
+            messages = self.table_model.protocol.messages
+            sample_rates = [self.__get_modulator_of_message(msg).sample_rate for msg in messages]
+            self.flipperzerosub_plugin.write_sub_file(filename, messages, sample_rates, self.modulators, self.project_manager)
+        else:
+            logger.debug("Filename was empty!")
 
     @pyqtSlot()
     def on_btn_network_sdr_clicked(self):

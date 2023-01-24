@@ -248,8 +248,8 @@ class IQArray(object):
 
         for value in self.convert_to(np.uint8):
             # if origin was a sub-file value is uint8, else value is [uint8, uint8]
-            # TODO: export only works with sub files. Idea: Export from bit stream?
-            value = np.linalg.norm(value)
+            if len(value) > 1:  # if value has more than one component, use the first component
+                value = value[0]
 
             # set lastvalue to value for first run
             try:

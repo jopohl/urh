@@ -68,10 +68,9 @@ class FlipperZeroSubPlugin(SDRPlugin):
 
         # Get Flipper Zero FuriHal Preset and its datarate
         frequency = int( project_manager.device_conf['frequency'] )
-        samplerate = sample_rates[0]
+        #samplerate = sample_rates[0]
         samples_per_symbol = messages[0].samples_per_symbol
-        #calculated_datarate = int(samplerate // samples_per_symbol)
-        preset, datarate = self.getFuriHalString( modulators[messages[0].modulator_index].modulation_type, 1000)
+        preset, bandwidth_deviation = self.getFuriHalString( modulators[messages[0].modulator_index].modulation_type, 1000) # TODO: last parameter is bandwidth/deviation of preset profile. Hardcoded to 1000 until it becomes clear how to find the value from signal data properly
 
         # Write Flipper Zero SubGHz protocol header
         file.write(f"Filetype: {self.filetype}\n")

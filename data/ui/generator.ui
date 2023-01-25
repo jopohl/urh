@@ -524,39 +524,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
            <property name="bottomMargin">
             <number>11</number>
            </property>
-           <item row="2" column="6">
-            <widget class="QComboBox" name="cbViewType">
-             <item>
-              <property name="text">
-               <string>Bit</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Hex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>ASCII</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="5">
-            <widget class="QLabel" name="lViewType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Viewtype:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="7">
+           <item row="1" column="0" colspan="8">
             <widget class="GeneratorTableView" name="tableMessages">
              <property name="acceptDrops">
               <bool>true</bool>
@@ -599,7 +567,83 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
              </attribute>
             </widget>
            </item>
-           <item row="0" column="0" colspan="7">
+           <item row="2" column="0">
+            <widget class="QPushButton" name="btnNetworkSDRSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Send via Network</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wired">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4" colspan="2">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>38</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="7">
+            <widget class="QComboBox" name="cbViewType">
+             <item>
+              <property name="text">
+               <string>Bit</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hex</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>ASCII</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLabel" name="lViewType">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Viewtype:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QPushButton" name="btnRfCatSend">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Send via RfCat</string>
+             </property>
+             <property name="icon">
+              <iconset theme="network-wireless">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="8">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <property name="topMargin">
               <number>0</number>
@@ -671,38 +715,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
              </item>
             </layout>
            </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="btnNetworkSDRSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data to your external application via TCP.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via Network</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wired">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QPushButton" name="btnRfCatSend">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send encoded data via RfCat. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Edit-&amp;gt;Options-&amp;gt;Device-&amp;gt;'Device sending repetitions'&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>Send via RfCat</string>
-             </property>
-             <property name="icon">
-              <iconset theme="network-wireless">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
+           <item row="2" column="3">
             <widget class="QLabel" name="lEstimatedTime">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -712,18 +725,15 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
              </property>
             </widget>
            </item>
-           <item row="2" column="3" colspan="2">
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnFZSave">
+             <property name="text">
+              <string>Save as FlipperZero SubGHz</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>38</width>
-               <height>22</height>
-              </size>
+             <property name="icon">
+              <iconset theme="document-save-as"/>
              </property>
-            </spacer>
+            </widget>
            </item>
           </layout>
          </widget>

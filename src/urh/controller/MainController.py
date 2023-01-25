@@ -866,6 +866,8 @@ class MainController(QMainWindow):
         self.generator_tab_controller.init_rfcat_plugin()
         self.generator_tab_controller.set_modulation_profile_status()
         self.simulator_tab_controller.refresh_field_types_for_labels()
+        # Flipper Zero
+        self.generator_tab_controller.set_FZSave_button_visibility()
 
         if "num_sending_repeats" in changed_options:
             self.project_manager.device_conf["num_sending_repeats"] = changed_options["num_sending_repeats"]

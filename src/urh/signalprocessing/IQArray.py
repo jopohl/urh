@@ -96,7 +96,7 @@ class IQArray(object):
         return self.__data.tostring()
 
     def subarray(self, start=None, stop=None, step=None):
-        return IQArray(self[start:stop:step])
+        return IQArray(np.ascontiguousarray(self[start:stop:step]))
 
     def insert_subarray(self, pos, subarray: np.ndarray):
         if subarray.ndim == 1:

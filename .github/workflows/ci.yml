@@ -192,3 +192,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
           TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+          OS: ${{ matrix.os }}

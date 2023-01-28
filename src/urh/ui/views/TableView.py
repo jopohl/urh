@@ -60,7 +60,7 @@ class TableView(QTableView):
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
-    def set_font_size(self, n: int | float):
+    def set_font_size(self, n: float):
         if n < 1:
             return
         font = self.font()

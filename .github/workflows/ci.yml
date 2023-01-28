@@ -181,12 +181,7 @@ jobs:
       - name: Upload to PyPi
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          if [[ $OS == ubuntu* ]]
-          then
-            twine upload --skip-existing dist/*
-          else
-            twine upload --skip-existing dist/*.whl
-          fi
+          twine upload --skip-existing dist/*
         shell: bash
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}

@@ -181,9 +181,15 @@ jobs:
       - name: Upload to PyPi
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          twine upload --skip-existing dist/*
+          if [[ $OS == ubuntu* ]]
+          then
+            twine upload --skip-existing dist/*
+          else
+            twine upload --skip-existing dist/*.whl
+          fi
         shell: bash
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
           TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+          OS: ${{ matrix.os }}

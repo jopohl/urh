@@ -113,10 +113,10 @@ def main():
 
     util.set_icon_theme()
 
-    font_size = settings.read("font_size", 0, int)
+    font_size = settings.read("font_size", 0, float)
     if font_size > 0:
         font = app.font()
-        font.setPointSize(font_size)
+        font.setPointSizeF(font_size)
         app.setFont(font)
 
     settings.write("default_theme", app.style().objectName())

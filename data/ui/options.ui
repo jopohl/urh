@@ -193,18 +193,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBoxFontSize">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxFontSize">
            <property name="suffix">
             <string>pt</string>
            </property>
            <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>120</number>
-           </property>
-           <property name="value">
-            <number>10</number>
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -282,7 +276,7 @@
                <x>0</x>
                <y>0</y>
                <width>762</width>
-               <height>397</height>
+               <height>466</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4"/>

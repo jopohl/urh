@@ -81,7 +81,7 @@ class GridScene(ZoomableScene):
             self.frequency_marker[1].setBrush(QBrush(settings.LINECOLOR))
             font = QFont()
             font.setBold(True)
-            font.setPointSize(int(font.pointSize() * 1.25)+1)
+            font.setPointSizeF(font.pointSizeF() * 1.25 + 1)
             self.frequency_marker[1].setFont(font)
 
         self.frequency_marker[0].setLine(x_pos, y1, x_pos, y2)

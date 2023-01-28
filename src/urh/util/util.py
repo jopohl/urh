@@ -318,7 +318,7 @@ def write_xml_to_file(xml_tag: ET.Element, filename: str):
 
 def get_monospace_font() -> QFont:
     fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-    fixed_font.setPointSize(QApplication.instance().font().pointSize())
+    fixed_font.setPointSizeF(QApplication.instance().font().pointSizeF())
     return fixed_font
 
 

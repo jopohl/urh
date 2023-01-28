@@ -60,23 +60,23 @@ class TableView(QTableView):
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
 
-    def set_font_size(self, n: int):
+    def set_font_size(self, n: int | float):
         if n < 1:
             return
         font = self.font()
 
         if n <= self.original_font_size:
-            font.setPointSize(n)
+            font.setPointSizeF(n)
             self.setFont(font)
 
         if n <= self.original_header_font_sizes["horizontal"]:
             hheader_font = self.horizontalHeader().font()
-            hheader_font.setPointSize(n)
+            hheader_font.setPointSizeF(n)
             self.horizontalHeader().setFont(hheader_font)
 
         if n <= self.original_header_font_sizes["vertical"]:
             vheader_font = self.verticalHeader().font()
-            vheader_font.setPointSize(n)
+            vheader_font.setPointSizeF(n)
             self.verticalHeader().setFont(vheader_font)
 
         self.resize_columns()
@@ -95,11 +95,11 @@ class TableView(QTableView):
 
     @pyqtSlot()
     def on_zoom_in_action_triggered(self):
-        self.set_font_size(self.font().pointSize() + 1)
+        self.set_font_size(self.font().pointSizeF() + 1)
 
     @pyqtSlot()
     def on_zoom_out_action_triggered(self):
-        self.set_font_size(self.font().pointSize() - 1)
+        self.set_font_size(self.font().pointSizeF() - 1)
 
     @pyqtSlot()
     def on_zoom_original_action_triggered(self):

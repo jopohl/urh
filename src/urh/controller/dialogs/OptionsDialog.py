@@ -197,7 +197,7 @@ class OptionsDialog(QDialog):
         completer.setModel(QDirModel(completer))
         self.ui.lineEditGRPythonInterpreter.setCompleter(completer)
 
-        self.ui.spinBoxFontSize.setValue(qApp.font().pointSize())
+        self.ui.doubleSpinBoxFontSize.setValue(qApp.font().pointSizeF())
 
         self.refresh_device_tab()
 
@@ -242,7 +242,7 @@ class OptionsDialog(QDialog):
         self.ui.checkBoxMultipleModulations.clicked.connect(self.on_checkbox_multiple_modulations_clicked)
         self.ui.btnViewBuildLog.clicked.connect(self.on_btn_view_build_log_clicked)
         self.ui.labelDeviceMissingInfo.linkActivated.connect(self.on_label_device_missing_info_link_activated)
-        self.ui.spinBoxFontSize.editingFinished.connect(self.on_spin_box_font_size_editing_finished)
+        self.ui.doubleSpinBoxFontSize.editingFinished.connect(self.on_spin_box_font_size_editing_finished)
 
     def show_gnuradio_infos(self):
         self.ui.lineEditGRPythonInterpreter.setText(self.backend_handler.gr_python_interpreter)
@@ -468,9 +468,9 @@ class OptionsDialog(QDialog):
 
     @pyqtSlot()
     def on_spin_box_font_size_editing_finished(self):
-        settings.write("font_size", self.ui.spinBoxFontSize.value())
+        settings.write("font_size", self.ui.doubleSpinBoxFontSize.value())
         font = qApp.font()
-        font.setPointSize(self.ui.spinBoxFontSize.value())
+        font.setPointSizeF(self.ui.doubleSpinBoxFontSize.value())
         qApp.setFont(font)
 
     @pyqtSlot(bool)

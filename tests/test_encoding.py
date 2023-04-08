@@ -125,18 +125,24 @@ class TestDecoding(unittest.TestCase):
 
         msg1 = "aa9a6d201006401009802019e411e8035b"
         msg2 = "aa9a6d2010000ffdaaf01019e411e8071b"
+        msg3 = ""
 
         # Remove Preamble + SOF + EOF for CRC calculation
         msg1 = util.hex2bit("a6d201006401009802019e411e8035")
         crc1 = util.hex2bit("35")
         msg2 = util.hex2bit("a6d2010000ffdaaf01019e411e8071")
         crc2 = util.hex2bit("71")
+        msg3 = util.hex2bit("a6d201006401009802019e411e40b6")
+        checksum3 = util.hex2bit("b6")
 
         wsp_checker = WSPChecksum()
         calc_crc1 = wsp_checker.calculate(msg1)
         calc_crc2 = wsp_checker.calculate(msg2)
+        calc_checksum3 = wsp_checker.calculate(msg3)
         self.assertTrue(calc_crc1 == crc1)
         self.assertTrue(calc_crc2 == crc2)
+        print(calc_checksum3, "=?=", checksum3)
+        self.assertTrue(calc_checksum3 == checksum3)
 
     def test_morse(self):
         e = Encoding()

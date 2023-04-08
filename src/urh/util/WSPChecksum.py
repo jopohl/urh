@@ -54,12 +54,12 @@ class WSPChecksum(object):
                 if status[0]:
                     return self.crc8(msg[:-8])  # ignore trailing hash
                 else:
-                    return self.checksum8(msg[:-8])  # ignore trailing hash
+                    return self.checksum8(msg[:])
 
             elif self.mode == self.ChecksumMode.checksum4:
                 return self.checksum4(msg)
             elif self.mode == self.ChecksumMode.checksum8:
-                return self.checksum8(msg[:-8])
+                return self.checksum8(msg[:])
             elif self.mode == self.ChecksumMode.crc8:
                 return self.crc8(msg[:-8])
 

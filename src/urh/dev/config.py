@@ -99,7 +99,8 @@ DEVICE_CONFIG["RTL-SDR"] = {
     "bandwidth": dev_range(start=1, stop=int(3.2 * M), step=1),
     "rx_rf_gain": list(range(-100, 500)),
     "direct_sampling": ["disabled", "I-ADC input enabled", "Q-ADC input enabled"],
-    "freq_correction": dev_range(start=-1 * 10 ** 3, stop=1 * 10 ** 3, step=1)
+    "freq_correction": dev_range(start=-1 * 10 ** 3, stop=1 * 10 ** 3, step=1),
+    "bias_tee_enabled": [False, True]
 }
 
 DEVICE_CONFIG["RTL-TCP"] = copy.deepcopy(DEVICE_CONFIG["RTL-SDR"])

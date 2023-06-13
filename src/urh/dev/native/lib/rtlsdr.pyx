@@ -332,3 +332,11 @@ cpdef int cancel_async():
     :return: 0 on success
     """
     return crtlsdr.rtlsdr_cancel_async(_c_device)
+
+cpdef int set_bias_tee(int on):
+    """
+    Enable or disable the bias tee on GPIO PIN 0.
+ 
+    return -1 if device is not initialized. 0 otherwise.
+    """
+    return crtlsdr.rtlsdr_set_bias_tee (_c_device, on)

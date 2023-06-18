@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2019, macos-10.15]
+        os: [ubuntu-latest, windows-2019, macos-11]
         python-version: ['3.7', '3.8', '3.9', '3.10']
         architecture: [x64]
         include:
@@ -29,11 +29,11 @@ jobs:
             python-version: '3.9'
           - os: windows-2019
             python-version: '3.10'
-          - os: macOS-10.15
+          - os: macOS-11
             python-version: '3.7'
-          - os: macOS-10.15
+          - os: macOS-11
             python-version: '3.8'
-          - os: macOS-10.15
+          - os: macOS-11
             python-version: '3.10'
 
       fail-fast: false
@@ -72,7 +72,7 @@ jobs:
             pip install pywin32 pyaudio
           elif [[ $OS == mac* ]] 
           then
-            brew tap pothosware/homebrew-pothos
+            brew tap pothosware/homebrew-pothosmacos-
             brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd
             
             wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg

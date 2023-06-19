@@ -69,3 +69,5 @@ cdef extern from "rtl-sdr.h":
 
     int rtlsdr_read_async(rtlsdr_dev_t *dev, rtlsdr_read_async_cb_t cb, void *ctx, uint32_t buf_num, uint32_t buf_len);
     int rtlsdr_cancel_async(rtlsdr_dev_t *dev)
+
+    int rtlsdr_set_bias_tee(rtlsdr_dev_t *dev, int on)

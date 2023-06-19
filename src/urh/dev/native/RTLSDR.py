@@ -18,7 +18,8 @@ class RTLSDR(Device):
         Device.Command.SET_RF_GAIN.name+"_get_allowed_values": "get_tuner_gains",
         Device.Command.SET_BANDWIDTH.name: "set_tuner_bandwidth",
         Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
-        Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling"
+        Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling",
+        Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee"
     })
 
     DATA_TYPE = np.int8
@@ -77,6 +78,7 @@ class RTLSDR(Device):
                             (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
                             (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
                             (self.Command.SET_RF_GAIN.name, self.gain),
+                            (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
                             ("identifier", self.device_number)])
 
     @property

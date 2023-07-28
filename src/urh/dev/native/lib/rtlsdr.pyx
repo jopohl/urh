@@ -314,17 +314,6 @@ cpdef bytes read_sync(int num_samples=8 * 32 * 512):
     finally:
         free(samples)
 
-cpdef int read_async(callback, connection):
-    """
-    Read samples from the device asynchronously. This function will block until
-    it is being canceled using rtlsdr_cancel_async()
-    read_bytes_async
-    :return: 0 on success
-    """
-    global f
-    f = callback
-    return crtlsdr.rtlsdr_read_async(_c_device, _c_callback_recv, <void *>connection, 0, 0)
-
 cpdef int cancel_async():
     """
     Cancel all pending asynchronous operations on the device.

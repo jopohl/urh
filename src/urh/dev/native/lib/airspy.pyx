@@ -17,7 +17,7 @@ ctypedef unsigned long long uint64_t
 cdef cairspy.airspy_device* _c_device
 cdef object f
 
-cdef int _c_callback_recv(cairspy.airspy_transfer*transfer) with gil:
+cdef int _c_callback_recv(cairspy.airspy_transfer*transfer) noexcept with gil:
     global f
     try:
         (<object> f)(<float [:2*transfer.sample_count]>transfer.samples)

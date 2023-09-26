@@ -8,7 +8,7 @@ ctypedef unsigned long long uint64_t
 
 cdef crtlsdr.rtlsdr_dev_t*_c_device
 
-cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx):
+cdef void _c_callback_recv(unsigned char *buffer, uint32_t length, void *ctx) noexcept:
     global f
     conn = <object> ctx
     (<object>f)(buffer[0:length])

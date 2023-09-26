@@ -10,7 +10,7 @@ TIMEOUT = 0.2
 cdef object f
 cdef int RUNNING = 0
 
-cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
+cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer) noexcept with gil:
     global f, RUNNING
     try:
         (<object> f)(transfer.buffer[0:transfer.valid_length])
@@ -19,7 +19,7 @@ cdef int _c_callback_recv(chackrf.hackrf_transfer*transfer)  with gil:
         logger.error("Cython-HackRF:" + str(e))
         return -1
 
-cdef int _c_callback_send(chackrf.hackrf_transfer*transfer)  with gil:
+cdef int _c_callback_send(chackrf.hackrf_transfer*transfer) noexcept with gil:
     global f, RUNNING
     # tostring() is a compatibility (numpy<1.9) alias for tobytes(). Despite its name it returns bytes not strings.
     cdef unsigned int i

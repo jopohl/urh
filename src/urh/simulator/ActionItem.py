@@ -13,7 +13,7 @@ class ActionItem(GraphicsItem):
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(model_item=model_item, parent=parent)
 
-        self.setFlag(QGraphicsTextItem.ItemIsPanel, True)
+        self.setFlag(QGraphicsTextItem.GraphicsItemFlag.ItemIsPanel, True)
 
         self.text = QGraphicsTextItem(self)
         self.text.setFont(self.font)

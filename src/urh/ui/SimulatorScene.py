@@ -358,7 +358,7 @@ class SimulatorScene(QGraphicsScene):
 
             insert_position = ref_item.get_pos()
         elif isinstance(ref_item, SimulatorRuleCondition):
-            if position == QAbstractItemView.OnItem:
+            if position == QAbstractItemView.DropIndicatorPosition.OnItem:
                 parent_item = ref_item
                 insert_position = parent_item.child_count()
             else:
@@ -368,10 +368,10 @@ class SimulatorScene(QGraphicsScene):
             parent_item = ref_item.parent()
             insert_position = ref_item.get_pos()
 
-        if position == QAbstractItemView.BelowItem:
+        if position == QAbstractItemView.DropIndicatorPosition.BelowItem:
             insert_position += 1
 
-        return (insert_position, parent_item)
+        return insert_position, parent_item
 
     def dropEvent(self, event: QDropEvent):
         items = [item for item in self.items(event.scenePos()) if isinstance(item, GraphicsItem) and item.acceptDrops()]

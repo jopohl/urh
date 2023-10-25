@@ -20,7 +20,7 @@ class LoggingGraphicsView(QGraphicsView):
         self.do_not_log_selected_action.triggered.connect(self.on_do_not_log_selected_action_triggered)
 
         self.select_all_action = QAction(self.tr("Select all"), self)
-        self.select_all_action.setShortcut(QKeySequence.SelectAll)
+        self.select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         self.select_all_action.triggered.connect(self.on_select_all_action_triggered)
 
         self.addAction(self.log_selected_action)

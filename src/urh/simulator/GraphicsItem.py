@@ -24,16 +24,16 @@ class GraphicsItem(QGraphicsObject):
 
         self.font = util.get_monospace_font()
         self.font_bold = QFont(self.font)
-        self.font_bold.setWeight(QFont.DemiBold)
+        self.font_bold.setWeight(QFont.Weight.DemiBold)
 
         self.number = QGraphicsTextItem(self)
         self.number.setFont(self.font_bold)
 
-        self.setFlag(QGraphicsItem.ItemIgnoresParentOpacity, True)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIgnoresParentOpacity, True)
 
     def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
-        self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
-        self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, is_selectable)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, is_movable)
         self.setAcceptHoverEvents(accept_hover_events)
         self.setAcceptDrops(accept_drops)
 
@@ -67,10 +67,10 @@ class GraphicsItem(QGraphicsObject):
         return [self.scene().model_to_scene(child) for child in self.model_item.children]
 
     def is_selectable(self):
-        return self.flags() & QGraphicsItem.ItemIsSelectable
+        return self.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsSelectable
 
     def is_movable(self):
-        return self.flags() & QGraphicsItem.ItemIsMovable
+        return self.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsMovable
 
     def select_all(self):
         self.setSelected(True)
@@ -112,9 +112,9 @@ class GraphicsItem(QGraphicsObject):
         rect = self.boundingRect()
 
         if pos.y() - rect.top() < rect.height() / 2:
-            self.drop_indicator_position = QAbstractItemView.AboveItem
+            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.AboveItem
         else:
-            self.drop_indicator_position = QAbstractItemView.BelowItem
+            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.BelowItem
 
         self.update()
 
@@ -142,7 +142,7 @@ class GraphicsItem(QGraphicsObject):
         painter.setPen(pen)
         rect = self.boundingRect()
 
-        if self.drop_indicator_position == QAbstractItemView.AboveItem:
+        if self.drop_indicator_position == QAbstractItemView.DropIndicatorPosition.AboveItem:
             painter.drawLine(QLineF(rect.topLeft(), rect.topRight()))
         else:
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))

@@ -102,11 +102,11 @@ class RuleConditionItem(GraphicsItem):
         rect = self.boundingRect()
 
         if pos.y() - rect.top() < rect.height() / 3:
-            self.drop_indicator_position = QAbstractItemView.AboveItem
+            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.AboveItem
         elif rect.bottom() - pos.y() < rect.height() / 3:
-            self.drop_indicator_position = QAbstractItemView.BelowItem
+            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.BelowItem
         else:
-            self.drop_indicator_position = QAbstractItemView.OnItem
+            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.OnItem
 
         self.update()
 
@@ -141,9 +141,9 @@ class RuleConditionItem(GraphicsItem):
         painter.setBrush(Qt.NoBrush)
         rect = self.boundingRect()
 
-        if self.drop_indicator_position == QAbstractItemView.AboveItem:
+        if self.drop_indicator_position == QAbstractItemView.DropIndicatorPosition.AboveItem:
             painter.drawLine(QLineF(rect.topLeft(), rect.topRight()))
-        elif self.drop_indicator_position == QAbstractItemView.OnItem:
+        elif self.drop_indicator_position == QAbstractItemView.DropIndicatorPosition.OnItem:
             painter.drawRect(rect)
         else:
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))

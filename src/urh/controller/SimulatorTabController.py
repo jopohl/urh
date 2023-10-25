@@ -440,7 +440,7 @@ class SimulatorTabController(QWidget):
                 return
 
         try:
-            self.get_simulator_dialog().exec_()
+            self.get_simulator_dialog().exec()
         except Exception as e:
             Errors.exception(e)
 
@@ -514,7 +514,7 @@ class SimulatorTabController(QWidget):
     @pyqtSlot()
     def on_btn_load_clicked(self):
         dialog = FileOperator.get_open_dialog(False, parent=self, name_filter="simulator")
-        if dialog.exec_():
+        if dialog.exec():
             self.load_simulator_file(dialog.selectedFiles()[0])
 
     @pyqtSlot()

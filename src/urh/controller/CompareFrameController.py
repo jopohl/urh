@@ -671,7 +671,7 @@ class CompareFrameController(QWidget):
 
     def show_protocol_label_dialog(self, selected_index=None):
         dialog = self.create_protocol_label_dialog(selected_index=selected_index)
-        dialog.exec_()
+        dialog.exec()
 
     def search(self):
         value = self.ui.lineEditSearch.text()

@@ -396,7 +396,7 @@ class SignalFrame(QFrame):
 
             drag.setMimeData(mimeData)
 
-            drag.exec_()
+            drag.exec()
 
     def set_filter_button_caption(self):
         self.ui.btnFilter.setText("Filter ({0})".format(self.dsp_filter.filter_type.value))
@@ -1329,7 +1329,7 @@ class SignalFrame(QFrame):
             dialog = self.get_costas_dialog()
         else:
             raise ValueError("No additional settings available")
-        dialog.exec_()
+        dialog.exec()
 
     @pyqtSlot()
     def on_export_fta_wanted(self):

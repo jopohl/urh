@@ -626,7 +626,7 @@ class GeneratorTabController(QWidget):
     @pyqtSlot()
     def on_btn_open_clicked(self):
         dialog = FileOperator.get_open_dialog(directory_mode=False, parent=self, name_filter="fuzz")
-        if dialog.exec_():
+        if dialog.exec():
             for filename in dialog.selectedFiles():
                 self.load_from_file(filename)
 

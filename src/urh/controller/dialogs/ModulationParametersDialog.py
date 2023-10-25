@@ -65,4 +65,4 @@ if __name__ == '__main__':
     dialog = ModulationParametersDialog([0, 100.0], "ASK")
     dialog.show()
 
-    app.exec_()
+    app.exec()

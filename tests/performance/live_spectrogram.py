@@ -72,4 +72,4 @@ if __name__ == '__main__':
     widget.setLayout(layout)
 
     widget.showMaximized()
-    app.exec_()
+    app.exec()

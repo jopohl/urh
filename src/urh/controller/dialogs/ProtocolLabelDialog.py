@@ -44,7 +44,7 @@ class ProtocolLabelDialog(QDialog):
                                                                              parent=self))
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
-        self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.EditTrigger.AllEditTriggers)
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 

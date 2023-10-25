@@ -62,7 +62,7 @@ if __name__ == '__main__':
     frequency = 0.1
     divisor = 200
     pos = 0
-    app.exec_()
+    app.exec()
     p.terminate()
     p.join()
 

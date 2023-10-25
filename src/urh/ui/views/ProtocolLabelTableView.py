@@ -51,7 +51,7 @@ class ProtocolLabelTableView(QTableView):
         return menu
 
     def contextMenuEvent(self, event):
-        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
+        self.create_context_menu().exec(self.mapToGlobal(event.pos()))
 
     def delete_selected_rows(self):
         for row in sorted(self.selected_rows, reverse=True):

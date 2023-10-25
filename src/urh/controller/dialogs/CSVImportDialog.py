@@ -234,4 +234,4 @@ class CSVImportDialog(QDialog):
 if __name__ == '__main__':
     app = QApplication(["urh"])
     csv_dia = CSVImportDialog()
-    csv_dia.exec_()
+    csv_dia.exec()

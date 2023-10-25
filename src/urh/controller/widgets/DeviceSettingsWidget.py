@@ -550,4 +550,4 @@ if __name__ == '__main__':
     widget = DeviceSettingsWidget(mc.project_manager, is_tx=False)
 
     widget.show()
-    app.exec_()
+    app.exec()

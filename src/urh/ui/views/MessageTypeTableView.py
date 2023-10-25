@@ -65,7 +65,7 @@ class MessageTypeTableView(QTableView):
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
-        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
+        self.create_context_menu().exec(self.mapToGlobal(event.pos()))
 
     def delete_rows(self):
         min_row, max_row = self.selection_range()

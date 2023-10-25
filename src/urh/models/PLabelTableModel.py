@@ -79,7 +79,7 @@ class PLabelTableModel(QAbstractTableModel):
                 return lbl.color_index
             elif j == 4:
                 return lbl.apply_decoding
-        elif role == Qt.AlignmentFlag.TextAlignmentRole:
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
             return Qt.AlignmentFlag.AlignCenter
         else:
             return None

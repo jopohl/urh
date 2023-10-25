@@ -792,7 +792,7 @@ class MainController(QMainWindow):
 
     def show_open_dialog(self, directory=False):
         dialog = FileOperator.get_open_dialog(directory_mode=directory, parent=self, name_filter="full")
-        if dialog.exec_():
+        if dialog.exec():
             try:
                 file_names = dialog.selectedFiles()
                 folders = [folder for folder in file_names if os.path.isdir(folder)]
@@ -914,7 +914,7 @@ class MainController(QMainWindow):
 
         dialog = CSVImportDialog(file_name, parent=self)
         dialog.data_imported.connect(on_data_imported)
-        dialog.exec_()
+        dialog.exec()
 
     @pyqtSlot(str)
     def on_label_non_project_mode_link_activated(self, link: str):
@@ -935,7 +935,7 @@ class MainController(QMainWindow):
     @pyqtSlot()
     def on_compare_frame_controller_load_protocol_clicked(self):
         dialog = FileOperator.get_open_dialog(directory_mode=False, parent=self, name_filter="proto")
-        if dialog.exec_():
+        if dialog.exec():
             for filename in dialog.selectedFiles():
                 self.add_protocol_file(filename)
 

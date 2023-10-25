@@ -314,7 +314,7 @@ class GeneratorTabController(QWidget):
         self.label_list_model.message = message
         decoder_name = message.decoder.name
         metrics = QFontMetrics(self.ui.lEncodingValue.font())
-        elidedName = metrics.elidedText(decoder_name, Qt.ElideRight, self.ui.lEncodingValue.width())
+        elidedName = metrics.elidedText(decoder_name, Qt.TextElideMode.ElideRight, self.ui.lEncodingValue.width())
         self.ui.lEncodingValue.setText(elidedName)
         self.ui.lEncodingValue.setToolTip(decoder_name)
         self.ui.cBoxModulations.blockSignals(True)

@@ -120,7 +120,7 @@ class ZoomableGraphicView(SelectableGraphicView):
 
     def wheelEvent(self, event: QWheelEvent):
         zoom_factor = 1.001 ** event.angleDelta().y()
-        self.zoom(zoom_factor, cursor_pos=event.pos())
+        self.zoom(zoom_factor, cursor_pos=event.position().toPoint())
 
     def resizeEvent(self, event):
         if self.sceneRect().width() == 0 or self.auto_fit_on_resize_is_blocked:

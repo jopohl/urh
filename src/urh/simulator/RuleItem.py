@@ -137,7 +137,7 @@ class RuleConditionItem(GraphicsItem):
             self.paint_drop_indicator(painter)
 
     def paint_drop_indicator(self, painter):
-        painter.setPen(QPen(Qt.darkRed, 2, Qt.SolidLine))
+        painter.setPen(QPen(Qt.GlobalColor.darkRed, 2, Qt.PenStyle.SolidLine))
         painter.setBrush(Qt.NoBrush)
         rect = self.boundingRect()
 

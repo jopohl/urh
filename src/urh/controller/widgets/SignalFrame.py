@@ -504,8 +504,8 @@ class SignalFrame(QFrame):
                 cur_message += 1
             i += 1
 
-        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, i)
-        c.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, sel_start)
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveMode.MoveAnchor, i)
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveMode.MoveAnchor, sel_start)
         text = text[i:]
         i = 0
         while cur_message < end_message:
@@ -513,8 +513,8 @@ class SignalFrame(QFrame):
                 cur_message += 1
             i += 1
 
-        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, i)
-        c.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, sel_end)
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveMode.KeepAnchor, i)
+        c.movePosition(QTextCursor.Right, QTextCursor.MoveMode.KeepAnchor, sel_end)
 
         self.ui.txtEdProto.setTextCursor(c)
 
@@ -1001,10 +1001,10 @@ class SignalFrame(QFrame):
                 message_pos = 0
 
             if n == start_message and message_pos == start_index:
-                c.setPosition(i + 1, QTextCursor.MoveAnchor)
+                c.setPosition(i + 1, QTextCursor.MoveMode.MoveAnchor)
 
             if n == end_message and message_pos == end_index:
-                c.setPosition(i, QTextCursor.KeepAnchor)
+                c.setPosition(i, QTextCursor.MoveMode.KeepAnchor)
                 break
 
         self.ui.txtEdProto.setTextCursor(c)

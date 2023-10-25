@@ -100,7 +100,7 @@ class TableModel(QAbstractTableModel):
         return True
 
     def headerData(self, section: int, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if orientation == Qt.Vertical:
+        if orientation == Qt.Orientation.Vertical:
             if role == Qt.ItemDataRole.DisplayRole:
                 return self.vertical_header_text[section]
             elif role ==Qt.ItemDataRole.BackgroundRole:

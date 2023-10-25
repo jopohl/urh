@@ -137,8 +137,8 @@ class GraphicsItem(QGraphicsObject):
             self.paint_drop_indicator(painter)
 
     def paint_drop_indicator(self, painter):
-        brush = QBrush(QColor(Qt.darkRed))
-        pen = QPen(brush, 2, Qt.SolidLine)
+        brush = QBrush(QColor(Qt.GlobalColor.darkRed))
+        pen = QPen(brush, 2, Qt.PenStyle.SolidLine)
         painter.setPen(pen)
         rect = self.boundingRect()
 

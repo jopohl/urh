@@ -31,7 +31,7 @@ class ParticipantTableView(QTableView):
         start_index = self.model().index(row_1, col_1)
         end_index = self.model().index(row_2, col_2)
         selection.select(start_index, end_index)
-        self.selectionModel().select(selection, QItemSelectionModel.Select)
+        self.selectionModel().select(selection, QItemSelectionModel.SelectionFlag.Select)
 
     def model(self) -> ParticipantTableModel:
         return super().model()

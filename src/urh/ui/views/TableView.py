@@ -160,7 +160,7 @@ class TableView(QTableView):
         start_index = self.model().index(row_1, col_1)
         end_index = self.model().index(row_2, col_2)
         selection.select(start_index, end_index)
-        self.selectionModel().select(selection, QItemSelectionModel.Select)
+        self.selectionModel().select(selection, QItemSelectionModel.SelectionFlag.Select)
 
     def resize_columns(self):
         if not self.isVisible():
@@ -266,8 +266,8 @@ class TableView(QTableView):
         selection = QItemSelection()
         selection.select(start, end)
         self.setCurrentIndex(start)
-        self.selectionModel().setCurrentIndex(end, QItemSelectionModel.ClearAndSelect)
-        self.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
+        self.selectionModel().setCurrentIndex(end, QItemSelectionModel.SelectionFlag.ClearAndSelect)
+        self.selectionModel().select(selection, QItemSelectionModel.SelectionFlag.ClearAndSelect)
         if scroll_to_start:
             self.scrollTo(start)
         else:

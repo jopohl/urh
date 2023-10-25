@@ -627,7 +627,7 @@ class CompareFrameController(QWidget):
         sel = QItemSelection()
         sel.select(start_index, end_index)
 
-        self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
+        self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.SelectionFlag.ClearAndSelect)
         self.ui.tblViewProtocol.scrollTo(mid_index)
 
     def expand_group_node(self, group_id):
@@ -698,8 +698,8 @@ class CompareFrameController(QWidget):
             sel = QItemSelection()
             sel.select(startindex, endindex)
 
-            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.Select)
-            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.PositionAtCenter)
+            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.SelectionFlag.Select)
+            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.ScrollHint.PositionAtCenter)
 
         self.ui.tblViewProtocol.setFocus()
 
@@ -769,8 +769,8 @@ class CompareFrameController(QWidget):
             sel = QItemSelection()
             sel.select(startindex, endindex)
 
-            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
-            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.PositionAtCenter)
+            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.SelectionFlag.ClearAndSelect)
+            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.ScrollHint.PositionAtCenter)
 
             self.ui.lSearchCurrent.setText(str(index + 1))
         except IndexError:
@@ -794,8 +794,8 @@ class CompareFrameController(QWidget):
             sel = QItemSelection()
             sel.select(startindex, endindex)
 
-            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
-            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.PositionAtCenter)
+            self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.SelectionFlag.ClearAndSelect)
+            self.ui.tblViewProtocol.scrollTo(startindex, QAbstractItemView.ScrollHint.PositionAtCenter)
 
             self.ui.lSearchCurrent.setText(str(index + 1))
         except IndexError:
@@ -1321,7 +1321,7 @@ class CompareFrameController(QWidget):
             self.active_group_ids = list(active_group_ids)
             self.active_group_ids.sort()
 
-        self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.ClearAndSelect)
+        self.ui.tblViewProtocol.selectionModel().select(sel, QItemSelectionModel.SelectionFlag.ClearAndSelect)
         self.ui.tblViewProtocol.blockSignals(False)
 
         self.updateUI(ignore_table_model=ignore_table_model_on_update)

@@ -112,7 +112,11 @@ cpdef array_to_QPath(np.int64_t[:] x, y):
 
     cdef long long last_index = 20 * (n + 1)
     byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)
-    buf = QByteArray(byte_view.data[12:last_index + 4])
+
+    try:
+        buf = QByteArray.fromRawData(byte_view.data[12:last_index + 4])
+    except TypeError:
+        buf = QByteArray(byte_view.data[12:last_index + 4])
 
     path = QPainterPath()
     ds = QDataStream(buf)

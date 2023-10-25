@@ -1,13 +1,12 @@
 from array import array
 
 import numpy
-from PyQt5.QtCore import Qt, pyqtSlot, QRegExp, QTimer
-from PyQt5.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegExpValidator
-from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit
+from PyQt6.QtCore import Qt, pyqtSlot, QRegularExpression, QTimer
+from PyQt6.QtGui import QCloseEvent, QResizeEvent, QKeyEvent, QIcon, QRegularExpressionValidator
+from PyQt6.QtWidgets import QDialog, QMessageBox, QLineEdit
 
 from urh import settings
 from urh.controller.dialogs.ModulationParametersDialog import ModulationParametersDialog
-from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.ui.ui_modulation import Ui_DialogModulation
@@ -23,8 +22,8 @@ class ModulatorDialog(QDialog):
 
         self.ui = Ui_DialogModulation()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.WindowType.Window)
 
         self.lock_samples_in_view = False
 
@@ -56,11 +55,11 @@ class ModulatorDialog(QDialog):
         self.original_bits = ""
 
         self.restore_bits_action = self.ui.linEdDataBits.addAction(QIcon.fromTheme("edit-undo"),
-                                                                   QLineEdit.TrailingPosition)
+                                                                   QLineEdit.ActionPosition.TrailingPosition)
         self.restore_bits_action.setEnabled(False)
 
         self.configure_parameters_action = self.ui.lineEditParameters.addAction(QIcon.fromTheme("configure"),
-                                                                                QLineEdit.TrailingPosition)
+                                                                                QLineEdit.ActionPosition.TrailingPosition)
 
         self.create_connects()
         self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
@@ -122,7 +121,7 @@ class ModulatorDialog(QDialog):
 
     def set_ui_for_current_modulator(self):
         index = self.ui.comboBoxModulationType.findText("*(" + self.current_modulator.modulation_type + ")",
-                                                        Qt.MatchWildcard)
+                                                        Qt.MatchFlag.MatchWildcard)
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(self.current_modulator.carrier_freq_hz)
         self.ui.doubleSpinBoxCarrierPhase.setValue(self.current_modulator.carrier_phase_deg)
@@ -290,7 +289,7 @@ class ModulatorDialog(QDialog):
         self.update_modulation_parameters()
 
     def handle_signal_loaded(self, protocol):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         self.ui.cbShowDataBitsOnly.setEnabled(True)
         self.ui.chkBoxLockSIV.setEnabled(True)
         self.ui.btnAutoDetect.setEnabled(True)
@@ -346,7 +345,7 @@ class ModulatorDialog(QDialog):
         self.update_views()
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+        if event.key() == Qt.Key.Key_Enter or event.key() == Qt.Key.Key_Return:
             return
         else:
             super().keyPressEvent(event)
@@ -377,7 +376,7 @@ class ModulatorDialog(QDialog):
             raise ValueError("Unknown modulation type")
 
         full_regex = r"^(" + regex + r"/){" + str(n) + "}" + regex + r"$"
-        self.ui.lineEditParameters.setValidator(QRegExpValidator(QRegExp(full_regex)))
+        self.ui.lineEditParameters.setValidator(QRegularExpressionValidator(QRegularExpression(full_regex)))
         self.ui.lineEditParameters.setText(self.current_modulator.parameters_string)
 
     def set_bits_per_symbol_enabled_status(self):

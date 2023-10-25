@@ -2,9 +2,9 @@ import os
 import random
 import tempfile
 
-from PyQt5.QtCore import QDir, Qt
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import QDir, Qt
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -168,7 +168,7 @@ class TestProjectManager(QtTestCase):
 
     def __set_label_name(self, index: int, name: str):
         model = self.form.compare_frame_controller.ui.tblLabelValues.model()
-        model.setData(model.createIndex(index, 0), name, role=Qt.EditRole)
+        model.setData(model.createIndex(index, 0), name, role=Qt.ItemDataRole.EditRole)
 
     def test_project_dialog(self):
         frequency = 1e9

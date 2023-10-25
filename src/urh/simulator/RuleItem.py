@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QPen, QColor
-from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
+from PyQt6.QtCore import Qt, QRectF, QLineF
+from PyQt6.QtGui import QPen, QColor
+from PyQt6.QtWidgets import QGraphicsTextItem, QAbstractItemView
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem

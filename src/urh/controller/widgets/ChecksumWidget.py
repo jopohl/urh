@@ -2,9 +2,9 @@ import array
 import copy
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
+from PyQt6.QtCore import pyqtSlot, QAbstractTableModel, QModelIndex, Qt, QRegularExpression
+from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtWidgets import QWidget, QHeaderView, QAbstractItemView, QLineEdit
 
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
 from urh.signalprocessing.Message import Message
@@ -48,18 +48,18 @@ class ChecksumWidget(QWidget):
         def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
             return len(self.checksum_label.data_ranges)
 
-        def headerData(self, section, orientation, role=Qt.DisplayRole):
-            if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+        def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+            if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.AlignmentFlag.Horizontal:
                 return self.header_labels[section]
             return super().headerData(section, orientation, role)
 
-        def data(self, index: QModelIndex, role=Qt.DisplayRole):
+        def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
             if not index.isValid():
                 return None
 
             i, j = index.row(), index.column()
 
-            if role == Qt.DisplayRole:
+            if role == Qt.ItemDataRole.DisplayRole:
                 data_range = self.checksum_label.data_ranges[i]
                 if j == 0:
                     return self.message.convert_index(data_range[0], 0, self.proto_view, True)[0] + 1
@@ -93,14 +93,14 @@ class ChecksumWidget(QWidget):
 
         def flags(self, index):
             if not index.isValid():
-                return Qt.NoItemFlags
+                return Qt.ItemFlag.NoItemFlags
 
             try:
                 _ = self.checksum_label.data_ranges[index.row()]
             except IndexError:
-                return Qt.NoItemFlags
+                return Qt.ItemFlag.NoItemFlags
 
-            return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+            return Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
     def __init__(self, checksum_label: ChecksumLabel, message: Message, proto_view: int, parent=None):
         super().__init__(parent)
@@ -110,13 +110,13 @@ class ChecksumWidget(QWidget):
         self.data_range_table_model = self.RangeTableModel(checksum_label, message, proto_view, parent=self)
         self.ui.tableViewDataRanges.setItemDelegateForColumn(0, SpinBoxDelegate(1, 999999, self))
         self.ui.tableViewDataRanges.setItemDelegateForColumn(1, SpinBoxDelegate(1, 999999, self))
-        self.ui.tableViewDataRanges.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.tableViewDataRanges.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableViewDataRanges.setModel(self.data_range_table_model)
-        self.ui.tableViewDataRanges.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        self.ui.tableViewDataRanges.setEditTriggers(QAbstractItemView.EditTrigger.AllEditTriggers)
         self.display_crc_data_ranges_in_table()
         self.ui.comboBoxCRCFunction.addItems([crc_name for crc_name in GenericCRC.DEFAULT_POLYNOMIALS])
         self.ui.comboBoxCRCFunction.addItems([special_crc_name for special_crc_name in self.SPECIAL_CRCS])
-        self.ui.lineEditCRCPolynomial.setValidator(QRegExpValidator(QRegExp("[0-9,a-f]*")))
+        self.ui.lineEditCRCPolynomial.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9,a-f]*")))
         self.ui.comboBoxCategory.clear()
         for _, member in self.checksum_label.Category.__members__.items():
             self.ui.comboBoxCategory.addItem(member.value)

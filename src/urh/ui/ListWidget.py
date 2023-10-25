@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
-from PyQt5.QtWidgets import QListWidget, QMenu
+from PyQt6.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
+from PyQt6.QtWidgets import QListWidget, QMenu
 
 from urh import settings
 

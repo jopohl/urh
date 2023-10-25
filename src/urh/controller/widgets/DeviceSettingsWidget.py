@@ -1,9 +1,9 @@
 from statistics import median
 
 import numpy as np
-from PyQt5.QtCore import QRegExp, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QRegExpValidator, QIcon
-from PyQt5.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
+from PyQt6.QtCore import QRegularExpression, pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QRegularExpressionValidator, QIcon
+from PyQt6.QtWidgets import QWidget, QSpinBox, QLabel, QComboBox, QSlider
 
 from urh import settings
 from urh.dev import config
@@ -52,11 +52,11 @@ class DeviceSettingsWidget(QWidget):
         self.on_btn_lock_bw_sr_clicked()
 
         ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
-        ip_regex = QRegExp("^" + ip_range
+        ip_regex = QRegularExpression("^" + ip_range
                            + "\\." + ip_range
                            + "\\." + ip_range
                            + "\\." + ip_range + "$")
-        self.ui.lineEditIP.setValidator(QRegExpValidator(ip_regex))
+        self.ui.lineEditIP.setValidator(QRegularExpressionValidator(ip_regex))
 
         self.create_connects()
         self.sync_gain_sliders()
@@ -542,7 +542,7 @@ class DeviceSettingsWidget(QWidget):
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
     from urh.controller.MainController import MainController
 
     app = QApplication([])

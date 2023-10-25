@@ -2,9 +2,9 @@ import locale
 import os
 import time
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtGui import QCloseEvent
+from PyQt6.QtWidgets import QDialog
 
 from urh import settings
 from urh.ui.ui_signal_details import Ui_SignalDetails
@@ -17,8 +17,8 @@ class SignalDetailsDialog(QDialog):
         self.signal = signal
         self.ui = Ui_SignalDetails()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         file = self.signal.filename
 

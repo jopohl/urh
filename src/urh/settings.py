@@ -3,8 +3,8 @@ import os
 import sys
 
 import psutil
-from PyQt5.QtCore import Qt, QSettings
-from PyQt5.QtGui import QColor
+from PyQt6.QtCore import Qt, QSettings
+from PyQt6.QtGui import QColor
 
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger
@@ -17,7 +17,7 @@ def __get_qt_settings():
     try:
         __qt_settings.fileName()
     except:
-        __qt_settings = QSettings(QSettings.IniFormat, QSettings.UserScope, 'urh', 'urh')
+        __qt_settings = QSettings(QSettings.Format.IniFormat, QSettings.Scope.UserScope, 'urh', 'urh')
 
     return __qt_settings
 
@@ -39,7 +39,7 @@ PAUSE_TRESHOLD = 10
 RECT_BIT_WIDTH = 10
 BIT_SCENE_HEIGHT = 100
 
-TRANSPARENT_COLOR = QColor(Qt.transparent)
+TRANSPARENT_COLOR = QColor(Qt.GlobalColor.transparent)
 
 LINECOLOR = QColor.fromRgb(225, 225, 225)
 LINECOLOR_I = QColor.fromRgb(50, 50, 225)
@@ -59,8 +59,8 @@ SELECTION_OPACITY = 1
 NOISE_OPACITY = 0.33
 
 # SEPARATION COLORS
-ONES_AREA_COLOR = Qt.green
-ZEROS_AREA_COLOR = Qt.magenta
+ONES_AREA_COLOR = Qt.GlobalColor.green
+ZEROS_AREA_COLOR = Qt.GlobalColor.magenta
 SEPARATION_OPACITY = 0.15
 SEPARATION_PADDING = .05  # percent
 

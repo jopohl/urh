@@ -1,7 +1,7 @@
 import copy
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
+from PyQt6.QtCore import Qt
+from PyQt6.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 
@@ -46,7 +46,7 @@ class TestLabels(QtTestCase):
         index = self.gframe.tree_model.createIndex(0, 0, item)
         rect = self.gframe.ui.treeProtocols.visualRect(index)
         self.assertEqual(len(self.gframe.ui.treeProtocols.selectedIndexes()), 0)
-        QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
+        QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.MouseButton.LeftButton, pos=rect.center())
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
         self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))
@@ -64,7 +64,7 @@ class TestLabels(QtTestCase):
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
         lbl.add_fuzz_value()
-        lbl.fuzz_me = Qt.Checked
+        lbl.fuzz_me = Qt.CheckState.Checked
         self.assertEqual(len(lbl.fuzz_values), 5)
         self.gframe.refresh_label_list()
         self.gframe.refresh_table()

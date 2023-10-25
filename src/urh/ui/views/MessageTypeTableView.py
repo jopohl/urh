@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QKeySequence, QIcon
-from PyQt5.QtWidgets import QAbstractItemView, QMenu, QAction, QTableView
+from PyQt6.QtCore import pyqtSignal, Qt, pyqtSlot
+from PyQt6.QtGui import QContextMenuEvent, QKeySequence, QIcon, QAction
+from PyQt6.QtWidgets import QAbstractItemView, QMenu, QTableView
 
 from urh.models.MessageTypeTableModel import MessageTypeTableModel
 
@@ -11,14 +11,14 @@ class MessageTypeTableView(QTableView):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragEnabled(True)
         self.setDropIndicatorShown(True)
 
         self.del_rows_action = QAction("Delete selected message types", self)
-        self.del_rows_action.setShortcut(QKeySequence.Delete)
+        self.del_rows_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.del_rows_action.setIcon(QIcon.fromTheme("edit-delete"))
-        self.del_rows_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.del_rows_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.del_rows_action.triggered.connect(self.delete_rows)
 
         self.addAction(self.del_rows_action)
@@ -77,9 +77,9 @@ class MessageTypeTableView(QTableView):
     @pyqtSlot()
     def on_show_all_action_triggered(self):
         for i in range(self.model().rowCount()):
-            self.model().setData(self.model().index(i, 0), Qt.Checked, role=Qt.CheckStateRole)
+            self.model().setData(self.model().index(i, 0), Qt.CheckState.Checked, role=Qt.ItemDataRole.CheckStateRole)
 
     @pyqtSlot()
     def on_hide_all_action_triggered(self):
         for i in range(self.model().rowCount()):
-            self.model().setData(self.model().index(i, 0), Qt.Unchecked, role=Qt.CheckStateRole)
+            self.model().setData(self.model().index(i, 0), Qt.CheckState.Unchecked, role=Qt.ItemDataRole.CheckStateRole)

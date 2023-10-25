@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 
 from urh import settings
 from urh.cythonext import signal_functions
@@ -51,7 +51,7 @@ class ProtocolAnalyzer(object):
 
         self.__name = urh_util.get_name_from_filename(filename)  # Fallback if Signal has no Name
 
-        self.show = Qt.Checked  # Show in Compare Frame?
+        self.show = Qt.CheckState.Checked  # Show in Compare Frame?
         self.qt_signals = ProtocolAnalyzerSignals()
 
         self.decoder = Encoding(["Non Return To Zero (NRZ)"])  # For Default Encoding of Protocol

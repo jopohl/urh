@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
+from PyQt6.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QWidget, QFileDialog, QCompleter, QMessageBox, QFrame, \
     QHBoxLayout, QToolButton, QDialog
 
 from urh.controller.CompareFrameController import CompareFrameController
@@ -95,7 +95,7 @@ class SimulatorTabController(QWidget):
         self.simulator_scene = SimulatorScene(mode=0, simulator_config=self.simulator_config)
         self.simulator_scene.tree_root_item = compare_frame_controller.proto_tree_model.rootItem
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.ui.gvSimulator.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.__active_item = None
@@ -109,7 +109,7 @@ class SimulatorTabController(QWidget):
         # place save/load button at corner of tab widget
         frame = QFrame(parent=self)
         frame.setLayout(QHBoxLayout())
-        frame.setFrameStyle(frame.NoFrame)
+        frame.setFrameStyle(frame.Shape.NoFrame)
         self.ui.btnSave = QToolButton(self.ui.tab)
         self.ui.btnSave.setIcon(QIcon.fromTheme("document-save"))
         frame.layout().addWidget(self.ui.btnSave)

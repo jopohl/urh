@@ -6,16 +6,16 @@ import fileinput
 
 def gen(force=False):
     if sys.platform == "win32":
-        bindir = r"c:\Python34\Lib\site-packages\PyQt5"
+        bindir = r"c:\Python34\Lib\site-packages\PyQt6"
     else:
         bindir = "/usr/bin"
 
     if sys.platform == "win32":
-        uic_path = os.path.join(bindir, "pyuic5.bat")
-        rcc_path = os.path.join(bindir, "pyrcc5.exe")
+        uic_path = os.path.join(bindir, "pyuic6.bat")
+        rcc_path = os.path.join(bindir, "pyrcc6.exe")
     else:
-        uic_path = os.path.join(bindir, "pyuic5")
-        rcc_path = os.path.join(bindir, "pyrcc5")
+        uic_path = os.path.join(bindir, "pyuic6")
+        rcc_path = os.path.join(bindir, "rcc")
 
     file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ui")
     ui_path = file_dir
@@ -39,7 +39,7 @@ def gen(force=False):
             # Generated file is already there and newer than ui file, no need to recompile it
             continue
 
-        call([uic_path, "--from-imports", file_path, "-o", out_file_path])
+        call([uic_path, file_path, "-o", out_file_path])
 
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
         # to avoid useless git updates when working on another computer
@@ -65,8 +65,8 @@ def gen(force=False):
 
         if time_generated_file < time_rc_file or force:
             # Only create, when generated file is old than rc file to prevent unneeded git pushes
-            call([rcc_path, file_path, "-o", out_file_path])
+            call([rcc_path, "-g", "python", file_path, "-o", out_file_path])
 
 
 if __name__ == "__main__":
-    gen()
+    gen(True)

@@ -1,5 +1,6 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
+from PyQt6.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QWidget, QSizePolicy, QCheckBox, QMessageBox
+from PyQt6.QtGui import QUndoStack
 
 from urh import settings
 from urh.controller.widgets.SignalFrame import SignalFrame
@@ -106,7 +107,7 @@ class SignalTabController(QWidget):
 
         if not getting_started:
             w = QWidget()
-            w.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            w.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):

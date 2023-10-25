@@ -1,9 +1,9 @@
 import locale
 import time
 
-from PyQt5.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
-from PyQt5.QtGui import QCloseEvent, QTransform
-from PyQt5.QtWidgets import QDialog, QGraphicsView
+from PyQt6.QtCore import pyqtSlot, QTimer, pyqtSignal, Qt
+from PyQt6.QtGui import QCloseEvent, QTransform
+from PyQt6.QtWidgets import QDialog, QGraphicsView
 
 from urh import settings
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
@@ -27,9 +27,9 @@ class SendRecvDialog(QDialog):
         self.update_interval = 25
 
         # This flag is needed. Will cause memory leak otherwise.
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
         self.testing_mode = testing_mode
 
         self.ui = Ui_SendRecvDialog()

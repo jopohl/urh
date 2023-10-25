@@ -3,10 +3,10 @@ import time
 from multiprocessing import Process, Array
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
-from PyQt5.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
-    QResizeEvent
-from PyQt5.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QUndoStack, QCheckBox, QApplication, qApp
+from PyQt6.QtCore import pyqtSignal, QPoint, Qt, QMimeData, pyqtSlot, QTimer
+from PyQt6.QtGui import QIcon, QDrag, QPixmap, QRegion, QDropEvent, QTextCursor, QContextMenuEvent, \
+    QResizeEvent, QUndoStack
+from PyQt6.QtWidgets import QFrame, QMessageBox, QMenu, QWidget, QCheckBox, QApplication
 
 from urh import settings
 from urh.controller.dialogs.AdvancedModulationOptionsDialog import AdvancedModulationOptionsDialog
@@ -70,7 +70,7 @@ class SignalFrame(QFrame):
 
         self.filter_abort_wanted = False
 
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.project_manager = project_manager
 
         self.proto_analyzer = proto_analyzer
@@ -385,7 +385,7 @@ class SignalFrame(QFrame):
         self.spectrogram_update_timer.start()
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             self.drag_started.emit(self.mapToParent(event.pos()))
             drag = QDrag(self)
             mimeData = QMimeData()
@@ -464,7 +464,7 @@ class SignalFrame(QFrame):
         filename = FileOperator.ask_save_file_name(initial_name, caption="Export demodulated")
         if filename:
             try:
-                self.setCursor(Qt.WaitCursor)
+                self.setCursor(Qt.CursorShape.WaitCursor)
                 data = self.signal.qad
                 if filename.endswith(".wav") or filename.endswith(".sub"):
                     data = self.signal.qad.astype(np.float32)
@@ -523,7 +523,7 @@ class SignalFrame(QFrame):
     def update_protocol(self):
         self.ui.txtEdProto.setEnabled(False)
         self.ui.txtEdProto.setText("Demodulating...")
-        qApp.processEvents()
+        QApplication.processEvents()
 
         try:
             self.proto_analyzer.get_protocol_from_signal()
@@ -595,7 +595,7 @@ class SignalFrame(QFrame):
             self.ui.txtEdProto.blockSignals(False)
 
     def draw_spectrogram(self, show_full_scene=False, force_redraw=False):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         window_size = 2 ** self.ui.sliderFFTWindowSize.value()
         data_min, data_max = self.ui.sliderSpectrogramMin.value(), self.ui.sliderSpectrogramMax.value()
 
@@ -667,7 +667,7 @@ class SignalFrame(QFrame):
 
     @pyqtSlot()
     def on_set_noise_in_graphic_view_clicked(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         start = self.ui.gvSignal.selection_area.x
         end = start + self.ui.gvSignal.selection_area.width
 
@@ -738,12 +738,12 @@ class SignalFrame(QFrame):
             self.ui.chkBoxSyncSelection.hide()
             self.ui.cbProtoView.setEnabled(False)
 
-        qApp.processEvents()
+        QApplication.processEvents()
         self.on_slider_y_scale_value_changed()
 
     @pyqtSlot()
     def on_cb_signal_view_index_changed(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         self.__set_spectrogram_adjust_widgets_visibility()
 
@@ -761,7 +761,7 @@ class SignalFrame(QFrame):
 
             self.ui.gvSignal.auto_fit_view()
             self.ui.gvSignal.refresh_selection_area()
-            qApp.processEvents()
+            QApplication.processEvents()
             self.on_slider_y_scale_value_changed()  # apply YScale to new view
             self.__set_samples_in_view()
             self.__set_duration()
@@ -771,7 +771,7 @@ class SignalFrame(QFrame):
     @pyqtSlot()
     def on_btn_autodetect_clicked(self):
         self.ui.btnAutoDetect.setEnabled(False)
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         try:
             detect_modulation = self.detect_modulation_action.isChecked()
@@ -1052,11 +1052,11 @@ class SignalFrame(QFrame):
         auto_detect_action = menu.addAction(self.tr("Auto-Detect signal parameters"))
         action = menu.exec_(self.mapToGlobal(event.pos()))
         if action == apply_to_all_action:
-            self.setCursor(Qt.WaitCursor)
+            self.setCursor(Qt.CursorShape.WaitCursor)
             self.apply_to_all_clicked.emit(self.signal)
             self.unsetCursor()
         elif action == auto_detect_action:
-            self.setCursor(Qt.WaitCursor)
+            self.setCursor(Qt.CursorShape.WaitCursor)
             self.signal.auto_detect(detect_modulation=False, detect_noise=False)
             self.unsetCursor()
 
@@ -1121,7 +1121,7 @@ class SignalFrame(QFrame):
                     # https://github.com/jopohl/urh/issues/570
                     cmd.signal_was_changed = True
 
-        qApp.processEvents()
+        QApplication.processEvents()
         self.ui.gvSignal.auto_fit_on_resize_is_blocked = False
 
         self.ui.lineEditSignalName.setFont(font)
@@ -1248,7 +1248,7 @@ class SignalFrame(QFrame):
     def on_bandpass_filter_triggered(self, f_low: float, f_high: float):
         self.filter_abort_wanted = False
 
-        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         filter_bw = Filter.read_configured_filter_bw()
         filtered = Array("f", 2 * self.signal.num_samples)
         p = Process(target=perform_filter,
@@ -1257,12 +1257,12 @@ class SignalFrame(QFrame):
         p.start()
 
         while p.is_alive():
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
 
             if self.filter_abort_wanted:
                 p.terminate()
                 p.join()
-                QApplication.instance().restoreOverrideCursor()
+                QApplication.restoreOverrideCursor()
                 return
 
             time.sleep(0.1)
@@ -1272,7 +1272,7 @@ class SignalFrame(QFrame):
         signal.name = self.signal.name + " filtered with f_low={0:.4n} f_high={1:.4n} bw={2:.4n}".format(f_low, f_high,
                                                                                                          filter_bw)
         self.signal_created.emit(signal)
-        QApplication.instance().restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
 
     def on_signal_data_edited(self):
         self.refresh_signal()
@@ -1342,7 +1342,7 @@ class SignalFrame(QFrame):
         filename = FileOperator.ask_save_file_name(initial_name, caption="Export spectrogram")
         if not filename:
             return
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
             self.ui.gvSpectrogram.scene_manager.spectrogram.export_to_fta(sample_rate=self.signal.sample_rate,
                                                                           filename=filename,

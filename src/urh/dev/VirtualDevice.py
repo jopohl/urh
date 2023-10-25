@@ -2,7 +2,7 @@ import time
 from enum import Enum
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 from urh.dev import config
 from urh.dev.BackendHandler import Backends, BackendHandler

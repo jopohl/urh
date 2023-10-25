@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, Qt, QLineF
-from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
+from PyQt6.QtCore import QRectF, Qt, QLineF
+from PyQt6.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
+from PyQt6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
     QAbstractItemView
 
 from urh import settings
@@ -125,12 +125,12 @@ class GraphicsItem(QGraphicsObject):
         if self.hover_active or self.isSelected():
             painter.setOpacity(settings.SELECTION_OPACITY)
             painter.setBrush(settings.SELECTION_COLOR)
-            painter.setPen(QPen(QColor(Qt.transparent), 0))
+            painter.setPen(QPen(QColor(Qt.GlobalColor.transparent), 0))
             painter.drawRect(self.boundingRect())
         elif not self.is_valid():
             painter.setOpacity(settings.SELECTION_OPACITY)
             painter.setBrush(QColor(255, 0, 0, 150))
-            painter.setPen(QPen(QColor(Qt.transparent), 0))
+            painter.setPen(QPen(QColor(Qt.GlobalColor.transparent), 0))
             painter.drawRect(self.boundingRect())
 
         if self.drag_over:

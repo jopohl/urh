@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt6.QtCore import Qt, QModelIndex, QAbstractTableModel, pyqtSignal
+from PyQt6.QtGui import QFont
 
 from urh.signalprocessing.MessageType import MessageType
 
@@ -31,8 +31,8 @@ class MessageTypeTableModel(QAbstractTableModel):
     def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.header_labels)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
@@ -40,38 +40,38 @@ class MessageTypeTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.endResetModel()
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         row = index.row()
         if not index.isValid() or row >= len(self.message_types):
             return
 
         message_type = self.message_types[row]
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if index.column() == 0:
                 return message_type.name
             elif index.column() == 1:
                 return ""
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             if index.column() == 0:
                 return message_type.show
             elif index.column() == 1:
                 return None
-        elif role == Qt.EditRole:
+        elif role == Qt.ItemDataRole.EditRole:
             if index.column() == 0:
                 return message_type.name
-        elif role == Qt.FontRole and index.column() == 0:
+        elif role == Qt.ItemDataRole.FontRole and index.column() == 0:
             font = QFont()
             font.setBold(index.row() in self.selected_message_type_indices)
             return font
 
-    def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
-        if role == Qt.CheckStateRole:
+    def setData(self, index: QModelIndex, value, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.CheckStateRole:
             if index.column() == 0:
                 message_type = self.message_types[index.row()]
                 message_type.show = value
                 self.message_type_visibility_changed.emit(message_type)
-        elif role == Qt.EditRole:
+        elif role == Qt.ItemDataRole.EditRole:
             if index.column() == 0 and value:
                 message_type = self.message_types[index.row()]
                 message_type.name = value
@@ -92,4 +92,4 @@ class MessageTypeTableModel(QAbstractTableModel):
             self.delete_message_type_at(row)
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable
+        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEditable

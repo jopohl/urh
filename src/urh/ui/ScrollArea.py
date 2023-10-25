@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QDropEvent, QDragEnterEvent, QWheelEvent
-from PyQt5.QtWidgets import QScrollArea
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QDropEvent, QDragEnterEvent, QWheelEvent
+from PyQt6.QtWidgets import QScrollArea
 
 class ScrollArea(QScrollArea):
     files_dropped = pyqtSignal(list)

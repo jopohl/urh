@@ -1,9 +1,9 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot, QTimer
-from PyQt5.QtGui import QIcon, QCloseEvent, QKeySequence
-from PyQt5.QtWidgets import QMainWindow, QUndoGroup, QActionGroup, QHeaderView, QAction, QMessageBox, QApplication, qApp
+from PyQt6.QtCore import QDir, Qt, pyqtSlot, QTimer
+from PyQt6.QtGui import QIcon, QCloseEvent, QKeySequence, QUndoGroup, QActionGroup, QAction
+from PyQt6.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QApplication
 
 from urh import settings, version
 from urh.controller.CompareFrameController import CompareFrameController
@@ -75,7 +75,7 @@ class MainController(QMainWindow):
         self.cancel_action = QAction(self.tr("Cancel"), self)
         self.cancel_action.setShortcut(QKeySequence.Cancel if hasattr(QKeySequence, "Cancel") else "Esc")
         self.cancel_action.triggered.connect(self.on_cancel_triggered)
-        self.cancel_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.cancel_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))
         self.addAction(self.cancel_action)
 
@@ -127,8 +127,8 @@ class MainController(QMainWindow):
 
         self.ui.fileTree.setRootIndex(self.file_proxy_model.mapFromSource(self.filemodel.index(path)))
         self.ui.fileTree.setToolTip(path)
-        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.ui.fileTree.header().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+        self.ui.fileTree.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         self.ui.fileTree.setFocus()
 
         self.generator_tab_controller.table_model.cfc = self.compare_frame_controller
@@ -137,12 +137,12 @@ class MainController(QMainWindow):
 
         undo_action = self.undo_group.createUndoAction(self)
         undo_action.setIcon(QIcon.fromTheme("edit-undo"))
-        undo_action.setShortcut(QKeySequence.Undo)
+        undo_action.setShortcut(QKeySequence.StandardKey.Undo)
         self.ui.menuEdit.insertAction(self.ui.actionDecoding, undo_action)
 
         redo_action = self.undo_group.createRedoAction(self)
         redo_action.setIcon(QIcon.fromTheme("edit-redo"))
-        redo_action.setShortcut(QKeySequence.Redo)
+        redo_action.setShortcut(QKeySequence.StandardKey.Redo)
         self.ui.menuEdit.insertAction(self.ui.actionDecoding, redo_action)
         self.ui.menuEdit.insertSeparator(self.ui.actionDecoding)
 
@@ -167,14 +167,14 @@ class MainController(QMainWindow):
         self.ui.labelNonProjectMode.setVisible(show)
 
     def create_connects(self):
-        self.ui.actionFullscreen_mode.setShortcut(QKeySequence.FullScreen)
-        self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.Open))
+        self.ui.actionFullscreen_mode.setShortcut(QKeySequence.StandardKey.FullScreen)
+        self.ui.actionOpen.setShortcut(QKeySequence(QKeySequence.StandardKey.Open))
         self.ui.actionOpen_directory.setShortcut(QKeySequence("Ctrl+Shift+O"))
 
         self.ui.menuEdit.aboutToShow.connect(self.on_edit_menu_about_to_show)
 
         self.ui.actionNew_Project.triggered.connect(self.on_new_project_action_triggered)
-        self.ui.actionNew_Project.setShortcut(QKeySequence.New)
+        self.ui.actionNew_Project.setShortcut(QKeySequence.StandardKey.New)
         self.ui.actionProject_settings.triggered.connect(self.on_project_settings_action_triggered)
         self.ui.actionSave_project.triggered.connect(self.save_project)
         self.ui.actionClose_project.triggered.connect(self.close_project)
@@ -191,7 +191,7 @@ class MainController(QMainWindow):
         self.ui.actionSpectrum_Analyzer.triggered.connect(self.on_show_spectrum_dialog_action_triggered)
         self.ui.actionOptions.triggered.connect(self.show_options_dialog_action_triggered)
         self.ui.actionSniff_protocol.triggered.connect(self.show_proto_sniff_dialog)
-        self.ui.actionAbout_Qt.triggered.connect(QApplication.instance().aboutQt)
+        self.ui.actionAbout_Qt.triggered.connect(QApplication.aboutQt)
         self.ui.actionSamples_from_csv.triggered.connect(self.on_import_samples_from_csv_action_triggered)
         self.ui.actionAuto_detect_new_signals.triggered.connect(self.on_auto_detect_new_signals_action_triggered)
 
@@ -307,7 +307,7 @@ class MainController(QMainWindow):
         self.add_signal(signal, group_id)
 
     def add_signal(self, signal, group_id=0, index=-1):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         pa = ProtocolAnalyzer(signal)
         sig_frame = self.signal_tab_controller.add_signal_frame(pa, index=index)
         pa = self.compare_frame_controller.add_protocol(pa, group_id)
@@ -317,7 +317,7 @@ class MainController(QMainWindow):
 
         if self.ui.actionAuto_detect_new_signals.isChecked() and not has_entry and not signal.changed:
             sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageLoading)
-            qApp.processEvents()
+            QApplication.processEvents()
             if not signal.already_demodulated:
                 signal.auto_detect(detect_modulation=True, detect_noise=False)
             sig_frame.ui.stackedWidget.setCurrentWidget(sig_frame.ui.pageSignal)
@@ -329,7 +329,7 @@ class MainController(QMainWindow):
         sig_frame.refresh_signal(draw_full_signal=True)
         sig_frame.refresh_signal_information(block=True)
 
-        qApp.processEvents()
+        QApplication.processEvents()
         sig_frame.show_protocol(refresh=True)
 
         if self.project_manager.read_participants_for_signal(signal, pa.messages):
@@ -579,7 +579,7 @@ class MainController(QMainWindow):
             if os.path.isdir(action.data()):
                 self.project_manager.set_project_folder(action.data())
             elif os.path.isfile(action.data()):
-                self.setCursor(Qt.WaitCursor)
+                self.setCursor(Qt.CursorShape.WaitCursor)
                 self.add_files(FileOperator.uncompress_archives([action.data()], QDir.tempPath()))
                 self.unsetCursor()
         except Exception as e:
@@ -623,7 +623,7 @@ class MainController(QMainWindow):
             if last_sig_frame is not None:
                 self.signal_tab_controller.ui.scrollArea.ensureWidgetVisible(last_sig_frame, 0, 0)
 
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
             self.ui.tabWidget.setCurrentIndex(0)
             if focus_frame is not None:
                 focus_frame.ui.txtEdProto.setFocus()
@@ -740,10 +740,10 @@ class MainController(QMainWindow):
 
     @pyqtSlot(list, float)
     def on_signals_recorded(self, file_names: list, sample_rate: float):
-        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         for filename in file_names:
             self.add_signalfile(filename, enforce_sample_rate=sample_rate)
-        QApplication.instance().restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
 
     @pyqtSlot()
     def show_options_dialog_action_triggered(self):
@@ -804,7 +804,7 @@ class MainController(QMainWindow):
 
                     self.project_manager.set_project_folder(folder)
                 else:
-                    self.setCursor(Qt.WaitCursor)
+                    self.setCursor(Qt.CursorShape.WaitCursor)
                     file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
                     self.add_files(file_names)
                     self.unsetCursor()
@@ -834,7 +834,7 @@ class MainController(QMainWindow):
     def __add_urls_to_group(self, file_urls, group_id=0):
         local_files = [file_url.toLocalFile() for file_url in file_urls if file_url.isLocalFile()]
         if len(local_files) > 0:
-            self.setCursor(Qt.WaitCursor)
+            self.setCursor(Qt.CursorShape.WaitCursor)
             self.add_files(FileOperator.uncompress_archives(local_files, QDir.tempPath()), group_id=group_id)
             self.unsetCursor()
 

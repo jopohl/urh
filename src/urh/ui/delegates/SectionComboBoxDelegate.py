@@ -1,9 +1,9 @@
 import sys
 from collections import OrderedDict
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtGui import QPainter, QStandardItem
-from PyQt5.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
+from PyQt6.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PyQt6.QtGui import QPainter, QStandardItem
+from PyQt6.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
 
 
 class SectionItemDelegate(QItemDelegate):
@@ -32,7 +32,7 @@ class SectionComboBox(QComboBox):
 
     def add_parent_item(self, text):
         item = QStandardItem(text)
-        item.setFlags(item.flags() & ~(Qt.ItemIsEnabled | Qt.ItemIsSelectable))
+        item.setFlags(item.flags() & ~(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable))
         item.setData("parent", Qt.AccessibleDescriptionRole)
 
         font = item.font()
@@ -78,7 +78,7 @@ class SectionComboBoxDelegate(QStyledItemDelegate):
         editor.blockSignals(False)
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
-        model.setData(index, editor.currentText(), Qt.EditRole)
+        model.setData(index, editor.currentText(), Qt.ItemDataRole.EditRole)
 
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)

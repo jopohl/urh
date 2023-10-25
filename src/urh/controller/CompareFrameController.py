@@ -5,10 +5,10 @@ from collections import defaultdict
 from datetime import datetime
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
+from PyQt6.QtCore import pyqtSlot, QTimer, Qt, pyqtSignal, QItemSelection, QItemSelectionModel, QLocale, \
     QModelIndex
-from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QMessageBox, QAbstractItemView, QUndoStack, QMenu, QWidget, QHeaderView, QInputDialog
+from PyQt6.QtGui import QContextMenuEvent, QIcon, QUndoStack
+from PyQt6.QtWidgets import QMessageBox, QAbstractItemView, QMenu, QWidget, QHeaderView, QInputDialog
 
 from urh import settings
 from urh.awre import AutoAssigner
@@ -108,12 +108,12 @@ class CompareFrameController(QWidget):
 
         self.ui.tblViewMessageTypes.setItemDelegateForColumn(1, MessageTypeButtonDelegate(
             parent=self.ui.tblViewMessageTypes))
-        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
 
-        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
 
         self.selection_timer = QTimer(self)
         self.selection_timer.setSingleShot(True)
@@ -709,7 +709,7 @@ class CompareFrameController(QWidget):
             # insert a & at beginning of the string
             return
 
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         if self.ui.lineEditSearch.text():
             self.search()
             self.ui.tblLabelValues.clearSelection()
@@ -1028,7 +1028,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(1)
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Detecting participants)")
@@ -1146,11 +1146,11 @@ class CompareFrameController(QWidget):
 
         states_by_message_type = defaultdict(list)
         for i, msg in enumerate(self.proto_analyzer.messages):
-            state = Qt.Unchecked if i in self.protocol_model.hidden_rows else Qt.Checked
+            state = Qt.CheckState.Unchecked if i in self.protocol_model.hidden_rows else Qt.CheckState.Checked
             states_by_message_type[msg.message_type].append(state)
 
         for msg_type, states in states_by_message_type.items():
-            msg_type.show = states[0] if len(set(states)) == 1 else Qt.PartiallyChecked
+            msg_type.show = states[0] if len(set(states)) == 1 else Qt.CheckState.PartiallyChecked
 
         self.message_type_table_model.update()
 

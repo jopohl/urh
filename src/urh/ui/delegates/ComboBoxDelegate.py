@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
-from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+from PyQt6.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
+from PyQt6.QtGui import QImage, QPainter, QColor, QPixmap
+from PyQt6.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
 
 
 class ComboBoxDelegate(QStyledItemDelegate):
@@ -67,7 +67,7 @@ class ComboBoxDelegate(QStyledItemDelegate):
             for i, item in enumerate(self.items):
                 color = self.colors[i]
                 painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
-                editor.setItemData(i, QPixmap.fromImage(img), Qt.DecorationRole)
+                editor.setItemData(i, QPixmap.fromImage(img), Qt.ItemDataRole.DecorationRole)
 
             del painter
         editor.currentIndexChanged.connect(self.currentIndexChanged)
@@ -86,9 +86,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
         if self.return_index:
-            model.setData(index, editor.currentIndex(), Qt.EditRole)
+            model.setData(index, editor.currentIndex(), Qt.ItemDataRole.EditRole)
         else:
-            model.setData(index, editor.currentText(), Qt.EditRole)
+            model.setData(index, editor.currentText(), Qt.ItemDataRole.EditRole)
 
     def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
         editor.setGeometry(option.rect)

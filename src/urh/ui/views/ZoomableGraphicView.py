@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent
-from PyQt5.QtWidgets import QAction, QMenu
+from PyQt6.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
+from PyQt6.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent, QAction
+from PyQt6.QtWidgets import QMenu
 
 from urh.ui.painting.SceneManager import SceneManager
 from urh.ui.views.SelectableGraphicView import SelectableGraphicView
@@ -23,23 +23,23 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.auto_fit_on_resize_is_blocked = False
 
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
-        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.setShortcut(QKeySequence.StandardKey.ZoomIn)
         self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
-        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
         self.addAction(self.zoom_in_action)
 
         self.zoom_out_action = QAction(self.tr("Zoom out"), self)
-        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.setShortcut(QKeySequence.StandardKey.ZoomOut)
         self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
-        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
 
         self.zoom_original_action = QAction(self.tr("Zoom original"), self)
-        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.setShortcut("Ctrl+0")
         self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
-        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 

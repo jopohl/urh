@@ -1,7 +1,7 @@
 import array
 
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QFont
+from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt6.QtGui import QFont
 
 from urh import settings
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -79,15 +79,15 @@ class LabelValueTableModel(QAbstractTableModel):
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.display_labels)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignLeft
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
+            return Qt.AlignmentFlag.AlignLeft
 
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
@@ -103,7 +103,7 @@ class LabelValueTableModel(QAbstractTableModel):
         else:
             calculated_crc = None
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
@@ -114,9 +114,9 @@ class LabelValueTableModel(QAbstractTableModel):
                 return lbl.display_order_str
             elif j == 4:
                 return self.__display_data(lbl, calculated_crc)
-        elif role == Qt.CheckStateRole and j == 0:
+        elif role == Qt.ItemDataRole.CheckStateRole and j == 0:
             return lbl.show
-        elif role == Qt.BackgroundColorRole:
+        elif role ==Qt.ItemDataRole.BackgroundRole:
             if isinstance(lbl, ChecksumLabel) and j == 4 and self.message is not None:
                 start, end = self.message.get_label_range(lbl, 0, True)
                 if calculated_crc == self.message.decoded_bits[start:end]:
@@ -127,7 +127,7 @@ class LabelValueTableModel(QAbstractTableModel):
             else:
                 return None
 
-        elif role == Qt.ToolTipRole:
+        elif role == Qt.ItemDataRole.ToolTipRole:
             if j == 2:
                 return self.tr("Choose display type for the value of the label:"
                                "<ul>"
@@ -144,7 +144,7 @@ class LabelValueTableModel(QAbstractTableModel):
                                "<li>Least Significant Bit (LSB)</li>"
                                "<li>Least Significant Digit (LSD)</li>"
                                "</ul>")
-        elif role == Qt.FontRole and j == 0:
+        elif role == Qt.ItemDataRole.FontRole and j == 0:
             font = QFont()
             font.setBold(i in self.selected_label_indices)
             return font
@@ -152,7 +152,7 @@ class LabelValueTableModel(QAbstractTableModel):
     def setData(self, index: QModelIndex, value, role=None):
         row = index.row()
         lbl = self.display_labels[row]
-        if role == Qt.EditRole and index.column() in (0, 1, 2, 3):
+        if role == Qt.ItemDataRole.EditRole and index.column() in (0, 1, 2, 3):
             if index.column() == 0:
                 lbl.name = value
                 new_field_type = self.controller.field_types_by_caption.get(value, None)
@@ -167,7 +167,7 @@ class LabelValueTableModel(QAbstractTableModel):
 
             self.dataChanged.emit(self.index(row, 0),
                                   self.index(row, self.columnCount()))
-        elif role == Qt.CheckStateRole and index.column() == 0:
+        elif role == Qt.ItemDataRole.CheckStateRole and index.column() == 0:
             lbl.show = value
             self.protolabel_visibility_changed.emit(lbl)
             return True
@@ -193,8 +193,8 @@ class LabelValueTableModel(QAbstractTableModel):
     def flags(self, index: QModelIndex):
         flags = super().flags(index)
         if index.column() in (0, 1, 2, 3):
-            flags |= Qt.ItemIsEditable
+            flags |= Qt.ItemFlag.ItemIsEditable
         if index.column() == 0:
-            flags |= Qt.ItemIsUserCheckable
+            flags |= Qt.ItemFlag.ItemIsUserCheckable
 
         return flags

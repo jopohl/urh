@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
 
 from urh.signalprocessing.Ruleset import Ruleset, Rule
 
@@ -21,16 +21,16 @@ class RulesetTableModel(QAbstractTableModel):
     def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.ruleset)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.AlignmentFlag.Horizontal:
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             i = index.row()
             j = index.column()
             rule = self.ruleset[i]
@@ -48,7 +48,7 @@ class RulesetTableModel(QAbstractTableModel):
                 return rule.target_value
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole:
+        if role == Qt.ItemDataRole.EditRole:
             i, j = index.row(), index.column()
             rule = self.ruleset[i]
             try:
@@ -68,4 +68,4 @@ class RulesetTableModel(QAbstractTableModel):
             return True
 
     def flags(self, index: QModelIndex):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable

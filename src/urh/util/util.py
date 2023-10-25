@@ -9,11 +9,11 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
 import numpy as np
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QFont
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QSplitter
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFontDatabase, QFont
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QSplitter
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QTableWidgetItem
 
 from urh import settings
 from urh.util.Logger import logger
@@ -304,7 +304,7 @@ def file_can_be_opened(filename: str):
 
 def create_table_item(content):
     item = QTableWidgetItem(str(content))
-    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+    item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
     return item
 
 
@@ -317,8 +317,8 @@ def write_xml_to_file(xml_tag: ET.Element, filename: str):
 
 
 def get_monospace_font() -> QFont:
-    fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-    fixed_font.setPointSizeF(QApplication.instance().font().pointSizeF())
+    fixed_font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
+    fixed_font.setPointSizeF(QApplication.font().pointSizeF())
     return fixed_font
 
 

@@ -1,9 +1,9 @@
-from PyQt5.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
-    QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import QActionGroup, QInputDialog
+from PyQt6.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
+    QActionGroup, QIcon
+from PyQt6.QtWidgets import QInputDialog
 
-from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
+from PyQt6.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
 
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.ui.views.TableView import TableView
@@ -15,8 +15,8 @@ class GeneratorTableView(TableView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
         self.drop_indicator_rect = QRect()
         self.drag_active = False
@@ -206,7 +206,7 @@ class GeneratorTableView(TableView):
 
     @pyqtSlot()
     def on_de_bruijn_action_triggered(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         row = self.rowAt(self.context_menu_pos.y())
         _, _, start, end = self.selection_range()

@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtCore import QRectF, QLineF, QPointF, Qt
-from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
+from PyQt6.QtCore import QRectF, QLineF, QPointF, Qt
+from PyQt6.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
 from urh import settings
 from urh.ui.painting.ZoomableScene import ZoomableScene

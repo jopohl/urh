@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QAbstractItemModel, pyqtSignal, QModelIndex, Qt, QMimeData
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QMessageBox, QWidget
+from PyQt6.QtCore import QAbstractItemModel, pyqtSignal, QModelIndex, Qt, QMimeData
+from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtWidgets import QMessageBox, QWidget
 
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -114,13 +114,13 @@ class ProtocolTreeModel(QAbstractItemModel):
 
     def data(self, index: QModelIndex, role=None):
         item = self.getItem(index)
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             return item.data()
-        elif role == Qt.DecorationRole and item.is_group:
+        elif role == Qt.ItemDataRole.DecorationRole and item.is_group:
             return QIcon.fromTheme("folder")
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             return item.show
-        elif role == Qt.FontRole:
+        elif role == Qt.ItemDataRole.FontRole:
             if item.is_group and self.rootItem.index_of(item) in self.controller.active_group_ids:
                 font = QFont()
                 font.setBold(True)
@@ -129,16 +129,16 @@ class ProtocolTreeModel(QAbstractItemModel):
                 font = QFont()
                 font.setBold(True)
                 return font
-        elif role == Qt.ToolTipRole:
+        elif role == Qt.ItemDataRole.ToolTipRole:
             return item.data()
 
     def setData(self, index: QModelIndex, value, role=None):
         item = self.getItem(index)
 
-        if role == Qt.EditRole and len(value) > 0:
+        if role == Qt.ItemDataRole.EditRole and len(value) > 0:
             item.setData(value)
             return True
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             item.show = value
             return True
 
@@ -165,12 +165,12 @@ class ProtocolTreeModel(QAbstractItemModel):
 
     def flags(self, index: QModelIndex):
         if not index.isValid():
-            return Qt.ItemIsDropEnabled
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable | \
-               Qt.ItemIsUserCheckable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+            return Qt.ItemFlag.ItemIsDropEnabled
+        return Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | \
+               Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsDragEnabled | Qt.ItemFlag.ItemIsDropEnabled
 
     def supportedDragActions(self):
-        return Qt.MoveAction | Qt.CopyAction
+        return Qt.DropAction.MoveAction | Qt.DropAction.CopyAction
 
     def mimeTypes(self):
         return ['text/plain', 'text/uri-list']
@@ -188,7 +188,7 @@ class ProtocolTreeModel(QAbstractItemModel):
         return mime_data
 
     def dropMimeData(self, mimedata, action, row, column, parentIndex):
-        if action == Qt.IgnoreAction:
+        if action == Qt.DropAction.IgnoreAction:
             return True
 
         data_str = str(mimedata.text())

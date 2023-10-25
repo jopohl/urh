@@ -2,7 +2,7 @@ import random
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 from urh import settings
 from urh.signalprocessing.Encoding import Encoding

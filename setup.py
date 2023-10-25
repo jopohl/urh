@@ -109,12 +109,12 @@ def read_long_description():
 
 install_requires = ["numpy", "psutil", "cython<3.0.0"]
 if IS_RELEASE:
-    install_requires.append("pyqt5")
+    install_requires.append("PyQt6")
 else:
     try:
-        import PyQt5
+        import PyQt6
     except ImportError:
-        install_requires.append("pyqt5")
+        install_requires.append("PyQt6")
 
 if sys.version_info < (3, 4):
     install_requires.append('enum34')

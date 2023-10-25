@@ -1,7 +1,7 @@
 import numpy
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QFontMetrics
-from PyQt5.QtWidgets import QTableView, qApp
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QKeyEvent, QFontMetrics
+from PyQt6.QtWidgets import QTableView, QApplication
 
 
 class FuzzingTableView(QTableView):
@@ -13,13 +13,13 @@ class FuzzingTableView(QTableView):
         self.horizontalHeader().setMinimumSectionSize(0)
 
     def resize_me(self):
-        qApp.setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         w = QFontMetrics(self.font()).widthChar("0") + 2
         for i in range(10):
             self.setColumnWidth(i, 3 * w)
         for i in range(10, self.model().col_count):
             self.setColumnWidth(i, w * (len(str(i + 1)) + 1))
-        qApp.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
 
     def selection_range(self):
         """
@@ -39,7 +39,7 @@ class FuzzingTableView(QTableView):
         return min_row, max_row, start, end
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key.Key_Delete:
             selected = self.selectionModel().selection()
             """:type: QtGui.QItemSelection """
             if selected.isEmpty():

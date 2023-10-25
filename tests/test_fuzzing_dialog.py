@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtTest import QTest
+from PyQt6.QtCore import Qt
+from PyQt6.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import settings
@@ -51,7 +51,7 @@ class TestFuzzingDialog(QtTestCase):
         rect = self.gframe.ui.treeProtocols.visualRect(index)
 
         self.assertEqual(len(self.gframe.ui.treeProtocols.selectedIndexes()), 0)
-        QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos = rect.center())
+        QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.MouseButton.LeftButton, pos = rect.center())
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
         self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))

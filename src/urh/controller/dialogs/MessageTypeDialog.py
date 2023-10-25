@@ -1,8 +1,8 @@
 import copy
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtGui import QCloseEvent
+from PyQt6.QtWidgets import QDialog
 
 from urh import settings
 from urh.models.RulesetTableModel import RulesetTableModel
@@ -19,8 +19,8 @@ class MessageTypeDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogMessageType()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         operator_descriptions = list(OPERATION_DESCRIPTION.values())
         operator_descriptions.sort()

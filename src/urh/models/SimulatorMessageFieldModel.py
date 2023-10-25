@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import qApp
+from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex, pyqtSignal
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import QApplication
 
 from urh import settings
 from urh.signalprocessing.FieldType import FieldType
@@ -32,19 +32,19 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
     def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
         return len(self.message_type) if self.message_type is not None else 0
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignLeft
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
+            return Qt.AlignmentFlag.AlignLeft
 
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         i, j = index.row(), index.column()
         lbl = self.message_type[i]  # type: SimulatorProtocolLabel
 
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
@@ -72,7 +72,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     return lbl.external_program
                 elif lbl.value_type_index == 4:
                     return "Range (Decimal): " + str(lbl.random_min) + " - " + str(lbl.random_max)
-        elif role == Qt.EditRole:
+        elif role == Qt.ItemDataRole.EditRole:
             if j == 0:
                 return lbl.name
             elif j == 1:
@@ -86,7 +86,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     return lbl.external_program
                 elif lbl.value_type_index == 4:
                     return [lbl.random_min, lbl.random_max]
-        elif role == Qt.FontRole:
+        elif role == Qt.ItemDataRole.FontRole:
             if j == 0:
                 font = QFont()
                 font.setItalic(lbl.field_type is None)
@@ -95,16 +95,16 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 font = QFont()
                 font.setUnderline(True)
                 return font
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundColorRole:
             if j == 0:
                 return settings.LABEL_COLORS[lbl.color_index]
             elif j == 3:
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
                     return settings.ERROR_BG_COLOR
-        elif role == Qt.TextColorRole:
+        elif role == Qt.ItemDataRole.TextColorRole:
             if self.link_index(index):
-                return qApp.palette().link().color()
+                return QApplication.palette().link().color()
 
     def link_index(self, index: QModelIndex):
         try:
@@ -116,7 +116,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         return False
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole:
+        if role == Qt.ItemDataRole.EditRole:
             i, j = index.row(), index.column()
             label = self.message_type[i]  # type: SimulatorProtocolLabel
 
@@ -156,12 +156,12 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         label = self.message_type[row]  # type: SimulatorProtocolLabel
 
         if col == 2 and label.is_checksum_label:
-            return Qt.ItemIsSelectable
+            return Qt.ItemFlag.ItemIsSelectable
 
-        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        flags = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
         if not(col == 3 and label.value_type_index == 1):
-            flags |= Qt.ItemIsEditable
+            flags |= Qt.ItemFlag.ItemIsEditable
 
         return flags
 

@@ -2,8 +2,8 @@ import array
 import os
 import tempfile
 
-from PyQt5.QtCore import QDir, QPoint, Qt
-from PyQt5.QtTest import QTest
+from PyQt6.QtCore import QDir, QPoint, Qt
+from PyQt6.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.GeneratorTabController import GeneratorTabController
@@ -99,7 +99,7 @@ class TestGenerator(QtTestCase):
         item = gframe.tree_model.rootItem.children[0].children[0]
         index = gframe.tree_model.createIndex(0, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)
-        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
+        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.MouseButton.LeftButton, pos=rect.center())
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
         gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
@@ -277,20 +277,20 @@ class TestGenerator(QtTestCase):
         self.assertTrue(bool(lbl.fuzz_me))
         self.assertEqual(len(lbl.fuzz_values), 1)
 
-        self.assertTrue(bool(model.data(model.index(0,0), role=Qt.CheckStateRole)), True)
-        model.setData(model.index(0,0), Qt.Unchecked, role=Qt.CheckStateRole)
+        self.assertTrue(bool(model.data(model.index(0,0), role=Qt.ItemDataRole.CheckStateRole)), True)
+        model.setData(model.index(0,0), Qt.CheckState.Unchecked, role=Qt.ItemDataRole.CheckStateRole)
         self.assertFalse(lbl.fuzz_me)
 
-        model.setData(model.index(0,0), "test", role=Qt.EditRole)
-        self.assertEqual("test (empty)", model.data(model.index(0,0), role=Qt.DisplayRole))
+        model.setData(model.index(0,0), "test", role=Qt.ItemDataRole.EditRole)
+        self.assertEqual("test (empty)", model.data(model.index(0,0), role=Qt.ItemDataRole.DisplayRole))
 
         lbl.fuzz_values.append("101010")
         model.update()
-        self.assertEqual("test (1)", model.data(model.index(0, 0), role=Qt.DisplayRole))
+        self.assertEqual("test (1)", model.data(model.index(0, 0), role=Qt.ItemDataRole.DisplayRole))
 
 
     def __set_model_data(self, model, row, column, value):
-        model.setData(model.createIndex(row, column), value, role=Qt.EditRole)
+        model.setData(model.createIndex(row, column), value, role=Qt.ItemDataRole.EditRole)
 
     def __is_inv_proto(self, proto1: str, proto2: str):
         if len(proto1) != len(proto2):

@@ -5,9 +5,9 @@ import tempfile
 from zipfile import ZipFile
 
 import numpy as np
-from PyQt5.QtCore import QDir
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt6.QtCore import QDir
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication, QFileDialog
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.IQArray import IQArray

@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from PyQt5.QtWidgets import QMessageBox, QWidget
+from PyQt6.QtWidgets import QMessageBox, QWidget
 
 from urh.util.Formatter import Formatter
 from urh.util.Logger import logger

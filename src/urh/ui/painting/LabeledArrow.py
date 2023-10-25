@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, QSizeF, QPointF
-from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QGraphicsLineItem
+from PyQt6.QtCore import QRectF, QSizeF, QPointF
+from PyQt6.QtGui import QPainter, QPen
+from PyQt6.QtWidgets import QGraphicsLineItem
 
 from urh import settings
 

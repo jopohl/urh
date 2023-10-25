@@ -1,7 +1,6 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QHeaderView
-from PyQt5.QtWidgets import QMenu, QActionGroup
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QHeaderView, QMenu
+from PyQt6.QtGui import QActionGroup
 
 from urh import settings
 from urh.models.SimulatorMessageTableModel import SimulatorMessageTableModel
@@ -16,8 +15,8 @@ class SimulatorMessageTableView(TableView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
     def _insert_column(self, pos):
         view_type = self.model().proto_view

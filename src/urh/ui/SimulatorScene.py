@@ -1,8 +1,8 @@
 import copy
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QDropEvent
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QDropEvent
+from PyQt6.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message

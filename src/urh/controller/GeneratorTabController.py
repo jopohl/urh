@@ -2,9 +2,9 @@ import locale
 
 import numpy
 import numpy as np
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QInputDialog, QWidget, QUndoStack, QApplication, QFileDialog
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtGui import QFontMetrics, QUndoStack
+from PyQt6.QtWidgets import QInputDialog, QWidget, QApplication, QFileDialog
 
 from urh import settings
 from urh.controller.CompareFrameController import CompareFrameController
@@ -435,7 +435,7 @@ class GeneratorTabController(QWidget):
             pos += len(modulated) + message.pause
             self.modulation_msg_indices.append(pos)
             self.ui.prBarGeneration.setValue(i + 1)
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
 
         self.ui.prBarGeneration.hide()
         return buffer
@@ -477,7 +477,7 @@ class GeneratorTabController(QWidget):
         elif self.ui.rBExhaustive.isChecked():
             fuz_mode = "Exhaustive"
 
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         fuzz_action = Fuzz(self.table_model.protocol, fuz_mode)
         self.table_model.undo_stack.push(fuzz_action)
         for row in fuzz_action.added_message_indices:
@@ -568,7 +568,7 @@ class GeneratorTabController(QWidget):
 
     @pyqtSlot()
     def on_view_type_changed(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         self.table_model.proto_view = self.ui.cbViewType.currentIndex()
         self.ui.tableMessages.resize_columns()
         self.unsetCursor()
@@ -715,20 +715,20 @@ class GeneratorTabController(QWidget):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingProgressBar)
         self.ui.progressBarFuzzing.setMaximum(num_values)
         self.ui.progressBarFuzzing.setValue(0)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
     @pyqtSlot()
     def on_fuzzing_finished(self):
         self.ui.stackedWidgetFuzzing.setCurrentWidget(self.ui.pageFuzzingUI)
         # Calculate Checksums for Fuzzed Messages
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         self.unsetCursor()
 
     @pyqtSlot(int)
     def on_current_fuzzing_message_changed(self, current_message: int):
         self.ui.progressBarFuzzing.setValue(current_message)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
     @pyqtSlot(ProtocolAnalyzer)
     def on_first_protocol_added(self, protocol: ProtocolAnalyzer):

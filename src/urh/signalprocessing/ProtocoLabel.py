@@ -1,7 +1,7 @@
 import copy
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
@@ -33,9 +33,9 @@ class ProtocolLabel(object):
 
         self.apply_decoding = True
         self.color_index = color_index
-        self.show = Qt.Checked
+        self.show = Qt.CheckState.Checked
 
-        self.__fuzz_me = Qt.Checked
+        self.__fuzz_me = Qt.CheckState.Checked
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
@@ -60,7 +60,7 @@ class ProtocolLabel(object):
     @fuzz_me.setter
     def fuzz_me(self, value):
         if isinstance(value, bool):
-            value = Qt.Checked if value else Qt.Unchecked
+            value = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
         self.__fuzz_me = value
 
     @property
@@ -216,8 +216,8 @@ class ProtocolLabel(object):
 
         result = ProtocolLabel(name=name, start=start, end=end, color_index=color_index)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
-        result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
-        result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
+        result.show = Qt.CheckState.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.CheckState.Unchecked
+        result.fuzz_me = Qt.CheckState.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.CheckState.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
 

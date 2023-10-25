@@ -6,9 +6,9 @@ import os
 import re
 import sys
 
-from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QPalette, QIcon, QColor
-from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
+from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtGui import QPalette, QIcon, QColor
+from PyQt6.QtWidgets import QApplication, QWidget, QStyleFactory
 
 try:
     locale.setlocale(locale.LC_ALL, '')
@@ -128,30 +128,30 @@ def main():
             palette = QPalette()
             background_color = QColor(56, 60, 74)
             text_color = QColor(211, 218, 227).lighter()
-            palette.setColor(QPalette.Window, background_color)
-            palette.setColor(QPalette.WindowText, text_color)
-            palette.setColor(QPalette.Base, background_color)
-            palette.setColor(QPalette.AlternateBase, background_color)
-            palette.setColor(QPalette.ToolTipBase, background_color)
-            palette.setColor(QPalette.ToolTipText, text_color)
-            palette.setColor(QPalette.Text, text_color)
+            palette.setColor(QPalette.ColorRole.Window, background_color)
+            palette.setColor(QPalette.ColorRole.WindowText, text_color)
+            palette.setColor(QPalette.ColorRole.Base, background_color)
+            palette.setColor(QPalette.ColorRole.AlternateBase, background_color)
+            palette.setColor(QPalette.ColorRole.ToolTipBase, background_color)
+            palette.setColor(QPalette.ColorRole.ToolTipText, text_color)
+            palette.setColor(QPalette.ColorRole.Text, text_color)
 
-            palette.setColor(QPalette.Button, background_color)
-            palette.setColor(QPalette.ButtonText, text_color)
+            palette.setColor(QPalette.ColorRole.Button, background_color)
+            palette.setColor(QPalette.ColorRole.ButtonText, text_color)
 
-            palette.setColor(QPalette.BrightText, Qt.red)
-            palette.setColor(QPalette.Disabled, QPalette.Text, Qt.darkGray)
-            palette.setColor(QPalette.Disabled, QPalette.ButtonText, Qt.darkGray)
+            palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
+            palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, Qt.GlobalColor.darkGray)
+            palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, Qt.GlobalColor.darkGray)
 
-            palette.setColor(QPalette.Highlight, QColor(200, 50, 0))
-            palette.setColor(QPalette.HighlightedText, text_color)
+            palette.setColor(QPalette.ColorRole.Highlight, QColor(200, 50, 0))
+            palette.setColor(QPalette.ColorRole.HighlightedText, text_color)
             app.setPalette(palette)
 
     # use system colors for painting
     widget = QWidget()
-    bg_color = widget.palette().color(QPalette.Background)
-    fg_color = widget.palette().color(QPalette.Foreground)
-    selection_color = widget.palette().color(QPalette.Highlight)
+    bg_color = widget.palette().color(QPalette.ColorRole.Window)
+    fg_color = widget.palette().color(QPalette.ColorRole.WindowText)
+    selection_color = widget.palette().color(QPalette.ColorRole.Highlight)
     settings.BGCOLOR = bg_color
     settings.LINECOLOR = fg_color
     settings.SELECTION_COLOR = selection_color
@@ -177,7 +177,7 @@ def main():
         timer.timeout.connect(app.quit)
         timer.start(1000)
 
-    return_code = app.exec_()
+    return_code = app.exec()
     app.closeAllWindows()
     os._exit(return_code)  # sys.exit() is not enough on Windows and will result in crash on exit
 

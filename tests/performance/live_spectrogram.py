@@ -3,8 +3,8 @@ from multiprocessing import Process, Pipe
 from multiprocessing.connection import Connection
 
 import numpy as np
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsView, QPushButton, QGraphicsScene, QLabel
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsView, QPushButton, QGraphicsScene, QLabel
 
 from urh.signalprocessing.Spectrogram import Spectrogram
 
@@ -54,7 +54,7 @@ def go():
         status_label.setText("Height: {0:.0f} // Speed: {1:.2f}  // Total Time: {2:.2f}".format(scene.sceneRect().height(),
                                                                                                 1/(time.time()-speed),
                                                                                                 time.time()-t))
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
 
 if __name__ == '__main__':

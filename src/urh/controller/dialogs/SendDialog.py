@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor, QIcon, QPen
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtGui import QBrush, QColor, QIcon, QPen
+from PyQt6.QtWidgets import QMessageBox
 
 from urh import settings
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
@@ -45,7 +45,7 @@ class SendDialog(SendRecvDialog):
             signal.iq_array = modulated_data
             self.scene_manager = SignalSceneManager(signal, parent=self)
             self.send_indicator = self.scene_manager.scene.addRect(0, -2, 0, 4,
-                                                                   QPen(QColor(Qt.transparent), 0),
+                                                                   QPen(QColor(Qt.GlobalColor.transparent), 0),
                                                                    QBrush(settings.SEND_INDICATOR_COLOR))
             self.send_indicator.stackBefore(self.scene_manager.scene.selection_area)
             self.scene_manager.init_scene()

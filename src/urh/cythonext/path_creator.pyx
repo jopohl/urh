@@ -1,8 +1,8 @@
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
-from PyQt5.QtCore import QByteArray, QDataStream
-from PyQt5.QtGui import QPainterPath
+from PyQt6.QtCore import QByteArray, QDataStream
+from PyQt6.QtGui import QPainterPath
 
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
@@ -112,11 +112,7 @@ cpdef array_to_QPath(np.int64_t[:] x, y):
 
     cdef long long last_index = 20 * (n + 1)
     byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)
-
-    try:
-        buf = QByteArray.fromRawData(byte_view.data[12:last_index + 4])
-    except TypeError:
-        buf = QByteArray(byte_view.data[12:last_index + 4])
+    buf = QByteArray(byte_view.data[12:last_index + 4])
 
     path = QPainterPath()
     ds = QDataStream(buf)

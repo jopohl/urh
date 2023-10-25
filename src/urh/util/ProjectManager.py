@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt6.QtCore import QDir, Qt, QObject, pyqtSignal
+from PyQt6.QtWidgets import QMessageBox, QApplication
 
 from urh import settings
 from urh.dev import config
@@ -528,7 +528,7 @@ class ProjectManager(QObject):
                     filename = os.path.normpath(os.path.join(self.project_path, filename))
                 file_names.insert(pos, filename)
 
-            QApplication.setOverrideCursor(Qt.WaitCursor)
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
             file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
             QApplication.restoreOverrideCursor()
             return file_names

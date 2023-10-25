@@ -1,10 +1,9 @@
 import string
 
-from PyQt5.QtCore import QLocale
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QValidator
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDoubleSpinBox
+from PyQt6.QtCore import QLocale
+from PyQt6.QtCore import QRegularExpression
+from PyQt6.QtGui import QValidator
+from PyQt6.QtWidgets import QDoubleSpinBox
 
 
 class KillerDoubleSpinBox(QDoubleSpinBox):
@@ -71,8 +70,8 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def validate(self, inpt: str, pos: int):
         if self.suffix().upper() in ("", "K", "M", "G"):
-            rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")
+            rx = QRegularExpression("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")
         else:
-            rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[{}]?$".format(self.suffix()))
-        result = QValidator.Acceptable if rx.exactMatch(inpt.replace(",", ".")) else QValidator.Invalid
+            rx = QRegularExpression("^(-?[0-9]+)[.]?[0-9]*[{}]?$".format(self.suffix()))
+        result = QValidator.State.Acceptable if rx.match(inpt.replace(",", ".")) else QValidator.State.Invalid
         return result, inpt, pos

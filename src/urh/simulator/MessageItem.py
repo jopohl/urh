@@ -1,8 +1,8 @@
 import math
 
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QPen, QPolygonF
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
+from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtGui import QPen, QPolygonF
+from PyQt6.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem

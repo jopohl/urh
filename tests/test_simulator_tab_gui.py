@@ -4,10 +4,10 @@ import time
 from array import array
 
 import numpy as np
-from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu, QCompleter
+from PyQt6.QtCore import Qt, QTimer, QPoint
+from PyQt6.QtGui import QContextMenuEvent
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication, QMenu, QCompleter
 
 from tests.QtTestCase import QtTestCase
 from urh import settings
@@ -115,53 +115,53 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 3)), "1" * 8)
 
         # constant value
-        model.setData(model.index(0, 2), 0, role=Qt.EditRole)
-        model.setData(model.index(0, 1), 0, role=Qt.EditRole)
-        model.setData(model.index(0, 3), "11110000", role=Qt.EditRole)
+        model.setData(model.index(0, 2), 0, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 1), 0, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 3), "11110000", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "11110000")
 
-        model.setData(model.index(0, 1), 1, role=Qt.EditRole)
-        model.setData(model.index(0, 3), "ab", role=Qt.EditRole)
+        model.setData(model.index(0, 1), 1, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 3), "ab", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "ab")
 
-        model.setData(model.index(0, 1), 2, role=Qt.EditRole)
-        model.setData(model.index(0, 3), "=", role=Qt.EditRole)
+        model.setData(model.index(0, 1), 2, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 3), "=", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "=")
 
-        model.setData(model.index(0, 1), 3, role=Qt.EditRole)
-        model.setData(model.index(0, 3), "240", role=Qt.EditRole)
+        model.setData(model.index(0, 1), 3, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 3), "240", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "240")
 
-        model.setData(model.index(0, 1), 4, role=Qt.EditRole)
-        model.setData(model.index(0, 3), "55", role=Qt.EditRole)
+        model.setData(model.index(0, 1), 4, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 3), "55", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "55")
 
         # get live during simulation
-        model.setData(model.index(0, 2), 1, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 1, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "-")
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
 
         # formula
-        model.setData(model.index(0, 2), 2, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 2, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "")
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
-        model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "4+5", role=Qt.ItemDataRole.EditRole)
         self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
-        model.setData(model.index(0, 3), "item1.preamble + 42", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "item1.preamble + 42", role=Qt.ItemDataRole.EditRole)
         self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
-        model.setData(model.index(0, 3), "item1.preamble + 42/", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "item1.preamble + 42/", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
 
         # external program
-        model.setData(model.index(0, 2), 3, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 3, role=Qt.ItemDataRole.EditRole)
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         self.assertEqual(model.data(model.index(0, 3)), "")
 
         # random value
-        model.setData(model.index(0, 2), 4, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 4, role=Qt.ItemDataRole.EditRole)
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         self.assertTrue(model.data(model.index(0, 3)).startswith("Range (Decimal):"))
-        model.setData(model.index(0, 3), (42, 1337), role=Qt.EditRole)
+        model.setData(model.index(0, 3), (42, 1337), role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 3)), "Range (Decimal): 42 - 1337")
 
     def test_insert_column(self):
@@ -194,7 +194,7 @@ class TestSimulatorTabGUI(QtTestCase):
         messages = stc.simulator_scene.get_all_message_items()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
 
-        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
+        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.MouseButton.LeftButton, Qt.NoModifier, pos)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
         self.assertIsInstance(stc.simulator_scene.selectedItems()[0], MessageItem)
@@ -302,11 +302,11 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 0)), "Alice (A)")
         self.assertEqual(model.data(model.index(1, 0)), "Bob (B)")
         self.assertFalse(self.form.project_manager.participants[0].simulate)
-        self.assertEqual(model.data(model.index(0, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+        self.assertEqual(model.data(model.index(0, 0), role=Qt.ItemDataRole.CheckStateRole), Qt.CheckState.Unchecked)
         self.assertFalse(self.form.project_manager.participants[1].simulate)
-        self.assertEqual(model.data(model.index(1, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+        self.assertEqual(model.data(model.index(1, 0), role=Qt.ItemDataRole.CheckStateRole), Qt.CheckState.Unchecked)
 
-        model.setData(model.index(0, 0), Qt.Checked, role=Qt.CheckStateRole)
+        model.setData(model.index(0, 0), Qt.CheckState.Checked, role=Qt.ItemDataRole.CheckStateRole)
         self.assertTrue(self.form.project_manager.participants[0].simulate)
 
     def test_valid_goto_targets(self):
@@ -352,7 +352,7 @@ class TestSimulatorTabGUI(QtTestCase):
 
         list_model = stc.ui.listViewSimulate.model()
         self.assertEqual(list_model.rowCount(), 2)
-        list_model.setData(list_model.createIndex(1, 0), Qt.Checked, role=Qt.CheckStateRole)
+        list_model.setData(list_model.createIndex(1, 0), Qt.CheckState.Checked, role=Qt.ItemDataRole.CheckStateRole)
 
         dialog = stc.get_simulator_dialog()
 

@@ -47,8 +47,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>621</width>
-         <height>1101</height>
+         <width>658</width>
+         <height>1111</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -497,9 +497,6 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
              </property>
              <property name="renderHints">
               <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-             </property>
-             <property name="cacheMode">
-              <set>QGraphicsView::CacheNone</set>
              </property>
              <property name="viewportUpdateMode">
               <enum>QGraphicsView::MinimalViewportUpdate</enum>

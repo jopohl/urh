@@ -1,6 +1,6 @@
 import copy
 
-from PyQt6.QtWidgets import QUndoCommand
+from PyQt6.QtGui import QUndoCommand
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Message import Message

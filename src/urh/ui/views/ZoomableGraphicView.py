@@ -71,7 +71,7 @@ class ZoomableGraphicView(SelectableGraphicView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_position = event.pos()
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
         self.context_menu_position = None
 
     def _add_zoom_actions_to_menu(self, menu: QMenu):

@@ -29,7 +29,7 @@ class LoggingGraphicsView(QGraphicsView):
 
     def contextMenuEvent(self, event):
         menu = self.create_context_menu()
-        menu.exec_(event.globalPos())
+        menu.exec(event.globalPos())
 
     def create_context_menu(self):
         menu = QMenu()

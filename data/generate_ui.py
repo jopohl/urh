@@ -12,10 +12,10 @@ def gen(force=False):
 
     if sys.platform == "win32":
         uic_path = os.path.join(bindir, "pyuic6.bat")
-        rcc_path = os.path.join(bindir, "pyrcc6.exe")
+        rcc_path = os.path.join(bindir, "pyside6-rcc.exe")
     else:
         uic_path = os.path.join(bindir, "pyuic6")
-        rcc_path = os.path.join(bindir, "rcc")
+        rcc_path = os.path.join(bindir, "pyside6-rcc")
 
     file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ui")
     ui_path = file_dir
@@ -64,9 +64,12 @@ def gen(force=False):
             time_generated_file = 0
 
         if time_generated_file < time_rc_file or force:
-            # Only create, when generated file is old than rc file to prevent unneeded git pushes
+            print(file_path)
+            # Only create, when generated file is older than rc file to prevent unneeded git pushes
             call([rcc_path, "-g", "python", file_path, "-o", out_file_path])
+            for line in fileinput.input(out_file_path, inplace=True):
+                print(line.replace("from PySide6 import QtCore", "from PyQt6 import QtCore"), end="")
 
 
 if __name__ == "__main__":
-    gen(True)
+    gen()

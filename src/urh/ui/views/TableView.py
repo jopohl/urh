@@ -151,7 +151,7 @@ class TableView(QTableView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_pos = event.pos()
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
         self.context_menu_pos = None
 

@@ -144,7 +144,7 @@ class TextEditProtocolView(QTextEdit):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
     def textCursor(self) -> QTextCursor:
         return super().textCursor()

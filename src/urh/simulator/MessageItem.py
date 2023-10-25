@@ -126,7 +126,7 @@ class MessageItem(GraphicsItem):
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setPen(QPen(Qt.black, 1, Qt.PenStyle.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        self.setPen(QPen(Qt.GlobalColor.black, 1, Qt.PenStyle.SolidLine, Qt.RoundCap, Qt.RoundJoin))
 
     def boundingRect(self):
         return super().boundingRect().adjusted(0, -5, 0, 5)

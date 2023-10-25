@@ -1050,7 +1050,7 @@ class SignalFrame(QFrame):
         apply_to_all_action = menu.addAction(self.tr("Apply values (BitLen, 0/1-Threshold, Tolerance) to all signals"))
         menu.addSeparator()
         auto_detect_action = menu.addAction(self.tr("Auto-Detect signal parameters"))
-        action = menu.exec_(self.mapToGlobal(event.pos()))
+        action = menu.exec(self.mapToGlobal(event.pos()))
         if action == apply_to_all_action:
             self.setCursor(Qt.CursorShape.WaitCursor)
             self.apply_to_all_clicked.emit(self.signal)

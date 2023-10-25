@@ -10,6 +10,9 @@ from PyQt6.QtCore import QTimer, Qt
 from PyQt6.QtGui import QPalette, QIcon, QColor
 from PyQt6.QtWidgets import QApplication, QWidget, QStyleFactory
 
+# noinspection PyUnresolvedReferences
+import urh.ui.urh_rc
+
 try:
     locale.setlocale(locale.LC_ALL, '')
 except locale.Error as e:

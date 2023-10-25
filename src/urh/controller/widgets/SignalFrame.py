@@ -409,7 +409,7 @@ class SignalFrame(QFrame):
 
     def dropEvent(self, event: QDropEvent):
         if len(event.mimeData().urls()) == 0:
-            self.frame_dropped.emit(self.mapToParent(event.pos()))
+            self.frame_dropped.emit(self.mapToParent(event.position().toPoint()))
         else:
             self.files_dropped.emit(event.mimeData().urls())
 
@@ -426,9 +426,9 @@ class SignalFrame(QFrame):
         if not not_show:
             cb = QCheckBox("Do not show this again.")
             msgbox = QMessageBox(QMessageBox.Question, "Confirm close", "Are you sure you want to close?")
-            msgbox.addButton(QMessageBox.Yes)
-            msgbox.addButton(QMessageBox.No)
-            msgbox.setDefaultButton(QMessageBox.No)
+            msgbox.addButton(QMessageBox.StandardButton.Yes)
+            msgbox.addButton(QMessageBox.StandardButton.No)
+            msgbox.setDefaultButton(QMessageBox.StandardButton.No)
             msgbox.setCheckBox(cb)
 
             reply = msgbox.exec()
@@ -436,7 +436,7 @@ class SignalFrame(QFrame):
             not_show_again = bool(cb.isChecked())
             settings.write("not_show_close_dialog", not_show_again)
             self.not_show_again_changed.emit()
-            if reply != QMessageBox.Yes:
+            if reply != QMessageBox.StandardButton.Yes:
                 return
 
         self.closed.emit(self)

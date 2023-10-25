@@ -19,7 +19,7 @@ class ListWidget(QListWidget):
     def dropEvent(self, event: QDropEvent):
         super().dropEvent(event)
         if self.count() > 0:
-            item = self.itemAt(event.pos())
+            item = self.itemAt(event.position().toPoint())
             if item is not None:
                 index = self.indexFromItem(item).row()
                 self.setCurrentRow(index)
@@ -27,14 +27,14 @@ class ListWidget(QListWidget):
                 self.setCurrentRow(self.count()-1)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
-        self.active_element = self.indexAt(event.pos()).row()
+        self.active_element = self.indexAt(event.position().toPoint()).row()
         event.accept()
         super().dragEnterEvent(event)
 
     def eventFilter(self, sender, event):
-        if event.type() == QEvent.ChildRemoved:
+        if event.type() == QEvent.Type.ChildRemoved:
             self.internalMove.emit()
-        elif event.type() == QEvent.KeyPress and event.key() in (Qt.Key_Delete, Qt.Key_Backspace)\
+        elif event.type() == QEvent.Type.KeyPress and event.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace)\
                 and self.currentItem() is not None:
             item = self.currentRow()
             item_name = self.currentItem().text()

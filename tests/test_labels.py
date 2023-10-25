@@ -80,7 +80,7 @@ class TestLabels(QtTestCase):
         # Delete a line
         old_row_count = self.gframe.table_model.row_count
         self.gframe.ui.tableMessages.selectRow(2)
-        QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key_Delete)
+        QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key.Key_Delete)
         self.assertEqual(self.gframe.table_model.row_count, old_row_count - 1)
 
         self.__check_background_is_drawn(lbl, 43, 43)
@@ -88,7 +88,7 @@ class TestLabels(QtTestCase):
         # Remove everything
         for i in range(old_row_count):
             self.gframe.ui.tableMessages.selectRow(0)
-            QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key_Delete)
+            QTest.keyClick(self.gframe.ui.tableMessages, Qt.Key.Key_Delete)
 
         self.assertEqual(self.gframe.table_model.row_count, 0)
 

@@ -345,8 +345,8 @@ class CompareFrameController(QWidget):
                 if len(messages) > 10:
                     reply = QMessageBox.question(self, "Set decoding",
                                                  "Do you want to apply the selected decoding to {} messages?".format(
-                                                     len(messages)), QMessageBox.Yes | QMessageBox.No)
-                    if reply != QMessageBox.Yes:
+                                                     len(messages)), QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                    if reply != QMessageBox.StandardButton.Yes:
                         self.ui.cbDecoding.blockSignals(True)
                         self.ui.cbDecoding.setCurrentText("...")
                         self.ui.cbDecoding.blockSignals(False)
@@ -850,8 +850,8 @@ class CompareFrameController(QWidget):
                 reply = QMessageBox.question(self, "Saving of protocol",
                                              "You want to save this protocol with an encoding different from NRZ.\n"
                                              "This may cause loss of information if you load it again.\n\n"
-                                             "Save anyway?", QMessageBox.Yes | QMessageBox.No)
-                if reply != QMessageBox.Yes:
+                                             "Save anyway?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                if reply != QMessageBox.StandardButton.Yes:
                     return
                 else:
                     break

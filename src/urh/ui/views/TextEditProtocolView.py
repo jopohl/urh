@@ -20,7 +20,7 @@ class TextEditProtocolView(QTextEdit):
         return self.textCursor().selectedText().replace('\u2028', '\n')
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key.Key_Delete:
             self.deletion_wanted.emit()
             event.ignore()
         else:

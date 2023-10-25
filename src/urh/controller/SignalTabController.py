@@ -135,8 +135,8 @@ class SignalTabController(QWidget):
             cb = QCheckBox("Don't ask me again.")
             msg_box = QMessageBox(QMessageBox.Question, self.tr("Confirm saving all signals"),
                                   self.tr("All changed signal files will be overwritten. OK?"))
-            msg_box.addButton(QMessageBox.Yes)
-            msg_box.addButton(QMessageBox.No)
+            msg_box.addButton(QMessageBox.StandardButton.Yes)
+            msg_box.addButton(QMessageBox.StandardButton.No)
             msg_box.setCheckBox(cb)
 
             reply = msg_box.exec()
@@ -144,7 +144,7 @@ class SignalTabController(QWidget):
             settings.write("not_show_save_dialog", not_show_again)
             self.not_show_again_changed.emit()
 
-            if reply != QMessageBox.Yes:
+            if reply != QMessageBox.StandardButton.Yes:
                 return
 
         for f in self.signal_frames:

@@ -61,7 +61,7 @@ class GraphicsItem(QGraphicsObject):
         self.update()
 
     def dragMoveEvent(self, event: QDropEvent):
-        self.update_drop_indicator(event.pos())
+        self.update_drop_indicator(event.position().toPoint())
 
     def get_scene_children(self):
         return [self.scene().model_to_scene(child) for child in self.model_item.children]

@@ -223,9 +223,9 @@ class ProjectManager(QObject):
                 reply = QMessageBox.question(self.main_controller, "Project File",
                                              "Do you want to create a Project File for this folder?\n"
                                              "If you chose No, you can do it later via File->Convert Folder to Project.",
-                                             QMessageBox.Yes | QMessageBox.No)
+                                             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
-                if reply == QMessageBox.Yes:
+                if reply == QMessageBox.StandardButton.Yes:
                     self.main_controller.show_project_settings()
                 else:
                     self.project_file = None

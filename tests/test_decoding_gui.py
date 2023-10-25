@@ -117,7 +117,7 @@ class TestDecodingGUI(QtTestCase):
         def accept_delete():
             timer.stop()
             message_box = next(w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox))
-            message_box.button(QMessageBox.Yes).click()
+            message_box.button(QMessageBox.StandardButton.Yes).click()
 
         self.dialog.ui.decoderchain.addItem(settings.DECODING_CUT)
         self.dialog.decoderchainUpdate()

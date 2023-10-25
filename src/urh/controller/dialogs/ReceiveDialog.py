@@ -41,8 +41,8 @@ class ReceiveDialog(SendRecvDialog):
         if not self.already_saved and self.device.current_index > 0:
             reply = QMessageBox.question(self, self.tr("Save data?"),
                                          self.tr("Do you want to save the data you have captured so far?"),
-                                         QMessageBox.Yes | QMessageBox.No | QMessageBox.Abort)
-            if reply == QMessageBox.Yes:
+                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.Abort)
+            if reply == QMessageBox.StandardButton.Yes:
                 self.on_save_clicked()
             elif reply == QMessageBox.Abort:
                 return False

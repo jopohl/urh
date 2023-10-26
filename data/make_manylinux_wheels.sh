@@ -3,7 +3,7 @@
 # for adapted jopohl/urh_manylinux
 
 yum install -y blas
-export LD_LIBRARY_PATH=/usr/local/lib/:/usr/lib64:/usr/lib64:$LD_LIBRARY_PATH
+export BLADERF_API_VERSION="2022.11"
 
 touch /tmp/urh_releasing
 for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set

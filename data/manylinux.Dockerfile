@@ -1,13 +1,13 @@
 FROM quay.io/pypa/manylinux_2_28_x86_64
 
+RUN yum -y install wget libusb-devel fftw-devel cmake3 boost-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm
 RUN export AIRSPY_VERSION="1.0.9" \
- && export BLADERF_VERSION="2023.02" \
+ && export BLADERF_VERSION="2022.11" \
  && export LIMESUITE_VERSION="20.01.0" \
  && export HACKRF_VERSION="v2023.01.1" \
  && export SDRPLAY_VERSION="2.13" \
  && export RTLSDR_VERSION="0.6.0" \
  && export UHD_VERSION="4.5.0.0" \
- && yum -y install wget libusb-devel fftw-devel cmake3 boost-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm \
  # HackRF
  && git clone --branch $HACKRF_VERSION --depth 1 https://github.com/greatscottgadgets/hackrf /tmp/hackrf-$HACKRF_VERSION \
  && cmake3 -Wno-dev -S /tmp/hackrf-$HACKRF_VERSION/host -B /tmp/build_hackrf \
@@ -28,19 +28,19 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && make -C /tmp/build_airspy install \
  # BladeRF
  && git clone --branch $BLADERF_VERSION --recursive https://github.com/Nuand/bladeRF /tmp/bladeRF-$BLADERF_VERSION \
- && cmake3 -Wno-dev -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \
+ && cmake -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \
  && make -j$(nproc) -C /tmp/build_blade \
  && make -C /tmp/build_blade install \
  && wget https://github.com/myriadrf/LimeSuite/archive/v$LIMESUITE_VERSION.tar.gz -O /tmp/lime.tar.gz \
  # Lime
  && tar xf /tmp/lime.tar.gz -C /tmp \
- && cmake3 -S /tmp/LimeSuite-$LIMESUITE_VERSION -B /tmp/build_lime \
+ && cmake -S /tmp/LimeSuite-$LIMESUITE_VERSION -B /tmp/build_lime \
  && make -j$(nproc) -C /tmp/build_lime \
  && make -C /tmp/build_lime install \
  # RTLSDR
  && wget https://github.com/osmocom/rtl-sdr/archive/$RTLSDR_VERSION.tar.gz -O /tmp/rtlsdr.tar.gz \
  && tar xf /tmp/rtlsdr.tar.gz -C /tmp \
- && cmake3 -DDETACH_KERNEL_DRIVER=ON -S /tmp/rtl-sdr-$RTLSDR_VERSION -B /tmp/build_rtlsdr \
+ && cmake -DDETACH_KERNEL_DRIVER=ON -S /tmp/rtl-sdr-$RTLSDR_VERSION -B /tmp/build_rtlsdr \
  && make -j$(nproc) -C /tmp/build_rtlsdr \
  && make -C /tmp/build_rtlsdr install \
  # SDRPLAY

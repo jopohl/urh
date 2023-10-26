@@ -31,8 +31,8 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && cmake -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \
  && make -j$(nproc) -C /tmp/build_blade \
  && make -C /tmp/build_blade install \
- && wget https://github.com/myriadrf/LimeSuite/archive/v$LIMESUITE_VERSION.tar.gz -O /tmp/lime.tar.gz \
  # Lime
+ && wget https://github.com/myriadrf/LimeSuite/archive/v$LIMESUITE_VERSION.tar.gz -O /tmp/lime.tar.gz \
  && tar xf /tmp/lime.tar.gz -C /tmp \
  && cmake -S /tmp/LimeSuite-$LIMESUITE_VERSION -B /tmp/build_lime \
  && make -j$(nproc) -C /tmp/build_lime \

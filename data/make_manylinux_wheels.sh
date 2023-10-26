@@ -2,6 +2,8 @@
 
 # for adapted jopohl/urh_manylinux
 
+export BLADERF_API_VERSION="2022.11"
+
 touch /tmp/urh_releasing
 for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
     echo -e "\033[1mInstalling requirements for $PYBIN\033[0m"

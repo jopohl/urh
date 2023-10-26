@@ -78,6 +78,7 @@ class SignalTabController(QWidget):
         sig_frame.blockSignals(True)
 
         index = self.num_frames if index == -1 else index
+        sig_frame.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
@@ -107,7 +108,7 @@ class SignalTabController(QWidget):
 
         if not getting_started:
             w = QWidget()
-            w.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+            w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):

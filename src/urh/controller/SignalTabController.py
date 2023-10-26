@@ -133,7 +133,7 @@ class SignalTabController(QWidget):
 
         if not not_show:
             cb = QCheckBox("Don't ask me again.")
-            msg_box = QMessageBox(QMessageBox.Question, self.tr("Confirm saving all signals"),
+            msg_box = QMessageBox(QMessageBox.Icon.Question, self.tr("Confirm saving all signals"),
                                   self.tr("All changed signal files will be overwritten. OK?"))
             msg_box.addButton(QMessageBox.StandardButton.Yes)
             msg_box.addButton(QMessageBox.StandardButton.No)

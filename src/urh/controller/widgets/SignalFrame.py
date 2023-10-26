@@ -425,7 +425,7 @@ class SignalFrame(QFrame):
 
         if not not_show:
             cb = QCheckBox("Do not show this again.")
-            msgbox = QMessageBox(QMessageBox.Question, "Confirm close", "Are you sure you want to close?")
+            msgbox = QMessageBox(QMessageBox.Icon.Question, "Confirm close", "Are you sure you want to close?")
             msgbox.addButton(QMessageBox.StandardButton.Yes)
             msgbox.addButton(QMessageBox.StandardButton.No)
             msgbox.setDefaultButton(QMessageBox.StandardButton.No)

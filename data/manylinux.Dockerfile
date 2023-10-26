@@ -1,17 +1,23 @@
-FROM quay.io/pypa/manylinux2014_x86_64
+FROM quay.io/pypa/manylinux_2_28_x86_64
 
 RUN export AIRSPY_VERSION="1.0.9" \
- && export BLADERF_VERSION="2018.08" \
+ && export BLADERF_VERSION="2023.02" \
  && export LIMESUITE_VERSION="20.01.0" \
+ && export HACKRF_VERSION="v2023.01.1" \
  && export SDRPLAY_VERSION="2.13" \
  && export RTLSDR_VERSION="0.6.0" \
- && export UHD_VERSION="3.15.0.0" \
- && yum -y install wget cmake3 hackrf-devel boost169-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm \
+ && export UHD_VERSION="4.5.0.0" \
+ && yum -y install wget libusb-devel fftw-devel cmake3 boost-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm \
+ # HackRF
+ && git clone --branch $HACKRF_VERSION --depth 1 https://github.com/greatscottgadgets/hackrf /tmp/hackrf-$HACKRF_VERSION \
+ && cmake3 -Wno-dev -S /tmp/hackrf-$HACKRF_VERSION/host -B /tmp/build_hackrf \
+ && make -j$(nproc) -C /tmp/build_hackrf \
+ &&  make -C /tmp/build_hackrf install \
  # UHD
  && wget https://github.com/EttusResearch/uhd/archive/v$UHD_VERSION.tar.gz -O /tmp/uhd.tar.gz \
  && tar xf /tmp/uhd.tar.gz -C /tmp \
- && python3.9 -m pip install mako \
- && cmake3 -DBOOST_INCLUDEDIR=/usr/include/boost169/ -DBOOST_LIBRARYDIR=/usr/lib64/boost169/ -DENABLE_EXAMPLES=OFF -DENABLE_UTILS=OFF -DENABLE_C_API=ON -DENABLE_TESTS=OFF -DENABLE_MAN_PAGES=OFF -S /tmp/uhd-$UHD_VERSION/host -B /tmp/build_uhd \
+ && python3.10 -m pip install mako \
+ && cmake3 -DBOOST_INCLUDEDIR=/usr/include/boost/ -DBOOST_LIBRARYDIR=/usr/lib64/boost/ -DENABLE_EXAMPLES=OFF -DENABLE_UTILS=OFF -DENABLE_C_API=ON -DENABLE_TESTS=OFF -DENABLE_MAN_PAGES=OFF -S /tmp/uhd-$UHD_VERSION/host -B /tmp/build_uhd \
  && make -j$(nproc) -C /tmp/build_uhd \
  && make -C /tmp/build_uhd install \
  # AirSpy
@@ -21,8 +27,7 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && make -j$(nproc) -C /tmp/build_airspy  \
  && make -C /tmp/build_airspy install \
  # BladeRF
- && wget https://github.com/Nuand/bladeRF/archive/$BLADERF_VERSION.tar.gz -O /tmp/bladeRF.tar.gz \
- && tar xf /tmp/bladeRF.tar.gz -C /tmp \
+ && git clone --branch $BLADERF_VERSION --recursive https://github.com/Nuand/bladeRF /tmp/bladeRF-$BLADERF_VERSION \
  && cmake3 -Wno-dev -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \
  && make -j$(nproc) -C /tmp/build_blade \
  && make -C /tmp/build_blade install \

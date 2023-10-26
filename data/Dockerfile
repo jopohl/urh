@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:23.04
 
 LABEL maintainer="Johannes.Pohl90@gmail.com"
 
@@ -10,13 +10,12 @@ ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && apt-get -qq update \
  && apt-get -qq install software-properties-common \
- && add-apt-repository -y ppa:myriadrf/drivers && apt-get -qq update \
+ && apt-get -qq update \
  && apt-get -qq install wget gcc g++ git \
-                       python3 python3-pip python3-pyaudio python3-PyQt6 python3-numpy python3-psutil \
+                       python3 cython3 python3-pip python3-pyaudio python3-pyqt6 python3-numpy python3-psutil python3-setuptools \
                        fonts-dejavu-core libgles2-mesa libusb-1.0-0 \
                        gr-osmosdr \
                        libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev \
- && python3 -m pip install setuptools cython \
  && mkdir /tmp/sdrplay \
  && wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-2.13.1.run -O /tmp/sdrplay/sdrplay.run \
  && cd /tmp/sdrplay && bash sdrplay.run --tar xf \

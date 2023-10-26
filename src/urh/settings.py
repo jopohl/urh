@@ -1,4 +1,3 @@
-# QT5 = True
 import os
 import sys
 

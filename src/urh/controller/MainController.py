@@ -73,7 +73,7 @@ class MainController(QMainWindow):
         self.undo_group.setActiveStack(self.signal_tab_controller.signal_undo_stack)
 
         self.cancel_action = QAction(self.tr("Cancel"), self)
-        self.cancel_action.setShortcut(QKeySequence.Cancel if hasattr(QKeySequence, "Cancel") else "Esc")
+        self.cancel_action.setShortcut(QKeySequence.StandardKey.Cancel if hasattr(QKeySequence, "Cancel") else "Esc")
         self.cancel_action.triggered.connect(self.on_cancel_triggered)
         self.cancel_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
         self.cancel_action.setIcon(QIcon.fromTheme("dialog-cancel"))

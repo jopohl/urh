@@ -20,7 +20,7 @@ class SimulatorLabelTableView(ProtocolLabelTableView):
     def mouseMoveEvent(self, e: QMouseEvent):
         index = self.indexAt(e.pos())
         if self.model().link_index(index):
-            self.setCursor(Qt.PointingHandCursor)
+            self.setCursor(Qt.CursorShape.PointingHandCursor)
         else:
             self.unsetCursor()
 

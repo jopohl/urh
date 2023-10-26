@@ -77,6 +77,6 @@ class QtTestCase(unittest.TestCase):
         self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
         mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
         drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
-                                mimedata, Qt.MouseButton.LeftButton, Qt.NoModifier)
+                                mimedata, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)

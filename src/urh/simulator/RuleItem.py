@@ -130,7 +130,7 @@ class RuleConditionItem(GraphicsItem):
 
         painter.drawRect(QRectF(0, 0, self.boundingRect().width(), height))
 
-        painter.setBrush(Qt.NoBrush)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawRect(self.boundingRect())
 
         if self.drag_over:
@@ -138,7 +138,7 @@ class RuleConditionItem(GraphicsItem):
 
     def paint_drop_indicator(self, painter):
         painter.setPen(QPen(Qt.GlobalColor.darkRed, 2, Qt.PenStyle.SolidLine))
-        painter.setBrush(Qt.NoBrush)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
         rect = self.boundingRect()
 
         if self.drop_indicator_position == QAbstractItemView.DropIndicatorPosition.AboveItem:

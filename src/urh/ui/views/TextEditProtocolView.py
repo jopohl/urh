@@ -62,9 +62,9 @@ class TextEditProtocolView(QTextEdit):
         line_wrap = self.sender().isChecked()
 
         if line_wrap:
-            self.setLineWrapMode(QTextEdit.WidgetWidth)
+            self.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
         else:
-            self.setLineWrapMode(QTextEdit.NoWrap)
+            self.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
 
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
@@ -136,7 +136,7 @@ class TextEditProtocolView(QTextEdit):
 
         line_wrap_action = menu.addAction("Linewrap (may take a while for long protocols)")
         line_wrap_action.setCheckable(True)
-        line_wrap = self.lineWrapMode() == QTextEdit.WidgetWidth
+        line_wrap = self.lineWrapMode() == QTextEdit.LineWrapMode.WidgetWidth
         line_wrap_action.setChecked(line_wrap)
         line_wrap_action.triggered.connect(self.on_line_wrap_action_triggered)
 

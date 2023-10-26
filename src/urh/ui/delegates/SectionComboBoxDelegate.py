@@ -11,16 +11,16 @@ class SectionItemDelegate(QItemDelegate):
         super().__init__(parent)
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
-        item_type = index.data(Qt.AccessibleDescriptionRole)
+        item_type = index.data(Qt.ItemDataRole.AccessibleDescriptionRole)
         if item_type == "parent":
             parent_option = option
-            parent_option.state |= QStyle.State_Enabled
+            parent_option.state |= QStyle.StateFlag.State_Enabled
             super().paint(painter, parent_option, index)
         elif item_type == "child":
             child_option = option
             indent = option.fontMetrics.width(4 * " ")
             child_option.rect.adjust(indent, 0, 0, 0)
-            child_option.textElideMode = Qt.ElideNone
+            child_option.textElideMode = Qt.TextElideMode.ElideNone
             super().paint(painter, child_option, index)
         else:
             super().paint(painter, option, index)
@@ -33,7 +33,7 @@ class SectionComboBox(QComboBox):
     def add_parent_item(self, text):
         item = QStandardItem(text)
         item.setFlags(item.flags() & ~(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable))
-        item.setData("parent", Qt.AccessibleDescriptionRole)
+        item.setData("parent", Qt.ItemDataRole.AccessibleDescriptionRole)
 
         font = item.font()
         font.setBold(True)
@@ -43,7 +43,7 @@ class SectionComboBox(QComboBox):
 
     def add_child_item(self, text):
         item = QStandardItem(text)
-        item.setData("child", Qt.AccessibleDescriptionRole)
+        item.setData("child", Qt.ItemDataRole.AccessibleDescriptionRole)
         self.model().appendRow(item)
 
 

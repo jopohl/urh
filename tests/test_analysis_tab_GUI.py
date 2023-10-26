@@ -37,10 +37,10 @@ class TestAnalysisTabGUI(QtTestCase):
         self.add_signal_to_form("enocean.complex")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
-        QTest.keyClick(w, Qt.Key_Enter)
+        QTest.keyClick(w, Qt.Key.Key_Enter)
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxNoiseTreshold
         w.setValue(0.0111)
-        QTest.keyClick(w, Qt.Key_Enter)
+        QTest.keyClick(w, Qt.Key.Key_Enter)
         self.cfc.assign_labels_action.setChecked(True)
         self.cfc.assign_message_type_action.setChecked(True)
         self.cfc.assign_participants_action.setChecked(True)
@@ -362,7 +362,7 @@ class TestAnalysisTabGUI(QtTestCase):
         timer.timeout.connect(on_timeout)
         timer.start(1)
 
-        self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
+        self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Reason.Mouse, QPoint(0, 0)))
 
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit...", names)

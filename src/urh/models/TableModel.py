@@ -237,7 +237,7 @@ class TableModel(QAbstractTableModel):
 
         elif role == Qt.ItemDataRole.TextAlignmentRole:
             if i in self.first_messages:
-                return Qt.AlignHCenter + Qt.AlignBottom
+                return Qt.AlignmentFlag.AlignHCenter + Qt.AlignmentFlag.AlignBottom
             else:
                 return Qt.AlignmentFlag.AlignCenter
 

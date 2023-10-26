@@ -98,7 +98,7 @@ class ProtocolLabelDialog(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Enter:
+        if event.key() == Qt.Key.Key_Enter:
             event.ignore()
         else:
             event.accept()

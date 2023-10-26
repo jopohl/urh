@@ -46,7 +46,7 @@ class GridScene(ZoomableScene):
                     + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
 
             pen = painter.pen()
-            pen.setStyle(Qt.DotLine)
+            pen.setStyle(Qt.PenStyle.DotLine)
             painter.setPen(pen)
             painter.drawLines(lines)
             painter.scale(scale_x, scale_y)

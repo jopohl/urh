@@ -194,7 +194,7 @@ class TestSimulatorTabGUI(QtTestCase):
         messages = stc.simulator_scene.get_all_message_items()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
 
-        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.MouseButton.LeftButton, Qt.NoModifier, pos)
+        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, pos)
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
         self.assertIsInstance(stc.simulator_scene.selectedItems()[0], MessageItem)
@@ -208,7 +208,7 @@ class TestSimulatorTabGUI(QtTestCase):
         timer.timeout.connect(self.__on_context_menu_simulator_graphics_view_timer_timeout)
         timer.start()
 
-        stc.ui.gvSimulator.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, pos))
+        stc.ui.gvSimulator.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Reason.Mouse, pos))
 
         rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
         self.assertEqual(len(rules), 1)
@@ -243,7 +243,7 @@ class TestSimulatorTabGUI(QtTestCase):
         e.setValidator(RuleExpressionValidator(self.form.simulator_tab_controller.sim_expression_parser))
 
         self.assertEqual(e.text(), "")
-        QTest.keyClick(e, Qt.Key_R, Qt.NoModifier)
+        QTest.keyClick(e, Qt.Key.Key_R, Qt.KeyboardModifier.NoModifier)
         self.assertEqual(e.text(), "r")
 
     def test_participant_table(self):

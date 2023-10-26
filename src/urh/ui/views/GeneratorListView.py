@@ -48,7 +48,7 @@ class GeneratorListView(QListView):
         super().selectionChanged(QItemSelection, QItemSelection_1)
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() in (Qt.Key_Enter, Qt.Key_Return):
+        if event.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
             selected = [index.row() for index in self.selectedIndexes()]
             if len(selected) > 0:
                 self.edit_on_item_triggered.emit(min(selected))

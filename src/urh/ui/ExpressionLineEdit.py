@@ -23,7 +23,7 @@ class ExpressionLineEdit(QLineEdit):
         super().setValidator(validator)
 
     def on_validation_status_changed(self, status, message):
-        if status == QValidator.Intermediate:
+        if status == QValidator.State.Intermediate:
             col = settings.ERROR_BG_COLOR
             bg_string = "background-color: rgba({}, {}, {}, {})".format(col.red(), col.green(), col.blue(), col.alpha())
             style_sheet = "QLineEdit {" + bg_string + "}"

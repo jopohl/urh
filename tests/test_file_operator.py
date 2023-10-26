@@ -60,7 +60,7 @@ class TestFileOperator(QtTestCase):
 
     def test_get_open_dialog(self):
         d1 = FileOperator.get_open_dialog(directory_mode=False)
-        self.assertEqual(d1.fileMode(), QFileDialog.ExistingFiles)
+        self.assertEqual(d1.fileMode(), QFileDialog.FileMode.ExistingFiles)
 
         d2 = FileOperator.get_open_dialog(directory_mode=True)
-        self.assertEqual(d2.fileMode(), QFileDialog.Directory)
+        self.assertEqual(d2.fileMode(), QFileDialog.FileMode.Directory)

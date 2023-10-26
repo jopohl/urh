@@ -58,10 +58,10 @@ def get_open_dialog(directory_mode=False, parent=None, name_filter="full") -> QF
     dialog = QFileDialog(parent=parent, directory=RECENT_PATH)
 
     if directory_mode:
-        dialog.setFileMode(QFileDialog.Directory)
+        dialog.setFileMode(QFileDialog.FileMode.Directory)
         dialog.setWindowTitle("Open Folder")
     else:
-        dialog.setFileMode(QFileDialog.ExistingFiles)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
         dialog.setWindowTitle("Open Files")
         if name_filter == "full":
             name_filter = __get__name_filter_for_signals() + ";;" \
@@ -102,9 +102,9 @@ def ask_save_file_name(initial_name: str, caption="Save signal", selected_name_f
 
     filename = None
     dialog = QFileDialog(directory=RECENT_PATH, caption=caption, filter=name_filter)
-    dialog.setFileMode(QFileDialog.AnyFile)
-    dialog.setLabelText(QFileDialog.Accept, "Save")
-    dialog.setAcceptMode(QFileDialog.AcceptSave)
+    dialog.setFileMode(QFileDialog.FileMode.AnyFile)
+    dialog.setLabelText(QFileDialog.DialogLabel.Accept, "Save")
+    dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptSave)
 
     if selected_name_filter is not None:
         dialog.selectNameFilter(selected_name_filter)
@@ -244,5 +244,5 @@ def uncompress_archives(file_names, temp_dir):
 
 def get_directory():
     directory = QFileDialog.getExistingDirectory(None, "Choose Directory", QDir.homePath(),
-                                                 QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)
+                                                 QFileDialog.Option.ShowDirsOnly | QFileDialog.Option.DontResolveSymlinks)
     return directory

@@ -278,7 +278,7 @@ class TestGenerator(QtTestCase):
         self.assertEqual(len(lbl.fuzz_values), 1)
 
         self.assertTrue(bool(model.data(model.index(0,0), role=Qt.ItemDataRole.CheckStateRole)), True)
-        model.setData(model.index(0,0), Qt.CheckState.Unchecked, role=Qt.ItemDataRole.CheckStateRole)
+        model.setData(model.index(0, 0), Qt.CheckState.Unchecked, role=Qt.ItemDataRole.CheckStateRole)
         self.assertFalse(lbl.fuzz_me)
 
         model.setData(model.index(0,0), "test", role=Qt.ItemDataRole.EditRole)

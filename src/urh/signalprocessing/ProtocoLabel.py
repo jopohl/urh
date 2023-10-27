@@ -55,7 +55,7 @@ class ProtocolLabel(object):
 
     @property
     def fuzz_me(self) -> int:
-        return self.__fuzz_me
+        return self.__fuzz_me.value
 
     @fuzz_me.setter
     def fuzz_me(self, value):

@@ -747,9 +747,6 @@
          <property name="renderHints">
           <set>QPainter::Antialiasing</set>
          </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
-         </property>
         </widget>
        </item>
        <item row="2" column="1">
@@ -785,9 +782,6 @@
          <property name="renderHints">
           <set>QPainter::Antialiasing</set>
          </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
-         </property>
         </widget>
        </item>
        <item row="3" column="1" colspan="3">
@@ -809,9 +803,6 @@
          </property>
          <property name="renderHints">
           <set>QPainter::Antialiasing</set>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
          </property>
         </widget>
        </item>

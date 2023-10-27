@@ -16,25 +16,22 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-2019, macos-11]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
         architecture: [x64]
         exclude:
           - os: windows-2019
-            python-version: '3.11'
+            python-version: '3.8'
           - os: windows-2019
             python-version: '3.9'
           - os: windows-2019
             python-version: '3.10'
-          - os: windows-2019
-            python-version: '3.12'
+          - os: macOS-11
+            python-version: '3.7'
           - os: macOS-11
             python-version: '3.8'
           - os: macOS-11
-            python-version: '3.9'
-          - os: macOS-11
             python-version: '3.10'
-          - os: macOS-11
-            python-version: '3.12'
+
       fail-fast: false
 
     steps:
@@ -98,7 +95,7 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == '3.11' && startsWith(matrix.os, 'ubuntu') }}
+        if: ${{ matrix.python-version == '3.9' && startsWith(matrix.os, 'ubuntu') }}
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel
@@ -155,7 +152,7 @@ jobs:
           path: dist
 
       - name: Run pytest with coverage
-        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.11' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.9' }}
         run: |
           touch tests/show_gui
           cp tests/.coveragerc .
@@ -164,7 +161,7 @@ jobs:
           coverage html
 
       - name: Run pytest without coverage
-        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.11' }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.9' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
       - uses: ncipollo/release-action@v1

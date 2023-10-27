@@ -48,7 +48,7 @@ class LabeledArrow(QGraphicsLineItem):
         painter.drawLine(QPointF(x1, y2), QPointF(x1 + x_arrowSize / 4, y2 - y_arrowSize / 2))
         painter.drawLine(QPointF(x1, y2), QPointF(x1 - x_arrowSize / 4, y2 - y_arrowSize / 2))
 
-        painter.setRenderHint(QPainter.HighQualityAntialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         fm = painter.fontMetrics()
         pixelsWide = fm.width(self.label)
         pixelsHigh = fm.height()

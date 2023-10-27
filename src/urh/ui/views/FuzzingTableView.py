@@ -14,7 +14,7 @@ class FuzzingTableView(QTableView):
 
     def resize_me(self):
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-        w = QFontMetrics(self.font()).widthChar("0") + 2
+        w = QFontMetrics(self.font()).averageCharWidth() + 2
         for i in range(10):
             self.setColumnWidth(i, 3 * w)
         for i in range(10, self.model().col_count):

@@ -3,7 +3,7 @@ import gc
 import os
 import unittest
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QDropEvent
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication
@@ -76,7 +76,7 @@ class QtTestCase(unittest.TestCase):
         sim_frame.ui.treeProtocols.selectAll()
         self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
         mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
-        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
+        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center().toPointF(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
                                 mimedata, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier)
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)

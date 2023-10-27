@@ -220,7 +220,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
+          <set>QPainter::Antialiasing</set>
          </property>
         </widget>
        </item>
@@ -745,7 +745,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
+          <set>QPainter::Antialiasing</set>
          </property>
          <property name="dragMode">
           <enum>QGraphicsView::NoDrag</enum>
@@ -783,7 +783,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
+          <set>QPainter::Antialiasing</set>
          </property>
          <property name="dragMode">
           <enum>QGraphicsView::NoDrag</enum>
@@ -808,7 +808,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
+          <set>QPainter::Antialiasing</set>
          </property>
          <property name="dragMode">
           <enum>QGraphicsView::NoDrag</enum>
@@ -1082,14 +1082,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KillerDoubleSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>urh.ui.KillerDoubleSpinBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZoomableGraphicView</class>
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.ZoomableGraphicView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KillerDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomAndDropableGraphicView</class>

@@ -95,7 +95,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 font = QFont()
                 font.setUnderline(True)
                 return font
-        elif role == Qt.ItemDataRole.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             if j == 0:
                 return settings.LABEL_COLORS[lbl.color_index]
             elif j == 3:

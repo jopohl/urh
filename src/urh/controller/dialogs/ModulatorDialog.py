@@ -23,7 +23,7 @@ class ModulatorDialog(QDialog):
         self.ui = Ui_DialogModulation()
         self.ui.setupUi(self)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.WindowType.WindowType.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.lock_samples_in_view = False
 

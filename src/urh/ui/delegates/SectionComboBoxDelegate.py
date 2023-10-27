@@ -18,7 +18,7 @@ class SectionItemDelegate(QItemDelegate):
             super().paint(painter, parent_option, index)
         elif item_type == "child":
             child_option = option
-            indent = option.fontMetrics.width(4 * " ")
+            indent = option.fontMetrics.horizontalAdvance(4 * " ")
             child_option.rect.adjust(indent, 0, 0, 0)
             child_option.textElideMode = Qt.TextElideMode.ElideNone
             super().paint(painter, child_option, index)

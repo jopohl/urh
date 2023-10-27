@@ -49,7 +49,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         f = QFontMetrics(painter.font())
         indicator_str = str(indicator) if indicator < 10 else "+"
 
-        fw = f.width(indicator_str)
+        fw = f.horizontalAdvance(indicator_str)
         fh = f.height()
         painter.drawText(math.ceil(w / 2 - fw / 2), math.ceil(h / 2 + fh / 4), indicator_str)
 

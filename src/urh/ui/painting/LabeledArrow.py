@@ -50,7 +50,7 @@ class LabeledArrow(QGraphicsLineItem):
 
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         fm = painter.fontMetrics()
-        pixelsWide = fm.width(self.label)
+        pixelsWide = fm.horizontalAdvance(self.label)
         pixelsHigh = fm.height()
         scale_factor = (0.2 * labelheight) / fm.height()
         scale_factor = scale_factor if scale_factor > 0 else 0.0000000000000000001

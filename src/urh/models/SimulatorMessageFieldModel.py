@@ -102,7 +102,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 if (lbl.value_type_index == 2 and
                         not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
                     return settings.ERROR_BG_COLOR
-        elif role == Qt.ItemDataRole.TextColorRole:
+        elif role == Qt.ItemDataRole.ForegroundRole:
             if self.link_index(index):
                 return QApplication.palette().link().color()
 

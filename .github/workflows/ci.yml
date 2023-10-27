@@ -20,7 +20,7 @@ jobs:
         architecture: [x64]
         exclude:
           - os: windows-2019
-            python-version: '3.8'
+            python-version: '3.11'
           - os: windows-2019
             python-version: '3.9'
           - os: windows-2019

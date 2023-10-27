@@ -1,7 +1,7 @@
 import copy
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Interval import Interval
@@ -33,9 +33,9 @@ class ProtocolLabel(object):
 
         self.apply_decoding = True
         self.color_index = color_index
-        self.show = Qt.Checked
+        self.show = Qt.CheckState.Checked
 
-        self.__fuzz_me = Qt.Checked
+        self.__fuzz_me = Qt.CheckState.Checked
         self.fuzz_values = []
 
         self.fuzz_created = fuzz_created
@@ -54,13 +54,15 @@ class ProtocolLabel(object):
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
 
     @property
-    def fuzz_me(self) -> int:
+    def fuzz_me(self) -> Qt.CheckState:
         return self.__fuzz_me
 
     @fuzz_me.setter
     def fuzz_me(self, value):
         if isinstance(value, bool):
-            value = Qt.Checked if value else Qt.Unchecked
+            value = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+        if isinstance(value, int):
+            value = Qt.CheckState.Unchecked if value == 0 else Qt.CheckState.Checked
         self.__fuzz_me = value
 
     @property
@@ -112,7 +114,7 @@ class ProtocolLabel(object):
 
     @property
     def active_fuzzing(self) -> bool:
-        return self.fuzz_me and len(self.fuzz_values) > 1
+        return self.fuzz_me.value and len(self.fuzz_values) > 1
 
     @property
     def range_complete_fuzzed(self) -> bool:
@@ -197,7 +199,7 @@ class ProtocolLabel(object):
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
                                            "display_endianness": str(self.display_endianness),
-                                           "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
+                                           "fuzz_me": str(self.fuzz_me.value), "fuzz_values": ",".join(self.fuzz_values),
                                            "auto_created": str(self.auto_created)})
 
     @classmethod
@@ -216,8 +218,8 @@ class ProtocolLabel(object):
 
         result = ProtocolLabel(name=name, start=start, end=end, color_index=color_index)
         result.apply_decoding = True if tag.get("apply_decoding", 'True') == "True" else False
-        result.show = Qt.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.Unchecked
-        result.fuzz_me = Qt.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.Unchecked
+        result.show = Qt.CheckState.Checked if Formatter.str2val(tag.get("show", 0), int) else Qt.CheckState.Unchecked
+        result.fuzz_me = Qt.CheckState.Checked if Formatter.str2val(tag.get("fuzz_me", 0), int) else Qt.CheckState.Unchecked
         result.fuzz_values = tag.get("fuzz_values", "").split(",")
         result.auto_created = True if tag.get("auto_created", 'False') == "True" else False
 

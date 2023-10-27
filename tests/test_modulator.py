@@ -5,7 +5,7 @@ import time
 import unittest
 
 import numpy as np
-from PyQt5.QtCore import QDir
+from PyQt6.QtCore import QDir
 
 from urh.cythonext.signal_functions import modulate_c, get_oqpsk_bits
 from urh.signalprocessing.Modulator import Modulator

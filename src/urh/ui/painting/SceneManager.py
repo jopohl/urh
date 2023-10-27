@@ -1,9 +1,9 @@
 import math
 
 import numpy as np
-from PyQt5.QtCore import QObject
-from PyQt5.QtGui import QPen, QColor
-from PyQt5.QtWidgets import QGraphicsPathItem
+from PyQt6.QtCore import QObject, QByteArray
+from PyQt6.QtGui import QPen, QColor
+from PyQt6.QtWidgets import QGraphicsPathItem
 from urh.signalprocessing.IQArray import IQArray
 
 from urh import settings

@@ -1,9 +1,9 @@
 import copy
 import os
 
-from PyQt5.QtCore import QDir, Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
+from PyQt6.QtCore import QDir, Qt, pyqtSlot
+from PyQt6.QtGui import QCloseEvent, QDropEvent, QDragEnterEvent, QIcon
+from PyQt6.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog, \
     QLineEdit, QMessageBox
 
 from urh import settings
@@ -26,8 +26,8 @@ class DecoderDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_Decoder()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         # Variables
         self.old_inpt_txt = ""
@@ -164,7 +164,7 @@ class DecoderDialog(QDialog):
     def saveas(self):
         # Ask for a name
         name, ok = QInputDialog.getText(self, self.tr("Save decoding"),
-                                        self.tr("Please enter a name:"), QLineEdit.Normal, self.e.chain[0])
+                                        self.tr("Please enter a name:"), QLineEdit.EchoMode.Normal, self.e.chain[0])
 
         if ok and name != "":
             self.e.chain[0] = name
@@ -192,9 +192,9 @@ class DecoderDialog(QDialog):
             reply = QMessageBox.question(self, self.tr("Delete Decoding?"),
                                          self.tr("Do you really want to delete " + "'{}'?".format(
                                              self.decodings[num].name)),
-                                         QMessageBox.Yes | QMessageBox.No)
+                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
-            if reply == QMessageBox.Yes:
+            if reply == QMessageBox.StandardButton.Yes:
                 self.decodings.pop(num)
                 self.ui.combobox_decodings.removeItem(num)
                 self.save_to_file()
@@ -852,7 +852,7 @@ class DecoderDialog(QDialog):
             self.decoder_update()
             return
 
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         signal = self.signals[indx - 1]
         pa = ProtocolAnalyzer(signal)

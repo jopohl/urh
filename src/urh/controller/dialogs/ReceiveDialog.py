@@ -1,7 +1,7 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QMessageBox
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.dev.VirtualDevice import Mode, VirtualDevice
@@ -41,10 +41,10 @@ class ReceiveDialog(SendRecvDialog):
         if not self.already_saved and self.device.current_index > 0:
             reply = QMessageBox.question(self, self.tr("Save data?"),
                                          self.tr("Do you want to save the data you have captured so far?"),
-                                         QMessageBox.Yes | QMessageBox.No | QMessageBox.Abort)
-            if reply == QMessageBox.Yes:
+                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Abort)
+            if reply == QMessageBox.StandardButton.Yes:
                 self.on_save_clicked()
-            elif reply == QMessageBox.Abort:
+            elif reply == QMessageBox.StandardButton.Abort:
                 return False
 
         try:

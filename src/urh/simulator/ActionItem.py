@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QRectF
-from PyQt5.QtWidgets import QGraphicsTextItem
+from PyQt6.QtCore import QRectF
+from PyQt6.QtWidgets import QGraphicsTextItem
 
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
@@ -13,7 +13,7 @@ class ActionItem(GraphicsItem):
     def __init__(self, model_item: SimulatorItem, parent=None):
         super().__init__(model_item=model_item, parent=parent)
 
-        self.setFlag(QGraphicsTextItem.ItemIsPanel, True)
+        self.setFlag(QGraphicsTextItem.GraphicsItemFlag.ItemIsPanel, True)
 
         self.text = QGraphicsTextItem(self)
         self.text.setFont(self.font)

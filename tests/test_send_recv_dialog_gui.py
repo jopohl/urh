@@ -4,10 +4,10 @@ import time
 from multiprocessing import Process, Value, Array
 
 import numpy as np
-from PyQt5.QtCore import QDir, QEvent, QPoint, Qt
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import QDir, QEvent, QPoint, Qt
+from PyQt6.QtGui import QMouseEvent
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -77,7 +77,7 @@ class TestSendRecvDialog(QtTestCase):
         if self.SHOW:
             send_dialog.show()
 
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         send_dialog.graphics_view.show_full_scene(reinitialize=True)
         return send_dialog
 
@@ -121,7 +121,7 @@ class TestSendRecvDialog(QtTestCase):
         index = generator_frame.tree_model.createIndex(0, 0, item)
         mimedata = generator_frame.tree_model.mimeData([index])
         generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
@@ -268,13 +268,13 @@ class TestSendRecvDialog(QtTestCase):
         # add a signal so we can use it
         self.add_signal_to_form("esaver.complex16s")
         logger.debug("Added signalfile")
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
         self.__add_first_signal_to_generator()
         generator_frame = self.form.generator_tab_controller
         self.assertEqual(generator_frame.table_model.rowCount(), 3)
 
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         sniff_dialog = self.__get_sniff_dialog()
 
         sniff_dialog.sniff_settings_widget.ui.checkBoxAdaptiveNoise.click()
@@ -330,11 +330,11 @@ class TestSendRecvDialog(QtTestCase):
             os.remove(target_file)
 
         sniff_dialog.ui.btnClear.click()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.setText(target_file)
         sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
         sniff_dialog.ui.btnStart.click()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertFalse(sniff_dialog.ui.btnAccept.isEnabled())
 
         generator_frame.ui.btnNetworkSDRSend.click()
@@ -351,7 +351,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
         view_width = send_dialog.graphics_view.view_rect().width()
         send_dialog.graphics_view.zoom(1.1)
@@ -375,7 +375,7 @@ class TestSendRecvDialog(QtTestCase):
 
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         y, h = send_dialog.graphics_view.view_rect().y(), send_dialog.graphics_view.view_rect().height()
 
         send_dialog.ui.sliderYscale.setValue(send_dialog.ui.sliderYscale.value() +
@@ -449,6 +449,6 @@ class TestSendRecvDialog(QtTestCase):
         # Check for segfaults https://github.com/jopohl/urh/issues/758
         dialog.device_settings_widget.ui.btnRefreshDeviceIdentifier.click()
 
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         QTest.qWait(100)
         self.assertTrue(True)

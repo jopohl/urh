@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QLabel
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QFontMetrics
+from PyQt6.QtWidgets import QLabel
 
 
 class ElidedLabel(QLabel):
@@ -10,7 +10,7 @@ class ElidedLabel(QLabel):
 
     def __set_elided_text(self):
         fm = QFontMetrics(self.font())
-        super().setText(fm.elidedText(self.full_text, Qt.ElideRight, self.width()))
+        super().setText(fm.elidedText(self.full_text, Qt.TextElideMode.ElideRight, self.width()))
 
         self.setToolTip(self.full_text)
 

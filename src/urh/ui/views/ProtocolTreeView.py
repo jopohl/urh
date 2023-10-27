@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QItemSelection, pyqtSlot
-from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, Qt
-from PyQt5.QtGui import QContextMenuEvent, QDropEvent, QIcon
-from PyQt5.QtWidgets import  QTreeView, QAbstractItemView, QMenu
+from PyQt6.QtCore import QItemSelection, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, QItemSelectionModel, Qt
+from PyQt6.QtGui import QContextMenuEvent, QDropEvent, QIcon
+from PyQt6.QtWidgets import  QTreeView, QAbstractItemView, QMenu
 
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 
@@ -14,7 +14,7 @@ class ProtocolTreeView(QTreeView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setDragEnabled(True)
         self.setAcceptDrops(True)
         self.setDropIndicatorShown(True)

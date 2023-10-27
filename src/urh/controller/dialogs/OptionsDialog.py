@@ -5,10 +5,10 @@ import tempfile
 import time
 
 import numpy as np
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
-from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QHBoxLayout, QCompleter, QDirModel, QApplication, QHeaderView, QRadioButton, \
-    QFileDialog, qApp
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal, QSize, QAbstractTableModel, QModelIndex
+from PyQt6.QtGui import QCloseEvent, QIcon, QPixmap, QFileSystemModel
+from PyQt6.QtWidgets import QDialog, QHBoxLayout, QCompleter, QApplication, QHeaderView, QRadioButton, \
+    QFileDialog
 
 from urh import settings, colormaps
 from urh.controller.widgets.PluginFrame import PluginFrame
@@ -42,8 +42,8 @@ class DeviceOptionsTableModel(QAbstractTableModel):
     def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.backend_handler.DEVICE_NAMES)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
@@ -51,14 +51,14 @@ class DeviceOptionsTableModel(QAbstractTableModel):
         dev_key = self.backend_handler.get_key_from_device_display_text(self.backend_handler.DEVICE_NAMES[index])
         return self.backend_handler.device_backends[dev_key]
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
         i = index.row()
         j = index.column()
         device = self.get_device_at(i)
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if j == 0:
                 return self.backend_handler.DEVICE_NAMES[i]
             elif j == 1:
@@ -79,13 +79,13 @@ class DeviceOptionsTableModel(QAbstractTableModel):
                 return "" if device.has_native_backend else "not available"
             elif j == 3:
                 return "" if device.has_gnuradio_backend else "not available"
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             if j == 0 and (device.has_native_backend or device.has_gnuradio_backend):
-                return Qt.Checked if device.is_enabled else Qt.Unchecked
+                return Qt.CheckState.Checked if device.is_enabled else Qt.CheckState.Unchecked
             elif j == 2 and device.has_native_backend:
-                return Qt.Checked if device.selected_backend == Backends.native else Qt.Unchecked
+                return Qt.CheckState.Checked if device.selected_backend == Backends.native else Qt.CheckState.Unchecked
             elif j == 3 and device.has_gnuradio_backend:
-                return Qt.Checked if device.selected_backend == Backends.grc else Qt.Unchecked
+                return Qt.CheckState.Checked if device.selected_backend == Backends.grc else Qt.CheckState.Unchecked
 
     def setData(self, index: QModelIndex, value, role=None):
         if not index.isValid():
@@ -93,7 +93,7 @@ class DeviceOptionsTableModel(QAbstractTableModel):
 
         i, j = index.row(), index.column()
         device = self.get_device_at(i)
-        if role == Qt.CheckStateRole:
+        if role == Qt.ItemDataRole.CheckStateRole:
             enabled = bool(value)
             if j == 0:
                 device.is_enabled = enabled
@@ -119,21 +119,21 @@ class DeviceOptionsTableModel(QAbstractTableModel):
         j = index.column()
         device = self.get_device_at(index.row())
         if j == 0 and not device.has_native_backend and not device.has_gnuradio_backend:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
         if j in [1, 2, 3] and not device.is_enabled:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
         if j == 2 and not device.has_native_backend:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
         if j == 3 and not device.has_gnuradio_backend:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
-        flags = Qt.ItemIsEnabled
+        flags = Qt.ItemFlag.ItemIsEnabled
 
         if j in [0, 2, 3]:
-            flags |= Qt.ItemIsUserCheckable
+            flags |= Qt.ItemFlag.ItemIsUserCheckable
 
         return flags
 
@@ -148,16 +148,16 @@ class OptionsDialog(QDialog):
 
         self.ui = Ui_DialogOptions()
         self.ui.setupUi(self)
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.device_options_model = DeviceOptionsTableModel(self.backend_handler, self)
         self.device_options_model.update()
         self.ui.tblDevices.setModel(self.device_options_model)
-        self.ui.tblDevices.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.tblDevices.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         self.ui.tblDevices.setItemDelegateForColumn(1, ComboBoxDelegate(["native", "GNU Radio"]))
 
-        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         layout = QHBoxLayout(self.ui.tab_plugins)
         self.plugin_controller = PluginFrame(installed_plugins, highlighted_plugins, parent=self)
         layout.addWidget(self.plugin_controller)
@@ -194,10 +194,10 @@ class OptionsDialog(QDialog):
         self.ui.radioButtonHighModulationAccuracy.setChecked(Modulator.get_dtype() == np.float32)
 
         completer = QCompleter()
-        completer.setModel(QDirModel(completer))
+        completer.setModel(QFileSystemModel(completer))
         self.ui.lineEditGRPythonInterpreter.setCompleter(completer)
 
-        self.ui.doubleSpinBoxFontSize.setValue(qApp.font().pointSizeF())
+        self.ui.doubleSpinBoxFontSize.setValue(QApplication.font().pointSizeF())
 
         self.refresh_device_tab()
 
@@ -206,7 +206,7 @@ class OptionsDialog(QDialog):
 
         self.field_type_table_model = FieldTypeTableModel([], parent=self)
         self.ui.tblLabeltypes.setModel(self.field_type_table_model)
-        self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.tblLabeltypes.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         self.ui.tblLabeltypes.setItemDelegateForColumn(1, ComboBoxDelegate([f.name for f in FieldType.Function],
                                                                            return_index=False, parent=self))
@@ -404,7 +404,7 @@ class OptionsDialog(QDialog):
         extensions, _ = ExtensionHelper.get_device_extensions_and_extras(library_dirs=library_dirs, include_dirs=include_dirs)
 
         self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions..."))
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         build_cmd = [sys.executable, os.path.realpath(ExtensionHelper.__file__),
                      "build_ext", "--inplace", "-t", tempfile.gettempdir()]
         if library_dirs:
@@ -418,7 +418,7 @@ class OptionsDialog(QDialog):
         num_dots = 1
         while p.poll() is None:
             self.ui.labelRebuildNativeStatus.setText(self.tr("Rebuilding device extensions" + ". " * num_dots))
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
             time.sleep(0.1)
             num_dots %= 10
             num_dots += 1
@@ -469,9 +469,9 @@ class OptionsDialog(QDialog):
     @pyqtSlot()
     def on_spin_box_font_size_editing_finished(self):
         settings.write("font_size", self.ui.doubleSpinBoxFontSize.value())
-        font = qApp.font()
+        font = QApplication.font()
         font.setPointSizeF(self.ui.doubleSpinBoxFontSize.value())
-        qApp.setFont(font)
+        QApplication.setFont(font)
 
     @pyqtSlot(bool)
     def on_radio_button_high_modulation_accuracy_clicked(self, checked):

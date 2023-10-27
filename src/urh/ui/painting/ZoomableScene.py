@@ -1,9 +1,9 @@
 import math
 
 import numpy as np
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QPen, QFont, QTransform, QFontMetrics
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
+from PyQt6.QtCore import QRectF
+from PyQt6.QtGui import QPen, QFont, QTransform, QFontMetrics
+from PyQt6.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
 
 from urh import settings
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
@@ -84,10 +84,10 @@ class ZoomableScene(QGraphicsScene):
             caption.show()
             scale_x, scale_y = util.calc_x_y_scale(self.separation_areas[i].rect(), self.parent())
             try:
-                caption.setPos(view_rect.x() + view_rect.width() - fm.width(caption.text()) * scale_x,
+                caption.setPos(view_rect.x() + view_rect.width() - fm.horizontalAdvance(caption.text()) * scale_x,
                                self.centers[i] + padding)
             except IndexError:
-                caption.setPos(view_rect.x() + view_rect.width() - fm.width(caption.text()) * scale_x,
+                caption.setPos(view_rect.x() + view_rect.width() - fm.horizontalAdvance(caption.text()) * scale_x,
                                self.centers[i - 1] - padding - fm.height() * scale_y)
 
             caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)

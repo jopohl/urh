@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QPointF
-from PyQt5.QtGui import QTransform
+from PyQt6.QtCore import QPointF
+from PyQt6.QtGui import QTransform
 
 from urh.ui.painting.Selection import Selection
 

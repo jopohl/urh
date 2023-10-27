@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
+from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
 
 from urh.signalprocessing.FieldType import FieldType
@@ -26,16 +26,16 @@ class FieldTypeTableModel(QAbstractTableModel):
     def rowCount(self, parent=None, *args, **kwargs):
         return len(self.field_types)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
-        if role == Qt.DisplayRole or role == Qt.EditRole:
+        if role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole:
             i = index.row()
             j = index.column()
             fieldtype = self.field_types[i]
@@ -48,7 +48,7 @@ class FieldTypeTableModel(QAbstractTableModel):
                 return ProtocolLabel.DISPLAY_FORMATS[fieldtype.display_format_index]
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.EditRole:
+        if role == Qt.ItemDataRole.EditRole:
             i, j = index.row(), index.column()
             fieldtype = self.field_types[i]
             try:
@@ -69,4 +69,4 @@ class FieldTypeTableModel(QAbstractTableModel):
             return True
 
     def flags(self, index: QModelIndex):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable

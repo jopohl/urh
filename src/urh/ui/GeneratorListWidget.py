@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QFocusEvent
-from PyQt5.QtWidgets import QListWidget, QMenu, QAction
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QContextMenuEvent, QFocusEvent, QAction
+from PyQt6.QtWidgets import QListWidget, QMenu
 
 
 class GeneratorListWidget(QListWidget):
@@ -30,7 +30,7 @@ class GeneratorListWidget(QListWidget):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
     def focusOutEvent(self, event: QFocusEvent):
         self.lost_focus.emit()

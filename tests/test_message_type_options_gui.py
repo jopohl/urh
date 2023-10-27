@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.MessageTypeDialog import MessageTypeDialog
@@ -38,20 +38,20 @@ class TestMessageTypeOptionsGUI(QtTestCase):
         self.assertEqual(num_rules + 1, self.dialog.ruleset_table_model.rowCount())
 
         model = self.dialog.ruleset_table_model
-        model.setData(model.index(0, 0), 10, role=Qt.EditRole)
+        model.setData(model.index(0, 0), 10, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(self.message_type.ruleset[0].start, 9)
-        model.setData(model.index(0, 1), 20, role=Qt.EditRole)
+        model.setData(model.index(0, 1), 20, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(self.message_type.ruleset[0].end, 20)
-        model.setData(model.index(0, 2), 2, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 2, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(self.message_type.ruleset[0].value_type, 2)
-        model.setData(model.index(0, 3), 2, role=Qt.EditRole)
-        model.setData(model.index(0, 4), "10101", role=Qt.EditRole)
+        model.setData(model.index(0, 3), 2, role=Qt.ItemDataRole.EditRole)
+        model.setData(model.index(0, 4), "10101", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(self.message_type.ruleset[0].target_value, "10101")
 
         for i in range(model.rowCount()):
             for j in range(model.columnCount()):
                 self.assertEqual(model.flags(model.index(i, j)),
-                                 Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable)
+                                 Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable)
 
         self.dialog.ui.btnRemoveRule.click()
         self.assertEqual(num_rules, len(self.message_type.ruleset))

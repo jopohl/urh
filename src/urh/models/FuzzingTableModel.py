@@ -1,7 +1,7 @@
 import math
 
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt
-from PyQt5.QtGui import QFont
+from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PyQt6.QtGui import QFont
 import numpy
 
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -51,7 +51,7 @@ class FuzzingTableModel(QAbstractTableModel):
     def data(self, index: QModelIndex, role=None):
         i = index.row()
         j = index.column()
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if self.data is None:
                 return None
             else:
@@ -62,13 +62,13 @@ class FuzzingTableModel(QAbstractTableModel):
                 elif self.proto_view == 2:
                     return chr(int(self.data[i][8 * j:8 * (j + 1)], 2))
 
-        elif role == Qt.FontRole:
+        elif role == Qt.ItemDataRole.FontRole:
             if i == 0:
                 font = QFont()
                 font.setBold(True)
                 return font
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignCenter
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
+            return Qt.AlignmentFlag.AlignCenter
 
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()
@@ -93,7 +93,7 @@ class FuzzingTableModel(QAbstractTableModel):
         return True
 
     def flags(self, QModelIndex):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable
 
     def add_range(self, start: int, end: int, step: int):
         lbl = self.fuzzing_label

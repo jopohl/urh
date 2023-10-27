@@ -2,7 +2,7 @@ import ast
 import html
 import operator as op
 
-from PyQt5.QtCore import QObject
+from PyQt6.QtCore import QObject
 
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel

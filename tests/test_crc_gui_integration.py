@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from tests.QtTestCase import QtTestCase
 from urh import settings
@@ -29,7 +29,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4),Qt.ItemDataRole.BackgroundRole),
                          settings.BG_COLOR_WRONG)
 
         # Configure WSP and verify its correct
@@ -45,7 +45,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4),Qt.ItemDataRole.BackgroundRole),
                          settings.BG_COLOR_CORRECT)
 
     def test_cc1101_crc(self):
@@ -72,7 +72,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4),Qt.ItemDataRole.BackgroundRole),
                          settings.BG_COLOR_WRONG)
 
         # Configure CC1101 and verify its correct
@@ -93,7 +93,7 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
+        self.assertEqual(label_value_model.data(label_value_model.index(0, 4),Qt.ItemDataRole.BackgroundRole),
                          settings.BG_COLOR_CORRECT)
 
     def test_checksum_in_generation_tab(self):
@@ -106,7 +106,7 @@ class TestCRCGUIIntegration(QtTestCase):
             ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
 
         label_model = self.form.compare_frame_controller.label_value_model
-        label_model.setData(label_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole)
+        label_model.setData(label_model.index(0, 0), checksum_fieldtype.caption, Qt.ItemDataRole.EditRole)
 
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(1)
@@ -117,7 +117,7 @@ class TestCRCGUIIntegration(QtTestCase):
         # check font is italic
         for i in range(3):
             for j in range(len(gframe.table_model.display_data[i])):
-                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.ItemDataRole.FontRole)
                 if 4 <= j <= 6:
                     self.assertTrue(font.italic(), msg=str(j))
                 else:
@@ -126,22 +126,22 @@ class TestCRCGUIIntegration(QtTestCase):
         # Now change something and verify CRC gets recalced
         checksum_before = gframe.table_model.display_data[0][4:6]
         self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(0, 1)), "f")
-        gframe.table_model.setData(gframe.table_model.index(0, 1), "f", Qt.EditRole)
+        gframe.table_model.setData(gframe.table_model.index(0, 1), "f", Qt.ItemDataRole.EditRole)
         checksum_after = gframe.table_model.display_data[0][4:6]
         self.assertNotEqual(checksum_before, checksum_after)
 
         # change something behind data ranges, crc should stay the same
         checksum_before = gframe.table_model.display_data[1][4:6]
         self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(1, 10)), "b")
-        gframe.table_model.setData(gframe.table_model.index(1, 10), "b", Qt.EditRole)
+        gframe.table_model.setData(gframe.table_model.index(1, 10), "b", Qt.ItemDataRole.EditRole)
         checksum_after = gframe.table_model.display_data[1][4:6]
         self.assertNotEqual(checksum_before, checksum_after)
 
         # edit checksum and verify its not italic anymore
-        gframe.table_model.setData(gframe.table_model.index(2, 5), "c", Qt.EditRole)
+        gframe.table_model.setData(gframe.table_model.index(2, 5), "c", Qt.ItemDataRole.EditRole)
         for i in range(3):
             for j in range(len(gframe.table_model.display_data[i])):
-                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.ItemDataRole.FontRole)
                 if 4 <= j <= 6 and i != 2:
                     self.assertTrue(font.italic(), msg=str(j))
                 else:

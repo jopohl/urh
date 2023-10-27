@@ -1,7 +1,8 @@
 import os
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QCompleter, QDirModel
+from PyQt6.QtCore import pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QWidget, QCompleter
+from PyQt6.QtGui import QFileSystemModel
 
 from urh import settings
 from urh.dev.BackendHandler import BackendHandler
@@ -51,7 +52,7 @@ class SniffSettingsWidget(QWidget):
 
         # Auto Complete like a Boss
         completer = QCompleter()
-        completer.setModel(QDirModel(completer))
+        completer.setModel(QFileSystemModel(completer))
         self.ui.lineEdit_sniff_OutputFile.setCompleter(completer)
 
         self.signals = signals

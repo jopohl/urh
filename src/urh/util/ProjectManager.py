@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import QDir, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt6.QtCore import QDir, Qt, QObject, pyqtSignal
+from PyQt6.QtWidgets import QMessageBox, QApplication
 
 from urh import settings
 from urh.dev import config
@@ -223,9 +223,9 @@ class ProjectManager(QObject):
                 reply = QMessageBox.question(self.main_controller, "Project File",
                                              "Do you want to create a Project File for this folder?\n"
                                              "If you chose No, you can do it later via File->Convert Folder to Project.",
-                                             QMessageBox.Yes | QMessageBox.No)
+                                             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
-                if reply == QMessageBox.Yes:
+                if reply == QMessageBox.StandardButton.Yes:
                     self.main_controller.show_project_settings()
                 else:
                     self.project_file = None
@@ -528,7 +528,7 @@ class ProjectManager(QObject):
                     filename = os.path.normpath(os.path.join(self.project_path, filename))
                 file_names.insert(pos, filename)
 
-            QApplication.setOverrideCursor(Qt.WaitCursor)
+            QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
             file_names = FileOperator.uncompress_archives(file_names, QDir.tempPath())
             QApplication.restoreOverrideCursor()
             return file_names

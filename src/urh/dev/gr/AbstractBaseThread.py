@@ -7,7 +7,7 @@ from queue import Queue, Empty
 from subprocess import Popen, PIPE
 from threading import Thread
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 
 from urh import settings
 from urh.util.Logger import logger

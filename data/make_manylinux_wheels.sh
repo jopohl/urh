@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # for adapted jopohl/urh_manylinux
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/:/usr/local/lib/:/usr/lib64/
+
 
 touch /tmp/urh_releasing
 for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set

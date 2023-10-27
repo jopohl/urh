@@ -1,8 +1,8 @@
 import os
 import tempfile
 
-from PyQt5.QtCore import QPoint, QTimer
-from PyQt5.QtWidgets import qApp, QInputDialog, QMessageBox
+from PyQt6.QtCore import QPoint, QTimer
+from PyQt6.QtWidgets import QApplication, QInputDialog, QMessageBox
 
 from tests.QtTestCase import QtTestCase
 from urh import settings
@@ -110,14 +110,14 @@ class TestDecodingGUI(QtTestCase):
     def test_save_remove_decoding(self):
         def set_save_name():
             timer.stop()
-            input_dialog = next(w for w in qApp.topLevelWidgets() if isinstance(w, QInputDialog))
+            input_dialog = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QInputDialog))
             input_dialog.setTextValue("Test decoding")
             input_dialog.accept()
 
         def accept_delete():
             timer.stop()
-            message_box = next(w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox))
-            message_box.button(QMessageBox.Yes).click()
+            message_box = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMessageBox))
+            message_box.button(QMessageBox.StandardButton.Yes).click()
 
         self.dialog.ui.decoderchain.addItem(settings.DECODING_CUT)
         self.dialog.decoderchainUpdate()

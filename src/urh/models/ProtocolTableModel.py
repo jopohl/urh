@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from PyQt5.QtCore import pyqtSignal, QModelIndex, Qt
+from PyQt6.QtCore import pyqtSignal, QModelIndex, Qt
 
 from urh import settings
 from urh.models.TableModel import TableModel
@@ -59,11 +59,11 @@ class ProtocolTableModel(TableModel):
         if index.isValid():
             alignment_offset = self.get_alignment_offset_at(index.row())
             if index.column() < alignment_offset:
-                return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+                return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled
 
             if self.is_writeable:
-                return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
+                return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsSelectable
             else:
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+                return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
         else:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags

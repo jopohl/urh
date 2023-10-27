@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# for plain quay.io/pypa/manylinux2014_x86_64
+# for plain manylinux image
 
 AIRSPY_VERSION="1.0.9"
 BLADERF_VERSION="2018.08"

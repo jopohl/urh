@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtWidgets import QDialog
+from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt6.QtWidgets import QDialog
 
 from urh.signalprocessing.Filter import Filter, FilterType
 from urh.ui.ui_filter_dialog import Ui_FilterDialog
@@ -12,7 +12,7 @@ class FilterDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_FilterDialog()
         self.ui.setupUi(self)
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.error_message = ""
 

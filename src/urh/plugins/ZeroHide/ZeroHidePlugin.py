@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QAction, QUndoStack
+from PyQt6.QtGui import QAction, QUndoStack
 
 from ..Plugin import ProtocolPlugin
 from ..ZeroHide.ZeroHideAction import ZeroHideAction

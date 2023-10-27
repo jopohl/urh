@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from PyQt5.QtTest import QTest
+from PyQt6.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from urh import settings

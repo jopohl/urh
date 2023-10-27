@@ -897,12 +897,6 @@ stop:1 rgba(255, 255, 255, 0));
                <property name="renderHints">
                 <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
                </property>
-               <property name="dragMode">
-                <enum>QGraphicsView::NoDrag</enum>
-               </property>
-               <property name="cacheMode">
-                <set>QGraphicsView::CacheNone</set>
-               </property>
                <property name="transformationAnchor">
                 <enum>QGraphicsView::NoAnchor</enum>
                </property>
@@ -914,9 +908,6 @@ stop:1 rgba(255, 255, 255, 0));
                </property>
                <property name="rubberBandSelectionMode">
                 <enum>Qt::ContainsItemShape</enum>
-               </property>
-               <property name="optimizationFlags">
-                <set>QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState</set>
                </property>
               </widget>
              </item>
@@ -953,17 +944,11 @@ stop:1 rgba(255, 255, 255, 0));
                <property name="renderHints">
                 <set>QPainter::TextAntialiasing</set>
                </property>
-               <property name="cacheMode">
-                <set>QGraphicsView::CacheNone</set>
-               </property>
                <property name="transformationAnchor">
                 <enum>QGraphicsView::NoAnchor</enum>
                </property>
                <property name="viewportUpdateMode">
                 <enum>QGraphicsView::MinimalViewportUpdate</enum>
-               </property>
-               <property name="optimizationFlags">
-                <set>QGraphicsView::DontClipPainter|QGraphicsView::DontSavePainterState</set>
                </property>
               </widget>
              </item>

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QPointF
-from PyQt5.QtGui import QColor, QPen, QTransform
-from PyQt5.QtWidgets import QGraphicsRectItem
+from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtGui import QColor, QPen, QTransform
+from PyQt6.QtWidgets import QGraphicsRectItem
 
 
 class Selection(QGraphicsRectItem):
@@ -18,7 +18,7 @@ class Selection(QGraphicsRectItem):
         self.resizing = False
 
         self.setBrush(fillcolor)
-        self.setPen(QPen(QColor(Qt.transparent), 0))
+        self.setPen(QPen(QColor(Qt.GlobalColor.transparent), 0))
         self.setOpacity(opacity)
 
     @property

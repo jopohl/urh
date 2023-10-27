@@ -1,7 +1,7 @@
 import math
 
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
@@ -116,7 +116,7 @@ class TestPlugins(QtTestCase):
     def __wait_for_spinbox_enabled(self, dialog):
         n = 0
         while not dialog.doubleSpinBoxAmplitude.isEnabled() and n < 50:
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
             QTest.qWait(10)
             n += 1
         self.assertTrue(dialog.doubleSpinBoxAmplitude.isEnabled())

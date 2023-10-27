@@ -1,8 +1,8 @@
 import array
 from collections import defaultdict
 
-from PyQt5.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QColor
+from PyQt6.QtCore import Qt, QModelIndex, pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QColor
 
 from urh import settings
 from urh.models.ProtocolTreeItem import ProtocolTreeItem
@@ -73,15 +73,15 @@ class GeneratorTableModel(TableModel):
 
     def flags(self, index: QModelIndex):
         if not index.isValid():
-            return Qt.ItemIsEnabled
+            return Qt.ItemFlag.ItemIsEnabled
 
-        return Qt.ItemIsEnabled | Qt.ItemIsDropEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEditable
+        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsDropEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsDragEnabled | Qt.ItemFlag.ItemIsEditable
 
     def supportedDropActions(self):
-        return Qt.CopyAction | Qt.MoveAction
+        return Qt.DropAction.CopyAction | Qt.DropAction.MoveAction
 
     def dropMimeData(self, mimedata, action, row, column, parentIndex):
-        if action == Qt.IgnoreAction:
+        if action == Qt.DropAction.IgnoreAction:
             return True
 
         data_str = str(mimedata.text())

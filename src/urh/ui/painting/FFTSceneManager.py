@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtGui import QPainterPath, QPen
-from PyQt5.QtWidgets import QGraphicsPathItem
+from PyQt6.QtGui import QPainterPath, QPen
+from PyQt6.QtWidgets import QGraphicsPathItem
 
 from urh import settings
 from urh.cythonext import path_creator

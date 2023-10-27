@@ -1,5 +1,5 @@
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QDragEnterEvent, QDropEvent
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QDragEnterEvent, QDropEvent
 from urh.signalprocessing.IQArray import IQArray
 
 from urh.cythonext import util

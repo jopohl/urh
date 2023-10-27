@@ -274,12 +274,12 @@ class TestGenerator(QtTestCase):
 
         model = gframe.label_list_model
         lbl = model.labels[0]
-        self.assertTrue(bool(lbl.fuzz_me))
+        self.assertTrue(bool(lbl.fuzz_me.value))
         self.assertEqual(len(lbl.fuzz_values), 1)
 
         self.assertTrue(bool(model.data(model.index(0,0), role=Qt.ItemDataRole.CheckStateRole)), True)
         model.setData(model.index(0, 0), Qt.CheckState.Unchecked, role=Qt.ItemDataRole.CheckStateRole)
-        self.assertFalse(lbl.fuzz_me)
+        self.assertFalse(lbl.fuzz_me.value)
 
         model.setData(model.index(0,0), "test", role=Qt.ItemDataRole.EditRole)
         self.assertEqual("test (empty)", model.data(model.index(0,0), role=Qt.ItemDataRole.DisplayRole))

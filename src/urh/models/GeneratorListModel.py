@@ -65,13 +65,13 @@ class GeneratorListModel(QAbstractListModel):
         return True
 
     def fuzzAll(self):
-        unfuzzedLabels = [label for label in self.labels if not label.fuzz_me]
+        unfuzzedLabels = [label for label in self.labels if not label.fuzz_me.value]
         for label in unfuzzedLabels:
             label.fuzz_me = Qt.CheckState.Checked
             self.protolabel_fuzzing_status_changed.emit(label)
 
     def unfuzzAll(self):
-        fuzzedLabels = [label for label in self.labels if label.fuzz_me]
+        fuzzedLabels = [label for label in self.labels if label.fuzz_me.value]
         for label in fuzzedLabels:
             label.fuzz_me = Qt.CheckState.Unchecked
             self.protolabel_fuzzing_status_changed.emit(label)

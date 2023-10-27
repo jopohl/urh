@@ -1,7 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDropEvent
 from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.dialogs.ModulatorDialog import ModulatorDialog
@@ -126,7 +125,7 @@ class TestModulatorGUI(QtTestCase):
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.MouseButton.LeftButton, pos=rect.center())
         mime_data = tree_model.mimeData([index])
-        drag_drop = QDropEvent(rect.center(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction, mime_data, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier)
+        drag_drop = QDropEvent(rect.center().toPointF(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction, mime_data, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier)
         drag_drop.acceptProposedAction()
         self.dialog.ui.gVOriginalSignal.dropEvent(drag_drop)
         self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples)

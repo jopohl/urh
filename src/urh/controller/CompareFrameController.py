@@ -539,7 +539,7 @@ class CompareFrameController(QWidget):
         for proto in self.protocol_list:
             abs_time = 0
             rel_time = 0
-            if proto.show and proto.messages:
+            if proto.show.value and proto.messages:
                 num_messages = 0
                 for i, message in enumerate(proto.messages):
                     if not message:
@@ -1308,7 +1308,7 @@ class CompareFrameController(QWidget):
         for item in selected_items:
             if item.is_group:
                 active_group_ids.add(self.proto_tree_model.rootItem.index_of(item))
-            elif item.show:
+            elif item.show.value:
                 active_group_ids.add(self.proto_tree_model.rootItem.index_of(item.parent()))
 
         if len(active_group_ids) == 0:

@@ -604,7 +604,7 @@ class MainController(QMainWindow):
             msg_total = 0
             last_sig_frame = None
             for protocol in cfc.protocol_list:
-                if not protocol.show:
+                if not protocol.show.value:
                     continue
                 n = protocol.num_messages
                 view_type = cfc.ui.cbProtoView.currentIndex()

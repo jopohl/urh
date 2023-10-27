@@ -3,7 +3,7 @@ import gc
 import os
 import unittest
 
-from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QDropEvent
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication
@@ -11,6 +11,9 @@ from PyQt6.QtWidgets import QApplication
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+
+# noinspection PyUnresolvedReferences
+import urh.ui.urh_rc
 
 faulthandler.enable()
 

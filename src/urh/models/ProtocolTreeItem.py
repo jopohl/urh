@@ -66,7 +66,9 @@ class ProtocolTreeItem(object):
             return self.protocol.show
 
     @show.setter
-    def show(self, value: bool):
+    def show(self, value: bool | Qt.CheckState):
+        if isinstance(value, Qt.CheckState):
+            value = value.value
         value = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
 
         if not self.is_group:
@@ -86,9 +88,9 @@ class ProtocolTreeItem(object):
         if self.childCount() == 0:
             return Qt.CheckState.Unchecked
 
-        if all(child.show for child in self.children):
+        if all(child.show.value for child in self.children):
             return Qt.CheckState.Checked
-        elif any(child.show for child in self.children):
+        elif any(child.show.value for child in self.children):
             return Qt.CheckState.PartiallyChecked
         else:
             return Qt.CheckState.Unchecked

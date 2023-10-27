@@ -54,13 +54,15 @@ class ProtocolLabel(object):
         self.copied = False  # keep track if label was already copied for COW in generation to avoid needless recopy
 
     @property
-    def fuzz_me(self) -> int:
-        return self.__fuzz_me.value
+    def fuzz_me(self) -> Qt.CheckState:
+        return self.__fuzz_me
 
     @fuzz_me.setter
     def fuzz_me(self, value):
         if isinstance(value, bool):
             value = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+        if isinstance(value, int):
+            value = Qt.CheckState.Unchecked if value == 0 else Qt.CheckState.Checked
         self.__fuzz_me = value
 
     @property
@@ -112,7 +114,7 @@ class ProtocolLabel(object):
 
     @property
     def active_fuzzing(self) -> bool:
-        return self.fuzz_me and len(self.fuzz_values) > 1
+        return self.fuzz_me.value and len(self.fuzz_values) > 1
 
     @property
     def range_complete_fuzzed(self) -> bool:
@@ -197,7 +199,7 @@ class ProtocolLabel(object):
                                            "display_format_index": str(self.display_format_index),
                                            "display_bit_order_index": str(self.display_bit_order_index),
                                            "display_endianness": str(self.display_endianness),
-                                           "fuzz_me": str(self.fuzz_me), "fuzz_values": ",".join(self.fuzz_values),
+                                           "fuzz_me": str(self.fuzz_me.value), "fuzz_values": ",".join(self.fuzz_values),
                                            "auto_created": str(self.auto_created)})
 
     @classmethod

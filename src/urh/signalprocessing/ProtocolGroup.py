@@ -41,7 +41,7 @@ class ProtocolGroup(object):
 
         :rtype: list of ProtocolAnalyzer
         """
-        return [proto for proto in self.all_protocols if proto.show]
+        return [proto for proto in self.all_protocols if proto.show.value]
 
     @property
     def messages(self):

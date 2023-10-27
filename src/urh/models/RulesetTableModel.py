@@ -22,7 +22,7 @@ class RulesetTableModel(QAbstractTableModel):
         return len(self.ruleset)
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.AlignmentFlag.Horizontal:
+        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 

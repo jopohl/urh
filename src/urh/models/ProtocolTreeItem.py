@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 
 from PyQt6.QtCore import Qt

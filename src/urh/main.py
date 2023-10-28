@@ -17,6 +17,7 @@ except locale.Error as e:
 
 GENERATE_UI = True
 
+os.add_dll_directory("src/urh/dev/native/lib/shared")
 
 def fix_windows_stdout_stderr():
     """

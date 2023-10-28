@@ -14,6 +14,7 @@ from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
 
+os.add_dll_directory("src/urh/dev/native/lib/shared")
 
 class QtTestCase(unittest.TestCase):
     SHOW = os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui"))

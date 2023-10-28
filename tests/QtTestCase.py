@@ -14,6 +14,7 @@ from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
 
 faulthandler.enable()
 
+
 class QtTestCase(unittest.TestCase):
     SHOW = os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui"))
 

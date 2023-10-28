@@ -229,6 +229,9 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
          <height>0</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">border:none</string>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -341,7 +344,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>27</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

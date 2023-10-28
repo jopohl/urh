@@ -108,7 +108,7 @@ jobs:
       - run: python setup.py bdist_wheel
         if: ${{ !startsWith(matrix.os, 'ubuntu') }}
 
-      - name: Build manylinux2014
+      - name: Build manylinux wheels
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           docker run --rm \

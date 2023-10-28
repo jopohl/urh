@@ -17,8 +17,6 @@ except locale.Error as e:
 
 GENERATE_UI = True
 
-os.add_dll_directory("src/urh/dev/native/lib/shared")
-
 def fix_windows_stdout_stderr():
     """
     Processes can't write to stdout/stderr on frozen windows apps because they do not exist here

@@ -16,33 +16,36 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-2019, macos-11]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
         architecture: [x64]
         include:
           - os: windows-2019
-            python-version: '3.7'
+            python-version: '3.8'
             architecture: x86
         exclude:
-          - os: windows-2019
-            python-version: '3.8'
           - os: windows-2019
             python-version: '3.9'
           - os: windows-2019
             python-version: '3.10'
-          - os: macOS-11
-            python-version: '3.7'
+          - os: windows-2019
+            python-version: '3.11'
+          - os: windows-2019
+            python-version: '3.12'
           - os: macOS-11
             python-version: '3.8'
           - os: macOS-11
+            python-version: '3.9'
+          - os: macOS-11
             python-version: '3.10'
-
+          - os: macOS-11
+            python-version: '3.12'
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
@@ -99,18 +102,18 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == '3.9' && startsWith(matrix.os, 'ubuntu') }}
+        if: ${{ matrix.python-version == '3.11' && startsWith(matrix.os, 'ubuntu') }}
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel
         if: ${{ !startsWith(matrix.os, 'ubuntu') }}
 
-      - name: Build manylinux2014
+      - name: Build manylinux wheels
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           docker run --rm \
           -e PYVER=$(python -c "import sys; print('%s%s' % (sys.version_info.major, sys.version_info.minor))") \
-          -v `pwd`:/io jopohl/urh_manylinux2014 /io/data/make_manylinux2014_wheels.sh
+          -v `pwd`:/io jopohl/urh_manylinux2_28 /io/data/make_manylinux_wheels.sh
 
       - name: Check wheel
         if: startsWith(matrix.os, 'ubuntu')
@@ -150,13 +153,13 @@ jobs:
                          dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist-${{ matrix.os }}
           path: dist
 
       - name: Run pytest with coverage
-        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.9' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.11' }}
         run: |
           touch tests/show_gui
           cp tests/.coveragerc .
@@ -165,7 +168,7 @@ jobs:
           coverage html
 
       - name: Run pytest without coverage
-        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.9' }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.11' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
       - uses: ncipollo/release-action@v1

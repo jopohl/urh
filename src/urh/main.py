@@ -89,7 +89,8 @@ def main():
 
     if GENERATE_UI and not hasattr(sys, "frozen"):
         try:
-            sys.path.insert(0, prefix)
+            sys.path.insert(0, 
+                            prefix)
             from data import generate_ui
 
             generate_ui.gen()

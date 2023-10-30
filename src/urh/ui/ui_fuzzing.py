@@ -15,10 +15,14 @@ class Ui_FuzzingDialog(object):
         self.gridLayout_5 = QtWidgets.QGridLayout(FuzzingDialog)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.spinBoxFuzzMessage = QtWidgets.QSpinBox(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxFuzzMessage.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxFuzzMessage.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxFuzzMessage.setSizePolicy(sizePolicy)
         self.spinBoxFuzzMessage.setMaximum(999999999)
         self.spinBoxFuzzMessage.setObjectName("spinBoxFuzzMessage")
@@ -34,10 +38,14 @@ class Ui_FuzzingDialog(object):
         self.btnAddFuzzingValues.setObjectName("btnAddFuzzingValues")
         self.gridLayout_5.addWidget(self.btnAddFuzzingValues, 9, 1, 1, 1)
         self.stackedWidgetLabels = QtWidgets.QStackedWidget(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.stackedWidgetLabels.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.stackedWidgetLabels.sizePolicy().hasHeightForWidth()
+        )
         self.stackedWidgetLabels.setSizePolicy(sizePolicy)
         self.stackedWidgetLabels.setObjectName("stackedWidgetLabels")
         self.pageAddRangeLabel = QtWidgets.QWidget()
@@ -47,7 +55,9 @@ class Ui_FuzzingDialog(object):
         self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.lStart = QtWidgets.QLabel(self.pageAddRangeLabel)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lStart.sizePolicy().hasHeightForWidth())
@@ -55,7 +65,9 @@ class Ui_FuzzingDialog(object):
         self.lStart.setObjectName("lStart")
         self.verticalLayout_3.addWidget(self.lStart)
         self.lEnd = QtWidgets.QLabel(self.pageAddRangeLabel)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lEnd.sizePolicy().hasHeightForWidth())
@@ -63,7 +75,9 @@ class Ui_FuzzingDialog(object):
         self.lEnd.setObjectName("lEnd")
         self.verticalLayout_3.addWidget(self.lEnd)
         self.lStep = QtWidgets.QLabel(self.pageAddRangeLabel)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lStep.sizePolicy().hasHeightForWidth())
@@ -86,10 +100,14 @@ class Ui_FuzzingDialog(object):
         self.checkBoxUpperBound.setObjectName("checkBoxUpperBound")
         self.verticalLayout_4.addWidget(self.checkBoxUpperBound)
         self.lNumberBoundaries = QtWidgets.QLabel(self.pageAddBoundariesLabel)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lNumberBoundaries.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lNumberBoundaries.sizePolicy().hasHeightForWidth()
+        )
         self.lNumberBoundaries.setSizePolicy(sizePolicy)
         self.lNumberBoundaries.setObjectName("lNumberBoundaries")
         self.verticalLayout_4.addWidget(self.lNumberBoundaries)
@@ -117,7 +135,9 @@ class Ui_FuzzingDialog(object):
         self.lPreBits.setObjectName("lPreBits")
         self.horizontalLayout_2.addWidget(self.lPreBits)
         self.lFuzzedBits = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lFuzzedBits.sizePolicy().hasHeightForWidth())
@@ -130,19 +150,27 @@ class Ui_FuzzingDialog(object):
         self.lFuzzedBits.setObjectName("lFuzzedBits")
         self.horizontalLayout_2.addWidget(self.lFuzzedBits)
         self.lPostBits = QtWidgets.QLabel(FuzzingDialog)
-        self.lPostBits.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.lPostBits.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.lPostBits.setObjectName("lPostBits")
         self.horizontalLayout_2.addWidget(self.lPostBits)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.gridLayout_5.addLayout(self.horizontalLayout_2, 1, 1, 1, 1)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.lFuzzedValues = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lFuzzedValues.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lFuzzedValues.sizePolicy().hasHeightForWidth()
+        )
         self.lFuzzedValues.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -162,20 +190,30 @@ class Ui_FuzzingDialog(object):
         self.btnDelRow.setObjectName("btnDelRow")
         self.gridLayout_4.addWidget(self.btnDelRow, 1, 1, 1, 1)
         self.tblFuzzingValues = FuzzingTableView(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tblFuzzingValues.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tblFuzzingValues.sizePolicy().hasHeightForWidth()
+        )
         self.tblFuzzingValues.setSizePolicy(sizePolicy)
         self.tblFuzzingValues.setAlternatingRowColors(True)
-        self.tblFuzzingValues.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.tblFuzzingValues.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tblFuzzingValues.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerPixel
+        )
+        self.tblFuzzingValues.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerPixel
+        )
         self.tblFuzzingValues.setShowGrid(False)
         self.tblFuzzingValues.setObjectName("tblFuzzingValues")
         self.tblFuzzingValues.horizontalHeader().setHighlightSections(False)
         self.tblFuzzingValues.verticalHeader().setHighlightSections(False)
         self.gridLayout_4.addWidget(self.tblFuzzingValues, 0, 0, 4, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout_4.addItem(spacerItem1, 3, 1, 1, 1)
         self.btnAddRow = QtWidgets.QToolButton(FuzzingDialog)
         icon = QtGui.QIcon.fromTheme("list-add")
@@ -247,7 +285,9 @@ class Ui_FuzzingDialog(object):
         self.stackedWidgetSpinboxes.addWidget(self.pageAddRandom)
         self.gridLayout_5.addWidget(self.stackedWidgetSpinboxes, 7, 1, 2, 1)
         self.lSourceBlock = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSourceBlock.sizePolicy().hasHeightForWidth())
@@ -255,15 +295,21 @@ class Ui_FuzzingDialog(object):
         self.lSourceBlock.setObjectName("lSourceBlock")
         self.gridLayout_5.addWidget(self.lSourceBlock, 1, 0, 1, 1)
         self.lFuzzingReferenceBlock = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lFuzzingReferenceBlock.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lFuzzingReferenceBlock.sizePolicy().hasHeightForWidth()
+        )
         self.lFuzzingReferenceBlock.setSizePolicy(sizePolicy)
         self.lFuzzingReferenceBlock.setObjectName("lFuzzingReferenceBlock")
         self.gridLayout_5.addWidget(self.lFuzzingReferenceBlock, 2, 0, 1, 1)
         self.lFuzzingEnd = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lFuzzingEnd.sizePolicy().hasHeightForWidth())
@@ -274,48 +320,68 @@ class Ui_FuzzingDialog(object):
         self.lStrategy.setObjectName("lStrategy")
         self.gridLayout_5.addWidget(self.lStrategy, 6, 0, 1, 1)
         self.comboBoxFuzzingLabel = QtWidgets.QComboBox(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxFuzzingLabel.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.comboBoxFuzzingLabel.sizePolicy().hasHeightForWidth()
+        )
         self.comboBoxFuzzingLabel.setSizePolicy(sizePolicy)
         self.comboBoxFuzzingLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.comboBoxFuzzingLabel.setEditable(True)
         self.comboBoxFuzzingLabel.setObjectName("comboBoxFuzzingLabel")
         self.gridLayout_5.addWidget(self.comboBoxFuzzingLabel, 0, 1, 1, 1)
         self.spinBoxFuzzingEnd = QtWidgets.QSpinBox(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxFuzzingEnd.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxFuzzingEnd.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxFuzzingEnd.setSizePolicy(sizePolicy)
         self.spinBoxFuzzingEnd.setMinimum(1)
         self.spinBoxFuzzingEnd.setMaximum(999999999)
         self.spinBoxFuzzingEnd.setObjectName("spinBoxFuzzingEnd")
         self.gridLayout_5.addWidget(self.spinBoxFuzzingEnd, 4, 1, 1, 1)
         self.spinBoxFuzzingStart = QtWidgets.QSpinBox(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxFuzzingStart.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxFuzzingStart.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxFuzzingStart.setSizePolicy(sizePolicy)
         self.spinBoxFuzzingStart.setMinimum(1)
         self.spinBoxFuzzingStart.setMaximum(999999999)
         self.spinBoxFuzzingStart.setObjectName("spinBoxFuzzingStart")
         self.gridLayout_5.addWidget(self.spinBoxFuzzingStart, 3, 1, 1, 1)
         self.lFuzzingStart = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lFuzzingStart.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lFuzzingStart.sizePolicy().hasHeightForWidth()
+        )
         self.lFuzzingStart.setSizePolicy(sizePolicy)
         self.lFuzzingStart.setObjectName("lFuzzingStart")
         self.gridLayout_5.addWidget(self.lFuzzingStart, 3, 0, 1, 1)
         self.lFuzzingLabel = QtWidgets.QLabel(FuzzingDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lFuzzingLabel.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lFuzzingLabel.sizePolicy().hasHeightForWidth()
+        )
         self.lFuzzingLabel.setSizePolicy(sizePolicy)
         self.lFuzzingLabel.setObjectName("lFuzzingLabel")
         self.gridLayout_5.addWidget(self.lFuzzingLabel, 0, 0, 1, 1)
@@ -323,23 +389,39 @@ class Ui_FuzzingDialog(object):
         self.retranslateUi(FuzzingDialog)
         self.stackedWidgetLabels.setCurrentIndex(0)
         self.stackedWidgetSpinboxes.setCurrentIndex(0)
-        self.comboBoxStrategy.currentIndexChanged['int'].connect(self.stackedWidgetLabels.setCurrentIndex)
-        self.comboBoxStrategy.currentIndexChanged['int'].connect(self.stackedWidgetSpinboxes.setCurrentIndex)
+        self.comboBoxStrategy.currentIndexChanged["int"].connect(
+            self.stackedWidgetLabels.setCurrentIndex
+        )
+        self.comboBoxStrategy.currentIndexChanged["int"].connect(
+            self.stackedWidgetSpinboxes.setCurrentIndex
+        )
 
     def retranslateUi(self, FuzzingDialog):
         _translate = QtCore.QCoreApplication.translate
         FuzzingDialog.setWindowTitle(_translate("FuzzingDialog", "Fuzzing"))
-        self.comboBoxStrategy.setItemText(0, _translate("FuzzingDialog", "Add Range of Values"))
-        self.comboBoxStrategy.setItemText(1, _translate("FuzzingDialog", "Add Boundaries"))
-        self.comboBoxStrategy.setItemText(2, _translate("FuzzingDialog", "Add Random Values from Range"))
-        self.comboBoxStrategy.setItemText(3, _translate("FuzzingDialog", "Add De Bruijn Sequence"))
-        self.btnAddFuzzingValues.setText(_translate("FuzzingDialog", "Add to Fuzzed Values"))
+        self.comboBoxStrategy.setItemText(
+            0, _translate("FuzzingDialog", "Add Range of Values")
+        )
+        self.comboBoxStrategy.setItemText(
+            1, _translate("FuzzingDialog", "Add Boundaries")
+        )
+        self.comboBoxStrategy.setItemText(
+            2, _translate("FuzzingDialog", "Add Random Values from Range")
+        )
+        self.comboBoxStrategy.setItemText(
+            3, _translate("FuzzingDialog", "Add De Bruijn Sequence")
+        )
+        self.btnAddFuzzingValues.setText(
+            _translate("FuzzingDialog", "Add to Fuzzed Values")
+        )
         self.lStart.setText(_translate("FuzzingDialog", "Start (Decimal):"))
         self.lEnd.setText(_translate("FuzzingDialog", "End (Decimal):"))
         self.lStep.setText(_translate("FuzzingDialog", "Step (Decimal):"))
         self.checkBoxLowerBound.setText(_translate("FuzzingDialog", "Lower Bound"))
         self.checkBoxUpperBound.setText(_translate("FuzzingDialog", "Upper Bound"))
-        self.lNumberBoundaries.setText(_translate("FuzzingDialog", "Values per Boundary:"))
+        self.lNumberBoundaries.setText(
+            _translate("FuzzingDialog", "Values per Boundary:")
+        )
         self.lRandomMin.setText(_translate("FuzzingDialog", "Range Minimum:"))
         self.lRandomMax.setText(_translate("FuzzingDialog", "Range Maximum:"))
         self.lNumRandom.setText(_translate("FuzzingDialog", "Number Values:"))
@@ -347,17 +429,37 @@ class Ui_FuzzingDialog(object):
         self.lFuzzedBits.setText(_translate("FuzzingDialog", "1010"))
         self.lPostBits.setText(_translate("FuzzingDialog", "010101"))
         self.lFuzzedValues.setText(_translate("FuzzingDialog", "Fuzzed Values"))
-        self.chkBRemoveDuplicates.setText(_translate("FuzzingDialog", "Remove Duplicates"))
-        self.btnDelRow.setToolTip(_translate("FuzzingDialog", "Remove selected values or last value if nothing is selected."))
+        self.chkBRemoveDuplicates.setText(
+            _translate("FuzzingDialog", "Remove Duplicates")
+        )
+        self.btnDelRow.setToolTip(
+            _translate(
+                "FuzzingDialog",
+                "Remove selected values or last value if nothing is selected.",
+            )
+        )
         self.btnDelRow.setText(_translate("FuzzingDialog", "..."))
         self.btnAddRow.setToolTip(_translate("FuzzingDialog", "Add a new value."))
         self.btnAddRow.setText(_translate("FuzzingDialog", "..."))
-        self.btnRepeatValues.setToolTip(_translate("FuzzingDialog", "Repeat selected values or all values if nothing is selected."))
+        self.btnRepeatValues.setToolTip(
+            _translate(
+                "FuzzingDialog",
+                "Repeat selected values or all values if nothing is selected.",
+            )
+        )
         self.btnRepeatValues.setText(_translate("FuzzingDialog", "..."))
         self.lSourceBlock.setText(_translate("FuzzingDialog", "Source Message:"))
-        self.lFuzzingReferenceBlock.setText(_translate("FuzzingDialog", "Message to fuzz:"))
-        self.lFuzzingEnd.setText(_translate("FuzzingDialog", "Fuzzing Label End Index:"))
+        self.lFuzzingReferenceBlock.setText(
+            _translate("FuzzingDialog", "Message to fuzz:")
+        )
+        self.lFuzzingEnd.setText(
+            _translate("FuzzingDialog", "Fuzzing Label End Index:")
+        )
         self.lStrategy.setText(_translate("FuzzingDialog", "Strategy:"))
-        self.lFuzzingStart.setText(_translate("FuzzingDialog", "Fuzzing Label Start Index:"))
+        self.lFuzzingStart.setText(
+            _translate("FuzzingDialog", "Fuzzing Label Start Index:")
+        )
         self.lFuzzingLabel.setText(_translate("FuzzingDialog", "Fuzzing Label:"))
+
+
 from urh.ui.views.FuzzingTableView import FuzzingTableView

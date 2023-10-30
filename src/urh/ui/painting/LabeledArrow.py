@@ -17,11 +17,19 @@ class LabeledArrow(QGraphicsLineItem):
     def boundingRect(self):
         extra = (self.pen().width() + 20) / 2.0
         try:
-            return QRectF(self.line().p1(), QSizeF(self.line().p2().x() - self.line().p1().x(),
-                                                   self.line().p2().y() - self.line().p1().y())) \
-                .normalized().adjusted(-extra, -extra, extra, extra)
+            return (
+                QRectF(
+                    self.line().p1(),
+                    QSizeF(
+                        self.line().p2().x() - self.line().p1().x(),
+                        self.line().p2().y() - self.line().p1().y(),
+                    ),
+                )
+                .normalized()
+                .adjusted(-extra, -extra, extra, extra)
+            )
         except RuntimeError:
-            return QRectF(0,0,0,0)
+            return QRectF(0, 0, 0, 0)
 
     def paint(self, painter, QStyleOptionGraphicsItem, QWidget_widget=None):
         """
@@ -41,12 +49,20 @@ class LabeledArrow(QGraphicsLineItem):
         labelheight = 0.75 * abs(y2 - y1)
 
         painter.drawLine(QPointF(x1, y1), QPointF(x1, y1 + labelheight / 2))
-        painter.drawLine(QPointF(x1, y1), QPointF(x1 + x_arrowSize / 4, y1 + y_arrowSize / 2))
-        painter.drawLine(QPointF(x1, y1), QPointF(x1 - x_arrowSize / 4, y1 + y_arrowSize / 2))
+        painter.drawLine(
+            QPointF(x1, y1), QPointF(x1 + x_arrowSize / 4, y1 + y_arrowSize / 2)
+        )
+        painter.drawLine(
+            QPointF(x1, y1), QPointF(x1 - x_arrowSize / 4, y1 + y_arrowSize / 2)
+        )
 
         painter.drawLine(QPointF(x1, y2 - labelheight / 2), QPointF(x1, y2))
-        painter.drawLine(QPointF(x1, y2), QPointF(x1 + x_arrowSize / 4, y2 - y_arrowSize / 2))
-        painter.drawLine(QPointF(x1, y2), QPointF(x1 - x_arrowSize / 4, y2 - y_arrowSize / 2))
+        painter.drawLine(
+            QPointF(x1, y2), QPointF(x1 + x_arrowSize / 4, y2 - y_arrowSize / 2)
+        )
+        painter.drawLine(
+            QPointF(x1, y2), QPointF(x1 - x_arrowSize / 4, y2 - y_arrowSize / 2)
+        )
 
         painter.setRenderHint(QPainter.HighQualityAntialiasing)
         fm = painter.fontMetrics()
@@ -56,11 +72,14 @@ class LabeledArrow(QGraphicsLineItem):
         scale_factor = scale_factor if scale_factor > 0 else 0.0000000000000000001
         painter.scale(1, scale_factor)
 
-
-
         # print(y1, y2, pixelsHigh)
 
-        painter.drawText(QPointF(x1 - pixelsWide / 2, (1 / scale_factor) * (y1 + y2) / 2 + pixelsHigh / 4), self.label)
+        painter.drawText(
+            QPointF(
+                x1 - pixelsWide / 2, (1 / scale_factor) * (y1 + y2) / 2 + pixelsHigh / 4
+            ),
+            self.label,
+        )
         # painter.drawText(QPointF(x1 - pixelsWide/2, (y1+y2+pixelsHigh)/2), self.label)
 
         del painter

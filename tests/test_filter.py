@@ -13,7 +13,9 @@ class TestFilter(QtTestCase):
         super().setUp()
 
         self.add_signal_to_form("unaveraged.coco")
-        self.sig_frame = self.form.signal_tab_controller.signal_frames[0] # type: SignalFrame
+        self.sig_frame = self.form.signal_tab_controller.signal_frames[
+            0
+        ]  # type: SignalFrame
 
     def test_fir_filter(self):
         input_signal = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 42], dtype=np.complex64)
@@ -22,7 +24,9 @@ class TestFilter(QtTestCase):
         fir_filter = Filter(filter_taps)
 
         filtered_signal = fir_filter.apply_fir_filter(input_signal.flatten())
-        expected_filtered_signal = np.array([0.25, 0.75, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 16.5], dtype=np.complex64)
+        expected_filtered_signal = np.array(
+            [0.25, 0.75, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 16.5], dtype=np.complex64
+        )
 
         self.assertTrue(np.array_equal(filtered_signal, expected_filtered_signal))
 
@@ -40,8 +44,10 @@ class TestFilter(QtTestCase):
         self.sig_frame.ui.spinBoxTolerance.setValue(5)
         self.sig_frame.ui.spinBoxTolerance.editingFinished.emit()
 
-        self.assertTrue(self.sig_frame.proto_analyzer.plain_hex_str[0].startswith(expected),
-                        msg=self.sig_frame.proto_analyzer.plain_hex_str[0])
+        self.assertTrue(
+            self.sig_frame.proto_analyzer.plain_hex_str[0].startswith(expected),
+            msg=self.sig_frame.proto_analyzer.plain_hex_str[0],
+        )
 
     def test_filter_selection(self):
         self.sig_frame.apply_filter_to_selection_only.trigger()
@@ -75,13 +81,17 @@ class TestFilter(QtTestCase):
         self.assertTrue(np.array_equal(old_signal, self.sig_frame.signal.iq_array.data))
 
         self.sig_frame.undo_stack.command(0).redo()
-        self.assertTrue(np.array_equal(filtered_signal, self.sig_frame.signal.iq_array.data))
+        self.assertTrue(
+            np.array_equal(filtered_signal, self.sig_frame.signal.iq_array.data)
+        )
 
     def test_filter_caption(self):
         self.assertIn("moving average", self.sig_frame.ui.btnFilter.text())
 
         self.assertFalse(self.sig_frame.filter_dialog.ui.lineEditCustomTaps.isEnabled())
-        self.assertFalse(self.sig_frame.filter_dialog.ui.radioButtonCustomTaps.isChecked())
+        self.assertFalse(
+            self.sig_frame.filter_dialog.ui.radioButtonCustomTaps.isChecked()
+        )
         self.sig_frame.filter_dialog.ui.radioButtonCustomTaps.click()
         self.assertTrue(self.sig_frame.filter_dialog.ui.lineEditCustomTaps.isEnabled())
         self.sig_frame.filter_dialog.ui.buttonBox.accepted.emit()
@@ -91,16 +101,18 @@ class TestFilter(QtTestCase):
     def test_fft_convolution(self):
         x = np.array([1, 2, 3])
         h = np.array([0, 1, 0.5])
-        expected_result = np.array([1., 2.5, 4.])
-        result_np = np.convolve(x, h, 'same')
+        expected_result = np.array([1.0, 2.5, 4.0])
+        result_np = np.convolve(x, h, "same")
         self.assertTrue(np.array_equal(result_np, expected_result))
 
         result_fft = Filter.fft_convolve_1d(x, h)
         self.assertEqual(len(expected_result), len(result_fft))
         for i in range(len(expected_result)):
-            self.assertAlmostEqual(expected_result[i], result_fft[i], places=8, msg=str(i))
+            self.assertAlmostEqual(
+                expected_result[i], result_fft[i], places=8, msg=str(i)
+            )
 
-        x = np.linspace(0, 1, num=10 ** 3).astype(np.complex64)
+        x = np.linspace(0, 1, num=10**3).astype(np.complex64)
         h = Filter.design_windowed_sinc_bandpass(0.1, 0.4, 0.01)
         # fft convolve is faster if IR is round about 400 samples or windowed sinc has bandwidth of 0.01
 
@@ -119,5 +131,6 @@ class TestFilter(QtTestCase):
         filtered2 = Filter.apply_bandpass_filter(sig, 0.2, 0.1)
         self.assertTrue(np.array_equal(filtered1, filtered2))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

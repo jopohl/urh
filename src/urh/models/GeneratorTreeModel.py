@@ -15,14 +15,19 @@ class GeneratorTreeModel(ProtocolTreeModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
 
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+        return (
+            Qt.ItemIsEnabled
+            | Qt.ItemIsSelectable
+            | Qt.ItemIsDragEnabled
+            | Qt.ItemIsDropEnabled
+        )
 
     def mimeTypes(self):
-        return [] # Prohibit Drag Drop in Generator
+        return []  # Prohibit Drag Drop in Generator
 
     def data(self, index: QModelIndex, role=None):
         item = self.getItem(index)
-        if role == Qt.DisplayRole:#
+        if role == Qt.DisplayRole:  #
             return item.data()
         elif role == Qt.DecorationRole and item.is_group:
             return QIcon.fromTheme("folder")

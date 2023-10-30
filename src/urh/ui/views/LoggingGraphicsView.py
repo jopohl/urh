@@ -5,7 +5,6 @@ from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 
 
 class LoggingGraphicsView(QGraphicsView):
-
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -13,11 +12,17 @@ class LoggingGraphicsView(QGraphicsView):
 
         self.log_selected_action = QAction(self.tr("Log selected items"), self)
         self.log_selected_action.setShortcut(QKeySequence("L"))
-        self.log_selected_action.triggered.connect(self.on_log_selected_action_triggered)
+        self.log_selected_action.triggered.connect(
+            self.on_log_selected_action_triggered
+        )
 
-        self.do_not_log_selected_action = QAction(self.tr("Do not log selected items"), self)
+        self.do_not_log_selected_action = QAction(
+            self.tr("Do not log selected items"), self
+        )
         self.do_not_log_selected_action.setShortcut(QKeySequence("N"))
-        self.do_not_log_selected_action.triggered.connect(self.on_do_not_log_selected_action_triggered)
+        self.do_not_log_selected_action.triggered.connect(
+            self.on_do_not_log_selected_action_triggered
+        )
 
         self.select_all_action = QAction(self.tr("Select all"), self)
         self.select_all_action.setShortcut(QKeySequence.SelectAll)
@@ -38,9 +43,12 @@ class LoggingGraphicsView(QGraphicsView):
             menu.addAction(self.log_selected_action)
             menu.addAction(self.do_not_log_selected_action)
 
-        SimulatorGraphicsView.add_select_actions_to_menu(menu, self.scene(),
-                                                         select_to_trigger=self.on_select_to_action_triggered,
-                                                         select_from_trigger=self.on_select_from_action_triggered)
+        SimulatorGraphicsView.add_select_actions_to_menu(
+            menu,
+            self.scene(),
+            select_to_trigger=self.on_select_to_action_triggered,
+            select_from_trigger=self.on_select_from_action_triggered,
+        )
 
         return menu
 
@@ -48,7 +56,9 @@ class LoggingGraphicsView(QGraphicsView):
         self.scene().select_messages_with_participant(self.sender().data())
 
     def on_select_to_action_triggered(self):
-        self.scene().select_messages_with_participant(self.sender().data(), from_part=False)
+        self.scene().select_messages_with_participant(
+            self.sender().data(), from_part=False
+        )
 
     def on_log_selected_action_triggered(self):
         self.scene().log_selected_items(True)

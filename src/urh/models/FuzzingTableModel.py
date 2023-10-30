@@ -24,7 +24,9 @@ class FuzzingTableModel(QAbstractTableModel):
                 seq = self.fuzzing_label.fuzz_values[:]
                 seen = set()
                 add_seen = seen.add
-                self.fuzzing_label.fuzz_values = [l for l in seq if not (l in seen or add_seen(l))]
+                self.fuzzing_label.fuzz_values = [
+                    l for l in seq if not (l in seen or add_seen(l))
+                ]
 
             self.data = self.fuzzing_label.fuzz_values
             if self.proto_view == 0:
@@ -58,9 +60,9 @@ class FuzzingTableModel(QAbstractTableModel):
                 if self.proto_view == 0:
                     return self.data[i][j]
                 elif self.proto_view == 1:
-                    return "{0:x}".format(int(self.data[i][4 * j:4 * (j + 1)], 2))
+                    return "{0:x}".format(int(self.data[i][4 * j : 4 * (j + 1)], 2))
                 elif self.proto_view == 2:
-                    return chr(int(self.data[i][8 * j:8 * (j + 1)], 2))
+                    return chr(int(self.data[i][8 * j : 8 * (j + 1)], 2))
 
         elif role == Qt.FontRole:
             if i == 0:
@@ -73,21 +75,38 @@ class FuzzingTableModel(QAbstractTableModel):
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()
         j = index.column()
-        hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
+        hex_chars = (
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+        )
         if self.proto_view == 0 and value in ("0", "1"):
             l = list(self.data[i])
             l[j] = value
-            self.data[i] = ''.join(l)
+            self.data[i] = "".join(l)
             self.update()
         elif self.proto_view == 1 and value in hex_chars:
             l = list(self.data[i])
-            l[4*j : 4 * (j + 1)] = "{0:04b}".format(int(value, 16))
-            self.data[i] = ''.join(l)
+            l[4 * j : 4 * (j + 1)] = "{0:04b}".format(int(value, 16))
+            self.data[i] = "".join(l)
             self.update()
         elif self.proto_view == 2 and len(value) == 1:
             l = list(self.data[i])
-            l[8*j : 8 * (j + 1)] = "{0:08b}".format(ord(value))
-            self.data[i] = ''.join(l)
+            l[8 * j : 8 * (j + 1)] = "{0:08b}".format(ord(value))
+            self.data[i] = "".join(l)
             self.update()
 
         return True
@@ -103,11 +122,15 @@ class FuzzingTableModel(QAbstractTableModel):
 
         self.update()
 
-    def add_boundaries(self, lower: int, upper: int, num_vals:int):
+    def add_boundaries(self, lower: int, upper: int, num_vals: int):
         lbl = self.fuzzing_label
 
         if lower > -1:
-            low = lower if lower < lbl.fuzz_maximum + num_vals else lbl.fuzz_maximum - num_vals
+            low = (
+                lower
+                if lower < lbl.fuzz_maximum + num_vals
+                else lbl.fuzz_maximum - num_vals
+            )
             for i in range(low, low + num_vals):
                 lbl.add_decimal_fuzz_value(i)
 
@@ -137,4 +160,3 @@ class FuzzingTableModel(QAbstractTableModel):
                 lbl.fuzz_values.insert(i, val)
 
         self.update()
-

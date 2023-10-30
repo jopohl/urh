@@ -13,6 +13,7 @@ from urh.signalprocessing.Participant import Participant
 
 SHOW_PLOTS = True
 
+
 class TestAWREHistograms(AWRETestCase):
     def test_very_simple_protocol(self):
         """
@@ -46,10 +47,16 @@ class TestAWREHistograms(AWRETestCase):
         mb.add_label(FieldType.Function.LENGTH, 8)
 
         num_messages_by_data_length = {8: 5, 16: 10, 32: 15}
-        pg = ProtocolGenerator([mb.message_type], syncs_by_mt={mb.message_type: "0x9a9d"})
+        pg = ProtocolGenerator(
+            [mb.message_type], syncs_by_mt={mb.message_type: "0x9a9d"}
+        )
         for data_length, num_messages in num_messages_by_data_length.items():
             for _ in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** data_length - 1), data_length))
+                pg.generate_message(
+                    data=pg.decimal_to_bits(
+                        random.randint(0, 2**data_length - 1), data_length
+                    )
+                )
 
         self.save_protocol("simple", pg)
 
@@ -70,7 +77,9 @@ class TestAWREHistograms(AWRETestCase):
 
         for i, (message_length, bitvectors) in enumerate(bitvectors_by_length.items()):
             plt.subplot(2, 2, i + 2)
-            plt.title("Messages with length {} ({})".format(message_length, len(bitvectors)))
+            plt.title(
+                "Messages with length {} ({})".format(message_length, len(bitvectors))
+            )
             Histogram(bitvectors).subplot_on(plt)
 
         if SHOW_PLOTS:
@@ -93,10 +102,17 @@ class TestAWREHistograms(AWRETestCase):
         bob = Participant("Bob", "B", "5a9d", color_index=1)
 
         num_messages = 100
-        pg = ProtocolGenerator([mb.message_type], syncs_by_mt={mb.message_type: "0x1c"}, little_endian=False)
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x1c"},
+            little_endian=False,
+        )
         for i in range(num_messages):
             len_data = random.randint(1, 5)
-            data = "".join(pg.decimal_to_bits(random.randint(0, 2 ** 8 - 1), 8) for _ in range(len_data))
+            data = "".join(
+                pg.decimal_to_bits(random.randint(0, 2**8 - 1), 8)
+                for _ in range(len_data)
+            )
             if i % 2 == 0:
                 source, dest = alice, bob
             else:
@@ -112,9 +128,14 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())):
+            sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())
+        ):
             plt.subplot(2, 2, i + 3)
-            plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
+            plt.title(
+                "Messages with participant {} ({})".format(
+                    participant.shortname, len(bitvectors)
+                )
+            )
             Histogram(bitvectors).subplot_on(plt)
 
         if SHOW_PLOTS:
@@ -122,9 +143,12 @@ class TestAWREHistograms(AWRETestCase):
 
     def get_bitvectors_by_participant(self, messages):
         import numpy as np
+
         result = defaultdict(list)
         for msg in messages:  # type: Message
-            result[msg.participant].append(np.array(msg.decoded_bits, dtype=np.uint8, order="C"))
+            result[msg.participant].append(
+                np.array(msg.decoded_bits, dtype=np.uint8, order="C")
+            )
         return result
 
     def test_ack_protocol(self):
@@ -150,16 +174,23 @@ class TestAWREHistograms(AWRETestCase):
         bob = Participant("Bob", "B", "5a9d", color_index=1)
 
         num_messages = 50
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0xbf", mb_ack.message_type: "0xbf"},
-                               little_endian=False)
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0xbf", mb_ack.message_type: "0xbf"},
+            little_endian=False,
+        )
         for i in range(num_messages):
             if i % 2 == 0:
                 source, dest = alice, bob
             else:
                 source, dest = bob, alice
             pg.generate_message(data="0xffff", source=source, destination=dest)
-            pg.generate_message(data="", source=dest, destination=source, message_type=mb_ack.message_type)
+            pg.generate_message(
+                data="",
+                source=dest,
+                destination=source,
+                message_type=mb_ack.message_type,
+            )
 
         self.save_protocol("proto_with_acks", pg)
 
@@ -170,9 +201,14 @@ class TestAWREHistograms(AWRETestCase):
         h.subplot_on(plt)
 
         for i, (participant, bitvectors) in enumerate(
-                sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())):
+            sorted(self.get_bitvectors_by_participant(pg.protocol.messages).items())
+        ):
             plt.subplot(2, 2, i + 3)
-            plt.title("Messages with participant {} ({})".format(participant.shortname, len(bitvectors)))
+            plt.title(
+                "Messages with participant {} ({})".format(
+                    participant.shortname, len(bitvectors)
+                )
+            )
             Histogram(bitvectors).subplot_on(plt)
 
         if SHOW_PLOTS:

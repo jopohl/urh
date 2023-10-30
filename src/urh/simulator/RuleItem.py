@@ -4,7 +4,11 @@ from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorRule import (
+    SimulatorRule,
+    SimulatorRuleCondition,
+    ConditionType,
+)
 
 
 class RuleItem(GraphicsItem):
@@ -55,13 +59,17 @@ class RuleConditionItem(GraphicsItem):
 
     def update_flags(self):
         if self.scene().mode == 0:
-            self.set_flags(is_selectable=True, accept_hover_events=True, accept_drops=True)
+            self.set_flags(
+                is_selectable=True, accept_hover_events=True, accept_drops=True
+            )
         else:
             self.set_flags(is_selectable=True, accept_hover_events=True)
 
     def labels_width(self):
-        return max(self.number.boundingRect().width() + self.text.boundingRect().width(),
-                   self.desc.boundingRect().width())
+        return max(
+            self.number.boundingRect().width() + self.text.boundingRect().width(),
+            self.desc.boundingRect().width(),
+        )
 
     def refresh(self):
         if len(self.model_item.condition):
@@ -76,13 +84,17 @@ class RuleConditionItem(GraphicsItem):
         self.setPos(x_pos, y_pos)
 
         start_y = 0
-        start_x = ((self.scene().items_width() + 40) - (
-                    self.number.boundingRect().width() + self.text.boundingRect().width())) / 2
+        start_x = (
+            (self.scene().items_width() + 40)
+            - (self.number.boundingRect().width() + self.text.boundingRect().width())
+        ) / 2
         self.number.setPos(start_x, start_y)
         start_x += self.number.boundingRect().width()
         self.text.setPos(start_x, start_y)
         start_y += round(self.number.boundingRect().height())
-        start_x = ((self.scene().items_width() + 40) - self.desc.boundingRect().width()) / 2
+        start_x = (
+            (self.scene().items_width() + 40) - self.desc.boundingRect().width()
+        ) / 2
         self.desc.setPos(start_x, start_y)
 
         if self.model_item.type != ConditionType.ELSE:
@@ -96,7 +108,9 @@ class RuleConditionItem(GraphicsItem):
 
         width = self.scene().items_width()
         self.prepareGeometryChange()
-        self.bounding_rect = QRectF(0, 0, width + 40, self.childrenBoundingRect().height() + 5)
+        self.bounding_rect = QRectF(
+            0, 0, width + 40, self.childrenBoundingRect().height() + 5
+        )
 
     def update_drop_indicator(self, pos):
         rect = self.boundingRect()

@@ -22,9 +22,12 @@ class TestDecodingGUI(QtTestCase):
 
         signal = self.form.signal_tab_controller.signal_frames[0].signal
         empty_signal = self.form.signal_tab_controller.signal_frames[1].signal
-        self.dialog = DecoderDialog(decodings=self.form.compare_frame_controller.decodings,
-                                    signals=[signal, empty_signal], parent=self.form,
-                                    project_manager=self.form.project_manager)
+        self.dialog = DecoderDialog(
+            decodings=self.form.compare_frame_controller.decodings,
+            signals=[signal, empty_signal],
+            parent=self.form,
+            project_manager=self.form.project_manager,
+        )
 
         if self.SHOW:
             self.dialog.show()
@@ -36,19 +39,21 @@ class TestDecodingGUI(QtTestCase):
 
     def test_build_decoding(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
-        chain = [(settings.DECODING_INVERT,),
-                 (settings.DECODING_ENOCEAN,),
-                 (settings.DECODING_DIFFERENTIAL,),
-                 (settings.DECODING_CARRIER,),
-                 (settings.DECODING_BITORDER,),
-                 (settings.DECODING_EDGE,),
-                 (settings.DECODING_INVERT,),
-                 (settings.DECODING_DATAWHITENING,),
-                 (settings.DECODING_REDUNDANCY, "2"),
-                 (settings.DECODING_MORSE, "1;3;1"),
-                 (settings.DECODING_SUBSTITUTION, "0:1;1:0;"),
-                 (settings.DECODING_EXTERNAL, "./;./"),
-                 (settings.DECODING_CUT, "0;1010")]
+        chain = [
+            (settings.DECODING_INVERT,),
+            (settings.DECODING_ENOCEAN,),
+            (settings.DECODING_DIFFERENTIAL,),
+            (settings.DECODING_CARRIER,),
+            (settings.DECODING_BITORDER,),
+            (settings.DECODING_EDGE,),
+            (settings.DECODING_INVERT,),
+            (settings.DECODING_DATAWHITENING,),
+            (settings.DECODING_REDUNDANCY, "2"),
+            (settings.DECODING_MORSE, "1;3;1"),
+            (settings.DECODING_SUBSTITUTION, "0:1;1:0;"),
+            (settings.DECODING_EXTERNAL, "./;./"),
+            (settings.DECODING_CUT, "0;1010"),
+        ]
 
         decoding = Encoding(chain=[c for chain_item in chain for c in chain_item])
         self.dialog.decodings[4] = decoding
@@ -63,7 +68,11 @@ class TestDecodingGUI(QtTestCase):
 
     def test_set_signal(self):
         self.dialog.ui.combobox_signals.setCurrentText("esaver")
-        bits = "".join(self.form.signal_tab_controller.signal_frames[0].proto_analyzer.plain_bits_str)
+        bits = "".join(
+            self.form.signal_tab_controller.signal_frames[
+                0
+            ].proto_analyzer.plain_bits_str
+        )
         self.assertEqual(self.dialog.ui.inpt.text(), bits)
 
         self.dialog.ui.combobox_signals.setCurrentIndex(0)
@@ -76,11 +85,17 @@ class TestDecodingGUI(QtTestCase):
     def test_select_items(self):
         for i in range(0, self.dialog.ui.basefunctions.count()):
             self.dialog.ui.basefunctions.setCurrentRow(i)
-            self.assertIn(self.dialog.ui.basefunctions.currentItem().text(), self.dialog.ui.info.text())
+            self.assertIn(
+                self.dialog.ui.basefunctions.currentItem().text(),
+                self.dialog.ui.info.text(),
+            )
 
         for i in range(0, self.dialog.ui.additionalfunctions.count()):
             self.dialog.ui.additionalfunctions.setCurrentRow(i)
-            self.assertIn(self.dialog.ui.additionalfunctions.currentItem().text(), self.dialog.ui.info.text())
+            self.assertIn(
+                self.dialog.ui.additionalfunctions.currentItem().text(),
+                self.dialog.ui.info.text(),
+            )
 
     def test_context_menu(self):
         self.dialog.ui.combobox_decodings.setCurrentIndex(4)
@@ -103,20 +118,30 @@ class TestDecodingGUI(QtTestCase):
 
         self.dialog.ui.decoderchain.context_menu_pos = QPoint(0, 0)
         self.dialog.ui.decoderchain.on_disable_function_triggered()
-        self.assertIn(settings.DECODING_DISABLED_PREFIX, self.dialog.ui.decoderchain.item(0).text())
+        self.assertIn(
+            settings.DECODING_DISABLED_PREFIX,
+            self.dialog.ui.decoderchain.item(0).text(),
+        )
         self.dialog.ui.decoderchain.on_disable_function_triggered()
-        self.assertNotIn(self.dialog.ui.decoderchain.item(0).text(), settings.DECODING_DISABLED_PREFIX)
+        self.assertNotIn(
+            self.dialog.ui.decoderchain.item(0).text(),
+            settings.DECODING_DISABLED_PREFIX,
+        )
 
     def test_save_remove_decoding(self):
         def set_save_name():
             timer.stop()
-            input_dialog = next(w for w in qApp.topLevelWidgets() if isinstance(w, QInputDialog))
+            input_dialog = next(
+                w for w in qApp.topLevelWidgets() if isinstance(w, QInputDialog)
+            )
             input_dialog.setTextValue("Test decoding")
             input_dialog.accept()
 
         def accept_delete():
             timer.stop()
-            message_box = next(w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox))
+            message_box = next(
+                w for w in qApp.topLevelWidgets() if isinstance(w, QMessageBox)
+            )
             message_box.button(QMessageBox.Yes).click()
 
         self.dialog.ui.decoderchain.addItem(settings.DECODING_CUT)
@@ -130,7 +155,9 @@ class TestDecodingGUI(QtTestCase):
         timer.start(10)
         self.dialog.ui.saveas.click()
 
-        self.assertEqual(self.dialog.ui.combobox_decodings.currentText(), "Test decoding")
+        self.assertEqual(
+            self.dialog.ui.combobox_decodings.currentText(), "Test decoding"
+        )
 
         timer.timeout.disconnect(set_save_name)
         timer.timeout.connect(accept_delete)
@@ -138,4 +165,6 @@ class TestDecodingGUI(QtTestCase):
 
         self.dialog.ui.delete_decoding.click()
 
-        self.assertNotEqual(self.dialog.ui.combobox_decodings.currentText(), "Test decoding")
+        self.assertNotEqual(
+            self.dialog.ui.combobox_decodings.currentText(), "Test decoding"
+        )

@@ -50,7 +50,7 @@ class Device(object):
         Command.SET_BANDWIDTH.name: "set_bandwidth",
         Command.SET_RF_GAIN.name: "set_rf_gain",
         Command.SET_IF_GAIN.name: {"rx": "set_if_rx_gain", "tx": "set_if_tx_gain"},
-        Command.SET_BB_GAIN.name: {"rx": "set_baseband_gain"}
+        Command.SET_BB_GAIN.name: {"rx": "set_baseband_gain"},
     }
 
     @classmethod
@@ -82,9 +82,11 @@ class Device(object):
                     allowed_values = getattr(cls.DEVICE_LIB, check_method_name)()
                     next_allowed = min(allowed_values, key=lambda x: abs(x - value))
                     if value != next_allowed:
-                        ctrl_connection.send("{}: {} not in range of supported values. Assuming {}".format(
-                            tag, value, next_allowed
-                        ))
+                        ctrl_connection.send(
+                            "{}: {} not in range of supported values. Assuming {}".format(
+                                tag, value, next_allowed
+                            )
+                        )
                         value = next_allowed
                 except (KeyError, AttributeError):
                     pass
@@ -101,8 +103,12 @@ class Device(object):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
-        if cls.setup_device(ctrl_connection, device_identifier=parameters["identifier"]):
+    def init_device(
+        cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict
+    ) -> bool:
+        if cls.setup_device(
+            ctrl_connection, device_identifier=parameters["identifier"]
+        ):
             for parameter, value in parameters.items():
                 cls.process_command((parameter, value), ctrl_connection, is_tx)
             return True
@@ -118,7 +124,9 @@ class Device(object):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection) -> int:
+    def enter_async_receive_mode(
+        cls, data_connection: Connection, ctrl_connection: Connection
+    ) -> int:
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -142,13 +150,20 @@ class Device(object):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def device_receive(cls, data_connection: Connection, ctrl_connection: Connection, dev_parameters: OrderedDict):
+    def device_receive(
+        cls,
+        data_connection: Connection,
+        ctrl_connection: Connection,
+        dev_parameters: OrderedDict,
+    ):
         if not cls.init_device(ctrl_connection, is_tx=False, parameters=dev_parameters):
             ctrl_connection.send("failed to start rx mode")
             return False
 
         try:
-            cls.adapt_num_read_samples_to_sample_rate(dev_parameters[cls.Command.SET_SAMPLE_RATE.name])
+            cls.adapt_num_read_samples_to_sample_rate(
+                dev_parameters[cls.Command.SET_SAMPLE_RATE.name]
+            )
         except NotImplementedError:
             # Many SDRs like HackRF or AirSpy do not need to calculate SYNC_RX_CHUNK_SIZE
             # as default values are either fine or given by the hardware
@@ -175,7 +190,9 @@ class Device(object):
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():
-                result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=False)
+                result = cls.process_command(
+                    ctrl_connection.recv(), ctrl_connection, is_tx=False
+                )
                 if result == cls.Command.STOP.name:
                     exit_requested = True
                     break
@@ -185,7 +202,12 @@ class Device(object):
         ctrl_connection.close()
 
     @classmethod
-    def device_send(cls, ctrl_connection: Connection, send_config: SendConfig, dev_parameters: OrderedDict):
+    def device_send(
+        cls,
+        ctrl_connection: Connection,
+        send_config: SendConfig,
+        dev_parameters: OrderedDict,
+    ):
         if not cls.init_device(ctrl_connection, is_tx=True, parameters=dev_parameters):
             ctrl_connection.send("failed to start tx mode")
             return False
@@ -200,7 +222,11 @@ class Device(object):
             return False
 
         exit_requested = False
-        buffer_size = cls.CONTINUOUS_TX_CHUNK_SIZE if send_config.continuous else cls.SYNC_TX_CHUNK_SIZE
+        buffer_size = (
+            cls.CONTINUOUS_TX_CHUNK_SIZE
+            if send_config.continuous
+            else cls.SYNC_TX_CHUNK_SIZE
+        )
         if not cls.ASYNCHRONOUS and buffer_size == 0:
             logger.warning("Send buffer size is zero!")
 
@@ -216,7 +242,9 @@ class Device(object):
                 cls.send_sync(send_config.get_data_to_send(buffer_size))
 
             while ctrl_connection.poll():
-                result = cls.process_command(ctrl_connection.recv(), ctrl_connection, is_tx=True)
+                result = cls.process_command(
+                    ctrl_connection.recv(), ctrl_connection, is_tx=True
+                )
                 if result == cls.Command.STOP.name:
                     exit_requested = True
                     break
@@ -227,15 +255,25 @@ class Device(object):
             time.sleep(0.75)
 
         if exit_requested:
-            logger.debug("{}: exit requested. Stopping sending".format(cls.__class__.__name__))
+            logger.debug(
+                "{}: exit requested. Stopping sending".format(cls.__class__.__name__)
+            )
         if send_config.sending_is_finished():
             logger.debug("{}: sending is finished.".format(cls.__class__.__name__))
 
         cls.shutdown_device(ctrl_connection, is_tx=True)
         ctrl_connection.close()
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
         super().__init__()
 
         self.error_not_open = -4242
@@ -278,9 +316,13 @@ class Device(object):
         self.device_number = 0
 
         self.samples_to_send = np.array([], dtype=self.DATA_TYPE)
-        self.sending_repeats = 1  # How often shall the sending sequence be repeated? 0 = forever
+        self.sending_repeats = (
+            1  # How often shall the sending sequence be repeated? 0 = forever
+        )
 
-        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
+        self.resume_on_full_receive_buffer = (
+            resume_on_full_receive_buffer  # for Spectrum Analyzer or Protocol Sniffing
+        )
         self.current_recv_index = 0
         self.is_receiving = False
         self.is_transmitting = False
@@ -295,7 +337,9 @@ class Device(object):
         self.apply_dc_correction = False
 
     def _start_read_rcv_buffer_thread(self):
-        self.read_recv_buffer_thread = threading.Thread(target=self.read_receiving_queue)
+        self.read_recv_buffer_thread = threading.Thread(
+            target=self.read_receiving_queue
+        )
         self.read_recv_buffer_thread.daemon = True
         self.read_recv_buffer_thread.start()
 
@@ -326,13 +370,17 @@ class Device(object):
 
     @property
     def device_parameters(self) -> OrderedDict:
-        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
-                            (self.Command.SET_IF_GAIN.name, self.if_gain),
-                            (self.Command.SET_BB_GAIN.name, self.baseband_gain),
-                            ("identifier", self.device_serial)])
+        return OrderedDict(
+            [
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_RF_GAIN.name, self.gain),
+                (self.Command.SET_IF_GAIN.name, self.if_gain),
+                (self.Command.SET_BB_GAIN.name, self.baseband_gain),
+                ("identifier", self.device_serial),
+            ]
+        )
 
     @property
     def send_config(self) -> SendConfig:
@@ -340,10 +388,16 @@ class Device(object):
             total_samples = len(self.send_buffer)
         else:
             total_samples = 2 * self.num_samples_to_send
-        return SendConfig(self.send_buffer, self._current_sent_sample, self._current_sending_repeat,
-                          total_samples, self.sending_repeats, continuous=self.sending_is_continuous,
-                          iq_to_bytes_method=self.iq_to_bytes,
-                          continuous_send_ring_buffer=self.continuous_send_ring_buffer)
+        return SendConfig(
+            self.send_buffer,
+            self._current_sent_sample,
+            self._current_sending_repeat,
+            total_samples,
+            self.sending_repeats,
+            continuous=self.sending_is_continuous,
+            iq_to_bytes_method=self.iq_to_bytes,
+            continuous_send_ring_buffer=self.continuous_send_ring_buffer,
+        )
 
     @property
     def receive_process_arguments(self):
@@ -355,37 +409,51 @@ class Device(object):
 
     def init_recv_buffer(self):
         if self.receive_buffer is None:
-            num_samples = settings.get_receive_buffer_size(self.resume_on_full_receive_buffer,
-                                                           self.is_in_spectrum_mode)
-            self.receive_buffer = IQArray(None, dtype=self.DATA_TYPE, n=int(num_samples))
+            num_samples = settings.get_receive_buffer_size(
+                self.resume_on_full_receive_buffer, self.is_in_spectrum_mode
+            )
+            self.receive_buffer = IQArray(
+                None, dtype=self.DATA_TYPE, n=int(num_samples)
+            )
 
     def log_retcode(self, retcode: int, action: str, msg=""):
         msg = str(msg)
-        error_code_msg = self.error_codes[retcode] if retcode in self.error_codes else "Error Code: " + str(retcode)
+        error_code_msg = (
+            self.error_codes[retcode]
+            if retcode in self.error_codes
+            else "Error Code: " + str(retcode)
+        )
 
         if retcode == self.success:
             if msg:
-                formatted_message = "{0}-{1} ({2}): Success".format(type(self).__name__, action, msg)
+                formatted_message = "{0}-{1} ({2}): Success".format(
+                    type(self).__name__, action, msg
+                )
             else:
-                formatted_message = "{0}-{1}: Success".format(type(self).__name__, action)
+                formatted_message = "{0}-{1}: Success".format(
+                    type(self).__name__, action
+                )
             logger.info(formatted_message)
         else:
             if msg:
-                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(type(self).__name__, action, error_code_msg,
-                                                                      retcode, msg)
+                formatted_message = "{0}-{1} ({4}): {2} ({3})".format(
+                    type(self).__name__, action, error_code_msg, retcode, msg
+                )
             else:
-                formatted_message = "{0}-{1}: {2} ({3})".format(type(self).__name__, action, error_code_msg, retcode)
+                formatted_message = "{0}-{1}: {2} ({3})".format(
+                    type(self).__name__, action, error_code_msg, retcode
+                )
             logger.error(formatted_message)
 
         self.device_messages.append(formatted_message)
 
     @property
     def received_data(self):
-        return self.receive_buffer[:self.current_recv_index]
+        return self.receive_buffer[: self.current_recv_index]
 
     @property
     def sent_data(self):
-        return self.samples_to_send[:self.current_sent_sample]
+        return self.samples_to_send[: self.current_sent_sample]
 
     @property
     def sending_finished(self):
@@ -489,7 +557,9 @@ class Device(object):
 
     def set_device_sample_rate(self, sample_rate):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_SAMPLE_RATE.name, int(sample_rate)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_SAMPLE_RATE.name, int(sample_rate))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -505,7 +575,9 @@ class Device(object):
 
     def set_device_channel_index(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_CHANNEL_INDEX.name, int(value)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_CHANNEL_INDEX.name, int(value))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -521,7 +593,9 @@ class Device(object):
 
     def set_device_antenna_index(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_ANTENNA_INDEX.name, int(value)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_ANTENNA_INDEX.name, int(value))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -538,7 +612,9 @@ class Device(object):
 
     def set_device_bias_tee_enabled(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_BIAS_TEE_ENABLED.name, int(value)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_BIAS_TEE_ENABLED.name, int(value))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -554,7 +630,9 @@ class Device(object):
 
     def set_device_freq_correction(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_FREQUENCY_CORRECTION.name, int(value)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_FREQUENCY_CORRECTION.name, int(value))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -570,7 +648,9 @@ class Device(object):
 
     def set_device_direct_sampling_mode(self, value):
         try:
-            self.parent_ctrl_conn.send((self.Command.SET_DIRECT_SAMPLING_MODE.name, int(value)))
+            self.parent_ctrl_conn.send(
+                (self.Command.SET_DIRECT_SAMPLING_MODE.name, int(value))
+            )
         except (BrokenPipeError, OSError):
             pass
 
@@ -581,8 +661,9 @@ class Device(object):
 
         self.is_receiving = True
         logger.info("{0}: Starting RX Mode".format(self.__class__.__name__))
-        self.receive_process = Process(target=self.receive_process_function,
-                                       args=self.receive_process_arguments)
+        self.receive_process = Process(
+            target=self.receive_process_function, args=self.receive_process_arguments
+        )
         self.receive_process.daemon = True
         self._start_read_rcv_buffer_thread()
         self._start_read_message_thread()
@@ -603,26 +684,38 @@ class Device(object):
         if hasattr(self, "receive_process") and self.receive_process.is_alive():
             self.receive_process.join(self.JOIN_TIMEOUT)
             if self.receive_process.is_alive():
-                logger.warning("{0}: Receive process is still alive, terminating it".format(self.__class__.__name__))
+                logger.warning(
+                    "{0}: Receive process is still alive, terminating it".format(
+                        self.__class__.__name__
+                    )
+                )
                 self.receive_process.terminate()
                 self.receive_process.join()
 
         self.is_receiving = False
-        for connection in (self.parent_ctrl_conn, self.parent_data_conn, self.child_ctrl_conn, self.child_data_conn):
+        for connection in (
+            self.parent_ctrl_conn,
+            self.parent_data_conn,
+            self.child_ctrl_conn,
+            self.child_data_conn,
+        ):
             try:
                 connection.close()
             except OSError as e:
                 logger.exception(e)
 
-    def start_tx_mode(self, samples_to_send: np.ndarray = None, repeats=None, resume=False):
+    def start_tx_mode(
+        self, samples_to_send: np.ndarray = None, repeats=None, resume=False
+    ):
         self.is_transmitting = True
         self.parent_ctrl_conn, self.child_ctrl_conn = Pipe()
         self.init_send_parameters(samples_to_send, repeats, resume=resume)
 
         logger.info("{0}: Starting TX Mode".format(self.__class__.__name__))
 
-        self.transmit_process = Process(target=self.send_process_function,
-                                        args=self.send_process_arguments)
+        self.transmit_process = Process(
+            target=self.send_process_function, args=self.send_process_arguments
+        )
 
         self.transmit_process.daemon = True
         self._start_read_message_thread()
@@ -639,7 +732,11 @@ class Device(object):
         if hasattr(self, "transmit_process") and self.transmit_process.is_alive():
             self.transmit_process.join(self.JOIN_TIMEOUT)
             if self.transmit_process.is_alive():
-                logger.warning("{0}: Transmit process is still alive, terminating it".format(self.__class__.__name__))
+                logger.warning(
+                    "{0}: Transmit process is still alive, terminating it".format(
+                        self.__class__.__name__
+                    )
+                )
                 self.transmit_process.terminate()
                 self.transmit_process.join()
 
@@ -672,7 +769,9 @@ class Device(object):
                     return_code = splitted[-1]
                     self.log_retcode(int(return_code), action)
                 except ValueError:
-                    self.device_messages.append("{0}: {1}".format(self.__class__.__name__, message))
+                    self.device_messages.append(
+                        "{0}: {1}".format(self.__class__.__name__, message)
+                    )
             except (EOFError, UnpicklingError, OSError, ConnectionResetError) as e:
                 logger.info("Exiting read device message thread due to " + str(e))
                 break
@@ -706,16 +805,23 @@ class Device(object):
                         n_samples = len(self.receive_buffer) - 1
                 else:
                     self.stop_rx_mode(
-                        "Receiving buffer is full {0}/{1}".format(self.current_recv_index + n_samples,
-                                                                  len(self.receive_buffer)))
+                        "Receiving buffer is full {0}/{1}".format(
+                            self.current_recv_index + n_samples,
+                            len(self.receive_buffer),
+                        )
+                    )
                     return
 
-            self.receive_buffer[self.current_recv_index:self.current_recv_index + n_samples] = samples[:n_samples]
+            self.receive_buffer[
+                self.current_recv_index : self.current_recv_index + n_samples
+            ] = samples[:n_samples]
             self.current_recv_index += n_samples
 
         logger.debug("Exiting read_receive_queue thread.")
 
-    def init_send_parameters(self, samples_to_send: IQArray = None, repeats: int = None, resume=False):
+    def init_send_parameters(
+        self, samples_to_send: IQArray = None, repeats: int = None, resume=False
+    ):
         if samples_to_send is not None:
             if isinstance(samples_to_send, IQArray):
                 samples_to_send = samples_to_send.convert_to(self.DATA_TYPE)

@@ -2,14 +2,23 @@ import copy
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDropEvent
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsSceneDragDropEvent, QAbstractItemView
+from PyQt5.QtWidgets import (
+    QGraphicsScene,
+    QGraphicsSceneDragDropEvent,
+    QAbstractItemView,
+)
 
 from urh.signalprocessing.FieldType import FieldType
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Participant import Participant
-from urh.simulator.ActionItem import ActionItem, GotoActionItem, TriggerCommandActionItem, SleepActionItem, \
-    CounterActionItem
+from urh.simulator.ActionItem import (
+    ActionItem,
+    GotoActionItem,
+    TriggerCommandActionItem,
+    SleepActionItem,
+    CounterActionItem,
+)
 from urh.simulator.GraphicsItem import GraphicsItem
 from urh.simulator.LabelItem import LabelItem
 from urh.simulator.MessageItem import MessageItem
@@ -21,7 +30,11 @@ from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorRule import (
+    SimulatorRule,
+    SimulatorRuleCondition,
+    ConditionType,
+)
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 
@@ -37,10 +50,12 @@ class SimulatorScene(QGraphicsScene):
         SimulatorCounterAction: CounterActionItem,
         SimulatorSleepAction: SleepActionItem,
         SimulatorMessage: MessageItem,
-        SimulatorProtocolLabel: LabelItem
+        SimulatorProtocolLabel: LabelItem,
     }
 
-    def __init__(self, mode: int, simulator_config: SimulatorConfiguration, parent=None):
+    def __init__(
+        self, mode: int, simulator_config: SimulatorConfiguration, parent=None
+    ):
         super().__init__(parent)
         self.mode = mode
         self.simulator_config = simulator_config
@@ -49,7 +64,9 @@ class SimulatorScene(QGraphicsScene):
         self.participants_dict = {}
         self.participant_items = []
 
-        self.broadcast_part = self.insert_participant(self.simulator_config.broadcast_part)
+        self.broadcast_part = self.insert_participant(
+            self.simulator_config.broadcast_part
+        )
         self.not_assigned_part = self.insert_participant(None)
         self.update_participants(refresh=False)
 
@@ -65,7 +82,11 @@ class SimulatorScene(QGraphicsScene):
 
     @property
     def visible_participants_without_broadcast(self):
-        return [part for part in self.participant_items if part.isVisible() and part is not self.broadcast_part]
+        return [
+            part
+            for part in self.participant_items
+            if part.isVisible() and part is not self.broadcast_part
+        ]
 
     def create_connects(self):
         self.simulator_config.participants_changed.connect(self.update_participants)
@@ -118,7 +139,7 @@ class SimulatorScene(QGraphicsScene):
             self.on_item_added(child)
 
     def model_to_scene(self, model_item: SimulatorItem):
-        if (model_item is None or model_item is self.simulator_config.rootItem):
+        if model_item is None or model_item is self.simulator_config.rootItem:
             return None
 
         try:
@@ -152,7 +173,11 @@ class SimulatorScene(QGraphicsScene):
 
     def min_items_width(self):
         width = 0
-        items = [item for item in self.items() if isinstance(item, (RuleConditionItem, ActionItem))]
+        items = [
+            item
+            for item in self.items()
+            if isinstance(item, (RuleConditionItem, ActionItem))
+        ]
 
         for item in items:
             if item.labels_width() > width:
@@ -182,7 +207,6 @@ class SimulatorScene(QGraphicsScene):
         self.log_items(items, logging_active)
 
     def log_items(self, items, logging_active: bool):
-
         for item in items:
             item.model_item.logging_active = logging_active
 
@@ -200,8 +224,11 @@ class SimulatorScene(QGraphicsScene):
         self.log_items(self.selectable_items(), logging_active)
 
     def selectable_items(self):
-        return [item for item in self.items() if isinstance(item, GraphicsItem) and
-                item.is_selectable()]
+        return [
+            item
+            for item in self.items()
+            if isinstance(item, GraphicsItem) and item.is_selectable()
+        ]
 
     def move_items(self, items, ref_item, position):
         new_pos, new_parent = self.insert_at(ref_item, position)
@@ -231,7 +258,10 @@ class SimulatorScene(QGraphicsScene):
 
     def update_participants(self, refresh=True):
         for participant in list(self.participants_dict):
-            if participant is None or participant == self.simulator_config.broadcast_part:
+            if (
+                participant is None
+                or participant == self.simulator_config.broadcast_part
+            ):
                 continue
 
             self.removeItem(self.participants_dict[participant])
@@ -272,22 +302,32 @@ class SimulatorScene(QGraphicsScene):
 
         :rtype: list[SimulatorMessage]
         """
-        return [item.model_item for item in self.selectedItems() if isinstance(item, MessageItem)]
+        return [
+            item.model_item
+            for item in self.selectedItems()
+            if isinstance(item, MessageItem)
+        ]
 
-    def select_messages_with_participant(self, participant: ParticipantItem, from_part=True):
+    def select_messages_with_participant(
+        self, participant: ParticipantItem, from_part=True
+    ):
         messages = self.get_all_message_items()
         self.clearSelection()
 
         for msg in messages:
-            if ((from_part and msg.source is participant) or
-                    (not from_part and msg.destination is participant)):
+            if (from_part and msg.source is participant) or (
+                not from_part and msg.destination is participant
+            ):
                 msg.select_all()
 
     def arrange_participants(self):
         messages = self.get_all_message_items()
 
         for participant in self.participant_items:
-            if any(msg.source == participant or msg.destination == participant for msg in messages):
+            if any(
+                msg.source == participant or msg.destination == participant
+                for msg in messages
+            ):
                 participant.setVisible(True)
             else:
                 participant.setVisible(False)
@@ -304,9 +344,20 @@ class SimulatorScene(QGraphicsScene):
             curr_participant = vp[i]
             participants_left = vp[:i]
 
-            items = [msg for msg in messages
-                     if ((msg.source == curr_participant and msg.destination in participants_left)
-                         or (msg.source in participants_left and msg.destination == curr_participant))]
+            items = [
+                msg
+                for msg in messages
+                if (
+                    (
+                        msg.source == curr_participant
+                        and msg.destination in participants_left
+                    )
+                    or (
+                        msg.source in participants_left
+                        and msg.destination == curr_participant
+                    )
+                )
+            ]
 
             x_max = vp[i - 1].x_pos()
             x_max += (vp[i - 1].width() + curr_participant.width()) / 2
@@ -314,7 +365,11 @@ class SimulatorScene(QGraphicsScene):
 
             for msg in items:
                 x = msg.width() + 30
-                x += msg.source.x_pos() if msg.source != curr_participant else msg.destination.x_pos()
+                x += (
+                    msg.source.x_pos()
+                    if msg.source != curr_participant
+                    else msg.destination.x_pos()
+                )
 
                 if x > x_max:
                     x_max = x
@@ -374,7 +429,11 @@ class SimulatorScene(QGraphicsScene):
         return (insert_position, parent_item)
 
     def dropEvent(self, event: QDropEvent):
-        items = [item for item in self.items(event.scenePos()) if isinstance(item, GraphicsItem) and item.acceptDrops()]
+        items = [
+            item
+            for item in self.items(event.scenePos())
+            if isinstance(item, GraphicsItem) and item.acceptDrops()
+        ]
         item = None if len(items) == 0 else items[0]
         if len(event.mimeData().urls()) > 0:
             self.files_dropped.emit(event.mimeData().urls())
@@ -403,7 +462,9 @@ class SimulatorScene(QGraphicsScene):
         """:type: list of ProtocolTreeItem """
         for group_node in group_nodes:
             nodes_to_add.extend(group_node.children)
-        nodes_to_add.extend([file_node for file_node in file_nodes if file_node not in nodes_to_add])
+        nodes_to_add.extend(
+            [file_node for file_node in file_nodes if file_node not in nodes_to_add]
+        )
         protocols_to_add = [node.protocol for node in nodes_to_add]
 
         ref_item = item
@@ -454,19 +515,38 @@ class SimulatorScene(QGraphicsScene):
         self.simulator_config.add_items([command_action], pos, parent)
         return command_action
 
-    def add_message(self, plain_bits, pause, message_type, ref_item, position, decoder=None, source=None,
-                    destination=None):
-        message = self.create_message(destination, plain_bits, pause, message_type, decoder, source)
+    def add_message(
+        self,
+        plain_bits,
+        pause,
+        message_type,
+        ref_item,
+        position,
+        decoder=None,
+        source=None,
+        destination=None,
+    ):
+        message = self.create_message(
+            destination, plain_bits, pause, message_type, decoder, source
+        )
         pos, parent = self.insert_at(ref_item, position, False)
         self.simulator_config.add_items([message], pos, parent)
         return message
 
-    def create_message(self, destination, plain_bits, pause, message_type, decoder, source):
+    def create_message(
+        self, destination, plain_bits, pause, message_type, decoder, source
+    ):
         if destination is None:
             destination = self.simulator_config.broadcast_part
 
-        sim_message = SimulatorMessage(destination=destination, plain_bits=plain_bits, pause=pause,
-                                       message_type=MessageType(message_type.name), decoder=decoder, source=source)
+        sim_message = SimulatorMessage(
+            destination=destination,
+            plain_bits=plain_bits,
+            pause=pause,
+            message_type=MessageType(message_type.name),
+            decoder=decoder,
+            source=source,
+        )
 
         for lbl in message_type:
             sim_label = SimulatorProtocolLabel(copy.deepcopy(lbl))
@@ -475,7 +555,9 @@ class SimulatorScene(QGraphicsScene):
         return sim_message
 
     def clear_all(self):
-        self.simulator_config.delete_items([item for item in self.simulator_config.rootItem.children])
+        self.simulator_config.delete_items(
+            [item for item in self.simulator_config.rootItem.children]
+        )
 
     def add_protocols(self, ref_item, position, protocols_to_add: list):
         pos, parent = self.insert_at(ref_item, position)
@@ -484,12 +566,14 @@ class SimulatorScene(QGraphicsScene):
         for protocol in protocols_to_add:
             for msg in protocol.messages:
                 source, destination = self.detect_source_destination(msg)
-                simulator_msg = self.create_message(destination=destination,
-                                                    plain_bits=copy.copy(msg.decoded_bits),
-                                                    pause=0,
-                                                    message_type=msg.message_type,
-                                                    decoder=msg.decoder,
-                                                    source=source)
+                simulator_msg = self.create_message(
+                    destination=destination,
+                    plain_bits=copy.copy(msg.decoded_bits),
+                    pause=0,
+                    message_type=msg.message_type,
+                    decoder=msg.decoder,
+                    source=source,
+                )
                 simulator_msg.timestamp = msg.timestamp
                 messages.append(simulator_msg)
 
@@ -517,12 +601,23 @@ class SimulatorScene(QGraphicsScene):
 
         if message.participant:
             source = message.participant
-            dst_address_label = next((lbl for lbl in message.message_type if lbl.field_type and
-                                      lbl.field_type.function == FieldType.Function.DST_ADDRESS), None)
+            dst_address_label = next(
+                (
+                    lbl
+                    for lbl in message.message_type
+                    if lbl.field_type
+                    and lbl.field_type.function == FieldType.Function.DST_ADDRESS
+                ),
+                None,
+            )
             if dst_address_label:
-                start, end = message.get_label_range(dst_address_label, view=1, decode=True)
+                start, end = message.get_label_range(
+                    dst_address_label, view=1, decode=True
+                )
                 dst_address = message.decoded_hex_str[start:end]
-                dst = next((p for p in participants if p.address_hex == dst_address), None)
+                dst = next(
+                    (p for p in participants if p.address_hex == dst_address), None
+                )
                 if dst is not None and dst != source:
                     destination = dst
 

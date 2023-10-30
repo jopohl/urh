@@ -21,7 +21,9 @@ class SimulatorMessageTableView(TableView):
 
     def _insert_column(self, pos):
         view_type = self.model().proto_view
-        index = self.model().protocol.convert_index(pos, from_view=view_type, to_view=0, decoded=False)[0]
+        index = self.model().protocol.convert_index(
+            pos, from_view=view_type, to_view=0, decoded=False
+        )[0]
         nbits = 1 if view_type == 0 else 4 if view_type == 1 else 8
         for row in self.selected_rows:
             msg = self.model().protocol.messages[row]
@@ -53,8 +55,10 @@ class SimulatorMessageTableView(TableView):
 
         selected_encoding = self.selected_message.decoder
 
-        if not all(self.model().protocol.messages[i].decoder is selected_encoding
-                   for i in self.selected_rows):
+        if not all(
+            self.model().protocol.messages[i].decoder is selected_encoding
+            for i in self.selected_rows
+        ):
             selected_encoding = None
 
         encoding_group = QActionGroup(self)
@@ -72,10 +76,14 @@ class SimulatorMessageTableView(TableView):
             ea.triggered.connect(self.on_encoding_action_triggered)
 
         if settings.read("multiple_modulations", False, bool):
-            selected_modulation = self.model().protocol.messages[self.selected_rows[0]].modulator_index
+            selected_modulation = (
+                self.model().protocol.messages[self.selected_rows[0]].modulator_index
+            )
 
-            if not all(self.model().protocol.messages[i].modulator_index == selected_modulation
-                       for i in self.selected_rows):
+            if not all(
+                self.model().protocol.messages[i].modulator_index == selected_modulation
+                for i in self.selected_rows
+            ):
                 selected_modulation = -1
 
             modulation_group = QActionGroup(self)
@@ -93,7 +101,9 @@ class SimulatorMessageTableView(TableView):
                 ma.triggered.connect(self.on_modulation_action_triggered)
 
             open_modulator_dialog_action = modulation_menu.addAction(self.tr("..."))
-            open_modulator_dialog_action.triggered.connect(self.on_open_modulator_dialog_action_triggered)
+            open_modulator_dialog_action.triggered.connect(
+                self.on_open_modulator_dialog_action_triggered
+            )
 
         return menu
 

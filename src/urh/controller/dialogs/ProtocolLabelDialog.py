@@ -24,7 +24,9 @@ class ProtocolLabelDialog(QDialog):
 
     SPECIAL_CONFIG_TYPES = [FieldType.Function.CHECKSUM]
 
-    def __init__(self, message: Message, viewtype: int, selected_index=None, parent=None):
+    def __init__(
+        self, message: Message, viewtype: int, selected_index=None, parent=None
+    ):
         super().__init__(parent)
         self.ui = Ui_DialogLabels()
         self.ui.setupUi(self)
@@ -33,24 +35,43 @@ class ProtocolLabelDialog(QDialog):
         field_types = FieldType.load_from_xml()
         self.model = PLabelTableModel(message, field_types)
 
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(0, ComboBoxDelegate([ft.caption for ft in field_types],
-                                                                                is_editable=True,
-                                                                                return_index=False, parent=self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(1, SpinBoxDelegate(1, len(message), self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(2, SpinBoxDelegate(1, len(message), self))
-        self.ui.tblViewProtoLabels.setItemDelegateForColumn(3,
-                                                            ComboBoxDelegate([""] * len(settings.LABEL_COLORS),
-                                                                             colors=settings.LABEL_COLORS,
-                                                                             parent=self))
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(
+            0,
+            ComboBoxDelegate(
+                [ft.caption for ft in field_types],
+                is_editable=True,
+                return_index=False,
+                parent=self,
+            ),
+        )
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(
+            1, SpinBoxDelegate(1, len(message), self)
+        )
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(
+            2, SpinBoxDelegate(1, len(message), self)
+        )
+        self.ui.tblViewProtoLabels.setItemDelegateForColumn(
+            3,
+            ComboBoxDelegate(
+                [""] * len(settings.LABEL_COLORS),
+                colors=settings.LABEL_COLORS,
+                parent=self,
+            ),
+        )
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
         self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
-        self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Stretch
+        )
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
         self.setWindowFlags(Qt.Window)
-        self.setWindowTitle(self.tr("Edit Protocol Labels From Message Type %s") % message.message_type.name)
+        self.setWindowTitle(
+            self.tr("Edit Protocol Labels From Message Type %s")
+            % message.message_type.name
+        )
 
         self.configure_special_config_tabs()
         self.ui.splitter.setSizes([int(self.height() / 2), int(self.height() / 2)])
@@ -58,13 +79,17 @@ class ProtocolLabelDialog(QDialog):
         self.create_connects()
 
         if selected_index is not None:
-            self.ui.tblViewProtoLabels.setCurrentIndex(self.model.index(selected_index, 0))
+            self.ui.tblViewProtoLabels.setCurrentIndex(
+                self.model.index(selected_index, 0)
+            )
 
         self.ui.cbProtoView.setCurrentIndex(viewtype)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setWindowFlags(Qt.Window)
 
-        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
+        self.restoreGeometry(
+            settings.read("{}/geometry".format(self.__class__.__name__), type=bytes)
+        )
 
         for i in range(self.model.rowCount()):
             self.open_editors(i)
@@ -75,24 +100,34 @@ class ProtocolLabelDialog(QDialog):
             if isinstance(lbl, SimulatorProtocolLabel):
                 lbl = lbl.label
 
-            if lbl.field_type is not None and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES:
+            if (
+                lbl.field_type is not None
+                and lbl.field_type.function in self.SPECIAL_CONFIG_TYPES
+            ):
                 if isinstance(lbl, ChecksumLabel):
                     w = ChecksumWidget(lbl, self.model.message, self.model.proto_view)
                     self.ui.tabWidgetAdvancedSettings.addTab(w, lbl.name)
                 else:
-                    logger.error("No Special Config Dialog for field type " + lbl.field_type.caption)
+                    logger.error(
+                        "No Special Config Dialog for field type "
+                        + lbl.field_type.caption
+                    )
 
         if self.ui.tabWidgetAdvancedSettings.count() > 0:
             self.ui.tabWidgetAdvancedSettings.setCurrentIndex(0)
             self.ui.tabWidgetAdvancedSettings.setFocus()
 
-        self.ui.groupBoxAdvancedSettings.setVisible(self.ui.tabWidgetAdvancedSettings.count() > 0)
+        self.ui.groupBoxAdvancedSettings.setVisible(
+            self.ui.tabWidgetAdvancedSettings.count() > 0
+        )
 
     def create_connects(self):
         self.ui.btnConfirm.clicked.connect(self.confirm)
         self.ui.cbProtoView.currentIndexChanged.connect(self.set_view_index)
         self.model.apply_decoding_changed.connect(self.on_apply_decoding_changed)
-        self.model.special_status_label_changed.connect(self.on_label_special_status_changed)
+        self.model.special_status_label_changed.connect(
+            self.on_label_special_status_changed
+        )
 
     def open_editors(self, row):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
@@ -104,7 +139,9 @@ class ProtocolLabelDialog(QDialog):
             event.accept()
 
     def closeEvent(self, event: QCloseEvent):
-        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write(
+            "{}/geometry".format(self.__class__.__name__), self.saveGeometry()
+        )
         super().closeEvent(event)
 
     @pyqtSlot()

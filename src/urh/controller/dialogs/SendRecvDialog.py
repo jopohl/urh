@@ -9,7 +9,9 @@ from urh import settings
 from urh.controller.widgets.DeviceSettingsWidget import DeviceSettingsWidget
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.VirtualDevice import VirtualDevice
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 from urh.ui.ui_send_recv import Ui_SendRecvDialog
 from urh.util import util
 from urh.util.Errors import Errors
@@ -21,7 +23,14 @@ from urh.util.ProjectManager import ProjectManager
 class SendRecvDialog(QDialog):
     device_parameters_changed = pyqtSignal(dict)
 
-    def __init__(self, project_manager: ProjectManager, is_tx: bool, continuous_send_mode=False, parent=None, testing_mode=False):
+    def __init__(
+        self,
+        project_manager: ProjectManager,
+        is_tx: bool,
+        continuous_send_mode=False,
+        parent=None,
+        testing_mode=False,
+    ):
         super().__init__(parent)
         self.is_tx = is_tx
         self.update_interval = 25
@@ -47,16 +56,25 @@ class SendRecvDialog(QDialog):
 
         self.start = 0
 
-        self.device_settings_widget = DeviceSettingsWidget(project_manager, is_tx,
-                                                           backend_handler=self.backend_handler,
-                                                           continuous_send_mode=continuous_send_mode)
-        self.ui.scrollAreaWidgetContents_2.layout().insertWidget(0, self.device_settings_widget)
+        self.device_settings_widget = DeviceSettingsWidget(
+            project_manager,
+            is_tx,
+            backend_handler=self.backend_handler,
+            continuous_send_mode=continuous_send_mode,
+        )
+        self.ui.scrollAreaWidgetContents_2.layout().insertWidget(
+            0, self.device_settings_widget
+        )
 
         if testing_mode:
-            self.device_settings_widget.ui.cbDevice.setCurrentText(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+            self.device_settings_widget.ui.cbDevice.setCurrentText(
+                NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
+            )
 
         self.timer = QTimer(self)
-        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
+        self.restoreGeometry(
+            settings.read("{}/geometry".format(self.__class__.__name__), type=bytes)
+        )
 
         self.ui.splitter.setSizes([int(0.4 * self.width()), int(0.6 * self.width())])
 
@@ -89,13 +107,28 @@ class SendRecvDialog(QDialog):
         self.graphics_view = None
 
     def hide_send_ui_items(self):
-        for item in ("lblCurrentRepeatValue", "progressBarMessage",
-                     "lblRepeatText", "lSamplesSentText", "progressBarSample", "labelCurrentMessage"):
+        for item in (
+            "lblCurrentRepeatValue",
+            "progressBarMessage",
+            "lblRepeatText",
+            "lSamplesSentText",
+            "progressBarSample",
+            "labelCurrentMessage",
+        ):
             getattr(self.ui, item).hide()
 
     def hide_receive_ui_items(self):
-        for item in ("lSamplesCaptured", "lSamplesCapturedText", "lSignalSize", "lSignalSizeText",
-                     "lTime", "lTimeText", "btnSave", "labelReceiveBufferFull", "lReceiveBufferFullText"):
+        for item in (
+            "lSamplesCaptured",
+            "lSamplesCapturedText",
+            "lSignalSize",
+            "lSignalSizeText",
+            "lTime",
+            "lTimeText",
+            "btnSave",
+            "labelReceiveBufferFull",
+            "lReceiveBufferFullText",
+        ):
             getattr(self.ui, item).hide()
 
     def set_device_ui_items_enabled(self, enabled: bool):
@@ -109,8 +142,12 @@ class SendRecvDialog(QDialog):
         self.timer.timeout.connect(self.update_view)
         self.ui.sliderYscale.valueChanged.connect(self.on_slider_y_scale_value_changed)
 
-        self.device_settings_widget.selected_device_changed.connect(self.on_selected_device_changed)
-        self.device_settings_widget.device_parameters_changed.connect(self.device_parameters_changed.emit)
+        self.device_settings_widget.selected_device_changed.connect(
+            self.on_selected_device_changed
+        )
+        self.device_settings_widget.device_parameters_changed.connect(
+            self.device_parameters_changed.emit
+        )
 
     def _create_device_connects(self):
         self.device.stopped.connect(self.on_device_stopped)
@@ -191,7 +228,9 @@ class SendRecvDialog(QDialog):
             Errors.usrp_found()
             self.on_clear_clicked()
 
-        elif any(e in messages for e in ("hackrf_error_not_found", "hackrf_error_libusb")):
+        elif any(
+            e in messages for e in ("hackrf_error_not_found", "hackrf_error_libusb")
+        ):
             self.device.stop_on_error("Could not establish connection to HackRF")
             Errors.hackrf_not_found()
             self.on_clear_clicked()
@@ -222,13 +261,24 @@ class SendRecvDialog(QDialog):
         if len(new_messages) > 1:
             self.ui.txtEditErrors.setPlainText(txt + new_messages)
 
-        self.ui.lSamplesCaptured.setText(Formatter.big_value_with_suffix(self.device.current_index, decimals=1))
-        self.ui.lSignalSize.setText(locale.format_string("%.2f", (8 * self.device.current_index) / (1024 ** 2)))
-        self.ui.lTime.setText(locale.format_string("%.2f", self.device.current_index / self.device.sample_rate))
+        self.ui.lSamplesCaptured.setText(
+            Formatter.big_value_with_suffix(self.device.current_index, decimals=1)
+        )
+        self.ui.lSignalSize.setText(
+            locale.format_string("%.2f", (8 * self.device.current_index) / (1024**2))
+        )
+        self.ui.lTime.setText(
+            locale.format_string(
+                "%.2f", self.device.current_index / self.device.sample_rate
+            )
+        )
 
         if self.is_rx and self.device.data is not None and len(self.device.data) > 0:
-            self.ui.labelReceiveBufferFull.setText("{0}%".format(int(100 * self.device.current_index /
-                                                                     len(self.device.data))))
+            self.ui.labelReceiveBufferFull.setText(
+                "{0}%".format(
+                    int(100 * self.device.current_index / len(self.device.data))
+                )
+            )
 
         if self.device.current_index == 0:
             return False
@@ -269,7 +319,9 @@ class SendRecvDialog(QDialog):
             logger.debug("Successfully cleaned up device")
             self.device_settings_widget.emit_device_parameters_changed()
 
-        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write(
+            "{}/geometry".format(self.__class__.__name__), self.saveGeometry()
+        )
 
         if self.device is not None:
             self.device.free_data()

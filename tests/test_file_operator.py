@@ -33,29 +33,45 @@ class TestFileOperator(QtTestCase):
                 data.tofile(name)
                 tar.add(name)
 
-        with ZipFile('test.zip', 'w') as zip:
+        with ZipFile("test.zip", "w") as zip:
             for name in ["4.complex", "5.complex"]:
                 data = np.ones(20, dtype=np.complex64)
                 data.tofile(name)
                 zip.write(name)
 
-        self.form.add_files(FileOperator.uncompress_archives(["test.tar.gz", "test.zip"], QDir.tempPath()))
+        self.form.add_files(
+            FileOperator.uncompress_archives(
+                ["test.tar.gz", "test.zip"], QDir.tempPath()
+            )
+        )
         self.assertEqual(len(self.form.signal_tab_controller.signal_frames), 5)
 
-        tar_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.tar.gz"), 'rb').read()).hexdigest()
-        self.form.signal_tab_controller.signal_frames[0].signal.iq_array = IQArray(np.ones(5, dtype=np.complex64))
+        tar_md5 = hashlib.md5(
+            open(os.path.join(temp_dir, "test.tar.gz"), "rb").read()
+        ).hexdigest()
+        self.form.signal_tab_controller.signal_frames[0].signal.iq_array = IQArray(
+            np.ones(5, dtype=np.complex64)
+        )
         self.form.signal_tab_controller.signal_frames[0].signal.changed = True
         self.form.signal_tab_controller.signal_frames[0].ui.btnSaveSignal.click()
 
-        tar_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.tar.gz"), 'rb').read()).hexdigest()
+        tar_md5_after_save = hashlib.md5(
+            open(os.path.join(temp_dir, "test.tar.gz"), "rb").read()
+        ).hexdigest()
         self.assertNotEqual(tar_md5, tar_md5_after_save)
 
-        zip_md5 = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
-        self.form.signal_tab_controller.signal_frames[4].signal.iq_array = IQArray(np.ones(5, dtype=np.complex64))
+        zip_md5 = hashlib.md5(
+            open(os.path.join(temp_dir, "test.zip"), "rb").read()
+        ).hexdigest()
+        self.form.signal_tab_controller.signal_frames[4].signal.iq_array = IQArray(
+            np.ones(5, dtype=np.complex64)
+        )
         self.form.signal_tab_controller.signal_frames[4].signal.changed = True
         self.form.signal_tab_controller.signal_frames[4].ui.btnSaveSignal.click()
 
-        zip_md5_after_save = hashlib.md5(open(os.path.join(temp_dir, "test.zip"), 'rb').read()).hexdigest()
+        zip_md5_after_save = hashlib.md5(
+            open(os.path.join(temp_dir, "test.zip"), "rb").read()
+        ).hexdigest()
         self.assertNotEqual(zip_md5, zip_md5_after_save)
 
     def test_get_open_dialog(self):

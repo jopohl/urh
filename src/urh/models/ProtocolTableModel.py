@@ -11,10 +11,14 @@ from urh.ui.actions.DeleteBitsAndPauses import DeleteBitsAndPauses
 class ProtocolTableModel(TableModel):
     ref_index_changed = pyqtSignal(int)
 
-    def __init__(self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None):
+    def __init__(
+        self, proto_analyzer: ProtocolAnalyzer, participants, controller, parent=None
+    ):
         super().__init__(participants=participants, parent=parent)
 
-        self.controller = controller # type: urh.controller.CompareFrameController.CompareFrameController
+        self.controller = (
+            controller
+        )  # type: urh.controller.CompareFrameController.CompareFrameController
 
         self.protocol = proto_analyzer
         self.active_group_ids = [0]
@@ -50,9 +54,17 @@ class ProtocolTableModel(TableModel):
         if not self.is_writeable:
             return
 
-        del_action = DeleteBitsAndPauses(proto_analyzer=self.protocol, start_message=min_row, end_message=max_row,
-                                         start=start, end=end, view=self.proto_view, decoded=True,
-                                         subprotos=self.controller.protocol_list, update_label_ranges=False)
+        del_action = DeleteBitsAndPauses(
+            proto_analyzer=self.protocol,
+            start_message=min_row,
+            end_message=max_row,
+            start=start,
+            end=end,
+            view=self.proto_view,
+            decoded=True,
+            subprotos=self.controller.protocol_list,
+            update_label_ranges=False,
+        )
         self.undo_stack.push(del_action)
 
     def flags(self, index: QModelIndex):

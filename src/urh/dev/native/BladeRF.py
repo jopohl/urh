@@ -15,11 +15,13 @@ class BladeRF(Device):
     DEVICE_LIB = bladerf
     ASYNCHRONOUS = False
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
-    DEVICE_METHODS.update({
-        Device.Command.SET_RF_GAIN.name: "set_gain",
-        Device.Command.SET_CHANNEL_INDEX.name: "set_channel",
-        Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee"
-    })
+    DEVICE_METHODS.update(
+        {
+            Device.Command.SET_RF_GAIN.name: "set_gain",
+            Device.Command.SET_CHANNEL_INDEX.name: "set_channel",
+            Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee",
+        }
+    )
 
     DATA_TYPE = np.int16
 
@@ -42,14 +44,18 @@ class BladeRF(Device):
         else:
             ctrl_connection.send("OPEN ({}):{}".format(device_identifier, ret))
 
-        ctrl_connection.send("If you experience problems, make sure you place a rbf file matching your device"
-                             " at the correct location. See http://www.nuand.com/fpga_images/"
-                             " and https://github.com/Nuand/bladeRF/wiki/FPGA-Autoloading")
+        ctrl_connection.send(
+            "If you experience problems, make sure you place a rbf file matching your device"
+            " at the correct location. See http://www.nuand.com/fpga_images/"
+            " and https://github.com/Nuand/bladeRF/wiki/FPGA-Autoloading"
+        )
 
         return ret == 0
 
     @classmethod
-    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+    def init_device(
+        cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict
+    ) -> bool:
         bladerf.set_tx(is_tx)
         return super().init_device(ctrl_connection, is_tx, parameters)
 
@@ -79,11 +85,25 @@ class BladeRF(Device):
     def send_sync(cls, data):
         bladerf.send_sync(data)
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            center_freq=center_freq,
+            sample_rate=sample_rate,
+            bandwidth=bandwidth,
+            gain=gain,
+            if_gain=if_gain,
+            baseband_gain=baseband_gain,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
         self.success = 0
 
     @property
@@ -92,13 +112,17 @@ class BladeRF(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([(self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
-                            (self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
-                            (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
-                            ("identifier", self.device_serial)])
+        return OrderedDict(
+            [
+                (self.Command.SET_CHANNEL_INDEX.name, self.channel_index),
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_RF_GAIN.name, self.gain),
+                (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
+                ("identifier", self.device_serial),
+            ]
+        )
 
     @staticmethod
     def bytes_to_iq(buffer) -> np.ndarray:

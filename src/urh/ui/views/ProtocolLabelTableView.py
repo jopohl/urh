@@ -33,8 +33,11 @@ class ProtocolLabelTableView(QTableView):
         if isinstance(self.model(), SimulatorMessageFieldModel):
             value_type_group = QActionGroup(self)
             value_type_menu = menu.addMenu("Set value type")
-            labels = [self.model().message_type[i] for i in self.selected_rows
-                      if not self.model().message_type[i].is_checksum_label]
+            labels = [
+                self.model().message_type[i]
+                for i in self.selected_rows
+                if not self.model().message_type[i].is_checksum_label
+            ]
 
             for i, value_type in enumerate(SimulatorProtocolLabel.VALUE_TYPES):
                 va = value_type_menu.addAction(value_type)
@@ -61,4 +64,3 @@ class ProtocolLabelTableView(QTableView):
         assert isinstance(self.model(), SimulatorMessageFieldModel)
         value_type_index = self.sender().data()
         self.model().set_value_type_index(self.selected_rows, value_type_index)
-

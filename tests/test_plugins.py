@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import QApplication
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
 from urh.plugins.MessageBreak.MessageBreakPlugin import MessageBreakPlugin
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 from urh.plugins.ZeroHide.ZeroHidePlugin import ZeroHidePlugin
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.ProtocoLabel import ProtocolLabel
@@ -18,8 +20,12 @@ class TestPlugins(QtTestCase):
     def setUp(self):
         super().setUp()
         self.add_signal_to_form("esaver.complex16s")
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0.3692)
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.setValue(0.3692)
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.editingFinished.emit()
 
         self.sframe = self.form.signal_tab_controller.signal_frames[0]
         self.cframe = self.form.compare_frame_controller  # type: CompareFrameController
@@ -30,12 +36,19 @@ class TestPlugins(QtTestCase):
         bp = MessageBreakPlugin()
 
         n = 1
-        action = bp.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack,
-                               (n, n, 4, 4), self.cframe.proto_analyzer, 0)
+        action = bp.get_action(
+            self.cframe.ui.tblViewProtocol,
+            self.cframe.protocol_undo_stack,
+            (n, n, 4, 4),
+            self.cframe.proto_analyzer,
+            0,
+        )
         self.assertEqual(self.cframe.protocol_model.row_count, 3)
 
         original_msg = self.cframe.proto_analyzer.messages[n]
-        original_msg.message_type = MessageType("Test", [ProtocolLabel("Test Label", 2, 42, 0)])
+        original_msg.message_type = MessageType(
+            "Test", [ProtocolLabel("Test Label", 2, 42, 0)]
+        )
         msg_type = original_msg.message_type
         old_msg_len = len(original_msg)
 
@@ -58,11 +71,18 @@ class TestPlugins(QtTestCase):
         self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331)
         zh = ZeroHidePlugin()
         zh.following_zeros = 158
-        action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
-                               self.cframe.proto_analyzer, 0)
+        action = zh.get_action(
+            self.cframe.ui.tblViewProtocol,
+            self.cframe.protocol_undo_stack,
+            (),
+            self.cframe.proto_analyzer,
+            0,
+        )
         action.trigger()
 
-        self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331 - 158)
+        self.assertEqual(
+            len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331 - 158
+        )
 
         self.cframe.protocol_undo_stack.undo()
         self.assertEqual(len(self.cframe.proto_analyzer.decoded_proto_bits_str[0]), 331)
@@ -71,22 +91,42 @@ class TestPlugins(QtTestCase):
         zh = ZeroHidePlugin()
         zh.following_zeros = 3
         self.add_signal_to_form("ask.complex")
-        self.form.signal_tab_controller.signal_frames[1].ui.cbModulationType.setCurrentText("ASK")
+        self.form.signal_tab_controller.signal_frames[
+            1
+        ].ui.cbModulationType.setCurrentText("ASK")
 
-        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset.setValue(-0.3938)
-        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[
+            1
+        ].ui.spinBoxCenterOffset.setValue(-0.3938)
+        self.form.signal_tab_controller.signal_frames[
+            1
+        ].ui.spinBoxCenterOffset.editingFinished.emit()
 
-        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxSamplesPerSymbol.setValue(300)
-        self.form.signal_tab_controller.signal_frames[1].ui.spinBoxSamplesPerSymbol.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[
+            1
+        ].ui.spinBoxSamplesPerSymbol.setValue(300)
+        self.form.signal_tab_controller.signal_frames[
+            1
+        ].ui.spinBoxSamplesPerSymbol.editingFinished.emit()
 
         self.form.ui.tabWidget.setCurrentIndex(1)
         test_bits = "1011001001011011011011011011011011001000000"
-        self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits)
+        self.assertEqual(
+            self.cframe.proto_analyzer.decoded_proto_bits_str[3], test_bits
+        )
 
-        action = zh.get_action(self.cframe.ui.tblViewProtocol, self.cframe.protocol_undo_stack, (),
-                               self.cframe.proto_analyzer, 0)
+        action = zh.get_action(
+            self.cframe.ui.tblViewProtocol,
+            self.cframe.protocol_undo_stack,
+            (),
+            self.cframe.proto_analyzer,
+            0,
+        )
         action.trigger()
-        self.assertEqual(self.cframe.proto_analyzer.decoded_proto_bits_str[3], "1011001001011011011011011011011011001")
+        self.assertEqual(
+            self.cframe.proto_analyzer.decoded_proto_bits_str[3],
+            "1011001001011011011011011011011011001",
+        )
 
     def test_sdr_interface_plugin(self):
         si = NetworkSDRInterfacePlugin(resume_on_full_receive_buffer=True)
@@ -97,7 +137,7 @@ class TestPlugins(QtTestCase):
             "1101010101011000011",
             "11010101010110000110",
             "11100010101001110000",
-            "111100000011011101010101010000101010101010100001010011010101010011"
+            "111100000011011101010101010000101010101010100001010011010101010011",
         ]
 
         for bits in test_bits:
@@ -124,17 +164,24 @@ class TestPlugins(QtTestCase):
     def test_insert_sine_plugin(self):
         insert_sine_plugin = self.sframe.ui.gvSignal.insert_sine_plugin
         num_samples = 10000
-        dialog = insert_sine_plugin.get_insert_sine_dialog(original_data=self.sframe.signal.iq_array.data,
-                                                           position=2000,
-                                                           sample_rate=self.sframe.signal.sample_rate,
-                                                           num_samples=num_samples)
+        dialog = insert_sine_plugin.get_insert_sine_dialog(
+            original_data=self.sframe.signal.iq_array.data,
+            position=2000,
+            sample_rate=self.sframe.signal.sample_rate,
+            num_samples=num_samples,
+        )
 
         graphics_view = dialog.graphicsViewSineWave  # type: ZoomableGraphicView
 
         self.__wait_for_spinbox_enabled(dialog)
 
-        self.assertEqual(int(graphics_view.sceneRect().width()), self.sframe.signal.num_samples + num_samples)
-        self.assertEqual(insert_sine_plugin.insert_indicator.rect().width(), num_samples)
+        self.assertEqual(
+            int(graphics_view.sceneRect().width()),
+            self.sframe.signal.num_samples + num_samples,
+        )
+        self.assertEqual(
+            insert_sine_plugin.insert_indicator.rect().width(), num_samples
+        )
         self.assertEqual(insert_sine_plugin.insert_indicator.rect().x(), 2000)
 
         dialog.doubleSpinBoxAmplitude.setValue(0.1)

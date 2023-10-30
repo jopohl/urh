@@ -136,7 +136,11 @@ class IQArray(object):
             elif target_dtype == np.uint16:
                 return self.__data.astype(np.uint16) << 8
             elif target_dtype == np.float32:
-                return np.add(np.multiply(self.__data, 1/128, dtype=np.float32), -1.0, dtype=np.float32)
+                return np.add(
+                    np.multiply(self.__data, 1 / 128, dtype=np.float32),
+                    -1.0,
+                    dtype=np.float32,
+                )
 
         if self.__data.dtype == np.int8:
             if target_dtype == np.uint8:
@@ -146,54 +150,76 @@ class IQArray(object):
             elif target_dtype == np.uint16:
                 return np.add(self.__data, 128, dtype=np.uint16, casting="unsafe") << 8
             elif target_dtype == np.float32:
-                return np.multiply(self.__data, 1/128, dtype=np.float32)
+                return np.multiply(self.__data, 1 / 128, dtype=np.float32)
 
         if self.__data.dtype == np.uint16:
             if target_dtype == np.int8:
-                return (np.add(self.__data, -32768, dtype=np.int16, casting="unsafe") >> 8).astype(np.int8)
+                return (
+                    np.add(self.__data, -32768, dtype=np.int16, casting="unsafe") >> 8
+                ).astype(np.int8)
             elif target_dtype == np.uint8:
                 return (self.__data >> 8).astype(np.uint8)
             elif target_dtype == np.int16:
                 return np.add(self.__data, -32768, dtype=np.int16, casting="unsafe")
             elif target_dtype == np.float32:
-                return np.add(np.multiply(self.__data, 1/32768, dtype=np.float32), -1.0, dtype=np.float32)
+                return np.add(
+                    np.multiply(self.__data, 1 / 32768, dtype=np.float32),
+                    -1.0,
+                    dtype=np.float32,
+                )
 
         if self.__data.dtype == np.int16:
             if target_dtype == np.int8:
                 return (self.__data >> 8).astype(np.int8)
             elif target_dtype == np.uint8:
-                return (np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe") >> 8).astype(np.uint8)
+                return (
+                    np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe") >> 8
+                ).astype(np.uint8)
             elif target_dtype == np.uint16:
                 return np.add(self.__data, 32768, dtype=np.uint16, casting="unsafe")
             elif target_dtype == np.float32:
-                return np.multiply(self.__data, 1/32768, dtype=np.float32)
+                return np.multiply(self.__data, 1 / 32768, dtype=np.float32)
 
         if self.__data.dtype == np.float32:
             if target_dtype == np.int8:
                 return np.multiply(self.__data, 127, dtype=np.float32).astype(np.int8)
             elif target_dtype == np.uint8:
-                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.float32).astype(np.uint8)
+                return np.multiply(
+                    np.add(self.__data, 1.0, dtype=np.float32), 127, dtype=np.float32
+                ).astype(np.uint8)
             elif target_dtype == np.int16:
-                return np.multiply(self.__data, 32767, dtype=np.float32).astype(np.int16)
+                return np.multiply(self.__data, 32767, dtype=np.float32).astype(
+                    np.int16
+                )
             elif target_dtype == np.uint16:
-                return np.multiply(np.add(self.__data, 1.0, dtype=np.float32), 32767, dtype=np.float32).astype(np.uint16)
+                return np.multiply(
+                    np.add(self.__data, 1.0, dtype=np.float32), 32767, dtype=np.float32
+                ).astype(np.uint16)
 
         if target_dtype not in (np.uint8, np.int8, np.uint16, np.int16, np.float32):
             raise ValueError("Data type {} not supported".format(target_dtype))
 
-        raise NotImplementedError("Conversion from {} to {} not supported", self.__data.dtype, target_dtype)
+        raise NotImplementedError(
+            "Conversion from {} to {} not supported", self.__data.dtype, target_dtype
+        )
 
     @staticmethod
     def from_file(filename: str):
         if filename.endswith(".complex16u") or filename.endswith(".cu8"):
             # two 8 bit unsigned integers
-            return IQArray(IQArray(data=np.fromfile(filename, dtype=np.uint8)).convert_to(np.int8))
+            return IQArray(
+                IQArray(data=np.fromfile(filename, dtype=np.uint8)).convert_to(np.int8)
+            )
         elif filename.endswith(".complex16s") or filename.endswith(".cs8"):
             # two 8 bit signed integers
             return IQArray(data=np.fromfile(filename, dtype=np.int8))
         elif filename.endswith(".complex32u") or filename.endswith(".cu16"):
             # two 16 bit unsigned integers
-            return IQArray(IQArray(data=np.fromfile(filename, dtype=np.uint16)).convert_to(np.int16))
+            return IQArray(
+                IQArray(data=np.fromfile(filename, dtype=np.uint16)).convert_to(
+                    np.int16
+                )
+            )
         elif filename.endswith(".complex32s") or filename.endswith(".cs16"):
             # two 16 bit signed integers
             return IQArray(data=np.fromfile(filename, dtype=np.int16))
@@ -209,7 +235,7 @@ class IQArray(object):
                 arr = arr.view(np.float64)
             if len(arr) % 2 == 0:
                 return arr.reshape((-1, 2), order="C")
-            else: # ignore the last half sample to avoid a conversion error
+            else:  # ignore the last half sample to avoid a conversion error
                 return arr[:-1].reshape((-1, 2), order="C")
         elif arr.ndim == 2:
             return arr
@@ -225,10 +251,14 @@ class IQArray(object):
 
     @staticmethod
     def concatenate(*args):
-        return IQArray(data=np.concatenate([arr.data if isinstance(arr, IQArray) else arr for arr in args[0]]))
+        return IQArray(
+            data=np.concatenate(
+                [arr.data if isinstance(arr, IQArray) else arr for arr in args[0]]
+            )
+        )
 
     def save_compressed(self, filename):
-        with tarfile.open(filename, 'w:bz2') as tar_write:
+        with tarfile.open(filename, "w:bz2") as tar_write:
             tmp_name = tempfile.mkstemp()[1]
             self.tofile(tmp_name)
             tar_write.add(tmp_name)
@@ -242,13 +272,17 @@ class IQArray(object):
         f.writeframes(self.convert_to(np.int16))
         f.close()
 
-    def export_to_sub(self, filename, frequency=433920000, preset="FuriHalSubGhzPresetOok650Async"):
+    def export_to_sub(
+        self, filename, frequency=433920000, preset="FuriHalSubGhzPresetOok650Async"
+    ):
         arr = []
         counter = 0
 
         for value in self.convert_to(np.uint8):
             # if origin was a sub-file value is uint8, else value is [uint8, uint8]
-            if len(value) > 1:  # if value has more than one component, use the first component
+            if (
+                len(value) > 1
+            ):  # if value has more than one component, use the first component
                 value = value[0]
 
             # set lastvalue to value for first run
@@ -269,12 +303,12 @@ class IQArray(object):
         # save last value
         arr.append(counter if lastvalue > 127 else -counter)
 
-        with open(filename, 'w') as subfile:
+        with open(filename, "w") as subfile:
             subfile.write("Filetype: Flipper SubGhz RAW File\n")
             subfile.write("Version: 1\n")
             subfile.write("Frequency: {}\n".format(frequency))
             subfile.write("Preset: {}\n".format(preset))
-            subfile.write("Protocol: RAW") # Skip last \n
+            subfile.write("Protocol: RAW")  # Skip last \n
             # Write data
             for idx in range(len(arr)):
                 if idx % 512 == 0:

@@ -43,10 +43,46 @@ class Encoding(object):
         self.cc1101_overwrite_crc = False
 
         # Configure CC1101 Date Whitening
-        polynomial = array.array("B", [False, False, True, False, False, False, False, True])  # x^5+x^0
-        sync_bytes = array.array("B", [True, True, True, False, True, False, False, True, True, True, False, False,
-                      True, False, True, False, True, True, True, False, True, False, False, True,
-                      True, True, False, False, True, False, True, False])  # "e9cae9ca"
+        polynomial = array.array(
+            "B", [False, False, True, False, False, False, False, True]
+        )  # x^5+x^0
+        sync_bytes = array.array(
+            "B",
+            [
+                True,
+                True,
+                True,
+                False,
+                True,
+                False,
+                False,
+                True,
+                True,
+                True,
+                False,
+                False,
+                True,
+                False,
+                True,
+                False,
+                True,
+                True,
+                True,
+                False,
+                True,
+                False,
+                False,
+                True,
+                True,
+                True,
+                False,
+                False,
+                True,
+                False,
+                True,
+                False,
+            ],
+        )  # "e9cae9ca"
         # sync_bytes = self.str2bit("01100111011010000110011101101000") # "67686768" (RWE Default)
         # sync_bytes = self.str2bit("01101001111101100110100111110111") # "69f669f7" (Special RWE)
 
@@ -254,41 +290,68 @@ class Encoding(object):
             elif self.code_externalprogram == operation:
                 if self.chain[i + 1] != "":
                     try:
-                        self.external_decoder, self.external_encoder = self.chain[i + 1].split(";")
+                        self.external_decoder, self.external_encoder = self.chain[
+                            i + 1
+                        ].split(";")
                     except ValueError:
                         pass
                 else:
                     self.external_decoder, self.external_encoder = "", ""
             elif self.code_data_whitening == operation:
-                if self.chain[i + 1].count(';') == 2:
-                    self.data_whitening_sync, self.data_whitening_polynomial, overwrite_crc = self.chain[i + 1].split(";")
-                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0 and len(overwrite_crc) > 0):
-                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
-                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
-                        self.cc1101_overwrite_crc = True if overwrite_crc == "1" else False
-                elif self.chain[i + 1].count(';') == 1:
-                    self.data_whitening_sync, self.data_whitening_polynomial = self.chain[i + 1].split(";")
-                    if (len(self.data_whitening_sync) > 0 and len(self.data_whitening_polynomial) > 0):
-                        self.data_whitening_sync = util.hex2bit(self.data_whitening_sync)
-                        self.data_whitening_polynomial = util.hex2bit(self.data_whitening_polynomial)
+                if self.chain[i + 1].count(";") == 2:
+                    (
+                        self.data_whitening_sync,
+                        self.data_whitening_polynomial,
+                        overwrite_crc,
+                    ) = self.chain[i + 1].split(";")
+                    if (
+                        len(self.data_whitening_sync) > 0
+                        and len(self.data_whitening_polynomial) > 0
+                        and len(overwrite_crc) > 0
+                    ):
+                        self.data_whitening_sync = util.hex2bit(
+                            self.data_whitening_sync
+                        )
+                        self.data_whitening_polynomial = util.hex2bit(
+                            self.data_whitening_polynomial
+                        )
+                        self.cc1101_overwrite_crc = (
+                            True if overwrite_crc == "1" else False
+                        )
+                elif self.chain[i + 1].count(";") == 1:
+                    (
+                        self.data_whitening_sync,
+                        self.data_whitening_polynomial,
+                    ) = self.chain[i + 1].split(";")
+                    if (
+                        len(self.data_whitening_sync) > 0
+                        and len(self.data_whitening_polynomial) > 0
+                    ):
+                        self.data_whitening_sync = util.hex2bit(
+                            self.data_whitening_sync
+                        )
+                        self.data_whitening_polynomial = util.hex2bit(
+                            self.data_whitening_polynomial
+                        )
                         self.cc1101_overwrite_crc = False
 
             elif self.code_cut == operation:
-                if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 1:
+                if self.chain[i + 1] != "" and self.chain[i + 1].count(";") == 1:
                     self.cutmode, tmp = self.chain[i + 1].split(";")
                     self.cutmode = int(self.cutmode)
                     if self.cutmode < 0 or self.cutmode > 3:
                         self.cutmode = 0
                     if self.cutmode == 0 or self.cutmode == 1:
                         self.cutmark = self.str2bit(tmp)
-                        if len(self.cutmark) == 0: self.cutmark = array.array("B", [True, False, True, False])
+                        if len(self.cutmark) == 0:
+                            self.cutmark = array.array("B", [True, False, True, False])
                     else:
                         try:
                             self.cutmark = int(tmp)
                         except ValueError:
                             self.cutmark = 1
             elif self.code_morse == operation:
-                if self.chain[i + 1] != "" and self.chain[i + 1].count(';') == 2:
+                if self.chain[i + 1] != "" and self.chain[i + 1].count(";") == 2:
                     try:
                         l, h, w = self.chain[i + 1].split(";")
                         self.morse_low = int(l)
@@ -429,17 +492,25 @@ class Encoding(object):
                 x = 0
                 for i in inpt:
                     while self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
-                        output.append(False if self.carrier[x % len(self.carrier)] in (
-                        "0", "*") else True)  # Add 0 when there is a wildcard (*) in carrier description
+                        output.append(
+                            False
+                            if self.carrier[x % len(self.carrier)] in ("0", "*")
+                            else True
+                        )  # Add 0 when there is a wildcard (*) in carrier description
                         x += 1
                     tmp = self.carrier[x % len(self.carrier)]
                     if not tmp in ("0", "1", "*"):
                         output.append(i)
                         x += 1
                 # Consume the trailing carrier pattern avoiding any wrap around
-                while x % len(self.carrier) > 0 and self.carrier[x % len(self.carrier)] in ("0", "1", "*"):
-                    output.append(False if self.carrier[x % len(self.carrier)] in (
-                    "0", "*") else True)  # Add 0 when there is a wildcard (*) in carrier description
+                while x % len(self.carrier) > 0 and self.carrier[
+                    x % len(self.carrier)
+                ] in ("0", "1", "*"):
+                    output.append(
+                        False
+                        if self.carrier[x % len(self.carrier)] in ("0", "*")
+                        else True
+                    )  # Add 0 when there is a wildcard (*) in carrier description
                     x += 1
         return output, errors, self.ErrorState.SUCCESS
 
@@ -460,10 +531,25 @@ class Encoding(object):
         # Change Byteorder to LSB first <-> LSB last
         i = 0
         while i < len(output) - 7:
-            output[i + 0], output[i + 1], output[i + 2], output[i + 3], output[i + 4], output[i + 5], output[i + 6], \
-            output[i + 7] = \
-                output[i + 7], output[i + 6], output[i + 5], output[i + 4], output[i + 3], output[i + 2], output[i + 1], \
-                output[i + 0]
+            (
+                output[i + 0],
+                output[i + 1],
+                output[i + 2],
+                output[i + 3],
+                output[i + 4],
+                output[i + 5],
+                output[i + 6],
+                output[i + 7],
+            ) = (
+                output[i + 7],
+                output[i + 6],
+                output[i + 5],
+                output[i + 4],
+                output[i + 3],
+                output[i + 2],
+                output[i + 1],
+                output[i + 0],
+            )
             i += 8
         return output, errors, self.ErrorState.SUCCESS
 
@@ -505,7 +591,11 @@ class Encoding(object):
 
     def code_invert(self, decoding, inpt):
         errors = 0
-        return array.array("B", [True if not x else False for x in inpt]), errors, self.ErrorState.SUCCESS
+        return (
+            array.array("B", [True if not x else False for x in inpt]),
+            errors,
+            self.ErrorState.SUCCESS,
+        )
 
     def code_differential(self, decoding, inpt):
         output = array.array("B", [inpt[0]])
@@ -571,18 +661,22 @@ class Encoding(object):
 
         # Padding of inpt with zeros to multiple of SRC[0] length (every SRC/DST-length should be the same)
         minimum_item_size = len(src[0])
-        zero_padding = (minimum_item_size - (len(padded_inpt) % minimum_item_size)) % minimum_item_size
-        padded_inpt.extend([False]*zero_padding)
+        zero_padding = (
+            minimum_item_size - (len(padded_inpt) % minimum_item_size)
+        ) % minimum_item_size
+        padded_inpt.extend([False] * zero_padding)
         errors = zero_padding
 
         i = 0
         try:
             while i < len(padded_inpt):
-                cnt = src.count(padded_inpt[i:i + minimum_item_size])
+                cnt = src.count(padded_inpt[i : i + minimum_item_size])
                 if cnt == 1:
-                    output.extend(dst[src.index(padded_inpt[i:i + minimum_item_size])])
+                    output.extend(
+                        dst[src.index(padded_inpt[i : i + minimum_item_size])]
+                    )
                 elif cnt < 1:
-                    output.extend(padded_inpt[i:i + 1])
+                    output.extend(padded_inpt[i : i + 1])
                     i += 1
                     errors += 1
                     continue
@@ -618,7 +712,7 @@ class Encoding(object):
                         output.append(False)
                     else:
                         if cnt > 0:
-                            if cnt > (self.morse_high+self.morse_low // 2):
+                            if cnt > (self.morse_high + self.morse_low // 2):
                                 output.append(True)
                             else:
                                 output.append(False)
@@ -641,9 +735,13 @@ class Encoding(object):
         errors = 0
 
         if decoding and self.external_decoder != "":
-            output = self.charstr2bit(util.run_command(self.external_decoder, self.bit2str(inpt)))
+            output = self.charstr2bit(
+                util.run_command(self.external_decoder, self.bit2str(inpt))
+            )
         elif not decoding and self.external_encoder != "":
-            output = self.charstr2bit(util.run_command(self.external_encoder, self.bit2str(inpt)))
+            output = self.charstr2bit(
+                util.run_command(self.external_encoder, self.bit2str(inpt))
+            )
         else:
             return [], 1, self.ErrorState.MISSING_EXTERNAL_PROGRAM
 
@@ -696,7 +794,9 @@ class Encoding(object):
     def code_enocean(self, decoding: bool, inpt):
         errors = 0
         output = array.array("B", [])
-        preamble = array.array("B", [True, False, True, False, True, False, True, False])
+        preamble = array.array(
+            "B", [True, False, True, False, True, False, True, False]
+        )
         sof = array.array("B", [True, False, False, True])
         eof = array.array("B", [True, False, True, True])
 
@@ -717,19 +817,19 @@ class Encoding(object):
             return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
         # check preamble
-        if inpt[n:n + 8] != preamble:
+        if inpt[n : n + 8] != preamble:
             return inpt, 0, self.ErrorState.PREAMBLE_NOT_FOUND
 
         # check SoF
-        if inpt[n + 8:n + 12] != sof:
+        if inpt[n + 8 : n + 12] != sof:
             return inpt, 0, self.ErrorState.SYNC_NOT_FOUND
 
-        output.extend(inpt[n:n + 12])
+        output.extend(inpt[n : n + 12])
 
         # search for data limits
         start = n + 12
         n = len(inpt)
-        while n > start and inpt[n - 4:n] != eof:
+        while n > start and inpt[n - 4 : n] != eof:
             n -= 1
         end = n - 4
 
@@ -738,22 +838,49 @@ class Encoding(object):
         if decoding:
             try:
                 for n in range(start, end, 12):
-                    errors += sum([inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]])
-                    errors += sum([inpt[n + 10] != False, inpt[n + 11] != True]) if n < end - 11 else 0
-                    output.extend([inpt[n], inpt[n + 1], inpt[n + 2], inpt[n + 4], inpt[n + 5], inpt[n + 6], inpt[n + 8],
-                                   inpt[n + 9]])
-            except IndexError: # compatibility for old project files
+                    errors += sum(
+                        [inpt[n + 2] == inpt[n + 3], inpt[n + 6] == inpt[n + 7]]
+                    )
+                    errors += (
+                        sum([inpt[n + 10] != False, inpt[n + 11] != True])
+                        if n < end - 11
+                        else 0
+                    )
+                    output.extend(
+                        [
+                            inpt[n],
+                            inpt[n + 1],
+                            inpt[n + 2],
+                            inpt[n + 4],
+                            inpt[n + 5],
+                            inpt[n + 6],
+                            inpt[n + 8],
+                            inpt[n + 9],
+                        ]
+                    )
+            except IndexError:  # compatibility for old project files
                 return inpt, 0, self.ErrorState.MISC
 
             # Finalize output
-            output.extend(inpt[end:end + 4])
+            output.extend(inpt[end : end + 4])
 
         else:
             for n in range(start, end, 8):
                 try:
                     output.extend(
-                        [inpt[n], inpt[n + 1], inpt[n + 2], not inpt[n + 2], inpt[n + 3], inpt[n + 4], inpt[n + 5],
-                         not inpt[n + 5], inpt[n + 6], inpt[n + 7]])
+                        [
+                            inpt[n],
+                            inpt[n + 1],
+                            inpt[n + 2],
+                            not inpt[n + 2],
+                            inpt[n + 3],
+                            inpt[n + 4],
+                            inpt[n + 5],
+                            not inpt[n + 5],
+                            inpt[n + 6],
+                            inpt[n + 7],
+                        ]
+                    )
                 except IndexError:
                     output.extend([False, True])
                     break
@@ -800,16 +927,16 @@ class Encoding(object):
     def charstr2bit(inpt: str):
         output = array.array("B", [])
         for i in inpt:
-            if i == '0':
+            if i == "0":
                 output.append(False)
-            elif i == '1':
+            elif i == "1":
                 output.append(True)
         return output
 
     @staticmethod
     def hex2str(inpt):
         bitstring = bin(int(inpt, base=16))[2:]
-        return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
+        return "0" * (4 * len(inpt.lstrip("0x")) - len(bitstring)) + bitstring
 
     def __eq__(self, other):
         if other is None:

@@ -20,20 +20,22 @@ class Ui_ModulationSettings(object):
         font.setBold(True)
         font.setWeight(75)
         self.groupBoxSniffSettings.setFont(font)
-        self.groupBoxSniffSettings.setStyleSheet("QGroupBox\n"
-"{\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
-"}\n"
-"QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
-"}")
+        self.groupBoxSniffSettings.setStyleSheet(
+            "QGroupBox\n"
+            "{\n"
+            "border: none;\n"
+            "}\n"
+            "\n"
+            "QGroupBox::title {\n"
+            "    subcontrol-origin: margin;\n"
+            "}\n"
+            "QGroupBox::indicator:unchecked {\n"
+            " image: url(:/icons/icons/collapse.svg)\n"
+            "}\n"
+            "QGroupBox::indicator:checked {\n"
+            " image: url(:/icons/icons/uncollapse.svg)\n"
+            "}"
+        )
         self.groupBoxSniffSettings.setFlat(True)
         self.groupBoxSniffSettings.setCheckable(True)
         self.groupBoxSniffSettings.setObjectName("groupBoxSniffSettings")
@@ -56,10 +58,14 @@ class Ui_ModulationSettings(object):
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
         self.labelCarrierFrequencyValue = QtWidgets.QLabel(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.labelCarrierFrequencyValue.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.labelCarrierFrequencyValue.sizePolicy().hasHeightForWidth()
+        )
         self.labelCarrierFrequencyValue.setSizePolicy(sizePolicy)
         self.labelCarrierFrequencyValue.setObjectName("labelCarrierFrequencyValue")
         self.gridLayout.addWidget(self.labelCarrierFrequencyValue, 0, 1, 1, 1)
@@ -112,33 +118,61 @@ class Ui_ModulationSettings(object):
         self.btnConfigurationDialog.setIcon(icon)
         self.btnConfigurationDialog.setObjectName("btnConfigurationDialog")
         self.verticalLayout_2.addWidget(self.btnConfigurationDialog)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_2.addItem(spacerItem)
         self.gridLayout_3.addWidget(self.frame, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.groupBoxSniffSettings)
 
         self.retranslateUi(ModulationSettings)
-        self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
-        ModulationSettings.setTabOrder(self.groupBoxSniffSettings, self.comboBoxModulationProfiles)
-        ModulationSettings.setTabOrder(self.comboBoxModulationProfiles, self.btnConfigurationDialog)
+        self.groupBoxSniffSettings.toggled["bool"].connect(self.frame.setVisible)
+        ModulationSettings.setTabOrder(
+            self.groupBoxSniffSettings, self.comboBoxModulationProfiles
+        )
+        ModulationSettings.setTabOrder(
+            self.comboBoxModulationProfiles, self.btnConfigurationDialog
+        )
 
     def retranslateUi(self, ModulationSettings):
         _translate = QtCore.QCoreApplication.translate
         ModulationSettings.setWindowTitle(_translate("ModulationSettings", "Form"))
-        self.groupBoxSniffSettings.setTitle(_translate("ModulationSettings", "Modulation settings"))
-        self.labelModulationProfile.setText(_translate("ModulationSettings", "Choose profile:"))
-        self.labelCarrierFrequencyValue.setText(_translate("ModulationSettings", "TextLabel"))
+        self.groupBoxSniffSettings.setTitle(
+            _translate("ModulationSettings", "Modulation settings")
+        )
+        self.labelModulationProfile.setText(
+            _translate("ModulationSettings", "Choose profile:")
+        )
+        self.labelCarrierFrequencyValue.setText(
+            _translate("ModulationSettings", "TextLabel")
+        )
         self.labelSampleRate.setText(_translate("ModulationSettings", "Sample Rate:"))
-        self.labelCarrierFrequency.setText(_translate("ModulationSettings", "Carrier Frequency:"))
-        self.labelSamplesPerSymbol.setText(_translate("ModulationSettings", "Samples per Symbol:"))
+        self.labelCarrierFrequency.setText(
+            _translate("ModulationSettings", "Carrier Frequency:")
+        )
+        self.labelSamplesPerSymbol.setText(
+            _translate("ModulationSettings", "Samples per Symbol:")
+        )
         self.labelSampleRateValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelModulationType.setText(_translate("ModulationSettings", "Modulation type:"))
-        self.labelSamplesPerSymbolValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelModulationTypeValue.setText(_translate("ModulationSettings", "TextLabel"))
-        self.labelParameters.setText(_translate("ModulationSettings", "Amplitudes in %:"))
+        self.labelModulationType.setText(
+            _translate("ModulationSettings", "Modulation type:")
+        )
+        self.labelSamplesPerSymbolValue.setText(
+            _translate("ModulationSettings", "TextLabel")
+        )
+        self.labelModulationTypeValue.setText(
+            _translate("ModulationSettings", "TextLabel")
+        )
+        self.labelParameters.setText(
+            _translate("ModulationSettings", "Amplitudes in %:")
+        )
         self.labelParameterValues.setText(_translate("ModulationSettings", "0/100"))
         self.label.setText(_translate("ModulationSettings", "Bits per Symbol:"))
         self.labelBitsPerSymbol.setText(_translate("ModulationSettings", "1"))
-        self.btnConfigurationDialog.setText(_translate("ModulationSettings", "Open modulation configuration dialog..."))
+        self.btnConfigurationDialog.setText(
+            _translate("ModulationSettings", "Open modulation configuration dialog...")
+        )
+
+
 from urh.ui.ElidedLabel import ElidedLabel
 from . import urh_rc

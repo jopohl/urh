@@ -2,11 +2,18 @@ import sys
 
 from PyQt5.QtCore import QModelIndex, Qt, QAbstractItemModel, pyqtSlot, QRectF
 from PyQt5.QtGui import QImage, QPainter, QColor, QPixmap
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QComboBox
+from PyQt5.QtWidgets import (
+    QStyledItemDelegate,
+    QWidget,
+    QStyleOptionViewItem,
+    QComboBox,
+)
 
 
 class ComboBoxDelegate(QStyledItemDelegate):
-    def __init__(self, items, colors=None, is_editable=False, return_index=True, parent=None):
+    def __init__(
+        self, items, colors=None, is_editable=False, return_index=True, parent=None
+    ):
         """
 
         :param items:
@@ -25,7 +32,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
         if colors:
             assert len(items) == len(colors)
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
+    def paint(
+        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         if self.colors:
             try:
                 item = index.model().data(index)
@@ -37,13 +46,17 @@ class ComboBoxDelegate(QStyledItemDelegate):
                 rect = QRectF(x + 8, y + h / 2 - 8, 16, 16)
                 painter.fillRect(rect, QColor("black"))
                 rect = rect.adjusted(1, 1, -1, -1)
-                painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
+                painter.fillRect(
+                    rect, QColor(color.red(), color.green(), color.blue(), 255)
+                )
             except:
                 super().paint(painter, option, index)
         else:
             super().paint(painter, option, index)
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor = QComboBox(parent)
         if sys.platform == "win32":
             # Ensure text entries are visible with windows combo boxes
@@ -66,7 +79,9 @@ class ComboBoxDelegate(QStyledItemDelegate):
             rect = img.rect().adjusted(1, 1, -1, -1)
             for i, item in enumerate(self.items):
                 color = self.colors[i]
-                painter.fillRect(rect, QColor(color.red(), color.green(), color.blue(), 255))
+                painter.fillRect(
+                    rect, QColor(color.red(), color.green(), color.blue(), 255)
+                )
                 editor.setItemData(i, QPixmap.fromImage(img), Qt.DecorationRole)
 
             del painter
@@ -84,13 +99,17 @@ class ComboBoxDelegate(QStyledItemDelegate):
             pass
         editor.blockSignals(False)
 
-    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
+    def setModelData(
+        self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
+    ):
         if self.return_index:
             model.setData(index, editor.currentIndex(), Qt.EditRole)
         else:
             model.setData(index, editor.currentText(), Qt.EditRole)
 
-    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def updateEditorGeometry(
+        self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor.setGeometry(option.rect)
 
     @pyqtSlot()

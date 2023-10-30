@@ -6,15 +6,39 @@ from urh.util.Logger import logger
 
 
 class ReceiverThread(AbstractBaseThread):
-    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, ip='127.0.0.1',
-                 parent=None, resume_on_full_receive_buffer=False):
-        super().__init__(frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, True, ip, parent)
+    def __init__(
+        self,
+        frequency,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain,
+        baseband_gain,
+        ip="127.0.0.1",
+        parent=None,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            frequency,
+            sample_rate,
+            bandwidth,
+            gain,
+            if_gain,
+            baseband_gain,
+            True,
+            ip,
+            parent,
+        )
 
-        self.resume_on_full_receive_buffer = resume_on_full_receive_buffer  # for Live Sniffing
+        self.resume_on_full_receive_buffer = (
+            resume_on_full_receive_buffer  # for Live Sniffing
+        )
         self.data = None
 
     def init_recv_buffer(self):
-        n_samples = settings.get_receive_buffer_size(self.resume_on_full_receive_buffer, self.is_in_spectrum_mode)
+        n_samples = settings.get_receive_buffer_size(
+            self.resume_on_full_receive_buffer, self.is_in_spectrum_mode
+        )
         self.data = np.zeros(n_samples, dtype=np.complex64)
 
     def run(self):
@@ -58,7 +82,9 @@ class ReceiverThread(AbstractBaseThread):
                         else:
                             self.stop("Receiving Buffer is full.")
                             return
-                    self.data[self.current_index:self.current_index + num_samples] = tmp
+                    self.data[
+                        self.current_index : self.current_index + num_samples
+                    ] = tmp
                     self.current_index += num_samples
                     rcvd = b""
                 except ValueError:

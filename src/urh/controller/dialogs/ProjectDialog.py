@@ -17,7 +17,9 @@ from urh.util.ProjectManager import ProjectManager
 
 
 class ProjectDialog(QDialog):
-    def __init__(self, new_project=True, project_manager: ProjectManager = None, parent=None):
+    def __init__(
+        self, new_project=True, project_manager: ProjectManager = None, parent=None
+    ):
         super().__init__(parent)
         if not new_project:
             assert project_manager is not None
@@ -29,15 +31,23 @@ class ProjectDialog(QDialog):
         if new_project:
             self.participant_table_model = ParticipantTableModel([])
         else:
-            self.participant_table_model = ParticipantTableModel(project_manager.participants)
+            self.participant_table_model = ParticipantTableModel(
+                project_manager.participants
+            )
 
-            self.ui.spinBoxSampleRate.setValue(project_manager.device_conf["sample_rate"])
+            self.ui.spinBoxSampleRate.setValue(
+                project_manager.device_conf["sample_rate"]
+            )
             self.ui.spinBoxFreq.setValue(project_manager.device_conf["frequency"])
             self.ui.spinBoxBandwidth.setValue(project_manager.device_conf["bandwidth"])
-            self.ui.spinBoxGain.setValue(project_manager.device_conf.get("gain", config.DEFAULT_GAIN))
+            self.ui.spinBoxGain.setValue(
+                project_manager.device_conf.get("gain", config.DEFAULT_GAIN)
+            )
             self.ui.txtEdDescription.setPlainText(project_manager.description)
             self.ui.lineEdit_Path.setText(project_manager.project_path)
-            self.ui.lineEditBroadcastAddress.setText(project_manager.broadcast_address_hex)
+            self.ui.lineEditBroadcastAddress.setText(
+                project_manager.broadcast_address_hex
+            )
 
             self.ui.btnSelectPath.hide()
             self.ui.lineEdit_Path.setDisabled(True)
@@ -47,7 +57,9 @@ class ProjectDialog(QDialog):
         self.ui.tblParticipants.setModel(self.participant_table_model)
         self.participant_table_model.update()
 
-        self.ui.lineEditBroadcastAddress.setValidator(QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}")))
+        self.ui.lineEditBroadcastAddress.setValidator(
+            QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}"))
+        )
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
         self.freq = self.ui.spinBoxFreq.value()
@@ -72,10 +84,14 @@ class ProjectDialog(QDialog):
             self.ui.btnAddParticipant.click()
 
         if new_project:
-            self.ui.lineEdit_Path.setText(os.path.realpath(os.path.join(os.curdir, "new")))
+            self.ui.lineEdit_Path.setText(
+                os.path.realpath(os.path.join(os.curdir, "new"))
+            )
 
         self.on_line_edit_path_text_edited()
-        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
+        self.restoreGeometry(
+            settings.read("{}/geometry".format(self.__class__.__name__), type=bytes)
+        )
 
     @property
     def participants(self):
@@ -86,23 +102,43 @@ class ProjectDialog(QDialog):
         return self.participant_table_model.participants
 
     def create_connects(self):
-        self.ui.spinBoxFreq.valueChanged.connect(self.on_spin_box_frequency_value_changed)
-        self.ui.spinBoxSampleRate.valueChanged.connect(self.on_spin_box_sample_rate_value_changed)
-        self.ui.spinBoxBandwidth.valueChanged.connect(self.on_spin_box_bandwidth_value_changed)
+        self.ui.spinBoxFreq.valueChanged.connect(
+            self.on_spin_box_frequency_value_changed
+        )
+        self.ui.spinBoxSampleRate.valueChanged.connect(
+            self.on_spin_box_sample_rate_value_changed
+        )
+        self.ui.spinBoxBandwidth.valueChanged.connect(
+            self.on_spin_box_bandwidth_value_changed
+        )
         self.ui.spinBoxGain.valueChanged.connect(self.on_spin_box_gain_value_changed)
-        self.ui.txtEdDescription.textChanged.connect(self.on_txt_edit_description_text_changed)
-        self.ui.lineEditBroadcastAddress.textEdited.connect(self.on_line_edit_broadcast_address_text_edited)
+        self.ui.txtEdDescription.textChanged.connect(
+            self.on_txt_edit_description_text_changed
+        )
+        self.ui.lineEditBroadcastAddress.textEdited.connect(
+            self.on_line_edit_broadcast_address_text_edited
+        )
 
-        self.ui.btnAddParticipant.clicked.connect(self.ui.tblParticipants.on_add_action_triggered)
-        self.ui.btnRemoveParticipant.clicked.connect(self.ui.tblParticipants.on_remove_action_triggered)
-        self.ui.btnUp.clicked.connect(self.ui.tblParticipants.on_move_up_action_triggered)
-        self.ui.btnDown.clicked.connect(self.ui.tblParticipants.on_move_down_action_triggered)
+        self.ui.btnAddParticipant.clicked.connect(
+            self.ui.tblParticipants.on_add_action_triggered
+        )
+        self.ui.btnRemoveParticipant.clicked.connect(
+            self.ui.tblParticipants.on_remove_action_triggered
+        )
+        self.ui.btnUp.clicked.connect(
+            self.ui.tblParticipants.on_move_up_action_triggered
+        )
+        self.ui.btnDown.clicked.connect(
+            self.ui.tblParticipants.on_move_down_action_triggered
+        )
 
         self.ui.lineEdit_Path.textEdited.connect(self.on_line_edit_path_text_edited)
         self.ui.buttonBox.accepted.connect(self.on_button_box_accepted)
         self.ui.buttonBox.rejected.connect(self.reject)
         self.ui.btnSelectPath.clicked.connect(self.on_btn_select_path_clicked)
-        self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(self.on_spectrum_analyzer_link_activated)
+        self.ui.lOpenSpectrumAnalyzer.linkActivated.connect(
+            self.on_spectrum_analyzer_link_activated
+        )
 
     def set_path(self, path):
         self.path = path
@@ -113,7 +149,9 @@ class ProjectDialog(QDialog):
         self.ui.lblNewPath.setVisible(not os.path.isdir(self.path))
 
     def closeEvent(self, event: QCloseEvent):
-        settings.write("{}/geometry".format(self.__class__.__name__), self.saveGeometry())
+        settings.write(
+            "{}/geometry".format(self.__class__.__name__), self.saveGeometry()
+        )
         super().closeEvent(event)
 
     @pyqtSlot(float)
@@ -183,5 +221,7 @@ class ProjectDialog(QDialog):
                 r.close()
                 return
 
-            r.device_parameters_changed.connect(self.set_recording_params_from_spectrum_analyzer_link)
+            r.device_parameters_changed.connect(
+                self.set_recording_params_from_spectrum_analyzer_link
+            )
             r.show()

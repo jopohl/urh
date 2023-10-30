@@ -3,14 +3,23 @@ from collections import OrderedDict
 
 from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
 from PyQt5.QtGui import QPainter, QStandardItem
-from PyQt5.QtWidgets import QItemDelegate, QStyleOptionViewItem, QStyle, QComboBox, QStyledItemDelegate, QWidget
+from PyQt5.QtWidgets import (
+    QItemDelegate,
+    QStyleOptionViewItem,
+    QStyle,
+    QComboBox,
+    QStyledItemDelegate,
+    QWidget,
+)
 
 
 class SectionItemDelegate(QItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex):
+    def paint(
+        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         item_type = index.data(Qt.AccessibleDescriptionRole)
         if item_type == "parent":
             parent_option = option
@@ -57,7 +66,9 @@ class SectionComboBoxDelegate(QStyledItemDelegate):
         super().__init__(parent)
         self.items = items
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor = SectionComboBox(parent)
         editor.setItemDelegate(SectionItemDelegate(editor.itemDelegate().parent()))
         if sys.platform == "win32":
@@ -77,10 +88,14 @@ class SectionComboBoxDelegate(QStyledItemDelegate):
         editor.setCurrentText(item)
         editor.blockSignals(False)
 
-    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
+    def setModelData(
+        self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
+    ):
         model.setData(index, editor.currentText(), Qt.EditRole)
 
-    def updateEditorGeometry(self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def updateEditorGeometry(
+        self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor.setGeometry(option.rect)
 
     @pyqtSlot()

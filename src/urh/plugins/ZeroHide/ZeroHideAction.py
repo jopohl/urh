@@ -4,7 +4,13 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class ZeroHideAction(QUndoCommand):
-    def __init__(self, protocol: ProtocolAnalyzer, following_zeros: int, view: int, zero_hide_offsets: dict):
+    def __init__(
+        self,
+        protocol: ProtocolAnalyzer,
+        following_zeros: int,
+        view: int,
+        zero_hide_offsets: dict,
+    ):
         super().__init__()
         self.protocol = protocol
         self.following_zeros = following_zeros
@@ -34,7 +40,9 @@ class ZeroHideAction(QUndoCommand):
 
             zero_sequences = self.__get_zero_seq_indexes(data, self.following_zeros)
 
-            self.zero_hide_offsets[i] = {start: end-start for start, end in zero_sequences}
+            self.zero_hide_offsets[i] = {
+                start: end - start for start, end in zero_sequences
+            }
             for seq in reversed(zero_sequences):
                 full_bits = pa.messages[i].decoded_bits
                 start = seq[0] * factor
@@ -60,7 +68,7 @@ class ZeroHideAction(QUndoCommand):
                 zero_counter += 1
             else:
                 if zero_counter >= following_zeros:
-                    result.append((i-zero_counter, i))
+                    result.append((i - zero_counter, i))
                 zero_counter = 0
 
         if zero_counter >= following_zeros:

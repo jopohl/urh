@@ -8,11 +8,19 @@ class RingBuffer(object):
     """
     A RingBuffer containing complex values.
     """
+
     def __init__(self, size: int, dtype=np.float32):
         self.dtype = dtype
 
-        types = {np.uint8: "B", np.int8: "b", np.int16: "h", np.uint16: "H", np.float32: "f", np.float64: "d"}
-        self.__data = Array(types[self.dtype], 2*size)
+        types = {
+            np.uint8: "B",
+            np.int8: "b",
+            np.int16: "h",
+            np.uint16: "H",
+            np.float32: "f",
+            np.float64: "d",
+        }
+        self.__data = Array(types[self.dtype], 2 * size)
 
         self.size = size
         self.__left_index = Value("L", 0)
@@ -48,7 +56,9 @@ class RingBuffer(object):
 
     @property
     def data(self):
-        return np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
+        return np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(
+            len(self.__data) // 2, 2
+        )
 
     @property
     def view_data(self):
@@ -78,12 +88,14 @@ class RingBuffer(object):
         if len(self) + n > self.size:
             raise ValueError("Too much data to push to RingBuffer")
 
-        slide_1 = np.s_[self.right_index:min(self.right_index + n, self.size)]
-        slide_2 = np.s_[:max(self.right_index + n - self.size, 0)]
+        slide_1 = np.s_[self.right_index : min(self.right_index + n, self.size)]
+        slide_2 = np.s_[: max(self.right_index + n - self.size, 0)]
         with self.__data.get_lock():
-            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
-            data[slide_1] = values[:slide_1.stop - slide_1.start]
-            data[slide_2] = values[slide_1.stop - slide_1.start:]
+            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(
+                len(self.__data) // 2, 2
+            )
+            data[slide_1] = values[: slide_1.stop - slide_1.start]
+            data[slide_2] = values[slide_1.stop - slide_1.start :]
             self.right_index += n
 
         self.__length.value += n
@@ -108,17 +120,19 @@ class RingBuffer(object):
             number = min(number, len(self))
 
         with self.__data.get_lock():
-            result = np.ones(2*number, dtype=self.dtype).reshape(number, 2)
-            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(len(self.__data) // 2, 2)
+            result = np.ones(2 * number, dtype=self.dtype).reshape(number, 2)
+            data = np.frombuffer(self.__data.get_obj(), dtype=self.dtype).reshape(
+                len(self.__data) // 2, 2
+            )
 
             if self.left_index + number > len(data):
                 end = len(data) - self.left_index
             else:
                 end = number
 
-            result[:end] = data[self.left_index:self.left_index + end]
+            result[:end] = data[self.left_index : self.left_index + end]
             if end < number:
-                result[end:] = data[:number-end]
+                result[end:] = data[: number - end]
 
         self.left_index += number
         self.__length.value -= number

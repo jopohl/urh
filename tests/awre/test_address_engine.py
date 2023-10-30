@@ -36,14 +36,18 @@ class TestAddressEngine(AWRETestCase):
         mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
 
         num_messages_by_data_length = {8: 5, 16: 10, 32: 15}
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"},
-                               participants=[self.alice])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            participants=[self.alice],
+        )
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(22 * i, data_length), source=self.alice)
+                pg.generate_message(
+                    data=pg.decimal_to_bits(22 * i, data_length), source=self.alice
+                )
 
-        #self.save_protocol("address_one_participant", pg)
+        # self.save_protocol("address_one_participant", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -63,9 +67,11 @@ class TestAddressEngine(AWRETestCase):
 
         num_messages = 50
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"},
-                               participants=[self.alice, self.bob])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            participants=[self.alice, self.bob],
+        )
 
         for i in range(num_messages):
             if i % 2 == 0:
@@ -74,9 +80,13 @@ class TestAddressEngine(AWRETestCase):
             else:
                 source, destination = self.bob, self.alice
                 data_length = 16
-            pg.generate_message(data=pg.decimal_to_bits(4 * i, data_length), source=source, destination=destination)
+            pg.generate_message(
+                data=pg.decimal_to_bits(4 * i, data_length),
+                source=source,
+                destination=destination,
+            )
 
-        #self.save_protocol("address_two_participants", pg)
+        # self.save_protocol("address_two_participants", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -97,10 +107,14 @@ class TestAddressEngine(AWRETestCase):
         ff.perform_iteration()
 
         self.assertEqual(len(ff.known_participant_addresses), 2)
-        self.assertIn(bytes([int(h, 16) for h in self.alice.address_hex]),
-                      map(bytes, ff.known_participant_addresses.values()))
-        self.assertIn(bytes([int(h, 16) for h in self.bob.address_hex]),
-                      map(bytes, ff.known_participant_addresses.values()))
+        self.assertIn(
+            bytes([int(h, 16) for h in self.alice.address_hex]),
+            map(bytes, ff.known_participant_addresses.values()),
+        )
+        self.assertIn(
+            bytes([int(h, 16) for h in self.bob.address_hex]),
+            map(bytes, ff.known_participant_addresses.values()),
+        )
 
         self.assertEqual(len(ff.message_types), 1)
         mt = ff.message_types[0]
@@ -128,9 +142,11 @@ class TestAddressEngine(AWRETestCase):
 
         num_messages = 50
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
-                               participants=[self.alice, self.bob])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
+            participants=[self.alice, self.bob],
+        )
 
         random.seed(0)
         for i in range(num_messages):
@@ -140,11 +156,21 @@ class TestAddressEngine(AWRETestCase):
             else:
                 source, destination = self.bob, self.alice
                 data_length = 16
-            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                source=source, destination=destination)
-            pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
+            pg.generate_message(
+                data=pg.decimal_to_bits(
+                    random.randint(0, 2 ** (data_length - 1)), data_length
+                ),
+                source=source,
+                destination=destination,
+            )
+            pg.generate_message(
+                data="",
+                message_type=mb_ack.message_type,
+                destination=source,
+                source=destination,
+            )
 
-        #self.save_protocol("address_two_participants_with_acks", pg)
+        # self.save_protocol("address_two_participants_with_acks", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -193,9 +219,11 @@ class TestAddressEngine(AWRETestCase):
 
         num_messages = 50
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
-                               participants=[self.alice, self.bob])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
+            participants=[self.alice, self.bob],
+        )
 
         random.seed(0)
         for i in range(num_messages):
@@ -205,11 +233,21 @@ class TestAddressEngine(AWRETestCase):
             else:
                 source, destination = self.bob, self.alice
                 data_length = 16
-            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                source=source, destination=destination)
-            pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
+            pg.generate_message(
+                data=pg.decimal_to_bits(
+                    random.randint(0, 2 ** (data_length - 1)), data_length
+                ),
+                source=source,
+                destination=destination,
+            )
+            pg.generate_message(
+                data="",
+                message_type=mb_ack.message_type,
+                destination=source,
+                source=destination,
+            )
 
-        #self.save_protocol("address_two_participants_with_acks_and_types", pg)
+        # self.save_protocol("address_two_participants_with_acks_and_types", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -261,10 +299,12 @@ class TestAddressEngine(AWRETestCase):
         mb_ack.add_label(FieldType.Function.LENGTH, 8)
         mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
-                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
-                               participants=[alice, bob, carl])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+            preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+            participants=[alice, bob, carl],
+        )
 
         i = -1
         while len(pg.protocol.messages) < 20:
@@ -280,7 +320,9 @@ class TestAddressEngine(AWRETestCase):
             pg.generate_message(data=data, source=source, destination=destination)
 
             if "ack" in (msg_type.name for msg_type in pg.protocol.message_types):
-                pg.generate_message(message_type=1, data="", source=destination, destination=source)
+                pg.generate_message(
+                    message_type=1, data="", source=destination, destination=source
+                )
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -290,9 +332,18 @@ class TestAddressEngine(AWRETestCase):
 
         # Since there are ACKS in this protocol, the engine must be able to assign the correct participant addresses
         # IN CORRECT ORDER!
-        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]), "1337")
-        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]), "4711")
-        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[2]), "cafe")
+        self.assertEqual(
+            util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]),
+            "1337",
+        )
+        self.assertEqual(
+            util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]),
+            "4711",
+        )
+        self.assertEqual(
+            util.convert_numbers_to_hex_string(ff.known_participant_addresses[2]),
+            "cafe",
+        )
 
     def test_protocol_with_acks_and_checksum(self):
         proto_file = get_path_for_data_file("ack_frames_with_crc.proto.xml")
@@ -305,8 +356,14 @@ class TestAddressEngine(AWRETestCase):
         ff.known_participant_addresses.clear()
 
         ff.run()
-        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]), "1337")
-        self.assertEqual(util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]), "4711")
+        self.assertEqual(
+            util.convert_numbers_to_hex_string(ff.known_participant_addresses[0]),
+            "1337",
+        )
+        self.assertEqual(
+            util.convert_numbers_to_hex_string(ff.known_participant_addresses[1]),
+            "4711",
+        )
 
         for mt in ff.message_types:
             preamble = mt.get_first_label_with_type(FieldType.Function.PREAMBLE)
@@ -320,7 +377,9 @@ class TestAddressEngine(AWRETestCase):
             self.assertEqual(length.length, 8)
 
     def test_address_engine_performance(self):
-        ff, messages = self.get_format_finder_from_protocol_file("35_messages.proto.xml", return_messages=True)
+        ff, messages = self.get_format_finder_from_protocol_file(
+            "35_messages.proto.xml", return_messages=True
+        )
 
         engine = AddressEngine(ff.hexvectors, ff.participant_indices)
         engine.find()
@@ -340,15 +399,20 @@ class TestAddressEngine(AWRETestCase):
 
         protocol = ProtocolAnalyzer(None)
         protocol.messages.extend([msg1, msg2, msg3, msg4])
-        #self.save_protocol("paper_example", protocol)
+        # self.save_protocol("paper_example", protocol)
 
         bitvectors = FormatFinder.get_bitvectors_from_messages(protocol.messages)
         hexvectors = FormatFinder.get_hexvectors(bitvectors)
-        address_engine = AddressEngine(hexvectors, participant_indices=[participants.index(msg.participant) for msg in
-                                                                        protocol.messages])
+        address_engine = AddressEngine(
+            hexvectors,
+            participant_indices=[
+                participants.index(msg.participant) for msg in protocol.messages
+            ],
+        )
 
     def test_find_common_sub_sequence(self):
         from urh.cythonext import awre_util
+
         str1 = "0612345678"
         str2 = "0756781234"
 
@@ -365,6 +429,7 @@ class TestAddressEngine(AWRETestCase):
 
     def test_find_first_occurrence(self):
         from urh.cythonext import awre_util
+
         str1 = "00" * 100 + "1234500012345" + "00" * 100
         str2 = "12345"
 
@@ -373,14 +438,20 @@ class TestAddressEngine(AWRETestCase):
         indices = awre_util.find_occurrences(seq1, seq2)
         self.assertEqual(len(indices), 2)
         index = indices[0]
-        self.assertEqual(str1[index:index + len(str2)], str2)
+        self.assertEqual(str1[index : index + len(str2)], str2)
 
         # Test with ignoring indices
-        indices = awre_util.find_occurrences(seq1, seq2, array("L", list(range(0, 205))))
+        indices = awre_util.find_occurrences(
+            seq1, seq2, array("L", list(range(0, 205)))
+        )
         self.assertEqual(len(indices), 1)
 
         # Test with ignoring indices
-        indices = awre_util.find_occurrences(seq1, seq2, array("L", list(range(0, 210))))
+        indices = awre_util.find_occurrences(
+            seq1, seq2, array("L", list(range(0, 210)))
+        )
         self.assertEqual(len(indices), 0)
 
-        self.assertEqual(awre_util.find_occurrences(seq1, np.ones(10, dtype=np.uint8)), [])
+        self.assertEqual(
+            awre_util.find_occurrences(seq1, np.ones(10, dtype=np.uint8)), []
+        )

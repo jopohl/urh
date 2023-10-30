@@ -7,25 +7,34 @@ from urh.controller.dialogs.ProtocolLabelDialog import ProtocolLabelDialog
 
 
 class TestProtocolLabelDialog(QtTestCase):
-
     def setUp(self):
         super().setUp()
         self.form.add_protocol_file(get_path_for_data_file("protocol.proto.xml"))
 
         self.cframe = self.form.compare_frame_controller
 
-        self.cframe.add_protocol_label(9, 19, 0, 0, edit_label_name=False)  # equals 10-20 in view
-        self.cframe.add_protocol_label(39, 54, 1, 0, edit_label_name=False)  # equals 40-55 in view
+        self.cframe.add_protocol_label(
+            9, 19, 0, 0, edit_label_name=False
+        )  # equals 10-20 in view
+        self.cframe.add_protocol_label(
+            39, 54, 1, 0, edit_label_name=False
+        )  # equals 40-55 in view
 
         self.assertEqual(len(self.cframe.proto_analyzer.protocol_labels), 2)
-        self.dialog = ProtocolLabelDialog(message=self.cframe.proto_analyzer.messages[0],
-                                          viewtype=0, parent=self.cframe)
+        self.dialog = ProtocolLabelDialog(
+            message=self.cframe.proto_analyzer.messages[0],
+            viewtype=0,
+            parent=self.cframe,
+        )
 
         if self.SHOW:
             self.dialog.show()
 
     def test_protocol_label_dialog(self):
-        self.assertIn(self.cframe.proto_analyzer.default_message_type.name, self.dialog.windowTitle())
+        self.assertIn(
+            self.cframe.proto_analyzer.default_message_type.name,
+            self.dialog.windowTitle(),
+        )
         table_model = self.dialog.ui.tblViewProtoLabels.model()
 
         self.assertEqual(table_model.rowCount(), 2)
@@ -72,7 +81,11 @@ class TestProtocolLabelDialog(QtTestCase):
     def test_remove_labels(self):
         self.dialog.ui.tblViewProtoLabels.selectAll()
         self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 2)
-        remove_action = self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
+        remove_action = (
+            self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()[0]
+        )
         remove_action.trigger()
         self.assertEqual(self.dialog.ui.tblViewProtoLabels.model().rowCount(), 0)
-        self.assertEqual(len(self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()), 0)
+        self.assertEqual(
+            len(self.dialog.ui.tblViewProtoLabels.create_context_menu().actions()), 0
+        )

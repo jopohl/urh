@@ -13,10 +13,13 @@ from urh.util import util
 from urh.util.GenericCRC import GenericCRC
 from urh.cythonext import util as c_util
 
+
 class TestChecksumEngine(AWRETestCase):
     def test_find_crc8(self):
         messages = ["aabbcc7d", "abcdee24", "dacafe33"]
-        message_bits = [np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)]
+        message_bits = [
+            np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)
+        ]
 
         checksum_engine = ChecksumEngine(message_bits, n_gram_length=8)
         result = checksum_engine.find()
@@ -33,7 +36,9 @@ class TestChecksumEngine(AWRETestCase):
 
     def test_find_crc16(self):
         messages = ["12345678347B", "abcdefffABBD", "cafe1337CE12"]
-        message_bits = [np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)]
+        message_bits = [
+            np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)
+        ]
 
         checksum_engine = ChecksumEngine(message_bits, n_gram_length=8)
         result = checksum_engine.find()
@@ -50,7 +55,9 @@ class TestChecksumEngine(AWRETestCase):
 
     def test_find_crc32(self):
         messages = ["deadcafe5D7F3F5A", "47111337E3319242", "beefaffe0DCD0E15"]
-        message_bits = [np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)]
+        message_bits = [
+            np.array(msg, dtype=np.uint8) for msg in map(util.hex2bit, messages)
+        ]
 
         checksum_engine = ChecksumEngine(message_bits, n_gram_length=8)
         result = checksum_engine.find()
@@ -81,15 +88,20 @@ class TestChecksumEngine(AWRETestCase):
 
         mb2.add_checksum_label(16, GenericCRC.from_standard_checksum("CRC16 CCITT"))
 
-        pg = ProtocolGenerator([mb.message_type, mb2.message_type], syncs_by_mt={mb.message_type: "0x1234", mb2.message_type: "0x1234"})
+        pg = ProtocolGenerator(
+            [mb.message_type, mb2.message_type],
+            syncs_by_mt={mb.message_type: "0x1234", mb2.message_type: "0x1234"},
+        )
 
         num_messages = 5
 
         for i in range(num_messages):
             pg.generate_message(data="{0:032b}".format(i), message_type=mb.message_type)
-            pg.generate_message(data="{0:016b}".format(i), message_type=mb2.message_type)
+            pg.generate_message(
+                data="{0:016b}".format(i), message_type=mb2.message_type
+            )
 
-        #self.save_protocol("crc16_test", pg)
+        # self.save_protocol("crc16_test", pg)
         self.clear_message_types(pg.protocol.messages)
 
         ff = FormatFinder(pg.protocol.messages)

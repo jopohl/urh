@@ -44,13 +44,14 @@ def gen(force=False):
         # Remove Line: # Form implementation generated from reading ui file '/home/joe/GIT/urh/ui/fuzzing.ui'
         # to avoid useless git updates when working on another computer
         for line in fileinput.input(out_file_path, inplace=True):
-            if line.startswith("# Form implementation generated from reading ui file") or line.startswith(
-                    "# Created by: "):
+            if line.startswith(
+                "# Form implementation generated from reading ui file"
+            ) or line.startswith("# Created by: "):
                 continue
             if line.strip().startswith("QtCore.QMetaObject.connectSlotsByName("):
                 # disable auto slot connection, as we do not use it, and it causes crash on python 3.7
                 continue
-            print(line, end='')
+            print(line, end="")
 
     for f in rc_files:
         file_path = os.path.join(rc_path, f)

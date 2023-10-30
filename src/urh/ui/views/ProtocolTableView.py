@@ -53,7 +53,9 @@ class ProtocolTableView(TableView):
         rows = set(i.row() for i in self.selectionModel().selectedIndexes())
         return [messages[i] for i in rows]
 
-    def selectionChanged(self, selection_1: QItemSelection, selection_2: QItemSelection):
+    def selectionChanged(
+        self, selection_1: QItemSelection, selection_2: QItemSelection
+    ):
         self.selection_changed.emit()
         super().selectionChanged(selection_1, selection_2)
 
@@ -70,7 +72,11 @@ class ProtocolTableView(TableView):
     def create_context_menu(self):
         menu = super().create_context_menu()
         row = self.rowAt(self.context_menu_pos.y())
-        cols = [index.column() for index in self.selectionModel().selectedIndexes() if index.row() == row]
+        cols = [
+            index.column()
+            for index in self.selectionModel().selectedIndexes()
+            if index.row() == row
+        ]
         cols.sort()
 
         pos = self.context_menu_pos
@@ -113,10 +119,15 @@ class ProtocolTableView(TableView):
 
         new_message_type_action = message_type_menu.addAction("Create new")
         new_message_type_action.setIcon(QIcon.fromTheme("list-add"))
-        new_message_type_action.triggered.connect(self.on_new_message_type_action_triggered)
+        new_message_type_action.triggered.connect(
+            self.on_new_message_type_action_triggered
+        )
 
-        if self.model().participants and self.model().protocol and not self.selection_is_empty:
-
+        if (
+            self.model().participants
+            and self.model().protocol
+            and not self.selection_is_empty
+        ):
             participant_group = QActionGroup(self)
             participant_menu_str = self.tr("Participant")
             if selected_participant is None:
@@ -129,13 +140,17 @@ class ProtocolTableView(TableView):
             none_participant_action = participant_menu.addAction("None")
             none_participant_action.setCheckable(True)
             none_participant_action.setActionGroup(participant_group)
-            none_participant_action.triggered.connect(self.on_none_participant_action_triggered)
+            none_participant_action.triggered.connect(
+                self.on_none_participant_action_triggered
+            )
 
             if selected_participant is None:
                 none_participant_action.setChecked(True)
 
             for participant in self.model().participants:
-                pa = participant_menu.addAction(participant.name + " (" + participant.shortname + ")")
+                pa = participant_menu.addAction(
+                    participant.name + " (" + participant.shortname + ")"
+                )
                 pa.setCheckable(True)
                 pa.setActionGroup(participant_group)
                 if selected_participant == participant:
@@ -152,23 +167,31 @@ class ProtocolTableView(TableView):
         menu.addAction(self.hide_row_action)
         hidden_rows = self.model().hidden_rows
         if len(hidden_rows) > 0:
-            show_row_action = menu.addAction(self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows))))
+            show_row_action = menu.addAction(
+                self.tr("Show all rows (reset {0:d} hidden)".format(len(hidden_rows)))
+            )
             show_row_action.triggered.connect(self.on_show_row_action_triggered)
 
         if self.model().refindex != -1:
             menu.addAction(self.ref_message_action)
 
         if not self.model().is_writeable:
-            show_interpretation_action = menu.addAction(self.tr("Show selection in Interpretation"))
+            show_interpretation_action = menu.addAction(
+                self.tr("Show selection in Interpretation")
+            )
             show_interpretation_action.setIcon(QIcon.fromTheme("zoom-select"))
-            show_interpretation_action.triggered.connect(self.on_show_in_interpretation_action_triggered)
+            show_interpretation_action.triggered.connect(
+                self.on_show_in_interpretation_action_triggered
+            )
 
         if self.model().is_writeable:
             writeable_action = menu.addAction(self.tr("Writeable"))
             writeable_action.setCheckable(True)
             writeable_action.setChecked(True)
         else:
-            writeable_action = menu.addAction(self.tr("Writeable (decouples from signal)"))
+            writeable_action = menu.addAction(
+                self.tr("Writeable (decouples from signal)")
+            )
             writeable_action.setCheckable(True)
             writeable_action.setChecked(False)
 
@@ -180,8 +203,13 @@ class ProtocolTableView(TableView):
 
         for plugin in self.controller.plugin_manager.protocol_plugins:
             if plugin.enabled:
-                act = plugin.get_action(self, undo_stack, self.selection_range(),
-                                        self.controller.proto_analyzer, view)
+                act = plugin.get_action(
+                    self,
+                    undo_stack,
+                    self.selection_range(),
+                    self.controller.proto_analyzer,
+                    view,
+                )
                 if act is not None:
                     menu.addAction(act)
 
@@ -257,7 +285,9 @@ class ProtocolTableView(TableView):
 
     @pyqtSlot()
     def on_message_type_action_triggered(self):
-        self.messagetype_selected.emit(self.message_type_actions[self.sender()], self.selected_messages)
+        self.messagetype_selected.emit(
+            self.message_type_actions[self.sender()], self.selected_messages
+        )
 
     @pyqtSlot()
     def on_new_message_type_action_triggered(self):

@@ -6,10 +6,14 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
 
 class InsertColumn(QUndoCommand):
-    def __init__(self, proto_analyzer: ProtocolAnalyzer, index: int, rows: list, view: int):
+    def __init__(
+        self, proto_analyzer: ProtocolAnalyzer, index: int, rows: list, view: int
+    ):
         super().__init__()
         self.proto_analyzer = proto_analyzer
-        self.index = proto_analyzer.convert_index(index, from_view=view, to_view=0, decoded=False)[0]
+        self.index = proto_analyzer.convert_index(
+            index, from_view=view, to_view=0, decoded=False
+        )[0]
         self.nbits = 1 if view == 0 else 4 if view == 1 else 8
         self.rows = rows
 

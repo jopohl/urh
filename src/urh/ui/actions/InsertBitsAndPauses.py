@@ -7,7 +7,12 @@ from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerConta
 
 
 class InsertBitsAndPauses(QUndoCommand):
-    def __init__(self, proto_analyzer_container: ProtocolAnalyzerContainer, index: int, pa: ProtocolAnalyzer):
+    def __init__(
+        self,
+        proto_analyzer_container: ProtocolAnalyzerContainer,
+        index: int,
+        pa: ProtocolAnalyzer,
+    ):
         super().__init__()
         self.proto_analyzer_container = proto_analyzer_container
         self.proto_analyzer = pa
@@ -19,10 +24,12 @@ class InsertBitsAndPauses(QUndoCommand):
         self.num_messages = 0
 
     def redo(self):
-        self.proto_analyzer_container.insert_protocol_analyzer(self.index, self.proto_analyzer)
+        self.proto_analyzer_container.insert_protocol_analyzer(
+            self.index, self.proto_analyzer
+        )
         self.num_messages += len(self.proto_analyzer.messages)
 
     def undo(self):
-        for i in reversed(range(self.index, self.index+self.num_messages)):
+        for i in reversed(range(self.index, self.index + self.num_messages)):
             del self.proto_analyzer_container.messages[i]
         self.num_messages = 0

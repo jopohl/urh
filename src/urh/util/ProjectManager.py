@@ -27,10 +27,12 @@ class ProjectManager(QObject):
     def __init__(self, main_controller):
         super().__init__()
         self.main_controller = main_controller
-        self.device_conf = dict(frequency=config.DEFAULT_FREQUENCY,
-                                sample_rate=config.DEFAULT_SAMPLE_RATE,
-                                bandwidth=config.DEFAULT_BANDWIDTH,
-                                name="USRP")
+        self.device_conf = dict(
+            frequency=config.DEFAULT_FREQUENCY,
+            sample_rate=config.DEFAULT_SAMPLE_RATE,
+            bandwidth=config.DEFAULT_BANDWIDTH,
+            name="USRP",
+        )
 
         self.simulator_rx_conf = dict()
         self.simulator_tx_conf = dict()
@@ -95,7 +97,9 @@ class ProjectManager(QObject):
 
     def reload_field_types(self):
         self.field_types = FieldType.load_from_xml()
-        self.field_types_by_caption = {field_type.caption: field_type for field_type in self.field_types}
+        self.field_types_by_caption = {
+            field_type.caption: field_type for field_type in self.field_types
+        }
 
     def set_device_parameters(self, kwargs: dict):
         for key, value in kwargs.items():
@@ -118,24 +122,25 @@ class ProjectManager(QObject):
         if self.project_file:
             return
         else:
-            prefix = os.path.realpath(os.path.join(settings.get_qt_settings_filename(), ".."))
+            prefix = os.path.realpath(
+                os.path.join(settings.get_qt_settings_filename(), "..")
+            )
 
-        fallback = [Encoding(["Non Return To Zero (NRZ)"]),
-
-                    Encoding(["Non Return To Zero + Invert",
-                              settings.DECODING_INVERT]),
-
-                    Encoding(["Manchester I",
-                              settings.DECODING_EDGE]),
-
-                    Encoding(["Manchester II",
-                              settings.DECODING_EDGE,
-                              settings.DECODING_INVERT]),
-
-                    Encoding(["Differential Manchester",
-                              settings.DECODING_EDGE,
-                              settings.DECODING_DIFFERENTIAL])
-                    ]
+        fallback = [
+            Encoding(["Non Return To Zero (NRZ)"]),
+            Encoding(["Non Return To Zero + Invert", settings.DECODING_INVERT]),
+            Encoding(["Manchester I", settings.DECODING_EDGE]),
+            Encoding(
+                ["Manchester II", settings.DECODING_EDGE, settings.DECODING_INVERT]
+            ),
+            Encoding(
+                [
+                    "Differential Manchester",
+                    settings.DECODING_EDGE,
+                    settings.DECODING_DIFFERENTIAL,
+                ]
+            ),
+        ]
 
         try:
             f = open(os.path.join(prefix, settings.DECODINGS_FILE), "r")
@@ -171,7 +176,7 @@ class ProjectManager(QObject):
                 value = dev_tag.text
 
             if dev_tag.tag == "bit_len":
-                target_dict["samples_per_symbol"] = value   # legacy
+                target_dict["samples_per_symbol"] = value  # legacy
             else:
                 target_dict[dev_tag.tag] = value
 
@@ -184,15 +189,25 @@ class ProjectManager(QObject):
         return result
 
     def simulator_rx_conf_to_xml(self) -> ET.Element:
-        return self.__device_conf_dict_to_xml("simulator_rx_conf", self.simulator_rx_conf)
+        return self.__device_conf_dict_to_xml(
+            "simulator_rx_conf", self.simulator_rx_conf
+        )
 
     def simulator_tx_conf_to_xml(self) -> ET.Element:
-        return self.__device_conf_dict_to_xml("simulator_tx_conf", self.simulator_tx_conf)
+        return self.__device_conf_dict_to_xml(
+            "simulator_tx_conf", self.simulator_tx_conf
+        )
 
     def read_parameters(self, root):
-        self.read_device_conf_dict(root.find("device_conf"), target_dict=self.device_conf)
-        self.read_device_conf_dict(root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf)
-        self.read_device_conf_dict(root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf)
+        self.read_device_conf_dict(
+            root.find("device_conf"), target_dict=self.device_conf
+        )
+        self.read_device_conf_dict(
+            root.find("simulator_rx_conf"), target_dict=self.simulator_rx_conf
+        )
+        self.read_device_conf_dict(
+            root.find("simulator_tx_conf"), target_dict=self.simulator_tx_conf
+        )
 
         self.description = root.get("description", "").replace(self.NEWLINE_CODE, "\n")
         self.broadcast_address_hex = root.get("broadcast_address_hex", "ffff")
@@ -204,7 +219,9 @@ class ProjectManager(QObject):
         tree = ET.parse(self.project_file)
         root = tree.getroot()
         result = []
-        for msg_type_tag in root.find("protocol").find("message_types").findall("message_type"):
+        for msg_type_tag in (
+            root.find("protocol").find("message_types").findall("message_type")
+        ):
             result.append(MessageType.from_xml(msg_type_tag))
 
         return result
@@ -220,10 +237,13 @@ class ProjectManager(QObject):
         collapse_project_tabs = False
         if not os.path.isfile(self.project_file):
             if ask_for_new_project:
-                reply = QMessageBox.question(self.main_controller, "Project File",
-                                             "Do you want to create a Project File for this folder?\n"
-                                             "If you chose No, you can do it later via File->Convert Folder to Project.",
-                                             QMessageBox.Yes | QMessageBox.No)
+                reply = QMessageBox.question(
+                    self.main_controller,
+                    "Project File",
+                    "Do you want to create a Project File for this folder?\n"
+                    "If you chose No, you can do it later via File->Convert Folder to Project.",
+                    QMessageBox.Yes | QMessageBox.No,
+                )
 
                 if reply == QMessageBox.Yes:
                     self.main_controller.show_project_settings()
@@ -243,15 +263,20 @@ class ProjectManager(QObject):
             self.modulation_was_edited = bool(int(root.get("modulation_was_edited", 0)))
             cfc = self.main_controller.compare_frame_controller
             self.read_parameters(root)
-            self.participants[:] = Participant.read_participants_from_xml_tag(xml_tag=root.find("protocol"))
+            self.participants[:] = Participant.read_participants_from_xml_tag(
+                xml_tag=root.find("protocol")
+            )
             self.main_controller.add_files(self.read_opened_filenames())
             self.read_compare_frame_groups(root)
             self.decodings = Encoding.read_decoders_from_xml_tag(root.find("protocol"))
 
             cfc.proto_analyzer.message_types[:] = self.read_message_types()
             cfc.message_type_table_model.update()
-            cfc.proto_analyzer.from_xml_tag(root=root.find("protocol"), participants=self.participants,
-                                            decodings=cfc.decodings)
+            cfc.proto_analyzer.from_xml_tag(
+                root=root.find("protocol"),
+                participants=self.participants,
+                decodings=cfc.decodings,
+            )
 
             cfc.updateUI()
 
@@ -263,7 +288,9 @@ class ProjectManager(QObject):
                 logger.exception(e)
 
             self.modulators = self.read_modulators_from_project_file()
-            self.main_controller.simulator_tab_controller.load_config_from_xml_tag(root.find("simulator_config"))
+            self.main_controller.simulator_tab_controller.load_config_from_xml_tag(
+                root.find("simulator_config")
+            )
 
         if len(self.project_path) > 0 and self.project_file is None:
             self.main_controller.ui.actionConvert_Folder_to_Project.setEnabled(True)
@@ -273,7 +300,10 @@ class ProjectManager(QObject):
         self.main_controller.adjust_for_current_file(path)
         self.main_controller.filemodel.setRootPath(path)
         self.main_controller.ui.fileTree.setRootIndex(
-            self.main_controller.file_proxy_model.mapFromSource(self.main_controller.filemodel.index(path)))
+            self.main_controller.file_proxy_model.mapFromSource(
+                self.main_controller.filemodel.index(path)
+            )
+        )
         self.main_controller.ui.fileTree.setToolTip(path)
         self.main_controller.ui.splitter.setSizes([1, 1])
         if collapse_project_tabs:
@@ -375,7 +405,7 @@ class ProjectManager(QObject):
             return
 
         # Recreate file
-        open(self.project_file, 'w').close()
+        open(self.project_file, "w").close()
         root = ET.Element("UniversalRadioHackerProject")
         tree = ET.ElementTree(root)
         tree.write(self.project_file)
@@ -389,12 +419,17 @@ class ProjectManager(QObject):
         root.append(self.simulator_rx_conf_to_xml())
         root.append(self.simulator_tx_conf_to_xml())
         root.set("description", str(self.description).replace("\n", self.NEWLINE_CODE))
-        root.set("collapse_project_tabs", str(int(not self.main_controller.ui.tabParticipants.isVisible())))
+        root.set(
+            "collapse_project_tabs",
+            str(int(not self.main_controller.ui.tabParticipants.isVisible())),
+        )
         root.set("modulation_was_edited", str(int(self.modulation_was_edited)))
         root.set("broadcast_address_hex", str(self.broadcast_address_hex))
 
         open_files = []
-        for i, sf in enumerate(self.main_controller.signal_tab_controller.signal_frames):
+        for i, sf in enumerate(
+            self.main_controller.signal_tab_controller.signal_frames
+        ):
             self.write_signal_information_to_project_file(sf.signal, tree=tree)
             try:
                 pf = self.main_controller.signal_protocol_dict[sf]
@@ -434,15 +469,23 @@ class ProjectManager(QObject):
                 if proto_frame.filename:
                     proto_tag = ET.SubElement(group_tag, "cf_protocol")
                     try:
-                        rel_file_name = os.path.relpath(proto_frame.filename, self.project_path)
+                        rel_file_name = os.path.relpath(
+                            proto_frame.filename, self.project_path
+                        )
                     except ValueError:
                         rel_file_name = proto_frame.filename
 
                     proto_tag.set("filename", rel_file_name)
 
-        root.append(cfc.proto_analyzer.to_xml_tag(decodings=cfc.decodings, participants=self.participants,
-                                                  messages=[msg for proto in cfc.full_protocol_list for msg in
-                                                            proto.messages]))
+        root.append(
+            cfc.proto_analyzer.to_xml_tag(
+                decodings=cfc.decodings,
+                participants=self.participants,
+                messages=[
+                    msg for proto in cfc.full_protocol_list for msg in proto.messages
+                ],
+            )
+        )
 
         if simulator_config is not None:
             root.append(simulator_config.save_to_xml())
@@ -492,25 +535,37 @@ class ProjectManager(QObject):
             if sig_tag.attrib["filename"] == signal_filename:
                 signal.name = sig_tag.attrib["name"]
                 center = sig_tag.get("qad_center", None)  # legacy support
-                signal.center = float(sig_tag.get("center", 0)) if center is None else float(center)
+                signal.center = (
+                    float(sig_tag.get("center", 0)) if center is None else float(center)
+                )
                 signal.center_spacing = float(sig_tag.get("center_spacing", 0.1))
                 signal.tolerance = int(sig_tag.get("tolerance", 5))
                 signal.bits_per_symbol = int(sig_tag.get("bits_per_symbol", 1))
-                signal.costas_loop_bandwidth = float(sig_tag.get("costas_loop_bandwidth", 0.1))
+                signal.costas_loop_bandwidth = float(
+                    sig_tag.get("costas_loop_bandwidth", 0.1)
+                )
 
                 signal.noise_threshold = float(sig_tag.get("noise_threshold", 0.1))
                 signal.sample_rate = float(sig_tag.get("sample_rate", 1e6))
-                signal.samples_per_symbol = int(sig_tag.get("bit_length", 0))   # Legacy for old project files
+                signal.samples_per_symbol = int(
+                    sig_tag.get("bit_length", 0)
+                )  # Legacy for old project files
                 if signal.samples_per_symbol == 0:
-                    signal.samples_per_symbol = int(sig_tag.get("samples_per_symbol", 100))
+                    signal.samples_per_symbol = int(
+                        sig_tag.get("samples_per_symbol", 100)
+                    )
 
                 try:
                     # Legacy support when modulation type was integer
-                    signal.modulation_type = Signal.MODULATION_TYPES[int(sig_tag.get("modulation_type", 0))]
+                    signal.modulation_type = Signal.MODULATION_TYPES[
+                        int(sig_tag.get("modulation_type", 0))
+                    ]
                 except (ValueError, IndexError):
                     signal.modulation_type = sig_tag.get("modulation_type", "ASK")
                 signal.pause_threshold = int(sig_tag.get("pause_threshold", 8))
-                signal.message_length_divisor = int(sig_tag.get("message_length_divisor", 1))
+                signal.message_length_divisor = int(
+                    sig_tag.get("message_length_divisor", 1)
+                )
                 break
 
         return True
@@ -525,7 +580,9 @@ class ProjectManager(QObject):
                 pos = int(file_tag.attrib["position"])
                 filename = file_tag.attrib["name"]
                 if not os.path.isfile(filename):
-                    filename = os.path.normpath(os.path.join(self.project_path, filename))
+                    filename = os.path.normpath(
+                        os.path.join(self.project_path, filename)
+                    )
                 file_names.insert(pos, filename)
 
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -535,7 +592,9 @@ class ProjectManager(QObject):
         return []
 
     def read_compare_frame_groups(self, root):
-        proto_tree_model = self.main_controller.compare_frame_controller.proto_tree_model
+        proto_tree_model = (
+            self.main_controller.compare_frame_controller.proto_tree_model
+        )
         tree_root = proto_tree_model.rootItem
         pfi = proto_tree_model.protocol_tree_items
         proto_frame_items = [item for item in pfi[0]]  # type:  list[ProtocolTreeItem]
@@ -554,9 +613,17 @@ class ProjectManager(QObject):
             for proto_tag in group_tag.iter("cf_protocol"):
                 filename = proto_tag.attrib["filename"]
                 if not os.path.isfile(filename):
-                    filename = os.path.normpath(os.path.join(self.project_path, filename))
+                    filename = os.path.normpath(
+                        os.path.join(self.project_path, filename)
+                    )
                 try:
-                    proto_frame_item = next((p for p in proto_frame_items if p.protocol.filename == filename))
+                    proto_frame_item = next(
+                        (
+                            p
+                            for p in proto_frame_items
+                            if p.protocol.filename == filename
+                        )
+                    )
                 except StopIteration:
                     proto_frame_item = None
 
@@ -569,14 +636,20 @@ class ProjectManager(QObject):
 
     def from_dialog(self, dialog):
         if dialog.committed:
-            if dialog.new_project or not os.path.isfile(os.path.join(dialog.path, settings.PROJECT_FILE)):
-                self.set_project_folder(dialog.path, ask_for_new_project=False, close_all=False)
+            if dialog.new_project or not os.path.isfile(
+                os.path.join(dialog.path, settings.PROJECT_FILE)
+            ):
+                self.set_project_folder(
+                    dialog.path, ask_for_new_project=False, close_all=False
+                )
             self.device_conf["frequency"] = dialog.freq
             self.device_conf["sample_rate"] = dialog.sample_rate
             self.device_conf["gain"] = dialog.gain
             self.device_conf["bandwidth"] = dialog.bandwidth
             self.description = dialog.description
-            self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(" ", "")
+            self.broadcast_address_hex = dialog.broadcast_address_hex.lower().replace(
+                " ", ""
+            )
             if dialog.new_project:
                 self.participants[:] = dialog.participants
             self.project_updated.emit()

@@ -34,9 +34,15 @@ class FilterDialog(QDialog):
             self.ui.lineEditCustomTaps.setEnabled(True)
 
     def create_connects(self):
-        self.ui.radioButtonMovingAverage.clicked.connect(self.on_radio_button_moving_average_clicked)
-        self.ui.radioButtonCustomTaps.clicked.connect(self.on_radio_button_custom_taps_clicked)
-        self.ui.radioButtonDCcorrection.clicked.connect(self.on_radio_button_dc_correction_clicked)
+        self.ui.radioButtonMovingAverage.clicked.connect(
+            self.on_radio_button_moving_average_clicked
+        )
+        self.ui.radioButtonCustomTaps.clicked.connect(
+            self.on_radio_button_custom_taps_clicked
+        )
+        self.ui.radioButtonDCcorrection.clicked.connect(
+            self.on_radio_button_dc_correction_clicked
+        )
 
         self.ui.spinBoxNumTaps.valueChanged.connect(self.set_error_status)
         self.ui.lineEditCustomTaps.textEdited.connect(self.set_error_status)
@@ -46,7 +52,9 @@ class FilterDialog(QDialog):
     def build_filter(self) -> Filter:
         if self.ui.radioButtonMovingAverage.isChecked():
             n = self.ui.spinBoxNumTaps.value()
-            return Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
+            return Filter(
+                [1 / n for _ in range(n)], filter_type=FilterType.moving_average
+            )
         elif self.ui.radioButtonDCcorrection.isChecked():
             return Filter([], filter_type=FilterType.dc_correction)
         else:
@@ -72,7 +80,9 @@ class FilterDialog(QDialog):
             self.ui.lineEditCustomTaps.setToolTip(self.error_message)
         elif len(dsp_filter.taps) != self.ui.spinBoxNumTaps.value():
             self.ui.lineEditCustomTaps.setStyleSheet("background: yellow")
-            self.ui.lineEditCustomTaps.setToolTip("The number of the filter taps does not match the configured number of taps. I will use your configured filter taps.")
+            self.ui.lineEditCustomTaps.setToolTip(
+                "The number of the filter taps does not match the configured number of taps. I will use your configured filter taps."
+            )
         else:
             self.ui.lineEditCustomTaps.setStyleSheet("")
             self.ui.lineEditCustomTaps.setToolTip("")

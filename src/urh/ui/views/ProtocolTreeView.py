@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QItemSelection, pyqtSlot
 from PyQt5.QtCore import pyqtSignal, QItemSelectionModel, Qt
 from PyQt5.QtGui import QContextMenuEvent, QDropEvent, QIcon
-from PyQt5.QtWidgets import  QTreeView, QAbstractItemView, QMenu
+from PyQt5.QtWidgets import QTreeView, QAbstractItemView, QMenu
 
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 
@@ -35,8 +35,13 @@ class ProtocolTreeView(QTreeView):
         new_group_action.triggered.connect(self.on_new_group_action_triggered)
 
         item = self.model().getItem(self.indexAt(self.context_menu_pos))
-        selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
-        selected_protocols = [item.protocol for item in selected_items if not item.is_group]
+        selected_items = [
+            self.model().getItem(index)
+            for index in self.selectionModel().selectedIndexes()
+        ]
+        selected_protocols = [
+            item.protocol for item in selected_items if not item.is_group
+        ]
         self.move_to_group_actions.clear()
 
         if item.is_group:
@@ -58,14 +63,18 @@ class ProtocolTreeView(QTreeView):
                 for i in other_groups:
                     group_name = self.model().rootItem.child(i).data()
                     move_to_group_action = move_to_group_menu.addAction(group_name)
-                    move_to_group_action.triggered.connect(self.on_move_to_group_action_triggered)
+                    move_to_group_action.triggered.connect(
+                        self.on_move_to_group_action_triggered
+                    )
                     self.move_to_group_actions[move_to_group_action] = i
 
         if item != self.model().rootItem:
             menu.addSeparator()
             sort_group_elements_action = menu.addAction("Sort Group Elements")
             sort_group_elements_action.setIcon(QIcon.fromTheme("view-sort-ascending"))
-            sort_group_elements_action.triggered.connect(self.on_sort_group_elements_action_triggered)
+            sort_group_elements_action.triggered.connect(
+                self.on_sort_group_elements_action_triggered
+            )
 
         return menu
 
@@ -93,14 +102,22 @@ class ProtocolTreeView(QTreeView):
 
     @pyqtSlot()
     def on_move_to_group_action_triggered(self):
-        selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
+        selected_items = [
+            self.model().getItem(index)
+            for index in self.selectionModel().selectedIndexes()
+        ]
         i = self.move_to_group_actions[self.sender()]
         self.model().move_to_group(selected_items, i)
 
     @pyqtSlot()
     def on_close_action_triggered(self):
-        selected_items = [self.model().getItem(index) for index in self.selectionModel().selectedIndexes()]
-        selected_protocols = [item.protocol for item in selected_items if not item.is_group]
+        selected_items = [
+            self.model().getItem(index)
+            for index in self.selectionModel().selectedIndexes()
+        ]
+        selected_protocols = [
+            item.protocol for item in selected_items if not item.is_group
+        ]
         self.close_wanted.emit(selected_protocols)
 
     @pyqtSlot()

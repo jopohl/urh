@@ -11,7 +11,7 @@ from PyQt5.QtGui import QPalette, QIcon, QColor
 from PyQt5.QtWidgets import QApplication, QWidget, QStyleFactory
 
 try:
-    locale.setlocale(locale.LC_ALL, '')
+    locale.setlocale(locale.LC_ALL, "")
 except locale.Error as e:
     print("Ignoring locale error {}".format(e))
 
@@ -30,19 +30,33 @@ def fix_windows_stdout_stderr():
             sys.stdout.write("\n")
             sys.stdout.flush()
         except:
+
             class DummyStream(object):
-                def __init__(self): pass
+                def __init__(self):
+                    pass
 
-                def write(self, data): pass
+                def write(self, data):
+                    pass
 
-                def read(self, data): pass
+                def read(self, data):
+                    pass
 
-                def flush(self): pass
+                def flush(self):
+                    pass
 
-                def close(self): pass
+                def close(self):
+                    pass
 
-            sys.stdout, sys.stderr, sys.stdin = DummyStream(), DummyStream(), DummyStream()
-            sys.__stdout__, sys.__stderr__, sys.__stdin__ = DummyStream(), DummyStream(), DummyStream()
+            sys.stdout, sys.stderr, sys.stdin = (
+                DummyStream(),
+                DummyStream(),
+                DummyStream(),
+            )
+            sys.__stdout__, sys.__stderr__, sys.__stdin__ = (
+                DummyStream(),
+                DummyStream(),
+                DummyStream(),
+            )
 
 
 def main():
@@ -52,32 +66,39 @@ def main():
         print("You need at least Python 3.4 for this application!")
         sys.exit(1)
 
-    urh_exe = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
+    urh_exe = sys.executable if hasattr(sys, "frozen") else sys.argv[0]
     urh_exe = os.readlink(urh_exe) if os.path.islink(urh_exe) else urh_exe
 
     urh_dir = os.path.join(os.path.dirname(os.path.realpath(urh_exe)), "..", "..")
     prefix = os.path.abspath(os.path.normpath(urh_dir))
 
     src_dir = os.path.join(prefix, "src")
-    if os.path.exists(src_dir) and not prefix.startswith("/usr") and not re.match(r"(?i)c:\\program", prefix):
+    if (
+        os.path.exists(src_dir)
+        and not prefix.startswith("/usr")
+        and not re.match(r"(?i)c:\\program", prefix)
+    ):
         # Started locally, not installed -> add directory to path
         sys.path.insert(0, src_dir)
 
     if len(sys.argv) > 1 and sys.argv[1] == "--version":
         import urh.version
+
         print(urh.version.VERSION)
         sys.exit(0)
 
-    if GENERATE_UI and not hasattr(sys, 'frozen'):
+    if GENERATE_UI and not hasattr(sys, "frozen"):
         try:
             sys.path.insert(0, prefix)
             from data import generate_ui
+
             generate_ui.gen()
         except (ImportError, FileNotFoundError):
             # The generate UI script cannot be found so we are most likely in release mode, no problem here.
             pass
 
     from urh.util import util
+
     util.set_shared_library_path()
 
     try:
@@ -93,6 +114,7 @@ def main():
         os.chdir(os.path.join(src_dir, "urh", "cythonext"))
 
         from urh.cythonext import build
+
         build.main()
 
         os.chdir(old_dir)
@@ -101,7 +123,7 @@ def main():
     from urh import settings
 
     if settings.read("theme_index", 0, int) > 0:
-        os.environ['QT_QPA_PLATFORMTHEME'] = 'fusion'
+        os.environ["QT_QPA_PLATFORMTHEME"] = "fusion"
 
     app = QApplication(["URH"] + sys.argv[1:])
     app.setWindowIcon(QIcon(":/icons/icons/appicon.png"))
@@ -164,6 +186,7 @@ def main():
     if sys.platform == "win32":
         # Ensure we get the app icon in windows taskbar
         import ctypes
+
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("jopohl.urh")
 
     if settings.read("MainController/geometry", type=bytes):
@@ -179,7 +202,9 @@ def main():
 
     return_code = app.exec_()
     app.closeAllWindows()
-    os._exit(return_code)  # sys.exit() is not enough on Windows and will result in crash on exit
+    os._exit(
+        return_code
+    )  # sys.exit() is not enough on Windows and will result in crash on exit
 
 
 if __name__ == "__main__":

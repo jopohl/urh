@@ -66,8 +66,12 @@ class TestDecoding(unittest.TestCase):
         decoded, err, _ = e.code_cut(True, received)
         self.assertEqual(decoded, expected_result)
 
-        received = e.str2bit("11010101010101010101010101010101011101001110010101110100111001010000100011011111110000100001011100101010101111101111010000001110101111010000100000110100000010011011110101100100011110000100011011100010100111100000000000000000")
-        expected_result = e.str2bit("1010101010101010101010101010101011101001110010101110100111001010000100011011111110000100001011100101010101111101111010000001110101111010000100000110100000010011011110101100100011110000100011011100010100111100000000000000000")
+        received = e.str2bit(
+            "11010101010101010101010101010101011101001110010101110100111001010000100011011111110000100001011100101010101111101111010000001110101111010000100000110100000010011011110101100100011110000100011011100010100111100000000000000000"
+        )
+        expected_result = e.str2bit(
+            "1010101010101010101010101010101011101001110010101110100111001010000100011011111110000100001011100101010101111101111010000001110101111010000100000110100000010011011110101100100011110000100011011100010100111100000000000000000"
+        )
         e.cutmode = 0
         e.cutmark = e.str2bit("10101010101010101010101010101010")
         decoded, err, _ = e.code_cut(True, received)
@@ -88,8 +92,18 @@ class TestDecoding(unittest.TestCase):
         self.assertIn(eof, received)
 
         # Preamble/SOF/EOF remain unchanged
-        expected_result = preamble + sof + "01100001 00000000 00000010 11000001 11000000 00100100" + eof
-        expected_result2 = preamble + sof + "01010000 00000000 00000010 11000001 11000000 00100010" + eof
+        expected_result = (
+            preamble
+            + sof
+            + "01100001 00000000 00000010 11000001 11000000 00100100"
+            + eof
+        )
+        expected_result2 = (
+            preamble
+            + sof
+            + "01010000 00000000 00000010 11000001 11000000 00100010"
+            + eof
+        )
 
         decoded, err, _ = e.code_enocean(True, e.str2bit(received.replace(" ", "")))
         self.assertEqual(err, 0)
@@ -161,14 +175,19 @@ class TestDecoding(unittest.TestCase):
 
     def test_substitution(self):
         e = Encoding()
-        e.src = [array.array("B", [True, True, True, False]), array.array("B", [True, False, False, False])]
+        e.src = [
+            array.array("B", [True, True, True, False]),
+            array.array("B", [True, False, False, False]),
+        ]
         e.dst = [array.array("B", [True]), array.array("B", [False])]
 
         # encoded-string with 3 missing trailing zeroes
         encoded = e.str2bit(
-            "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001")
+            "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001"
+        )
         compare = e.str2bit(
-            "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001000")
+            "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001000"
+        )
         decoded, err, _ = e.code_substitution(decoding=True, inpt=encoded)
         reencoded, _, _ = e.code_substitution(decoding=False, inpt=decoded)
         self.assertEqual(err, 3)
@@ -181,11 +200,15 @@ class TestDecoding(unittest.TestCase):
         encoder = '{} "{}"'.format(sys.executable, encoder)
         decoder = '{} "{}"'.format(sys.executable, decoder)
 
-        e = Encoding(["test external", settings.DECODING_EXTERNAL, decoder + ";" + encoder])
+        e = Encoding(
+            ["test external", settings.DECODING_EXTERNAL, decoder + ";" + encoder]
+        )
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
         encoded = e.encode(data)
-        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+        self.assertEqual(
+            encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1])
+        )
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
@@ -203,15 +226,26 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
-        encoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, encoder_in_dir_with_spaces)
-        decoder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, decoder_in_dir_with_spaces)
+        encoder_in_dir_with_spaces = '{} "{}"'.format(
+            sys.executable, encoder_in_dir_with_spaces
+        )
+        decoder_in_dir_with_spaces = '{} "{}"'.format(
+            sys.executable, decoder_in_dir_with_spaces
+        )
 
-        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
-                      decoder_in_dir_with_spaces + ";" + encoder_in_dir_with_spaces])
+        e = Encoding(
+            [
+                "test external with spaces",
+                settings.DECODING_EXTERNAL,
+                decoder_in_dir_with_spaces + ";" + encoder_in_dir_with_spaces,
+            ]
+        )
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
         encoded = e.encode(data)
-        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+        self.assertEqual(
+            encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1])
+        )
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
@@ -232,14 +266,23 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
-        coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
+        coder_in_dir_with_spaces = '{} "{}"'.format(
+            sys.executable, coder_in_dir_with_spaces
+        )
 
-        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
-                      coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
+        e = Encoding(
+            [
+                "test external with spaces",
+                settings.DECODING_EXTERNAL,
+                coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e",
+            ]
+        )
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
         encoded = e.encode(data)
-        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+        self.assertEqual(
+            encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1])
+        )
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
@@ -248,7 +291,9 @@ class TestDecoding(unittest.TestCase):
         code = get_path_for_data_file("code.py")
         encoder = get_path_for_data_file("encode.py")
         decoder = get_path_for_data_file("decode.py")
-        dir_with_spaces = os.path.join(tempfile.gettempdir(), "directory", "with extra space")
+        dir_with_spaces = os.path.join(
+            tempfile.gettempdir(), "directory", "with extra space"
+        )
 
         os.makedirs(dir_with_spaces, exist_ok=True)
 
@@ -260,32 +305,53 @@ class TestDecoding(unittest.TestCase):
         shutil.copy(encoder, encoder_in_dir_with_spaces)
         shutil.copy(decoder, decoder_in_dir_with_spaces)
 
-        coder_in_dir_with_spaces = '{} "{}"'.format(sys.executable, coder_in_dir_with_spaces)
+        coder_in_dir_with_spaces = '{} "{}"'.format(
+            sys.executable, coder_in_dir_with_spaces
+        )
 
-        e = Encoding(["test external with spaces", settings.DECODING_EXTERNAL,
-                      coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e"])
+        e = Encoding(
+            [
+                "test external with spaces",
+                settings.DECODING_EXTERNAL,
+                coder_in_dir_with_spaces + " d" + ";" + coder_in_dir_with_spaces + " e",
+            ]
+        )
 
         data = array.array("B", [1, 0, 1, 0, 0, 1, 1])
         encoded = e.encode(data)
-        self.assertEqual(encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]))
+        self.assertEqual(
+            encoded, array.array("B", [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1])
+        )
 
         decoded = e.decode(encoded)
         self.assertEqual(decoded, data)
 
     def test_data_whitening(self):
         e = Encoding()
-        nrz1 = util.string2bits("101010101010101010101010101010101110100111001010111010011100101011110011101011001001010011101110100011001011100111100111101011111110011100101001111111110011000111010000010111010101011100")
-        nrz2 = util.string2bits("101010101010101010101010101010101110100111001010111010011100101011110001101011001011010000011101101101011101101110110011010010011010001010010010000101111001100111000100001001111110000000001000000010011")
+        nrz1 = util.string2bits(
+            "101010101010101010101010101010101110100111001010111010011100101011110011101011001001010011101110100011001011100111100111101011111110011100101001111111110011000111010000010111010101011100"
+        )
+        nrz2 = util.string2bits(
+            "101010101010101010101010101010101110100111001010111010011100101011110001101011001011010000011101101101011101101110110011010010011010001010010010000101111001100111000100001001111110000000001000000010011"
+        )
         de_whitened1, err, _ = e.code_data_whitening(True, nrz1)  # Decoding
         de_whitened2, err, _ = e.code_data_whitening(True, nrz2)  # Decoding
 
         e.cc1101_overwrite_crc = False
-        nrz1_, err, _ = e.code_data_whitening(False, de_whitened1)  # Encoding without overwriting CRC
-        nrz2_, err, _ = e.code_data_whitening(False, de_whitened2)  # Encoding without overwriting CRC
+        nrz1_, err, _ = e.code_data_whitening(
+            False, de_whitened1
+        )  # Encoding without overwriting CRC
+        nrz2_, err, _ = e.code_data_whitening(
+            False, de_whitened2
+        )  # Encoding without overwriting CRC
 
         e.cc1101_overwrite_crc = True
-        nrz1__, err, _ = e.code_data_whitening(False, de_whitened1)  # Encoding with overwriting CRC
-        nrz2__, err, _ = e.code_data_whitening(False, de_whitened2)  # Encoding with overwriting CRC
+        nrz1__, err, _ = e.code_data_whitening(
+            False, de_whitened1
+        )  # Encoding with overwriting CRC
+        nrz2__, err, _ = e.code_data_whitening(
+            False, de_whitened2
+        )  # Encoding with overwriting CRC
 
         self.assertEqual(nrz1, nrz1_)
         self.assertEqual(nrz1, nrz1__)

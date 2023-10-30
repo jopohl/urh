@@ -66,7 +66,9 @@ class Ui_ChecksumOptions(object):
         self.btnRemoveRange.setIcon(icon)
         self.btnRemoveRange.setObjectName("btnRemoveRange")
         self.verticalLayout.addWidget(self.btnRemoveRange)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.gridLayout_2.addWidget(self.groupBox, 7, 0, 1, 2)
@@ -104,7 +106,7 @@ class Ui_ChecksumOptions(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.page_wsp)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label_6 = QtWidgets.QLabel(self.page_wsp)
-        self.label_6.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.label_6.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_6.setWordWrap(True)
         self.label_6.setObjectName("label_6")
         self.verticalLayout_2.addWidget(self.label_6)
@@ -120,18 +122,24 @@ class Ui_ChecksumOptions(object):
         self.radioButtonWSPCRC8 = QtWidgets.QRadioButton(self.page_wsp)
         self.radioButtonWSPCRC8.setObjectName("radioButtonWSPCRC8")
         self.verticalLayout_2.addWidget(self.radioButtonWSPCRC8)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_2.addItem(spacerItem1)
         self.stackedWidget.addWidget(self.page_wsp)
         self.verticalLayout_3.addWidget(self.stackedWidget)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 107, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 107, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_3.addItem(spacerItem2)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 2)
 
         self.retranslateUi(ChecksumOptions)
         self.stackedWidget.setCurrentIndex(0)
-        ChecksumOptions.setTabOrder(self.comboBoxCRCFunction, self.lineEditCRCPolynomial)
+        ChecksumOptions.setTabOrder(
+            self.comboBoxCRCFunction, self.lineEditCRCPolynomial
+        )
         ChecksumOptions.setTabOrder(self.lineEditCRCPolynomial, self.lineEditStartValue)
         ChecksumOptions.setTabOrder(self.lineEditStartValue, self.lineEditFinalXOR)
         ChecksumOptions.setTabOrder(self.lineEditFinalXOR, self.tableViewDataRanges)
@@ -139,27 +147,57 @@ class Ui_ChecksumOptions(object):
         ChecksumOptions.setTabOrder(self.btnAddRange, self.radioButtonWSPAuto)
         ChecksumOptions.setTabOrder(self.radioButtonWSPAuto, self.btnRemoveRange)
         ChecksumOptions.setTabOrder(self.btnRemoveRange, self.radioButtonWSPChecksum4)
-        ChecksumOptions.setTabOrder(self.radioButtonWSPChecksum4, self.radioButtonWSPChecksum8)
-        ChecksumOptions.setTabOrder(self.radioButtonWSPChecksum8, self.radioButtonWSPCRC8)
+        ChecksumOptions.setTabOrder(
+            self.radioButtonWSPChecksum4, self.radioButtonWSPChecksum8
+        )
+        ChecksumOptions.setTabOrder(
+            self.radioButtonWSPChecksum8, self.radioButtonWSPCRC8
+        )
 
     def retranslateUi(self, ChecksumOptions):
         _translate = QtCore.QCoreApplication.translate
-        ChecksumOptions.setWindowTitle(_translate("ChecksumOptions", "Configure Checksum"))
+        ChecksumOptions.setWindowTitle(
+            _translate("ChecksumOptions", "Configure Checksum")
+        )
         self.label_4.setText(_translate("ChecksumOptions", "Checksum category:"))
         self.comboBoxCategory.setItemText(0, _translate("ChecksumOptions", "CRC"))
-        self.comboBoxCategory.setItemText(1, _translate("ChecksumOptions", "Wireless Short Packet Checksum"))
+        self.comboBoxCategory.setItemText(
+            1, _translate("ChecksumOptions", "Wireless Short Packet Checksum")
+        )
         self.label_5.setText(_translate("ChecksumOptions", "CRC polynomial (hex):"))
-        self.groupBox.setTitle(_translate("ChecksumOptions", "Configure data ranges for CRC"))
+        self.groupBox.setTitle(
+            _translate("ChecksumOptions", "Configure data ranges for CRC")
+        )
         self.btnAddRange.setText(_translate("ChecksumOptions", "..."))
         self.btnRemoveRange.setText(_translate("ChecksumOptions", "..."))
         self.label_3.setText(_translate("ChecksumOptions", "CRC function:"))
         self.label_2.setText(_translate("ChecksumOptions", "Final XOR (hex):"))
         self.label.setText(_translate("ChecksumOptions", "Start value (hex):"))
-        self.label_crc_info.setText(_translate("ChecksumOptions", "<html><head/><body><p>Order=17</p><p>Length of checksum=16</p><p>start value length =16</p><p>final XOR length = 16</p><p>Polynomial = x<span style=\" vertical-align:super;\">1</span> + 4</p></body></html>"))
-        self.checkBoxRefIn.setText(_translate("ChecksumOptions", "RefIn (Reflect input)"))
-        self.checkBoxRefOut.setText(_translate("ChecksumOptions", "RefOut (Reflect output)"))
-        self.label_6.setText(_translate("ChecksumOptions", "<html><head/><body><p>The Wireless Short Packet (WSP) standard uses three different checksums. URH can automatically detect the used checksum algorithm from the message. However, you can enforce the usage of a certain checksum if you need to.</p><p>With <span style=\" font-weight:600;\">Automatic</span> setting, checksums are chosen by these rules:</p><p>1) 4 Bit Checksum - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)</p><p>2) 8 Bit Checksum: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 0</p><p>3) 8 Bit CRC: STATUS bit 2<span style=\" vertical-align:super;\">7</span> = 1</p></body></html>"))
-        self.radioButtonWSPAuto.setText(_translate("ChecksumOptions", "Automatic (recommended)"))
-        self.radioButtonWSPChecksum4.setText(_translate("ChecksumOptions", "Force Checksum4"))
-        self.radioButtonWSPChecksum8.setText(_translate("ChecksumOptions", "Force Checksum8"))
+        self.label_crc_info.setText(
+            _translate(
+                "ChecksumOptions",
+                '<html><head/><body><p>Order=17</p><p>Length of checksum=16</p><p>start value length =16</p><p>final XOR length = 16</p><p>Polynomial = x<span style=" vertical-align:super;">1</span> + 4</p></body></html>',
+            )
+        )
+        self.checkBoxRefIn.setText(
+            _translate("ChecksumOptions", "RefIn (Reflect input)")
+        )
+        self.checkBoxRefOut.setText(
+            _translate("ChecksumOptions", "RefOut (Reflect output)")
+        )
+        self.label_6.setText(
+            _translate(
+                "ChecksumOptions",
+                '<html><head/><body><p>The Wireless Short Packet (WSP) standard uses three different checksums. URH can automatically detect the used checksum algorithm from the message. However, you can enforce the usage of a certain checksum if you need to.</p><p>With <span style=" font-weight:600;">Automatic</span> setting, checksums are chosen by these rules:</p><p>1) 4 Bit Checksum - For Switch Telegram (RORG=5 or 6 and STATUS = 0x20 or 0x30)</p><p>2) 8 Bit Checksum: STATUS bit 2<span style=" vertical-align:super;">7</span> = 0</p><p>3) 8 Bit CRC: STATUS bit 2<span style=" vertical-align:super;">7</span> = 1</p></body></html>',
+            )
+        )
+        self.radioButtonWSPAuto.setText(
+            _translate("ChecksumOptions", "Automatic (recommended)")
+        )
+        self.radioButtonWSPChecksum4.setText(
+            _translate("ChecksumOptions", "Force Checksum4")
+        )
+        self.radioButtonWSPChecksum8.setText(
+            _translate("ChecksumOptions", "Force Checksum8")
+        )
         self.radioButtonWSPCRC8.setText(_translate("ChecksumOptions", "Force CRC8"))

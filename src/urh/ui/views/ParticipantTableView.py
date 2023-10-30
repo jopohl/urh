@@ -24,7 +24,9 @@ class ParticipantTableView(QTableView):
         if selection.isEmpty():
             return 0, self.model().columnCount() - 1
 
-        return min([rng.left() for rng in selection]), max([rng.right() for rng in selection])
+        return min([rng.left() for rng in selection]), max(
+            [rng.right() for rng in selection]
+        )
 
     def select(self, row_1, col_1, row_2, col_2):
         selection = QItemSelection()
@@ -52,9 +54,13 @@ class ParticipantTableView(QTableView):
             menu.addAction(self.remove_action)
             menu.addSeparator()
 
-            move_up = menu.addAction(QIcon.fromTheme("go-up"), "Move selected participants up")
+            move_up = menu.addAction(
+                QIcon.fromTheme("go-up"), "Move selected participants up"
+            )
             move_up.triggered.connect(self.on_move_up_action_triggered)
-            move_down = menu.addAction(QIcon.fromTheme("go-down"), "Move selected participants down")
+            move_down = menu.addAction(
+                QIcon.fromTheme("go-down"), "Move selected participants down"
+            )
             move_down.triggered.connect(self.on_move_down_action_triggered)
 
         return menu
@@ -72,9 +78,14 @@ class ParticipantTableView(QTableView):
         for row in range(n):
             self.closePersistentEditor(self.model().index(row, 3))
 
-        self.setItemDelegateForColumn(2, ComboBoxDelegate([""] * len(settings.PARTICIPANT_COLORS),
-                                                          colors=settings.PARTICIPANT_COLORS,
-                                                          parent=self))
+        self.setItemDelegateForColumn(
+            2,
+            ComboBoxDelegate(
+                [""] * len(settings.PARTICIPANT_COLORS),
+                colors=settings.PARTICIPANT_COLORS,
+                parent=self,
+            ),
+        )
         self.setItemDelegateForColumn(3, ComboBoxDelegate(items, parent=self))
 
         for row in range(n):
@@ -94,7 +105,7 @@ class ParticipantTableView(QTableView):
         col_start, col_end = self.selected_columns
         start, end = self.model().move_up(self.selectionModel().selection())
         if start is not None and end is not None:
-            self.select(start-1, col_start, end-1, col_end)
+            self.select(start - 1, col_start, end - 1, col_end)
 
     @pyqtSlot()
     def on_move_down_action_triggered(self):

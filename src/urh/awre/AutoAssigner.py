@@ -24,7 +24,9 @@ def auto_assign_participants(messages, participants):
         src_address = msg.get_src_address_from_data()
         if src_address:
             try:
-                msg.participant = next(p for p in participants if p.address_hex == src_address)
+                msg.participant = next(
+                    p for p in participants if p.address_hex == src_address
+                )
             except StopIteration:
                 pass
 

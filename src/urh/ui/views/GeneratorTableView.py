@@ -1,6 +1,16 @@
 from PyQt5.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragMoveEvent, QDragEnterEvent, QPainter, QBrush, QColor, QPen, QDropEvent, QDragLeaveEvent, \
-    QContextMenuEvent, QIcon
+from PyQt5.QtGui import (
+    QDragMoveEvent,
+    QDragEnterEvent,
+    QPainter,
+    QBrush,
+    QColor,
+    QPen,
+    QDropEvent,
+    QDragLeaveEvent,
+    QContextMenuEvent,
+    QIcon,
+)
 from PyQt5.QtWidgets import QActionGroup, QInputDialog
 
 from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
@@ -34,26 +44,44 @@ class GeneratorTableView(TableView):
         pos = event.pos()
         row = self.rowAt(pos.y())
 
-        index = self.model().createIndex(row, 0)  # this always get the default 0 column index
+        index = self.model().createIndex(
+            row, 0
+        )  # this always get the default 0 column index
 
         rect = self.visualRect(index)
         rect_left = self.visualRect(index.sibling(index.row(), 0))
-        rect_right = self.visualRect(index.sibling(index.row(),
-                                                   self.horizontalHeader().logicalIndex(
-                                                       self.model().columnCount() - 1)))  # in case section has been moved
+        rect_right = self.visualRect(
+            index.sibling(
+                index.row(),
+                self.horizontalHeader().logicalIndex(self.model().columnCount() - 1),
+            )
+        )  # in case section has been moved
 
         self.drop_indicator_position = self.position(event.pos(), rect)
 
         if self.drop_indicator_position == self.AboveItem:
-            self.drop_indicator_rect = QRect(rect_left.left(), rect_left.top(), rect_right.right() - rect_left.left(), 0)
+            self.drop_indicator_rect = QRect(
+                rect_left.left(),
+                rect_left.top(),
+                rect_right.right() - rect_left.left(),
+                0,
+            )
             event.accept()
         elif self.drop_indicator_position == self.BelowItem:
-            self.drop_indicator_rect = QRect(rect_left.left(), rect_left.bottom(), rect_right.right() - rect_left.left(),
-                                             0)
+            self.drop_indicator_rect = QRect(
+                rect_left.left(),
+                rect_left.bottom(),
+                rect_right.right() - rect_left.left(),
+                0,
+            )
             event.accept()
         elif self.drop_indicator_position == self.OnItem:
-            self.drop_indicator_rect = QRect(rect_left.left(), rect_left.bottom(), rect_right.right() - rect_left.left(),
-                                             0)
+            self.drop_indicator_rect = QRect(
+                rect_left.left(),
+                rect_left.bottom(),
+                rect_right.right() - rect_left.left(),
+                0,
+            )
             event.accept()
         else:
             self.drop_indicator_rect = QRect()
@@ -62,23 +90,38 @@ class GeneratorTableView(TableView):
         self.viewport().update()
 
     def __rect_for_row(self, row):
-        index = self.model().createIndex(row, 0)  # this always get the default 0 column index
+        index = self.model().createIndex(
+            row, 0
+        )  # this always get the default 0 column index
         # rect = self.visualRect(index)
         rect_left = self.visualRect(index.sibling(index.row(), 0))
-        rect_right = self.visualRect(index.sibling(index.row(),
-                                                   self.horizontalHeader().logicalIndex(
-                                                       self.model().columnCount() - 1)))  # in case section has been moved
-        return QRect(rect_left.left(), rect_left.bottom(), rect_right.right() - rect_left.left(), 0)
+        rect_right = self.visualRect(
+            index.sibling(
+                index.row(),
+                self.horizontalHeader().logicalIndex(self.model().columnCount() - 1),
+            )
+        )  # in case section has been moved
+        return QRect(
+            rect_left.left(),
+            rect_left.bottom(),
+            rect_right.right() - rect_left.left(),
+            0,
+        )
 
     def dropEvent(self, event: QDropEvent):
         self.drag_active = False
         row = self.rowAt(event.pos().y())
-        index = self.model().createIndex(row, 0)  # this always get the default 0 column index
+        index = self.model().createIndex(
+            row, 0
+        )  # this always get the default 0 column index
         rect = self.visualRect(index)
         drop_indicator_position = self.position(event.pos(), rect)
         if row == -1:
             row = self.model().row_count - 1
-        elif drop_indicator_position == self.BelowItem or drop_indicator_position == self.OnItem:
+        elif (
+            drop_indicator_position == self.BelowItem
+            or drop_indicator_position == self.OnItem
+        ):
             row += 1
 
         self.model().dropped_row = row
@@ -164,7 +207,9 @@ class GeneratorTableView(TableView):
         self.encoding_actions = {}
 
         if not self.selection_is_empty:
-            selected_encoding = self.model().protocol.messages[self.selected_rows[0]].decoder
+            selected_encoding = (
+                self.model().protocol.messages[self.selected_rows[0]].decoder
+            )
             for i in self.selected_rows:
                 if self.model().protocol.messages[i].decoder != selected_encoding:
                     selected_encoding = None
@@ -185,7 +230,9 @@ class GeneratorTableView(TableView):
                 ea.triggered.connect(self.on_encoding_action_triggered)
 
             menu.addSeparator()
-            de_bruijn_action = menu.addAction("Generate De Bruijn Sequence from Selection")
+            de_bruijn_action = menu.addAction(
+                "Generate De Bruijn Sequence from Selection"
+            )
             de_bruijn_action.triggered.connect(self.on_de_bruijn_action_triggered)
 
         return menu
@@ -201,7 +248,9 @@ class GeneratorTableView(TableView):
     @pyqtSlot()
     def on_encoding_action_triggered(self):
         for row in self.selected_rows:
-            self.model().protocol.messages[row].decoder = self.encoding_actions[self.sender()]
+            self.model().protocol.messages[row].decoder = self.encoding_actions[
+                self.sender()
+            ]
         self.encodings_updated.emit()
 
     @pyqtSlot()
@@ -217,7 +266,12 @@ class GeneratorTableView(TableView):
     @pyqtSlot()
     def on_add_message_action_triggered(self):
         row = self.rowAt(self.context_menu_pos.y())
-        num_bits, ok = QInputDialog.getInt(self, self.tr("How many bits shall the new message have?"),
-                                           self.tr("Number of bits:"), 42, 1)
+        num_bits, ok = QInputDialog.getInt(
+            self,
+            self.tr("How many bits shall the new message have?"),
+            self.tr("Number of bits:"),
+            42,
+            1,
+        )
         if ok:
             self.model().add_empty_row_behind(row, num_bits)

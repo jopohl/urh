@@ -14,7 +14,11 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(798, 469)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/appicon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/icons/icons/appicon.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         MainWindow.setWindowIcon(icon)
         MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         MainWindow.setDockNestingEnabled(False)
@@ -23,14 +27,16 @@ class Ui_MainWindow(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
-        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
-"}")
+        self.splitter.setStyleSheet(
+            "QSplitter::handle:horizontal {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
+            "}"
+        )
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
@@ -43,17 +49,23 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.lnEdtTreeFilter = QtWidgets.QLineEdit(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lnEdtTreeFilter.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lnEdtTreeFilter.sizePolicy().hasHeightForWidth()
+        )
         self.lnEdtTreeFilter.setSizePolicy(sizePolicy)
         self.lnEdtTreeFilter.setAcceptDrops(False)
         self.lnEdtTreeFilter.setInputMethodHints(QtCore.Qt.ImhDialableCharactersOnly)
         self.lnEdtTreeFilter.setClearButtonEnabled(True)
         self.lnEdtTreeFilter.setObjectName("lnEdtTreeFilter")
         self.horizontalLayout_3.addWidget(self.lnEdtTreeFilter)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_3.addItem(spacerItem)
         self.btnFileTreeGoUp = QtWidgets.QToolButton(self.layoutWidget)
         icon = QtGui.QIcon.fromTheme("go-up")
@@ -62,7 +74,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.btnFileTreeGoUp)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         self.fileTree = DirectoryTreeView(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(10)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.fileTree.sizePolicy().hasHeightForWidth())
@@ -79,10 +93,14 @@ class Ui_MainWindow(object):
         self.fileTree.header().setStretchLastSection(False)
         self.verticalLayout_3.addWidget(self.fileTree)
         self.tabWidget_Project = QtWidgets.QTabWidget(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tabWidget_Project.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tabWidget_Project.sizePolicy().hasHeightForWidth()
+        )
         self.tabWidget_Project.setSizePolicy(sizePolicy)
         self.tabWidget_Project.setStyleSheet("QTabWidget::pane { border: 0; }")
         self.tabWidget_Project.setObjectName("tabWidget_Project")
@@ -107,7 +125,9 @@ class Ui_MainWindow(object):
         self.tabWidget_Project.addTab(self.tabDescription, "")
         self.verticalLayout_3.addWidget(self.tabWidget_Project)
         self.tabWidget = QtWidgets.QTabWidget(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -194,7 +214,9 @@ class Ui_MainWindow(object):
         self.actionShow_Confirm_Close_Dialog = QtWidgets.QAction(MainWindow)
         self.actionShow_Confirm_Close_Dialog.setCheckable(True)
         self.actionShow_Confirm_Close_Dialog.setChecked(False)
-        self.actionShow_Confirm_Close_Dialog.setObjectName("actionShow_Confirm_Close_Dialog")
+        self.actionShow_Confirm_Close_Dialog.setObjectName(
+            "actionShow_Confirm_Close_Dialog"
+        )
         self.actionTest = QtWidgets.QAction(MainWindow)
         self.actionTest.setObjectName("actionTest")
         self.actionHold_Shift_to_Drag = QtWidgets.QAction(MainWindow)
@@ -232,7 +254,9 @@ class Ui_MainWindow(object):
         self.actionSeperate_Protocols_in_Compare_Frame = QtWidgets.QAction(MainWindow)
         self.actionSeperate_Protocols_in_Compare_Frame.setCheckable(True)
         self.actionSeperate_Protocols_in_Compare_Frame.setChecked(True)
-        self.actionSeperate_Protocols_in_Compare_Frame.setObjectName("actionSeperate_Protocols_in_Compare_Frame")
+        self.actionSeperate_Protocols_in_Compare_Frame.setObjectName(
+            "actionSeperate_Protocols_in_Compare_Frame"
+        )
         self.actionOpenArchive = QtWidgets.QAction(MainWindow)
         self.actionOpenArchive.setObjectName("actionOpenArchive")
         self.actionOpen = QtWidgets.QAction(MainWindow)
@@ -247,7 +271,9 @@ class Ui_MainWindow(object):
         self.actionShow_only_Compare_Frame = QtWidgets.QAction(MainWindow)
         self.actionShow_only_Compare_Frame.setCheckable(True)
         self.actionShow_only_Compare_Frame.setChecked(True)
-        self.actionShow_only_Compare_Frame.setObjectName("actionShow_only_Compare_Frame")
+        self.actionShow_only_Compare_Frame.setObjectName(
+            "actionShow_only_Compare_Frame"
+        )
         self.actionConfigurePlugins = QtWidgets.QAction(MainWindow)
         self.actionConfigurePlugins.setIconVisibleInMenu(True)
         self.actionConfigurePlugins.setObjectName("actionConfigurePlugins")
@@ -255,10 +281,16 @@ class Ui_MainWindow(object):
         self.actionSort_Frames_by_Name.setObjectName("actionSort_Frames_by_Name")
         self.actionConvert_Folder_to_Project = QtWidgets.QAction(MainWindow)
         self.actionConvert_Folder_to_Project.setIconVisibleInMenu(True)
-        self.actionConvert_Folder_to_Project.setObjectName("actionConvert_Folder_to_Project")
+        self.actionConvert_Folder_to_Project.setObjectName(
+            "actionConvert_Folder_to_Project"
+        )
         self.actionDecoding = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/icons/decoding.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/icons/icons/decoding.svg"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionDecoding.setIcon(icon1)
         self.actionDecoding.setObjectName("actionDecoding")
         self.actionRecord = QtWidgets.QAction(MainWindow)
@@ -268,7 +300,11 @@ class Ui_MainWindow(object):
         self.actionRecord.setObjectName("actionRecord")
         self.actionSpectrum_Analyzer = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/icons/spectrum.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/icons/icons/spectrum.svg"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionSpectrum_Analyzer.setIcon(icon2)
         self.actionSpectrum_Analyzer.setIconVisibleInMenu(True)
         self.actionSpectrum_Analyzer.setObjectName("actionSpectrum_Analyzer")
@@ -283,7 +319,11 @@ class Ui_MainWindow(object):
         self.actionNew_Project.setObjectName("actionNew_Project")
         self.actionSniff_protocol = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/icons/sniffer.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(":/icons/icons/sniffer.svg"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionSniff_protocol.setIcon(icon3)
         self.actionSniff_protocol.setObjectName("actionSniff_protocol")
         self.actionProject_settings = QtWidgets.QAction(MainWindow)
@@ -317,11 +357,15 @@ class Ui_MainWindow(object):
         self.actionAuto_detect_new_signals = QtWidgets.QAction(MainWindow)
         self.actionAuto_detect_new_signals.setCheckable(True)
         self.actionAuto_detect_new_signals.setChecked(True)
-        self.actionAuto_detect_new_signals.setObjectName("actionAuto_detect_new_signals")
+        self.actionAuto_detect_new_signals.setObjectName(
+            "actionAuto_detect_new_signals"
+        )
         self.actionAutomaticNoiseThreshold = QtWidgets.QAction(MainWindow)
         self.actionAutomaticNoiseThreshold.setCheckable(True)
         self.actionAutomaticNoiseThreshold.setChecked(True)
-        self.actionAutomaticNoiseThreshold.setObjectName("actionAutomaticNoiseThreshold")
+        self.actionAutomaticNoiseThreshold.setObjectName(
+            "actionAutomaticNoiseThreshold"
+        )
         self.action1NoiseThreshold = QtWidgets.QAction(MainWindow)
         self.action1NoiseThreshold.setCheckable(True)
         self.action1NoiseThreshold.setObjectName("action1NoiseThreshold")
@@ -380,17 +424,42 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Universal Radio Hacker"))
         self.lnEdtTreeFilter.setPlaceholderText(_translate("MainWindow", "Filter"))
         self.btnFileTreeGoUp.setText(_translate("MainWindow", "..."))
-        self.tabWidget_Project.setTabText(self.tabWidget_Project.indexOf(self.tabParticipants), _translate("MainWindow", "Participants"))
-        self.tabWidget_Project.setTabText(self.tabWidget_Project.indexOf(self.tabDescription), _translate("MainWindow", "Description"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_interpretation), _translate("MainWindow", "Interpretation"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_protocol), _translate("MainWindow", "Analysis"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_generator), _translate("MainWindow", "Generator"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_simulator), _translate("MainWindow", "Simulator"))
-        self.labelNonProjectMode.setText(_translate("MainWindow", "<html><head/><body><p>Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via File -&gt; <a href=\"open_new_project_dialog\"><span style=\" text-decoration: underline; color:#0000ff;\">New Project</span></a>. <a href=\"dont_show_non_project_again\"><span style=\" text-decoration: underline; color:#0000ff;\">Don\'t show this hint</span></a></p></body></html>"))
+        self.tabWidget_Project.setTabText(
+            self.tabWidget_Project.indexOf(self.tabParticipants),
+            _translate("MainWindow", "Participants"),
+        )
+        self.tabWidget_Project.setTabText(
+            self.tabWidget_Project.indexOf(self.tabDescription),
+            _translate("MainWindow", "Description"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_interpretation),
+            _translate("MainWindow", "Interpretation"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_protocol),
+            _translate("MainWindow", "Analysis"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_generator),
+            _translate("MainWindow", "Generator"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_simulator),
+            _translate("MainWindow", "Simulator"),
+        )
+        self.labelNonProjectMode.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p>Warning: You are running URH in non project mode. All your settings will be lost after closing the program. If you want to keep your settings create a project via File -&gt; <a href="open_new_project_dialog"><span style=" text-decoration: underline; color:#0000ff;">New Project</span></a>. <a href="dont_show_non_project_again"><span style=" text-decoration: underline; color:#0000ff;">Don\'t show this hint</span></a></p></body></html>',
+            )
+        )
         self.menuFile.setTitle(_translate("MainWindow", "Fi&le"))
         self.menuImport.setTitle(_translate("MainWindow", "Import"))
         self.menuEdit.setTitle(_translate("MainWindow", "Edi&t"))
-        self.menuDefault_noise_threshold.setTitle(_translate("MainWindow", "Default noise threshold"))
+        self.menuDefault_noise_threshold.setTitle(
+            _translate("MainWindow", "Default noise threshold")
+        )
         self.menuHelp.setTitle(_translate("MainWindow", "Hel&p"))
         self.actionFSK.setText(_translate("MainWindow", "Undo"))
         self.actionOOK.setText(_translate("MainWindow", "Redo"))
@@ -399,43 +468,75 @@ class Ui_MainWindow(object):
         self.actionAuto_Fit_Y.setText(_translate("MainWindow", "&Auto Fit Y"))
         self.actionUndo.setText(_translate("MainWindow", "&Undo"))
         self.actionRedo.setText(_translate("MainWindow", "&Redo"))
-        self.actionShow_Confirm_Close_Dialog.setText(_translate("MainWindow", "&Show Confirm Close Dialog"))
+        self.actionShow_Confirm_Close_Dialog.setText(
+            _translate("MainWindow", "&Show Confirm Close Dialog")
+        )
         self.actionTest.setText(_translate("MainWindow", "test"))
-        self.actionHold_Shift_to_Drag.setText(_translate("MainWindow", "&Hold Shift to Drag"))
+        self.actionHold_Shift_to_Drag.setText(
+            _translate("MainWindow", "&Hold Shift to Drag")
+        )
         self.actionDocumentation.setText(_translate("MainWindow", "&Documentation"))
-        self.actionAbout_AutomaticHacker.setText(_translate("MainWindow", "&About Universal Radio Hacker..."))
+        self.actionAbout_AutomaticHacker.setText(
+            _translate("MainWindow", "&About Universal Radio Hacker...")
+        )
         self.actionOpenSignal.setText(_translate("MainWindow", "&Signal"))
         self.actionOpenProtocol.setText(_translate("MainWindow", "&Protocol"))
-        self.actionShow_Compare_Frame.setText(_translate("MainWindow", "Show &Compare Frame"))
+        self.actionShow_Compare_Frame.setText(
+            _translate("MainWindow", "Show &Compare Frame")
+        )
         self.actionCloseAllFiles.setText(_translate("MainWindow", "&Close all files"))
         self.actionSaveAllSignals.setText(_translate("MainWindow", "&Save all signals"))
-        self.actionSeperate_Protocols_in_Compare_Frame.setText(_translate("MainWindow", "Separate &Protocols in Compare Frame"))
+        self.actionSeperate_Protocols_in_Compare_Frame.setText(
+            _translate("MainWindow", "Separate &Protocols in Compare Frame")
+        )
         self.actionOpenArchive.setText(_translate("MainWindow", "&Archive"))
         self.actionOpen.setText(_translate("MainWindow", "&Open..."))
         self.actionOpen_Folder.setText(_translate("MainWindow", "Open &Folder.."))
-        self.actionShow_only_Compare_Frame.setText(_translate("MainWindow", "Show Compare Frame only"))
+        self.actionShow_only_Compare_Frame.setText(
+            _translate("MainWindow", "Show Compare Frame only")
+        )
         self.actionConfigurePlugins.setText(_translate("MainWindow", "Configure..."))
-        self.actionSort_Frames_by_Name.setText(_translate("MainWindow", "Sort &Frames by Name"))
-        self.actionConvert_Folder_to_Project.setText(_translate("MainWindow", "Conv&ert Folder to Project"))
+        self.actionSort_Frames_by_Name.setText(
+            _translate("MainWindow", "Sort &Frames by Name")
+        )
+        self.actionConvert_Folder_to_Project.setText(
+            _translate("MainWindow", "Conv&ert Folder to Project")
+        )
         self.actionDecoding.setText(_translate("MainWindow", "&Decoding..."))
         self.actionRecord.setText(_translate("MainWindow", "&Record signal..."))
-        self.actionSpectrum_Analyzer.setText(_translate("MainWindow", "Spectrum &Analyzer..."))
+        self.actionSpectrum_Analyzer.setText(
+            _translate("MainWindow", "Spectrum &Analyzer...")
+        )
         self.actionOptions.setText(_translate("MainWindow", "&Options..."))
         self.actionNew_Project.setText(_translate("MainWindow", "&New Project.."))
-        self.actionSniff_protocol.setText(_translate("MainWindow", "Sn&iff protocol..."))
-        self.actionProject_settings.setText(_translate("MainWindow", "&Project settings..."))
+        self.actionSniff_protocol.setText(
+            _translate("MainWindow", "Sn&iff protocol...")
+        )
+        self.actionProject_settings.setText(
+            _translate("MainWindow", "&Project settings...")
+        )
         self.actionSave_project.setText(_translate("MainWindow", "Sa&ve project"))
         self.actionFullscreen_mode.setText(_translate("MainWindow", "&Fullscreen mode"))
         self.actionOpen_directory.setText(_translate("MainWindow", "Open &folder..."))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About &Qt"))
         self.actionShowFileTree.setText(_translate("MainWindow", "&Show file tree"))
-        self.actionSamples_from_csv.setText(_translate("MainWindow", "IQ samples from csv"))
+        self.actionSamples_from_csv.setText(
+            _translate("MainWindow", "IQ samples from csv")
+        )
         self.actionClose_project.setText(_translate("MainWindow", "Close project"))
-        self.actionAuto_detect_new_signals.setText(_translate("MainWindow", "Auto detect signals on loading"))
-        self.actionAutomaticNoiseThreshold.setText(_translate("MainWindow", "Automatic"))
+        self.actionAuto_detect_new_signals.setText(
+            _translate("MainWindow", "Auto detect signals on loading")
+        )
+        self.actionAutomaticNoiseThreshold.setText(
+            _translate("MainWindow", "Automatic")
+        )
         self.action1NoiseThreshold.setText(_translate("MainWindow", "1%"))
         self.action5NoiseThreshold.setText(_translate("MainWindow", "5%"))
         self.action10NoiseThreshold.setText(_translate("MainWindow", "10%"))
-        self.action100NoiseThreshold.setText(_translate("MainWindow", "100% (disables demodulation)"))
+        self.action100NoiseThreshold.setText(
+            _translate("MainWindow", "100% (disables demodulation)")
+        )
+
+
 from urh.ui.views.DirectoryTreeView import DirectoryTreeView
 from . import urh_rc

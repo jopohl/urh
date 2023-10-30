@@ -1,7 +1,9 @@
 import copy
 from collections import OrderedDict, namedtuple
 
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 
 DEFAULT_FREQUENCY = 433.92e6
 DEFAULT_SAMPLE_RATE = 1e6
@@ -16,9 +18,9 @@ DEVICE_CONFIG = OrderedDict()
 
 dev_range = namedtuple("dev_range", ["start", "stop", "step"])
 
-K = 10 ** 3
-M = 10 ** 6
-G = 10 ** 9
+K = 10**3
+M = 10**6
+G = 10**9
 
 DEVICE_CONFIG["PlutoSDR"] = {
     "center_freq": dev_range(start=70 * M, stop=6 * G, step=1),
@@ -31,13 +33,15 @@ DEVICE_CONFIG["PlutoSDR"] = {
 # http://www.nuand.com/bladeRF-brief.pdf
 DEVICE_CONFIG["BladeRF"] = {
     "center_freq": dev_range(start=47 * M, stop=6 * G, step=1),
-    "sample_rate": dev_range(start=520.834 * K, stop=61.44 * M, step=1),  # https://github.com/jopohl/urh/issues/930
+    "sample_rate": dev_range(
+        start=520.834 * K, stop=61.44 * M, step=1
+    ),  # https://github.com/jopohl/urh/issues/930
     "bandwidth": dev_range(start=1.5 * M, stop=28 * M, step=1),
     "rx_channel": ["RX1", "RX2"],
     "tx_channel": ["TX1", "TX2"],
     "tx_rf_gain": list(range(0, 61)),
     "rx_rf_gain": list(range(0, 61)),
-    "bias_tee_enabled": [False, True]
+    "bias_tee_enabled": [False, True],
 }
 
 # https://github.com/mossmann/hackrf/wiki/HackRF-One#features
@@ -50,7 +54,7 @@ DEVICE_CONFIG["HackRF"] = {
     "rx_if_gain": [0, 8, 16, 24, 32, 40],
     "tx_if_gain": list(range(0, 48)),
     "rx_baseband_gain": list(range(0, 63, 2)),  # only available in RX
-    "bias_tee_enabled": [False, True]
+    "bias_tee_enabled": [False, True],
 }
 
 DEVICE_CONFIG["Rad1o"] = {
@@ -61,7 +65,7 @@ DEVICE_CONFIG["Rad1o"] = {
     "rx_rf_gain": [0, 14],
     "rx_if_gain": [0, 8, 16, 24, 32, 40],
     "tx_if_gain": list(range(0, 48)),
-    "rx_baseband_gain": list(range(0, 63, 2))  # only available in RX
+    "rx_baseband_gain": list(range(0, 63, 2)),  # only available in RX
 }
 
 # https://kb.ettus.com/About_USRP_Bandwidths_and_Sampling_Rates
@@ -73,7 +77,7 @@ DEVICE_CONFIG["USRP"] = {
     "rx_rf_gain": list(range(0, 101)),
     "tx_rf_gain": list(range(0, 101)),
     "rx_antenna": ["Antenna 1", "Antenna 2", "Antenna 3"],
-    "tx_antenna": ["Antenna 1", "Antenna 2", "Antenna 3"]
+    "tx_antenna": ["Antenna 1", "Antenna 2", "Antenna 3"],
 }
 
 # https://myriadrf.org/projects/limesdr/
@@ -88,7 +92,7 @@ DEVICE_CONFIG["LimeSDR"] = {
     "rx_antenna": ["None", "High (RX_H)", "Low (RX_L)", "Wide (RX_W)"],
     "rx_antenna_default_index": 2,
     "tx_antenna": ["None", "Band 1 (TX_1)", "Band 2 (TX_2)"],
-    "tx_antenna_default_index": 1
+    "tx_antenna_default_index": 1,
 }
 
 # http://osmocom.org/projects/sdr/wiki/rtl-sdr
@@ -99,8 +103,8 @@ DEVICE_CONFIG["RTL-SDR"] = {
     "bandwidth": dev_range(start=1, stop=int(3.2 * M), step=1),
     "rx_rf_gain": list(range(-100, 500)),
     "direct_sampling": ["disabled", "I-ADC input enabled", "Q-ADC input enabled"],
-    "freq_correction": dev_range(start=-1 * 10 ** 3, stop=1 * 10 ** 3, step=1),
-    "bias_tee_enabled": [False, True]
+    "freq_correction": dev_range(start=-1 * 10**3, stop=1 * 10**3, step=1),
+    "bias_tee_enabled": [False, True],
 }
 
 DEVICE_CONFIG["RTL-TCP"] = copy.deepcopy(DEVICE_CONFIG["RTL-SDR"])
@@ -113,7 +117,10 @@ DEVICE_CONFIG[NetworkSDRInterfacePlugin.NETWORK_SDR_NAME] = {}
 # https://airspy.com/products/
 DEVICE_CONFIG["AirSpy R2"] = {
     "center_freq": dev_range(start=24, stop=1800 * M, step=1),
-    "sample_rate": [10 * M, 10 * M],  # This device always uses 10M, no matter what is configured.
+    "sample_rate": [
+        10 * M,
+        10 * M,
+    ],  # This device always uses 10M, no matter what is configured.
     "bandwidth": [10 * M, 10 * M],
     "rx_rf_gain": list(range(0, 16)),
     "rx_if_gain": list(range(0, 16)),

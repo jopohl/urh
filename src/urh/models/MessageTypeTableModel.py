@@ -92,4 +92,9 @@ class MessageTypeTableModel(QAbstractTableModel):
             self.delete_message_type_at(row)
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEditable
+        return (
+            Qt.ItemIsEnabled
+            | Qt.ItemIsSelectable
+            | Qt.ItemIsUserCheckable
+            | Qt.ItemIsEditable
+        )

@@ -19,7 +19,9 @@ from urh.controller.dialogs.ReceiveDialog import ReceiveDialog
 from urh.controller.dialogs.SendDialog import SendDialog
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
 from urh.dev.BackendHandler import BackendContainer, Backends
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 from urh.signalprocessing.ContinuousModulator import ContinuousModulator
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Signal import Signal
@@ -46,7 +48,7 @@ def receive(port, current_index, target_index, buffer, ready):
 
             arr = np.frombuffer(data, dtype=np.complex64)
             data = np.frombuffer(buffer.get_obj(), dtype=np.complex64)
-            data[current_index.value:current_index.value + len(arr)] = arr
+            data[current_index.value : current_index.value + len(arr)] = arr
             current_index.value += len(arr)
 
         if current_index.value >= target_index - 1:
@@ -64,16 +66,22 @@ class TestSendRecvDialog(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(2)
 
     def __get_recv_dialog(self):
-        receive_dialog = ReceiveDialog(self.form.project_manager, testing_mode=True, parent=self.form)
+        receive_dialog = ReceiveDialog(
+            self.form.project_manager, testing_mode=True, parent=self.form
+        )
         if self.SHOW:
             receive_dialog.show()
 
         return receive_dialog
 
     def __get_send_dialog(self):
-        send_dialog = SendDialog(self.form.project_manager, modulated_data=self.signal.iq_array,
-                                 modulation_msg_indices=None,
-                                 testing_mode=True, parent=self.form)
+        send_dialog = SendDialog(
+            self.form.project_manager,
+            modulated_data=self.signal.iq_array,
+            modulation_msg_indices=None,
+            testing_mode=True,
+            parent=self.form,
+        )
         if self.SHOW:
             send_dialog.show()
 
@@ -83,17 +91,23 @@ class TestSendRecvDialog(QtTestCase):
 
     def __get_continuous_send_dialog(self):
         gframe = self.form.generator_tab_controller
-        continuous_send_dialog = ContinuousSendDialog(self.form.project_manager,
-                                                      gframe.table_model.protocol.messages, gframe.modulators,
-                                                      self.form.generator_tab_controller.total_modulated_samples,
-                                                      parent=self.form, testing_mode=True)
+        continuous_send_dialog = ContinuousSendDialog(
+            self.form.project_manager,
+            gframe.table_model.protocol.messages,
+            gframe.modulators,
+            self.form.generator_tab_controller.total_modulated_samples,
+            parent=self.form,
+            testing_mode=True,
+        )
         if self.SHOW:
             continuous_send_dialog.show()
 
         return continuous_send_dialog
 
     def __get_spectrum_dialog(self):
-        spectrum_dialog = SpectrumDialogController(self.form.project_manager, testing_mode=True, parent=self.form)
+        spectrum_dialog = SpectrumDialogController(
+            self.form.project_manager, testing_mode=True, parent=self.form
+        )
         if self.SHOW:
             spectrum_dialog.show()
 
@@ -120,13 +134,17 @@ class TestSendRecvDialog(QtTestCase):
         item = generator_frame.tree_model.rootItem.children[0].children[0]
         index = generator_frame.tree_model.createIndex(0, 0, item)
         mimedata = generator_frame.tree_model.mimeData([index])
-        generator_frame.table_model.dropMimeData(mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0))
+        generator_frame.table_model.dropMimeData(
+            mimedata, 1, -1, -1, generator_frame.table_model.createIndex(0, 0)
+        )
         QApplication.instance().processEvents()
 
     def test_network_sdr_enabled(self):
         for dialog in self.__get_all_dialogs():
-            items = [dialog.device_settings_widget.ui.cbDevice.itemText(i) for i in
-                     range(dialog.device_settings_widget.ui.cbDevice.count())]
+            items = [
+                dialog.device_settings_widget.ui.cbDevice.itemText(i)
+                for i in range(dialog.device_settings_widget.ui.cbDevice.count())
+            ]
             self.assertIn(NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, items)
 
             dialog.close()
@@ -137,7 +155,9 @@ class TestSendRecvDialog(QtTestCase):
         receive_dialog.device.set_server_port(port)
         receive_dialog.ui.btnStart.click()
 
-        data = np.array([complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64)
+        data = np.array(
+            [complex(1, 2), complex(3, 4), complex(5, 6)], dtype=np.complex64
+        )
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -150,7 +170,11 @@ class TestSendRecvDialog(QtTestCase):
         QTest.qWait(100)
 
         self.assertEqual(receive_dialog.device.current_index, 3)
-        self.assertTrue(np.array_equal(receive_dialog.device.data[:3].flatten(), data.view(np.float32)))
+        self.assertTrue(
+            np.array_equal(
+                receive_dialog.device.data[:3].flatten(), data.view(np.float32)
+            )
+        )
 
         receive_dialog.ui.btnStop.click()
         receive_dialog.ui.btnClear.click()
@@ -166,7 +190,9 @@ class TestSendRecvDialog(QtTestCase):
         spectrum_dialog.ui.btnStart.click()
         self.assertEqual(len(spectrum_dialog.scene_manager.peak), 0)
 
-        data = np.array([complex(1, 1), complex(2, 2), complex(3, 3)], dtype=np.complex64)
+        data = np.array(
+            [complex(1, 1), complex(2, 2), complex(3, 3)], dtype=np.complex64
+        )
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -201,11 +227,17 @@ class TestSendRecvDialog(QtTestCase):
         send_dialog.ui.btnStart.click()
         QTest.qWait(250)
 
-        #self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
-        self.assertTrue(np.array_equal(receive_dialog.device.data[:receive_dialog.device.current_index // 2],
-                                       self.signal.iq_array.data))
+        # self.assertEqual(receive_dialog.device.current_index, 2 * self.signal.num_samples)
+        self.assertTrue(
+            np.array_equal(
+                receive_dialog.device.data[: receive_dialog.device.current_index // 2],
+                self.signal.iq_array.data,
+            )
+        )
 
-        self.assertEqual(send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished")
+        self.assertEqual(
+            send_dialog.ui.lblCurrentRepeatValue.text(), "Sending finished"
+        )
         self.assertFalse(send_dialog.ui.btnStop.isEnabled())
         receive_dialog.ui.btnStop.click()
         self.assertFalse(receive_dialog.ui.btnStop.isEnabled())
@@ -219,7 +251,7 @@ class TestSendRecvDialog(QtTestCase):
 
         port = util.get_free_port()
 
-        gframe = self.form.generator_tab_controller # type: GeneratorTabController
+        gframe = self.form.generator_tab_controller  # type: GeneratorTabController
         for msg in gframe.table_model.protocol.messages:
             msg.pause = 5000
 
@@ -229,7 +261,9 @@ class TestSendRecvDialog(QtTestCase):
         buffer = Array("f", 4 * len(expected))
         ready = Value("i", 0)
 
-        process = Process(target=receive, args=(port, current_index, len(expected), buffer, ready))
+        process = Process(
+            target=receive, args=(port, current_index, len(expected), buffer, ready)
+        )
         process.daemon = True
         process.start()
         n = 0
@@ -280,11 +314,15 @@ class TestSendRecvDialog(QtTestCase):
         sniff_dialog.sniff_settings_widget.ui.checkBoxAdaptiveNoise.click()
         self.assertTrue(sniff_dialog.sniffer.adaptive_noise)
         sniff_dialog.sniff_settings_widget.ui.btn_sniff_use_signal.click()
-        self.assertEqual(sniff_dialog.sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol.value(),
-                         self.form.signal_tab_controller.signal_frames[0].signal.samples_per_symbol)
+        self.assertEqual(
+            sniff_dialog.sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol.value(),
+            self.form.signal_tab_controller.signal_frames[0].signal.samples_per_symbol,
+        )
 
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.setChecked(False)
-        self.assertEqual(sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        self.assertEqual(
+            sniff_dialog.device.name, NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
+        )
         sniff_dialog.sniff_settings_widget.ui.comboBox_sniff_viewtype.setCurrentIndex(0)
 
         port = util.get_free_port()
@@ -316,14 +354,20 @@ class TestSendRecvDialog(QtTestCase):
 
         sniff_dialog.ui.btnStop.click()
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.click()
-        self.assertTrue(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
+        self.assertTrue(
+            sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("[")
+        )
         sniff_dialog.sniff_settings_widget.ui.checkBox_sniff_Timestamp.click()
-        self.assertFalse(sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("["))
+        self.assertFalse(
+            sniff_dialog.ui.txtEd_sniff_Preview.toPlainText().startswith("[")
+        )
 
         n = self.form.compare_frame_controller.protocol_model.rowCount()
         sniff_dialog.protocol_accepted.emit(sniff_dialog.sniffer.messages)
         QTest.qWait(10)
-        self.assertEqual(self.form.compare_frame_controller.protocol_model.rowCount(), n + 3)
+        self.assertEqual(
+            self.form.compare_frame_controller.protocol_model.rowCount(), n + 3
+        )
 
         target_file = os.path.join(QDir.tempPath(), "sniff_file.txt")
         if os.path.isfile(target_file):
@@ -331,7 +375,9 @@ class TestSendRecvDialog(QtTestCase):
 
         sniff_dialog.ui.btnClear.click()
         QApplication.instance().processEvents()
-        sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.setText(target_file)
+        sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.setText(
+            target_file
+        )
         sniff_dialog.sniff_settings_widget.ui.lineEdit_sniff_OutputFile.editingFinished.emit()
         sniff_dialog.ui.btnStart.click()
         QApplication.instance().processEvents()
@@ -352,12 +398,16 @@ class TestSendRecvDialog(QtTestCase):
     def test_send_dialog_scene_zoom(self):
         send_dialog = self.__get_send_dialog()
         QApplication.instance().processEvents()
-        self.assertEqual(send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples)
+        self.assertEqual(
+            send_dialog.graphics_view.sceneRect().width(), self.signal.num_samples
+        )
         view_width = send_dialog.graphics_view.view_rect().width()
         send_dialog.graphics_view.zoom(1.1)
         self.assertLess(send_dialog.graphics_view.view_rect().width(), view_width)
         send_dialog.graphics_view.zoom(0.8)
-        self.assertLessEqual(int(send_dialog.graphics_view.view_rect().width()), int(view_width))
+        self.assertLessEqual(
+            int(send_dialog.graphics_view.view_rect().width()), int(view_width)
+        )
 
         send_dialog.close()
 
@@ -368,7 +418,9 @@ class TestSendRecvDialog(QtTestCase):
         self.assertEqual(num_samples, len(send_dialog.device.samples_to_send))
         send_dialog.graphics_view.set_horizontal_selection(0, 1337)
         send_dialog.graphics_view.delete_action.trigger()
-        self.assertEqual(send_dialog.scene_manager.signal.num_samples, num_samples - 1337)
+        self.assertEqual(
+            send_dialog.scene_manager.signal.num_samples, num_samples - 1337
+        )
         self.assertEqual(len(send_dialog.device.samples_to_send), num_samples - 1337)
 
         send_dialog.close()
@@ -376,10 +428,15 @@ class TestSendRecvDialog(QtTestCase):
     def test_send_dialog_y_slider(self):
         send_dialog = self.__get_send_dialog()
         QApplication.instance().processEvents()
-        y, h = send_dialog.graphics_view.view_rect().y(), send_dialog.graphics_view.view_rect().height()
+        y, h = (
+            send_dialog.graphics_view.view_rect().y(),
+            send_dialog.graphics_view.view_rect().height(),
+        )
 
-        send_dialog.ui.sliderYscale.setValue(send_dialog.ui.sliderYscale.value() +
-                                             send_dialog.ui.sliderYscale.singleStep())
+        send_dialog.ui.sliderYscale.setValue(
+            send_dialog.ui.sliderYscale.value()
+            + send_dialog.ui.sliderYscale.singleStep()
+        )
         self.assertNotEqual(y, send_dialog.graphics_view.view_rect().y())
         self.assertNotEqual(h, send_dialog.graphics_view.view_rect().height())
 
@@ -401,17 +458,23 @@ class TestSendRecvDialog(QtTestCase):
 
             dialog.device_settings_widget.ui.spinBoxFreq.setValue(2e9)
             dialog.device_settings_widget.ui.spinBoxFreq.editingFinished.emit()
-            self.assertEqual(dialog.device_settings_widget.ui.spinBoxFreq.text()[-1], "G")
+            self.assertEqual(
+                dialog.device_settings_widget.ui.spinBoxFreq.text()[-1], "G"
+            )
             self.assertEqual(dialog.device.frequency, 2e9)
 
             dialog.device_settings_widget.ui.spinBoxSampleRate.setValue(10e6)
             dialog.device_settings_widget.ui.spinBoxSampleRate.editingFinished.emit()
-            self.assertEqual(dialog.device_settings_widget.ui.spinBoxSampleRate.text()[-1], "M")
+            self.assertEqual(
+                dialog.device_settings_widget.ui.spinBoxSampleRate.text()[-1], "M"
+            )
             self.assertEqual(dialog.device.sample_rate, 10e6)
 
             dialog.device_settings_widget.ui.spinBoxBandwidth.setValue(3e6)
             dialog.device_settings_widget.ui.spinBoxBandwidth.editingFinished.emit()
-            self.assertEqual(dialog.device_settings_widget.ui.spinBoxBandwidth.text()[-1], "M")
+            self.assertEqual(
+                dialog.device_settings_widget.ui.spinBoxBandwidth.text()[-1], "M"
+            )
             self.assertEqual(dialog.device.bandwidth, 3e6)
 
             dialog.device_settings_widget.ui.spinBoxGain.setValue(5)
@@ -431,7 +494,9 @@ class TestSendRecvDialog(QtTestCase):
             self.assertEqual(dialog.device.freq_correction, 40)
 
             dialog.device_settings_widget.ui.comboBoxDirectSampling.clear()
-            self.assertEqual(dialog.device_settings_widget.ui.comboBoxDirectSampling.count(), 0)
+            self.assertEqual(
+                dialog.device_settings_widget.ui.comboBoxDirectSampling.count(), 0
+            )
             dialog.device_settings_widget.ui.comboBoxDirectSampling.addItem("test")
             dialog.device_settings_widget.ui.comboBoxDirectSampling.addItem("test1")
             dialog.device_settings_widget.ui.comboBoxDirectSampling.setCurrentIndex(1)

@@ -20,7 +20,6 @@ class InsertSinePlugin(SignalEditorPlugin):
     INSERT_INDICATOR_COLOR = QColor(0, 255, 0, 80)
 
     def __init__(self):
-
         self.__dialog_ui = None  # type: QDialog
         self.complex_wave = None
 
@@ -39,10 +38,16 @@ class InsertSinePlugin(SignalEditorPlugin):
     @property
     def dialog_ui(self) -> QDialog:
         if self.__dialog_ui is None:
-            dir_name = os.path.dirname(os.readlink(__file__)) if os.path.islink(__file__) else os.path.dirname(__file__)
+            dir_name = (
+                os.path.dirname(os.readlink(__file__))
+                if os.path.islink(__file__)
+                else os.path.dirname(__file__)
+            )
 
             logging.getLogger().setLevel(logging.WARNING)
-            self.__dialog_ui = uic.loadUi(os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui")))
+            self.__dialog_ui = uic.loadUi(
+                os.path.realpath(os.path.join(dir_name, "insert_sine_dialog.ui"))
+            )
             logging.getLogger().setLevel(logger.level)
 
             self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
@@ -58,9 +63,14 @@ class InsertSinePlugin(SignalEditorPlugin):
 
             scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
             self.__dialog_ui.graphicsViewSineWave.scene_manager = scene_manager
-            self.insert_indicator = scene_manager.scene.addRect(0, -2, 0, 4,
-                                                                QPen(QColor(Qt.transparent), 0),
-                                                                QBrush(self.INSERT_INDICATOR_COLOR))
+            self.insert_indicator = scene_manager.scene.addRect(
+                0,
+                -2,
+                0,
+                4,
+                QPen(QColor(Qt.transparent), 0),
+                QBrush(self.INSERT_INDICATOR_COLOR),
+            )
             self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
 
             self.set_time()
@@ -125,19 +135,30 @@ class InsertSinePlugin(SignalEditorPlugin):
 
     def create_dialog_connects(self):
         self.dialog_ui.doubleSpinBoxAmplitude.editingFinished.connect(
-            self.on_double_spin_box_amplitude_editing_finished)
+            self.on_double_spin_box_amplitude_editing_finished
+        )
         self.dialog_ui.doubleSpinBoxFrequency.editingFinished.connect(
-            self.on_double_spin_box_frequency_editing_finished)
-        self.dialog_ui.doubleSpinBoxPhase.editingFinished.connect(self.on_double_spin_box_phase_editing_finished)
+            self.on_double_spin_box_frequency_editing_finished
+        )
+        self.dialog_ui.doubleSpinBoxPhase.editingFinished.connect(
+            self.on_double_spin_box_phase_editing_finished
+        )
         self.dialog_ui.doubleSpinBoxSampleRate.editingFinished.connect(
-            self.on_double_spin_box_sample_rate_editing_finished)
-        self.dialog_ui.doubleSpinBoxNSamples.editingFinished.connect(self.on_spin_box_n_samples_editing_finished)
-        self.dialog_ui.lineEditTime.editingFinished.connect(self.on_line_edit_time_editing_finished)
+            self.on_double_spin_box_sample_rate_editing_finished
+        )
+        self.dialog_ui.doubleSpinBoxNSamples.editingFinished.connect(
+            self.on_spin_box_n_samples_editing_finished
+        )
+        self.dialog_ui.lineEditTime.editingFinished.connect(
+            self.on_line_edit_time_editing_finished
+        )
         self.dialog_ui.buttonBox.accepted.connect(self.on_button_box_accept)
         self.dialog_ui.buttonBox.rejected.connect(self.on_button_box_reject)
         self.__dialog_ui.finished.connect(self.on_dialog_finished)
 
-    def get_insert_sine_dialog(self, original_data, position, sample_rate=None, num_samples=None) -> QDialog:
+    def get_insert_sine_dialog(
+        self, original_data, position, sample_rate=None, num_samples=None
+    ) -> QDialog:
         if sample_rate is not None:
             self.__sample_rate = sample_rate
             self.dialog_ui.doubleSpinBoxSampleRate.setValue(sample_rate)
@@ -168,11 +189,20 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.complex_wave = np.empty(len(arg), dtype=np.complex64)
         self.complex_wave.real = np.cos(arg)
         self.complex_wave.imag = np.sin(arg)
-        self.complex_wave = IQArray(self.amplitude * self.complex_wave).convert_to(self.original_data.dtype)
+        self.complex_wave = IQArray(self.amplitude * self.complex_wave).convert_to(
+            self.original_data.dtype
+        )
 
-        self.draw_data = np.insert(self.original_data[:, 0], self.position, self.complex_wave[:, 0])
-        y, h = self.dialog_ui.graphicsViewSineWave.view_rect().y(), self.dialog_ui.graphicsViewSineWave.view_rect().height()
-        self.insert_indicator.setRect(self.position, y - h, self.num_samples, 2 * h + abs(y))
+        self.draw_data = np.insert(
+            self.original_data[:, 0], self.position, self.complex_wave[:, 0]
+        )
+        y, h = (
+            self.dialog_ui.graphicsViewSineWave.view_rect().y(),
+            self.dialog_ui.graphicsViewSineWave.view_rect().height(),
+        )
+        self.insert_indicator.setRect(
+            self.position, y - h, self.num_samples, 2 * h + abs(y)
+        )
 
         self.__set_status_of_editable_elements(enabled=True)
         QApplication.instance().restoreOverrideCursor()
@@ -180,13 +210,26 @@ class InsertSinePlugin(SignalEditorPlugin):
         self.dialog_ui.graphicsViewSineWave.show_full_scene()
 
     def __set_status_of_editable_elements(self, enabled: bool):
-        for obj in ("doubleSpinBoxAmplitude", "doubleSpinBoxFrequency", "doubleSpinBoxPhase",
-                    "doubleSpinBoxSampleRate", "doubleSpinBoxNSamples", "lineEditTime", "buttonBox"):
+        for obj in (
+            "doubleSpinBoxAmplitude",
+            "doubleSpinBoxFrequency",
+            "doubleSpinBoxPhase",
+            "doubleSpinBoxSampleRate",
+            "doubleSpinBoxNSamples",
+            "lineEditTime",
+            "buttonBox",
+        ):
             getattr(self.dialog_ui, obj).setEnabled(enabled)
 
     def set_time(self):
-        self.dialog_ui.lineEditTime.setText(Formatter.science_time(self.num_samples / self.sample_rate, decimals=3,
-                                                                   append_seconds=False, remove_spaces=True))
+        self.dialog_ui.lineEditTime.setText(
+            Formatter.science_time(
+                self.num_samples / self.sample_rate,
+                decimals=3,
+                append_seconds=False,
+                remove_spaces=True,
+            )
+        )
 
     @pyqtSlot()
     def on_double_spin_box_amplitude_editing_finished(self):
@@ -221,7 +264,15 @@ class InsertSinePlugin(SignalEditorPlugin):
             except ValueError:
                 return
 
-        factor = 10 ** -9 if suffix == "n" else 10 ** -6 if suffix == "µ" else 10 ** -3 if suffix == "m" else 1
+        factor = (
+            10**-9
+            if suffix == "n"
+            else 10**-6
+            if suffix == "µ"
+            else 10**-3
+            if suffix == "m"
+            else 1
+        )
         time_val = t * factor
 
         if self.sample_rate * time_val >= 1:

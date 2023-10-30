@@ -11,9 +11,9 @@ util.set_shared_library_path()
 from urh.dev.native.RTLSDR import RTLSDR
 from urh.dev.native.lib import rtlsdr
 
+
 class TestRTLSDR(unittest.TestCase):
     def test_cython_wrapper(self):
-
         print("Device count:", rtlsdr.get_device_count())
         print("Device name:", rtlsdr.get_device_name(0))
         manufact, product, serial = rtlsdr.get_device_usb_strings(0)
@@ -39,7 +39,7 @@ class TestRTLSDR(unittest.TestCase):
         print("tuner gain", rtlsdr.get_tuner_gain())
         print("set tuner if gain", rtlsdr.set_tuner_if_gain(1, 10))
         print("Sample Rate", rtlsdr.get_sample_rate())
-        print("Set Sample Rate to 300k", rtlsdr.set_sample_rate(300 * 10 ** 3))
+        print("Set Sample Rate to 300k", rtlsdr.set_sample_rate(300 * 10**3))
         print("Sample Rate", rtlsdr.get_sample_rate())
         read_samples = rtlsdr.read_sync(1024)
         print(read_samples)

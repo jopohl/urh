@@ -59,11 +59,15 @@ class SelectableGraphicView(QGraphicsView):
 
     @property
     def hold_shift_to_drag(self) -> bool:
-        return settings.read('hold_shift_to_drag', True, type=bool)
+        return settings.read("hold_shift_to_drag", True, type=bool)
 
     @property
     def something_is_selected(self) -> bool:
-        return hasattr(self, "selection_area") and self.selection_area is not None and not self.selection_area.is_empty
+        return (
+            hasattr(self, "selection_area")
+            and self.selection_area is not None
+            and not self.selection_area.is_empty
+        )
 
     def is_pos_in_separea(self, pos: QPoint):
         """
@@ -106,9 +110,12 @@ class SelectableGraphicView(QGraphicsView):
 
         cursor = self.cursor().shape()
         has_shift_modifier = event.modifiers() == Qt.ShiftModifier
-        is_in_shift_mode = (has_shift_modifier and self.hold_shift_to_drag) \
-                           or (not has_shift_modifier and not self.hold_shift_to_drag) \
-                              and cursor != Qt.SplitHCursor and cursor != Qt.SplitVCursor
+        is_in_shift_mode = (
+            (has_shift_modifier and self.hold_shift_to_drag)
+            or (not has_shift_modifier and not self.hold_shift_to_drag)
+            and cursor != Qt.SplitHCursor
+            and cursor != Qt.SplitVCursor
+        )
 
         if event.buttons() == Qt.LeftButton and is_in_shift_mode:
             self.setCursor(Qt.ClosedHandCursor)
@@ -118,7 +125,10 @@ class SelectableGraphicView(QGraphicsView):
                 self.separation_area_moving = True
                 self.setCursor(Qt.SplitVCursor)
 
-            elif self.selection_area.is_empty or self.selection_area.selected_edge is None:
+            elif (
+                self.selection_area.is_empty
+                or self.selection_area.selected_edge is None
+            ):
                 # Create new selection
                 self.mouse_press_pos = event.pos()
                 self.mouse_pos = event.pos()
@@ -137,11 +147,15 @@ class SelectableGraphicView(QGraphicsView):
 
         if self.grab_start is not None:
             move_x = self.grab_start.x() - event.pos().x()
-            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + move_x)
+            self.horizontalScrollBar().setValue(
+                self.horizontalScrollBar().value() + move_x
+            )
 
             if self.move_y_with_drag:
                 move_y = self.grab_start.y() - event.pos().y()
-                self.verticalScrollBar().setValue(self.verticalScrollBar().value() + move_y)
+                self.verticalScrollBar().setValue(
+                    self.verticalScrollBar().value() + move_y
+                )
 
             self.grab_start = event.pos()
             return
@@ -150,8 +164,14 @@ class SelectableGraphicView(QGraphicsView):
             y_sep = self.mapToScene(event.pos()).y()
             y = self.sceneRect().y()
             h = self.sceneRect().height()
-            if y < y_sep < y + h and hasattr(self, "signal") and self.signal is not None:
-                self.scene().draw_sep_area(-self.signal.get_thresholds_for_center(-y_sep), show_symbols=True)
+            if (
+                y < y_sep < y + h
+                and hasattr(self, "signal")
+                and self.signal is not None
+            ):
+                self.scene().draw_sep_area(
+                    -self.signal.get_thresholds_for_center(-y_sep), show_symbols=True
+                )
         elif self.is_pos_in_separea(self.mapToScene(event.pos())):
             self.setCursor(Qt.SplitVCursor)
         elif cursor == Qt.SplitVCursor and self.has_horizontal_selection:
@@ -161,8 +181,9 @@ class SelectableGraphicView(QGraphicsView):
             pos = self.mapToScene(event.pos())
             roi_edge = self.selection_area.get_selected_edge(pos, self.transform())
             if roi_edge is None:
-                if (cursor == Qt.SplitHCursor and self.has_horizontal_selection) \
-                        or (cursor == Qt.SplitVCursor and not self.has_horizontal_selection):
+                if (cursor == Qt.SplitHCursor and self.has_horizontal_selection) or (
+                    cursor == Qt.SplitVCursor and not self.has_horizontal_selection
+                ):
                     self.unsetCursor()
                     return
             elif roi_edge == 0 or roi_edge == 1:
@@ -172,7 +193,6 @@ class SelectableGraphicView(QGraphicsView):
                     self.setCursor(Qt.SplitVCursor)
 
         if event.buttons() == Qt.LeftButton and self.selection_area.resizing:
-
             if self.selection_area.selected_edge == 0:
                 start = self.mapToScene(event.pos())
                 self.__set_selection_area(x=start.x(), y=start.y())
@@ -226,7 +246,11 @@ class SelectableGraphicView(QGraphicsView):
             self.grab_start = None
             self.setCursor(Qt.OpenHandCursor)
 
-        elif self.separation_area_moving and hasattr(self, "signal") and self.signal is not None:
+        elif (
+            self.separation_area_moving
+            and hasattr(self, "signal")
+            and self.signal is not None
+        ):
             y_sep = self.mapToScene(event.pos()).y()
             y = self.sceneRect().y()
             h = self.sceneRect().height()
@@ -252,15 +276,23 @@ class SelectableGraphicView(QGraphicsView):
         This happens e.g. when switching from Signal View to Quad Demod view
         :return:
         """
-        self.__set_selection_area(x=self.selection_area.x, y=self.selection_area.y,
-                                  w=self.selection_area.width, h=self.selection_area.height)
+        self.__set_selection_area(
+            x=self.selection_area.x,
+            y=self.selection_area.y,
+            w=self.selection_area.width,
+            h=self.selection_area.height,
+        )
 
     def set_vertical_selection(self, y=None, h=None):
         self.selection_area.setX(self.sceneRect().x())
         self.selection_area.width = self.sceneRect().width()
 
         if y is not None:
-            y = util.clip(y, self.sceneRect().y(), self.sceneRect().y() + self.sceneRect().height())
+            y = util.clip(
+                y,
+                self.sceneRect().y(),
+                self.sceneRect().y() + self.sceneRect().height(),
+            )
             self.selection_area.setY(y)
 
         if h is not None:
@@ -279,7 +311,9 @@ class SelectableGraphicView(QGraphicsView):
         self.selection_area.height = self.view_rect().height()
 
         if x is not None:
-            x = util.clip(x, self.sceneRect().x(), self.sceneRect().x() + self.sceneRect().width())
+            x = util.clip(
+                x, self.sceneRect().x(), self.sceneRect().x() + self.sceneRect().width()
+            )
             self.selection_area.setX(x)
 
         if w is not None:
@@ -309,14 +343,18 @@ class SelectableGraphicView(QGraphicsView):
             self.selection_height_changed.emit(int(self.selection_area.height))
 
     def emit_selection_start_end_changed(self):
-        self.sel_area_start_end_changed.emit(self.selection_area.start, self.selection_area.end)
+        self.sel_area_start_end_changed.emit(
+            self.selection_area.start, self.selection_area.end
+        )
 
     def view_rect(self) -> QRectF:
         """
         Return the boundaries of the view in scene coordinates
         """
         top_left = self.mapToScene(0, 0)
-        bottom_right = self.mapToScene(self.viewport().width() - 1, self.viewport().height() - 1)
+        bottom_right = self.mapToScene(
+            self.viewport().width() - 1, self.viewport().height() - 1
+        )
         return QRectF(top_left, bottom_right)
 
     def eliminate(self):

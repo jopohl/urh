@@ -12,7 +12,9 @@ class Ui_TabAnalysis(object):
     def setupUi(self, TabAnalysis):
         TabAnalysis.setObjectName("TabAnalysis")
         TabAnalysis.resize(1331, 739)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(TabAnalysis.sizePolicy().hasHeightForWidth())
@@ -37,26 +39,30 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.splitter_2 = QtWidgets.QSplitter(self.scrollAreaWidgetContents)
-        self.splitter_2.setStyleSheet("QSplitter::handle:vertical {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
-"}")
+        self.splitter_2.setStyleSheet(
+            "QSplitter::handle:vertical {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+            "}"
+        )
         self.splitter_2.setOrientation(QtCore.Qt.Vertical)
         self.splitter_2.setHandleWidth(6)
         self.splitter_2.setObjectName("splitter_2")
         self.splitter = QtWidgets.QSplitter(self.splitter_2)
-        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
-"}")
+        self.splitter.setStyleSheet(
+            "QSplitter::handle:horizontal {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
+            "}"
+        )
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
@@ -75,10 +81,14 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_3.setSpacing(7)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.treeViewProtocols = ProtocolTreeView(self.tab_protocols)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.treeViewProtocols.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.treeViewProtocols.sizePolicy().hasHeightForWidth()
+        )
         self.treeViewProtocols.setSizePolicy(sizePolicy)
         self.treeViewProtocols.setAcceptDrops(True)
         self.treeViewProtocols.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -88,8 +98,12 @@ class Ui_TabAnalysis(object):
         self.treeViewProtocols.setDragDropOverwriteMode(False)
         self.treeViewProtocols.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.treeViewProtocols.setDefaultDropAction(QtCore.Qt.IgnoreAction)
-        self.treeViewProtocols.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.treeViewProtocols.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.treeViewProtocols.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection
+        )
+        self.treeViewProtocols.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows
+        )
         self.treeViewProtocols.setTextElideMode(QtCore.Qt.ElideRight)
         self.treeViewProtocols.setAnimated(True)
         self.treeViewProtocols.setObjectName("treeViewProtocols")
@@ -104,10 +118,14 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.listViewParticipants = QtWidgets.QListView(self.tab_participants)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listViewParticipants.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.listViewParticipants.sizePolicy().hasHeightForWidth()
+        )
         self.listViewParticipants.setSizePolicy(sizePolicy)
         self.listViewParticipants.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.listViewParticipants.setTextElideMode(QtCore.Qt.ElideRight)
@@ -124,15 +142,21 @@ class Ui_TabAnalysis(object):
         self.label_4.setObjectName("label_4")
         self.gridLayout_3.addWidget(self.label_4, 0, 0, 1, 1)
         self.lEncodingErrors = QtWidgets.QLabel(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lEncodingErrors.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lEncodingErrors.sizePolicy().hasHeightForWidth()
+        )
         self.lEncodingErrors.setSizePolicy(sizePolicy)
         self.lEncodingErrors.setObjectName("lEncodingErrors")
         self.gridLayout_3.addWidget(self.lEncodingErrors, 2, 0, 1, 1)
         self.cbDecoding = QtWidgets.QComboBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbDecoding.sizePolicy().hasHeightForWidth())
@@ -146,15 +170,21 @@ class Ui_TabAnalysis(object):
         self.cbDecoding.addItem("")
         self.gridLayout_3.addWidget(self.cbDecoding, 1, 1, 1, 1)
         self.chkBoxShowOnlyDiffs = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.chkBoxShowOnlyDiffs.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.chkBoxShowOnlyDiffs.sizePolicy().hasHeightForWidth()
+        )
         self.chkBoxShowOnlyDiffs.setSizePolicy(sizePolicy)
         self.chkBoxShowOnlyDiffs.setObjectName("chkBoxShowOnlyDiffs")
         self.gridLayout_3.addWidget(self.chkBoxShowOnlyDiffs, 4, 0, 1, 2)
         self.cbProtoView = QtWidgets.QComboBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbProtoView.sizePolicy().hasHeightForWidth())
@@ -165,23 +195,35 @@ class Ui_TabAnalysis(object):
         self.cbProtoView.addItem("")
         self.gridLayout_3.addWidget(self.cbProtoView, 0, 1, 1, 1)
         self.lDecodingErrorsValue = QtWidgets.QLabel(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lDecodingErrorsValue.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lDecodingErrorsValue.sizePolicy().hasHeightForWidth()
+        )
         self.lDecodingErrorsValue.setSizePolicy(sizePolicy)
         self.lDecodingErrorsValue.setObjectName("lDecodingErrorsValue")
         self.gridLayout_3.addWidget(self.lDecodingErrorsValue, 2, 1, 1, 1)
         self.chkBoxOnlyShowLabelsInProtocol = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.chkBoxOnlyShowLabelsInProtocol.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.chkBoxOnlyShowLabelsInProtocol.sizePolicy().hasHeightForWidth()
+        )
         self.chkBoxOnlyShowLabelsInProtocol.setSizePolicy(sizePolicy)
-        self.chkBoxOnlyShowLabelsInProtocol.setObjectName("chkBoxOnlyShowLabelsInProtocol")
+        self.chkBoxOnlyShowLabelsInProtocol.setObjectName(
+            "chkBoxOnlyShowLabelsInProtocol"
+        )
         self.gridLayout_3.addWidget(self.chkBoxOnlyShowLabelsInProtocol, 5, 0, 1, 2)
         self.cbShowDiffs = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbShowDiffs.sizePolicy().hasHeightForWidth())
@@ -189,10 +231,14 @@ class Ui_TabAnalysis(object):
         self.cbShowDiffs.setObjectName("cbShowDiffs")
         self.gridLayout_3.addWidget(self.cbShowDiffs, 3, 0, 1, 2)
         self.stackedWidgetLogicAnalysis = QtWidgets.QStackedWidget(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.stackedWidgetLogicAnalysis.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.stackedWidgetLogicAnalysis.sizePolicy().hasHeightForWidth()
+        )
         self.stackedWidgetLogicAnalysis.setSizePolicy(sizePolicy)
         self.stackedWidgetLogicAnalysis.setObjectName("stackedWidgetLogicAnalysis")
         self.pageButtonAnalyzer = QtWidgets.QWidget()
@@ -202,7 +248,9 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.btnAnalyze = QtWidgets.QToolButton(self.pageButtonAnalyzer)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnAnalyze.sizePolicy().hasHeightForWidth())
@@ -219,10 +267,14 @@ class Ui_TabAnalysis(object):
         self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.progressBarLogicAnalyzer = QtWidgets.QProgressBar(self.pageProgressBar)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.progressBarLogicAnalyzer.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.progressBarLogicAnalyzer.sizePolicy().hasHeightForWidth()
+        )
         self.progressBarLogicAnalyzer.setSizePolicy(sizePolicy)
         self.progressBarLogicAnalyzer.setProperty("value", 24)
         self.progressBarLogicAnalyzer.setObjectName("progressBarLogicAnalyzer")
@@ -238,7 +290,9 @@ class Ui_TabAnalysis(object):
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.btnSaveProto = QtWidgets.QToolButton(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnSaveProto.sizePolicy().hasHeightForWidth())
@@ -251,7 +305,9 @@ class Ui_TabAnalysis(object):
         self.btnSaveProto.setObjectName("btnSaveProto")
         self.gridLayout_2.addWidget(self.btnSaveProto, 0, 16, 1, 1)
         self.lSlash = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSlash.sizePolicy().hasHeightForWidth())
@@ -263,29 +319,38 @@ class Ui_TabAnalysis(object):
         self.lblShownRows.setObjectName("lblShownRows")
         self.gridLayout_2.addWidget(self.lblShownRows, 0, 4, 1, 1)
         self.lTime = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lTime.sizePolicy().hasHeightForWidth())
         self.lTime.setSizePolicy(sizePolicy)
         self.lTime.setTextFormat(QtCore.Qt.PlainText)
-        self.lTime.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.lTime.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
         self.lTime.setObjectName("lTime")
         self.gridLayout_2.addWidget(self.lTime, 0, 15, 1, 1)
         self.lSearchCurrent = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lSearchCurrent.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lSearchCurrent.sizePolicy().hasHeightForWidth()
+        )
         self.lSearchCurrent.setSizePolicy(sizePolicy)
-        self.lSearchCurrent.setStyleSheet("QLabel\n"
-"{\n"
-"    qproperty-alignment: AlignCenter;\n"
-"}")
+        self.lSearchCurrent.setStyleSheet(
+            "QLabel\n" "{\n" "    qproperty-alignment: AlignCenter;\n" "}"
+        )
         self.lSearchCurrent.setObjectName("lSearchCurrent")
         self.gridLayout_2.addWidget(self.lSearchCurrent, 0, 6, 1, 1)
         self.lblRSSI = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblRSSI.sizePolicy().hasHeightForWidth())
@@ -294,10 +359,14 @@ class Ui_TabAnalysis(object):
         self.gridLayout_2.addWidget(self.lblRSSI, 0, 12, 1, 1)
         self.btnNextSearch = QtWidgets.QToolButton(self.layoutWidget1)
         self.btnNextSearch.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnNextSearch.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.btnNextSearch.sizePolicy().hasHeightForWidth()
+        )
         self.btnNextSearch.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon.fromTheme("go-next")
         self.btnNextSearch.setIcon(icon)
@@ -305,29 +374,36 @@ class Ui_TabAnalysis(object):
         self.gridLayout_2.addWidget(self.btnNextSearch, 0, 9, 1, 1)
         self.btnPrevSearch = QtWidgets.QToolButton(self.layoutWidget1)
         self.btnPrevSearch.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnPrevSearch.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.btnPrevSearch.sizePolicy().hasHeightForWidth()
+        )
         self.btnPrevSearch.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon.fromTheme("go-previous")
         self.btnPrevSearch.setIcon(icon)
         self.btnPrevSearch.setObjectName("btnPrevSearch")
         self.gridLayout_2.addWidget(self.btnPrevSearch, 0, 5, 1, 1)
         self.lSearchTotal = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSearchTotal.sizePolicy().hasHeightForWidth())
         self.lSearchTotal.setSizePolicy(sizePolicy)
-        self.lSearchTotal.setStyleSheet("QLabel\n"
-"{\n"
-"    qproperty-alignment: AlignCenter;\n"
-"}")
+        self.lSearchTotal.setStyleSheet(
+            "QLabel\n" "{\n" "    qproperty-alignment: AlignCenter;\n" "}"
+        )
         self.lSearchTotal.setObjectName("lSearchTotal")
         self.gridLayout_2.addWidget(self.lSearchTotal, 0, 8, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.layoutWidget1)
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 0, 14, 1, 1)
         self.line_2 = QtWidgets.QFrame(self.layoutWidget1)
@@ -336,20 +412,28 @@ class Ui_TabAnalysis(object):
         self.line_2.setObjectName("line_2")
         self.gridLayout_2.addWidget(self.line_2, 0, 13, 1, 1)
         self.btnSearchSelectFilter = QtWidgets.QToolButton(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnSearchSelectFilter.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.btnSearchSelectFilter.sizePolicy().hasHeightForWidth()
+        )
         self.btnSearchSelectFilter.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon.fromTheme("edit-find")
         self.btnSearchSelectFilter.setIcon(icon)
         self.btnSearchSelectFilter.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
-        self.btnSearchSelectFilter.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.btnSearchSelectFilter.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon
+        )
         self.btnSearchSelectFilter.setAutoRaise(False)
         self.btnSearchSelectFilter.setArrowType(QtCore.Qt.NoArrow)
         self.btnSearchSelectFilter.setObjectName("btnSearchSelectFilter")
         self.gridLayout_2.addWidget(self.btnSearchSelectFilter, 0, 2, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(60, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            60, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.gridLayout_2.addItem(spacerItem, 0, 10, 1, 1)
         self.line = QtWidgets.QFrame(self.layoutWidget1)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
@@ -357,7 +441,9 @@ class Ui_TabAnalysis(object):
         self.line.setObjectName("line")
         self.gridLayout_2.addWidget(self.line, 0, 11, 1, 1)
         self.btnLoadProto = QtWidgets.QToolButton(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnLoadProto.sizePolicy().hasHeightForWidth())
@@ -370,10 +456,14 @@ class Ui_TabAnalysis(object):
         self.lblClearAlignment.setObjectName("lblClearAlignment")
         self.gridLayout_2.addWidget(self.lblClearAlignment, 0, 3, 1, 1)
         self.lineEditSearch = QtWidgets.QLineEdit(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEditSearch.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lineEditSearch.sizePolicy().hasHeightForWidth()
+        )
         self.lineEditSearch.setSizePolicy(sizePolicy)
         self.lineEditSearch.setAcceptDrops(False)
         self.lineEditSearch.setClearButtonEnabled(True)
@@ -381,10 +471,14 @@ class Ui_TabAnalysis(object):
         self.gridLayout_2.addWidget(self.lineEditSearch, 0, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
         self.tblViewProtocol = ProtocolTableView(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tblViewProtocol.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tblViewProtocol.sizePolicy().hasHeightForWidth()
+        )
         self.tblViewProtocol.setSizePolicy(sizePolicy)
         self.tblViewProtocol.setAcceptDrops(True)
         self.tblViewProtocol.setAutoFillBackground(True)
@@ -394,10 +488,16 @@ class Ui_TabAnalysis(object):
         self.tblViewProtocol.setAutoScroll(True)
         self.tblViewProtocol.setDragDropMode(QtWidgets.QAbstractItemView.DropOnly)
         self.tblViewProtocol.setAlternatingRowColors(True)
-        self.tblViewProtocol.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.tblViewProtocol.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection
+        )
         self.tblViewProtocol.setTextElideMode(QtCore.Qt.ElideNone)
-        self.tblViewProtocol.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
-        self.tblViewProtocol.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.tblViewProtocol.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerPixel
+        )
+        self.tblViewProtocol.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollPerPixel
+        )
         self.tblViewProtocol.setShowGrid(False)
         self.tblViewProtocol.setGridStyle(QtCore.Qt.NoPen)
         self.tblViewProtocol.setSortingEnabled(False)
@@ -409,7 +509,9 @@ class Ui_TabAnalysis(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.lBits = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lBits.sizePolicy().hasHeightForWidth())
@@ -418,10 +520,14 @@ class Ui_TabAnalysis(object):
         self.lBits.setObjectName("lBits")
         self.horizontalLayout_3.addWidget(self.lBits)
         self.lBitsSelection = QtWidgets.QLineEdit(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lBitsSelection.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lBitsSelection.sizePolicy().hasHeightForWidth()
+        )
         self.lBitsSelection.setSizePolicy(sizePolicy)
         self.lBitsSelection.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lBitsSelection.setAcceptDrops(False)
@@ -431,7 +537,9 @@ class Ui_TabAnalysis(object):
         self.lBitsSelection.setObjectName("lBitsSelection")
         self.horizontalLayout_3.addWidget(self.lBitsSelection)
         self.lHex = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lHex.sizePolicy().hasHeightForWidth())
@@ -440,10 +548,14 @@ class Ui_TabAnalysis(object):
         self.lHex.setObjectName("lHex")
         self.horizontalLayout_3.addWidget(self.lHex)
         self.lHexSelection = QtWidgets.QLineEdit(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lHexSelection.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lHexSelection.sizePolicy().hasHeightForWidth()
+        )
         self.lHexSelection.setSizePolicy(sizePolicy)
         self.lHexSelection.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lHexSelection.setAcceptDrops(False)
@@ -453,7 +565,9 @@ class Ui_TabAnalysis(object):
         self.lHexSelection.setObjectName("lHexSelection")
         self.horizontalLayout_3.addWidget(self.lHexSelection)
         self.lDecimal = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lDecimal.sizePolicy().hasHeightForWidth())
@@ -462,25 +576,37 @@ class Ui_TabAnalysis(object):
         self.lDecimal.setObjectName("lDecimal")
         self.horizontalLayout_3.addWidget(self.lDecimal)
         self.lDecimalSelection = QtWidgets.QLineEdit(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lDecimalSelection.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lDecimalSelection.sizePolicy().hasHeightForWidth()
+        )
         self.lDecimalSelection.setSizePolicy(sizePolicy)
         self.lDecimalSelection.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lDecimalSelection.setAcceptDrops(False)
-        self.lDecimalSelection.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+        self.lDecimalSelection.setStyleSheet(
+            "background-color: rgba(255, 255, 255, 0);"
+        )
         self.lDecimalSelection.setFrame(False)
         self.lDecimalSelection.setReadOnly(True)
         self.lDecimalSelection.setObjectName("lDecimalSelection")
         self.horizontalLayout_3.addWidget(self.lDecimalSelection)
         self.lNumSelectedColumns = QtWidgets.QLabel(self.layoutWidget1)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lNumSelectedColumns.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lNumSelectedColumns.sizePolicy().hasHeightForWidth()
+        )
         self.lNumSelectedColumns.setSizePolicy(sizePolicy)
-        self.lNumSelectedColumns.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.lNumSelectedColumns.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.lNumSelectedColumns.setObjectName("lNumSelectedColumns")
         self.horizontalLayout_3.addWidget(self.lNumSelectedColumns)
         self.lColumnsSelectedText = QtWidgets.QLabel(self.layoutWidget1)
@@ -495,7 +621,9 @@ class Ui_TabAnalysis(object):
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(self.layoutWidget2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
@@ -504,19 +632,27 @@ class Ui_TabAnalysis(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.lblLabelValues = QtWidgets.QLabel(self.layoutWidget2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lblLabelValues.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lblLabelValues.sizePolicy().hasHeightForWidth()
+        )
         self.lblLabelValues.setSizePolicy(sizePolicy)
         self.lblLabelValues.setAlignment(QtCore.Qt.AlignCenter)
         self.lblLabelValues.setObjectName("lblLabelValues")
         self.gridLayout.addWidget(self.lblLabelValues, 0, 1, 1, 1)
         self.btnAddMessagetype = QtWidgets.QToolButton(self.layoutWidget2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnAddMessagetype.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.btnAddMessagetype.sizePolicy().hasHeightForWidth()
+        )
         self.btnAddMessagetype.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon.fromTheme("list-add")
         self.btnAddMessagetype.setIcon(icon)
@@ -524,10 +660,14 @@ class Ui_TabAnalysis(object):
         self.btnAddMessagetype.setObjectName("btnAddMessagetype")
         self.gridLayout.addWidget(self.btnAddMessagetype, 3, 0, 1, 1)
         self.tblLabelValues = LabelValueTableView(self.layoutWidget2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tblLabelValues.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tblLabelValues.sizePolicy().hasHeightForWidth()
+        )
         self.tblLabelValues.setSizePolicy(sizePolicy)
         self.tblLabelValues.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.tblLabelValues.setAlternatingRowColors(True)
@@ -540,10 +680,14 @@ class Ui_TabAnalysis(object):
         self.tblLabelValues.verticalHeader().setVisible(False)
         self.gridLayout.addWidget(self.tblLabelValues, 1, 1, 3, 1)
         self.tblViewMessageTypes = MessageTypeTableView(self.layoutWidget2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tblViewMessageTypes.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tblViewMessageTypes.sizePolicy().hasHeightForWidth()
+        )
         self.tblViewMessageTypes.setSizePolicy(sizePolicy)
         self.tblViewMessageTypes.setAcceptDrops(False)
         self.tblViewMessageTypes.setToolTip("")
@@ -565,53 +709,107 @@ class Ui_TabAnalysis(object):
     def retranslateUi(self, TabAnalysis):
         _translate = QtCore.QCoreApplication.translate
         TabAnalysis.setWindowTitle(_translate("TabAnalysis", "Frame"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_protocols), _translate("TabAnalysis", "Protocols"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_participants), _translate("TabAnalysis", "Participants"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_protocols),
+            _translate("TabAnalysis", "Protocols"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_participants),
+            _translate("TabAnalysis", "Participants"),
+        )
         self.label_5.setText(_translate("TabAnalysis", "Decoding:"))
         self.label_4.setText(_translate("TabAnalysis", "View data as:"))
         self.lEncodingErrors.setText(_translate("TabAnalysis", "Decoding errors:"))
         self.cbDecoding.setItemText(0, _translate("TabAnalysis", "NRZ"))
         self.cbDecoding.setItemText(1, _translate("TabAnalysis", "Manchester"))
         self.cbDecoding.setItemText(2, _translate("TabAnalysis", "Manchester II"))
-        self.cbDecoding.setItemText(3, _translate("TabAnalysis", "Differential Manchester"))
+        self.cbDecoding.setItemText(
+            3, _translate("TabAnalysis", "Differential Manchester")
+        )
         self.cbDecoding.setItemText(4, _translate("TabAnalysis", "..."))
-        self.chkBoxShowOnlyDiffs.setText(_translate("TabAnalysis", "Show only diffs in protocol"))
-        self.cbProtoView.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>Set the desired view here.</p></body></html>"))
+        self.chkBoxShowOnlyDiffs.setText(
+            _translate("TabAnalysis", "Show only diffs in protocol")
+        )
+        self.cbProtoView.setToolTip(
+            _translate(
+                "TabAnalysis",
+                "<html><head/><body><p>Set the desired view here.</p></body></html>",
+            )
+        )
         self.cbProtoView.setItemText(0, _translate("TabAnalysis", "Bits"))
         self.cbProtoView.setItemText(1, _translate("TabAnalysis", "Hex"))
         self.cbProtoView.setItemText(2, _translate("TabAnalysis", "ASCII"))
         self.lDecodingErrorsValue.setText(_translate("TabAnalysis", "0 (0.00%)"))
-        self.chkBoxOnlyShowLabelsInProtocol.setText(_translate("TabAnalysis", "Show only labels in protocol"))
+        self.chkBoxOnlyShowLabelsInProtocol.setText(
+            _translate("TabAnalysis", "Show only labels in protocol")
+        )
         self.cbShowDiffs.setText(_translate("TabAnalysis", "Mark diffs in protocol"))
-        self.btnAnalyze.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>Run some automatic analysis on the protocol e.g. assign labels automatically. You can configure which checks to run with the arrow on the right of this button.</p></body></html>"))
+        self.btnAnalyze.setToolTip(
+            _translate(
+                "TabAnalysis",
+                "<html><head/><body><p>Run some automatic analysis on the protocol e.g. assign labels automatically. You can configure which checks to run with the arrow on the right of this button.</p></body></html>",
+            )
+        )
         self.btnAnalyze.setText(_translate("TabAnalysis", "Analyze Protocol"))
-        self.btnSaveProto.setToolTip(_translate("TabAnalysis", "Save current protocol."))
+        self.btnSaveProto.setToolTip(
+            _translate("TabAnalysis", "Save current protocol.")
+        )
         self.lSlash.setText(_translate("TabAnalysis", "/"))
         self.lblShownRows.setText(_translate("TabAnalysis", "shown: 42/108"))
-        self.lTime.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Message</span><span style=\" font-weight:600;\">Start</span> is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.</p></body></html>"))
+        self.lTime.setToolTip(
+            _translate(
+                "TabAnalysis",
+                '<html><head/><body><p>The <span style=" font-weight:600;">Message</span><span style=" font-weight:600;">Start</span> is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.</p></body></html>',
+            )
+        )
         self.lTime.setText(_translate("TabAnalysis", "0 (+0)"))
         self.lSearchCurrent.setText(_translate("TabAnalysis", "-"))
-        self.lblRSSI.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>This is the average signal power of the current message. The nearer this value is to zero, the stronger the signal is.</p></body></html>"))
+        self.lblRSSI.setToolTip(
+            _translate(
+                "TabAnalysis",
+                "<html><head/><body><p>This is the average signal power of the current message. The nearer this value is to zero, the stronger the signal is.</p></body></html>",
+            )
+        )
         self.lblRSSI.setText(_translate("TabAnalysis", "-∞ dBm"))
         self.btnNextSearch.setText(_translate("TabAnalysis", ">"))
         self.btnPrevSearch.setText(_translate("TabAnalysis", "<"))
         self.lSearchTotal.setText(_translate("TabAnalysis", "-"))
-        self.label_3.setToolTip(_translate("TabAnalysis", "<html><head/><body><p>The <span style=\" font-weight:600;\">Message Start</span> is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.</p></body></html>"))
+        self.label_3.setToolTip(
+            _translate(
+                "TabAnalysis",
+                '<html><head/><body><p>The <span style=" font-weight:600;">Message Start</span> is the point in time when a protocol message begins. Additionally the relative time (+ ...) from the previous message is shown.</p></body></html>',
+            )
+        )
         self.label_3.setText(_translate("TabAnalysis", "Timestamp:"))
         self.btnSearchSelectFilter.setText(_translate("TabAnalysis", "Search"))
         self.btnLoadProto.setToolTip(_translate("TabAnalysis", "Load a protocol."))
         self.btnLoadProto.setText(_translate("TabAnalysis", "..."))
-        self.lblClearAlignment.setText(_translate("TabAnalysis", "<html><head/><body><p><a href=\"reset_alignment\"><span style=\" text-decoration: underline; color:#0000ff;\">Reset alignment</span></a></p></body></html>"))
-        self.lineEditSearch.setPlaceholderText(_translate("TabAnalysis", "Enter pattern here"))
+        self.lblClearAlignment.setText(
+            _translate(
+                "TabAnalysis",
+                '<html><head/><body><p><a href="reset_alignment"><span style=" text-decoration: underline; color:#0000ff;">Reset alignment</span></a></p></body></html>',
+            )
+        )
+        self.lineEditSearch.setPlaceholderText(
+            _translate("TabAnalysis", "Enter pattern here")
+        )
         self.lBits.setText(_translate("TabAnalysis", "Bit:"))
         self.lHex.setText(_translate("TabAnalysis", "Hex:"))
         self.lDecimal.setText(_translate("TabAnalysis", "Decimal:"))
         self.lNumSelectedColumns.setText(_translate("TabAnalysis", "0"))
-        self.lColumnsSelectedText.setText(_translate("TabAnalysis", "column(s) selected"))
+        self.lColumnsSelectedText.setText(
+            _translate("TabAnalysis", "column(s) selected")
+        )
         self.label.setText(_translate("TabAnalysis", "Message types"))
         self.lblLabelValues.setText(_translate("TabAnalysis", "Labels for message"))
-        self.btnAddMessagetype.setToolTip(_translate("TabAnalysis", "Add a new message type"))
-        self.btnAddMessagetype.setText(_translate("TabAnalysis", "Add new message type"))
+        self.btnAddMessagetype.setToolTip(
+            _translate("TabAnalysis", "Add a new message type")
+        )
+        self.btnAddMessagetype.setText(
+            _translate("TabAnalysis", "Add new message type")
+        )
+
+
 from urh.ui.views.LabelValueTableView import LabelValueTableView
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.ui.views.ProtocolTableView import ProtocolTableView

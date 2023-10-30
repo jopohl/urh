@@ -7,7 +7,9 @@ def monospace(string):
 
 def indent_string(string, depth=1):
     width = depth * INDENT_WIDTH_PX
-    return '<table style="margin-left: {0}px;" border=0><tr><td>{1}</td></tr></table>'.format(width, string)
+    return '<table style="margin-left: {0}px;" border=0><tr><td>{1}</td></tr></table>'.format(
+        width, string
+    )
 
 
 def mark_differences(value: str, compare_against: str):
@@ -27,6 +29,8 @@ def mark_differences(value: str, compare_against: str):
 def align_expected_and_got_value(expected: str, got: str, align_depth=1):
     width = align_depth * INDENT_WIDTH_PX
     got_marked = mark_differences(got, expected)
-    return '<table style="margin-left: {0}px;" border=0>' \
-           '<tr><td>Expected: </td><td>{1}</td></tr><tr><td>Got: </td><td>{2}</td> </tr>' \
-           '</table>'.format(width, monospace(expected), monospace(got_marked))
+    return (
+        '<table style="margin-left: {0}px;" border=0>'
+        "<tr><td>Expected: </td><td>{1}</td></tr><tr><td>Got: </td><td>{2}</td> </tr>"
+        "</table>".format(width, monospace(expected), monospace(got_marked))
+    )

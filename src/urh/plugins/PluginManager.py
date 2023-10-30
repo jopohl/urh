@@ -16,9 +16,13 @@ class PluginManager(object):
         return [p for p in self.installed_plugins if isinstance(p, ProtocolPlugin)]
 
     def load_installed_plugins(self):
-        """ :rtype: list of Plugin """
+        """:rtype: list of Plugin"""
         result = []
-        plugin_dirs = [d for d in os.listdir(self.plugin_path) if os.path.isdir(os.path.join(self.plugin_path, d))]
+        plugin_dirs = [
+            d
+            for d in os.listdir(self.plugin_path)
+            if os.path.isdir(os.path.join(self.plugin_path, d))
+        ]
         for d in plugin_dirs:
             if d == "__pycache__":
                 continue

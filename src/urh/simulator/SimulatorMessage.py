@@ -9,9 +9,19 @@ from urh.util.Formatter import Formatter
 
 
 class SimulatorMessage(Message, SimulatorItem):
-    def __init__(self, destination: Participant, plain_bits,
-                 pause: int, message_type: MessageType, decoder=None, source=None, timestamp=None):
-        Message.__init__(self, plain_bits, pause, message_type, decoder=decoder, participant=source)
+    def __init__(
+        self,
+        destination: Participant,
+        plain_bits,
+        pause: int,
+        message_type: MessageType,
+        decoder=None,
+        source=None,
+        timestamp=None,
+    ):
+        Message.__init__(
+            self, plain_bits, pause, message_type, decoder=decoder, participant=source
+        )
         SimulatorItem.__init__(self)
         if timestamp is not None:
             self.timestamp = timestamp
@@ -56,33 +66,62 @@ class SimulatorMessage(Message, SimulatorItem):
 
     @property
     def plain_bits_str(self) -> str:
-        return str(self.send_recv_messages[-1]) if len(self.send_recv_messages) > 0 else str(self)
+        return (
+            str(self.send_recv_messages[-1])
+            if len(self.send_recv_messages) > 0
+            else str(self)
+        )
 
     def __delitem__(self, index):
         removed_labels = self._remove_labels_for_range(index, instant_remove=False)
         self.simulator_config.delete_items(removed_labels)
         del self.plain_bits[index]
 
-    def to_xml(self, decoders=None, include_message_type=False, write_bits=True) -> ET.Element:
-        result = ET.Element("simulator_message",
-                            attrib={"destination_id": self.destination.id if self.destination else "",
-                                    "repeat": str(self.repeat)})
+    def to_xml(
+        self, decoders=None, include_message_type=False, write_bits=True
+    ) -> ET.Element:
+        result = ET.Element(
+            "simulator_message",
+            attrib={
+                "destination_id": self.destination.id if self.destination else "",
+                "repeat": str(self.repeat),
+            },
+        )
 
-        result.append(super().to_xml(decoders, include_message_type, write_bits=write_bits))
+        result.append(
+            super().to_xml(decoders, include_message_type, write_bits=write_bits)
+        )
 
         return result
 
-    def from_xml(self, tag: ET.Element, participants, decoders=None, message_types=None):
+    def from_xml(
+        self, tag: ET.Element, participants, decoders=None, message_types=None
+    ):
         super().from_xml(tag, participants, decoders, message_types)
-        self.destination = Participant.find_matching(tag.get("destination_id", ""), participants)
+        self.destination = Participant.find_matching(
+            tag.get("destination_id", ""), participants
+        )
         self.repeat = Formatter.str2val(tag.get("repeat", "1"), int, 1)
 
     @classmethod
-    def new_from_xml(cls, tag: ET.Element, participants, decoders=None, message_types=None):
-        msg = Message.new_from_xml(tag.find("message"),
-                                   participants=participants,
-                                   decoders=decoders,
-                                   message_types=message_types)
-        destination = Participant.find_matching(tag.get("destination_id", ""), participants)
-        return SimulatorMessage(destination, msg.plain_bits, msg.pause, msg.message_type, msg.decoder, msg.participant,
-                                timestamp=msg.timestamp)
+    def new_from_xml(
+        cls, tag: ET.Element, participants, decoders=None, message_types=None
+    ):
+        msg = Message.new_from_xml(
+            tag.find("message"),
+            participants=participants,
+            decoders=decoders,
+            message_types=message_types,
+        )
+        destination = Participant.find_matching(
+            tag.get("destination_id", ""), participants
+        )
+        return SimulatorMessage(
+            destination,
+            msg.plain_bits,
+            msg.pause,
+            msg.message_type,
+            msg.decoder,
+            msg.participant,
+            timestamp=msg.timestamp,
+        )

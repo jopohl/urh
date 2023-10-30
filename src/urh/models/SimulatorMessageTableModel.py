@@ -5,6 +5,7 @@ from PyQt5.QtCore import QModelIndex, Qt
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 
+
 class SimulatorMessageTableModel(TableModel):
     def __init__(self, project_manager, parent=None):
         super().__init__(None, parent)
@@ -40,9 +41,13 @@ class SimulatorMessageTableModel(TableModel):
             participant_name = msg.participant.shortname if msg.participant else "?"
             destination_name = msg.destination.shortname if msg.destination else "?"
 
-            self.vertical_header_text[i] = "{0} ({1} -> {2})".format(msg.index(), participant_name, destination_name)
+            self.vertical_header_text[i] = "{0} ({1} -> {2})".format(
+                msg.index(), participant_name, destination_name
+            )
 
-    def delete_range(self, msg_start: int, msg_end: int, index_start: int, index_end: int):
+    def delete_range(
+        self, msg_start: int, msg_end: int, index_start: int, index_end: int
+    ):
         removable_messages = []
 
         if msg_start > msg_end:
@@ -53,9 +58,16 @@ class SimulatorMessageTableModel(TableModel):
 
         for i in range(msg_start, msg_end + 1):
             try:
-                bs, be = self.protocol.convert_range(index_start, index_end, self.proto_view, 0, self.decode, message_indx=i)
+                bs, be = self.protocol.convert_range(
+                    index_start,
+                    index_end,
+                    self.proto_view,
+                    0,
+                    self.decode,
+                    message_indx=i,
+                )
                 self.protocol.messages[i].clear_decoded_bits()
-                del self.protocol.messages[i][bs:be + 1]
+                del self.protocol.messages[i][bs : be + 1]
 
                 if len(self.protocol.messages[i]) == 0:
                     removable_messages.append(self.protocol.messages[i])

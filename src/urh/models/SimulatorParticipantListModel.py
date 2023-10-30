@@ -5,7 +5,6 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 
 class SimulatorParticipantListModel(QAbstractListModel):
-
     participant_simulate_changed = pyqtSignal(Participant)
 
     def __init__(self, config: SimulatorConfiguration, parent=None):

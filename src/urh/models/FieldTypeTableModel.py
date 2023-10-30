@@ -5,7 +5,7 @@ from urh.signalprocessing.FieldType import FieldType
 
 
 class FieldTypeTableModel(QAbstractTableModel):
-    header_labels = ["Caption", 'Function', "Default display type"]
+    header_labels = ["Caption", "Function", "Default display type"]
 
     def __init__(self, fieldtypes, parent=None):
         """

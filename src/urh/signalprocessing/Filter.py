@@ -21,7 +21,7 @@ class Filter(object):
         "Narrow": 0.01,
         "Medium": 0.08,
         "Wide": 0.1,
-        "Very Wide": 0.42
+        "Very Wide": 0.42,
     }
 
     def __init__(self, taps: list, filter_type: FilterType = FilterType.custom):
@@ -36,12 +36,14 @@ class Filter(object):
 
     def apply_fir_filter(self, input_signal: np.ndarray) -> np.ndarray:
         if input_signal.dtype != np.complex64:
-            tmp = np.empty(len(input_signal)//2, dtype=np.complex64)
+            tmp = np.empty(len(input_signal) // 2, dtype=np.complex64)
             tmp.real = input_signal[0::2]
             tmp.imag = input_signal[1::2]
             input_signal = tmp
 
-        return signal_functions.fir_filter(input_signal, np.array(self.taps, dtype=np.complex64))
+        return signal_functions.fir_filter(
+            input_signal, np.array(self.taps, dtype=np.complex64)
+        )
 
     @staticmethod
     def read_configured_filter_bw() -> float:
@@ -68,14 +70,16 @@ class Filter(object):
     def fft_convolve_1d(x: np.ndarray, h: np.ndarray):
         n = len(x) + len(h) - 1
         n_opt = 1 << (n - 1).bit_length()  # Get next power of 2
-        if np.issubdtype(x.dtype, np.complexfloating) or np.issubdtype(h.dtype, np.complexfloating):
+        if np.issubdtype(x.dtype, np.complexfloating) or np.issubdtype(
+            h.dtype, np.complexfloating
+        ):
             fft, ifft = np.fft.fft, np.fft.ifft  # use complex fft
         else:
             fft, ifft = np.fft.rfft, np.fft.irfft  # use real fft
 
         result = ifft(fft(x, n_opt) * fft(h, n_opt), n_opt)[0:n]
         too_much = (len(result) - len(x)) // 2  # Center result
-        return result[too_much: -too_much]
+        return result[too_much:-too_much]
 
     @staticmethod
     def apply_bandpass_filter(data, f_low, f_high, filter_bw=0.08):
@@ -91,7 +95,7 @@ class Filter(object):
         # https://softwareengineering.stackexchange.com/questions/171757/computational-complexity-of-correlation-in-time-vs-multiplication-in-frequency-s/
         if len(h) < 8 * math.log(math.sqrt(len(data))):
             logger.debug("Use normal convolve")
-            return np.convolve(data, h, 'same')
+            return np.convolve(data, h, "same")
         else:
             logger.debug("Use FFT convolve")
             return Filter.fft_convolve_1d(data, h)
@@ -101,7 +105,7 @@ class Filter(object):
         N = Filter.get_filter_length_from_bandwidth(bw)
 
         # Compute sinc filter impulse response
-        h = np.sinc(2 * fc * (np.arange(N) - (N - 1) / 2.))
+        h = np.sinc(2 * fc * (np.arange(N) - (N - 1) / 2.0))
 
         # We use blackman window function
         w = np.blackman(N)
@@ -122,5 +126,6 @@ class Filter(object):
         N = Filter.get_filter_length_from_bandwidth(bw)
 
         # https://dsp.stackexchange.com/questions/41361/how-to-implement-bandpass-filter-on-complex-valued-signal
-        return Filter.design_windowed_sinc_lpf(f_c, bw=bw) * \
-               np.exp(complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex))
+        return Filter.design_windowed_sinc_lpf(f_c, bw=bw) * np.exp(
+            complex(0, 1) * np.pi * 2 * f_shift * np.arange(0, N, dtype=complex)
+        )

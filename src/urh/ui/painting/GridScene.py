@@ -21,10 +21,18 @@ class GridScene(ZoomableScene):
     def drawBackground(self, painter: QPainter, rect: QRectF):
         if self.draw_grid and len(self.frequencies) > 0:
             painter.setPen(QPen(painter.pen().color(), 0))
-            parent_width = self.parent().width() if hasattr(self.parent(), "width") else 750
-            view_rect = self.parent().view_rect() if hasattr(self.parent(), "view_rect") else rect
+            parent_width = (
+                self.parent().width() if hasattr(self.parent(), "width") else 750
+            )
+            view_rect = (
+                self.parent().view_rect()
+                if hasattr(self.parent(), "view_rect")
+                else rect
+            )
 
-            font_width = self.font_metrics.width(Formatter.big_value_with_suffix(self.center_freq) + "   ")
+            font_width = self.font_metrics.width(
+                Formatter.big_value_with_suffix(self.center_freq) + "   "
+            )
             x_grid_size = int(view_rect.width() / parent_width * font_width)
             # x_grid_size = int(0.1 * view_rect.width()) if 0.1 * view_rect.width() > 1 else 1
             y_grid_size = 1
@@ -36,14 +44,24 @@ class GridScene(ZoomableScene):
 
             top = rect.top() - (rect.top() % y_grid_size)
             bottom = rect.bottom() - (rect.bottom() % y_grid_size)
-            right_border = int(rect.right()) if rect.right() < len(self.frequencies) else len(self.frequencies)
+            right_border = (
+                int(rect.right())
+                if rect.right() < len(self.frequencies)
+                else len(self.frequencies)
+            )
 
             scale_x, scale_y = util.calc_x_y_scale(rect, self.parent())
 
             fh = self.font_metrics.height()
-            x_range = list(range(x_mid, left, -x_grid_size)) + list(range(x_mid, right_border, x_grid_size))
-            lines = [QLineF(x, rect.top(), x, bottom-fh*scale_y) for x in x_range] \
-                    + [QLineF(rect.left(), y, rect.right(), y) for y in np.arange(top, bottom, y_grid_size)]
+            x_range = list(range(x_mid, left, -x_grid_size)) + list(
+                range(x_mid, right_border, x_grid_size)
+            )
+            lines = [
+                QLineF(x, rect.top(), x, bottom - fh * scale_y) for x in x_range
+            ] + [
+                QLineF(rect.left(), y, rect.right(), y)
+                for y in np.arange(top, bottom, y_grid_size)
+            ]
 
             pen = painter.pen()
             pen.setStyle(Qt.DotLine)
@@ -63,7 +81,9 @@ class GridScene(ZoomableScene):
 
                 value = Formatter.big_value_with_suffix(self.center_freq + freq, 2)
                 font_width = self.font_metrics.width(value)
-                painter.drawText(QPointF(x / scale_x - font_width / 2, bottom / scale_y), value)
+                painter.drawText(
+                    QPointF(x / scale_x - font_width / 2, bottom / scale_y), value
+                )
 
     def draw_frequency_marker(self, x_pos, frequency):
         if frequency is None:
@@ -86,12 +106,16 @@ class GridScene(ZoomableScene):
 
         self.frequency_marker[0].setLine(x_pos, y1, x_pos, y2)
         scale_x, scale_y = util.calc_x_y_scale(self.sceneRect(), self.parent())
-        self.frequency_marker[1].setTransform(QTransform.fromScale(scale_x, scale_y), False)
-        self.frequency_marker[1].setText("Tune to " + Formatter.big_value_with_suffix(frequency, decimals=3))
+        self.frequency_marker[1].setTransform(
+            QTransform.fromScale(scale_x, scale_y), False
+        )
+        self.frequency_marker[1].setText(
+            "Tune to " + Formatter.big_value_with_suffix(frequency, decimals=3)
+        )
         font_metric = QFontMetrics(self.frequency_marker[1].font())
         text_width = font_metric.width("Tune to") * scale_x
         text_width += (font_metric.width(" ") * scale_x) / 2
-        self.frequency_marker[1].setPos(x_pos-text_width, 0.95*y1)
+        self.frequency_marker[1].setPos(x_pos - text_width, 0.95 * y1)
 
     def clear_frequency_marker(self):
         if self.frequency_marker is not None:
@@ -99,7 +123,7 @@ class GridScene(ZoomableScene):
             self.removeItem(self.frequency_marker[1])
         self.frequency_marker = None
 
-    def get_freq_for_pos(self, x: int) ->  float:
+    def get_freq_for_pos(self, x: int) -> float:
         try:
             f = self.frequencies[x]
         except IndexError:

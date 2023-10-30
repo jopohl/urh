@@ -4,11 +4,11 @@ from urh import settings
 
 
 def trace_calls(frame, event, arg):
-    if event != 'call':
+    if event != "call":
         return
     co = frame.f_code
     func_name = co.co_name
-    if func_name == 'write':
+    if func_name == "write":
         # Ignore write() calls from print statements
         return
     func_line_no = frame.f_lineno
@@ -21,16 +21,25 @@ def trace_calls(frame, event, arg):
             return
 
         if "_test" in caller_filename or "_test" in func_filename:
-            start = '\033[91m'
+            start = "\033[91m"
         else:
             start = "\033[0;32m"
         end = "\033[0;0m"
     else:
         start, end = "", ""
 
-    print('%s Call to %s on line %s of %s from line %s of %s %s' % \
-          (start, func_name, func_line_no, func_filename,
-           caller_line_no, caller_filename, end))
+    print(
+        "%s Call to %s on line %s of %s from line %s of %s %s"
+        % (
+            start,
+            func_name,
+            func_line_no,
+            func_filename,
+            caller_line_no,
+            caller_filename,
+            end,
+        )
+    )
     return
 
 
@@ -43,7 +52,9 @@ def write_settings():
         settings_written
     except NameError:
         settings_written = True
-        settings.write("not_show_close_dialog", True)  # prevent interactive close questions
+        settings.write(
+            "not_show_close_dialog", True
+        )  # prevent interactive close questions
         settings.write("not_show_save_dialog", True)
         settings.write("NetworkSDRInterface", True)
         settings.write("align_labels", True)

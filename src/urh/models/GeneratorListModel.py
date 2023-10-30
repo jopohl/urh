@@ -12,14 +12,14 @@ class GeneratorListModel(QAbstractListModel):
     def __init__(self, message: Message, parent=None):
         super().__init__(parent)
         self.__message = message
-    
+
     @property
     def labels(self):
         if self.message:
             return self.message.message_type
         else:
             return []
-    
+
     @property
     def message(self):
         return self.__message
@@ -52,7 +52,6 @@ class GeneratorListModel(QAbstractListModel):
             return self.labels[row].fuzz_me
         elif role == Qt.BackgroundColorRole:
             return settings.LABEL_COLORS[self.labels[row].color_index]
-
 
     def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
         if role == Qt.CheckStateRole:

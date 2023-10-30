@@ -13,14 +13,16 @@ class RTLSDR(Device):
     DEVICE_LIB = rtlsdr
     ASYNCHRONOUS = False
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
-    DEVICE_METHODS.update({
-        Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
-        Device.Command.SET_RF_GAIN.name+"_get_allowed_values": "get_tuner_gains",
-        Device.Command.SET_BANDWIDTH.name: "set_tuner_bandwidth",
-        Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
-        Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling",
-        Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee"
-    })
+    DEVICE_METHODS.update(
+        {
+            Device.Command.SET_RF_GAIN.name: "set_tuner_gain",
+            Device.Command.SET_RF_GAIN.name + "_get_allowed_values": "get_tuner_gains",
+            Device.Command.SET_BANDWIDTH.name: "set_tuner_bandwidth",
+            Device.Command.SET_FREQUENCY_CORRECTION.name: "set_freq_correction",
+            Device.Command.SET_DIRECT_SAMPLING_MODE.name: "set_direct_sampling",
+            Device.Command.SET_BIAS_TEE_ENABLED.name: "set_bias_tee",
+        }
+    )
 
     DATA_TYPE = np.int8
 
@@ -52,19 +54,27 @@ class RTLSDR(Device):
         ret = rtlsdr.close()
         ctrl_connection.send("CLOSE:" + str(ret))
 
-    def __init__(self, freq, gain, srate, device_number, resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=freq, sample_rate=srate, bandwidth=0,
-                         gain=gain, if_gain=1, baseband_gain=1,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self, freq, gain, srate, device_number, resume_on_full_receive_buffer=False
+    ):
+        super().__init__(
+            center_freq=freq,
+            sample_rate=srate,
+            bandwidth=0,
+            gain=gain,
+            if_gain=1,
+            baseband_gain=1,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
 
         self.success = 0
-        self.bandwidth_is_adjustable = self.get_bandwidth_is_adjustable()  # e.g. not in Manjaro Linux / Ubuntu 14.04
+        self.bandwidth_is_adjustable = (
+            self.get_bandwidth_is_adjustable()
+        )  # e.g. not in Manjaro Linux / Ubuntu 14.04
 
         self.device_number = device_number
 
-        self.error_codes = {
-            -100: "Method not available in installed driver."
-        }
+        self.error_codes = {-100: "Method not available in installed driver."}
 
     @staticmethod
     def get_bandwidth_is_adjustable():
@@ -72,14 +82,18 @@ class RTLSDR(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
-                            (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
-                            (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
-                            ("identifier", self.device_number)])
+        return OrderedDict(
+            [
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_FREQUENCY_CORRECTION.name, self.freq_correction),
+                (self.Command.SET_DIRECT_SAMPLING_MODE.name, self.direct_sampling_mode),
+                (self.Command.SET_RF_GAIN.name, self.gain),
+                (self.Command.SET_BIAS_TEE_ENABLED.name, self.bias_tee_enabled),
+                ("identifier", self.device_number),
+            ]
+        )
 
     @property
     def has_multi_device_support(self):
@@ -89,8 +103,12 @@ class RTLSDR(Device):
         if self.bandwidth_is_adjustable:
             super().set_device_bandwidth(bandwidth)
         else:
-            logger.warning("Setting the bandwidth is not supported by your RTL-SDR driver version.")
+            logger.warning(
+                "Setting the bandwidth is not supported by your RTL-SDR driver version."
+            )
 
     @staticmethod
     def bytes_to_iq(buffer):
-        return np.subtract(np.frombuffer(buffer, dtype=np.int8), 127).reshape((-1, 2), order="C")
+        return np.subtract(np.frombuffer(buffer, dtype=np.int8), 127).reshape(
+            (-1, 2), order="C"
+        )

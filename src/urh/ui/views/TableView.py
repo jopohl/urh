@@ -21,8 +21,10 @@ class TableView(QTableView):
         self.use_header_colors = False
 
         self.original_font_size = self.font().pointSize()
-        self.original_header_font_sizes = {"vertical": self.verticalHeader().font().pointSize(),
-                                           "horizontal": self.horizontalHeader().font().pointSize()}
+        self.original_header_font_sizes = {
+            "vertical": self.verticalHeader().font().pointSize(),
+            "horizontal": self.horizontalHeader().font().pointSize(),
+        }
 
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
         self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
@@ -40,7 +42,9 @@ class TableView(QTableView):
 
         self.zoom_original_action = QAction(self.tr("Zoom original"), self)
         self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
-        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
+        self.zoom_original_action.triggered.connect(
+            self.on_zoom_original_action_triggered
+        )
         self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
@@ -51,11 +55,19 @@ class TableView(QTableView):
         column_menu = menu.addMenu("Insert column")
 
         insert_column_left_action = column_menu.addAction("on the left")
-        insert_column_left_action.triggered.connect(self.on_insert_column_left_action_triggered)
-        insert_column_left_action.setIcon(QIcon.fromTheme("edit-table-insert-column-left"))
+        insert_column_left_action.triggered.connect(
+            self.on_insert_column_left_action_triggered
+        )
+        insert_column_left_action.setIcon(
+            QIcon.fromTheme("edit-table-insert-column-left")
+        )
         insert_column_right_action = column_menu.addAction("on the right")
-        insert_column_right_action.setIcon(QIcon.fromTheme("edit-table-insert-column-right"))
-        insert_column_right_action.triggered.connect(self.on_insert_column_right_action_triggered)
+        insert_column_right_action.setIcon(
+            QIcon.fromTheme("edit-table-insert-column-right")
+        )
+        insert_column_right_action.triggered.connect(
+            self.on_insert_column_right_action_triggered
+        )
 
     def selectionModel(self) -> QItemSelectionModel:
         return super().selectionModel()
@@ -126,8 +138,10 @@ class TableView(QTableView):
         if self.context_menu_pos is None:
             return menu
 
-        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
-                                                                     column=self.columnAt(self.context_menu_pos.x()))
+        selected_label_index = self.model().get_selected_label_index(
+            row=self.rowAt(self.context_menu_pos.y()),
+            column=self.columnAt(self.context_menu_pos.x()),
+        )
 
         if self.model().row_count > 0:
             if selected_label_index == -1:
@@ -137,7 +151,9 @@ class TableView(QTableView):
                 label_action = menu.addAction("Edit label...")
                 label_action.setIcon(QIcon.fromTheme("configure"))
 
-            label_action.triggered.connect(self.on_create_or_edit_label_action_triggered)
+            label_action.triggered.connect(
+                self.on_create_or_edit_label_action_triggered
+            )
             menu.addSeparator()
 
             zoom_menu = menu.addMenu("Zoom font size")
@@ -180,7 +196,9 @@ class TableView(QTableView):
         num_rows = self.model().rowCount()
         if self.isVisible() and num_rows > 0:
             hd = self.model().headerData
-            max_len = np.max([len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(num_rows)])
+            max_len = np.max(
+                [len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(num_rows)]
+            )
             w = (self.font().pointSize() + 2) * max_len
 
             # https://github.com/jopohl/urh/issues/182
@@ -216,8 +234,10 @@ class TableView(QTableView):
 
             self.model().insert_column(start, list(range(min_row, max_row + 1)))
 
-        if event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down) \
-                or event.modifiers() == Qt.ShiftModifier:
+        if (
+            event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down)
+            or event.modifiers() == Qt.ShiftModifier
+        ):
             super().keyPressEvent(event)
             return
 
@@ -314,8 +334,10 @@ class TableView(QTableView):
 
     @pyqtSlot()
     def on_create_or_edit_label_action_triggered(self):
-        selected_label_index = self.model().get_selected_label_index(row=self.rowAt(self.context_menu_pos.y()),
-                                                                     column=self.columnAt(self.context_menu_pos.x()))
+        selected_label_index = self.model().get_selected_label_index(
+            row=self.rowAt(self.context_menu_pos.y()),
+            column=self.columnAt(self.context_menu_pos.x()),
+        )
         if selected_label_index == -1:
             min_row, max_row, start, end = self.selection_range()
             self.create_label_triggered.emit(min_row, start, end)

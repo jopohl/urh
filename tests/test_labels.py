@@ -17,24 +17,38 @@ class TestLabels(QtTestCase):
 
         # Create two labels on Compare Frame
         self.form.ui.tabWidget.setCurrentIndex(1)
-        self.cframe.add_protocol_label(start=0, end=40, messagenr=1, proto_view=0, edit_label_name=False)  # Sync
-        self.cframe.add_protocol_label(start=43, end=43, messagenr=2, proto_view=0, edit_label_name=False)  # FuzzBit
+        self.cframe.add_protocol_label(
+            start=0, end=40, messagenr=1, proto_view=0, edit_label_name=False
+        )  # Sync
+        self.cframe.add_protocol_label(
+            start=43, end=43, messagenr=2, proto_view=0, edit_label_name=False
+        )  # FuzzBit
 
         self.assertEqual(len(self.cframe.active_message_type), 2)
 
     def test_show_labels_only(self):
         self.cframe.ui.chkBoxOnlyShowLabelsInProtocol.setChecked(True)
         for i in range(0, 40):
-            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i))
-        self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg="Bit 43")
+            self.assertFalse(
+                self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i)
+            )
+        self.assertFalse(
+            self.cframe.ui.tblViewProtocol.isColumnHidden(43), msg="Bit 43"
+        )
         for i in range(44, self.cframe.protocol_model.col_count):
-            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i))
+            self.assertTrue(
+                self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Bit " + str(i)
+            )
 
         self.cframe.ui.cbProtoView.setCurrentIndex(1)  # Hex View
         for i in range(0, 10):
-            self.assertFalse(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i))
+            self.assertFalse(
+                self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i)
+            )
         for i in range(13, self.cframe.protocol_model.col_count):
-            self.assertTrue(self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i))
+            self.assertTrue(
+                self.cframe.ui.tblViewProtocol.isColumnHidden(i), msg="Hex " + str(i)
+            )
 
     def test_generator_label(self):
         labels = self.cframe.proto_analyzer.protocol_labels
@@ -46,10 +60,16 @@ class TestLabels(QtTestCase):
         index = self.gframe.tree_model.createIndex(0, 0, item)
         rect = self.gframe.ui.treeProtocols.visualRect(index)
         self.assertEqual(len(self.gframe.ui.treeProtocols.selectedIndexes()), 0)
-        QTest.mousePress(self.gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center())
+        QTest.mousePress(
+            self.gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center()
+        )
         self.assertEqual(self.gframe.ui.treeProtocols.selectedIndexes()[0], index)
-        mimedata = self.gframe.tree_model.mimeData(self.gframe.ui.treeProtocols.selectedIndexes())
-        self.gframe.table_model.dropMimeData(mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0))
+        mimedata = self.gframe.tree_model.mimeData(
+            self.gframe.ui.treeProtocols.selectedIndexes()
+        )
+        self.gframe.table_model.dropMimeData(
+            mimedata, 1, -1, -1, self.gframe.table_model.createIndex(0, 0)
+        )
         self.assertEqual(self.gframe.table_model.row_count, 3)
 
         # Check Label in Generator
@@ -57,7 +77,9 @@ class TestLabels(QtTestCase):
         self.assertEqual(len(labels), 2)
 
         # Fuzz Label
-        lbl = copy.deepcopy(self.gframe.table_model.protocol.messages[0].message_type[1])
+        lbl = copy.deepcopy(
+            self.gframe.table_model.protocol.messages[0].message_type[1]
+        )
         self.gframe.table_model.protocol.messages[0].message_type[1] = lbl
         lbl.fuzz_values.append("1")
         lbl.add_fuzz_value()
@@ -95,6 +117,8 @@ class TestLabels(QtTestCase):
     def __check_background_is_drawn(self, lbl, lbl_start, lbl_end):
         pac = self.gframe.table_model.protocol
         for i in range(self.gframe.table_model.row_count):
-            start, end = pac.messages[i].get_label_range(lbl, self.gframe.table_model.proto_view, False)
+            start, end = pac.messages[i].get_label_range(
+                lbl, self.gframe.table_model.proto_view, False
+            )
             self.assertEqual(start, lbl_start)
             self.assertEqual(end, lbl_end + 1)

@@ -3,12 +3,31 @@ import xml.etree.ElementTree as ET
 
 
 class Participant(object):
-    __slots__ = ["name", "shortname", "address_hex", "color_index", "show", "simulate", "relative_rssi", "__id"]
+    __slots__ = [
+        "name",
+        "shortname",
+        "address_hex",
+        "color_index",
+        "show",
+        "simulate",
+        "relative_rssi",
+        "__id",
+    ]
 
-    def __init__(self, name: str, shortname: str = None, address_hex: str = None,
-                 color_index=0, id: str = None, relative_rssi=0, simulate=False):
+    def __init__(
+        self,
+        name: str,
+        shortname: str = None,
+        address_hex: str = None,
+        color_index=0,
+        id: str = None,
+        relative_rssi=0,
+        simulate=False,
+    ):
         self.name = name if name else "unknown"
-        self.shortname = shortname if shortname else name[0].upper() if len(name) > 0 else "X"
+        self.shortname = (
+            shortname if shortname else name[0].upper() if len(name) > 0 else "X"
+        )
         self.address_hex = address_hex if address_hex else ""
         self.color_index = color_index
         self.show = True
@@ -78,8 +97,15 @@ class Participant(object):
         except ValueError:
             simulate = False
 
-        return Participant(name, shortname=shortname, address_hex=address_hex, color_index=color_index,
-                           id=tag.attrib["id"], relative_rssi=relative_rssi, simulate=simulate)
+        return Participant(
+            name,
+            shortname=shortname,
+            address_hex=address_hex,
+            color_index=color_index,
+            id=tag.attrib["id"],
+            relative_rssi=relative_rssi,
+            simulate=simulate,
+        )
 
     @staticmethod
     def participants_to_xml_tag(participants: list) -> ET.Element:

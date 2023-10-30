@@ -35,7 +35,9 @@ class Ui_DialogMessageType(object):
         self.rbAssignAutomatically = QtWidgets.QRadioButton(DialogMessageType)
         self.rbAssignAutomatically.setObjectName("rbAssignAutomatically")
         self.gridLayout.addWidget(self.rbAssignAutomatically, 0, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 145, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 145, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem, 4, 2, 1, 1)
         self.btnAddRule = QtWidgets.QToolButton(DialogMessageType)
         icon = QtGui.QIcon.fromTheme("list-add")
@@ -43,7 +45,9 @@ class Ui_DialogMessageType(object):
         self.btnAddRule.setObjectName("btnAddRule")
         self.gridLayout.addWidget(self.btnAddRule, 2, 2, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(DialogMessageType)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 5, 0, 1, 2)
 
@@ -52,12 +56,22 @@ class Ui_DialogMessageType(object):
     def retranslateUi(self, DialogMessageType):
         _translate = QtCore.QCoreApplication.translate
         DialogMessageType.setWindowTitle(_translate("DialogMessageType", "Dialog"))
-        self.cbRulesetMode.setItemText(0, _translate("DialogMessageType", "All rules must apply (AND)"))
-        self.cbRulesetMode.setItemText(1, _translate("DialogMessageType", "At least one rule must apply (OR)"))
-        self.cbRulesetMode.setItemText(2, _translate("DialogMessageType", "No rule must apply (NOR)"))
+        self.cbRulesetMode.setItemText(
+            0, _translate("DialogMessageType", "All rules must apply (AND)")
+        )
+        self.cbRulesetMode.setItemText(
+            1, _translate("DialogMessageType", "At least one rule must apply (OR)")
+        )
+        self.cbRulesetMode.setItemText(
+            2, _translate("DialogMessageType", "No rule must apply (NOR)")
+        )
         self.btnRemoveRule.setToolTip(_translate("DialogMessageType", "Remove ruleset"))
         self.btnRemoveRule.setText(_translate("DialogMessageType", "..."))
-        self.rbAssignManually.setText(_translate("DialogMessageType", "Assi&gn manually"))
-        self.rbAssignAutomatically.setText(_translate("DialogMessageType", "Assign a&utomatically"))
+        self.rbAssignManually.setText(
+            _translate("DialogMessageType", "Assi&gn manually")
+        )
+        self.rbAssignAutomatically.setText(
+            _translate("DialogMessageType", "Assign a&utomatically")
+        )
         self.btnAddRule.setToolTip(_translate("DialogMessageType", "Add ruleset"))
         self.btnAddRule.setText(_translate("DialogMessageType", "..."))

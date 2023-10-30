@@ -12,7 +12,9 @@ class SpinBoxDelegate(QStyledItemDelegate):
     def _get_editor(self, parent) -> QSpinBox:
         return QSpinBox(parent)
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor = self._get_editor(parent)
         editor.setMinimum(self.minimum)
         editor.setMaximum(self.maximum)
@@ -25,10 +27,12 @@ class SpinBoxDelegate(QStyledItemDelegate):
         try:
             editor.setValue(int(index.model().data(index)))
         except ValueError:
-            pass # If Label was deleted and UI not updated yet
+            pass  # If Label was deleted and UI not updated yet
         editor.blockSignals(False)
 
-    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
+    def setModelData(
+        self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
+    ):
         model.setData(index, editor.value(), Qt.EditRole)
 
     @pyqtSlot()

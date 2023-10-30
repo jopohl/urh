@@ -18,9 +18,11 @@ class TestCRC(unittest.TestCase):
         c = GenericCRC(polynomial=WSPChecksum.CRC_8_POLYNOMIAL)
         e = Encoding()
 
-        bitstr = ["010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
-                  "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",
-                  "010101010110100111010010111011101110111011100110001011101010001011101110110110100101"]
+        bitstr = [
+            "010101010110100111011010111011101110111011100110001011101010001011101110110110101101",
+            "010101010110101001101110111011101110111011100110001011101010001011101110110111100101",
+            "010101010110100111010010111011101110111011100110001011101010001011101110110110100101",
+        ]
 
         expected = ["78", "c9", "f2"]
 
@@ -45,14 +47,22 @@ class TestCRC(unittest.TestCase):
             self.assertEqual(util.bit2hex(crc.crc(bits)), expect)
 
     def test_different_crcs(self):
-        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_standard",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         bitstring_set = [
             "101001001010101010101011101111111000000000000111101010011101011",
             "101001001010101101111010110111101010010110111010",
             "00000000000000000000000000000000100000000000000000000000000000000001111111111111",
             "1111111111111111111111111111111110111111111111111111110111111111111111110000000000"
-            "1"]
+            "1",
+        ]
 
         for j in c.DEFAULT_POLYNOMIALS:
             c.polynomial = c.choose_polynomial(j)
@@ -105,14 +115,28 @@ class TestCRC(unittest.TestCase):
                 c.reverse_all = False
 
     def test_cache(self):
-        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_standard",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         c.calculate_cache(8)
         self.assertEqual(len(c.cache), 256)
 
     def test_different_crcs_fast(self):
-        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_standard",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         bitstring_set = [
             "10101010",
             "00000001",
@@ -123,7 +147,8 @@ class TestCRC(unittest.TestCase):
             "101001001010101101111010110111101010010110111010",
             "00000000000000000000000000000000100000000000000000000000000000000001111111111111",
             "1111111111111111111111111111111110111111111111111111110111111111111111110000000000"
-            "1"]
+            "1",
+        ]
 
         for j in c.DEFAULT_POLYNOMIALS:
             c.polynomial = c.choose_polynomial(j)
@@ -185,13 +210,21 @@ class TestCRC(unittest.TestCase):
                     c.lsb_first = False
 
     def test_reverse_engineering(self):
-        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_standard",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         bitstring_set = [
             "1110001111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
             "1110010011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
             "1110010111001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
-            "1110011011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010"]
+            "1110011011001011100010000101010100000010110111000101100010100100111110111101100110110111011001010010001011101010",
+        ]
         bitset = []
         crcset = []
 
@@ -206,10 +239,22 @@ class TestCRC(unittest.TestCase):
             self.assertEqual(util.bit2hex(polynomial), "8005")
 
     def test_not_aligned_data_len(self):
-        c = GenericCRC(polynomial="16_standard", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_standard",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         polynomials = ["8_standard", "16_standard", "16_ccitt", "16_dnp"]
-        crcs = {"8_standard": 0xd5, "16_standard": 0x8005, "16_ccitt": 0x1021, "16_dnp": 0x3d65}
+        crcs = {
+            "8_standard": 0xD5,
+            "16_standard": 0x8005,
+            "16_ccitt": 0x1021,
+            "16_dnp": 0x3D65,
+        }
         for j in polynomials:
             c.polynomial = c.choose_polynomial(j)
             inpt = "1"
@@ -219,18 +264,36 @@ class TestCRC(unittest.TestCase):
                 inpt = "0" + inpt
 
     def test_bruteforce_parameters_and_data_range(self):
-        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_ccitt",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
         vrfy_crc = "0011101111010001"
 
-        result = c.bruteforce_parameters_and_data_range(c.str2arr(inpt), len(inpt)-len(vrfy_crc)-1)
+        result = c.bruteforce_parameters_and_data_range(
+            c.str2arr(inpt), len(inpt) - len(vrfy_crc) - 1
+        )
         self.assertEqual(result, (2, 84, 172))
-        self.assertEqual(vrfy_crc, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
+        self.assertEqual(
+            vrfy_crc, c.bit2str(c.crc(c.str2arr(inpt[result[1] : result[2]])))
+        )
 
     def test_bruteforce_parameters_and_data_range_improved(self):
-        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_ccitt",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         inpt = "101010101010101010000000111000000000000011100000001011010010110100000000111000000101001010000100000000000100111001111110010000000011011111111001001101100001100010100000000000111011110100010"
         vrfy_crc = "0011101111010001"
 
@@ -238,7 +301,9 @@ class TestCRC(unittest.TestCase):
         runs = 100
         for i in range(0, runs):
             t = time.time()
-            result = c.bruteforce_parameters_and_data_range(c.str2arr(inpt), len(inpt)-len(vrfy_crc)-1)
+            result = c.bruteforce_parameters_and_data_range(
+                c.str2arr(inpt), len(inpt) - len(vrfy_crc) - 1
+            )
             t1 += time.time() - t
             # print(result, c.bit2str(c.crc(c.str2arr(inpt[result[1]:result[2]]))))
             self.assertEqual(result[0], 2)  # Parameters = 2
@@ -249,8 +314,15 @@ class TestCRC(unittest.TestCase):
         self.assertLess(t1 / runs, 0.1)  # Should be faster than 100ms in average
 
     def test_adaptive_crc_calculation(self):
-        c = GenericCRC(polynomial="16_ccitt", start_value=False, final_xor=False,
-                       reverse_polynomial=False, reverse_all=False, lsb_first=False, little_endian=False)
+        c = GenericCRC(
+            polynomial="16_ccitt",
+            start_value=False,
+            final_xor=False,
+            reverse_polynomial=False,
+            reverse_all=False,
+            lsb_first=False,
+            little_endian=False,
+        )
         inpt1 = "10101010101010"
         inpt2 = "1010101010101001"
 

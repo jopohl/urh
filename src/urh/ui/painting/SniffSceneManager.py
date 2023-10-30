@@ -12,7 +12,7 @@ class SniffSceneManager(SceneManager):
 
     @property
     def plot_data(self):
-        return self.data_array[self.__start:self.end]
+        return self.data_array[self.__start : self.end]
 
     @plot_data.setter
     def plot_data(self, value):

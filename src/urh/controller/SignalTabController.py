@@ -26,8 +26,11 @@ class SignalTabController(QWidget):
         :rtype: list of SignalFrame
         """
         splitter = self.ui.splitter
-        return [splitter.widget(i) for i in range(splitter.count())
-                if isinstance(splitter.widget(i), SignalFrame)]
+        return [
+            splitter.widget(i)
+            for i in range(splitter.count())
+            if isinstance(splitter.widget(i), SignalFrame)
+        ]
 
     @property
     def signal_undo_stack(self):
@@ -52,12 +55,14 @@ class SignalTabController(QWidget):
     def on_files_dropped(self, files):
         self.files_dropped.emit(files)
 
-    def close_frame(self, frame:SignalFrame):
+    def close_frame(self, frame: SignalFrame):
         self.frame_closed.emit(frame)
 
     def add_signal_frame(self, proto_analyzer, index=-1):
         self.__set_getting_started_status(False)
-        sig_frame = SignalFrame(proto_analyzer, self.undo_stack, self.project_manager, parent=self)
+        sig_frame = SignalFrame(
+            proto_analyzer, self.undo_stack, self.project_manager, parent=self
+        )
         sframes = self.signal_frames
 
         if len(proto_analyzer.signal.filename) == 0:
@@ -67,12 +72,16 @@ class SignalTabController(QWidget):
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
         sig_frame.signal_created.connect(self.emit_signal_created)
         sig_frame.not_show_again_changed.connect(self.not_show_again_changed.emit)
-        sig_frame.ui.lineEditSignalName.setToolTip(self.tr("Sourcefile: ") + proto_analyzer.signal.filename)
+        sig_frame.ui.lineEditSignalName.setToolTip(
+            self.tr("Sourcefile: ") + proto_analyzer.signal.filename
+        )
         sig_frame.apply_to_all_clicked.connect(self.on_apply_to_all_clicked)
 
         prev_signal_frame = sframes[-1] if len(sframes) > 0 else None
         if prev_signal_frame is not None and hasattr(prev_signal_frame, "ui"):
-            sig_frame.ui.cbProtoView.setCurrentIndex(prev_signal_frame.ui.cbProtoView.currentIndex())
+            sig_frame.ui.cbProtoView.setCurrentIndex(
+                prev_signal_frame.ui.cbProtoView.currentIndex()
+            )
 
         sig_frame.blockSignals(True)
 
@@ -80,15 +89,19 @@ class SignalTabController(QWidget):
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
-        default_view = settings.read('default_view', 0, int)
+        default_view = settings.read("default_view", 0, int)
         sig_frame.ui.cbProtoView.setCurrentIndex(default_view)
 
         return sig_frame
 
     def add_empty_frame(self, filename: str, proto):
         self.__set_getting_started_status(False)
-        sig_frame = SignalFrame(proto_analyzer=proto, undo_stack=self.undo_stack, project_manager=self.project_manager,
-                                parent=self)
+        sig_frame = SignalFrame(
+            proto_analyzer=proto,
+            undo_stack=self.undo_stack,
+            project_manager=self.project_manager,
+            parent=self,
+        )
 
         sig_frame.ui.lineEditSignalName.setText(filename)
         self.__create_connects_for_signal_frame(signal_frame=sig_frame)
@@ -110,7 +123,7 @@ class SignalTabController(QWidget):
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):
-        signal_frame.hold_shift = settings.read('hold_shift_to_drag', True, type=bool)
+        signal_frame.hold_shift = settings.read("hold_shift_to_drag", True, type=bool)
         signal_frame.drag_started.connect(self.frame_dragged)
         signal_frame.frame_dropped.connect(self.frame_dropped)
         signal_frame.files_dropped.connect(self.on_files_dropped)
@@ -126,14 +139,17 @@ class SignalTabController(QWidget):
             return
 
         try:
-            not_show = settings.read('not_show_save_dialog', False, type=bool)
+            not_show = settings.read("not_show_save_dialog", False, type=bool)
         except TypeError:
             not_show = False
 
         if not not_show:
             cb = QCheckBox("Don't ask me again.")
-            msg_box = QMessageBox(QMessageBox.Question, self.tr("Confirm saving all signals"),
-                                  self.tr("All changed signal files will be overwritten. OK?"))
+            msg_box = QMessageBox(
+                QMessageBox.Question,
+                self.tr("Confirm saving all signals"),
+                self.tr("All changed signal files will be overwritten. OK?"),
+            )
             msg_box.addButton(QMessageBox.Yes)
             msg_box.addButton(QMessageBox.No)
             msg_box.setCheckBox(cb)
@@ -179,7 +195,9 @@ class SignalTabController(QWidget):
                     proto_needs_update = True
 
                 if frame.signal.noise_threshold != signal.noise_threshold:
-                    frame.signal.noise_threshold_relative = signal.noise_threshold_relative
+                    frame.signal.noise_threshold_relative = (
+                        signal.noise_threshold_relative
+                    )
                     proto_needs_update = True
 
                 if frame.signal.samples_per_symbol != signal.samples_per_symbol:

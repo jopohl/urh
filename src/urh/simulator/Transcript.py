@@ -8,7 +8,9 @@ class Transcript(object):
     def __init__(self):
         self.__data = []
 
-    def append(self, source: Participant, destination: Participant, msg: Message, index: int):
+    def append(
+        self, source: Participant, destination: Participant, msg: Message, index: int
+    ):
         if len(self.__data) == 0:
             self.__data.append([])
 
@@ -26,12 +28,20 @@ class Transcript(object):
         if len(self.__data) == 0:
             return result
 
-        rng = range(0, len(self.__data)) if all_rounds else range(len(self.__data)-1, len(self.__data))
+        rng = (
+            range(0, len(self.__data))
+            if all_rounds
+            else range(len(self.__data) - 1, len(self.__data))
+        )
 
         for i in rng:
             for source, destination, msg, msg_index in self.__data[i]:
                 data = msg.plain_bits_str if use_bit else msg.plain_hex_str
-                result.append(self.FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+                result.append(
+                    self.FORMAT.format(
+                        msg_index, source.shortname, destination.shortname, data
+                    )
+                )
 
             if i != len(self.__data) - 1:
                 result.append("")

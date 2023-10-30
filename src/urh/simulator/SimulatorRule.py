@@ -22,7 +22,14 @@ class SimulatorRule(SimulatorItem):
         return next((child for child in self.children if child.condition_applies), None)
 
     def next_item(self):
-        return next((c.children[0] for c in self.children if c.condition_applies and c.child_count()), self.next_sibling())
+        return next(
+            (
+                c.children[0]
+                for c in self.children
+                if c.condition_applies and c.child_count()
+            ),
+            self.next_sibling(),
+        )
 
     def to_xml(self) -> ET.Element:
         return ET.Element("simulator_rule")
@@ -49,7 +56,9 @@ class SimulatorRuleCondition(SimulatorItem):
         if self.type is ConditionType.ELSE:
             return True
 
-        valid, _, node = self.expression_parser.validate_expression(self.condition, is_formula=False)
+        valid, _, node = self.expression_parser.validate_expression(
+            self.condition, is_formula=False
+        )
         assert valid == True and node is not None
         return self.expression_parser.evaluate_node(node)
 
@@ -63,12 +72,16 @@ class SimulatorRuleCondition(SimulatorItem):
         if self.type is ConditionType.ELSE:
             return True
 
-        result, _, _ = self.expression_parser.validate_expression(self.condition, is_formula=False)
+        result, _, _ = self.expression_parser.validate_expression(
+            self.condition, is_formula=False
+        )
         return result
 
     def to_xml(self):
-        return ET.Element("simulator_rule_condition", attrib={"type": self.type.value,
-                                                              "condition": self.condition})
+        return ET.Element(
+            "simulator_rule_condition",
+            attrib={"type": self.type.value, "condition": self.condition},
+        )
 
     @classmethod
     def from_xml(cls, tag: ET.Element):

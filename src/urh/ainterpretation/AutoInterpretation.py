@@ -26,6 +26,7 @@ def min_without_outliers(data: np.ndarray, z=2):
 
     return np.min(data[abs(data - np.mean(data)) <= z * np.std(data)])
 
+
 def get_most_frequent_value(values: list):
     """
     Return the most frequent value in list.
@@ -66,9 +67,15 @@ def detect_noise_level(magnitudes):
     chunksize_percent = 1
     chunksize = max(1, int(len(magnitudes) * chunksize_percent / 100))
 
-    chunks = [magnitudes[i - chunksize:i] for i in range(len(magnitudes), 0, -chunksize) if i - chunksize >= 0]
+    chunks = [
+        magnitudes[i - chunksize : i]
+        for i in range(len(magnitudes), 0, -chunksize)
+        if i - chunksize >= 0
+    ]
 
-    mean_values = np.fromiter((np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks))
+    mean_values = np.fromiter(
+        (np.mean(chunk) for chunk in chunks), dtype=np.float32, count=len(chunks)
+    )
     minimum, maximum = util.minmax(mean_values)
     if maximum == 0 or minimum / maximum > 0.9:
         # Mean values are very close to each other, so there is probably no noise in the signal
@@ -94,7 +101,9 @@ def segment_messages_from_magnitudes(magnitudes: np.ndarray, noise_threshold: fl
     :param noise_threshold: Threshold for noise
     :return:
     """
-    return c_auto_interpretation.segment_messages_from_magnitudes(magnitudes, noise_threshold)
+    return c_auto_interpretation.segment_messages_from_magnitudes(
+        magnitudes, noise_threshold
+    )
 
 
 def merge_message_segments_for_ook(segments: list):
@@ -106,13 +115,13 @@ def merge_message_segments_for_ook(segments: list):
     pauses = np.fromiter(
         (segments[i + 1][0] - segments[i][1] for i in range(len(segments) - 1)),
         count=len(segments) - 1,
-        dtype=np.uint64
+        dtype=np.uint64,
     )
 
     pulses = np.fromiter(
         (segments[i][1] - segments[i][0] for i in range(len(segments))),
         count=len(segments),
-        dtype=np.uint64
+        dtype=np.uint64,
     )
 
     # Find relatively large pauses, these mark new messages
@@ -122,7 +131,9 @@ def merge_message_segments_for_ook(segments: list):
     # Merge Pulse Lengths between long pauses
     for i in range(0, len(large_pause_indices) + 1):
         if i == 0:
-            start, end = 0, large_pause_indices[i] + 1 if len(large_pause_indices) >= 1 else len(segments)
+            start, end = 0, large_pause_indices[i] + 1 if len(
+                large_pause_indices
+            ) >= 1 else len(segments)
         elif i == len(large_pause_indices):
             start, end = large_pause_indices[i - 1] + 1, len(segments)
         else:
@@ -130,7 +141,9 @@ def merge_message_segments_for_ook(segments: list):
 
         msg_begin = segments[start][0]
         msg_length = sum(segments[j][1] - segments[j][0] for j in range(start, end))
-        msg_length += sum(segments[j][0] - segments[j - 1][1] for j in range(start + 1, end))
+        msg_length += sum(
+            segments[j][0] - segments[j - 1][1] for j in range(start + 1, end)
+        )
 
         result.append((msg_begin, msg_begin + msg_length))
 
@@ -156,10 +169,17 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
     var_mag = np.var(mag_wavlt)
     var_norm_mag = np.var(norm_mag_wavlt)
 
-    var_filtered_mag = np.var(c_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order))
-    var_filtered_norm_mag = np.var(c_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order))
+    var_filtered_mag = np.var(
+        c_auto_interpretation.median_filter(mag_wavlt, k=median_filter_order)
+    )
+    var_filtered_norm_mag = np.var(
+        c_auto_interpretation.median_filter(norm_mag_wavlt, k=median_filter_order)
+    )
 
-    if all(v < 0.15 for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)):
+    if all(
+        v < 0.15
+        for v in (var_mag, var_norm_mag, var_filtered_mag, var_filtered_norm_mag)
+    ):
         return "OOK"
 
     if var_mag > 1.5 * var_norm_mag:
@@ -173,14 +193,17 @@ def detect_modulation(data: np.ndarray, wavelet_scale=4, median_filter_order=11)
         else:
             # Now we either have a FSK signal or we a have OOK single pulse
             # If we have an FSK, there should be at least two peaks in FFT
-            fft = np.fft.fft(data[0:2 ** int(np.log2(len(data)))])
+            fft = np.fft.fft(data[0 : 2 ** int(np.log2(len(data)))])
             fft = np.abs(np.fft.fftshift(fft))
             ten_greatest_indices = np.argsort(fft)[::-1][0:10]
             greatest_index = ten_greatest_indices[0]
             min_distance = 10
             min_freq = 100  # 100 seems to be magnitude of noise frequency
 
-            if any(abs(i - greatest_index) >= min_distance and fft[i] >= min_freq for i in ten_greatest_indices):
+            if any(
+                abs(i - greatest_index) >= min_distance and fft[i] >= min_freq
+                for i in ten_greatest_indices
+            ):
                 return "FSK"
             else:
                 return "OOK"
@@ -207,7 +230,7 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
 
     # Ignore the first and last 5% of samples,
     # because there tends to be an overshoot at start/end of rectangular signal
-    rect = rect[int(0.05*len(rect)):int(0.95*len(rect))]
+    rect = rect[int(0.05 * len(rect)) : int(0.95 * len(rect))]
 
     if max_size is not None and len(rect) > max_size:
         rect = rect[0:max_size]
@@ -219,7 +242,9 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
     hist_step = float(np.var(rect))
 
     try:
-        y, x = np.histogram(rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step))
+        y, x = np.histogram(
+            rect, bins=np.arange(hist_min, hist_max + hist_step, hist_step)
+        )
     except (ZeroDivisionError, ValueError):
         # For a segment with zero variance (constant line) it is not possible to find a center
         return None
@@ -227,7 +252,7 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
     num_values = 2
     most_common_levels = []
 
-    window_size = max(2, int(0.05*len(y)) + 1)
+    window_size = max(2, int(0.05 * len(y)) + 1)
 
     def get_elem(arr, index: int, default):
         if 0 <= index < len(arr):
@@ -237,9 +262,11 @@ def detect_center(rectangular_signal: np.ndarray, max_size=None):
 
     for index in np.argsort(y)[::-1]:
         # check if we have a local maximum in histogram, if yes, append the value
-        if all(y[index] > get_elem(y, index+i, 0) and
-               y[index] > get_elem(y, index-i, 0)
-               for i in range(1, window_size)):
+        if all(
+            y[index] > get_elem(y, index + i, 0)
+            and y[index] > get_elem(y, index - i, 0)
+            for i in range(1, window_size)
+        ):
             most_common_levels.append(x[index])
 
         if len(most_common_levels) == num_values:
@@ -280,7 +307,9 @@ def merge_plateau_lengths(plateau_lengths, tolerance=None) -> list:
     if tolerance == 0 or tolerance is None:
         return plateau_lengths
 
-    return c_auto_interpretation.merge_plateaus(plateau_lengths, tolerance, max_count=10000)
+    return c_auto_interpretation.merge_plateaus(
+        plateau_lengths, tolerance, max_count=10000
+    )
 
 
 def round_plateau_lengths(plateau_lengths: list):
@@ -322,7 +351,9 @@ def get_bit_length_from_plateau_lengths(merged_plateau_lengths) -> int:
         return int(merged_plateau_lengths[0])
 
     round_plateau_lengths(merged_plateau_lengths)
-    histogram = c_auto_interpretation.get_threshold_divisor_histogram(merged_plateau_lengths)
+    histogram = c_auto_interpretation.get_threshold_divisor_histogram(
+        merged_plateau_lengths
+    )
 
     if len(histogram) == 0:
         return 0
@@ -350,10 +381,16 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
     noise = detect_noise_level(magnitudes) if noise is None else noise
 
     # segment messages
-    message_indices = segment_messages_from_magnitudes(magnitudes, noise_threshold=noise)
+    message_indices = segment_messages_from_magnitudes(
+        magnitudes, noise_threshold=noise
+    )
 
     # detect modulation
-    modulation = detect_modulation_for_messages(iq_array, message_indices) if modulation is None else modulation
+    modulation = (
+        detect_modulation_for_messages(iq_array, message_indices)
+        if modulation is None
+        else modulation
+    )
     if modulation is None:
         return None
 
@@ -379,7 +416,9 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
         if center is None:
             continue
 
-        plateau_lengths = c_auto_interpretation.get_plateau_lengths(msg_rect_data, center, percentage=25)
+        plateau_lengths = c_auto_interpretation.get_plateau_lengths(
+            msg_rect_data, center, percentage=25
+        )
         tolerance = estimate_tolerance_from_plateau_lengths(plateau_lengths)
         if tolerance is None:
             tolerance = 0
@@ -428,7 +467,7 @@ def estimate(iq_array: IQArray, noise: float = None, modulation: str = None) -> 
         "bit_length": bit_length,
         "center": center,
         "tolerance": int(tolerance),
-        "noise": noise
+        "noise": noise,
     }
 
     return result

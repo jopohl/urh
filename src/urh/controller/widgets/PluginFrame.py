@@ -21,14 +21,19 @@ class PluginFrame(QFrame):
         self.ui.groupBoxSettings.setLayout(self.settings_layout)
         self.create_connects()
 
-        self.restoreGeometry(settings.read("{}/geometry".format(self.__class__.__name__), type=bytes))
-
+        self.restoreGeometry(
+            settings.read("{}/geometry".format(self.__class__.__name__), type=bytes)
+        )
 
     def create_connects(self):
-        self.ui.listViewPlugins.selectionModel().selectionChanged.connect(self.on_list_selection_changed)
+        self.ui.listViewPlugins.selectionModel().selectionChanged.connect(
+            self.on_list_selection_changed
+        )
         for plugin in self.model.plugins:
             if hasattr(plugin, "show_proto_sniff_dialog_clicked"):
-                plugin.show_proto_sniff_dialog_clicked.connect(self.parent().parent().show_proto_sniff_dialog)
+                plugin.show_proto_sniff_dialog_clicked.connect(
+                    self.parent().parent().show_proto_sniff_dialog
+                )
 
     def save_enabled_states(self):
         for plugin in self.model.plugins:

@@ -21,7 +21,9 @@ class SpectrogramGraphicView(ZoomableGraphicView):
         super().__init__(parent)
 
         self.move_y_with_drag = True
-        self.scene_manager = SpectrogramSceneManager(np.zeros(1, dtype=np.complex64), parent=self)
+        self.scene_manager = SpectrogramSceneManager(
+            np.zeros(1, dtype=np.complex64), parent=self
+        )
         self.setScene(self.scene_manager.scene)
 
     @property
@@ -54,16 +56,22 @@ class SpectrogramGraphicView(ZoomableGraphicView):
             filter_bw = Filter.read_configured_filter_bw()
             text = self.tr("Apply bandpass filter (filter bw={0:n})".format(filter_bw))
             create_from_frequency_selection = menu.addAction(text)
-            create_from_frequency_selection.triggered.connect(self.on_create_from_frequency_selection_triggered)
+            create_from_frequency_selection.triggered.connect(
+                self.on_create_from_frequency_selection_triggered
+            )
             create_from_frequency_selection.setIcon(QIcon.fromTheme("view-filter"))
 
             try:
-                cancel_button = " or ".join(k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel))
+                cancel_button = " or ".join(
+                    k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel)
+                )
             except Exception as e:
                 logger.debug("Error reading cancel button: " + str(e))
                 cancel_button = "Esc"
 
-            create_from_frequency_selection.setToolTip("You can abort filtering with <b>{}</b>.".format(cancel_button))
+            create_from_frequency_selection.setToolTip(
+                "You can abort filtering with <b>{}</b>.".format(cancel_button)
+            )
 
         configure_filter_bw = menu.addAction(self.tr("Configure filter bandwidth..."))
         configure_filter_bw.triggered.connect(self.on_configure_filter_bw_triggered)
@@ -91,7 +99,9 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     def emit_selection_start_end_changed(self):
         h = self.sceneRect().height()
-        self.sel_area_start_end_changed.emit(h - self.selection_area.end, h - self.selection_area.start)
+        self.sel_area_start_end_changed.emit(
+            h - self.selection_area.end, h - self.selection_area.start
+        )
 
     @pyqtSlot()
     def on_create_from_frequency_selection_triggered(self):
@@ -110,7 +120,7 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
     @pyqtSlot()
     def on_export_fta_action_triggered(self):
-        if not(self.scene_manager and self.scene_manager.spectrogram):
+        if not (self.scene_manager and self.scene_manager.spectrogram):
             return
 
         self.export_fta_wanted.emit()

@@ -20,20 +20,22 @@ class Ui_SniffSettings(object):
         font.setBold(True)
         font.setWeight(75)
         self.groupBoxSniffSettings.setFont(font)
-        self.groupBoxSniffSettings.setStyleSheet("QGroupBox\n"
-"{\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
-"}\n"
-"QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
-"}")
+        self.groupBoxSniffSettings.setStyleSheet(
+            "QGroupBox\n"
+            "{\n"
+            "border: none;\n"
+            "}\n"
+            "\n"
+            "QGroupBox::title {\n"
+            "    subcontrol-origin: margin;\n"
+            "}\n"
+            "QGroupBox::indicator:unchecked {\n"
+            " image: url(:/icons/icons/collapse.svg)\n"
+            "}\n"
+            "QGroupBox::indicator:checked {\n"
+            " image: url(:/icons/icons/uncollapse.svg)\n"
+            "}"
+        )
         self.groupBoxSniffSettings.setFlat(True)
         self.groupBoxSniffSettings.setCheckable(True)
         self.groupBoxSniffSettings.setObjectName("groupBoxSniffSettings")
@@ -53,10 +55,14 @@ class Ui_SniffSettings(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.spinbox_sniff_Noise = QtWidgets.QDoubleSpinBox(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinbox_sniff_Noise.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinbox_sniff_Noise.sizePolicy().hasHeightForWidth()
+        )
         self.spinbox_sniff_Noise.setSizePolicy(sizePolicy)
         self.spinbox_sniff_Noise.setDecimals(4)
         self.spinbox_sniff_Noise.setMaximum(1.0)
@@ -89,16 +95,22 @@ class Ui_SniffSettings(object):
         self.spinbox_sniff_SamplesPerSymbol = QtWidgets.QSpinBox(self.frame)
         self.spinbox_sniff_SamplesPerSymbol.setMinimum(1)
         self.spinbox_sniff_SamplesPerSymbol.setMaximum(999999999)
-        self.spinbox_sniff_SamplesPerSymbol.setObjectName("spinbox_sniff_SamplesPerSymbol")
+        self.spinbox_sniff_SamplesPerSymbol.setObjectName(
+            "spinbox_sniff_SamplesPerSymbol"
+        )
         self.gridLayout.addWidget(self.spinbox_sniff_SamplesPerSymbol, 4, 1, 1, 1)
         self.label_sniff_viewtype = QtWidgets.QLabel(self.frame)
         self.label_sniff_viewtype.setObjectName("label_sniff_viewtype")
         self.gridLayout.addWidget(self.label_sniff_viewtype, 9, 0, 1, 1)
         self.lineEdit_sniff_OutputFile = QtWidgets.QLineEdit(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_sniff_OutputFile.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lineEdit_sniff_OutputFile.sizePolicy().hasHeightForWidth()
+        )
         self.lineEdit_sniff_OutputFile.setSizePolicy(sizePolicy)
         self.lineEdit_sniff_OutputFile.setReadOnly(False)
         self.lineEdit_sniff_OutputFile.setClearButtonEnabled(True)
@@ -115,10 +127,14 @@ class Ui_SniffSettings(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.comboBox_sniff_signal = QtWidgets.QComboBox(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox_sniff_signal.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.comboBox_sniff_signal.sizePolicy().hasHeightForWidth()
+        )
         self.comboBox_sniff_signal.setSizePolicy(sizePolicy)
         self.comboBox_sniff_signal.setObjectName("comboBox_sniff_signal")
         self.horizontalLayout_2.addWidget(self.comboBox_sniff_signal)
@@ -132,10 +148,14 @@ class Ui_SniffSettings(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.spinbox_sniff_Center = QtWidgets.QDoubleSpinBox(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinbox_sniff_Center.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinbox_sniff_Center.sizePolicy().hasHeightForWidth()
+        )
         self.spinbox_sniff_Center.setSizePolicy(sizePolicy)
         self.spinbox_sniff_Center.setDecimals(4)
         self.spinbox_sniff_Center.setMinimum(-3.14)
@@ -166,10 +186,14 @@ class Ui_SniffSettings(object):
         self.label_sniff_Noise.setObjectName("label_sniff_Noise")
         self.gridLayout.addWidget(self.label_sniff_Noise, 1, 0, 1, 1)
         self.comboBox_sniff_encoding = QtWidgets.QComboBox(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBox_sniff_encoding.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.comboBox_sniff_encoding.sizePolicy().hasHeightForWidth()
+        )
         self.comboBox_sniff_encoding.setSizePolicy(sizePolicy)
         self.comboBox_sniff_encoding.setObjectName("comboBox_sniff_encoding")
         self.gridLayout.addWidget(self.comboBox_sniff_encoding, 8, 1, 1, 1)
@@ -188,41 +212,76 @@ class Ui_SniffSettings(object):
         self.verticalLayout.addWidget(self.groupBoxSniffSettings)
 
         self.retranslateUi(SniffSettings)
-        self.groupBoxSniffSettings.toggled['bool'].connect(self.frame.setVisible)
+        self.groupBoxSniffSettings.toggled["bool"].connect(self.frame.setVisible)
         SniffSettings.setTabOrder(self.groupBoxSniffSettings, self.spinbox_sniff_Noise)
-        SniffSettings.setTabOrder(self.spinbox_sniff_Noise, self.spinbox_sniff_SamplesPerSymbol)
-        SniffSettings.setTabOrder(self.spinbox_sniff_SamplesPerSymbol, self.spinbox_sniff_ErrorTolerance)
-        SniffSettings.setTabOrder(self.spinbox_sniff_ErrorTolerance, self.combox_sniff_Modulation)
-        SniffSettings.setTabOrder(self.combox_sniff_Modulation, self.comboBox_sniff_encoding)
-        SniffSettings.setTabOrder(self.comboBox_sniff_encoding, self.comboBox_sniff_viewtype)
-        SniffSettings.setTabOrder(self.comboBox_sniff_viewtype, self.checkBox_sniff_Timestamp)
-        SniffSettings.setTabOrder(self.checkBox_sniff_Timestamp, self.lineEdit_sniff_OutputFile)
+        SniffSettings.setTabOrder(
+            self.spinbox_sniff_Noise, self.spinbox_sniff_SamplesPerSymbol
+        )
+        SniffSettings.setTabOrder(
+            self.spinbox_sniff_SamplesPerSymbol, self.spinbox_sniff_ErrorTolerance
+        )
+        SniffSettings.setTabOrder(
+            self.spinbox_sniff_ErrorTolerance, self.combox_sniff_Modulation
+        )
+        SniffSettings.setTabOrder(
+            self.combox_sniff_Modulation, self.comboBox_sniff_encoding
+        )
+        SniffSettings.setTabOrder(
+            self.comboBox_sniff_encoding, self.comboBox_sniff_viewtype
+        )
+        SniffSettings.setTabOrder(
+            self.comboBox_sniff_viewtype, self.checkBox_sniff_Timestamp
+        )
+        SniffSettings.setTabOrder(
+            self.checkBox_sniff_Timestamp, self.lineEdit_sniff_OutputFile
+        )
 
     def retranslateUi(self, SniffSettings):
         _translate = QtCore.QCoreApplication.translate
         SniffSettings.setWindowTitle(_translate("SniffSettings", "Form"))
-        self.groupBoxSniffSettings.setTitle(_translate("SniffSettings", "Sniff settings"))
+        self.groupBoxSniffSettings.setTitle(
+            _translate("SniffSettings", "Sniff settings")
+        )
         self.label_sniff_Center.setText(_translate("SniffSettings", "Center:"))
-        self.checkBoxAdaptiveNoise.setToolTip(_translate("SniffSettings", "<html><head/><body><p>With adaptive noise URH will update the noise level automatically during RX. This is helpful in a dynamic environment where noise differs in time.</p></body></html>"))
+        self.checkBoxAdaptiveNoise.setToolTip(
+            _translate(
+                "SniffSettings",
+                "<html><head/><body><p>With adaptive noise URH will update the noise level automatically during RX. This is helpful in a dynamic environment where noise differs in time.</p></body></html>",
+            )
+        )
         self.checkBoxAdaptiveNoise.setText(_translate("SniffSettings", "Adaptive"))
         self.label_sniff_Modulation.setText(_translate("SniffSettings", "Modulation:"))
         self.label_sniff_Signal.setText(_translate("SniffSettings", "Use values from:"))
         self.combox_sniff_Modulation.setItemText(0, _translate("SniffSettings", "ASK"))
         self.combox_sniff_Modulation.setItemText(1, _translate("SniffSettings", "FSK"))
         self.combox_sniff_Modulation.setItemText(2, _translate("SniffSettings", "PSK"))
-        self.label_sniff_Tolerance.setText(_translate("SniffSettings", "Error Tolerance:"))
+        self.label_sniff_Tolerance.setText(
+            _translate("SniffSettings", "Error Tolerance:")
+        )
         self.label_sniff_viewtype.setText(_translate("SniffSettings", "View:"))
-        self.lineEdit_sniff_OutputFile.setPlaceholderText(_translate("SniffSettings", "None"))
-        self.label_sniff_BitLength.setText(_translate("SniffSettings", "Samples per Symbol:"))
+        self.lineEdit_sniff_OutputFile.setPlaceholderText(
+            _translate("SniffSettings", "None")
+        )
+        self.label_sniff_BitLength.setText(
+            _translate("SniffSettings", "Samples per Symbol:")
+        )
         self.btn_sniff_use_signal.setText(_translate("SniffSettings", "Use"))
-        self.label_sniff_OutputFile.setText(_translate("SniffSettings", "Write bitstream to file:"))
+        self.label_sniff_OutputFile.setText(
+            _translate("SniffSettings", "Write bitstream to file:")
+        )
         self.checkBoxAutoCenter.setText(_translate("SniffSettings", "Automatic"))
         self.label_sniff_encoding.setText(_translate("SniffSettings", "Encoding:"))
         self.comboBox_sniff_viewtype.setItemText(0, _translate("SniffSettings", "Bit"))
         self.comboBox_sniff_viewtype.setItemText(1, _translate("SniffSettings", "Hex"))
-        self.comboBox_sniff_viewtype.setItemText(2, _translate("SniffSettings", "ASCII"))
-        self.checkBox_sniff_Timestamp.setText(_translate("SniffSettings", "Show Timestamp"))
+        self.comboBox_sniff_viewtype.setItemText(
+            2, _translate("SniffSettings", "ASCII")
+        )
+        self.checkBox_sniff_Timestamp.setText(
+            _translate("SniffSettings", "Show Timestamp")
+        )
         self.label_sniff_Noise.setText(_translate("SniffSettings", "Noise:"))
         self.labelCenterSpacing.setText(_translate("SniffSettings", "Center Spacing:"))
         self.labelBitsPerSymbol.setText(_translate("SniffSettings", "Bits per Symbol:"))
+
+
 from . import urh_rc

@@ -1,4 +1,5 @@
 import sys
+
 if sys.version_info[0] >= 3:
     from queue import Queue, Empty
 else:
@@ -15,12 +16,18 @@ class InputHandlerThread(Thread):
         self.device = device
         self.daemon = True
 
-        t = Thread(target=self.enqueue_input, args=(sys.stdin, self.queue,))
+        t = Thread(
+            target=self.enqueue_input,
+            args=(
+                sys.stdin,
+                self.queue,
+            ),
+        )
         t.daemon = True  # thread dies with the program
         t.start()
 
     def enqueue_input(self, inp, queue):
-        for line in iter(inp.readline, b''):
+        for line in iter(inp.readline, b""):
             queue.put(line)
         inp.close()
 
@@ -84,7 +91,8 @@ class InputHandlerThread(Thread):
                             v = 1
                         self.device.set_freq_correction(v)
                     elif i.startswith("DSM:"):
-                        print("GNU Radio does not support setting direct sampling mode live.")
+                        print(
+                            "GNU Radio does not support setting direct sampling mode live."
+                        )
 
             time.sleep(0.1)
-

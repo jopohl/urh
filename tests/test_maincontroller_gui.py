@@ -33,7 +33,9 @@ class TestMaincontrollerGUI(QtTestCase):
         except OSError:
             pass
 
-        self.form.project_manager.set_project_folder(test_dir, ask_for_new_project=False)
+        self.form.project_manager.set_project_folder(
+            test_dir, ask_for_new_project=False
+        )
 
         self.assertIn("project_test", self.form.recentFileActionList[0].text())
 
@@ -45,12 +47,19 @@ class TestMaincontrollerGUI(QtTestCase):
         self.add_signal_to_form("esaver.complex16s")
         self.form.on_options_changed({"show_pause_as_time": True, "default_view": 2})
         QApplication.instance().processEvents()
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.currentIndex(), 2)
+        self.assertEqual(
+            self.form.signal_tab_controller.signal_frames[
+                0
+            ].ui.cbProtoView.currentIndex(),
+            2,
+        )
 
     def test_open_plain_bits(self):
-        bits = ["1010111000110001010101010101",
-                "1010111110010010101",
-                "1111010100101010101010101010"]
+        bits = [
+            "1010111000110001010101010101",
+            "1010111110010010101",
+            "1111010100101010101010101010",
+        ]
 
         filename = os.path.join(tempfile.gettempdir(), "test_plain_bits.txt")
         with open(filename, "w") as f:
@@ -60,13 +69,20 @@ class TestMaincontrollerGUI(QtTestCase):
         self.form.add_files([filename])
 
         for i, bit_seq in enumerate(bits):
-            table_data = "".join(map(str, self.form.compare_frame_controller.protocol_model.display_data[i]))
+            table_data = "".join(
+                map(
+                    str,
+                    self.form.compare_frame_controller.protocol_model.display_data[i],
+                )
+            )
             self.assertEqual(bit_seq, table_data)
 
     def test_open_options_dialog(self):
         self.form.show_options_dialog_specific_tab(1)
-        w = next((w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)),
-                 None)  # type: OptionsDialog
+        w = next(
+            (w for w in QApplication.topLevelWidgets() if isinstance(w, OptionsDialog)),
+            None,
+        )  # type: OptionsDialog
         self.assertIsNotNone(w)
         self.assertEqual(w.ui.tabWidget.currentIndex(), 1)
         w.close()
@@ -91,7 +107,9 @@ class TestMaincontrollerGUI(QtTestCase):
 
         self.assertFalse(timer.isActive())
 
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 100)
+        self.assertEqual(
+            self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 100
+        )
         self.assertTrue(os.path.isfile(self.get_path_for_filename("csvtest.complex")))
         timer.start()
         self.form.add_files([self.get_path_for_filename("csvtest.csv")])
@@ -138,16 +156,22 @@ class TestMaincontrollerGUI(QtTestCase):
         assert isinstance(self.form, MainController)
         file_proxy_model = self.form.file_proxy_model
         file_model = self.form.filemodel
-        self.form.ui.fileTree.setRootIndex(file_proxy_model.mapFromSource(file_model.index(QDir.tempPath())))
+        self.form.ui.fileTree.setRootIndex(
+            file_proxy_model.mapFromSource(file_model.index(QDir.tempPath()))
+        )
 
         menu = self.form.ui.fileTree.create_context_menu()
-        remove_action = next((action for action in menu.actions() if action.text() == "Delete"), None)
+        remove_action = next(
+            (action for action in menu.actions() if action.text() == "Delete"), None
+        )
         self.assertIsNotNone(remove_action)
 
         f = os.path.join(QDir.tempPath(), "test")
         open(f, "w").close()
         self.assertTrue(os.path.isfile(f))
-        self.form.ui.fileTree.setCurrentIndex(file_proxy_model.mapFromSource(file_model.index(f)))
+        self.form.ui.fileTree.setCurrentIndex(
+            file_proxy_model.mapFromSource(file_model.index(f))
+        )
 
         remove_action.trigger()
         self.assertFalse(os.path.isfile(f))

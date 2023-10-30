@@ -12,7 +12,13 @@ from urh.util.GenericCRC import GenericCRC
 
 
 class ChecksumEngine(Engine):
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.9, already_labeled: list = None):
+    def __init__(
+        self,
+        bitvectors,
+        n_gram_length=8,
+        minimum_score=0.9,
+        already_labeled: list = None,
+    ):
         """
         :type bitvectors: list of np.ndarray
         :param bitvectors: bitvectors behind the synchronization
@@ -23,7 +29,9 @@ class ChecksumEngine(Engine):
         if already_labeled is None:
             self.already_labeled_cols = set()
         else:
-            self.already_labeled_cols = {e for rng in already_labeled for e in range(*rng)}
+            self.already_labeled_cols = {
+                e for rng in already_labeled for e in range(*rng)
+            }
 
     def find(self):
         result = list()
@@ -37,31 +45,58 @@ class ChecksumEngine(Engine):
             checksums_for_length = []
             for index in message_indices:
                 bits = self.bitvectors[index]
-                data_start, data_stop, crc_start, crc_stop = WSPChecksum.search_for_wsp_checksum(bits)
+                (
+                    data_start,
+                    data_stop,
+                    crc_start,
+                    crc_stop,
+                ) = WSPChecksum.search_for_wsp_checksum(bits)
                 if (data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0):
-                    checksum_range = ChecksumRange(start=crc_start, length=crc_stop-crc_start,
-                                                   data_range_start=data_start, data_range_end=data_stop,
-                                                   crc=WSPChecksum(), score=1/len(message_indices),
-                                                   field_type="checksum", message_indices={index})
+                    checksum_range = ChecksumRange(
+                        start=crc_start,
+                        length=crc_stop - crc_start,
+                        data_range_start=data_start,
+                        data_range_end=data_stop,
+                        crc=WSPChecksum(),
+                        score=1 / len(message_indices),
+                        field_type="checksum",
+                        message_indices={index},
+                    )
                     try:
-                        present = next(c for c in checksums_for_length if c == checksum_range)
+                        present = next(
+                            c for c in checksums_for_length if c == checksum_range
+                        )
                         present.message_indices.add(index)
                     except StopIteration:
                         checksums_for_length.append(checksum_range)
                     continue
 
-                crc_object, data_start, data_stop, crc_start, crc_stop = crc.guess_all(bits,
-                                                                                       ignore_positions=self.already_labeled_cols)
+                crc_object, data_start, data_stop, crc_start, crc_stop = crc.guess_all(
+                    bits, ignore_positions=self.already_labeled_cols
+                )
 
-                if (crc_object, data_start, data_stop, crc_start, crc_stop) != (0, 0, 0, 0, 0):
-                    checksum_range = ChecksumRange(start=crc_start, length=crc_stop - crc_start,
-                                                   data_range_start=data_start, data_range_end=data_stop,
-                                                   crc=copy.copy(crc_object), score=1 / len(message_indices),
-                                                   field_type="checksum", message_indices={index}
-                                                   )
+                if (crc_object, data_start, data_stop, crc_start, crc_stop) != (
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ):
+                    checksum_range = ChecksumRange(
+                        start=crc_start,
+                        length=crc_stop - crc_start,
+                        data_range_start=data_start,
+                        data_range_end=data_stop,
+                        crc=copy.copy(crc_object),
+                        score=1 / len(message_indices),
+                        field_type="checksum",
+                        message_indices={index},
+                    )
 
                     try:
-                        present = next(rng for rng in checksums_for_length if rng == checksum_range)
+                        present = next(
+                            rng for rng in checksums_for_length if rng == checksum_range
+                        )
                         present.message_indices.add(index)
                         continue
                     except StopIteration:
@@ -69,10 +104,15 @@ class ChecksumEngine(Engine):
 
                     checksums_for_length.append(checksum_range)
 
-                    matching = awre_util.check_crc_for_messages(message_indices, self.bitvectors,
-                                                                data_start, data_stop,
-                                                                crc_start, crc_stop,
-                                                                *crc_object.get_parameters())
+                    matching = awre_util.check_crc_for_messages(
+                        message_indices,
+                        self.bitvectors,
+                        data_start,
+                        data_stop,
+                        crc_start,
+                        crc_stop,
+                        *crc_object.get_parameters()
+                    )
 
                     checksum_range.message_indices.update(matching)
 
@@ -87,8 +127,14 @@ class ChecksumEngine(Engine):
 
         self._debug("Found Checksums", result)
         try:
-            max_scored = max(filter(lambda x: len(x.message_indices) >= 2 and x.score >= self.minimum_score, result),
-                             key=lambda x: x.score)
+            max_scored = max(
+                filter(
+                    lambda x: len(x.message_indices) >= 2
+                    and x.score >= self.minimum_score,
+                    result,
+                ),
+                key=lambda x: x.score,
+            )
         except ValueError:
             return []
 

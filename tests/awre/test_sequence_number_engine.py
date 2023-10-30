@@ -23,13 +23,14 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         num_messages = 20
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"})
+        pg = ProtocolGenerator(
+            [mb.message_type], syncs_by_mt={mb.message_type: "0x9a9d"}
+        )
 
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        #self.save_protocol("simple_sequence_number", pg)
+        # self.save_protocol("simple_sequence_number", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -41,8 +42,15 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
-        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(
+            ff.message_types[0].num_labels_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            ),
+            1,
+        )
+        label = ff.message_types[0].get_first_label_with_type(
+            FieldType.Function.SEQUENCE_NUMBER
+        )
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 8)
 
@@ -54,15 +62,20 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         num_messages = 10
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"}, sequence_number_increment=64)
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            sequence_number_increment=64,
+        )
 
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        #self.save_protocol("16bit_seq", pg)
+        # self.save_protocol("16bit_seq", pg)
 
-        bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
+        bitvectors = FormatFinder.get_bitvectors_from_messages(
+            pg.protocol.messages, sync_ends=[24] * num_messages
+        )
         seq_engine = SequenceNumberEngine(bitvectors, n_gram_length=8)
         highscored_ranges = seq_engine.find()
         self.assertEqual(len(highscored_ranges), 1)
@@ -73,8 +86,15 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
-        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(
+            ff.message_types[0].num_labels_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            ),
+            1,
+        )
+        label = ff.message_types[0].get_first_label_with_type(
+            FieldType.Function.SEQUENCE_NUMBER
+        )
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 16)
 
@@ -87,15 +107,20 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         num_messages = 10
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"}, sequence_number_increment=1)
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            sequence_number_increment=1,
+        )
 
         for i in range(num_messages):
             pg.generate_message(data="0xcafe" + "abc" * i)
 
-        #self.save_protocol("16bit_seq_first_byte_zero_test", pg)
+        # self.save_protocol("16bit_seq_first_byte_zero_test", pg)
 
-        bitvectors = FormatFinder.get_bitvectors_from_messages(pg.protocol.messages, sync_ends=[24]*num_messages)
+        bitvectors = FormatFinder.get_bitvectors_from_messages(
+            pg.protocol.messages, sync_ends=[24] * num_messages
+        )
         seq_engine = SequenceNumberEngine(bitvectors, n_gram_length=8)
         highscored_ranges = seq_engine.find()
         self.assertEqual(len(highscored_ranges), 1)
@@ -105,8 +130,15 @@ class TestSequenceNumberEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 1)
         self.assertGreater(len(ff.message_types[0]), 0)
-        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
-        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(
+            ff.message_types[0].num_labels_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            ),
+            1,
+        )
+        label = ff.message_types[0].get_first_label_with_type(
+            FieldType.Function.SEQUENCE_NUMBER
+        )
 
         # Not consider constants as part of SEQ Nr!
         self.assertEqual(label.start, 40)
@@ -130,9 +162,11 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         num_messages = 3
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x1337"},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x1337"},
+            participants=[alice, bob],
+        )
 
         for i in range(num_messages):
             if i % 2 == 0:
@@ -141,7 +175,7 @@ class TestSequenceNumberEngine(AWRETestCase):
                 source, destination = bob, alice
             pg.generate_message(data="", source=source, destination=destination)
 
-        #self.save_protocol("protocol_1", pg)
+        # self.save_protocol("protocol_1", pg)
 
         # Delete message type information -> no prior knowledge
         self.clear_message_types(pg.protocol.messages)
@@ -152,7 +186,12 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         self.assertEqual(len(ff.message_types), 1)
 
-        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 0)
+        self.assertEqual(
+            ff.message_types[0].num_labels_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            ),
+            0,
+        )
 
     def test_sequence_number_little_endian_16_bit(self):
         mb = MessageTypeBuilder("16bit_seq_test")
@@ -162,21 +201,31 @@ class TestSequenceNumberEngine(AWRETestCase):
 
         num_messages = 8
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"},
-                               little_endian=True, sequence_number_increment=64)
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            little_endian=True,
+            sequence_number_increment=64,
+        )
 
         for i in range(num_messages):
             pg.generate_message(data="0xcafe")
 
-        #self.save_protocol("16bit_litte_endian_seq", pg)
+        # self.save_protocol("16bit_litte_endian_seq", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
         ff.perform_iteration()
 
         self.assertEqual(len(ff.message_types), 1)
-        self.assertEqual(ff.message_types[0].num_labels_with_type(FieldType.Function.SEQUENCE_NUMBER), 1)
-        label = ff.message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+        self.assertEqual(
+            ff.message_types[0].num_labels_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            ),
+            1,
+        )
+        label = ff.message_types[0].get_first_label_with_type(
+            FieldType.Function.SEQUENCE_NUMBER
+        )
         self.assertEqual(label.start, 24)
         self.assertEqual(label.length, 16)

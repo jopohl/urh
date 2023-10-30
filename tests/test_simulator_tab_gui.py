@@ -13,7 +13,9 @@ from tests.QtTestCase import QtTestCase
 from urh import settings
 from urh.controller.MainController import MainController
 from urh.controller.SimulatorTabController import SimulatorTabController
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 from urh.signalprocessing.IQArray import IQArray
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
@@ -146,11 +148,20 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 3)), "")
         stc.ui.tblViewFieldValues.openPersistentEditor(model.index(0, 3))
         model.setData(model.index(0, 3), "4+5", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
+        self.assertNotEqual(
+            model.data(model.index(0, 3), role=Qt.BackgroundColorRole),
+            settings.ERROR_BG_COLOR,
+        )
         model.setData(model.index(0, 3), "item1.preamble + 42", role=Qt.EditRole)
-        self.assertNotEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
+        self.assertNotEqual(
+            model.data(model.index(0, 3), role=Qt.BackgroundColorRole),
+            settings.ERROR_BG_COLOR,
+        )
         model.setData(model.index(0, 3), "item1.preamble + 42/", role=Qt.EditRole)
-        self.assertEqual(model.data(model.index(0, 3), role=Qt.BackgroundColorRole), settings.ERROR_BG_COLOR)
+        self.assertEqual(
+            model.data(model.index(0, 3), role=Qt.BackgroundColorRole),
+            settings.ERROR_BG_COLOR,
+        )
 
         # external program
         model.setData(model.index(0, 2), 3, role=Qt.EditRole)
@@ -174,13 +185,17 @@ class TestSimulatorTabGUI(QtTestCase):
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(2)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i] + 4, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(
+                lens[i] + 4, len(stc.simulator_message_table_model.protocol.messages[i])
+            )
 
         stc.ui.cbViewType.setCurrentText("Bit")
         stc.ui.tblViewMessage.selectAll()
         stc.ui.tblViewMessage._insert_column(6)
         for i, l in enumerate(lens):
-            self.assertEqual(lens[i] + 5, len(stc.simulator_message_table_model.protocol.messages[i]))
+            self.assertEqual(
+                lens[i] + 5, len(stc.simulator_message_table_model.protocol.messages[i])
+            )
 
     def test_simulator_graphics_view(self):
         self.__setup_project()
@@ -194,23 +209,35 @@ class TestSimulatorTabGUI(QtTestCase):
         messages = stc.simulator_scene.get_all_message_items()
         pos = stc.ui.gvSimulator.mapFromScene(messages[0].scenePos())
 
-        QTest.mouseClick(stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos)
+        QTest.mouseClick(
+            stc.ui.gvSimulator.viewport(), Qt.LeftButton, Qt.NoModifier, pos
+        )
 
         self.assertEqual(len(stc.simulator_scene.selectedItems()), 1)
         self.assertIsInstance(stc.simulator_scene.selectedItems()[0], MessageItem)
 
-        rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
+        rules = [
+            item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)
+        ]
         self.assertEqual(len(rules), 0)
-        self.menus_to_ignore = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
+        self.menus_to_ignore = [
+            w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
+        ]
         timer = QTimer(self.form)
         timer.setInterval(1)
         timer.setSingleShot(True)
-        timer.timeout.connect(self.__on_context_menu_simulator_graphics_view_timer_timeout)
+        timer.timeout.connect(
+            self.__on_context_menu_simulator_graphics_view_timer_timeout
+        )
         timer.start()
 
-        stc.ui.gvSimulator.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, pos))
+        stc.ui.gvSimulator.contextMenuEvent(
+            QContextMenuEvent(QContextMenuEvent.Mouse, pos)
+        )
 
-        rules = [item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)]
+        rules = [
+            item for item in stc.simulator_scene.items() if isinstance(item, RuleItem)
+        ]
         self.assertEqual(len(rules), 1)
 
     def test_simulator_message_table_context_menu(self):
@@ -223,14 +250,18 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(stc.simulator_message_field_model.rowCount(), 1)
 
         stc.ui.tblViewMessage.selectColumn(4)
-        x, y = stc.ui.tblViewMessage.columnViewportPosition(4), stc.ui.tblViewMessage.rowViewportPosition(0)
+        x, y = stc.ui.tblViewMessage.columnViewportPosition(
+            4
+        ), stc.ui.tblViewMessage.rowViewportPosition(0)
         pos = QPoint(x, y)
         stc.ui.tblViewMessage.context_menu_pos = pos
         menu = stc.ui.tblViewMessage.create_context_menu()
 
         names = [action.text() for action in menu.actions()]
         self.assertIn("Enforce encoding", names)
-        add_label_action = next(action for action in menu.actions() if action.text() == "Create label...")
+        add_label_action = next(
+            action for action in menu.actions() if action.text() == "Create label..."
+        )
         add_label_action.trigger()
         menu.close()
         stc.ui.tblViewMessage.selectRow(0)
@@ -239,8 +270,14 @@ class TestSimulatorTabGUI(QtTestCase):
 
     def test_expression_line_edit(self):
         e = ExpressionLineEdit()
-        e.setCompleter(QCompleter(self.form.simulator_tab_controller.completer_model, e))
-        e.setValidator(RuleExpressionValidator(self.form.simulator_tab_controller.sim_expression_parser))
+        e.setCompleter(
+            QCompleter(self.form.simulator_tab_controller.completer_model, e)
+        )
+        e.setValidator(
+            RuleExpressionValidator(
+                self.form.simulator_tab_controller.sim_expression_parser
+            )
+        )
 
         self.assertEqual(e.text(), "")
         QTest.keyClick(e, Qt.Key_R, Qt.NoModifier)
@@ -289,12 +326,24 @@ class TestSimulatorTabGUI(QtTestCase):
         self.form.project_manager.project_updated.emit()
 
         mt = self.form.compare_frame_controller.proto_analyzer.default_message_type
-        msg1 = SimulatorMessage(destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-        msg2 = SimulatorMessage(destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg1 = SimulatorMessage(
+            destination=alice,
+            plain_bits=array("B", [1, 0, 1, 1]),
+            pause=100,
+            message_type=mt,
+        )
+        msg2 = SimulatorMessage(
+            destination=bob,
+            plain_bits=array("B", [1, 0, 1, 1]),
+            pause=100,
+            message_type=mt,
+        )
 
         simulator_manager = self.form.simulator_tab_controller.simulator_config
         simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
-        simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
+        simulator_manager.add_label(
+            5, 15, "test", parent_item=simulator_manager.rootItem.children[0]
+        )
 
         stc = self.form.simulator_tab_controller  # type: SimulatorTabController
         model = stc.ui.listViewSimulate.model()
@@ -302,9 +351,13 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 0)), "Alice (A)")
         self.assertEqual(model.data(model.index(1, 0)), "Bob (B)")
         self.assertFalse(self.form.project_manager.participants[0].simulate)
-        self.assertEqual(model.data(model.index(0, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+        self.assertEqual(
+            model.data(model.index(0, 0), role=Qt.CheckStateRole), Qt.Unchecked
+        )
         self.assertFalse(self.form.project_manager.participants[1].simulate)
-        self.assertEqual(model.data(model.index(1, 0), role=Qt.CheckStateRole), Qt.Unchecked)
+        self.assertEqual(
+            model.data(model.index(1, 0), role=Qt.CheckStateRole), Qt.Unchecked
+        )
 
         model.setData(model.index(0, 0), Qt.Checked, role=Qt.CheckStateRole)
         self.assertTrue(self.form.project_manager.participants[0].simulate)
@@ -318,24 +371,29 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertEqual(len(stc.simulator_config.get_all_messages()), 3)
         stc.ui.gvSimulator.on_add_goto_action_triggered()
 
-        self.assertEqual(stc.ui.detail_view_widget.currentWidget(), stc.ui.page_goto_action)
-        self.assertEqual(stc.ui.goto_combobox.count(), 3 + 1)  # select item... also in combobox
+        self.assertEqual(
+            stc.ui.detail_view_widget.currentWidget(), stc.ui.page_goto_action
+        )
+        self.assertEqual(
+            stc.ui.goto_combobox.count(), 3 + 1
+        )  # select item... also in combobox
 
         stc.ui.gvSimulator.on_add_counter_action_triggered()
         stc.ui.gvSimulator.on_add_sleep_action_triggered()
         stc.ui.gvSimulator.on_add_goto_action_triggered()
 
-        self.assertEqual(stc.ui.goto_combobox.count(), 5 + 1)  # select item... also in combobox
+        self.assertEqual(
+            stc.ui.goto_combobox.count(), 5 + 1
+        )  # select item... also in combobox
 
     def test_open_simulator_dialog_and_send_message(self):
         def __wait_for_simulator_log_message(dialog, log_message):
-
             n = 0
             while not any(log_message in msg for msg in dialog.simulator.log_messages):
                 if n < 50:
                     time.sleep(0.5)
                 else:
-                    self.fail("Did not receive log message \"{}\"".format(log_message))
+                    self.fail('Did not receive log message "{}"'.format(log_message))
                 n += 1
 
         stc = self.form.simulator_tab_controller
@@ -352,7 +410,9 @@ class TestSimulatorTabGUI(QtTestCase):
 
         list_model = stc.ui.listViewSimulate.model()
         self.assertEqual(list_model.rowCount(), 2)
-        list_model.setData(list_model.createIndex(1, 0), Qt.Checked, role=Qt.CheckStateRole)
+        list_model.setData(
+            list_model.createIndex(1, 0), Qt.Checked, role=Qt.CheckStateRole
+        )
 
         dialog = stc.get_simulator_dialog()
 
@@ -386,11 +446,18 @@ class TestSimulatorTabGUI(QtTestCase):
         dialog.close()
 
     def __on_context_menu_simulator_graphics_view_timer_timeout(self):
-        menu = next(w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
-                    and w.parent() is None and w not in self.menus_to_ignore)
+        menu = next(
+            w
+            for w in QApplication.topLevelWidgets()
+            if isinstance(w, QMenu)
+            and w.parent() is None
+            and w not in self.menus_to_ignore
+        )
         names = [action.text() for action in menu.actions()]
         self.assertIn("Source", names)
-        add_rule_action = next(action for action in menu.actions() if action.text() == "Add rule")
+        add_rule_action = next(
+            action for action in menu.actions() if action.text() == "Add rule"
+        )
         add_rule_action.trigger()
         menu.close()
 
@@ -403,15 +470,23 @@ class TestSimulatorTabGUI(QtTestCase):
         if os.path.isfile(os.path.join(directory, "URHProject.xml")):
             os.remove(os.path.join(directory, "URHProject.xml"))
 
-        self.form.project_manager.set_project_folder(directory, ask_for_new_project=False)
+        self.form.project_manager.set_project_folder(
+            directory, ask_for_new_project=False
+        )
         self.form.project_manager.participants[:] = self.participants
         self.form.project_manager.project_updated.emit()
         self.add_signal_to_form("esaver.complex16s")
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
-        self.assertEqual(self.form.compare_frame_controller.participant_list_model.rowCount(), 3)
+        self.assertEqual(
+            self.form.compare_frame_controller.participant_list_model.rowCount(), 3
+        )
 
         for i in range(3):
-            self.form.compare_frame_controller.proto_analyzer.messages[i].participant = self.carl
+            self.form.compare_frame_controller.proto_analyzer.messages[
+                i
+            ].participant = self.carl
 
         self.form.compare_frame_controller.add_protocol_label(8, 15, 0, 0, False)
-        self.assertEqual(self.form.compare_frame_controller.label_value_model.rowCount(), 1)
+        self.assertEqual(
+            self.form.compare_frame_controller.label_value_model.rowCount(), 1
+        )

@@ -11,6 +11,7 @@ from urh.dev.native.USRP import USRP
 from urh.dev.native.lib import usrp
 import unittest
 
+
 class TestUSRP(unittest.TestCase):
     def test_cython_wrapper(self):
         print(usrp.find_devices(""))
@@ -30,8 +31,6 @@ class TestUSRP(unittest.TestCase):
         print("Set bandwidth", usrp.set_bandwidth(1e6))
         print("Set gain", usrp.set_rf_gain(0.5))
 
-
-
         buffer = bytearray()
 
         num_samples = 32768 // 2
@@ -42,10 +41,10 @@ class TestUSRP(unittest.TestCase):
         for i in range(500):
             usrp.recv_stream(child_conn, num_samples)
             received_bytes = parent_conn.recv_bytes()
-            #print(received_bytes)
+            # print(received_bytes)
             print(i)
             buffer.extend(received_bytes)
-            #print(USRP.bytes_to_iq(received_bytes, len(received_bytes) // 8))
+            # print(USRP.bytes_to_iq(received_bytes, len(received_bytes) // 8))
 
         f = open("/tmp/test.complex", "wb")
         f.write(buffer)
@@ -57,8 +56,8 @@ class TestUSRP(unittest.TestCase):
         return_code = usrp.close()
         print("close", return_code)
 
+        # self.assertTrue(True)
 
-        #self.assertTrue(True)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

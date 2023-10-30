@@ -33,6 +33,8 @@ class AdvancedModulationOptionsDialog(QDialog):
             self.pause_threshold_edited.emit(self.ui.spinBoxPauseThreshold.value())
 
         if self.message_length_divisor != self.ui.spinBoxMessageLengthDivisor.value():
-            self.message_length_divisor_edited.emit(self.ui.spinBoxMessageLengthDivisor.value())
+            self.message_length_divisor_edited.emit(
+                self.ui.spinBoxMessageLengthDivisor.value()
+            )
 
         self.accept()

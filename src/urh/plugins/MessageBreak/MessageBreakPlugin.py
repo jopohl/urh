@@ -13,7 +13,14 @@ class MessageBreakPlugin(ProtocolPlugin):
         self.command = None
         """:type: QUndoAction """
 
-    def get_action(self, parent, undo_stack: QUndoStack, sel_range, protocol: ProtocolAnalyzer, view: int):
+    def get_action(
+        self,
+        parent,
+        undo_stack: QUndoStack,
+        sel_range,
+        protocol: ProtocolAnalyzer,
+        view: int,
+    ):
         """
         :type parent: QTableView
         :type undo_stack: QUndoStack

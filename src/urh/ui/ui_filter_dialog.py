@@ -25,11 +25,15 @@ class Ui_FilterDialog(object):
         self.gridLayout.addWidget(self.radioButtonCustomTaps, 9, 0, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(FilterDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 15, 0, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.gridLayout.addItem(spacerItem, 16, 0, 1, 1)
         self.line = QtWidgets.QFrame(FilterDialog)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -91,11 +95,35 @@ class Ui_FilterDialog(object):
         _translate = QtCore.QCoreApplication.translate
         FilterDialog.setWindowTitle(_translate("FilterDialog", "Configure filter"))
         self.radioButtonCustomTaps.setText(_translate("FilterDialog", "Custom taps:"))
-        self.radioButtonMovingAverage.setText(_translate("FilterDialog", "Moving average"))
-        self.label_4.setText(_translate("FilterDialog", "A DC correction filter will remove the DC component (mean value) of the signal and center it around zero."))
-        self.lineEditCustomTaps.setToolTip(_translate("FilterDialog", "<html><head/><body><p>You can configure custom filter taps here either explicit using [0.1, 0.2, 0.3] or with <span style=\" font-weight:600;\">python programming shortcuts</span> like [0.1] * 3 + [0.2] * 4 will result in [0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2]</p></body></html>"))
+        self.radioButtonMovingAverage.setText(
+            _translate("FilterDialog", "Moving average")
+        )
+        self.label_4.setText(
+            _translate(
+                "FilterDialog",
+                "A DC correction filter will remove the DC component (mean value) of the signal and center it around zero.",
+            )
+        )
+        self.lineEditCustomTaps.setToolTip(
+            _translate(
+                "FilterDialog",
+                '<html><head/><body><p>You can configure custom filter taps here either explicit using [0.1, 0.2, 0.3] or with <span style=" font-weight:600;">python programming shortcuts</span> like [0.1] * 3 + [0.2] * 4 will result in [0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2]</p></body></html>',
+            )
+        )
         self.lineEditCustomTaps.setText(_translate("FilterDialog", "[0.1]*10"))
         self.label.setText(_translate("FilterDialog", "Number of taps:"))
-        self.label_3.setText(_translate("FilterDialog", "You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps.  By default we use 10 taps with each tap set to 0.1 producing a moving average filter."))
-        self.label_2.setText(_translate("FilterDialog", "These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here."))
-        self.radioButtonDCcorrection.setText(_translate("FilterDialog", "DC correction"))
+        self.label_3.setText(
+            _translate(
+                "FilterDialog",
+                "You can imagine taps as weighting factors applied to n samples of the signal whereby n is the number of taps.  By default we use 10 taps with each tap set to 0.1 producing a moving average filter.",
+            )
+        )
+        self.label_2.setText(
+            _translate(
+                "FilterDialog",
+                "These n weighted samples get summed up to produce the output of the filter. In DSP terms you configure the impulse response of the filter here.",
+            )
+        )
+        self.radioButtonDCcorrection.setText(
+            _translate("FilterDialog", "DC correction")
+        )

@@ -1,5 +1,10 @@
 from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt, pyqtSlot
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QCheckBox
+from PyQt5.QtWidgets import (
+    QStyledItemDelegate,
+    QWidget,
+    QStyleOptionViewItem,
+    QCheckBox,
+)
 
 
 class CheckBoxDelegate(QStyledItemDelegate):
@@ -7,7 +12,9 @@ class CheckBoxDelegate(QStyledItemDelegate):
         super().__init__(parent)
         self.enabled = True
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         editor = QCheckBox(parent)
         editor.stateChanged.connect(self.stateChanged)
         return editor
@@ -18,7 +25,9 @@ class CheckBoxDelegate(QStyledItemDelegate):
         self.enabled = editor.isChecked()
         editor.blockSignals(False)
 
-    def setModelData(self, editor: QCheckBox, model: QAbstractItemModel, index: QModelIndex):
+    def setModelData(
+        self, editor: QCheckBox, model: QAbstractItemModel, index: QModelIndex
+    ):
         model.setData(index, editor.isChecked(), Qt.EditRole)
 
     @pyqtSlot()

@@ -28,7 +28,9 @@ class Ui_DialogModulationParameters(object):
         self.tblSymbolParameters.verticalHeader().setVisible(False)
         self.verticalLayout.addWidget(self.tblSymbolParameters)
         self.buttonBox = QtWidgets.QDialogButtonBox(DialogModulationParameters)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -36,7 +38,9 @@ class Ui_DialogModulationParameters(object):
 
     def retranslateUi(self, DialogModulationParameters):
         _translate = QtCore.QCoreApplication.translate
-        DialogModulationParameters.setWindowTitle(_translate("DialogModulationParameters", "Modulation Parameters"))
+        DialogModulationParameters.setWindowTitle(
+            _translate("DialogModulationParameters", "Modulation Parameters")
+        )
         item = self.tblSymbolParameters.horizontalHeaderItem(0)
         item.setText(_translate("DialogModulationParameters", "Symbol"))
         item = self.tblSymbolParameters.horizontalHeaderItem(1)

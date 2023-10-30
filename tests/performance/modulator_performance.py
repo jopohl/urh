@@ -38,6 +38,7 @@ def test_psk_performance():
     result.tofile("/tmp/psk.complex")
     print("PSK {}ms".format(elapsed * 1000))
 
+
 def test_gfsk_performance():
     bit_data = "10" * 100 + "0000011111" + "001101011" * 100 + "111111100000" * 100
     modulator = Modulator("Perf")
@@ -49,5 +50,6 @@ def test_gfsk_performance():
     result.tofile("/tmp/gfsk.complex")
     print("GFSK {}ms".format(elapsed * 1000))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_fsk_performance()

@@ -24,7 +24,7 @@ class ParticipantListModel(QAbstractListModel):
                 return "not assigned"
             else:
                 try:
-                    return str(self.participants[row-1])
+                    return str(self.participants[row - 1])
                 except IndexError:
                     return None
 
@@ -33,7 +33,9 @@ class ParticipantListModel(QAbstractListModel):
                 return Qt.Checked if self.show_unassigned else Qt.Unchecked
             else:
                 try:
-                    return Qt.Checked if self.participants[row-1].show else Qt.Unchecked
+                    return (
+                        Qt.Checked if self.participants[row - 1].show else Qt.Unchecked
+                    )
                 except IndexError:
                     return None
 
@@ -45,8 +47,8 @@ class ParticipantListModel(QAbstractListModel):
 
         elif role == Qt.CheckStateRole:
             try:
-                if self.participants[index.row()-1].show != value:
-                    self.participants[index.row()-1].show = value
+                if self.participants[index.row() - 1].show != value:
+                    self.participants[index.row() - 1].show = value
                     self.show_state_changed.emit()
             except IndexError:
                 return False

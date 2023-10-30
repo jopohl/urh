@@ -4,7 +4,15 @@ from multiprocessing.connection import Connection
 
 import numpy as np
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsView, QPushButton, QGraphicsScene, QLabel
+from PyQt5.QtWidgets import (
+    QApplication,
+    QFrame,
+    QVBoxLayout,
+    QGraphicsView,
+    QPushButton,
+    QGraphicsScene,
+    QLabel,
+)
 
 from urh.signalprocessing.Spectrogram import Spectrogram
 
@@ -51,13 +59,15 @@ def go():
         item.setPos(x_pos, y_pos)
         y_pos += pixmap.height()
         graphic_view.fitInView(scene.sceneRect())
-        status_label.setText("Height: {0:.0f} // Speed: {1:.2f}  // Total Time: {2:.2f}".format(scene.sceneRect().height(),
-                                                                                                1/(time.time()-speed),
-                                                                                                time.time()-t))
+        status_label.setText(
+            "Height: {0:.0f} // Speed: {1:.2f}  // Total Time: {2:.2f}".format(
+                scene.sceneRect().height(), 1 / (time.time() - speed), time.time() - t
+            )
+        )
         QApplication.instance().processEvents()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     global graphic_view, status_label
     app = QApplication(["spectrum"])
     widget = QFrame()

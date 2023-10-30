@@ -5,7 +5,9 @@ from urh.signalprocessing.ProtocolAnalyzerContainer import ProtocolAnalyzerConta
 
 
 class Fuzz(QUndoCommand):
-    def __init__(self, proto_analyzer_container: ProtocolAnalyzerContainer, fuz_mode: str):
+    def __init__(
+        self, proto_analyzer_container: ProtocolAnalyzerContainer, fuz_mode: str
+    ):
         super().__init__()
         self.proto_analyzer_container = proto_analyzer_container
         self.fuz_mode = fuz_mode
@@ -14,17 +16,23 @@ class Fuzz(QUndoCommand):
         self.added_message_indices = []
 
     def redo(self):
-        if settings.read('use_default_fuzzing_pause', True, bool):
+        if settings.read("use_default_fuzzing_pause", True, bool):
             default_pause = settings.read("default_fuzzing_pause", 10**6, int)
         else:
             default_pause = None
 
         if self.fuz_mode == "Successive":
-            added_indices = self.proto_analyzer_container.fuzz_successive(default_pause=default_pause)
+            added_indices = self.proto_analyzer_container.fuzz_successive(
+                default_pause=default_pause
+            )
         elif self.fuz_mode == "Concurrent":
-            added_indices = self.proto_analyzer_container.fuzz_concurrent(default_pause=default_pause)
+            added_indices = self.proto_analyzer_container.fuzz_concurrent(
+                default_pause=default_pause
+            )
         elif self.fuz_mode == "Exhaustive":
-            added_indices = self.proto_analyzer_container.fuzz_exhaustive(default_pause=default_pause)
+            added_indices = self.proto_analyzer_container.fuzz_exhaustive(
+                default_pause=default_pause
+            )
         else:
             added_indices = []
 

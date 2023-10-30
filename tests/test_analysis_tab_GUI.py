@@ -19,10 +19,18 @@ class TestAnalysisTabGUI(QtTestCase):
         self.add_signal_to_form("two_participants.complex16s")
         assert isinstance(self.form, MainController)
         self.cfc = self.form.compare_frame_controller  # type: CompareFrameController
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(-0.0574)
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxTolerance.setValue(10)
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxTolerance.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.setValue(-0.0574)
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxTolerance.setValue(
+            10
+        )
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxTolerance.editingFinished.emit()
 
     def test_analyze_button_fsk(self):
         assert isinstance(self.cfc, CompareFrameController)
@@ -52,7 +60,10 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.ui.tblViewProtocol.selectRow(1)
         QApplication.instance().processEvents()
-        self.assertEqual(self.cfc.ui.lBitsSelection.text(), self.cfc.proto_analyzer.messages[1].plain_bits_str)
+        self.assertEqual(
+            self.cfc.ui.lBitsSelection.text(),
+            self.cfc.proto_analyzer.messages[1].plain_bits_str,
+        )
 
         self.cfc.ui.tblViewProtocol.clearSelection()
         QApplication.instance().processEvents()
@@ -78,7 +89,9 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.btnSearchSelectFilter.click()
 
         selected_now = self.cfc.ui.tblViewProtocol.selectedIndexes()
-        self.assertEqual(len(self.cfc.ui.tblViewProtocol.selectedIndexes()), len(search_str))
+        self.assertEqual(
+            len(self.cfc.ui.tblViewProtocol.selectedIndexes()), len(search_str)
+        )
 
         self.cfc.ui.btnNextSearch.click()
         self.assertNotEqual(selected_now, self.cfc.ui.tblViewProtocol.selectedIndexes())
@@ -89,13 +102,18 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.select_action.trigger()
         self.assertEqual(self.cfc.ui.btnSearchSelectFilter.text(), "Select all")
         self.cfc.ui.btnSearchSelectFilter.click()
-        self.assertGreater(len(self.cfc.ui.tblViewProtocol.selectedIndexes()), len(selected_now))
+        self.assertGreater(
+            len(self.cfc.ui.tblViewProtocol.selectedIndexes()), len(selected_now)
+        )
 
         self.cfc.filter_action.trigger()
         self.assertEqual(self.cfc.ui.btnSearchSelectFilter.text(), "Filter")
         self.cfc.ui.btnSearchSelectFilter.click()
-        hidden_rows = [i for i in range(self.cfc.protocol_model.row_count)
-                       if self.cfc.ui.tblViewProtocol.isRowHidden(i)]
+        hidden_rows = [
+            i
+            for i in range(self.cfc.protocol_model.row_count)
+            if self.cfc.ui.tblViewProtocol.isRowHidden(i)
+        ]
 
         self.assertEqual(hidden_rows, [0, 5, 6, 10, 13, 14, 16, 17])
 
@@ -114,30 +132,43 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.tblViewProtocol.clearSelection()
         self.cfc.ui.lineEditSearch.setText(search_str)
 
-        self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="before search")
+        self.assertEqual(
+            self.cfc.ui.lineEditSearch.text(), search_str, msg="before search"
+        )
         self.cfc.ui.btnSearchSelectFilter.click()
         self.assertEqual(self.cfc.ui.lSearchTotal.text(), "-")
-        self.assertEqual(self.cfc.ui.lineEditSearch.text(), search_str, msg="after search")
+        self.assertEqual(
+            self.cfc.ui.lineEditSearch.text(), search_str, msg="after search"
+        )
 
     def test_show_diff(self):
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
 
-        hidden_columns_before = [i for i in range(self.cfc.protocol_model.col_count)
-                                 if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
+        hidden_columns_before = [
+            i
+            for i in range(self.cfc.protocol_model.col_count)
+            if self.cfc.ui.tblViewProtocol.isColumnHidden(i)
+        ]
         self.assertEqual(len(hidden_columns_before), 0)
 
         self.cfc.ui.chkBoxShowOnlyDiffs.click()
         self.assertTrue(self.cfc.ui.cbShowDiffs.isChecked())
 
-        hidden_columns_now = [i for i in range(self.cfc.protocol_model.col_count)
-                              if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
+        hidden_columns_now = [
+            i
+            for i in range(self.cfc.protocol_model.col_count)
+            if self.cfc.ui.tblViewProtocol.isColumnHidden(i)
+        ]
 
         self.assertNotEqual(hidden_columns_before, hidden_columns_now)
 
         self.cfc.ui.chkBoxOnlyShowLabelsInProtocol.click()
 
-        hidden_columns_now = [i for i in range(self.cfc.protocol_model.col_count)
-                              if self.cfc.ui.tblViewProtocol.isColumnHidden(i)]
+        hidden_columns_now = [
+            i
+            for i in range(self.cfc.protocol_model.col_count)
+            if self.cfc.ui.tblViewProtocol.isColumnHidden(i)
+        ]
 
         self.assertEqual(len(hidden_columns_now), self.cfc.protocol_model.col_count)
 
@@ -159,7 +190,6 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(len(self.cfc.proto_analyzer.message_types), 1)
 
     def test_create_context_menu(self):
-
         self.cfc.proto_tree_model.rootItem.child(0).show = False
         QApplication.instance().processEvents()
 
@@ -179,9 +209,15 @@ class TestAnalysisTabGUI(QtTestCase):
 
         self.cfc.ui.tblViewProtocol.selectRow(1)
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
-        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(min_row, start, max_row, end - 1)
+        self.cfc.ui.tblViewProtocol.show_interpretation_clicked.emit(
+            min_row, start, max_row, end - 1
+        )
         self.assertEqual(self.form.ui.tabWidget.currentIndex(), 0)
-        self.assertFalse(self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.selection_area.is_empty)
+        self.assertFalse(
+            self.form.signal_tab_controller.signal_frames[
+                0
+            ].ui.gvSignal.selection_area.is_empty
+        )
 
     def test_hide_row(self):
         num_messages = len(self.cfc.proto_analyzer.messages)
@@ -208,18 +244,31 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(len(self.cfc.protocol_model.hidden_rows), 1)
 
     def test_refresh_existing_decodings(self):
-        self.assertEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+        self.assertEqual(
+            self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0]
+        )
         decoder = copy.deepcopy(self.cfc.proto_analyzer.messages[0].decoder)
         decoder.chain.append(decoder.code_invert)
         self.cfc.proto_analyzer.messages[0].decoder = decoder
-        self.assertNotEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+        self.assertNotEqual(
+            self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0]
+        )
 
         self.cfc.refresh_existing_encodings()
-        self.assertEqual(self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0])
+        self.assertEqual(
+            self.cfc.proto_analyzer.messages[0].decoder, self.cfc.decodings[0]
+        )
 
     def test_get_labels_from_selection(self):
         self.cfc.ui.tblViewProtocol.selectRow(1)
-        self.assertEqual(len(self.cfc.get_labels_from_selection(*self.cfc.ui.tblViewProtocol.selection_range())), 0)
+        self.assertEqual(
+            len(
+                self.cfc.get_labels_from_selection(
+                    *self.cfc.ui.tblViewProtocol.selection_range()
+                )
+            ),
+            0,
+        )
 
     def test_refresh_field_types_for_labels(self):
         self.cfc.add_protocol_label(0, 10, 0, 0, edit_label_name=False)
@@ -281,25 +330,43 @@ class TestAnalysisTabGUI(QtTestCase):
         model.setData(model.index(0, 0), "test", Qt.EditRole)
         table_model = self.cfc.protocol_model
         for i in range(0, 16):
-            self.assertEqual(table_model.data(table_model.index(2, i), Qt.ToolTipRole), "test", msg=str(i))
+            self.assertEqual(
+                table_model.data(table_model.index(2, i), Qt.ToolTipRole),
+                "test",
+                msg=str(i),
+            )
 
         for i in range(17, 100):
-            self.assertEqual(table_model.data(table_model.index(2, i), Qt.ToolTipRole), "", msg=str(i))
+            self.assertEqual(
+                table_model.data(table_model.index(2, i), Qt.ToolTipRole),
+                "",
+                msg=str(i),
+            )
 
         self.cfc.add_protocol_label(20, 24, 2, 0, edit_label_name=False)
-        checksum_field_type = next(ft for ft in self.cfc.field_types if ft.function == FieldType.Function.CHECKSUM)
+        checksum_field_type = next(
+            ft
+            for ft in self.cfc.field_types
+            if ft.function == FieldType.Function.CHECKSUM
+        )
         model.setData(model.index(1, 0), checksum_field_type.caption, Qt.EditRole)
         for i in range(20, 24):
-            self.assertIn("Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole))
+            self.assertIn(
+                "Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole)
+            )
 
         for i in range(0, 20):
-            self.assertNotIn("Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole))
+            self.assertNotIn(
+                "Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole)
+            )
 
     def test_protocol_tree_context_menu(self):
         self.cfc.ui.treeViewProtocols.context_menu_pos = QPoint(0, 0)
         menu = self.cfc.ui.treeViewProtocols.create_context_menu()
         actions = ["Create a new group", "Sort Group Elements", "Delete group"]
-        menu_action_names = [action.text() for action in menu.actions() if action.text()]
+        menu_action_names = [
+            action.text() for action in menu.actions() if action.text()
+        ]
         for action in menu_action_names:
             self.assertIn(action, actions)
 
@@ -338,15 +405,20 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(lbl.display_endianness, "big")
 
     def test_label_list_view(self):
-        menus_before = [w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)]
+        menus_before = [
+            w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
+        ]
 
         global context_menu
         context_menu = None  # type: QMenu
 
         def on_timeout():
             global context_menu
-            context_menu = next(w for w in QApplication.topLevelWidgets()
-                                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before)
+            context_menu = next(
+                w
+                for w in QApplication.topLevelWidgets()
+                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before
+            )
             context_menu.close()
 
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
@@ -362,7 +434,9 @@ class TestAnalysisTabGUI(QtTestCase):
         timer.timeout.connect(on_timeout)
         timer.start(1)
 
-        self.cfc.ui.tblLabelValues.contextMenuEvent(QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0)))
+        self.cfc.ui.tblLabelValues.contextMenuEvent(
+            QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0))
+        )
 
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit...", names)
@@ -382,7 +456,12 @@ class TestAnalysisTabGUI(QtTestCase):
         pattern = "6768676"
         for i in range(self.cfc.protocol_model.row_count):
             for j in range(len(pattern)):
-                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j + 11)) != pattern[j]:
+                if (
+                    self.cfc.protocol_model.data(
+                        self.cfc.protocol_model.index(i, j + 11)
+                    )
+                    != pattern[j]
+                ):
                     aligned = False
                     break
 
@@ -396,7 +475,12 @@ class TestAnalysisTabGUI(QtTestCase):
         aligned = True
         for i in range(self.cfc.protocol_model.row_count):
             for j in range(len(pattern)):
-                if self.cfc.protocol_model.data(self.cfc.protocol_model.index(i, j + 11)) != pattern[j]:
+                if (
+                    self.cfc.protocol_model.data(
+                        self.cfc.protocol_model.index(i, j + 11)
+                    )
+                    != pattern[j]
+                ):
                     aligned = False
                     break
 

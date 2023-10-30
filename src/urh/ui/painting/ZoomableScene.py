@@ -3,7 +3,12 @@ import math
 import numpy as np
 from PyQt5.QtCore import QRectF
 from PyQt5.QtGui import QPen, QFont, QTransform, QFontMetrics
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsRectItem, QGraphicsSceneDragDropEvent, QGraphicsSimpleTextItem
+from PyQt5.QtWidgets import (
+    QGraphicsScene,
+    QGraphicsRectItem,
+    QGraphicsSceneDragDropEvent,
+    QGraphicsSimpleTextItem,
+)
 
 from urh import settings
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
@@ -27,8 +32,14 @@ class ZoomableScene(QGraphicsScene):
 
         self.ones_arrow = None
         self.zeros_arrow = None
-        self.selection_area = HorizontalSelection(0, 0, 0, 0, fillcolor=settings.SELECTION_COLOR,
-                                                  opacity=settings.SELECTION_OPACITY)
+        self.selection_area = HorizontalSelection(
+            0,
+            0,
+            0,
+            0,
+            fillcolor=settings.SELECTION_COLOR,
+            opacity=settings.SELECTION_OPACITY,
+        )
         self.addItem(self.selection_area)
 
     @property
@@ -43,7 +54,14 @@ class ZoomableScene(QGraphicsScene):
             area.hide()
 
         if self.noise_area is None or self.noise_area.scene() != self:
-            roi = HorizontalSelection(x, y, w, h, fillcolor=settings.NOISE_COLOR, opacity=settings.NOISE_OPACITY)
+            roi = HorizontalSelection(
+                x,
+                y,
+                w,
+                h,
+                fillcolor=settings.NOISE_COLOR,
+                opacity=settings.NOISE_OPACITY,
+            )
             self.noise_area = roi
             self.addItem(self.noise_area)
         else:
@@ -82,13 +100,23 @@ class ZoomableScene(QGraphicsScene):
 
         for i, caption in enumerate(self.captions):
             caption.show()
-            scale_x, scale_y = util.calc_x_y_scale(self.separation_areas[i].rect(), self.parent())
+            scale_x, scale_y = util.calc_x_y_scale(
+                self.separation_areas[i].rect(), self.parent()
+            )
             try:
-                caption.setPos(view_rect.x() + view_rect.width() - fm.width(caption.text()) * scale_x,
-                               self.centers[i] + padding)
+                caption.setPos(
+                    view_rect.x()
+                    + view_rect.width()
+                    - fm.width(caption.text()) * scale_x,
+                    self.centers[i] + padding,
+                )
             except IndexError:
-                caption.setPos(view_rect.x() + view_rect.width() - fm.width(caption.text()) * scale_x,
-                               self.centers[i - 1] - padding - fm.height() * scale_y)
+                caption.setPos(
+                    view_rect.x()
+                    + view_rect.width()
+                    - fm.width(caption.text()) * scale_x,
+                    self.centers[i - 1] - padding - fm.height() * scale_y,
+                )
 
             caption.setTransform(QTransform.fromScale(scale_x, scale_y), False)
 
@@ -121,7 +149,9 @@ class ZoomableScene(QGraphicsScene):
         for i, area in enumerate(self.separation_areas):
             area.show()
             try:
-                self.separation_areas[i].setRect(x, start, w, abs(start - reversed_centers[i]))
+                self.separation_areas[i].setRect(
+                    x, start, w, abs(start - reversed_centers[i])
+                )
                 start += abs(start - reversed_centers[i])
             except IndexError:
                 self.separation_areas[i].setRect(x, start, w, abs(start - h))

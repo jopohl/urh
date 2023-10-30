@@ -21,20 +21,22 @@ class Ui_FormDeviceSettings(object):
         font.setBold(True)
         font.setWeight(75)
         self.groupBoxDeviceSettings.setFont(font)
-        self.groupBoxDeviceSettings.setStyleSheet("QGroupBox\n"
-"{\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
-"}\n"
-"QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
-"}")
+        self.groupBoxDeviceSettings.setStyleSheet(
+            "QGroupBox\n"
+            "{\n"
+            "border: none;\n"
+            "}\n"
+            "\n"
+            "QGroupBox::title {\n"
+            "    subcontrol-origin: margin;\n"
+            "}\n"
+            "QGroupBox::indicator:unchecked {\n"
+            " image: url(:/icons/icons/collapse.svg)\n"
+            "}\n"
+            "QGroupBox::indicator:checked {\n"
+            " image: url(:/icons/icons/uncollapse.svg)\n"
+            "}"
+        )
         self.groupBoxDeviceSettings.setFlat(True)
         self.groupBoxDeviceSettings.setCheckable(True)
         self.groupBoxDeviceSettings.setObjectName("groupBoxDeviceSettings")
@@ -101,7 +103,9 @@ class Ui_FormDeviceSettings(object):
         self.sliderGain.setObjectName("sliderGain")
         self.gridLayout_5.addWidget(self.sliderGain, 0, 0, 1, 1)
         self.spinBoxGain = QtWidgets.QSpinBox(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.spinBoxGain.sizePolicy().hasHeightForWidth())
@@ -122,10 +126,14 @@ class Ui_FormDeviceSettings(object):
         self.sliderIFGain.setObjectName("sliderIFGain")
         self.gridLayout_7.addWidget(self.sliderIFGain, 0, 0, 1, 1)
         self.spinBoxIFGain = QtWidgets.QSpinBox(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxIFGain.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxIFGain.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxIFGain.setSizePolicy(sizePolicy)
         self.spinBoxIFGain.setObjectName("spinBoxIFGain")
         self.gridLayout_7.addWidget(self.spinBoxIFGain, 0, 1, 1, 1)
@@ -139,7 +147,9 @@ class Ui_FormDeviceSettings(object):
         self.comboBoxDeviceIdentifier.setObjectName("comboBoxDeviceIdentifier")
         self.gridLayout.addWidget(self.comboBoxDeviceIdentifier, 1, 1, 1, 1)
         self.cbDevice = QtWidgets.QComboBox(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbDevice.sizePolicy().hasHeightForWidth())
@@ -164,10 +174,14 @@ class Ui_FormDeviceSettings(object):
         self.sliderBasebandGain.setObjectName("sliderBasebandGain")
         self.gridLayout_8.addWidget(self.sliderBasebandGain, 0, 0, 1, 1)
         self.spinBoxBasebandGain = QtWidgets.QSpinBox(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxBasebandGain.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxBasebandGain.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxBasebandGain.setSizePolicy(sizePolicy)
         self.spinBoxBasebandGain.setObjectName("spinBoxBasebandGain")
         self.gridLayout_8.addWidget(self.spinBoxBasebandGain, 0, 1, 1, 1)
@@ -231,13 +245,17 @@ class Ui_FormDeviceSettings(object):
         self.labelChannel.setObjectName("labelChannel")
         self.gridLayout.addWidget(self.labelChannel, 3, 0, 1, 1)
         self.btnLockBWSR = QtWidgets.QToolButton(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnLockBWSR.sizePolicy().hasHeightForWidth())
         self.btnLockBWSR.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/icons/icons/lock.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.btnLockBWSR.setIcon(icon)
         self.btnLockBWSR.setIconSize(QtCore.QSize(16, 16))
         self.btnLockBWSR.setCheckable(True)
@@ -257,11 +275,15 @@ class Ui_FormDeviceSettings(object):
         self.verticalLayout.addWidget(self.groupBoxDeviceSettings)
 
         self.retranslateUi(FormDeviceSettings)
-        self.groupBoxDeviceSettings.toggled['bool'].connect(self.frame_2.setVisible)
+        self.groupBoxDeviceSettings.toggled["bool"].connect(self.frame_2.setVisible)
         FormDeviceSettings.setTabOrder(self.groupBoxDeviceSettings, self.cbDevice)
         FormDeviceSettings.setTabOrder(self.cbDevice, self.comboBoxDeviceIdentifier)
-        FormDeviceSettings.setTabOrder(self.comboBoxDeviceIdentifier, self.btnRefreshDeviceIdentifier)
-        FormDeviceSettings.setTabOrder(self.btnRefreshDeviceIdentifier, self.lineEditSubdevice)
+        FormDeviceSettings.setTabOrder(
+            self.comboBoxDeviceIdentifier, self.btnRefreshDeviceIdentifier
+        )
+        FormDeviceSettings.setTabOrder(
+            self.btnRefreshDeviceIdentifier, self.lineEditSubdevice
+        )
         FormDeviceSettings.setTabOrder(self.lineEditSubdevice, self.comboBoxChannel)
         FormDeviceSettings.setTabOrder(self.comboBoxChannel, self.comboBoxAntenna)
         FormDeviceSettings.setTabOrder(self.comboBoxAntenna, self.lineEditIP)
@@ -275,63 +297,206 @@ class Ui_FormDeviceSettings(object):
         FormDeviceSettings.setTabOrder(self.spinBoxGain, self.sliderIFGain)
         FormDeviceSettings.setTabOrder(self.sliderIFGain, self.spinBoxIFGain)
         FormDeviceSettings.setTabOrder(self.spinBoxIFGain, self.sliderBasebandGain)
-        FormDeviceSettings.setTabOrder(self.sliderBasebandGain, self.spinBoxBasebandGain)
-        FormDeviceSettings.setTabOrder(self.spinBoxBasebandGain, self.spinBoxFreqCorrection)
-        FormDeviceSettings.setTabOrder(self.spinBoxFreqCorrection, self.comboBoxDirectSampling)
+        FormDeviceSettings.setTabOrder(
+            self.sliderBasebandGain, self.spinBoxBasebandGain
+        )
+        FormDeviceSettings.setTabOrder(
+            self.spinBoxBasebandGain, self.spinBoxFreqCorrection
+        )
+        FormDeviceSettings.setTabOrder(
+            self.spinBoxFreqCorrection, self.comboBoxDirectSampling
+        )
         FormDeviceSettings.setTabOrder(self.comboBoxDirectSampling, self.spinBoxNRepeat)
         FormDeviceSettings.setTabOrder(self.spinBoxNRepeat, self.checkBoxDCCorrection)
 
     def retranslateUi(self, FormDeviceSettings):
         _translate = QtCore.QCoreApplication.translate
         FormDeviceSettings.setWindowTitle(_translate("FormDeviceSettings", "Form"))
-        self.groupBoxDeviceSettings.setTitle(_translate("FormDeviceSettings", "Device settings"))
+        self.groupBoxDeviceSettings.setTitle(
+            _translate("FormDeviceSettings", "Device settings")
+        )
         self.labelAntenna.setText(_translate("FormDeviceSettings", "Antenna:"))
-        self.labelBasebandGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=\" font-weight:600;\">complex downsampling</span>.</p></body></html>"))
-        self.labelBasebandGain.setText(_translate("FormDeviceSettings", "Baseband gain:"))
-        self.lineEditSubdevice.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Configure the subdevice of your USRP. For example, <span style=\" font-weight:600;\">B:0 </span>to select a WBX on slot B. You can learn more at <a href=\"http://files.ettus.com/manual/page_configuration.html#config_subdev\"><span style=\" text-decoration: underline; color:#2980b9;\">http://files.ettus.com/manual/page_configuration.html#config_subdev.</span></a></p></body></html>"))
-        self.labelSubdevice.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Configure the subdevice of your USRP. For example, <span style=\" font-weight:600;\">B:0 </span>to select a WBX on slot B. You can learn more at <a href=\"http://files.ettus.com/manual/page_configuration.html#config_subdev\"><span style=\" text-decoration: underline; color:#2980b9;\">http://files.ettus.com/manual/page_configuration.html#config_subdev.</span></a></p></body></html>"))
-        self.labelSubdevice.setText(_translate("FormDeviceSettings", "<html><head/><body><p>Subdevice:</p></body></html>"))
+        self.labelBasebandGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=" font-weight:600;">complex downsampling</span>.</p></body></html>',
+            )
+        )
+        self.labelBasebandGain.setText(
+            _translate("FormDeviceSettings", "Baseband gain:")
+        )
+        self.lineEditSubdevice.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Configure the subdevice of your USRP. For example, <span style=" font-weight:600;">B:0 </span>to select a WBX on slot B. You can learn more at <a href="http://files.ettus.com/manual/page_configuration.html#config_subdev"><span style=" text-decoration: underline; color:#2980b9;">http://files.ettus.com/manual/page_configuration.html#config_subdev.</span></a></p></body></html>',
+            )
+        )
+        self.labelSubdevice.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Configure the subdevice of your USRP. For example, <span style=" font-weight:600;">B:0 </span>to select a WBX on slot B. You can learn more at <a href="http://files.ettus.com/manual/page_configuration.html#config_subdev"><span style=" text-decoration: underline; color:#2980b9;">http://files.ettus.com/manual/page_configuration.html#config_subdev.</span></a></p></body></html>',
+            )
+        )
+        self.labelSubdevice.setText(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>Subdevice:</p></body></html>",
+            )
+        )
         self.lineEditIP.setText(_translate("FormDeviceSettings", "127.0.0.1"))
-        self.btnRefreshDeviceIdentifier.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Automatically detect connected SDRs of the above configured type. There is <span style=\" font-weight:600;\">no need</span> to press this button if you have only one SDR of a certain type attached. </p></body></html>"))
+        self.btnRefreshDeviceIdentifier.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Automatically detect connected SDRs of the above configured type. There is <span style=" font-weight:600;">no need</span> to press this button if you have only one SDR of a certain type attached. </p></body></html>',
+            )
+        )
         self.btnRefreshDeviceIdentifier.setText(_translate("FormDeviceSettings", "..."))
-        self.labelDirectSampling.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The<span style=\" font-weight:600;\"> native backend</span> is recommended, when using this setting.</p></body></html>"))
-        self.labelDirectSampling.setText(_translate("FormDeviceSettings", "Direct sampling:"))
+        self.labelDirectSampling.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The<span style=" font-weight:600;"> native backend</span> is recommended, when using this setting.</p></body></html>',
+            )
+        )
+        self.labelDirectSampling.setText(
+            _translate("FormDeviceSettings", "Direct sampling:")
+        )
         self.labelBandwidth.setText(_translate("FormDeviceSettings", "Bandwidth (Hz):"))
-        self.sliderGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>"))
-        self.spinBoxGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>"))
-        self.labelSampleRate.setText(_translate("FormDeviceSettings", "Sample rate (Sps):"))
-        self.sliderIFGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>"))
-        self.spinBoxIFGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>"))
-        self.labelFreqCorrection.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Set the frequency correction in <span style=\" font-weight:600;\">ppm</span>. If you do not know what to enter here, just leave it to one.</p></body></html>"))
-        self.labelFreqCorrection.setText(_translate("FormDeviceSettings", "Frequency correction:"))
-        self.comboBoxDeviceIdentifier.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>You can enter a device identifier here if you have multiple SDRs of the same type attached to separate them. There is no need to configure this value otherwise. URH will <span style=\" font-weight:600;\">automatically</span> select an attached SDR of the configured type if you leave this value empty.</p></body></html>"))
+        self.sliderGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>",
+            )
+        )
+        self.spinBoxGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>",
+            )
+        )
+        self.labelSampleRate.setText(
+            _translate("FormDeviceSettings", "Sample rate (Sps):")
+        )
+        self.sliderIFGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>",
+            )
+        )
+        self.spinBoxIFGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>",
+            )
+        )
+        self.labelFreqCorrection.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Set the frequency correction in <span style=" font-weight:600;">ppm</span>. If you do not know what to enter here, just leave it to one.</p></body></html>',
+            )
+        )
+        self.labelFreqCorrection.setText(
+            _translate("FormDeviceSettings", "Frequency correction:")
+        )
+        self.comboBoxDeviceIdentifier.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>You can enter a device identifier here if you have multiple SDRs of the same type attached to separate them. There is no need to configure this value otherwise. URH will <span style=" font-weight:600;">automatically</span> select an attached SDR of the configured type if you leave this value empty.</p></body></html>',
+            )
+        )
         self.cbDevice.setItemText(0, _translate("FormDeviceSettings", "USRP"))
         self.cbDevice.setItemText(1, _translate("FormDeviceSettings", "HackRF"))
-        self.spinBoxNRepeat.setSpecialValueText(_translate("FormDeviceSettings", "Infinite"))
-        self.sliderBasebandGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=\" font-weight:600;\">complex downsampling</span>.</p></body></html>"))
-        self.spinBoxBasebandGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=\" font-weight:600;\">complex downsampling</span>.</p></body></html>"))
+        self.spinBoxNRepeat.setSpecialValueText(
+            _translate("FormDeviceSettings", "Infinite")
+        )
+        self.sliderBasebandGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=" font-weight:600;">complex downsampling</span>.</p></body></html>',
+            )
+        )
+        self.spinBoxBasebandGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>The baseband gain is applied to the baseband signal in your software defined radio. The baseband signal is at low frequency and gathered from the RF signal by <span style=" font-weight:600;">complex downsampling</span>.</p></body></html>',
+            )
+        )
         self.labelPort.setText(_translate("FormDeviceSettings", "Port number:"))
-        self.labelGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>"))
+        self.labelGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The gain (more exactly RF gain) is the gain applied to the RF signal. This amplifies the high frequent signal arriving at the antenna of your Software Defined Radio.</p></body></html>",
+            )
+        )
         self.labelGain.setText(_translate("FormDeviceSettings", "Gain:"))
-        self.checkBoxDCCorrection.setToolTip(_translate("FormDeviceSettings", "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero."))
-        self.checkBoxDCCorrection.setText(_translate("FormDeviceSettings", "Apply DC correction"))
-        self.labelDeviceIdentifier.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>You can enter a device identifier here if you have multiple SDRs of the same type attached to separate them. There is no need to configure this value otherwise. URH will <span style=\" font-weight:600;\">automatically</span> select an attached SDR of the configured type if you leave this value empty.</p></body></html>"))
-        self.labelDeviceIdentifier.setText(_translate("FormDeviceSettings", "Device Identifier:"))
+        self.checkBoxDCCorrection.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero.",
+            )
+        )
+        self.checkBoxDCCorrection.setText(
+            _translate("FormDeviceSettings", "Apply DC correction")
+        )
+        self.labelDeviceIdentifier.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>You can enter a device identifier here if you have multiple SDRs of the same type attached to separate them. There is no need to configure this value otherwise. URH will <span style=" font-weight:600;">automatically</span> select an attached SDR of the configured type if you leave this value empty.</p></body></html>',
+            )
+        )
+        self.labelDeviceIdentifier.setText(
+            _translate("FormDeviceSettings", "Device Identifier:")
+        )
         self.labelFreq.setText(_translate("FormDeviceSettings", "Frequency (Hz):"))
         self.labelIP.setText(_translate("FormDeviceSettings", "IP address:"))
-        self.spinBoxFreqCorrection.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Set the frequency correction in <span style=\" font-weight:600;\">ppm</span>. If you do not know what to enter here, just leave it to one.</p></body></html>"))
+        self.spinBoxFreqCorrection.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Set the frequency correction in <span style=" font-weight:600;">ppm</span>. If you do not know what to enter here, just leave it to one.</p></body></html>',
+            )
+        )
         self.labelNRepeat.setText(_translate("FormDeviceSettings", "Repeat:"))
-        self.comboBoxDirectSampling.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The<span style=\" font-weight:600;\"> native backend</span> is recommended, when using this setting.</p></body></html>"))
-        self.labelDCCorrection.setToolTip(_translate("FormDeviceSettings", "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero."))
-        self.labelDCCorrection.setText(_translate("FormDeviceSettings", "DC correction:"))
-        self.labelIFGain.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>"))
+        self.comboBoxDirectSampling.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                '<html><head/><body><p>Set the direct sampling mode. If you do not know what to choose here, just set it to disabled. The<span style=" font-weight:600;"> native backend</span> is recommended, when using this setting.</p></body></html>',
+            )
+        )
+        self.labelDCCorrection.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "Apply DC correction during recording, that is, ensure the captured signal has a mean value of zero.",
+            )
+        )
+        self.labelDCCorrection.setText(
+            _translate("FormDeviceSettings", "DC correction:")
+        )
+        self.labelIFGain.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>The IF Gain is applied to the Intermediate Frequency signal in your Software Defined Radio. An IF signal has a lower frequency than the high frequent RF signal, so signal processing can be applied more efficiently.</p></body></html>",
+            )
+        )
         self.labelIFGain.setText(_translate("FormDeviceSettings", "IF Gain:"))
         self.labelChannel.setText(_translate("FormDeviceSettings", "Channel:"))
         self.btnLockBWSR.setText(_translate("FormDeviceSettings", "..."))
         self.label_3.setText(_translate("FormDeviceSettings", "Device:"))
-        self.labelBiasTee.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Enable the bias tee of your SDR, if you have an external LNA connected. Leave this disabled if you have no external LNA attached.</p></body></html>"))
+        self.labelBiasTee.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>Enable the bias tee of your SDR, if you have an external LNA connected. Leave this disabled if you have no external LNA attached.</p></body></html>",
+            )
+        )
         self.labelBiasTee.setText(_translate("FormDeviceSettings", "Bias Tee:"))
-        self.checkBoxBiasTee.setToolTip(_translate("FormDeviceSettings", "<html><head/><body><p>Enable the bias tee of your SDR, if you have an external LNA connected. Leave this disabled if you have no external LNA attached.</p></body></html>"))
-        self.checkBoxBiasTee.setText(_translate("FormDeviceSettings", "Enable Bias Tee"))
+        self.checkBoxBiasTee.setToolTip(
+            _translate(
+                "FormDeviceSettings",
+                "<html><head/><body><p>Enable the bias tee of your SDR, if you have an external LNA connected. Leave this disabled if you have no external LNA attached.</p></body></html>",
+            )
+        )
+        self.checkBoxBiasTee.setText(
+            _translate("FormDeviceSettings", "Enable Bias Tee")
+        )
+
+
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from . import urh_rc

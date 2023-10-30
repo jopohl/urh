@@ -17,7 +17,9 @@ class Ui_Interpretation(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.scrollArea = ScrollArea(Interpretation)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
@@ -31,10 +33,14 @@ class Ui_Interpretation(object):
         self.scrollArea.setObjectName("scrollArea")
         self.scrlAreaSignals = QtWidgets.QWidget()
         self.scrlAreaSignals.setGeometry(QtCore.QRect(0, 0, 631, 561))
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.scrlAreaSignals.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.scrlAreaSignals.sizePolicy().hasHeightForWidth()
+        )
         self.scrlAreaSignals.setSizePolicy(sizePolicy)
         self.scrlAreaSignals.setAutoFillBackground(True)
         self.scrlAreaSignals.setStyleSheet("")
@@ -43,14 +49,16 @@ class Ui_Interpretation(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(self.scrlAreaSignals)
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
-"}")
+        self.splitter.setStyleSheet(
+            "QSplitter::handle:vertical {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+            "}"
+        )
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
@@ -75,6 +83,13 @@ class Ui_Interpretation(object):
     def retranslateUi(self, Interpretation):
         _translate = QtCore.QCoreApplication.translate
         Interpretation.setWindowTitle(_translate("Interpretation", "Form"))
-        self.labelGettingStarted.setText(_translate("Interpretation", "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>"))
+        self.labelGettingStarted.setText(
+            _translate(
+                "Interpretation",
+                "<html><head/><body><p>Open a file or record a new signal using the <b>File menu</b> to get started.</p></body></html>",
+            )
+        )
+
+
 from urh.ui.ScrollArea import ScrollArea
 from . import urh_rc

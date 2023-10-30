@@ -19,6 +19,7 @@ class TestPartiallyLabeled(AWRETestCase):
     Some tests if there are already information about the message types present
 
     """
+
     def test_fully_labeled(self):
         """
         For fully labeled protocol, nothing should be done
@@ -26,7 +27,9 @@ class TestPartiallyLabeled(AWRETestCase):
         :return:
         """
         protocol = self.__prepare_example_protocol()
-        message_types = sorted(copy.deepcopy(protocol.message_types), key=lambda x: x.name)
+        message_types = sorted(
+            copy.deepcopy(protocol.message_types), key=lambda x: x.name
+        )
         ff = FormatFinder(protocol.messages)
         ff.perform_iteration()
         self.assertEqual(len(message_types), len(ff.message_types))
@@ -65,16 +68,44 @@ class TestPartiallyLabeled(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(2, len(ff.message_types))
 
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
-        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.PREAMBLE))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
-        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.SYNC))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
-        self.assertIsNotNone(ff.message_types[1].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        )
+        self.assertIsNotNone(
+            ff.message_types[1].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+        )
+        self.assertIsNotNone(
+            ff.message_types[1].get_first_label_with_type(FieldType.Function.SYNC)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNotNone(
+            ff.message_types[1].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.DST_ADDRESS
+            )
+        )
+        self.assertIsNotNone(
+            ff.message_types[1].get_first_label_with_type(
+                FieldType.Function.DST_ADDRESS
+            )
+        )
+        self.assertIsNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.SRC_ADDRESS
+            )
+        )
+        self.assertIsNotNone(
+            ff.message_types[1].get_first_label_with_type(
+                FieldType.Function.SRC_ADDRESS
+            )
+        )
 
     def test_type_part_already_labeled(self):
         protocol = self.__prepare_simple_example_protocol()
@@ -86,11 +117,25 @@ class TestPartiallyLabeled(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(1, len(ff.message_types))
 
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.DST_ADDRESS
+            )
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.SRC_ADDRESS
+            )
+        )
 
     def test_length_part_already_labeled(self):
         protocol = self.__prepare_simple_example_protocol()
@@ -102,11 +147,25 @@ class TestPartiallyLabeled(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(1, len(ff.message_types))
 
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
-        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+        )
+        self.assertIsNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.DST_ADDRESS
+            )
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.SRC_ADDRESS
+            )
+        )
 
     def test_address_part_already_labeled(self):
         protocol = self.__prepare_simple_example_protocol()
@@ -118,11 +177,25 @@ class TestPartiallyLabeled(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(1, len(ff.message_types))
 
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNotNone(ff.message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.SYNC)
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.DST_ADDRESS
+            )
+        )
+        self.assertIsNotNone(
+            ff.message_types[0].get_first_label_with_type(
+                FieldType.Function.SRC_ADDRESS
+            )
+        )
 
     @staticmethod
     def __message_types_have_same_labels(mt1: MessageType, mt2: MessageType):
@@ -154,9 +227,11 @@ class TestPartiallyLabeled(AWRETestCase):
 
         num_messages = 50
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x6768", mb_ack.message_type: "0x6768"},
+            participants=[alice, bob],
+        )
 
         random.seed(0)
         for i in range(num_messages):
@@ -166,11 +241,21 @@ class TestPartiallyLabeled(AWRETestCase):
             else:
                 source, destination = bob, alice
                 data_length = 16
-            pg.generate_message(data=pg.decimal_to_bits(random.randint(0, 2 ** (data_length - 1)), data_length),
-                                source=source, destination=destination)
-            pg.generate_message(data="", message_type=mb_ack.message_type, destination=source, source=destination)
+            pg.generate_message(
+                data=pg.decimal_to_bits(
+                    random.randint(0, 2 ** (data_length - 1)), data_length
+                ),
+                source=source,
+                destination=destination,
+            )
+            pg.generate_message(
+                data="",
+                message_type=mb_ack.message_type,
+                destination=source,
+                source=destination,
+            )
 
-        #self.save_protocol("labeled_protocol", pg)
+        # self.save_protocol("labeled_protocol", pg)
 
         return pg.protocol
 
@@ -187,12 +272,22 @@ class TestPartiallyLabeled(AWRETestCase):
         mb.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb.add_label(FieldType.Function.SRC_ADDRESS, 16)
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x6768"},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x6768"},
+            participants=[alice, bob],
+        )
 
         for i in range(10):
-            pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(16)]), source=alice, destination=bob)
-            pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(8)]), source=bob, destination=alice)
+            pg.generate_message(
+                data="".join([random.choice(["0", "1"]) for _ in range(16)]),
+                source=alice,
+                destination=bob,
+            )
+            pg.generate_message(
+                data="".join([random.choice(["0", "1"]) for _ in range(8)]),
+                source=bob,
+                destination=alice,
+            )
 
         return pg.protocol

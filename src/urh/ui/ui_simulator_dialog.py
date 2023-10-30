@@ -56,14 +56,22 @@ class Ui_DialogSimulator(object):
         self.scrollAreaWidgetContentsRX.setObjectName("scrollAreaWidgetContentsRX")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContentsRX)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.btnTestSniffSettings = QtWidgets.QPushButton(self.scrollAreaWidgetContentsRX)
+        self.btnTestSniffSettings = QtWidgets.QPushButton(
+            self.scrollAreaWidgetContentsRX
+        )
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/sniffer.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/icons/icons/sniffer.svg"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.btnTestSniffSettings.setIcon(icon)
         self.btnTestSniffSettings.setAutoDefault(False)
         self.btnTestSniffSettings.setObjectName("btnTestSniffSettings")
         self.verticalLayout_6.addWidget(self.btnTestSniffSettings)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_6.addItem(spacerItem)
         self.scrollAreaRX.setWidget(self.scrollAreaWidgetContentsRX)
         self.verticalLayout_5.addWidget(self.scrollAreaRX)
@@ -82,7 +90,9 @@ class Ui_DialogSimulator(object):
         self.scrollAreaWidgetContentsTX.setObjectName("scrollAreaWidgetContentsTX")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContentsTX)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_8.addItem(spacerItem1)
         self.scrollAreaTX.setWidget(self.scrollAreaWidgetContentsTX)
         self.verticalLayout_7.addWidget(self.scrollAreaTX)
@@ -102,20 +112,22 @@ class Ui_DialogSimulator(object):
         self.verticalLayout_15 = QtWidgets.QVBoxLayout(self.tab_simulation)
         self.verticalLayout_15.setObjectName("verticalLayout_15")
         self.groupBoxSimulationStatus = QtWidgets.QGroupBox(self.tab_simulation)
-        self.groupBoxSimulationStatus.setStyleSheet("QGroupBox\n"
-"{\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
-"}\n"
-"QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
-"}")
+        self.groupBoxSimulationStatus.setStyleSheet(
+            "QGroupBox\n"
+            "{\n"
+            "border: none;\n"
+            "}\n"
+            "\n"
+            "QGroupBox::title {\n"
+            "    subcontrol-origin: margin;\n"
+            "}\n"
+            "QGroupBox::indicator:unchecked {\n"
+            " image: url(:/icons/icons/collapse.svg)\n"
+            "}\n"
+            "QGroupBox::indicator:checked {\n"
+            " image: url(:/icons/icons/uncollapse.svg)\n"
+            "}"
+        )
         self.groupBoxSimulationStatus.setCheckable(True)
         self.groupBoxSimulationStatus.setObjectName("groupBoxSimulationStatus")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.groupBoxSimulationStatus)
@@ -165,20 +177,22 @@ class Ui_DialogSimulator(object):
         self.verticalLayout_12.addWidget(self.frame)
         self.verticalLayout_15.addWidget(self.groupBoxSimulationStatus)
         self.groupBoxRXStatus = QtWidgets.QGroupBox(self.tab_simulation)
-        self.groupBoxRXStatus.setStyleSheet("QGroupBox\n"
-"{\n"
-"border: none;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"}\n"
-"QGroupBox::indicator:unchecked {\n"
-" image: url(:/icons/icons/collapse.svg)\n"
-"}\n"
-"QGroupBox::indicator:checked {\n"
-" image: url(:/icons/icons/uncollapse.svg)\n"
-"}")
+        self.groupBoxRXStatus.setStyleSheet(
+            "QGroupBox\n"
+            "{\n"
+            "border: none;\n"
+            "}\n"
+            "\n"
+            "QGroupBox::title {\n"
+            "    subcontrol-origin: margin;\n"
+            "}\n"
+            "QGroupBox::indicator:unchecked {\n"
+            " image: url(:/icons/icons/collapse.svg)\n"
+            "}\n"
+            "QGroupBox::indicator:checked {\n"
+            " image: url(:/icons/icons/uncollapse.svg)\n"
+            "}"
+        )
         self.groupBoxRXStatus.setCheckable(True)
         self.groupBoxRXStatus.setObjectName("groupBoxRXStatus")
         self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.groupBoxRXStatus)
@@ -196,7 +210,9 @@ class Ui_DialogSimulator(object):
         self.checkBoxCaptureFullRX = QtWidgets.QCheckBox(self.frame_2)
         self.checkBoxCaptureFullRX.setObjectName("checkBoxCaptureFullRX")
         self.horizontalLayout_5.addWidget(self.checkBoxCaptureFullRX)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_5.addItem(spacerItem2)
         self.btnSaveRX = QtWidgets.QToolButton(self.frame_2)
         icon = QtGui.QIcon.fromTheme("document-save")
@@ -227,7 +243,9 @@ class Ui_DialogSimulator(object):
         self.radioButtonTranscriptHex = QtWidgets.QRadioButton(self.tab)
         self.radioButtonTranscriptHex.setObjectName("radioButtonTranscriptHex")
         self.horizontalLayout_3.addWidget(self.radioButtonTranscriptHex)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_3.addItem(spacerItem3)
         self.btnOpenInAnalysis = QtWidgets.QPushButton(self.tab)
         self.btnOpenInAnalysis.setObjectName("btnOpenInAnalysis")
@@ -261,8 +279,8 @@ class Ui_DialogSimulator(object):
         self.retranslateUi(DialogSimulator)
         self.tabWidgetSimulatorSettings.setCurrentIndex(3)
         self.tabWidget.setCurrentIndex(0)
-        self.groupBoxSimulationStatus.toggled['bool'].connect(self.frame.setVisible)
-        self.groupBoxRXStatus.toggled['bool'].connect(self.frame_2.setVisible)
+        self.groupBoxSimulationStatus.toggled["bool"].connect(self.frame.setVisible)
+        self.groupBoxRXStatus.toggled["bool"].connect(self.frame_2.setVisible)
 
     def retranslateUi(self, DialogSimulator):
         _translate = QtCore.QCoreApplication.translate
@@ -270,31 +288,73 @@ class Ui_DialogSimulator(object):
         self.btnLogAll.setText(_translate("DialogSimulator", "Log all"))
         self.btnLogNone.setText(_translate("DialogSimulator", "Log none"))
         self.btnToggleLog.setText(_translate("DialogSimulator", "Toggle selected"))
-        self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabLog), _translate("DialogSimulator", "Log settings"))
-        self.btnTestSniffSettings.setText(_translate("DialogSimulator", "Test sniffer settings"))
-        self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabRX), _translate("DialogSimulator", "RX settings"))
-        self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabTX), _translate("DialogSimulator", "TX settings"))
-        self.groupBoxSimulationStatus.setTitle(_translate("DialogSimulator", "Simulation Status"))
+        self.tabWidgetSimulatorSettings.setTabText(
+            self.tabWidgetSimulatorSettings.indexOf(self.tabLog),
+            _translate("DialogSimulator", "Log settings"),
+        )
+        self.btnTestSniffSettings.setText(
+            _translate("DialogSimulator", "Test sniffer settings")
+        )
+        self.tabWidgetSimulatorSettings.setTabText(
+            self.tabWidgetSimulatorSettings.indexOf(self.tabRX),
+            _translate("DialogSimulator", "RX settings"),
+        )
+        self.tabWidgetSimulatorSettings.setTabText(
+            self.tabWidgetSimulatorSettings.indexOf(self.tabTX),
+            _translate("DialogSimulator", "TX settings"),
+        )
+        self.groupBoxSimulationStatus.setTitle(
+            _translate("DialogSimulator", "Simulation Status")
+        )
         self.label.setText(_translate("DialogSimulator", "Current iteration:"))
         self.lblCurrentRepeatValue.setText(_translate("DialogSimulator", "0"))
         self.label_2.setText(_translate("DialogSimulator", "Current item:"))
         self.lblCurrentItemValue.setText(_translate("DialogSimulator", "0"))
         self.btnSaveLog.setText(_translate("DialogSimulator", "..."))
         self.groupBoxRXStatus.setTitle(_translate("DialogSimulator", "RX Status"))
-        self.checkBoxCaptureFullRX.setText(_translate("DialogSimulator", "Capture complete RX"))
+        self.checkBoxCaptureFullRX.setText(
+            _translate("DialogSimulator", "Capture complete RX")
+        )
         self.btnSaveRX.setToolTip(_translate("DialogSimulator", "Save current capture"))
         self.btnSaveRX.setText(_translate("DialogSimulator", "Save"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_simulation), _translate("DialogSimulator", "Status"))
-        self.textEditTranscript.setPlaceholderText(_translate("DialogSimulator", "Here you will find all messages that were sent and received during simulation."))
-        self.radioButtonTranscriptBit.setText(_translate("DialogSimulator", "Bit &view"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_simulation),
+            _translate("DialogSimulator", "Status"),
+        )
+        self.textEditTranscript.setPlaceholderText(
+            _translate(
+                "DialogSimulator",
+                "Here you will find all messages that were sent and received during simulation.",
+            )
+        )
+        self.radioButtonTranscriptBit.setText(
+            _translate("DialogSimulator", "Bit &view")
+        )
         self.radioButtonTranscriptHex.setText(_translate("DialogSimulator", "Hex view"))
-        self.btnOpenInAnalysis.setText(_translate("DialogSimulator", "Open in Analysis"))
+        self.btnOpenInAnalysis.setText(
+            _translate("DialogSimulator", "Open in Analysis")
+        )
         self.btnSaveTranscript.setText(_translate("DialogSimulator", "..."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("DialogSimulator", "Messages"))
-        self.textEditDevices.setPlaceholderText(_translate("DialogSimulator", "After simulation start you will see the log messages of your configured SDRs here."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_device), _translate("DialogSimulator", "Devices"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab), _translate("DialogSimulator", "Messages")
+        )
+        self.textEditDevices.setPlaceholderText(
+            _translate(
+                "DialogSimulator",
+                "After simulation start you will see the log messages of your configured SDRs here.",
+            )
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_device),
+            _translate("DialogSimulator", "Devices"),
+        )
         self.btnStartStop.setText(_translate("DialogSimulator", "Start"))
-        self.tabWidgetSimulatorSettings.setTabText(self.tabWidgetSimulatorSettings.indexOf(self.tabSimulation), _translate("DialogSimulator", "Simulation"))
+        self.tabWidgetSimulatorSettings.setTabText(
+            self.tabWidgetSimulatorSettings.indexOf(self.tabSimulation),
+            _translate("DialogSimulator", "Simulation"),
+        )
+
+
 from urh.ui.views.LiveGraphicView import LiveGraphicView
 from urh.ui.views.LoggingGraphicsView import LoggingGraphicsView
 from . import urh_rc

@@ -10,6 +10,7 @@ from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogContro
 from urh.util import util
 from urh.util.ProjectManager import ProjectManager
 
+
 def send_data(port):
     num_samples = settings.SPECTRUM_BUFFER_SIZE
     frequency = 0.1
@@ -44,7 +45,7 @@ def close_socket(sock):
     sock.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(["test"])
     main = MainController()
     port = util.get_free_port()
@@ -65,4 +66,3 @@ if __name__ == '__main__':
     app.exec_()
     p.terminate()
     p.join()
-

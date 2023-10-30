@@ -12,6 +12,7 @@ class EpicGraphicView(EditableGraphicView):
     """
     Tied to Signal Frame (Interpretation)
     """
+
     save_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -44,8 +45,10 @@ class EpicGraphicView(EditableGraphicView):
     @property
     def selected_messages(self):
         if self.something_is_selected and self.protocol:
-            sb, _, eb, _ = self.protocol.get_bitseq_from_selection(self.selection_area.start, abs(self.selection_area.width))
-            return self.protocol.messages[sb:eb + 1]
+            sb, _, eb, _ = self.protocol.get_bitseq_from_selection(
+                self.selection_area.start, abs(self.selection_area.width)
+            )
+            return self.protocol.messages[sb : eb + 1]
         else:
             return []
 
@@ -68,8 +71,11 @@ class EpicGraphicView(EditableGraphicView):
             if message.bit_sample_pos[-2] < start:
                 continue
 
-            color = None if message.participant is None else settings.PARTICIPANT_COLORS[
-                message.participant.color_index]
+            color = (
+                None
+                if message.participant is None
+                else settings.PARTICIPANT_COLORS[message.participant.color_index]
+            )
 
             if color is None:
                 continue
@@ -87,7 +93,9 @@ class EpicGraphicView(EditableGraphicView):
                 break
 
             # Data part of the message
-            sub_path_ranges.append((message.bit_sample_pos[0], message.bit_sample_pos[-2] + 1))
+            sub_path_ranges.append(
+                (message.bit_sample_pos[0], message.bit_sample_pos[-2] + 1)
+            )
             colors.append(color)
 
             start = message.bit_sample_pos[-2] + 1
@@ -103,4 +111,3 @@ class EpicGraphicView(EditableGraphicView):
     @pyqtSlot()
     def on_save_action_triggered(self):
         self.save_clicked.emit()
-

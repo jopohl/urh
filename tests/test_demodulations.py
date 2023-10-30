@@ -20,7 +20,11 @@ class TestDemodulations(unittest.TestCase):
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
-        self.assertTrue(proto_analyzer.plain_bits_str[0].startswith("1011001001011011011011011011011011001000000"))
+        self.assertTrue(
+            proto_analyzer.plain_bits_str[0].startswith(
+                "1011001001011011011011011011011011001000000"
+            )
+        )
 
     def test_ask_two(self):
         signal = Signal(get_path_for_data_file("ask_short.complex"), "ASK-Test2")
@@ -43,8 +47,10 @@ class TestDemodulations(unittest.TestCase):
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
-        self.assertEqual(proto_analyzer.plain_bits_str[0],
-                         "101010101010101010101010101010101100011000100110110001100010011011110100110111000001110110011000111011101111011110100100001001111001100110011100110100100011100111010011111100011")
+        self.assertEqual(
+            proto_analyzer.plain_bits_str[0],
+            "101010101010101010101010101010101100011000100110110001100010011011110100110111000001110110011000111011101111011110100100001001111001100110011100110100100011100111010011111100011",
+        )
 
     def test_fsk_short_bit_length(self):
         bits_str = "101010"
@@ -75,13 +81,16 @@ class TestDemodulations(unittest.TestCase):
 
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
-        self.assertTrue(proto_analyzer.plain_bits_str[0].startswith("1011"), msg=proto_analyzer.plain_bits_str[0])
+        self.assertTrue(
+            proto_analyzer.plain_bits_str[0].startswith("1011"),
+            msg=proto_analyzer.plain_bits_str[0],
+        )
 
     def test_4_psk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1])
         angles_degree = [-135, -45, 45, 135]
 
-        parameters = array.array("f", [np.pi*a/180 for a in angles_degree])
+        parameters = array.array("f", [np.pi * a / 180 for a in angles_degree])
         result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
 
         signal = Signal("")
@@ -98,7 +107,9 @@ class TestDemodulations(unittest.TestCase):
         self.assertTrue(demod_bits.startswith("10101010"))
 
         np.random.seed(42)
-        noised = result + 0.1 * np.random.normal(loc=0, scale=np.sqrt(2)/2, size=(len(result), 2))
+        noised = result + 0.1 * np.random.normal(
+            loc=0, scale=np.sqrt(2) / 2, size=(len(result), 2)
+        )
         signal.iq_array = IQArray(noised.astype(np.float32))
         signal.center_spacing = 1.5
         signal.noise_threshold = 0.2
@@ -122,4 +133,3 @@ class TestDemodulations(unittest.TestCase):
         proto_analyzer = ProtocolAnalyzer(signal)
         proto_analyzer.get_protocol_from_signal()
         self.assertEqual(proto_analyzer.plain_bits_str[0], "1010110001")
-

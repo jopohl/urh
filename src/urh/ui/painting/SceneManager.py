@@ -32,7 +32,9 @@ class SceneManager(QObject):
             return len(self.plot_data[0])
         return len(self.plot_data)
 
-    def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
+    def show_scene_section(
+        self, x1: float, x2: float, subpath_ranges=None, colors=None
+    ):
         """
         :param x1: start of section to show
         :param x2: end of section to show
@@ -46,15 +48,28 @@ class SceneManager(QObject):
 
         if end > start:
             if isinstance(self.plot_data, list):
-                paths_i = path_creator.create_path(self.plot_data[0], start=start, end=end,
-                                            subpath_ranges=subpath_ranges)
-                paths_q = path_creator.create_path(self.plot_data[1], start=start, end=end,
-                                            subpath_ranges=subpath_ranges)
+                paths_i = path_creator.create_path(
+                    self.plot_data[0],
+                    start=start,
+                    end=end,
+                    subpath_ranges=subpath_ranges,
+                )
+                paths_q = path_creator.create_path(
+                    self.plot_data[1],
+                    start=start,
+                    end=end,
+                    subpath_ranges=subpath_ranges,
+                )
                 self.set_path(paths_i, colors=[settings.LINECOLOR_I] * len(paths_i))
-                self.set_path(paths_q, colors=[settings.LINECOLOR_Q] * len(paths_q), run_clear_path=False)
+                self.set_path(
+                    paths_q,
+                    colors=[settings.LINECOLOR_Q] * len(paths_q),
+                    run_clear_path=False,
+                )
             else:
-                paths = path_creator.create_path(self.plot_data, start=start, end=end,
-                                            subpath_ranges=subpath_ranges)
+                paths = path_creator.create_path(
+                    self.plot_data, start=start, end=end, subpath_ranges=subpath_ranges
+                )
                 self.set_path(paths, colors=colors)
 
     def set_path(self, paths: list, colors=None, run_clear_path=True):
@@ -63,12 +78,16 @@ class SceneManager(QObject):
         colors = [settings.LINECOLOR] * len(paths) if colors is None else colors
         assert len(paths) == len(colors)
         for path, color in zip(paths, colors):
-            path_object = self.scene.addPath(path, QPen(color if color else settings.LINECOLOR, 0))
+            path_object = self.scene.addPath(
+                path, QPen(color if color else settings.LINECOLOR, 0)
+            )
             if color:
                 path_object.setZValue(1)
 
     def __limit_value(self, val: float) -> int:
-        return 0 if val < 0 else self.num_samples if val > self.num_samples else int(val)
+        return (
+            0 if val < 0 else self.num_samples if val > self.num_samples else int(val)
+        )
 
     def show_full_scene(self):
         self.show_scene_section(0, self.num_samples)

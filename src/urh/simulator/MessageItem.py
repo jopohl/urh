@@ -23,7 +23,12 @@ class MessageItem(GraphicsItem):
 
     def update_flags(self):
         if self.scene().mode == 0:
-            self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
+            self.set_flags(
+                is_selectable=True,
+                is_movable=True,
+                accept_hover_events=True,
+                accept_drops=True,
+            )
 
     def width(self):
         labels = self.labels()
@@ -36,11 +41,17 @@ class MessageItem(GraphicsItem):
         return width
 
     def refresh(self):
-        self.repeat_text.setPlainText("(" + str(self.model_item.repeat) + "x)" if self.model_item.repeat > 1 else "")
+        self.repeat_text.setPlainText(
+            "(" + str(self.model_item.repeat) + "x)"
+            if self.model_item.repeat > 1
+            else ""
+        )
 
     def labels(self):
         self.refresh_unlabeled_range_marker()
-        unlabeled_range_items = [uri for uri in self.childItems() if isinstance(uri, UnlabeledRangeItem)]
+        unlabeled_range_items = [
+            uri for uri in self.childItems() if isinstance(uri, UnlabeledRangeItem)
+        ]
         result = []
 
         start = 0
@@ -67,7 +78,9 @@ class MessageItem(GraphicsItem):
     def refresh_unlabeled_range_marker(self):
         msg = self.model_item
 
-        urm = [item for item in self.childItems() if isinstance(item, UnlabeledRangeItem)]
+        urm = [
+            item for item in self.childItems() if isinstance(item, UnlabeledRangeItem)
+        ]
 
         if len(msg):
             num_unlabeled_ranges = len(msg.message_type.unlabeled_ranges)
@@ -89,7 +102,9 @@ class MessageItem(GraphicsItem):
         self.setPos(QPointF(x_pos, y_pos))
 
         p_source = self.mapFromItem(self.source.line, self.source.line.line().p1())
-        p_destination = self.mapFromItem(self.destination.line, self.destination.line.line().p1())
+        p_destination = self.mapFromItem(
+            self.destination.line, self.destination.line.line().p1()
+        )
 
         arrow_width = abs(p_source.x() - p_destination.x())
 
@@ -147,11 +162,15 @@ class MessageArrowItem(QGraphicsLineItem):
         if self.line().dy() >= 0:
             angle = (math.pi * 2) - angle
 
-        arrow_p1 = self.line().p2() - QPointF(math.sin(angle + math.pi / 2.5) * arrow_size,
-                                              math.cos(angle + math.pi / 2.5) * arrow_size)
+        arrow_p1 = self.line().p2() - QPointF(
+            math.sin(angle + math.pi / 2.5) * arrow_size,
+            math.cos(angle + math.pi / 2.5) * arrow_size,
+        )
 
-        arrow_p2 = self.line().p2() - QPointF(math.sin(angle + math.pi - math.pi / 2.5) * arrow_size,
-                                              math.cos(angle + math.pi - math.pi / 2.5) * arrow_size)
+        arrow_p2 = self.line().p2() - QPointF(
+            math.sin(angle + math.pi - math.pi / 2.5) * arrow_size,
+            math.cos(angle + math.pi - math.pi / 2.5) * arrow_size,
+        )
 
         arrow_head = QPolygonF()
         arrow_head.append(self.line().p2())

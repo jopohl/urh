@@ -29,9 +29,13 @@ class PlutoSDR(Device):
 
     @classmethod
     def setup_device(cls, ctrl_connection: Connection, device_identifier):
-        device_identifier = device_identifier if isinstance(device_identifier, str) else ""
+        device_identifier = (
+            device_identifier if isinstance(device_identifier, str) else ""
+        )
         try:
-            device_identifier = re.search(r"(?<=\[).+?(?=\])", device_identifier).group(0)
+            device_identifier = re.search(r"(?<=\[).+?(?=\])", device_identifier).group(
+                0
+            )
         except (IndexError, AttributeError):
             pass
 
@@ -48,7 +52,9 @@ class PlutoSDR(Device):
         return ret == 0
 
     @classmethod
-    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+    def init_device(
+        cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict
+    ) -> bool:
         plutosdr.set_tx(is_tx)
         return super().init_device(ctrl_connection, is_tx, parameters)
 
@@ -78,11 +84,25 @@ class PlutoSDR(Device):
     def send_sync(cls, data):
         plutosdr.send_sync(data)
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            center_freq=center_freq,
+            sample_rate=sample_rate,
+            bandwidth=bandwidth,
+            gain=gain,
+            if_gain=if_gain,
+            baseband_gain=baseband_gain,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
         self.success = 0
 
     @property
@@ -91,11 +111,15 @@ class PlutoSDR(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
-                            ("identifier", self.device_serial)])
+        return OrderedDict(
+            [
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_RF_GAIN.name, self.gain),
+                ("identifier", self.device_serial),
+            ]
+        )
 
     @staticmethod
     def bytes_to_iq(buffer) -> np.ndarray:

@@ -19,8 +19,7 @@ class WSPChecksum(object):
         checksum8 = 2
         crc8 = 3
 
-    CRC_8_POLYNOMIAL = array.array("B", [1,
-                                         0, 0, 0, 0, 0, 1, 1, 1])  # x^8+x^2+x+1
+    CRC_8_POLYNOMIAL = array.array("B", [1, 0, 0, 0, 0, 0, 1, 1, 1])  # x^8+x^2+x+1
 
     def __init__(self, mode=ChecksumMode.auto):
         self.mode = mode
@@ -74,9 +73,15 @@ class WSPChecksum(object):
             return 0, 0, 0, 0  # Check for EOF
 
         rorg = bits_behind_sync[0:4].tobytes()
-        if rorg == array.array("B", [0, 1, 0, 1]).tobytes() or rorg == array.array("B", [0, 1, 1, 0]).tobytes():
+        if (
+            rorg == array.array("B", [0, 1, 0, 1]).tobytes()
+            or rorg == array.array("B", [0, 1, 1, 0]).tobytes()
+        ):
             # Switch telegram
-            if cls.checksum4(bits_behind_sync[-8:]).tobytes() == bits_behind_sync[-8:-4].tobytes():
+            if (
+                cls.checksum4(bits_behind_sync[-8:]).tobytes()
+                == bits_behind_sync[-8:-4].tobytes()
+            ):
                 crc_start = len(bits_behind_sync) - 8
                 crc_stop = len(bits_behind_sync) - 4
                 data_stop = crc_start
@@ -92,15 +97,15 @@ class WSPChecksum(object):
         val = copy.copy(bits)
         val[-4:] = array.array("B", [False, False, False, False])
         for i in range(0, len(val), 8):
-            hash += int("".join(map(str, map(int, val[i:i + 8]))), 2)
-        hash = (((hash & 0xf0) >> 4) + (hash & 0x0f)) & 0x0f
+            hash += int("".join(map(str, map(int, val[i : i + 8]))), 2)
+        hash = (((hash & 0xF0) >> 4) + (hash & 0x0F)) & 0x0F
         return array.array("B", list(map(bool, map(int, "{0:04b}".format(hash)))))
 
     @classmethod
     def checksum8(cls, bits: array.array) -> array.array:
         hash = 0
         for i in range(0, len(bits) - 8, 8):
-            hash += int("".join(map(str, map(int, bits[i:i + 8]))), 2)
+            hash += int("".join(map(str, map(int, bits[i : i + 8]))), 2)
         return array.array("B", list(map(bool, map(int, "{0:08b}".format(hash % 256)))))
 
     @classmethod

@@ -89,14 +89,18 @@ class Ui_DialogCSVImport(object):
         self.gridLayout.addWidget(self.label_4, 3, 0, 1, 2)
         self.buttonBox = QtWidgets.QDialogButtonBox(DialogCSVImport)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 9, 2, 1, 1)
         self.groupBoxFilePreview = QtWidgets.QGroupBox(DialogCSVImport)
         self.groupBoxFilePreview.setObjectName("groupBoxFilePreview")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBoxFilePreview)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.plainTextEditFilePreview = QtWidgets.QPlainTextEdit(self.groupBoxFilePreview)
+        self.plainTextEditFilePreview = QtWidgets.QPlainTextEdit(
+            self.groupBoxFilePreview
+        )
         self.plainTextEditFilePreview.setUndoRedoEnabled(False)
         self.plainTextEditFilePreview.setReadOnly(True)
         self.plainTextEditFilePreview.setObjectName("plainTextEditFilePreview")
@@ -115,26 +119,53 @@ class Ui_DialogCSVImport(object):
         self.buttonBox.rejected.connect(DialogCSVImport.reject)
         DialogCSVImport.setTabOrder(self.lineEditFilename, self.btnChooseFile)
         DialogCSVImport.setTabOrder(self.btnChooseFile, self.plainTextEditFilePreview)
-        DialogCSVImport.setTabOrder(self.plainTextEditFilePreview, self.comboBoxCSVSeparator)
+        DialogCSVImport.setTabOrder(
+            self.plainTextEditFilePreview, self.comboBoxCSVSeparator
+        )
         DialogCSVImport.setTabOrder(self.comboBoxCSVSeparator, self.btnAddSeparator)
         DialogCSVImport.setTabOrder(self.btnAddSeparator, self.spinBoxIDataColumn)
         DialogCSVImport.setTabOrder(self.spinBoxIDataColumn, self.spinBoxQDataColumn)
-        DialogCSVImport.setTabOrder(self.spinBoxQDataColumn, self.spinBoxTimestampColumn)
-        DialogCSVImport.setTabOrder(self.spinBoxTimestampColumn, self.tableWidgetPreview)
+        DialogCSVImport.setTabOrder(
+            self.spinBoxQDataColumn, self.spinBoxTimestampColumn
+        )
+        DialogCSVImport.setTabOrder(
+            self.spinBoxTimestampColumn, self.tableWidgetPreview
+        )
 
     def retranslateUi(self, DialogCSVImport):
         _translate = QtCore.QCoreApplication.translate
         DialogCSVImport.setWindowTitle(_translate("DialogCSVImport", "CSV Import"))
-        self.labelFileNotFound.setText(_translate("DialogCSVImport", "<html><head/><body><p><span style=\" color:#ff0000;\">Could not open the selected file.</span></p></body></html>"))
+        self.labelFileNotFound.setText(
+            _translate(
+                "DialogCSVImport",
+                '<html><head/><body><p><span style=" color:#ff0000;">Could not open the selected file.</span></p></body></html>',
+            )
+        )
         self.comboBoxCSVSeparator.setItemText(0, _translate("DialogCSVImport", ","))
         self.comboBoxCSVSeparator.setItemText(1, _translate("DialogCSVImport", ";"))
-        self.btnAddSeparator.setToolTip(_translate("DialogCSVImport", "Add a custom separator."))
+        self.btnAddSeparator.setToolTip(
+            _translate("DialogCSVImport", "Add a custom separator.")
+        )
         self.btnAddSeparator.setText(_translate("DialogCSVImport", "..."))
-        self.spinBoxTimestampColumn.setToolTip(_translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>"))
-        self.spinBoxTimestampColumn.setSpecialValueText(_translate("DialogCSVImport", "Not present"))
+        self.spinBoxTimestampColumn.setToolTip(
+            _translate(
+                "DialogCSVImport",
+                "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>",
+            )
+        )
+        self.spinBoxTimestampColumn.setSpecialValueText(
+            _translate("DialogCSVImport", "Not present")
+        )
         self.label.setText(_translate("DialogCSVImport", "I Data Column:"))
-        self.spinBoxQDataColumn.setSpecialValueText(_translate("DialogCSVImport", "Not present"))
-        self.label_3.setToolTip(_translate("DialogCSVImport", "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>"))
+        self.spinBoxQDataColumn.setSpecialValueText(
+            _translate("DialogCSVImport", "Not present")
+        )
+        self.label_3.setToolTip(
+            _translate(
+                "DialogCSVImport",
+                "<html><head/><body><p> If your dataset contains timestamps URH will calculate the sample rate from them. You can manually edit the sample rate after import in the signal details.</p></body></html>",
+            )
+        )
         self.label_3.setText(_translate("DialogCSVImport", "Timestamp Column:"))
         self.label_2.setText(_translate("DialogCSVImport", "Q Data Column:"))
         self.groupBox.setTitle(_translate("DialogCSVImport", "Preview"))
@@ -146,6 +177,10 @@ class Ui_DialogCSVImport(object):
         item.setText(_translate("DialogCSVImport", "Q"))
         self.btnChooseFile.setText(_translate("DialogCSVImport", "..."))
         self.label_4.setText(_translate("DialogCSVImport", "CSV Separator:"))
-        self.groupBoxFilePreview.setTitle(_translate("DialogCSVImport", "File Content (at most 100 rows)"))
+        self.groupBoxFilePreview.setTitle(
+            _translate("DialogCSVImport", "File Content (at most 100 rows)")
+        )
         self.label_5.setText(_translate("DialogCSVImport", "File to import:"))
-        self.btnAutoDefault.setText(_translate("DialogCSVImport", "Prevent Dialog From Close with Enter"))
+        self.btnAutoDefault.setText(
+            _translate("DialogCSVImport", "Prevent Dialog From Close with Enter")
+        )

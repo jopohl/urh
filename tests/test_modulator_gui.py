@@ -9,7 +9,6 @@ from urh.util.Logger import logger
 
 
 class TestModulatorGUI(QtTestCase):
-
     def setUp(self):
         super().setUp()
         self.form.ui.tabWidget.setCurrentIndex(2)
@@ -68,36 +67,58 @@ class TestModulatorGUI(QtTestCase):
 
     def test_zoom(self):
         self.dialog.ui.gVModulated.zoom(1.1)
-        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         [int(self.dialog.ui.gVCarrier.view_rect().width())-1,
-                          int(self.dialog.ui.gVCarrier.view_rect().width()),
-                          int(self.dialog.ui.gVCarrier.view_rect().width()+1)])
+        self.assertIn(
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+            [
+                int(self.dialog.ui.gVCarrier.view_rect().width()) - 1,
+                int(self.dialog.ui.gVCarrier.view_rect().width()),
+                int(self.dialog.ui.gVCarrier.view_rect().width() + 1),
+            ],
+        )
 
-        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         [int(self.dialog.ui.gVData.view_rect().width())-1,
-                          int(self.dialog.ui.gVData.view_rect().width()),
-                          int(self.dialog.ui.gVData.view_rect().width()+1)])
+        self.assertIn(
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+            [
+                int(self.dialog.ui.gVData.view_rect().width()) - 1,
+                int(self.dialog.ui.gVData.view_rect().width()),
+                int(self.dialog.ui.gVData.view_rect().width() + 1),
+            ],
+        )
 
         self.dialog.ui.gVModulated.zoom(1.01)
 
-        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         [int(self.dialog.ui.gVCarrier.view_rect().width())-1,
-                          int(self.dialog.ui.gVCarrier.view_rect().width()),
-                          int(self.dialog.ui.gVCarrier.view_rect().width()+1)])
+        self.assertIn(
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+            [
+                int(self.dialog.ui.gVCarrier.view_rect().width()) - 1,
+                int(self.dialog.ui.gVCarrier.view_rect().width()),
+                int(self.dialog.ui.gVCarrier.view_rect().width() + 1),
+            ],
+        )
 
-        self.assertIn(int(self.dialog.ui.gVModulated.view_rect().width()),
-                         [int(self.dialog.ui.gVData.view_rect().width())-1,
-                          int(self.dialog.ui.gVData.view_rect().width()),
-                          int(self.dialog.ui.gVData.view_rect().width()+1)])
+        self.assertIn(
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+            [
+                int(self.dialog.ui.gVData.view_rect().width()) - 1,
+                int(self.dialog.ui.gVData.view_rect().width()),
+                int(self.dialog.ui.gVData.view_rect().width() + 1),
+            ],
+        )
 
     def test_edit_modulation(self):
-        self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
+        self.dialog.ui.comboBoxModulationType.setCurrentText(
+            "Amplitude Shift Keying (ASK)"
+        )
         self.assertEqual(self.dialog.ui.labelParameters.text(), "Amplitudes in %:")
 
-        self.dialog.ui.comboBoxModulationType.setCurrentText("Frequency Shift Keying (FSK)")
+        self.dialog.ui.comboBoxModulationType.setCurrentText(
+            "Frequency Shift Keying (FSK)"
+        )
         self.assertEqual(self.dialog.ui.labelParameters.text(), "Frequencies in Hz:")
 
-        self.dialog.ui.comboBoxModulationType.setCurrentText("Gaussian Frequency Shift Keying (GFSK)")
+        self.dialog.ui.comboBoxModulationType.setCurrentText(
+            "Gaussian Frequency Shift Keying (GFSK)"
+        )
         self.assertEqual(self.dialog.ui.labelParameters.text(), "Frequencies in Hz:")
         self.dialog.ui.spinBoxGaussBT.setValue(0.5)
         self.dialog.ui.spinBoxGaussBT.editingFinished.emit()
@@ -109,11 +130,15 @@ class TestModulatorGUI(QtTestCase):
         self.dialog.ui.comboBoxModulationType.setCurrentText("Phase Shift Keying (PSK)")
         self.assertEqual(self.dialog.ui.labelParameters.text(), "Phases in degree:")
 
-        self.dialog.ui.comboBoxModulationType.setCurrentText("Amplitude Shift Keying (ASK)")
+        self.dialog.ui.comboBoxModulationType.setCurrentText(
+            "Amplitude Shift Keying (ASK)"
+        )
         self.assertEqual(self.dialog.ui.labelParameters.text(), "Amplitudes in %:")
 
-        self.assertEqual(int(self.dialog.ui.lSamplesInViewModulated.text()),
-                         int(self.dialog.ui.gVModulated.view_rect().width()))
+        self.assertEqual(
+            int(self.dialog.ui.lSamplesInViewModulated.text()),
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+        )
 
     def test_signal_view(self):
         self.add_signal_to_form("esaver.complex16s")
@@ -126,22 +151,34 @@ class TestModulatorGUI(QtTestCase):
         rect = tree_view.visualRect(index)
         QTest.mousePress(tree_view.viewport(), Qt.LeftButton, pos=rect.center())
         mime_data = tree_model.mimeData([index])
-        drag_drop = QDropEvent(rect.center(), Qt.CopyAction | Qt.MoveAction, mime_data, Qt.LeftButton, Qt.NoModifier)
+        drag_drop = QDropEvent(
+            rect.center(),
+            Qt.CopyAction | Qt.MoveAction,
+            mime_data,
+            Qt.LeftButton,
+            Qt.NoModifier,
+        )
         drag_drop.acceptProposedAction()
         self.dialog.ui.gVOriginalSignal.dropEvent(drag_drop)
-        self.assertEqual(self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples)
+        self.assertEqual(
+            self.dialog.ui.gVOriginalSignal.sceneRect().width(), signal.num_samples
+        )
 
         self.dialog.ui.cbShowDataBitsOnly.click()
         self.dialog.ui.chkBoxLockSIV.click()
 
-        self.assertEqual(int(self.dialog.ui.gVOriginalSignal.view_rect().width()),
-                         int(self.dialog.ui.gVModulated.view_rect().width()))
+        self.assertEqual(
+            int(self.dialog.ui.gVOriginalSignal.view_rect().width()),
+            int(self.dialog.ui.gVModulated.view_rect().width()),
+        )
 
         freq = self.dialog.ui.doubleSpinBoxCarrierFreq.value()
         self.dialog.ui.btnAutoDetect.click()
         self.assertNotEqual(freq, self.dialog.ui.doubleSpinBoxCarrierFreq.value())
 
-        self.dialog.ui.comboBoxModulationType.setCurrentText("Frequency Shift Keying (FSK)")
+        self.dialog.ui.comboBoxModulationType.setCurrentText(
+            "Frequency Shift Keying (FSK)"
+        )
         self.dialog.ui.btnAutoDetect.click()
 
         self.assertEqual(self.dialog.ui.lCurrentSearchResult.text(), "1")

@@ -17,5 +17,8 @@ class TestFilterBandwidthDialog(QtTestCase):
         N = 401
         bw = Filter.get_bandwidth_from_filter_length(N)
         self.dialog.ui.spinBoxCustomKernelLength.setValue(N)
-        self.assertAlmostEqual(bw, self.dialog.ui.doubleSpinBoxCustomBandwidth.value(),
-                               places=self.dialog.ui.doubleSpinBoxCustomBandwidth.decimals())
+        self.assertAlmostEqual(
+            bw,
+            self.dialog.ui.doubleSpinBoxCustomBandwidth.value(),
+            places=self.dialog.ui.doubleSpinBoxCustomBandwidth.decimals(),
+        )

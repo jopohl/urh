@@ -18,7 +18,9 @@ class ProtocolTreeItem(object):
         """
         self.__itemData = data
         self.__parentItem = parent
-        self.__childItems = data.items if type(data) == ProtocolGroup else []  # type: list[ProtocolTreeItem]
+        self.__childItems = (
+            data.items if type(data) == ProtocolGroup else []
+        )  # type: list[ProtocolTreeItem]
 
         self.copy_data = False  # For Writeable Mode in CFC
         self.__data_copy = None  # For Writeable Mode in CFC
@@ -28,18 +30,24 @@ class ProtocolTreeItem(object):
         if isinstance(self.__itemData, ProtocolAnalyzer):
             if self.copy_data:
                 if self.__data_copy is None:
-                    self.__data_copy = copy.deepcopy(self.__itemData)  # type: ProtocolAnalyzer
+                    self.__data_copy = copy.deepcopy(
+                        self.__itemData
+                    )  # type: ProtocolAnalyzer
 
                     # keep message types
                     self.__data_copy.message_types = self.__itemData.message_types
                     nrz = Encoding([""])
-                    for i, message in enumerate(self.__data_copy.messages):  # type: Message
+                    for i, message in enumerate(
+                        self.__data_copy.messages
+                    ):  # type: Message
                         decoded_bits = message.decoded_bits
                         message.decoder = nrz
                         message.plain_bits = decoded_bits
                         message.message_type = self.__itemData.messages[i].message_type
 
-                    self.__data_copy.qt_signals.show_state_changed.connect(self.__itemData.qt_signals.show_state_changed.emit)
+                    self.__data_copy.qt_signals.show_state_changed.connect(
+                        self.__itemData.qt_signals.show_state_changed.emit
+                    )
 
                 return self.__data_copy
             else:
@@ -141,7 +149,7 @@ class ProtocolTreeItem(object):
 
     def addProtocol(self, proto):
         try:
-            assert (isinstance(proto, ProtocolAnalyzer))
+            assert isinstance(proto, ProtocolAnalyzer)
             self.__childItems.append(ProtocolTreeItem(proto, self))
         except AssertionError:
             return
@@ -177,15 +185,22 @@ class ProtocolTreeItem(object):
     def swapChildren(self, child1, child2):
         i1 = self.__childItems.index(child1)
         i2 = self.__childItems.index(child2)
-        self.__childItems[i1], self.__childItems[i2] = self.__childItems[i2], self.__childItems[i1]
+        self.__childItems[i1], self.__childItems[i2] = (
+            self.__childItems[i2],
+            self.__childItems[i1],
+        )
 
     def bringChildsToFront(self, childs):
         for child in childs:
-            self.__childItems.insert(0, self.__childItems.pop(self.__childItems.index(child)))
+            self.__childItems.insert(
+                0, self.__childItems.pop(self.__childItems.index(child))
+            )
 
     def bringChildsToIndex(self, index, childs):
         for child in reversed(childs):
-            self.__childItems.insert(index, self.__childItems.pop(self.__childItems.index(child)))
+            self.__childItems.insert(
+                index, self.__childItems.pop(self.__childItems.index(child))
+            )
 
     def containsChilds(self, childs):
         for child in childs:

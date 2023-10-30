@@ -11,6 +11,7 @@ util.set_shared_library_path()
 
 from urh.dev.native.lib import bladerf
 
+
 class TestBladeRF(unittest.TestCase):
     def test_version(self):
         bladerf.get_api_version()

@@ -20,13 +20,21 @@ class ModulationParametersDialog(QDialog):
         self.num_bits = int(math.log2(len(parameters)))
 
         if "FSK" in modulation_type:
-            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, KillerSpinBoxDelegate(-1e12, 1e12, self))
-            self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Frequency in Hz")
+            self.ui.tblSymbolParameters.setItemDelegateForColumn(
+                1, KillerSpinBoxDelegate(-1e12, 1e12, self)
+            )
+            self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText(
+                "Frequency in Hz"
+            )
         elif "ASK" in modulation_type:
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Amplitude")
-            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, SpinBoxDelegate(0, 100, self, "%"))
+            self.ui.tblSymbolParameters.setItemDelegateForColumn(
+                1, SpinBoxDelegate(0, 100, self, "%")
+            )
         elif "PSK" in modulation_type:
-            self.ui.tblSymbolParameters.setItemDelegateForColumn(1, SpinBoxDelegate(-360, 360, self, "°"))
+            self.ui.tblSymbolParameters.setItemDelegateForColumn(
+                1, SpinBoxDelegate(-360, 360, self, "°")
+            )
             self.ui.tblSymbolParameters.horizontalHeaderItem(1).setText("Phase")
 
         fmt = "{0:0" + str(self.num_bits) + "b}"
@@ -42,7 +50,9 @@ class ModulationParametersDialog(QDialog):
             item = QTableWidgetItem()
             item.setData(Qt.DisplayRole, self.parameters[i])
             self.ui.tblSymbolParameters.setItem(i, 1, item)
-            self.ui.tblSymbolParameters.openPersistentEditor(self.ui.tblSymbolParameters.item(i, 1))
+            self.ui.tblSymbolParameters.openPersistentEditor(
+                self.ui.tblSymbolParameters.item(i, 1)
+            )
 
         self.create_connects()
 
@@ -58,8 +68,9 @@ class ModulationParametersDialog(QDialog):
         self.accept()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
+
     app = QApplication(["urh"])
 
     dialog = ModulationParametersDialog([0, 100.0], "ASK")

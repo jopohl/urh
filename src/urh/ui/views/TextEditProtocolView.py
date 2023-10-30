@@ -17,7 +17,7 @@ class TextEditProtocolView(QTextEdit):
 
     @property
     def selected_text(self):
-        return self.textCursor().selectedText().replace('\u2028', '\n')
+        return self.textCursor().selectedText().replace("\u2028", "\n")
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Delete:
@@ -98,8 +98,8 @@ class TextEditProtocolView(QTextEdit):
         cursor = self.textCursor()
         if self.participants and self.messages and not cursor.selection().isEmpty():
             self.selected_messages = []
-            start_msg = self.toPlainText()[0:cursor.selectionStart()].count("\n")
-            end_msg = self.toPlainText()[0:cursor.selectionEnd()].count("\n") + 1
+            start_msg = self.toPlainText()[0 : cursor.selectionStart()].count("\n")
+            end_msg = self.toPlainText()[0 : cursor.selectionEnd()].count("\n") + 1
             for i in range(start_msg, end_msg):
                 self.selected_messages.append(self.messages[i])
 
@@ -113,13 +113,17 @@ class TextEditProtocolView(QTextEdit):
             none_participant_action = participant_menu.addAction("None")
             none_participant_action.setCheckable(True)
             none_participant_action.setActionGroup(participant_group)
-            none_participant_action.triggered.connect(self.on_none_participant_action_triggered)
+            none_participant_action.triggered.connect(
+                self.on_none_participant_action_triggered
+            )
 
             if selected_msg and selected_msg.participant is None:
                 none_participant_action.setChecked(True)
 
             for participant in self.participants:
-                pa = participant_menu.addAction(participant.name + " (" + participant.shortname + ")")
+                pa = participant_menu.addAction(
+                    participant.name + " (" + participant.shortname + ")"
+                )
                 pa.setCheckable(True)
                 pa.setActionGroup(participant_group)
                 if selected_msg and selected_msg.participant == participant:
@@ -134,7 +138,9 @@ class TextEditProtocolView(QTextEdit):
 
         menu.addSeparator()
 
-        line_wrap_action = menu.addAction("Linewrap (may take a while for long protocols)")
+        line_wrap_action = menu.addAction(
+            "Linewrap (may take a while for long protocols)"
+        )
         line_wrap_action.setCheckable(True)
         line_wrap = self.lineWrapMode() == QTextEdit.WidgetWidth
         line_wrap_action.setChecked(line_wrap)

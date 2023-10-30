@@ -22,13 +22,17 @@ class Histogram(object):
         :param normalize:
         """
         self.__vectors = vectors  # type: list[np.ndarray]
-        self.__active_indices = list(range(len(vectors))) if indices is None else indices
+        self.__active_indices = (
+            list(range(len(vectors))) if indices is None else indices
+        )
 
         self.normalize = normalize
         self.data = self.__create_histogram()
 
     def __create_histogram(self):
-        return awre_util.create_difference_histogram(self.__vectors, self.__active_indices)
+        return awre_util.create_difference_histogram(
+            self.__vectors, self.__active_indices
+        )
 
     def __repr__(self):
         return str(self.data.tolist())
@@ -58,15 +62,29 @@ class Histogram(object):
             else:
                 if length >= 2:
                     value = self.__get_value_for_common_range(start, length)
-                    result.append(CommonRange(start, length, value, message_indices=set(self.__active_indices),
-                                              range_type=range_type))
+                    result.append(
+                        CommonRange(
+                            start,
+                            length,
+                            value,
+                            message_indices=set(self.__active_indices),
+                            range_type=range_type,
+                        )
+                    )
 
                 start, length = None, 0
 
             if i == len(data_indices) - 1 and length >= 2:
                 value = self.__get_value_for_common_range(start, length)
-                result.append(CommonRange(start, length, value, message_indices=set(self.__active_indices),
-                                          range_type=range_type))
+                result.append(
+                    CommonRange(
+                        start,
+                        length,
+                        value,
+                        message_indices=set(self.__active_indices),
+                        range_type=range_type,
+                    )
+                )
 
         return result
 
@@ -81,10 +99,10 @@ class Histogram(object):
         values = defaultdict(list)
         for i in self.__active_indices:
             vector = self.__vectors[i]
-            values[vector[start:start + length].tostring()].append(i)
+            values[vector[start : start + length].tostring()].append(i)
         value = max(values, key=lambda x: len(x))
         indices = values[value]
-        return self.__vectors[indices[0]][start:start + length]
+        return self.__vectors[indices[0]][start : start + length]
 
     def __vector_to_string(self, data_vector) -> str:
         lut = {i: "{0:x}".format(i) for i in range(16)}
@@ -92,6 +110,7 @@ class Histogram(object):
 
     def plot(self):
         import matplotlib.pyplot as plt
+
         self.subplot_on(plt)
         plt.show()
 

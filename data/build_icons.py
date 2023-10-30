@@ -25,7 +25,7 @@ def get_used_icon_names():
         with open(sourcefile, "r") as f:
             for line in f:
                 if "QIcon.fromTheme" in line:
-                    icon = line[line.find("QIcon.fromTheme"):]
+                    icon = line[line.find("QIcon.fromTheme") :]
                     icon = icon.replace('"', "'")
                     start = icon.find("'") + 1
                     end = icon.find("'", start)
@@ -35,7 +35,11 @@ def get_used_icon_names():
 
 def copy_icons(icon_names: set):
     target_dir = "/tmp/oxy"
-    sizes = [s for s in os.listdir(OXYGEN_PATH) if os.path.isdir(os.path.join(OXYGEN_PATH, s))]  # 8x8, 22x22 ...
+    sizes = [
+        s
+        for s in os.listdir(OXYGEN_PATH)
+        if os.path.isdir(os.path.join(OXYGEN_PATH, s))
+    ]  # 8x8, 22x22 ...
     for size in sizes:
         target_size_dir = os.path.join(target_dir, size)
         os.makedirs(target_size_dir, exist_ok=True)
@@ -59,7 +63,7 @@ def copy_icons(icon_names: set):
         for size in sizes:
             f.write("\n")
             f.write("[" + size + "]\n")
-            f.write("Size=" + size[:size.index("x")] + "\n")
+            f.write("Size=" + size[: size.index("x")] + "\n")
             f.write("\n")
 
     root = ET.Element("RCC")

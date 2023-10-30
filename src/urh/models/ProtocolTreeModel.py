@@ -121,7 +121,10 @@ class ProtocolTreeModel(QAbstractItemModel):
         elif role == Qt.CheckStateRole:
             return item.show
         elif role == Qt.FontRole:
-            if item.is_group and self.rootItem.index_of(item) in self.controller.active_group_ids:
+            if (
+                item.is_group
+                and self.rootItem.index_of(item) in self.controller.active_group_ids
+            ):
                 font = QFont()
                 font.setBold(True)
                 return font
@@ -166,23 +169,31 @@ class ProtocolTreeModel(QAbstractItemModel):
     def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.ItemIsDropEnabled
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable | \
-               Qt.ItemIsUserCheckable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+        return (
+            Qt.ItemIsEditable
+            | Qt.ItemIsEnabled
+            | Qt.ItemIsSelectable
+            | Qt.ItemIsUserCheckable
+            | Qt.ItemIsDragEnabled
+            | Qt.ItemIsDropEnabled
+        )
 
     def supportedDragActions(self):
         return Qt.MoveAction | Qt.CopyAction
 
     def mimeTypes(self):
-        return ['text/plain', 'text/uri-list']
+        return ["text/plain", "text/uri-list"]
 
     def mimeData(self, indexes):
-        data = ''
+        data = ""
         for index in indexes:
             parent_item = self.getItem(index.parent())
             if parent_item == self.rootItem:
                 data += "{0},{1},{2}/".format(index.row(), index.column(), -1)
             else:
-                data += "{0},{1},{2}/".format(index.row(), index.column(), self.rootItem.index_of(parent_item))
+                data += "{0},{1},{2}/".format(
+                    index.row(), index.column(), self.rootItem.index_of(parent_item)
+                )
         mime_data = QMimeData()
         mime_data.setText(data)
         return mime_data
@@ -216,8 +227,13 @@ class ProtocolTreeModel(QAbstractItemModel):
                 continue
 
             if contains_files and contains_groups:
-                QMessageBox.information(QWidget(), self.tr("Drag not supported"),
-                                        self.tr("You can only drag/drop groups or protocols, no mixtures of both."))
+                QMessageBox.information(
+                    QWidget(),
+                    self.tr("Drag not supported"),
+                    self.tr(
+                        "You can only drag/drop groups or protocols, no mixtures of both."
+                    ),
+                )
                 return False
 
             drag_nodes.append(node)
@@ -261,7 +277,10 @@ class ProtocolTreeModel(QAbstractItemModel):
                 # Can't drop groups on files
                 return False
 
-            elif parent_node.containsChilds(drag_nodes) and drop_node in parent_node.children:
+            elif (
+                parent_node.containsChilds(drag_nodes)
+                and drop_node in parent_node.children
+            ):
                 # "Nodes on node in parent folder dropped"
                 pos = parent_node.index_of(drop_node)
                 parent_node.bringChildsToIndex(pos, drag_nodes)
@@ -300,13 +319,19 @@ class ProtocolTreeModel(QAbstractItemModel):
     def addGroup(self, name="New group"):
         self.rootItem.addGroup(name)
         child_nr = self.rootItem.childCount() - 1
-        self.group_added.emit(self.createIndex(child_nr, 0, self.rootItem.child(child_nr)))
+        self.group_added.emit(
+            self.createIndex(child_nr, 0, self.rootItem.child(child_nr))
+        )
 
     def delete_group(self, group_item: ProtocolTreeItem):
         if self.rootItem.childCount() == 1:
-            QMessageBox.critical(self.controller, self.tr("Group not deletable"),
-                                 self.tr(
-                                     "You can't delete the last group. Think about the children, they would be homeless!"))
+            QMessageBox.critical(
+                self.controller,
+                self.tr("Group not deletable"),
+                self.tr(
+                    "You can't delete the last group. Think about the children, they would be homeless!"
+                ),
+            )
             return
 
         group_id = self.rootItem.index_of(group_item)

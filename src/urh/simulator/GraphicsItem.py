@@ -1,7 +1,12 @@
 from PyQt5.QtCore import QRectF, Qt, QLineF
 from PyQt5.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
-from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
-    QAbstractItemView
+from PyQt5.QtWidgets import (
+    QGraphicsObject,
+    QGraphicsItem,
+    QGraphicsTextItem,
+    QGraphicsSceneDragDropEvent,
+    QAbstractItemView,
+)
 
 from urh import settings
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -31,7 +36,13 @@ class GraphicsItem(QGraphicsObject):
 
         self.setFlag(QGraphicsItem.ItemIgnoresParentOpacity, True)
 
-    def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
+    def set_flags(
+        self,
+        is_selectable=False,
+        is_movable=False,
+        accept_hover_events=False,
+        accept_drops=False,
+    ):
         self.setFlag(QGraphicsItem.ItemIsSelectable, is_selectable)
         self.setFlag(QGraphicsItem.ItemIsMovable, is_movable)
         self.setAcceptHoverEvents(accept_hover_events)
@@ -64,7 +75,9 @@ class GraphicsItem(QGraphicsObject):
         self.update_drop_indicator(event.pos())
 
     def get_scene_children(self):
-        return [self.scene().model_to_scene(child) for child in self.model_item.children]
+        return [
+            self.scene().model_to_scene(child) for child in self.model_item.children
+        ]
 
     def is_selectable(self):
         return self.flags() & QGraphicsItem.ItemIsSelectable
@@ -87,8 +100,9 @@ class GraphicsItem(QGraphicsObject):
         while next_item is not None:
             next_item = next_item.next()
 
-            if (not isinstance(next_item, SimulatorProtocolLabel) and
-                    not isinstance(next_item, SimulatorRule)):
+            if not isinstance(next_item, SimulatorProtocolLabel) and not isinstance(
+                next_item, SimulatorRule
+            ):
                 break
 
         return self.scene().model_to_scene(next_item)
@@ -99,8 +113,9 @@ class GraphicsItem(QGraphicsObject):
         while prev_item is not None:
             prev_item = prev_item.prev()
 
-            if (not isinstance(prev_item, SimulatorProtocolLabel) and
-                    not isinstance(prev_item, SimulatorRule)):
+            if not isinstance(prev_item, SimulatorProtocolLabel) and not isinstance(
+                prev_item, SimulatorRule
+            ):
                 break
 
         return self.scene().model_to_scene(prev_item)
@@ -181,7 +196,9 @@ class GraphicsItem(QGraphicsObject):
                 self.item_under_mouse = item
                 self.item_under_mouse.dragEnterEvent(None)
         elif self.item_under_mouse and self.item_under_mouse == item:
-            self.item_under_mouse.update_drop_indicator(self.mapToItem(self.item_under_mouse, event.pos()))
+            self.item_under_mouse.update_drop_indicator(
+                self.mapToItem(self.item_under_mouse, event.pos())
+            )
         elif item:
             self.item_under_mouse = item
             self.item_under_mouse.dragEnterEvent(None)

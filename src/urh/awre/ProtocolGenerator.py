@@ -20,9 +20,18 @@ class ProtocolGenerator(object):
     DEFAULT_SYNC = "1001"
     BROADCAST_ADDRESS = "0xffff"
 
-    def __init__(self, message_types: list, participants: list = None, preambles_by_mt=None,
-                 syncs_by_mt=None, little_endian=False, length_in_bytes=True, sequence_numbers=None,
-                 sequence_number_increment=1, message_type_codes=None):
+    def __init__(
+        self,
+        message_types: list,
+        participants: list = None,
+        preambles_by_mt=None,
+        syncs_by_mt=None,
+        little_endian=False,
+        length_in_bytes=True,
+        sequence_numbers=None,
+        sequence_number_increment=1,
+        message_type_codes=None,
+    ):
         """
 
         :param message_types:
@@ -65,7 +74,6 @@ class ProtocolGenerator(object):
                 message_type_codes[mt] = i
         self.message_type_codes = message_type_codes
 
-
     @property
     def messages(self):
         return self.protocol.messages
@@ -78,8 +86,11 @@ class ProtocolGenerator(object):
         if participant is None:
             return self.to_bits(self.BROADCAST_ADDRESS)
 
-        address = "0x" + participant.address_hex if not participant.address_hex.startswith(
-            "0x") else participant.address_hex
+        address = (
+            "0x" + participant.address_hex
+            if not participant.address_hex.startswith("0x")
+            else participant.address_hex
+        )
         return self.to_bits(address)
 
     @staticmethod
@@ -93,7 +104,9 @@ class ProtocolGenerator(object):
     def decimal_to_bits(self, number: int, num_bits: int) -> str:
         len_formats = {8: "B", 16: "H", 32: "I", 64: "Q"}
         if num_bits not in len_formats:
-            raise ValueError("Invalid length for length field: {} bits".format(num_bits))
+            raise ValueError(
+                "Invalid length for length field: {} bits".format(num_bits)
+            )
 
         struct_format = "<" if self.little_endian else ">"
         struct_format += len_formats[num_bits]
@@ -101,10 +114,18 @@ class ProtocolGenerator(object):
         byte_length = struct.pack(struct_format, number)
         return "".join("{0:08b}".format(byte) for byte in byte_length)
 
-    def generate_message(self, message_type=None, data="0x00", source: Participant = None,
-                         destination: Participant = None):
+    def generate_message(
+        self,
+        message_type=None,
+        data="0x00",
+        source: Participant = None,
+        destination: Participant = None,
+    ):
         for participant in (source, destination):
-            if isinstance(participant, Participant) and participant not in self.participants:
+            if (
+                isinstance(participant, Participant)
+                and participant not in self.participants
+            ):
                 self.participants.append(participant)
 
         if isinstance(message_type, MessageType):
@@ -123,7 +144,9 @@ class ProtocolGenerator(object):
 
         start = 0
 
-        data_label_present = mt.get_first_label_with_type(FieldType.Function.DATA) is not None
+        data_label_present = (
+            mt.get_first_label_with_type(FieldType.Function.DATA) is not None
+        )
 
         if data_label_present:
             message_length = mt[-1].end - 1
@@ -158,15 +181,26 @@ class ProtocolGenerator(object):
 
                 bits.append(self.decimal_to_bits(value, len_field))
             elif lbl.field_type.function == FieldType.Function.TYPE:
-                bits.append(self.decimal_to_bits(self.message_type_codes[mt] % (2 ** len_field), len_field))
+                bits.append(
+                    self.decimal_to_bits(
+                        self.message_type_codes[mt] % (2**len_field), len_field
+                    )
+                )
             elif lbl.field_type.function == FieldType.Function.SEQUENCE_NUMBER:
-                bits.append(self.decimal_to_bits(self.sequence_numbers[mt] % (2 ** len_field), len_field))
+                bits.append(
+                    self.decimal_to_bits(
+                        self.sequence_numbers[mt] % (2**len_field), len_field
+                    )
+                )
             elif lbl.field_type.function == FieldType.Function.DST_ADDRESS:
                 dst_bits = self.__get_address_for_participant(destination)
 
                 if len(dst_bits) != len_field:
                     raise ValueError(
-                        "Length of dst ({0} bits) != length dst field ({1} bits)".format(len(dst_bits), len_field))
+                        "Length of dst ({0} bits) != length dst field ({1} bits)".format(
+                            len(dst_bits), len_field
+                        )
+                    )
 
                 bits.append(dst_bits)
             elif lbl.field_type.function == FieldType.Function.SRC_ADDRESS:
@@ -174,13 +208,19 @@ class ProtocolGenerator(object):
 
                 if len(src_bits) != len_field:
                     raise ValueError(
-                        "Length of src ({0} bits) != length src field ({1} bits)".format(len(src_bits), len_field))
+                        "Length of src ({0} bits) != length src field ({1} bits)".format(
+                            len(src_bits), len_field
+                        )
+                    )
 
                 bits.append(src_bits)
             elif lbl.field_type.function == FieldType.Function.DATA:
                 if len(data) != len_field:
                     raise ValueError(
-                        "Length of data ({} bits) != length data field ({} bits)".format(len(data), len_field))
+                        "Length of data ({} bits) != length data field ({} bits)".format(
+                            len(data), len_field
+                        )
+                    )
                 bits.append(data)
 
             start = lbl.end
@@ -194,7 +234,9 @@ class ProtocolGenerator(object):
         self.sequence_numbers[mt] += self.sequence_number_increment
 
         for checksum_label in checksum_labels:
-            msg[checksum_label.start:checksum_label.end] = checksum_label.calculate_checksum_for_message(msg, False)
+            msg[
+                checksum_label.start : checksum_label.end
+            ] = checksum_label.calculate_checksum_for_message(msg, False)
 
         self.protocol.messages.append(msg)
 
@@ -206,15 +248,39 @@ class ProtocolGenerator(object):
             f.write("  \\begin{itemize}\n")
             for lbl in message_type:  # type: ProtocolLabel
                 if lbl.field_type.function == FieldType.Function.SYNC:
-                    sync = array("B", map(int, self.syncs_by_message_type[message_type]))
-                    f.write("    \\item {}: \\texttt{{0x{}}}\n".format(lbl.name, util.bit2hex(sync)))
+                    sync = array(
+                        "B", map(int, self.syncs_by_message_type[message_type])
+                    )
+                    f.write(
+                        "    \\item {}: \\texttt{{0x{}}}\n".format(
+                            lbl.name, util.bit2hex(sync)
+                        )
+                    )
                 elif lbl.field_type.function == FieldType.Function.PREAMBLE:
-                    preamble = array("B", map(int, self.preambles_by_message_type[message_type]))
-                    f.write("    \\item {}: \\texttt{{0x{}}}\n".format(lbl.name, util.bit2hex(preamble)))
+                    preamble = array(
+                        "B", map(int, self.preambles_by_message_type[message_type])
+                    )
+                    f.write(
+                        "    \\item {}: \\texttt{{0x{}}}\n".format(
+                            lbl.name, util.bit2hex(preamble)
+                        )
+                    )
                 elif lbl.field_type.function == FieldType.Function.CHECKSUM:
-                    f.write("    \\item {}: {}\n".format(lbl.name, lbl.checksum.caption))
-                elif lbl.field_type.function in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER) and lbl.length > 8:
-                    f.write("    \\item {}: {} bit (\\textbf{{{} endian}})\n".format(lbl.name, lbl.length, "little" if self.little_endian else "big"))
+                    f.write(
+                        "    \\item {}: {}\n".format(lbl.name, lbl.checksum.caption)
+                    )
+                elif (
+                    lbl.field_type.function
+                    in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER)
+                    and lbl.length > 8
+                ):
+                    f.write(
+                        "    \\item {}: {} bit (\\textbf{{{} endian}})\n".format(
+                            lbl.name,
+                            lbl.length,
+                            "little" if self.little_endian else "big",
+                        )
+                    )
                 elif lbl.field_type.function == FieldType.Function.DATA:
                     f.write("    \\item payload: {} byte\n".format(lbl.length // 8))
                 else:
@@ -225,16 +291,35 @@ class ProtocolGenerator(object):
             f.write("\\subsection{{Protocol {}}}\n".format(number))
 
             if len(self.participants) > 1:
-                f.write("There were {} participants involved in communication: ".format(len(self.participants)))
-                f.write(", ".join("{} (\\texttt{{0x{}}})".format(p.name, p.address_hex) for p in self.participants[:-1]))
-                f.write(" and {} (\\texttt{{0x{}}})".format(self.participants[-1].name, self.participants[-1].address_hex))
+                f.write(
+                    "There were {} participants involved in communication: ".format(
+                        len(self.participants)
+                    )
+                )
+                f.write(
+                    ", ".join(
+                        "{} (\\texttt{{0x{}}})".format(p.name, p.address_hex)
+                        for p in self.participants[:-1]
+                    )
+                )
+                f.write(
+                    " and {} (\\texttt{{0x{}}})".format(
+                        self.participants[-1].name, self.participants[-1].address_hex
+                    )
+                )
                 f.write(".\n")
 
             if len(self.message_types) == 1:
-                f.write("The protocol has one message type with the following fields:\n")
+                f.write(
+                    "The protocol has one message type with the following fields:\n"
+                )
                 export_message_type_to_latex(self.message_types[0], f)
             else:
-                f.write("The protocol has {} message types with the following fields:\n".format(len(self.message_types)))
+                f.write(
+                    "The protocol has {} message types with the following fields:\n".format(
+                        len(self.message_types)
+                    )
+                )
                 f.write("\\begin{itemize}\n")
                 for mt in self.message_types:
                     f.write("  \\item \\textbf{{{}}}\n".format(mt.name))
@@ -244,7 +329,7 @@ class ProtocolGenerator(object):
             f.write("\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     mb = MessageTypeBuilder("test")
     mb.add_label(FieldType.Function.PREAMBLE, 8)
     mb.add_label(FieldType.Function.SYNC, 4)
@@ -255,6 +340,9 @@ if __name__ == '__main__':
     pg = ProtocolGenerator([mb.message_type], [], little_endian=False)
     pg.generate_message(data="1" * 8)
     pg.generate_message(data="1" * 16)
-    pg.generate_message(data="0xab", source=Participant("Alice", "A", "1234"),
-                        destination=Participant("Bob", "B", "4567"))
+    pg.generate_message(
+        data="0xab",
+        source=Participant("Alice", "A", "1234"),
+        destination=Participant("Bob", "B", "4567"),
+    )
     pg.to_file("/tmp/test.proto")

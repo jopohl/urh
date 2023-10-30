@@ -12,7 +12,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from urh import settings
 from urh.util.Logger import logger
 
-ON_POSIX = 'posix' in sys.builtin_module_names
+ON_POSIX = "posix" in sys.builtin_module_names
 
 
 class AbstractBaseThread(QThread):
@@ -20,8 +20,18 @@ class AbstractBaseThread(QThread):
     stopped = pyqtSignal()
     sender_needs_restart = pyqtSignal()
 
-    def __init__(self, frequency, sample_rate, bandwidth, gain, if_gain, baseband_gain, receiving: bool,
-                 ip='127.0.0.1', parent=None):
+    def __init__(
+        self,
+        frequency,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain,
+        baseband_gain,
+        receiving: bool,
+        ip="127.0.0.1",
+        parent=None,
+    ):
         super().__init__(parent)
         self.ip = ip
         self.gr_port = 1337
@@ -60,7 +70,7 @@ class AbstractBaseThread(QThread):
         self._sample_rate = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'SR:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"SR:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -74,7 +84,7 @@ class AbstractBaseThread(QThread):
         self._frequency = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'F:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"F:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -88,7 +98,7 @@ class AbstractBaseThread(QThread):
         self._gain = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'G:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"G:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -102,7 +112,7 @@ class AbstractBaseThread(QThread):
         self._if_gain = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'IFG:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"IFG:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -116,7 +126,7 @@ class AbstractBaseThread(QThread):
         self._baseband_gain = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'BBG:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"BBG:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -130,7 +140,7 @@ class AbstractBaseThread(QThread):
         self._bandwidth = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'BW:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"BW:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -144,7 +154,7 @@ class AbstractBaseThread(QThread):
         self._freq_correction = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'FC:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"FC:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -174,7 +184,7 @@ class AbstractBaseThread(QThread):
         self._direct_sampling_mode = value
         if self.gr_process:
             try:
-                self.gr_process.stdin.write(b'DSM:' + bytes(str(value), "utf8") + b'\n')
+                self.gr_process.stdin.write(b"DSM:" + bytes(str(value), "utf8") + b"\n")
                 self.gr_process.stdin.flush()
             except BrokenPipeError:
                 pass
@@ -182,7 +192,7 @@ class AbstractBaseThread(QThread):
     def initialize_process(self):
         self.started.emit()
 
-        if not hasattr(sys, 'frozen'):
+        if not hasattr(sys, "frozen"):
             rp = os.path.realpath(os.path.join(os.path.dirname(__file__), "scripts"))
         else:
             rp = os.path.realpath(os.path.dirname(sys.executable))
@@ -193,21 +203,44 @@ class AbstractBaseThread(QThread):
         if not self.gr_python_interpreter:
             self.stop(
                 "FATAL: Could not find a GR compatible Python interpreter. "
-                "Make sure you have a running GNU Radio installation.")
+                "Make sure you have a running GNU Radio installation."
+            )
             return
 
-        options = [self.gr_python_interpreter, os.path.join(rp, filename),
-                   "--sample-rate", str(int(self.sample_rate)), "--frequency", str(int(self.frequency)),
-                   "--gain", str(self.gain), "--if-gain", str(self.if_gain), "--bb-gain", str(self.baseband_gain),
-                   "--bandwidth", str(int(self.bandwidth)), "--freq-correction", str(self.freq_correction),
-                   "--direct-sampling", str(self.direct_sampling_mode),  "--channel-index", str(self.channel_index),
-                   "--port", str(self.gr_port)]
+        options = [
+            self.gr_python_interpreter,
+            os.path.join(rp, filename),
+            "--sample-rate",
+            str(int(self.sample_rate)),
+            "--frequency",
+            str(int(self.frequency)),
+            "--gain",
+            str(self.gain),
+            "--if-gain",
+            str(self.if_gain),
+            "--bb-gain",
+            str(self.baseband_gain),
+            "--bandwidth",
+            str(int(self.bandwidth)),
+            "--freq-correction",
+            str(self.freq_correction),
+            "--direct-sampling",
+            str(self.direct_sampling_mode),
+            "--channel-index",
+            str(self.channel_index),
+            "--port",
+            str(self.gr_port),
+        ]
 
         logger.info("Starting GNU Radio")
         logger.debug(" ".join(options))
-        self.gr_process = Popen(options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1)
+        self.gr_process = Popen(
+            options, stdout=PIPE, stderr=PIPE, stdin=PIPE, bufsize=1
+        )
         logger.info("Started GNU Radio")
-        t = Thread(target=self.enqueue_output, args=(self.gr_process.stderr, self.queue))
+        t = Thread(
+            target=self.enqueue_output, args=(self.gr_process.stderr, self.queue)
+        )
         t.daemon = True  # thread dies with the program
         t.start()
 
@@ -248,7 +281,7 @@ class AbstractBaseThread(QThread):
             return "Could not decode device message"
 
     def enqueue_output(self, out, queue):
-        for line in iter(out.readline, b''):
+        for line in iter(out.readline, b""):
             queue.put(line)
         out.close()
 

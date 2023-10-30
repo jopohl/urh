@@ -14,8 +14,12 @@ class FileIconProvider(QFileIconProvider):
     def icon(self, arg):
         if isinstance(arg, QFileInfo):
             try:
-                if (arg.isDir() and os.path.isfile(os.path.join(arg.filePath(), settings.PROJECT_FILE))) \
-                        or (arg.isFile() and arg.fileName() == settings.PROJECT_FILE):
+                if (
+                    arg.isDir()
+                    and os.path.isfile(
+                        os.path.join(arg.filePath(), settings.PROJECT_FILE)
+                    )
+                ) or (arg.isFile() and arg.fileName() == settings.PROJECT_FILE):
                     return QIcon(":/icons/icons/appicon.png")
             except:
                 # In some environments (e.g. docker) there tend to be encoding errors

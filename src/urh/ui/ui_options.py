@@ -44,17 +44,31 @@ class Ui_DialogOptions(object):
         self.groupBoxModulationAccuracy.setObjectName("groupBoxModulationAccuracy")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.groupBoxModulationAccuracy)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.radioButtonLowModulationAccuracy = QtWidgets.QRadioButton(self.groupBoxModulationAccuracy)
-        self.radioButtonLowModulationAccuracy.setObjectName("radioButtonLowModulationAccuracy")
+        self.radioButtonLowModulationAccuracy = QtWidgets.QRadioButton(
+            self.groupBoxModulationAccuracy
+        )
+        self.radioButtonLowModulationAccuracy.setObjectName(
+            "radioButtonLowModulationAccuracy"
+        )
         self.verticalLayout_7.addWidget(self.radioButtonLowModulationAccuracy)
-        self.radioButtonMediumModulationAccuracy = QtWidgets.QRadioButton(self.groupBoxModulationAccuracy)
-        self.radioButtonMediumModulationAccuracy.setObjectName("radioButtonMediumModulationAccuracy")
+        self.radioButtonMediumModulationAccuracy = QtWidgets.QRadioButton(
+            self.groupBoxModulationAccuracy
+        )
+        self.radioButtonMediumModulationAccuracy.setObjectName(
+            "radioButtonMediumModulationAccuracy"
+        )
         self.verticalLayout_7.addWidget(self.radioButtonMediumModulationAccuracy)
-        self.radioButtonHighModulationAccuracy = QtWidgets.QRadioButton(self.groupBoxModulationAccuracy)
-        self.radioButtonHighModulationAccuracy.setObjectName("radioButtonHighModulationAccuracy")
+        self.radioButtonHighModulationAccuracy = QtWidgets.QRadioButton(
+            self.groupBoxModulationAccuracy
+        )
+        self.radioButtonHighModulationAccuracy.setObjectName(
+            "radioButtonHighModulationAccuracy"
+        )
         self.verticalLayout_7.addWidget(self.radioButtonHighModulationAccuracy)
         self.verticalLayout_9.addWidget(self.groupBoxModulationAccuracy)
-        spacerItem = QtWidgets.QSpacerItem(20, 500, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 500, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_9.addItem(spacerItem)
         self.tabWidget.addTab(self.tabGeneration, "")
         self.tabView = QtWidgets.QWidget()
@@ -67,10 +81,14 @@ class Ui_DialogOptions(object):
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_2.addWidget(self.label_7)
         self.comboBoxDefaultView = QtWidgets.QComboBox(self.tabView)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxDefaultView.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.comboBoxDefaultView.sizePolicy().hasHeightForWidth()
+        )
         self.comboBoxDefaultView.setSizePolicy(sizePolicy)
         self.comboBoxDefaultView.setObjectName("comboBoxDefaultView")
         self.comboBoxDefaultView.addItem("")
@@ -79,7 +97,9 @@ class Ui_DialogOptions(object):
         self.horizontalLayout_2.addWidget(self.comboBoxDefaultView)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.checkBoxShowConfirmCloseDialog = QtWidgets.QCheckBox(self.tabView)
-        self.checkBoxShowConfirmCloseDialog.setObjectName("checkBoxShowConfirmCloseDialog")
+        self.checkBoxShowConfirmCloseDialog.setObjectName(
+            "checkBoxShowConfirmCloseDialog"
+        )
         self.verticalLayout.addWidget(self.checkBoxShowConfirmCloseDialog)
         self.checkBoxHoldShiftToDrag = QtWidgets.QCheckBox(self.tabView)
         self.checkBoxHoldShiftToDrag.setObjectName("checkBoxHoldShiftToDrag")
@@ -127,15 +147,27 @@ class Ui_DialogOptions(object):
         self.groupBoxSpectrogramColormap.setObjectName("groupBoxSpectrogramColormap")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBoxSpectrogramColormap)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.scrollAreaSpectrogramColormap = QtWidgets.QScrollArea(self.groupBoxSpectrogramColormap)
+        self.scrollAreaSpectrogramColormap = QtWidgets.QScrollArea(
+            self.groupBoxSpectrogramColormap
+        )
         self.scrollAreaSpectrogramColormap.setWidgetResizable(True)
-        self.scrollAreaSpectrogramColormap.setObjectName("scrollAreaSpectrogramColormap")
+        self.scrollAreaSpectrogramColormap.setObjectName(
+            "scrollAreaSpectrogramColormap"
+        )
         self.scrollAreaWidgetSpectrogramColormapContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(QtCore.QRect(0, 0, 762, 466))
-        self.scrollAreaWidgetSpectrogramColormapContents.setObjectName("scrollAreaWidgetSpectrogramColormapContents")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetSpectrogramColormapContents)
+        self.scrollAreaWidgetSpectrogramColormapContents.setGeometry(
+            QtCore.QRect(0, 0, 762, 466)
+        )
+        self.scrollAreaWidgetSpectrogramColormapContents.setObjectName(
+            "scrollAreaWidgetSpectrogramColormapContents"
+        )
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(
+            self.scrollAreaWidgetSpectrogramColormapContents
+        )
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.scrollAreaSpectrogramColormap.setWidget(self.scrollAreaWidgetSpectrogramColormapContents)
+        self.scrollAreaSpectrogramColormap.setWidget(
+            self.scrollAreaWidgetSpectrogramColormapContents
+        )
         self.verticalLayout_2.addWidget(self.scrollAreaSpectrogramColormap)
         self.verticalLayout.addWidget(self.groupBoxSpectrogramColormap)
         self.tabWidget.addTab(self.tabView, "")
@@ -161,11 +193,15 @@ class Ui_DialogOptions(object):
         self.btnRemoveLabeltype.setIcon(icon)
         self.btnRemoveLabeltype.setObjectName("btnRemoveLabeltype")
         self.verticalLayout_3.addWidget(self.btnRemoveLabeltype)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_3.addItem(spacerItem1)
         self.horizontalLayout_3.addLayout(self.verticalLayout_3)
         self.verticalLayout_5.addLayout(self.horizontalLayout_3)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 203, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 203, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_5.addItem(spacerItem2)
         self.tabWidget.addTab(self.tabFieldtypes, "")
         self.tab_plugins = QtWidgets.QWidget()
@@ -234,7 +270,9 @@ class Ui_DialogOptions(object):
         self.btnRebuildNative.setObjectName("btnRebuildNative")
         self.gridLayout_5.addWidget(self.btnRebuildNative, 4, 0, 1, 1)
         self.labelRebuildNativeStatus = QtWidgets.QLabel(self.groupBoxNativeOptions)
-        self.labelRebuildNativeStatus.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.labelRebuildNativeStatus.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
         self.labelRebuildNativeStatus.setObjectName("labelRebuildNativeStatus")
         self.gridLayout_5.addWidget(self.labelRebuildNativeStatus, 4, 2, 1, 1)
         self.verticalLayout_8.addWidget(self.groupBoxNativeOptions)
@@ -292,59 +330,194 @@ class Ui_DialogOptions(object):
         _translate = QtCore.QCoreApplication.translate
         DialogOptions.setWindowTitle(_translate("DialogOptions", "Options"))
         self.labelFuzzingSamples.setText(_translate("DialogOptions", "Samples"))
-        self.checkBoxDefaultFuzzingPause.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If you disable the default pause, the pause of the fuzzed message will be used.</p></body></html>"))
-        self.checkBoxDefaultFuzzingPause.setText(_translate("DialogOptions", "Use a default pause for fuzzed messages"))
-        self.checkBoxMultipleModulations.setText(_translate("DialogOptions", "Enable modulation profiles"))
-        self.groupBoxModulationAccuracy.setTitle(_translate("DialogOptions", "Modulation Accuracy"))
-        self.radioButtonLowModulationAccuracy.setText(_translate("DialogOptions", "Low (2x8 bit) - Recommended for HackRF and RTL-SDR"))
-        self.radioButtonMediumModulationAccuracy.setText(_translate("DialogOptions", "Medium (2x16 bit) - Recommended for BladeRF, PlutoSDR and SDRPlay"))
-        self.radioButtonHighModulationAccuracy.setText(_translate("DialogOptions", "High (2x32 bit) - Recommended if you are not sure what to choose"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGeneration), _translate("DialogOptions", "Generation"))
+        self.checkBoxDefaultFuzzingPause.setToolTip(
+            _translate(
+                "DialogOptions",
+                "<html><head/><body><p>If you disable the default pause, the pause of the fuzzed message will be used.</p></body></html>",
+            )
+        )
+        self.checkBoxDefaultFuzzingPause.setText(
+            _translate("DialogOptions", "Use a default pause for fuzzed messages")
+        )
+        self.checkBoxMultipleModulations.setText(
+            _translate("DialogOptions", "Enable modulation profiles")
+        )
+        self.groupBoxModulationAccuracy.setTitle(
+            _translate("DialogOptions", "Modulation Accuracy")
+        )
+        self.radioButtonLowModulationAccuracy.setText(
+            _translate(
+                "DialogOptions", "Low (2x8 bit) - Recommended for HackRF and RTL-SDR"
+            )
+        )
+        self.radioButtonMediumModulationAccuracy.setText(
+            _translate(
+                "DialogOptions",
+                "Medium (2x16 bit) - Recommended for BladeRF, PlutoSDR and SDRPlay",
+            )
+        )
+        self.radioButtonHighModulationAccuracy.setText(
+            _translate(
+                "DialogOptions",
+                "High (2x32 bit) - Recommended if you are not sure what to choose",
+            )
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabGeneration),
+            _translate("DialogOptions", "Generation"),
+        )
         self.label_7.setText(_translate("DialogOptions", "Default View:"))
         self.comboBoxDefaultView.setItemText(0, _translate("DialogOptions", "Bit"))
         self.comboBoxDefaultView.setItemText(1, _translate("DialogOptions", "Hex"))
         self.comboBoxDefaultView.setItemText(2, _translate("DialogOptions", "ASCII"))
-        self.checkBoxShowConfirmCloseDialog.setText(_translate("DialogOptions", "Show \"confirm close\" dialog"))
-        self.checkBoxHoldShiftToDrag.setToolTip(_translate("DialogOptions", "<html><head/><body><p>If checked, you need to <span style=\" font-weight:600;\">hold the Shift key to drag</span> with the mouse inside graphic views like the drawn signal in Interpretation tab, while making a selection with the mouse does not require holding any buttons.</p><p>If unchecked, this is inverted: Hold shift to make a selection, and drag by default.</p></body></html>"))
-        self.checkBoxHoldShiftToDrag.setText(_translate("DialogOptions", "Hold shift to drag"))
-        self.checkBoxPauseTime.setText(_translate("DialogOptions", "Show pauses as time"))
+        self.checkBoxShowConfirmCloseDialog.setText(
+            _translate("DialogOptions", 'Show "confirm close" dialog')
+        )
+        self.checkBoxHoldShiftToDrag.setToolTip(
+            _translate(
+                "DialogOptions",
+                '<html><head/><body><p>If checked, you need to <span style=" font-weight:600;">hold the Shift key to drag</span> with the mouse inside graphic views like the drawn signal in Interpretation tab, while making a selection with the mouse does not require holding any buttons.</p><p>If unchecked, this is inverted: Hold shift to make a selection, and drag by default.</p></body></html>',
+            )
+        )
+        self.checkBoxHoldShiftToDrag.setText(
+            _translate("DialogOptions", "Hold shift to drag")
+        )
+        self.checkBoxPauseTime.setText(
+            _translate("DialogOptions", "Show pauses as time")
+        )
         self.checkBoxAlignLabels.setText(_translate("DialogOptions", "Align on labels"))
-        self.labelFontSize.setText(_translate("DialogOptions", "<html><head/><body><p>Application font size (<span style=\" font-weight:600;\">restart</span> for full effect):</p></body></html>"))
+        self.labelFontSize.setText(
+            _translate(
+                "DialogOptions",
+                '<html><head/><body><p>Application font size (<span style=" font-weight:600;">restart</span> for full effect):</p></body></html>',
+            )
+        )
         self.doubleSpinBoxFontSize.setSuffix(_translate("DialogOptions", "pt"))
-        self.label_9.setText(_translate("DialogOptions", "Choose application theme (requires restart):"))
-        self.comboBoxTheme.setItemText(0, _translate("DialogOptions", "native look (default)"))
+        self.label_9.setText(
+            _translate("DialogOptions", "Choose application theme (requires restart):")
+        )
+        self.comboBoxTheme.setItemText(
+            0, _translate("DialogOptions", "native look (default)")
+        )
         self.comboBoxTheme.setItemText(1, _translate("DialogOptions", "fallback theme"))
-        self.comboBoxTheme.setItemText(2, _translate("DialogOptions", "fallback theme (dark)"))
-        self.labelIconTheme.setText(_translate("DialogOptions", "Choose icon theme (requires restart):"))
-        self.comboBoxIconTheme.setItemText(0, _translate("DialogOptions", "bundled icons (default)"))
-        self.comboBoxIconTheme.setItemText(1, _translate("DialogOptions", "native icon theme"))
-        self.groupBoxSpectrogramColormap.setTitle(_translate("DialogOptions", "Spectrogram Colormap"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabView), _translate("DialogOptions", "View"))
+        self.comboBoxTheme.setItemText(
+            2, _translate("DialogOptions", "fallback theme (dark)")
+        )
+        self.labelIconTheme.setText(
+            _translate("DialogOptions", "Choose icon theme (requires restart):")
+        )
+        self.comboBoxIconTheme.setItemText(
+            0, _translate("DialogOptions", "bundled icons (default)")
+        )
+        self.comboBoxIconTheme.setItemText(
+            1, _translate("DialogOptions", "native icon theme")
+        )
+        self.groupBoxSpectrogramColormap.setTitle(
+            _translate("DialogOptions", "Spectrogram Colormap")
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabView), _translate("DialogOptions", "View")
+        )
         self.btnAddLabelType.setText(_translate("DialogOptions", "..."))
         self.btnRemoveLabeltype.setText(_translate("DialogOptions", "..."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabFieldtypes), _translate("DialogOptions", "Fieldtypes"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_plugins), _translate("DialogOptions", "Plugins"))
-        self.labelInfoDeviceTable.setText(_translate("DialogOptions", "<html><head/><body><p>Use the checkboxes in the table below to choose device backends and enable or disable devices. Disabled devices will not show up in device related dialogs such as send or receive.</p></body></html>"))
-        self.labelDeviceMissingInfo.setText(_translate("DialogOptions", "<html><head/><body><p>Missing a native backend? Perform a <a href=\"health_check\"><span style=\" text-decoration: underline; color:#0000ff;\">health check</span></a>! If GNU Radio backend is not available double check the GNU Radio settings below.</p></body></html>"))
-        self.groupBoxNativeOptions.setTitle(_translate("DialogOptions", "Native options"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabFieldtypes),
+            _translate("DialogOptions", "Fieldtypes"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_plugins),
+            _translate("DialogOptions", "Plugins"),
+        )
+        self.labelInfoDeviceTable.setText(
+            _translate(
+                "DialogOptions",
+                "<html><head/><body><p>Use the checkboxes in the table below to choose device backends and enable or disable devices. Disabled devices will not show up in device related dialogs such as send or receive.</p></body></html>",
+            )
+        )
+        self.labelDeviceMissingInfo.setText(
+            _translate(
+                "DialogOptions",
+                '<html><head/><body><p>Missing a native backend? Perform a <a href="health_check"><span style=" text-decoration: underline; color:#0000ff;">health check</span></a>! If GNU Radio backend is not available double check the GNU Radio settings below.</p></body></html>',
+            )
+        )
+        self.groupBoxNativeOptions.setTitle(
+            _translate("DialogOptions", "Native options")
+        )
         self.labelLibDirs.setText(_translate("DialogOptions", "Library directories:"))
-        self.lineEditIncludeDirs.setPlaceholderText(_translate("DialogOptions", "Comma separated list of additional include directories"))
-        self.labelNativeRebuildInfo.setText(_translate("DialogOptions", "You can rebuild the native device extensions here. This is useful, when you installed a device driver afterwards or your drivers are stored in an unusual location."))
-        self.lineEditLibDirs.setPlaceholderText(_translate("DialogOptions", "Comma separated list of additional library directories"))
-        self.labelIncludeDirs.setText(_translate("DialogOptions", "Include directories:"))
+        self.lineEditIncludeDirs.setPlaceholderText(
+            _translate(
+                "DialogOptions",
+                "Comma separated list of additional include directories",
+            )
+        )
+        self.labelNativeRebuildInfo.setText(
+            _translate(
+                "DialogOptions",
+                "You can rebuild the native device extensions here. This is useful, when you installed a device driver afterwards or your drivers are stored in an unusual location.",
+            )
+        )
+        self.lineEditLibDirs.setPlaceholderText(
+            _translate(
+                "DialogOptions",
+                "Comma separated list of additional library directories",
+            )
+        )
+        self.labelIncludeDirs.setText(
+            _translate("DialogOptions", "Include directories:")
+        )
         self.btnViewBuildLog.setText(_translate("DialogOptions", "View log"))
-        self.btnRebuildNative.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Rebuild the native device extensions. You need to restart URH after this, to use new extensions.</p></body></html>"))
+        self.btnRebuildNative.setToolTip(
+            _translate(
+                "DialogOptions",
+                "<html><head/><body><p>Rebuild the native device extensions. You need to restart URH after this, to use new extensions.</p></body></html>",
+            )
+        )
         self.btnRebuildNative.setText(_translate("DialogOptions", "Rebuild"))
-        self.labelRebuildNativeStatus.setText(_translate("DialogOptions", "Rebuild <x> new device extensions. Please restart URH to use them."))
-        self.groupBox_3.setTitle(_translate("DialogOptions", "GNU Radio options (optional)"))
-        self.label.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=\" font-weight:600;\">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>"))
+        self.labelRebuildNativeStatus.setText(
+            _translate(
+                "DialogOptions",
+                "Rebuild <x> new device extensions. Please restart URH to use them.",
+            )
+        )
+        self.groupBox_3.setTitle(
+            _translate("DialogOptions", "GNU Radio options (optional)")
+        )
+        self.label.setToolTip(
+            _translate(
+                "DialogOptions",
+                '<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=" font-weight:600;">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>',
+            )
+        )
         self.label.setText(_translate("DialogOptions", "Python Interpreter:"))
-        self.lineEditGRPythonInterpreter.setToolTip(_translate("DialogOptions", "<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=\" font-weight:600;\">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>"))
-        self.lineEditGRPythonInterpreter.setPlaceholderText(_translate("DialogOptions", "Enter python interpreter path e.g. /usr/bin/python"))
+        self.lineEditGRPythonInterpreter.setToolTip(
+            _translate(
+                "DialogOptions",
+                '<html><head/><body><p>Choose a python interpreter which has access to your GNU Radio installation, that is, you can do <span style=" font-weight:600;">python -c &quot;import gnuradio&quot;</span> with it on the command line.</p></body></html>',
+            )
+        )
+        self.lineEditGRPythonInterpreter.setPlaceholderText(
+            _translate(
+                "DialogOptions", "Enter python interpreter path e.g. /usr/bin/python"
+            )
+        )
         self.btnChooseGRPythonInterpreter.setText(_translate("DialogOptions", "..."))
-        self.label_8.setText(_translate("DialogOptions", "Default sending repititions:"))
-        self.spinBoxNumSendingRepeats.setSpecialValueText(_translate("DialogOptions", "Infinite"))
-        self.label_5.setText(_translate("DialogOptions", "Use this percentage of available RAM for buffer allocation:"))
+        self.label_8.setText(
+            _translate("DialogOptions", "Default sending repititions:")
+        )
+        self.spinBoxNumSendingRepeats.setSpecialValueText(
+            _translate("DialogOptions", "Infinite")
+        )
+        self.label_5.setText(
+            _translate(
+                "DialogOptions",
+                "Use this percentage of available RAM for buffer allocation:",
+            )
+        )
         self.doubleSpinBoxRAMThreshold.setSuffix(_translate("DialogOptions", "%"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabDevices), _translate("DialogOptions", "Device"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabDevices),
+            _translate("DialogOptions", "Device"),
+        )
+
+
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

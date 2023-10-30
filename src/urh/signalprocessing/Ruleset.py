@@ -5,15 +5,23 @@ import xml.etree.ElementTree as ET
 from urh.util.Logger import logger
 
 OPERATIONS = {
-                '>':  operator.gt,
-                '<':  operator.lt,
-                '>=': operator.ge,
-                '<=': operator.le,
-                '=':  operator.eq,
-                '!=': operator.ne
-             }
+    ">": operator.gt,
+    "<": operator.lt,
+    ">=": operator.ge,
+    "<=": operator.le,
+    "=": operator.eq,
+    "!=": operator.ne,
+}
 
-OPERATION_DESCRIPTION = {">": "greater", "<": "lower", ">=": "greater equal", "<=": "lower equal", "=": "equal", "!=": "not equal"}
+OPERATION_DESCRIPTION = {
+    ">": "greater",
+    "<": "lower",
+    ">=": "greater equal",
+    "<=": "lower equal",
+    "=": "equal",
+    "!=": "not equal",
+}
+
 
 class Mode(Enum):
     all_apply = 0
@@ -22,11 +30,13 @@ class Mode(Enum):
 
 
 class Rule(object):
-    def __init__(self, start: int, end: int, operator: str, target_value: str, value_type: int):
+    def __init__(
+        self, start: int, end: int, operator: str, target_value: str, value_type: int
+    ):
         assert operator in OPERATIONS
         self.__start = start
         self.__end = end + 1
-        self.__value_type = value_type # 0 = Bit, 1 = Hex, 2 = ASCII
+        self.__value_type = value_type  # 0 = Bit, 1 = Hex, 2 = ASCII
         self.operator = operator
         self.target_value = target_value
 
@@ -64,8 +74,14 @@ class Rule(object):
             logger.warning("{} could not be cast to integer".format(value))
 
     def applies_for_message(self, message):
-        data = message.decoded_bits_str if self.value_type == 0 else message.decoded_hex_str if self.value_type == 1 else message.decoded_ascii_str
-        return OPERATIONS[self.operator](data[self.start:self.end], self.target_value)
+        data = (
+            message.decoded_bits_str
+            if self.value_type == 0
+            else message.decoded_hex_str
+            if self.value_type == 1
+            else message.decoded_ascii_str
+        )
+        return OPERATIONS[self.operator](data[self.start : self.end], self.target_value)
 
     @property
     def operator_description(self):
@@ -96,7 +112,7 @@ class Rule(object):
 
 
 class Ruleset(list):
-    def __init__(self, mode: Mode = Mode.all_apply, rules = None):
+    def __init__(self, mode: Mode = Mode.all_apply, rules=None):
         rules = rules if rules is not None else []
         self.mode = mode
         super().__init__(rules)

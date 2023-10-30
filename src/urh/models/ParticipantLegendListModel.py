@@ -5,7 +5,6 @@ from urh import settings
 
 
 class ParticipantLegendListModel(QAbstractListModel):
-
     def __init__(self, participants, parent=None):
         """
 
@@ -24,21 +23,29 @@ class ParticipantLegendListModel(QAbstractListModel):
                 return "not assigned"
             else:
                 try:
-                    return str(self.participants[row-1])
+                    return str(self.participants[row - 1])
                 except IndexError:
                     return None
         elif role == Qt.BackgroundColorRole:
             if row > 0:
                 try:
-                    return settings.PARTICIPANT_COLORS[self.participants[row - 1].color_index]
+                    return settings.PARTICIPANT_COLORS[
+                        self.participants[row - 1].color_index
+                    ]
                 except IndexError:
                     return None
         elif role == Qt.TextColorRole:
             if row > 0:
                 try:
-                    bgcolor = settings.PARTICIPANT_COLORS[self.participants[row - 1].color_index]
+                    bgcolor = settings.PARTICIPANT_COLORS[
+                        self.participants[row - 1].color_index
+                    ]
                     red, green, blue = bgcolor.red(), bgcolor.green(), bgcolor.blue()
-                    return QColor("black") if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else  QColor("white")
+                    return (
+                        QColor("black")
+                        if (red * 0.299 + green * 0.587 + blue * 0.114) > 186
+                        else QColor("white")
+                    )
                 except IndexError:
                     return None
 

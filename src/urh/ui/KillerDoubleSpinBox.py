@@ -11,6 +11,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
     """
     Print values with suffix (G,M,K)
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -41,12 +42,12 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             self.setSingleStep(10 ** -(self.decimals()))
 
     def textFromValue(self, value: float):
-        if abs(value) >= 10 ** 9:
-            result, suffix = super().textFromValue(value / 10 ** 9), "G"
-        elif abs(value) >= 10 ** 6:
-            result, suffix = super().textFromValue(value / 10 ** 6), "M"
-        elif abs(value) >= 10 ** 3:
-            result, suffix = super().textFromValue(value / 10 ** 3), "K"
+        if abs(value) >= 10**9:
+            result, suffix = super().textFromValue(value / 10**9), "G"
+        elif abs(value) >= 10**6:
+            result, suffix = super().textFromValue(value / 10**6), "M"
+        elif abs(value) >= 10**3:
+            result, suffix = super().textFromValue(value / 10**3), "K"
         else:
             result, suffix = super().textFromValue(value), ""
 
@@ -61,11 +62,11 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
 
     def valueFromText(self, text: str):
         if text.endswith("G") or text.endswith("g"):
-            return QLocale().toDouble(text[:-1])[0] * 10 ** 9
+            return QLocale().toDouble(text[:-1])[0] * 10**9
         elif text.endswith("M") or text.endswith("m"):
-            return QLocale().toDouble(text[:-1])[0] * 10 ** 6
+            return QLocale().toDouble(text[:-1])[0] * 10**6
         elif text.endswith("K") or text.endswith("k"):
-            return QLocale().toDouble(text[:-1])[0] * 10 ** 3
+            return QLocale().toDouble(text[:-1])[0] * 10**3
         else:
             return QLocale().toDouble(text.rstrip(self.suffix()))[0]
 
@@ -74,5 +75,9 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[kKmMgG]?$")
         else:
             rx = QRegExp("^(-?[0-9]+)[.]?[0-9]*[{}]?$".format(self.suffix()))
-        result = QValidator.Acceptable if rx.exactMatch(inpt.replace(",", ".")) else QValidator.Invalid
+        result = (
+            QValidator.Acceptable
+            if rx.exactMatch(inpt.replace(",", "."))
+            else QValidator.Invalid
+        )
         return result, inpt, pos

@@ -53,7 +53,10 @@ class TestSignalTabGUI(QtTestCase):
 
     def test_load_proto(self):
         self.form.add_files([get_path_for_data_file("protocol.proto.xml")])
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(), "Protocol")
+        self.assertEqual(
+            self.form.signal_tab_controller.signal_frames[0].ui.lSignalTyp.text(),
+            "Protocol",
+        )
 
     def test_graphic_view_selection(self):
         self.add_signal_to_form("esaver.complex16s")
@@ -80,7 +83,16 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.context_menu_position = QPoint(0, 0)
         menu = frame.ui.gvSignal.create_context_menu()
         self.assertTrue(frame.ui.gvSignal.selection_area.is_empty)
-        self.assertIsNone(next((action for action in menu.actions() if action.text() == "Zoom selection"), None))
+        self.assertIsNone(
+            next(
+                (
+                    action
+                    for action in menu.actions()
+                    if action.text() == "Zoom selection"
+                ),
+                None,
+            )
+        )
 
         frame.ui.gvSignal.selection_area.start = 1337
         frame.ui.gvSignal.selection_area.end = 4711
@@ -88,7 +100,9 @@ class TestSignalTabGUI(QtTestCase):
 
         menu = frame.ui.gvSignal.create_context_menu()
         self.assertFalse(frame.ui.gvSignal.selection_area.is_empty)
-        zoom_action = next(action for action in menu.actions() if action.text() == "Zoom selection")
+        zoom_action = next(
+            action for action in menu.actions() if action.text() == "Zoom selection"
+        )
         zoom_action.trigger()
         self.assertEqual(frame.ui.spinBoxSelectionStart.value(), 1337)
         self.assertEqual(frame.ui.spinBoxSelectionEnd.value(), 4711)
@@ -175,7 +189,9 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.btnSaveSignal.click()
         self.form.close_signal_frame(frame)
         self.add_signal_to_form(os.path.join(QDir.tempPath(), "sig.complex"))
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000)
+        self.assertEqual(
+            self.form.signal_tab_controller.signal_frames[0].signal.num_samples, 3000
+        )
         os.remove(os.path.join(QDir.tempPath(), "sig.complex"))
 
     def test_selection_sync(self):
@@ -187,11 +203,17 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
         QApplication.instance().processEvents()
         QTest.qWait(100)
-        self.assertEqual(frame.proto_analyzer.messages[0].plain_bits_str, frame.ui.txtEdProto.selected_text.strip())
+        self.assertEqual(
+            frame.proto_analyzer.messages[0].plain_bits_str,
+            frame.ui.txtEdProto.selected_text.strip(),
+        )
         frame.ui.txtEdProto.show_proto_clicked.emit()
         QApplication.instance().processEvents()
-        self.assertAlmostEqual((128440 - 89383) / 1000000,
-                               (frame.ui.gvSignal.view_rect().width()) / 1000000, places=1)
+        self.assertAlmostEqual(
+            (128440 - 89383) / 1000000,
+            (frame.ui.gvSignal.view_rect().width()) / 1000000,
+            places=1,
+        )
 
     def test_auto_detect_button(self):
         self.add_signal_to_form("esaver.complex16s")
@@ -214,7 +236,10 @@ class TestSignalTabGUI(QtTestCase):
         QApplication.instance().processEvents()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
-        self.assertEqual(self.form.signal_tab_controller.signal_frames[1].signal.num_samples, end - start)
+        self.assertEqual(
+            self.form.signal_tab_controller.signal_frames[1].signal.num_samples,
+            end - start,
+        )
 
     def test_demodulated_view(self):
         self.add_signal_to_form("esaver.complex16s")
@@ -225,23 +250,39 @@ class TestSignalTabGUI(QtTestCase):
 
     def test_context_menu_text_edit_protocol_view(self):
         self.add_signal_to_form("esaver.complex16s")
-        self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(2)
+        self.form.signal_tab_controller.signal_frames[0].ui.cbProtoView.setCurrentIndex(
+            2
+        )
         text_edit = self.form.signal_tab_controller.signal_frames[0].ui.txtEdProto
 
         menu = text_edit.create_context_menu()
-        line_wrap_action = next(action for action in menu.actions() if action.text().startswith("Linewrap"))
+        line_wrap_action = next(
+            action for action in menu.actions() if action.text().startswith("Linewrap")
+        )
         checked = line_wrap_action.isChecked()
         line_wrap_action.trigger()
 
         menu = text_edit.create_context_menu()
-        line_wrap_action = next(action for action in menu.actions() if action.text().startswith("Linewrap"))
+        line_wrap_action = next(
+            action for action in menu.actions() if action.text().startswith("Linewrap")
+        )
         self.assertNotEqual(checked, line_wrap_action.isChecked())
 
-        self.assertEqual(len([action for action in menu.actions() if action.text() == "Participant"]), 0)
+        self.assertEqual(
+            len(
+                [action for action in menu.actions() if action.text() == "Participant"]
+            ),
+            0,
+        )
         self.form.project_manager.participants.append(Participant("Alice", "A"))
         text_edit.selectAll()
         menu = text_edit.create_context_menu()
-        self.assertEqual(len([action for action in menu.actions() if action.text() == "Participant"]), 1)
+        self.assertEqual(
+            len(
+                [action for action in menu.actions() if action.text() == "Participant"]
+            ),
+            1,
+        )
 
     def test_load_already_demodulated(self):
         self.add_signal_to_form("demodulated.wav")
@@ -257,13 +298,24 @@ class TestSignalTabGUI(QtTestCase):
     def test_export_demodulated(self):
         self.add_signal_to_form("esaver.complex16s")
         assert isinstance(self.form, MainController)
-        self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.context_menu_position = QPoint(0,0)
-        cm = self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.create_context_menu()
-        export_action = next((a for a in cm.actions() if "demodulated" in a.text().lower()), None)
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.gvSignal.context_menu_position = QPoint(0, 0)
+        cm = self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.gvSignal.create_context_menu()
+        export_action = next(
+            (a for a in cm.actions() if "demodulated" in a.text().lower()), None
+        )
         self.assertIsNone(export_action)
 
-        self.form.signal_tab_controller.signal_frames[0].ui.cbSignalView.setCurrentIndex(1)
-        cm = self.form.signal_tab_controller.signal_frames[0].ui.gvSignal.create_context_menu()
-        export_action = next((a for a in cm.actions() if "demodulated" in a.text().lower()), None)
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.cbSignalView.setCurrentIndex(1)
+        cm = self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.gvSignal.create_context_menu()
+        export_action = next(
+            (a for a in cm.actions() if "demodulated" in a.text().lower()), None
+        )
         self.assertIsNotNone(export_action)
-

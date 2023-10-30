@@ -17,7 +17,9 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         button = QPushButton(parent)
         button.setFlat(True)
 
-        num_rules = self.parent().model().get_num_active_rules_of_message_type_at(index.row())
+        num_rules = (
+            self.parent().model().get_num_active_rules_of_message_type_at(index.row())
+        )
 
         if num_rules == 0:
             icon = QIcon.fromTheme("configure")
@@ -51,7 +53,9 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
 
         fw = f.width(indicator_str)
         fh = f.height()
-        painter.drawText(math.ceil(w / 2 - fw / 2), math.ceil(h / 2 + fh / 4), indicator_str)
+        painter.drawText(
+            math.ceil(w / 2 - fw / 2), math.ceil(h / 2 + fh / 4), indicator_str
+        )
 
         painter.end()
         return QIcon(pixmap)

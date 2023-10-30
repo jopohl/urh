@@ -16,7 +16,9 @@ class TestCenterDetection(unittest.TestCase):
             result = np.zeros(len(bits) * bit_len, dtype=np.float32)
             for i, bit in enumerate(bits):
                 if int(bit) != 0:
-                    result[i * bit_len:(i + 1) * bit_len] = np.ones(bit_len, dtype=np.int8)
+                    result[i * bit_len : (i + 1) * bit_len] = np.ones(
+                        bit_len, dtype=np.int8
+                    )
             return result
 
         rect = generate_rectangular_signal("101010111100011", bit_len=10)
@@ -51,7 +53,13 @@ class TestCenterDetection(unittest.TestCase):
             self.assertLessEqual(center, 0.072, msg=str(i))
 
     def test_ask_50_center_detection(self):
-        message_indices = [(0, 8000), (18000, 26000), (36000, 44000), (54000, 62000), (72000, 80000)]
+        message_indices = [
+            (0, 8000),
+            (18000, 26000),
+            (36000, 44000),
+            (54000, 62000),
+            (72000, 80000),
+        ]
 
         data = Signal(get_path_for_data_file("ask50.complex")).iq_array.data
         rect = afp_demod(data, 0.0509, "ASK", 2)
@@ -77,8 +85,10 @@ class TestCenterDetection(unittest.TestCase):
         self.assertLessEqual(center2, -0.0367)
 
     def test_noised_homematic_center_detection(self):
-        data = Signal(get_path_for_data_file("noised_homematic.complex"), "").iq_array.data
-        rect = afp_demod(data, 0.0,  "FSK", 2)
+        data = Signal(
+            get_path_for_data_file("noised_homematic.complex"), ""
+        ).iq_array.data
+        rect = afp_demod(data, 0.0, "FSK", 2)
 
         center = detect_center(rect)
 
@@ -103,9 +113,13 @@ class TestCenterDetection(unittest.TestCase):
         data = Signal(get_path_for_data_file("fsk_live.coco"), "").iq_array.data
 
         n = 10
-        moving_average_filter = Filter([1/n for _ in range(n)], filter_type=FilterType.moving_average)
-        filtered_data = moving_average_filter.apply_fir_filter(data.flatten()).view(np.float32)
-        filtered_data = filtered_data.reshape((len(filtered_data)//2, 2))
+        moving_average_filter = Filter(
+            [1 / n for _ in range(n)], filter_type=FilterType.moving_average
+        )
+        filtered_data = moving_average_filter.apply_fir_filter(data.flatten()).view(
+            np.float32
+        )
+        filtered_data = filtered_data.reshape((len(filtered_data) // 2, 2))
 
         rect = afp_demod(filtered_data, 0.0175, "FSK", 2)
         center = detect_center(rect)

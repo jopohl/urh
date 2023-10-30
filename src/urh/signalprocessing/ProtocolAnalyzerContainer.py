@@ -36,7 +36,9 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         self.fuzz_pause = 10000
 
         self.__group = ProtocolGroup("GeneratorGroup")
-        self.__group.add_protocol_item(ProtocolTreeItem(self, None))  # Warning: parent is None
+        self.__group.add_protocol_item(
+            ProtocolTreeItem(self, None)
+        )  # Warning: parent is None
 
     @property
     def protocol_labels(self):
@@ -50,12 +52,20 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
 
     def insert_protocol_analyzer(self, index: int, proto_analyzer: ProtocolAnalyzer):
         for msg in reversed(proto_analyzer.messages):
-            self.messages.insert(index, Message(plain_bits=msg.decoded_bits, pause=msg.pause,
-                                                message_type=copy.copy(msg.message_type),
-                                                rssi=msg.rssi, modulator_index=0, decoder=msg.decoder,
-                                                samples_per_symbol=msg.samples_per_symbol,
-                                                participant=msg.participant, bits_per_symbol=msg.bits_per_symbol)
-                                                )
+            self.messages.insert(
+                index,
+                Message(
+                    plain_bits=msg.decoded_bits,
+                    pause=msg.pause,
+                    message_type=copy.copy(msg.message_type),
+                    rssi=msg.rssi,
+                    modulator_index=0,
+                    decoder=msg.decoder,
+                    samples_per_symbol=msg.samples_per_symbol,
+                    participant=msg.participant,
+                    bits_per_symbol=msg.bits_per_symbol,
+                ),
+            )
         if len(self.pauses) > 0:
             self.fuzz_pause = self.pauses[0]
 
@@ -78,14 +88,24 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
             appd_result(msg)
 
             if mode == FuzzMode.successive:
-                combinations = [[(l.start, l.end, fuzz_val)] for l in labels for fuzz_val in l.fuzz_values[1:]]
+                combinations = [
+                    [(l.start, l.end, fuzz_val)]
+                    for l in labels
+                    for fuzz_val in l.fuzz_values[1:]
+                ]
             elif mode == FuzzMode.concurrent:
-                num_values = numpy.max([len(l.fuzz_values) for l in labels]) if labels else 0
+                num_values = (
+                    numpy.max([len(l.fuzz_values) for l in labels]) if labels else 0
+                )
                 f = lambda index, label: index if index < len(label.fuzz_values) else 0
-                combinations = [[(l.start, l.end, l.fuzz_values[f(j, l)]) for l in labels] for j in
-                                range(1, num_values)]
+                combinations = [
+                    [(l.start, l.end, l.fuzz_values[f(j, l)]) for l in labels]
+                    for j in range(1, num_values)
+                ]
             elif mode == FuzzMode.exhaustive:
-                pool = [[(l.start, l.end, fv) for fv in l.fuzz_values[1:]] for l in labels]
+                pool = [
+                    [(l.start, l.end, fv) for fv in l.fuzz_values[1:]] for l in labels
+                ]
                 combinations = list(itertools.product(*pool)) if labels else []
             else:
                 raise ValueError("Unknown fuzz mode")
@@ -105,10 +125,16 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
                     cpy_bits[start:end] = array.array("B", map(int, fuz_val))
 
                 pause = default_pause if default_pause is not None else msg.pause
-                fuz_msg = Message(plain_bits=cpy_bits, pause=pause,
-                                  rssi=msg.rssi, message_type=message_type,
-                                  modulator_index=msg.modulator_index,
-                                  decoder=msg.decoder, fuzz_created=True, participant=msg.participant)
+                fuz_msg = Message(
+                    plain_bits=cpy_bits,
+                    pause=pause,
+                    rssi=msg.rssi,
+                    message_type=message_type,
+                    modulator_index=msg.modulator_index,
+                    decoder=msg.decoder,
+                    fuzz_created=True,
+                    participant=msg.participant,
+                )
                 added_message_indices.append(i + j + 1)
                 appd_result(fuz_msg)
                 if j % 10000 == 0:
@@ -142,16 +168,33 @@ class ProtocolAnalyzerContainer(ProtocolAnalyzer):
         return self.fuzz(FuzzMode.exhaustive, default_pause=default_pause)
 
     def create_fuzzing_label(self, start, end, msg_index) -> ProtocolLabel:
-        fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(start=start, end=end)
+        fuz_lbl = self.messages[msg_index].message_type.add_protocol_label(
+            start=start, end=end
+        )
         return fuz_lbl
 
     def set_decoder_for_messages(self, decoder, messages=None):
         raise NotImplementedError("Encoding can't be set in Generator!")
 
-    def to_xml_file(self, filename: str, decoders, participants, tag_name="fuzz_profile",
-                    include_message_types=True, write_bits=True, modulators=None):
-        super().to_xml_file(filename=filename, decoders=decoders, participants=participants, tag_name=tag_name,
-                            include_message_types=include_message_types, write_bits=write_bits, modulators=modulators)
+    def to_xml_file(
+        self,
+        filename: str,
+        decoders,
+        participants,
+        tag_name="fuzz_profile",
+        include_message_types=True,
+        write_bits=True,
+        modulators=None,
+    ):
+        super().to_xml_file(
+            filename=filename,
+            decoders=decoders,
+            participants=participants,
+            tag_name=tag_name,
+            include_message_types=include_message_types,
+            write_bits=write_bits,
+            modulators=modulators,
+        )
 
     def from_xml_file(self, filename: str, read_bits=True):
         super().from_xml_file(filename=filename, read_bits=read_bits)

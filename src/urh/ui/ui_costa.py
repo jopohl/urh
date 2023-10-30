@@ -16,7 +16,9 @@ class Ui_DialogCosta(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(DialogCosta)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(DialogCosta)
-        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label.setAlignment(
+            QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop
+        )
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
@@ -32,10 +34,14 @@ class Ui_DialogCosta(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.buttonBox = QtWidgets.QDialogButtonBox(DialogCosta)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(DialogCosta)
@@ -45,5 +51,10 @@ class Ui_DialogCosta(object):
     def retranslateUi(self, DialogCosta):
         _translate = QtCore.QCoreApplication.translate
         DialogCosta.setWindowTitle(_translate("DialogCosta", "Configure Costas Loop"))
-        self.label.setText(_translate("DialogCosta", "URH uses a Costas loop for PSK demodulation. Configure the loop bandwidth below."))
+        self.label.setText(
+            _translate(
+                "DialogCosta",
+                "URH uses a Costas loop for PSK demodulation. Configure the loop bandwidth below.",
+            )
+        )
         self.labelLoopBandwidth.setText(_translate("DialogCosta", "Loop Bandwidth:"))

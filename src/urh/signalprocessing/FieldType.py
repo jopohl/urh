@@ -6,7 +6,6 @@ from urh import settings
 
 
 class FieldType(object):
-
     __slots__ = ["caption", "function", "display_format_index"]
 
     class Function(Enum):
@@ -21,14 +20,20 @@ class FieldType(object):
         CHECKSUM = "checksum"
         CUSTOM = "custom"
 
-    def __init__(self, caption: str, function: Function, display_format_index: int = None):
+    def __init__(
+        self, caption: str, function: Function, display_format_index: int = None
+    ):
         self.caption = caption
         self.function = function
 
         if display_format_index is None:
             if self.function in (self.Function.PREAMBLE, self.Function.SYNC):
                 self.display_format_index = 0
-            elif self.function in (self.Function.DST_ADDRESS, self.Function.SRC_ADDRESS, self.Function.CHECKSUM):
+            elif self.function in (
+                self.Function.DST_ADDRESS,
+                self.Function.SRC_ADDRESS,
+                self.Function.CHECKSUM,
+            ):
                 self.display_format_index = 1
             elif self.function in (self.Function.SEQUENCE_NUMBER, self.Function.LENGTH):
                 self.display_format_index = 3
@@ -38,10 +43,16 @@ class FieldType(object):
             self.display_format_index = display_format_index
 
     def __eq__(self, other):
-        return isinstance(other, FieldType) and self.caption == other.caption and self.function == other.function
+        return (
+            isinstance(other, FieldType)
+            and self.caption == other.caption
+            and self.function == other.function
+        )
 
     def __repr__(self):
-        return "FieldType: {0} - {1} ({2})".format(self.function.name, self.caption, self.display_format_index)
+        return "FieldType: {0} - {1} ({2})".format(
+            self.function.name, self.caption, self.display_format_index
+        )
 
     @staticmethod
     def from_caption(caption: str):
@@ -76,9 +87,15 @@ class FieldType(object):
         return result
 
     def to_xml(self):
-        return ET.Element("field_type", attrib={    "caption": self.caption,
-                                                    "function": self.function.name,
-                                                    "display_format_index": str(self.display_format_index)})
+        return ET.Element(
+            "field_type",
+            attrib={
+                "caption": self.caption,
+                "function": self.function.name,
+                "display_format_index": str(self.display_format_index),
+            },
+        )
+
     @staticmethod
     def from_xml(tag):
         """
@@ -97,10 +114,11 @@ class FieldType(object):
             function = FieldType.Function.CUSTOM
 
         display_format_index = int(tag.get("display_format_index", -1))
-        display_format_index = None if display_format_index == -1 else display_format_index
+        display_format_index = (
+            None if display_format_index == -1 else display_format_index
+        )
 
         return FieldType(caption, function, display_format_index)
-
 
     @staticmethod
     def save_to_xml(field_types):

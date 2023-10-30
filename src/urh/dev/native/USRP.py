@@ -10,7 +10,12 @@ from urh.dev.native.lib import usrp
 
 class USRP(Device):
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
-    DEVICE_METHODS.update({"SET_SUBDEVICE": "set_subdevice", Device.Command.SET_ANTENNA_INDEX.name: "set_antenna"})
+    DEVICE_METHODS.update(
+        {
+            "SET_SUBDEVICE": "set_subdevice",
+            Device.Command.SET_ANTENNA_INDEX.name: "set_antenna",
+        }
+    )
 
     SYNC_RX_CHUNK_SIZE = 16384
     SYNC_TX_CHUNK_SIZE = 16384 * 2
@@ -47,12 +52,17 @@ class USRP(Device):
         return success
 
     @classmethod
-    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict):
+    def init_device(
+        cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict
+    ):
         usrp.set_tx(is_tx)
         success = super().init_device(ctrl_connection, is_tx, parameters)
         if success:
-            ctrl_connection.send("Current antenna is {} (possible antennas: {})".format(usrp.get_antenna(),
-                                                                                        ", ".join(usrp.get_antennas())))
+            ctrl_connection.send(
+                "Current antenna is {} (possible antennas: {})".format(
+                    usrp.get_antenna(), ", ".join(usrp.get_antennas())
+                )
+            )
         return success
 
     @classmethod
@@ -85,11 +95,25 @@ class USRP(Device):
     def send_sync(cls, data):
         usrp.send_stream(data)
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            center_freq=center_freq,
+            sample_rate=sample_rate,
+            bandwidth=bandwidth,
+            gain=gain,
+            if_gain=if_gain,
+            baseband_gain=baseband_gain,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
         self.success = 0
 
         self.error_codes = {4711: "Antenna index not supported on this device"}
@@ -105,15 +129,17 @@ class USRP(Device):
 
     @property
     def device_parameters(self):
-        return OrderedDict([
-            ("SET_SUBDEVICE", self.subdevice),
-            (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
-            (self.Command.SET_FREQUENCY.name, self.frequency),
-            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-            (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
-            ("identifier", self.device_serial),
-        ])
+        return OrderedDict(
+            [
+                ("SET_SUBDEVICE", self.subdevice),
+                (self.Command.SET_ANTENNA_INDEX.name, self.antenna_index),
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_RF_GAIN.name, self.gain * 0.01),
+                ("identifier", self.device_serial),
+            ]
+        )
 
     @staticmethod
     def bytes_to_iq(buffer):

@@ -34,21 +34,28 @@ class LabelValueTableModel(QAbstractTableModel):
             return "-"
 
         try:
-            data = self.message.decoded_bits[lbl.start:lbl.end]
+            data = self.message.decoded_bits[lbl.start : lbl.end]
         except IndexError:
             return None
 
         lsb = lbl.display_bit_order_index == 1
         lsd = lbl.display_bit_order_index == 2
 
-        data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd,
-                                           endianness=lbl.display_endianness)
+        data = util.convert_bits_to_string(
+            data,
+            lbl.display_format_index,
+            pad_zeros=True,
+            lsb=lsb,
+            lsd=lsd,
+            endianness=lbl.display_endianness,
+        )
         if data is None:
             return None
 
         if expected_checksum is not None:
             data += " (should be {0})".format(
-                util.convert_bits_to_string(expected_checksum, lbl.display_format_index))
+                util.convert_bits_to_string(expected_checksum, lbl.display_format_index)
+            )
 
         return data
 
@@ -63,7 +70,9 @@ class LabelValueTableModel(QAbstractTableModel):
 
     @property
     def message(self):
-        if self.message_index != -1 and self.message_index < len(self.proto_analyzer.messages):
+        if self.message_index != -1 and self.message_index < len(
+            self.proto_analyzer.messages
+        ):
             return self.proto_analyzer.messages[self.message_index]
         else:
             return None
@@ -99,7 +108,9 @@ class LabelValueTableModel(QAbstractTableModel):
             return None
 
         if isinstance(lbl, ChecksumLabel) and self.message is not None:
-            calculated_crc = lbl.calculate_checksum_for_message(self.message, use_decoded_bits=True)
+            calculated_crc = lbl.calculate_checksum_for_message(
+                self.message, use_decoded_bits=True
+            )
         else:
             calculated_crc = None
 
@@ -129,21 +140,25 @@ class LabelValueTableModel(QAbstractTableModel):
 
         elif role == Qt.ToolTipRole:
             if j == 2:
-                return self.tr("Choose display type for the value of the label:"
-                               "<ul>"
-                               "<li>Bit</li>"
-                               "<li>Hexadecimal (Hex)</li>"
-                               "<li>ASCII chars</li>"
-                               "<li>Decimal Number</li>"
-                               "<li>Binary Coded Decimal (BCD)</li>"
-                               "</ul>")
+                return self.tr(
+                    "Choose display type for the value of the label:"
+                    "<ul>"
+                    "<li>Bit</li>"
+                    "<li>Hexadecimal (Hex)</li>"
+                    "<li>ASCII chars</li>"
+                    "<li>Decimal Number</li>"
+                    "<li>Binary Coded Decimal (BCD)</li>"
+                    "</ul>"
+                )
             if j == 3:
-                return self.tr("Choose bit order for the displayed value:"
-                               "<ul>"
-                               "<li>Most Significant Bit (MSB) [Default]</li>"
-                               "<li>Least Significant Bit (LSB)</li>"
-                               "<li>Least Significant Digit (LSD)</li>"
-                               "</ul>")
+                return self.tr(
+                    "Choose bit order for the displayed value:"
+                    "<ul>"
+                    "<li>Most Significant Bit (MSB) [Default]</li>"
+                    "<li>Least Significant Bit (LSB)</li>"
+                    "<li>Least Significant Digit (LSD)</li>"
+                    "</ul>"
+                )
         elif role == Qt.FontRole and j == 0:
             font = QFont()
             font.setBold(i in self.selected_label_indices)
@@ -156,7 +171,9 @@ class LabelValueTableModel(QAbstractTableModel):
             if index.column() == 0:
                 lbl.name = value
                 new_field_type = self.controller.field_types_by_caption.get(value, None)
-                self.controller.active_message_type.change_field_type_of_label(lbl, new_field_type)
+                self.controller.active_message_type.change_field_type_of_label(
+                    lbl, new_field_type
+                )
             elif index.column() == 1:
                 lbl.color_index = value
                 self.label_color_changed.emit(lbl)
@@ -165,17 +182,20 @@ class LabelValueTableModel(QAbstractTableModel):
             elif index.column() == 3:
                 lbl.display_order_str = value
 
-            self.dataChanged.emit(self.index(row, 0),
-                                  self.index(row, self.columnCount()))
+            self.dataChanged.emit(
+                self.index(row, 0), self.index(row, self.columnCount())
+            )
         elif role == Qt.CheckStateRole and index.column() == 0:
             lbl.show = value
             self.protolabel_visibility_changed.emit(lbl)
             return True
 
     def add_labels_to_message_type(self, start: int, end: int, message_type_id: int):
-        for lbl in self.display_labels[start:end + 1]:
+        for lbl in self.display_labels[start : end + 1]:
             if lbl not in self.controller.proto_analyzer.message_types[message_type_id]:
-                self.controller.proto_analyzer.message_types[message_type_id].add_label(lbl)
+                self.controller.proto_analyzer.message_types[message_type_id].add_label(
+                    lbl
+                )
         self.controller.updateUI(resize_table=False)
 
     def delete_label_at(self, index: int):

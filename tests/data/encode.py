@@ -5,5 +5,6 @@ Simply doubles each bit of the input
 """
 
 import sys
+
 bits = sys.argv[1]
-print("".join(b+b for b in bits))
+print("".join(b + b for b in bits))

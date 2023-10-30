@@ -20,7 +20,9 @@ class CostaOptionsDialog(QDialog):
     def create_connects(self):
         self.ui.buttonBox.accepted.connect(self.accept)
         self.ui.buttonBox.rejected.connect(self.reject)
-        self.ui.doubleSpinBoxLoopBandwidth.valueChanged.connect(self.on_spinbox_loop_bandwidth_value_changed)
+        self.ui.doubleSpinBoxLoopBandwidth.valueChanged.connect(
+            self.on_spinbox_loop_bandwidth_value_changed
+        )
 
     @pyqtSlot(float)
     def on_spinbox_loop_bandwidth_value_changed(self, value):

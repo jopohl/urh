@@ -37,21 +37,33 @@ class TestUtil(QtTestCase):
         util.set_shared_library_path()
 
     def test_create_textbox_dialog(self):
-        dialog = util.create_textbox_dialog("Test content", "Test title", parent=self.form)
+        dialog = util.create_textbox_dialog(
+            "Test content", "Test title", parent=self.form
+        )
         self.assertEqual(dialog.windowTitle(), "Test title")
-        self.assertEqual(dialog.layout().itemAt(0).widget().toPlainText(), "Test content")
+        self.assertEqual(
+            dialog.layout().itemAt(0).widget().toPlainText(), "Test content"
+        )
         dialog.close()
 
     def test_get_receive_buffer_size(self):
         settings.OVERWRITE_RECEIVE_BUFFER_SIZE = None
-        ns = settings.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=True)
+        ns = settings.get_receive_buffer_size(
+            resume_on_full_receive_buffer=True, spectrum_mode=True
+        )
         self.assertEqual(ns, settings.SPECTRUM_BUFFER_SIZE)
 
-        ns = settings.get_receive_buffer_size(resume_on_full_receive_buffer=True, spectrum_mode=False)
+        ns = settings.get_receive_buffer_size(
+            resume_on_full_receive_buffer=True, spectrum_mode=False
+        )
         self.assertEqual(ns, settings.SNIFF_BUFFER_SIZE)
 
-        ns1 = settings.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=True)
-        ns2 = settings.get_receive_buffer_size(resume_on_full_receive_buffer=False, spectrum_mode=False)
+        ns1 = settings.get_receive_buffer_size(
+            resume_on_full_receive_buffer=False, spectrum_mode=True
+        )
+        ns2 = settings.get_receive_buffer_size(
+            resume_on_full_receive_buffer=False, spectrum_mode=False
+        )
         self.assertEqual(len(str(ns1)), len(str(ns2)))
 
     def test_write_pcap(self):
@@ -70,7 +82,11 @@ class TestUtil(QtTestCase):
         proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
 
         pcap = PCAP()
-        pcap.write_packets(proto_analyzer.messages, os.path.join(tempfile.gettempdir(), "test.pcap"), 1e6)
+        pcap.write_packets(
+            proto_analyzer.messages,
+            os.path.join(tempfile.gettempdir(), "test.pcap"),
+            1e6,
+        )
 
     def test_write_pcapng(self):
         signal = Signal(get_path_for_data_file("ask.complex"), "ASK-Test")
@@ -88,36 +104,57 @@ class TestUtil(QtTestCase):
         proto_analyzer.messages.append(copy.deepcopy(proto_analyzer.messages[0]))
 
         filepath = os.path.join(tempfile.gettempdir(), "test.pcapng")
-        PCAPNG.create_pcapng_file(filepath, "Universal Radio Hacker Test", "TestHW", 147)
+        PCAPNG.create_pcapng_file(
+            filepath, "Universal Radio Hacker Test", "TestHW", 147
+        )
         PCAPNG.append_packets_to_pcapng(
             filename=filepath,
             packets=(msg.decoded_ascii_buffer for msg in proto_analyzer.messages),
-            timestamps=(msg.timestamp for msg in proto_analyzer.messages))
+            timestamps=(msg.timestamp for msg in proto_analyzer.messages),
+        )
 
         # As we don't have PCAPNG importers, we'll verify output just by checking file size, PCAPNG SHB type number
         # and that all msg bytes were written somewhere inside output file
         filechecks = False
-        if os.path.isfile(filepath):                                     # ok, file exist
+        if os.path.isfile(filepath):  # ok, file exist
             with open(filepath, "rb") as f:
                 filecontents = f.read()
             # min file len= SHB + IDB + 4 EPB msgs
-            minfilelen = 28 + 20 + (4 * (32 + len(proto_analyzer.messages[0].decoded_ascii_buffer)))
-            if len(filecontents) >= minfilelen:                          # ok, min file length passed
-                if filecontents.find(b'\x0A\x0D\x0D\x0A') >= 0:          # ok, seems that SHB was written
-                    if filecontents.find(proto_analyzer.messages[0].decoded_ascii_buffer) >= 0: # ok, msg bytes written
+            minfilelen = (
+                28
+                + 20
+                + (4 * (32 + len(proto_analyzer.messages[0].decoded_ascii_buffer)))
+            )
+            if len(filecontents) >= minfilelen:  # ok, min file length passed
+                if (
+                    filecontents.find(b"\x0A\x0D\x0D\x0A") >= 0
+                ):  # ok, seems that SHB was written
+                    if (
+                        filecontents.find(
+                            proto_analyzer.messages[0].decoded_ascii_buffer
+                        )
+                        >= 0
+                    ):  # ok, msg bytes written
                         filechecks = True
-                
+
         self.assertTrue(filechecks)
 
     def test_de_bruijn_fuzzing(self):
-        self.assertEqual(c_util.de_bruijn(3), array.array("B", [0, 0, 0, 1, 0, 1, 1, 1]))
-        self.assertEqual(c_util.de_bruijn(4), array.array("B", [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]))
+        self.assertEqual(
+            c_util.de_bruijn(3), array.array("B", [0, 0, 0, 1, 0, 1, 1, 1])
+        )
+        self.assertEqual(
+            c_util.de_bruijn(4),
+            array.array("B", [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1]),
+        )
 
     def test_native_backends_installed(self):
         from urh.util import util
 
         if not util.get_shared_library_path():
-            logger.info("Shared library dir not found, skipping check of native device extensions")
+            logger.info(
+                "Shared library dir not found, skipping check of native device extensions"
+            )
             return
 
         util.set_shared_library_path()

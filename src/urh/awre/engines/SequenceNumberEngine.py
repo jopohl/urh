@@ -6,7 +6,13 @@ from urh.cythonext import awre_util
 
 
 class SequenceNumberEngine(Engine):
-    def __init__(self, bitvectors, n_gram_length=8, minimum_score=0.75, already_labeled: list = None):
+    def __init__(
+        self,
+        bitvectors,
+        n_gram_length=8,
+        minimum_score=0.75,
+        already_labeled: list = None,
+    ):
         """
 
         :type bitvectors: list of np.ndarray
@@ -18,7 +24,9 @@ class SequenceNumberEngine(Engine):
         if already_labeled is None:
             self.already_labeled_cols = set()
         else:
-            self.already_labeled_cols = {e // n_gram_length for rng in already_labeled for e in range(*rng)}
+            self.already_labeled_cols = {
+                e // n_gram_length for rng in already_labeled for e in range(*rng)
+            }
 
     def find(self):
         n = self.n_gram_length
@@ -44,28 +52,43 @@ class SequenceNumberEngine(Engine):
 
         self._debug("Scores by column", scores_by_column)
         result = []
-        for candidate_column in sorted(scores_by_column, key=scores_by_column.get, reverse=True):
+        for candidate_column in sorted(
+            scores_by_column, key=scores_by_column.get, reverse=True
+        ):
             score = scores_by_column[candidate_column]
             if score < self.minimum_score:
                 continue
 
-            most_common_diff = self.get_most_frequent(diff_frequencies_by_column[candidate_column])
+            most_common_diff = self.get_most_frequent(
+                diff_frequencies_by_column[candidate_column]
+            )
             message_indices = np.flatnonzero(
                 # get all rows that have the most common difference or zero
-                (diff_matrix[:, candidate_column] == most_common_diff) | (diff_matrix[:, candidate_column] == 0)
+                (diff_matrix[:, candidate_column] == most_common_diff)
+                | (diff_matrix[:, candidate_column] == 0)
             )
 
             # For example, index 1 in diff matrix corresponds to index 1 and 2 of messages
             message_indices = set(message_indices) | set(message_indices + 1)
             values = set()
             for i in message_indices:
-                values.add(self.bitvectors[i][candidate_column * n:(candidate_column + 1) * n].tobytes())
+                values.add(
+                    self.bitvectors[i][
+                        candidate_column * n : (candidate_column + 1) * n
+                    ].tobytes()
+                )
 
-            matching_ranges = [r for r in result if r.message_indices == message_indices]
+            matching_ranges = [
+                r for r in result if r.message_indices == message_indices
+            ]
 
             try:
-                matching_range = next(r for r in matching_ranges if r.start == (candidate_column - 1) * n
-                                      and (r.byte_order_is_unknown or r.byte_order == "big"))
+                matching_range = next(
+                    r
+                    for r in matching_ranges
+                    if r.start == (candidate_column - 1) * n
+                    and (r.byte_order_is_unknown or r.byte_order == "big")
+                )
                 matching_range.length += n
                 matching_range.byte_order = "big"
                 matching_range.values.extend(list(values))
@@ -74,8 +97,12 @@ class SequenceNumberEngine(Engine):
                 pass
 
             try:
-                matching_range = next(r for r in matching_ranges if r.start == (candidate_column + 1) * n
-                                      and (r.byte_order_is_unknown or r.byte_order == "little"))
+                matching_range = next(
+                    r
+                    for r in matching_ranges
+                    if r.start == (candidate_column + 1) * n
+                    and (r.byte_order_is_unknown or r.byte_order == "little")
+                )
                 matching_range.start -= n
                 matching_range.length += n
                 matching_range.byte_order = "little"
@@ -84,9 +111,14 @@ class SequenceNumberEngine(Engine):
             except StopIteration:
                 pass
 
-            new_range = CommonRange(start=candidate_column * n, length=n, score=score,
-                                    field_type="sequence number", message_indices=message_indices,
-                                    byte_order=None)
+            new_range = CommonRange(
+                start=candidate_column * n,
+                length=n,
+                score=score,
+                field_type="sequence number",
+                message_indices=message_indices,
+                byte_order=None,
+            )
             new_range.values.extend(list(values))
             result.append(new_range)
 
@@ -95,7 +127,10 @@ class SequenceNumberEngine(Engine):
 
     @staticmethod
     def get_most_frequent(diff_frequencies: dict):
-        return max(filter(lambda x: x not in (0, -1), diff_frequencies), key=diff_frequencies.get)
+        return max(
+            filter(lambda x: x not in (0, -1), diff_frequencies),
+            key=diff_frequencies.get,
+        )
 
     @staticmethod
     def calc_score(diff_frequencies: dict) -> float:

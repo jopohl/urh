@@ -18,13 +18,17 @@ class Plugin(QObject):
         self.plugin_path = ""
         self.description = ""
         self.__settings_frame = None
-        self.qsettings = QSettings(QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin")
+        self.qsettings = QSettings(
+            QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin"
+        )
 
     @property
     def settings_frame(self):
         if self.__settings_frame is None:
             logging.getLogger().setLevel(logging.WARNING)
-            self.__settings_frame = uic.loadUi(os.path.join(self.plugin_path, "settings.ui"))
+            self.__settings_frame = uic.loadUi(
+                os.path.join(self.plugin_path, "settings.ui")
+            )
             logging.getLogger().setLevel(logger.level)
 
             self.create_connects()
@@ -59,8 +63,9 @@ class ProtocolPlugin(Plugin):
     def __init__(self, name: str):
         Plugin.__init__(self, name)
 
-    def get_action(self, parent, undo_stack: QUndoStack, sel_range, groups,
-                   view: int) -> QUndoCommand:
+    def get_action(
+        self, parent, undo_stack: QUndoStack, sel_range, groups, view: int
+    ) -> QUndoCommand:
         """
         :type parent: QTableView
         :type undo_stack: QUndoStack

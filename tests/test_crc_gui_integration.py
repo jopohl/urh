@@ -11,31 +11,50 @@ class TestCRCGUIIntegration(QtTestCase):
         self.__add_wsp_signal()
         self.__set_wsp_encoding()
 
-        self.form.compare_frame_controller.add_protocol_label(14, 14, 0, 1, edit_label_name=False)
+        self.form.compare_frame_controller.add_protocol_label(
+            14, 14, 0, 1, edit_label_name=False
+        )
         checksum_fieldtype = next(
-            ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
+            ft
+            for ft in self.form.compare_frame_controller.field_types
+            if ft.function == ft.Function.CHECKSUM
+        )
 
         label_value_model = self.form.compare_frame_controller.label_value_model
 
         # Configure Normal Checksum and verify its wrong
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
+        proto_label_dialog = (
+            self.form.compare_frame_controller.create_protocol_label_dialog()
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
-        proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
+        proto_label_dialog.model.setData(
+            proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(
+            0
+        )  # type: ChecksumWidget
         self.assertNotIn("WSP", checksum_tab.ui.comboBoxCategory.currentText())
         checksum_tab.ui.radioButtonWSPAuto.click()
 
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         settings.BG_COLOR_WRONG)
+        self.assertEqual(
+            label_value_model.data(
+                label_value_model.index(0, 4), Qt.BackgroundColorRole
+            ),
+            settings.BG_COLOR_WRONG,
+        )
 
         # Configure WSP and verify its correct
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
+        proto_label_dialog = (
+            self.form.compare_frame_controller.create_protocol_label_dialog()
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(
+            0
+        )  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCategory.setCurrentIndex(1)
         self.assertIn("WSP", checksum_tab.ui.comboBoxCategory.currentText())
         checksum_tab.ui.radioButtonWSPAuto.click()
@@ -45,25 +64,40 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         settings.BG_COLOR_CORRECT)
+        self.assertEqual(
+            label_value_model.data(
+                label_value_model.index(0, 4), Qt.BackgroundColorRole
+            ),
+            settings.BG_COLOR_CORRECT,
+        )
 
     def test_cc1101_crc(self):
         self.__add_cc1101_signal()
         self.__set_cc1101_encoding()
 
-        self.form.compare_frame_controller.add_protocol_label(24, 27, 0, 1, edit_label_name=False)
+        self.form.compare_frame_controller.add_protocol_label(
+            24, 27, 0, 1, edit_label_name=False
+        )
         checksum_fieldtype = next(
-            ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
+            ft
+            for ft in self.form.compare_frame_controller.field_types
+            if ft.function == ft.Function.CHECKSUM
+        )
 
         label_value_model = self.form.compare_frame_controller.label_value_model
 
         # Configure Normal Checksum and verify its wrong
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
+        proto_label_dialog = (
+            self.form.compare_frame_controller.create_protocol_label_dialog()
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 0)
-        proto_label_dialog.model.setData(proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption)
+        proto_label_dialog.model.setData(
+            proto_label_dialog.model.index(0, 0), checksum_fieldtype.caption
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(
+            0
+        )  # type: ChecksumWidget
         self.assertEqual("generic", checksum_tab.ui.comboBoxCategory.currentText())
         self.assertNotEqual("CC1101", checksum_tab.ui.comboBoxCRCFunction.currentText())
 
@@ -72,13 +106,21 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         settings.BG_COLOR_WRONG)
+        self.assertEqual(
+            label_value_model.data(
+                label_value_model.index(0, 4), Qt.BackgroundColorRole
+            ),
+            settings.BG_COLOR_WRONG,
+        )
 
         # Configure CC1101 and verify its correct
-        proto_label_dialog = self.form.compare_frame_controller.create_protocol_label_dialog()
+        proto_label_dialog = (
+            self.form.compare_frame_controller.create_protocol_label_dialog()
+        )
         self.assertEqual(proto_label_dialog.ui.tabWidgetAdvancedSettings.count(), 1)
-        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(0)  # type: ChecksumWidget
+        checksum_tab = proto_label_dialog.ui.tabWidgetAdvancedSettings.widget(
+            0
+        )  # type: ChecksumWidget
         checksum_tab.ui.comboBoxCRCFunction.setCurrentText("CC1101")
         self.assertEqual(checksum_tab.ui.lineEditCRCPolynomial.text(), "8005")
         self.assertEqual(checksum_tab.ui.lineEditFinalXOR.text(), "0000")
@@ -93,31 +135,51 @@ class TestCRCGUIIntegration(QtTestCase):
         self.form.compare_frame_controller.ui.tblViewProtocol.clearSelection()
         self.form.compare_frame_controller.ui.tblViewProtocol.selectRow(0)
 
-        self.assertEqual(label_value_model.data(label_value_model.index(0, 4), Qt.BackgroundColorRole),
-                         settings.BG_COLOR_CORRECT)
+        self.assertEqual(
+            label_value_model.data(
+                label_value_model.index(0, 4), Qt.BackgroundColorRole
+            ),
+            settings.BG_COLOR_CORRECT,
+        )
 
     def test_checksum_in_generation_tab(self):
         self.add_signal_to_form("esaver.complex16s")
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.setValue(0.3692)
-        self.form.signal_tab_controller.signal_frames[0].ui.spinBoxCenterOffset.editingFinished.emit()
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.setValue(0.3692)
+        self.form.signal_tab_controller.signal_frames[
+            0
+        ].ui.spinBoxCenterOffset.editingFinished.emit()
 
-        self.form.compare_frame_controller.add_protocol_label(4, 6, 0, 1, edit_label_name=False)
+        self.form.compare_frame_controller.add_protocol_label(
+            4, 6, 0, 1, edit_label_name=False
+        )
         checksum_fieldtype = next(
-            ft for ft in self.form.compare_frame_controller.field_types if ft.function == ft.Function.CHECKSUM)
+            ft
+            for ft in self.form.compare_frame_controller.field_types
+            if ft.function == ft.Function.CHECKSUM
+        )
 
         label_model = self.form.compare_frame_controller.label_value_model
-        label_model.setData(label_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole)
+        label_model.setData(
+            label_model.index(0, 0), checksum_fieldtype.caption, Qt.EditRole
+        )
 
         gframe = self.form.generator_tab_controller
         gframe.ui.cbViewType.setCurrentIndex(1)
         self.add_signal_to_generator(signal_index=0)
         self.assertEqual(gframe.table_model.row_count, 3)
-        self.assertEqual(gframe.table_model.protocol.protocol_labels[0].field_type, checksum_fieldtype)
+        self.assertEqual(
+            gframe.table_model.protocol.protocol_labels[0].field_type,
+            checksum_fieldtype,
+        )
 
         # check font is italic
         for i in range(3):
             for j in range(len(gframe.table_model.display_data[i])):
-                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                font = gframe.table_model.data(
+                    gframe.table_model.createIndex(i, j), Qt.FontRole
+                )
                 if 4 <= j <= 6:
                     self.assertTrue(font.italic(), msg=str(j))
                 else:
@@ -125,14 +187,18 @@ class TestCRCGUIIntegration(QtTestCase):
 
         # Now change something and verify CRC gets recalced
         checksum_before = gframe.table_model.display_data[0][4:6]
-        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(0, 1)), "f")
+        self.assertNotEqual(
+            gframe.table_model.data(gframe.table_model.index(0, 1)), "f"
+        )
         gframe.table_model.setData(gframe.table_model.index(0, 1), "f", Qt.EditRole)
         checksum_after = gframe.table_model.display_data[0][4:6]
         self.assertNotEqual(checksum_before, checksum_after)
 
         # change something behind data ranges, crc should stay the same
         checksum_before = gframe.table_model.display_data[1][4:6]
-        self.assertNotEqual(gframe.table_model.data(gframe.table_model.index(1, 10)), "b")
+        self.assertNotEqual(
+            gframe.table_model.data(gframe.table_model.index(1, 10)), "b"
+        )
         gframe.table_model.setData(gframe.table_model.index(1, 10), "b", Qt.EditRole)
         checksum_after = gframe.table_model.display_data[1][4:6]
         self.assertNotEqual(checksum_before, checksum_after)
@@ -141,7 +207,9 @@ class TestCRCGUIIntegration(QtTestCase):
         gframe.table_model.setData(gframe.table_model.index(2, 5), "c", Qt.EditRole)
         for i in range(3):
             for j in range(len(gframe.table_model.display_data[i])):
-                font = gframe.table_model.data(gframe.table_model.createIndex(i, j), Qt.FontRole)
+                font = gframe.table_model.data(
+                    gframe.table_model.createIndex(i, j), Qt.FontRole
+                )
                 if 4 <= j <= 6 and i != 2:
                     self.assertTrue(font.italic(), msg=str(j))
                 else:
@@ -162,7 +230,10 @@ class TestCRCGUIIntegration(QtTestCase):
 
         self.assertEqual(len(signal_frame.proto_analyzer.plain_hex_str), 3)
         for i in range(3):
-            self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[i].strip("0"), "aad3d5ddddcc5d45ddbba")
+            self.assertEqual(
+                signal_frame.proto_analyzer.plain_hex_str[i].strip("0"),
+                "aad3d5ddddcc5d45ddbba",
+            )
 
     def __add_cc1101_signal(self):
         self.add_signal_to_form("cc1101.complex")
@@ -178,7 +249,10 @@ class TestCRCGUIIntegration(QtTestCase):
         signal_frame.ui.spinBoxTolerance.editingFinished.emit()
 
         self.assertEqual(len(signal_frame.proto_analyzer.plain_hex_str), 1)
-        self.assertEqual(signal_frame.proto_analyzer.plain_hex_str[0], "aaaaaaaa9a7d9a7dfc99ff1398fb8")
+        self.assertEqual(
+            signal_frame.proto_analyzer.plain_hex_str[0],
+            "aaaaaaaa9a7d9a7dfc99ff1398fb8",
+        )
 
     def __set_wsp_encoding(self):
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
@@ -196,7 +270,9 @@ class TestCRCGUIIntegration(QtTestCase):
 
     def __set_cc1101_encoding(self):
         self.form.compare_frame_controller.ui.cbProtoView.setCurrentText("Hex")
-        decoding = Encoding(["CC1101", settings.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"])
+        decoding = Encoding(
+            ["CC1101", settings.DECODING_DATAWHITENING, "0x9a7d9a7d;0x21"]
+        )
 
         self.form.compare_frame_controller.decodings.append(decoding)
         self.form.compare_frame_controller.fill_decoding_combobox()

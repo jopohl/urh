@@ -1,6 +1,6 @@
 import numpy as np
 
-from urh.cythonext import auto_interpretation as  cy_auto_interpretation
+from urh.cythonext import auto_interpretation as cy_auto_interpretation
 from urh.signalprocessing.Modulator import Modulator
 
 
@@ -27,16 +27,20 @@ def cwt_haar(x: np.ndarray, scale=10):
     x_hat = np.fft.fft(x)
 
     # Get omega (eq. (5) in paper)
-    f = (2.0 * np.pi / num_data)
-    omega = f * np.concatenate((np.arange(0, num_data // 2), np.arange(num_data // 2, num_data) * -1))
+    f = 2.0 * np.pi / num_data
+    omega = f * np.concatenate(
+        (np.arange(0, num_data // 2), np.arange(num_data // 2, num_data) * -1)
+    )
 
     # get psi hat (eq. (6) in paper)
-    psi_hat = np.sqrt(2.0 * np.pi * scale) * normalized_haar_wavelet(scale * omega, scale)
+    psi_hat = np.sqrt(2.0 * np.pi * scale) * normalized_haar_wavelet(
+        scale * omega, scale
+    )
 
     # get W (eq. (4) in paper)
     W = np.fft.ifft(x_hat * psi_hat)
 
-    return W[2 * scale:-2 * scale]
+    return W[2 * scale : -2 * scale]
 
 
 if __name__ == "__main__":
@@ -45,8 +49,10 @@ if __name__ == "__main__":
     # data = np.fromfile("/home/joe/GIT/urh/tests/data/fsk.complex", dtype=np.complex64)[5:15000]
     # data = np.fromfile("/home/joe/GIT/urh/tests/data/ask.complex", dtype=np.complex64)[462:754]
     # data = np.fromfile("/home/joe/GIT/urh/tests/data/enocean.complex", dtype=np.complex64)[9724:10228]
-    data = np.fromfile("/home/joe/GIT/publications/ainterpretation/experiments/signals/esaver_test4on.complex",
-                       dtype=np.complex64)[86452:115541]
+    data = np.fromfile(
+        "/home/joe/GIT/publications/ainterpretation/experiments/signals/esaver_test4on.complex",
+        dtype=np.complex64,
+    )[86452:115541]
 
     # data = np.fromfile("/home/joe/GIT/urh/tests/data/action_ook.complex", dtype=np.complex64)[3780:4300]
 

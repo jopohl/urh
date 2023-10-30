@@ -24,6 +24,7 @@ def receive_async(callback, connection):
     rtlsdr.read_async(callback, connection)
     connection.close()
 
+
 def receive_sync(connection):
     rtlsdr.open(0)
     rtlsdr.reset_buffer()
@@ -41,6 +42,7 @@ def receive_sync(connection):
 
     connection.close()
 
+
 def process_command(command):
     if command == "stop":
         return "stop"
@@ -56,6 +58,7 @@ def process_command(command):
         logger.info("[RTLSDR] setting sample rate to {}".format(int(value)))
         rtlsdr.set_sample_rate(int(value))
 
+
 def read_connection(connection):
     while True:
         try:
@@ -63,6 +66,7 @@ def read_connection(connection):
             print(received_bytes[0:100])
         except EOFError:
             break
+
 
 def f(child_conn):
     ctrl_command = b""
@@ -85,16 +89,17 @@ class TestPipe(unittest.TestCase):
         p.start()
         for _ in range(5):
             while parent_conn.poll():
-                print("Got from client", parent_conn.recv_bytes())  # prints "[42, None, 'hello']"
+                print(
+                    "Got from client", parent_conn.recv_bytes()
+                )  # prints "[42, None, 'hello']"
             time.sleep(1)
         parent_conn.send_bytes(b"stop")
         p.join()
 
-
     def test_rtl_sdr_with_pipe(self):
         parent_conn, child_conn = Pipe()
-        p = Process(target=receive_sync, args=(child_conn, ))
-        t = Thread(target=read_connection, args=(parent_conn, ))
+        p = Process(target=receive_sync, args=(child_conn,))
+        t = Thread(target=read_connection, args=(parent_conn,))
         t.daemon = True
         p.daemon = True
         t.start()

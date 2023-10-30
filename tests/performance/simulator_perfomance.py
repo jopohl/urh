@@ -9,7 +9,9 @@ from tests.utils_testing import get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.dev.BackendHandler import BackendHandler
 from urh.dev.EndlessSender import EndlessSender
-from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import NetworkSDRInterfacePlugin
+from urh.plugins.NetworkSDRInterface.NetworkSDRInterfacePlugin import (
+    NetworkSDRInterfacePlugin,
+)
 from urh.signalprocessing.MessageType import MessageType
 from urh.signalprocessing.Modulator import Modulator
 from urh.signalprocessing.Participant import Participant
@@ -28,7 +30,7 @@ def receive(port, current_index, target_index, elapsed):
     s.listen(1)
 
     conn, addr = s.accept()
-    logger.debug('Receiver got connection from address:'.format(addr))
+    logger.debug("Receiver got connection from address:".format(addr))
 
     start = False
     while True:
@@ -80,22 +82,53 @@ class TestSimulatorPerfomance(QtTestCase):
         self.form.project_manager.participants.append(part_b)
         self.form.project_manager.project_updated.emit()
 
-        sniffer = ProtocolSniffer(100, 0.01, 0.01, 0.1, 5, "FSK", 1,
-                                  NetworkSDRInterfacePlugin.NETWORK_SDR_NAME, BackendHandler(),
-                                  network_raw_mode=True)
-        sender = EndlessSender(BackendHandler(), NetworkSDRInterfacePlugin.NETWORK_SDR_NAME)
+        sniffer = ProtocolSniffer(
+            100,
+            0.01,
+            0.01,
+            0.1,
+            5,
+            "FSK",
+            1,
+            NetworkSDRInterfacePlugin.NETWORK_SDR_NAME,
+            BackendHandler(),
+            network_raw_mode=True,
+        )
+        sender = EndlessSender(
+            BackendHandler(), NetworkSDRInterfacePlugin.NETWORK_SDR_NAME
+        )
 
-        simulator = Simulator(self.stc.simulator_config, self.gtc.modulators, self.stc.sim_expression_parser,
-                              self.form.project_manager, sniffer=sniffer, sender=sender)
+        simulator = Simulator(
+            self.stc.simulator_config,
+            self.gtc.modulators,
+            self.stc.sim_expression_parser,
+            self.form.project_manager,
+            sniffer=sniffer,
+            sender=sender,
+        )
 
         pause = 100
-        msg_a = SimulatorMessage(part_b,
-                                 [1, 0] * 16 + [1, 1, 0, 0] * 8 + [0, 0, 1, 1] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 pause=pause, message_type=MessageType("empty_message_type"), source=part_a)
+        msg_a = SimulatorMessage(
+            part_b,
+            [1, 0] * 16
+            + [1, 1, 0, 0] * 8
+            + [0, 0, 1, 1] * 8
+            + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
+            pause=pause,
+            message_type=MessageType("empty_message_type"),
+            source=part_a,
+        )
 
-        msg_b = SimulatorMessage(part_a,
-                                 [1, 0] * 16 + [1, 1, 0, 0] * 8 + [1, 1, 0, 0] * 8 + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
-                                 pause=pause, message_type=MessageType("empty_message_type"), source=part_b)
+        msg_b = SimulatorMessage(
+            part_a,
+            [1, 0] * 16
+            + [1, 1, 0, 0] * 8
+            + [1, 1, 0, 0] * 8
+            + [1, 0, 1, 1, 1, 0, 0, 1, 1, 1] * 4,
+            pause=pause,
+            message_type=MessageType("empty_message_type"),
+            source=part_b,
+        )
 
         self.stc.simulator_config.add_items([msg_a, msg_b], 0, None)
         self.stc.simulator_config.update_active_participants()
@@ -114,7 +147,9 @@ class TestSimulatorPerfomance(QtTestCase):
         current_index = Value("L")
         elapsed = Value("f")
         target_num_samples = 13600 + pause
-        receive_process = Process(target=receive, args=(port, current_index, target_num_samples, elapsed))
+        receive_process = Process(
+            target=receive, args=(port, current_index, target_num_samples, elapsed)
+        )
         receive_process.daemon = True
         receive_process.start()
 
@@ -130,10 +165,14 @@ class TestSimulatorPerfomance(QtTestCase):
 
         # yappi.start()
 
-        self.network_sdr_plugin_sender.send_raw_data(modulator.modulate(msg_a.encoded_bits), 1)
+        self.network_sdr_plugin_sender.send_raw_data(
+            modulator.modulate(msg_a.encoded_bits), 1
+        )
         time.sleep(0.5)
         # send some zeros to simulate the end of a message
-        self.network_sdr_plugin_sender.send_raw_data(np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1)
+        self.network_sdr_plugin_sender.send_raw_data(
+            np.zeros(self.num_zeros_for_pause, dtype=np.complex64), 1
+        )
         time.sleep(0.5)
         receive_process.join(15)
 

@@ -65,9 +65,11 @@ class ZoomAndDropableGraphicView(ZoomableGraphicView):
 
         plot_min, plot_max = util.minmax(self.signal.real_plot_data)
         data_min, data_max = IQArray.min_max_for_dtype(self.signal.real_plot_data.dtype)
-        self.scale(1, (data_max - data_min) / (plot_max-plot_min))
+        self.scale(1, (data_max - data_min) / (plot_max - plot_min))
 
-        self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
+        self.centerOn(
+            self.view_rect().x() + self.view_rect().width() / 2, self.y_center
+        )
 
     def eliminate(self):
         # Do _not_ call eliminate() for self.signal and self.proto_analyzer

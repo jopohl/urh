@@ -73,7 +73,7 @@ The official URH docker image is available [here](https://hub.docker.com/r/jopoh
 ### macOS
 #### Using DMG
 
-It is recommended to use __at least macOS 10.14__ when using the DMG available [here](https://github.com/jopohl/urh/releases).
+It is recommended to use __at least macOS 12__ when using the DMG available [here](https://github.com/jopohl/urh/releases).
 
 #### With brew
 URH is available as a [homebrew formula](https://formulae.brew.sh/formula/urh) so you can install it with

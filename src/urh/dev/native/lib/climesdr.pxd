@@ -5,7 +5,7 @@ ctypedef unsigned long long uint64_t
 
 cdef extern from "lime/LimeSuite.h":
     ctypedef double float_type
-    const int LMS_SUCCESS = 0
+    int LMS_SUCCESS = 0
 
     ctypedef void lms_device_t
     ctypedef char lms_info_str_t[256]
@@ -14,8 +14,8 @@ cdef extern from "lime/LimeSuite.h":
     int LMS_Open(lms_device_t ** device, lms_info_str_t info, void*args)
     int LMS_Close(lms_device_t *device)
 
-    const bool LMS_CH_TX = True
-    const bool LMS_CH_RX = False
+    bool LMS_CH_TX = True
+    bool LMS_CH_RX = False
 
     ctypedef struct lms_range_t:
         float_type min  # Minimum allowed value

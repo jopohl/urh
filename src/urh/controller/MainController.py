@@ -391,7 +391,9 @@ class MainController(QMainWindow):
         self.ui.tabWidget.setCurrentIndex(3)
         self.simulator_tab_controller.load_simulator_file(filename)
 
-    def add_signalfile(self, filename: str, group_id=0, enforce_sample_rate=None):
+    def add_signalfile(
+        self, filename: str, group_id=0, enforce_sample_rate=None, signal_timestamp=0
+    ):
         if not os.path.exists(filename):
             QMessageBox.critical(
                 self,
@@ -411,7 +413,9 @@ class MainController(QMainWindow):
         else:
             sample_rate = self.project_manager.device_conf["sample_rate"]
 
-        signal = Signal(filename, sig_name, sample_rate=sample_rate)
+        signal = Signal(
+            filename, sig_name, sample_rate=sample_rate, timestamp=signal_timestamp
+        )
 
         self.file_proxy_model.open_files.add(filename)
         self.add_signal(signal, group_id)
@@ -944,11 +948,15 @@ class MainController(QMainWindow):
         r.device_parameters_changed.connect(pm.set_device_parameters)
         r.show()
 
-    @pyqtSlot(list, float)
-    def on_signals_recorded(self, file_names: list, sample_rate: float):
+    @pyqtSlot(list)
+    def on_signals_recorded(self, recorded_files: list):
         QApplication.instance().setOverrideCursor(Qt.WaitCursor)
-        for filename in file_names:
-            self.add_signalfile(filename, enforce_sample_rate=sample_rate)
+        for recorded_file in recorded_files:
+            self.add_signalfile(
+                recorded_file.filename,
+                enforce_sample_rate=recorded_file.sample_rate,
+                signal_timestamp=recorded_file.timestamp,
+            )
         QApplication.instance().restoreOverrideCursor()
 
     @pyqtSlot()

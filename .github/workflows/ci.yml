@@ -20,15 +20,15 @@ jobs:
         architecture: [x64]
         include:
           - os: windows-2019
-            python-version: '3.8'
+            python-version: '3.11'
             architecture: x86
         exclude:
+          - os: windows-2019
+            python-version: '3.8'
           - os: windows-2019
             python-version: '3.9'
           - os: windows-2019
             python-version: '3.10'
-          - os: windows-2019
-            python-version: '3.11'
           - os: windows-2019
             python-version: '3.12'
           - os: macOS-12

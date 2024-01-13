@@ -155,7 +155,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.os }}-${{ matrix.python_version }}-${{ matrix.architecture }}
+          name: dist-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.architecture }}
           path: dist
 
       - name: Run pytest with coverage

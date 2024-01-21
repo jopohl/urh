@@ -47,10 +47,10 @@ cdef void __rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum
         PyGILState_Release(gstate)
         free(data)
 
-cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext):
+cdef void _rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext) noexcept:
     __rx_stream_callback(xi, xq, firstSampleNum, grChanged, rfChanged, fsChanged, numSamples, reset, cbContext)
 
-cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext):
+cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext) noexcept:
     return
 
 cpdef void set_gr_mode_for_dev_model(int dev_model):

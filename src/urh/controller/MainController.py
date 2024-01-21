@@ -217,6 +217,7 @@ class MainController(QMainWindow):
         )
         self.ui.actionSave_project.triggered.connect(self.save_project)
         self.ui.actionClose_project.triggered.connect(self.close_project)
+        self.ui.actionExit_URH.triggered.connect(self.close)
 
         self.ui.actionAbout_AutomaticHacker.triggered.connect(
             self.on_show_about_clicked
@@ -352,13 +353,12 @@ class MainController(QMainWindow):
             self.on_label_non_project_mode_link_activated
         )
 
-        self.ui.menuFile.addSeparator()
         for i in range(settings.MAX_RECENT_FILE_NR):
             recent_file_action = QAction(self)
             recent_file_action.setVisible(False)
             recent_file_action.triggered.connect(self.on_open_recent_action_triggered)
             self.recentFileActionList.append(recent_file_action)
-            self.ui.menuFile.addAction(self.recentFileActionList[i])
+            self.ui.menuRecent.addAction(self.recentFileActionList[i])
 
     def add_plain_bits_from_txt(self, filename: str):
         with open(filename) as f:

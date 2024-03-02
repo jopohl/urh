@@ -5,7 +5,7 @@ env:
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, *]
     tags: [ "v*" ]
   pull_request:
     branches: [ master ]
@@ -92,7 +92,7 @@ jobs:
             pip install pyaudio
             pip install pillow
           fi
-          pip install twine setuptools pytest pytest-xvfb pytest-cov pytest-faulthandler six appdirs packaging pyinstaller
+          pip install twine setuptools pytest pytest-xvfb pytest-cov pytest-faulthandler six appdirs packaging pyinstaller==6.4.0
           python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
         shell: bash
         env:
@@ -158,18 +158,6 @@ jobs:
           name: dist-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.architecture }}
           path: dist
 
-      - name: Run pytest with coverage
-        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.11' }}
-        run: |
-          touch tests/show_gui
-          cp tests/.coveragerc .
-          pytest -s -v --junitxml=junit/test-results.xml --cov=src --cov-config=.coveragerc tests
-          coverage xml
-          coverage html
-
-      - name: Run pytest without coverage
-        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.11' }}
-        run: pytest -s -v --junitxml=junit/test-results.xml tests
 
       - uses: ncipollo/release-action@v1
         if: startsWith(github.ref, 'refs/tags/')

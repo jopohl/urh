@@ -54,6 +54,8 @@ def set_builtin(name, value):
     if isinstance(__builtins__, dict):
         __builtins__[name] = value
     else:
+        # to support https://github.com/pypa/build
+        # see https://github.com/jopohl/urh/issues/1106
         setattr(__builtins__, name, value)
 
 class build_ext(_build_ext):

@@ -7,9 +7,6 @@ from cython.view cimport array as cvarray  # needed for converting of malloc arr
 from urh.util.Logger import logger
 
 
-cdef extern from "Python.h":
-    void PyEval_InitThreads()
-
 ctypedef unsigned char uint8_t
 ctypedef unsigned int uint32_t
 ctypedef unsigned long long uint64_t
@@ -81,7 +78,6 @@ cpdef int set_if_rx_gain(uint8_t vga_gain):
 cpdef int start_rx(callback):
     global f
     f = callback
-    PyEval_InitThreads()
     cairspy.airspy_set_sample_type(_c_device, cairspy.airspy_sample_type.AIRSPY_SAMPLE_FLOAT32_IQ)
     return cairspy.airspy_start_rx(_c_device, _c_callback_recv, NULL)
 

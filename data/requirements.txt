@@ -2,3 +2,4 @@ numpy
 pyqt5
 psutil
 cython
+setuptools

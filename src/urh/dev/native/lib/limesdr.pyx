@@ -290,7 +290,7 @@ cpdef int set_antenna(size_t index):
 
 cpdef int get_antenna():
     """
-    Obtain currently selected antenna of the the specified RX or TX channel.
+    Obtain currently selected antenna of the specified RX or TX channel.
      
     :return: Index of selected antenna on success, (-1) on failure
     """

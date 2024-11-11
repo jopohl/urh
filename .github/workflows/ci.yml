@@ -75,8 +75,7 @@ jobs:
             pip install pywin32 pyaudio
           elif [[ $OS == mac* ]] 
           then
-            brew tap pothosware/homebrew-pothos
-            brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd
+            brew install airspy hackrf librtlsdr libbladerf pothosware/homebrew-pothos/limesuite portaudio uhd
             
             wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg
             sudo installer -pkg macOS-10.15.pkg -target /

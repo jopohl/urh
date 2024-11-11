@@ -142,7 +142,7 @@ def read_long_description():
         return ""
 
 
-install_requires = ["numpy", "psutil", "cython"]
+install_requires = ["numpy<2.0.0", "psutil", "cython", "setuptools"]
 if IS_RELEASE:
     install_requires.append("pyqt5")
 else:
@@ -168,7 +168,7 @@ setup(
     license="GNU General Public License (GPL)",
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=install_requires,
-    setup_requires=["numpy"],
+    setup_requires=["numpy<2.0.0"],
     packages=get_packages(),
     ext_modules=get_extensions(),
     cmdclass={"build_ext": build_ext},

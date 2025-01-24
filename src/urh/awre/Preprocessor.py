@@ -100,7 +100,10 @@ class Preprocessor(object):
                         (pl for pl in preamble_lengths if pl % 4 == 0), None
                     )
                 if preamble_length is None:
-                    preamble_length = preamble_lengths[0]
+                    try:
+                        preamble_length = preamble_lengths[0]
+                    except IndexError as e:
+                        preamble_length = 0
                 result[i] = preamble_length
 
         return result

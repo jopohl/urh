@@ -68,6 +68,9 @@ class LimeSDR(Device):
         ):
             return False
 
+        if not is_tx:
+            limesdr.enable_channel(True, True, parameters[cls.Command.SET_CHANNEL_INDEX.name])
+
         limesdr.enable_channel(
             True, is_tx, parameters[cls.Command.SET_CHANNEL_INDEX.name]
         )

@@ -142,7 +142,7 @@ def read_long_description():
         return ""
 
 
-install_requires = ["numpy<2.0.0", "psutil", "cython", "setuptools"]
+install_requires = ["numpy<2.0.0", "psutil", "cython<3.1", "setuptools"]
 if IS_RELEASE:
     install_requires.append("pyqt5")
 else:

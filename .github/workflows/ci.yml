@@ -76,8 +76,7 @@ jobs:
           elif [[ $OS == mac* ]] 
           then
             # https://stackoverflow.com/a/79622211
-            export CMAKE_POLICY_VERSION_MINIMUM=3.5
-            brew install airspy hackrf librtlsdr libbladerf pothosware/homebrew-pothos/limesuite portaudio uhd
+            CMAKE_POLICY_VERSION_MINIMUM=3.5 brew install airspy hackrf librtlsdr libbladerf pothosware/homebrew-pothos/limesuite portaudio uhd
             
             wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg
             sudo installer -pkg macOS-10.15.pkg -target /

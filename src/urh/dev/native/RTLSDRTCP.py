@@ -24,12 +24,10 @@ class RTLSDRTCP(Device):
         "rtlXtalFreq": 0x0B,
         "tunerXtalFreq": 0x0C,
         "gainByIndex": 0x0D,
-
         # At least two rtl_tcp implementations agree on the biasTee value.
         # See https://github.com/pinkavaj/rtl-sdr/blob/master/include/rtl_tcp.h#L50
         # See https://gitea.osmocom.org/sdr/rtl-sdr/src/branch/master/src/rtl_tcp.c
         "biasTee": 0x0E,
-
         # Only pinkavaj/rtl-sdr has a bandwidth constant; osmocom does not.
         # As a result, bandwidth commands will do nothing when using osmocom's rtl_tcp.
         "bandwidth": 0x40,

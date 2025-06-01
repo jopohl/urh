@@ -29,7 +29,7 @@ class RTLSDRTCP(Device):
         "biasTee",
     ]
 
-    DATA_TYPE = np.uint8
+    DATA_TYPE = np.int8
 
     @staticmethod
     def receive_sync(

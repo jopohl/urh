@@ -10,24 +10,30 @@ from urh.util.Logger import logger
 class RTLSDRTCP(Device):
     MAXDATASIZE = 65536
     ENDIAN = "big"
-    RTL_TCP_CONSTS = [
-        "NULL",
-        "centerFreq",
-        "sampleRate",
-        "tunerGainMode",
-        "tunerGain",
-        "freqCorrection",
-        "tunerIFGain",
-        "testMode",
-        "agcMode",
-        "directSampling",
-        "offsetTuning",
-        "rtlXtalFreq",
-        "tunerXtalFreq",
-        "gainByIndex",
-        "bandwidth",
-        "biasTee",
-    ]
+    RTL_TCP_CONSTS = {
+        "centerFreq": 0x01,
+        "sampleRate": 0x02,
+        "tunerGainMode": 0x03,
+        "tunerGain": 0x04,
+        "freqCorrection": 0x05,
+        "tunerIFGain": 0x06,
+        "testMode": 0x07,
+        "agcMode": 0x08,
+        "directSampling": 0x09,
+        "offsetTuning": 0x0A,
+        "rtlXtalFreq": 0x0B,
+        "tunerXtalFreq": 0x0C,
+        "gainByIndex": 0x0D,
+
+        # At least two rtl_tcp implementations agree on the biasTee value.
+        # See https://github.com/pinkavaj/rtl-sdr/blob/master/include/rtl_tcp.h#L50
+        # See https://gitea.osmocom.org/sdr/rtl-sdr/src/branch/master/src/rtl_tcp.c
+        "biasTee": 0x0E,
+
+        # Only pinkavaj/rtl-sdr has a bandwidth constant; osmocom does not.
+        # As a result, bandwidth commands will do nothing when using osmocom's rtl_tcp.
+        "bandwidth": 0x40,
+    }
 
     DATA_TYPE = np.int8
 
@@ -42,6 +48,7 @@ class RTLSDRTCP(Device):
         gain: int,
         freq_correction: int,
         direct_sampling_mode: int,
+        bias_tee_enabled: bool,
         device_ip: str,
         port: int,
     ):
@@ -57,6 +64,7 @@ class RTLSDRTCP(Device):
             sdr.set_parameter(
                 "directSampling", int(direct_sampling_mode), ctrl_connection
             )
+            sdr.set_parameter("biasTee", int(bias_tee_enabled), ctrl_connection)
             # Gain has to be set last, otherwise it does not get considered by RTL-SDR
             sdr.set_parameter("tunerGain", int(gain), ctrl_connection)
             exit_requested = False
@@ -152,6 +160,7 @@ class RTLSDRTCP(Device):
             self.gain,
             self.freq_correction,
             self.direct_sampling_mode,
+            self.bias_tee_enabled,
             self.device_ip,
             self.port,
         )
@@ -239,7 +248,7 @@ class RTLSDRTCP(Device):
         self, param: str, value: int, ctrl_connection
     ):  # returns error (True/False)
         if self.socket_is_open:
-            msg = self.RTL_TCP_CONSTS.index(param).to_bytes(
+            msg = self.RTL_TCP_CONSTS[param].to_bytes(
                 1, self.ENDIAN
             )  # Set param at bits 0-7
             msg += value.to_bytes(4, self.ENDIAN)  # Set value at bits 8-39

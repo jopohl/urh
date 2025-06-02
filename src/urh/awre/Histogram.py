@@ -99,7 +99,7 @@ class Histogram(object):
         values = defaultdict(list)
         for i in self.__active_indices:
             vector = self.__vectors[i]
-            values[vector[start : start + length].tostring()].append(i)
+            values[vector[start : start + length].tobytes()].append(i)
         value = max(values, key=lambda x: len(x))
         indices = values[value]
         return self.__vectors[indices[0]][start : start + length]

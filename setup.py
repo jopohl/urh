@@ -151,9 +151,6 @@ else:
     except ImportError:
         install_requires.append("pyqt5")
 
-if sys.version_info < (3, 4):
-    install_requires.append("enum34")
-
 setup(
     name="urh",
     version=version.VERSION,

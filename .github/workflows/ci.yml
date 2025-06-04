@@ -91,7 +91,7 @@ jobs:
             pip install pyaudio
             pip install pillow
           fi
-          pip install twine setuptools pytest pytest-xvfb pytest-cov pytest-faulthandler six appdirs packaging pyinstaller
+          pip install twine setuptools pytest pytest-xvfb pytest-cov appdirs packaging pyinstaller
           python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
         shell: bash
         env:

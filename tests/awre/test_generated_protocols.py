@@ -152,11 +152,11 @@ class TestGeneratedProtocols(AWRETestCase):
         ff.run()
 
         self.assertIn(
-            known_participant_addresses[0].tostring(),
+            known_participant_addresses[0].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
         self.assertIn(
-            known_participant_addresses[1].tostring(),
+            known_participant_addresses[1].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
 
@@ -172,11 +172,11 @@ class TestGeneratedProtocols(AWRETestCase):
         ff.run()
 
         self.assertIn(
-            known_participant_addresses[0].tostring(),
+            known_participant_addresses[0].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
         self.assertIn(
-            known_participant_addresses[1].tostring(),
+            known_participant_addresses[1].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
 
@@ -221,11 +221,11 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertEqual(len(ff.message_types), 1)
 
         self.assertIn(
-            known_participant_addresses[0].tostring(),
+            known_participant_addresses[0].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
         self.assertIn(
-            known_participant_addresses[1].tostring(),
+            known_participant_addresses[1].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
 
@@ -244,11 +244,11 @@ class TestGeneratedProtocols(AWRETestCase):
         self.assertEqual(len(ff.message_types), 1)
 
         self.assertIn(
-            known_participant_addresses[0].tostring(),
+            known_participant_addresses[0].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
         self.assertIn(
-            known_participant_addresses[1].tostring(),
+            known_participant_addresses[1].tobytes(),
             list(map(bytes, ff.known_participant_addresses.values())),
         )
 

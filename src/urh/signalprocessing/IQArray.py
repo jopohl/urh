@@ -93,7 +93,7 @@ class IQArray(object):
         return self.convert_to(np.float32).flatten(order="C").view(np.complex64)
 
     def to_bytes(self):
-        return self.__data.tostring()
+        return self.__data.tobytes()
 
     def subarray(self, start=None, stop=None, step=None):
         return IQArray(np.ascontiguousarray(self[start:stop:step]))

@@ -262,13 +262,13 @@ class SimulatorConfiguration(QObject):
         items = []
 
         modulators_tag = xml_tag.find("modulators")
-        if modulators_tag:
+        if modulators_tag is not None:
             self.project_manager.modulators = Modulator.modulators_from_xml_tag(
                 modulators_tag
             )
 
         participants_tag = xml_tag.find("participants")
-        if participants_tag:
+        if participants_tag is not None:
             for participant in Participant.read_participants_from_xml_tag(
                 participants_tag
             ):
@@ -277,19 +277,19 @@ class SimulatorConfiguration(QObject):
             self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")
-        if decodings_tag:
+        if decodings_tag is not None:
             self.project_manager.decodings = Encoding.read_decoders_from_xml_tag(
                 decodings_tag
             )
 
         rx_config_tag = xml_tag.find("simulator_rx_conf")
-        if rx_config_tag:
+        if rx_config_tag is not None:
             ProjectManager.read_device_conf_dict(
                 rx_config_tag, self.project_manager.simulator_rx_conf
             )
 
         tx_config_tag = xml_tag.find("simulator_tx_conf")
-        if tx_config_tag:
+        if tx_config_tag is not None:
             ProjectManager.read_device_conf_dict(
                 tx_config_tag, self.project_manager.simulator_tx_conf
             )

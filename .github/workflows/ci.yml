@@ -15,30 +15,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        os: [ubuntu-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
         architecture: [x64]
         include:
           - os: windows-latest
-            python-version: '3.11'
+            python-version: '3.12'
             architecture: x86
-        exclude:
-          - os: windows-latest
-            python-version: '3.8'
-          - os: windows-latest
-            python-version: '3.9'
-          - os: windows-latest
-            python-version: '3.10'
           - os: windows-latest
             python-version: '3.12'
-          - os: macOS-13
-            python-version: '3.8'
-          - os: macOS-13
-            python-version: '3.9'
-          - os: macOS-13
-            python-version: '3.10'
+            architecture: x64
           - os: macOS-13
             python-version: '3.12'
+            architecture: x64
       fail-fast: false
 
     steps:
@@ -101,7 +90,7 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == '3.11' && startsWith(matrix.os, 'ubuntu') }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.12' }}
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel
@@ -158,7 +147,7 @@ jobs:
           path: dist
 
       - name: Run pytest with coverage
-        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.11' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.12' }}
         run: |
           touch tests/show_gui
           cp tests/.coveragerc .
@@ -167,7 +156,7 @@ jobs:
           coverage html
 
       - name: Run pytest without coverage
-        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.11' }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.12' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
       - uses: ncipollo/release-action@v1

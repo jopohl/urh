@@ -82,7 +82,9 @@ class SimulatorExpressionParser(QObject):
         elif isinstance(node, ast.UnaryOp):
             return self.operators[type(node.op)](self.evaluate_node(node.operand))
         elif isinstance(node, ast.Compare):
-            to_string = isinstance(node.comparators[0], ast.Str)
+            to_string = isinstance(node.comparators[0], ast.Constant) and isinstance(
+                node.comparators[0].value, str
+            )
 
             return self.operators[type(node.ops[0])](
                 self.evaluate_attribute_node(node.left, to_string),
@@ -91,14 +93,14 @@ class SimulatorExpressionParser(QObject):
         elif isinstance(node, ast.BoolOp):
             func = all if isinstance(node.op, ast.And) else any
             return func(self.evaluate_node(value) for value in node.values)
-        elif isinstance(node, ast.Str):
-            return node.s
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return node.value
         elif isinstance(node, ast.Attribute):
             return self.evaluate_attribute_node(node)
-        elif isinstance(node, ast.Num):
-            return node.n
-        else:
-            logger.error("Error during parsing")
+        elif isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            return node.value
+        logger.error("Error during parsing")
+        return None
 
     def evaluate_attribute_node(self, node, to_string=False):
         identifier = node.value.id + "." + node.attr
@@ -124,7 +126,7 @@ class SimulatorExpressionParser(QObject):
             return self.simulator_config.item_dict[identifier].return_code
 
     def validate_formula_node(self, node):
-        if isinstance(node, ast.Num):
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
             return
         elif isinstance(node, ast.BinOp):
             if type(node.op) not in self.op_formula:

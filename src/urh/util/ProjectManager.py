@@ -509,7 +509,7 @@ class ProjectManager(QObject):
                 messages_tag = sig_tag.find("messages")
 
                 try:
-                    if messages_tag:
+                    if messages_tag is not None:
                         for i, message_tag in enumerate(messages_tag.iter("message")):
                             messages[i].from_xml(message_tag, self.participants)
                 except IndexError:

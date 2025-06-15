@@ -630,7 +630,7 @@ class Message(object):
                     break
 
         message_type_tag = tag.find("message_type")
-        if message_type_tag:
+        if message_type_tag is not None:
             self.message_type = MessageType.from_xml(message_type_tag)
 
     @classmethod

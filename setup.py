@@ -2,8 +2,8 @@ import os
 import sys
 import tempfile
 
-if sys.version_info < (3, 8):
-    print("You need at least Python 3.8 for this application!")
+if sys.version_info < (3, 9):
+    print("You need at least Python 3.9 for this application!")
     if sys.version_info[0] < 3:
         print("try running with python3 {}".format(" ".join(sys.argv)))
     sys.exit(1)
@@ -166,7 +166,7 @@ setup(
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=install_requires,
     setup_requires=["numpy<2.0.0"],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     packages=get_packages(),
     ext_modules=get_extensions(),
     cmdclass={"build_ext": build_ext},

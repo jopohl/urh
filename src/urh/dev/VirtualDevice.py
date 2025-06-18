@@ -226,6 +226,18 @@ class VirtualDevice(QObject):
                         baseband_gain=baseband_gain,
                         resume_on_full_receive_buffer=resume_on_full_receive_buffer,
                     )
+                elif name.startswith("hydrasdr"):
+                    from urh.dev.native.HydraSDR import HydraSDR
+
+                    self.__dev = HydraSDR(
+                        center_freq=freq,
+                        sample_rate=sample_rate,
+                        bandwidth=bandwidth,
+                        gain=gain,
+                        if_gain=if_gain,
+                        baseband_gain=baseband_gain,
+                        resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+                    )
                 elif name.startswith("usrp"):
                     from urh.dev.native.USRP import USRP
 

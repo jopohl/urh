@@ -20,6 +20,7 @@ COMPILER_DIRECTIVES = {
 }
 
 DEVICES = {
+    "hydrasdr": {"lib": "hydrasdr", "test_function": "open"},
     "airspy": {"lib": "airspy", "test_function": "open"},
     "bladerf": {
         "lib": "bladeRF",

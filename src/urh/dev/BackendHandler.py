@@ -95,6 +95,7 @@ class BackendHandler(object):
         "BladeRF",
         "FUNcube",
         "HackRF",
+        "HydraSDR",
         "Rad1o",
         "LimeSDR",
         "PlutoSDR",
@@ -213,6 +214,15 @@ class BackendHandler(object):
             return False
 
     @property
+    def __hydrasdr_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import hydrasdr
+
+            return True
+        except ImportError:
+            return False
+
+    @property
     def __lime_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import limesdr
@@ -317,6 +327,10 @@ class BackendHandler(object):
             backends.add(Backends.native)
 
         if devname.lower().startswith("airspy") and self.__airspy_native_enabled:
+            supports_rx, supports_tx = True, False
+            backends.add(Backends.native)
+
+        if devname.lower().startswith("hydrasdr") and self.__hydrasdr_native_enabled:
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 

@@ -137,6 +137,20 @@ DEVICE_CONFIG["AirSpy Mini"] = {
     "rx_baseband_gain": list(range(0, 16)),
 }
 
+# https://hydrasdr.com/
+
+DEVICE_CONFIG["HydraSDR"] = {
+    "center_freq": dev_range(start=24, stop=1800 * M, step=1),
+    "sample_rate": [
+        10 * M,
+        10 * M,
+    ],  # This device always uses 10M, no matter what is configured.
+    "bandwidth": [10 * M, 10 * M],
+    "rx_rf_gain": list(range(0, 16)),
+    "rx_if_gain": list(range(0, 16)),
+    "rx_baseband_gain": list(range(0, 16)),
+}
+
 DEVICE_CONFIG["SDRPlay"] = {
     "center_freq": dev_range(start=1 * K, stop=2 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=10 * M, step=1),

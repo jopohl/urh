@@ -77,8 +77,8 @@ cdef extern from "libhydrasdr/hydrasdr.h":
     int hydrasdr_config_write(hydrasdr_device* device, const uint8_t page_index, const uint16_t length, unsigned char *data)
     int hydrasdr_config_read(hydrasdr_device* device, const uint8_t page_index, const uint16_t length, unsigned char *data)
     
-    int hydrasdr_r820t_write(hydrasdr_device* device, uint8_t register_number, uint8_t value)
-    int hydrasdr_r820t_read(hydrasdr_device* device, uint8_t register_number, uint8_t* value)
+    int hydrasdr_r82x_write(struct hydrasdr_device* device, uint8_t register_number, uint8_t value)
+    int hydrasdr_r82x_read(struct hydrasdr_device* device, uint8_t register_number, uint8_t* value);
     
     int hydrasdr_board_id_read(hydrasdr_device* device, uint8_t* value)
     # Parameter length shall be at least 128bytes

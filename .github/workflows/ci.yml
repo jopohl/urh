@@ -82,6 +82,12 @@ jobs:
           fi
           pip install twine setuptools pytest pytest-xvfb pytest-cov appdirs packaging pyinstaller
           python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
+          git clone https://github.com/hydrasdr/rfone_host.git
+          cd rfone_host
+          mkdir build
+          cd build
+          cmake ..
+          make && make install
         shell: bash
         env:
           OS: ${{ matrix.os }}

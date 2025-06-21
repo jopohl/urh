@@ -57,14 +57,17 @@ jobs:
           if [[ $OS == ubuntu* ]]
           then
             sudo apt-get update
-            sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
-            pip install PyVirtualDisplay==0.2.5
+            sudo apt-get install libhackrf-dev librtlsdr-dev xvfb libxkbcommon-x11-0 x11-utils libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 build-essential cmake git pkg-config
             git clone https://github.com/hydrasdr/rfone_host.git
             cd rfone_host
             mkdir build
             cd build
-            cmake ..
-            make && sudo make install
+            cmake -DCMAKE_INSTALL_PREFIX="/usr" ..
+            make -j$(nproc)
+            sudo make install
+            sudo ldconfig
+            cd ../..
+            pip install PyVirtualDisplay==0.2.5
           elif [[ $OS == windows* ]]
           then
             pip install pywin32 pyaudio

@@ -7,7 +7,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/:/usr/local/lib/:/usr/l
 git clone https://github.com/hydrasdr/rfone_host.git /tmp/rfone_host \
  && cmake3 -Wno-dev -S /tmp/rfone_host -B /tmp/build_rfone_host \
  && make -j$(nproc) -C /tmp/build_rfone_host \
- && make -C /tmp/build_rfone_host install \
+ && make -C /tmp/build_rfone_host install
 # TODO END
 
 touch /tmp/urh_releasing

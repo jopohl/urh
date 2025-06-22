@@ -50,6 +50,56 @@ jobs:
         env:
           ARCH: ${{ matrix.architecture }}
 
+      - name: Setup MSYS2
+        if: startsWith(matrix.os, 'windows')
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-pkg-config
+            git
+            wget
+            unzip
+            p7zip
+
+      - name: Build rfone_host (Windows)
+        if: startsWith(matrix.os, 'windows')
+        shell: msys2 {0}
+        run: |
+          # Clone rfone_host
+          git clone https://github.com/hydrasdr/rfone_host.git
+          cd rfone_host
+          
+          # Download libusb as specified in README
+          wget -nv https://github.com/libusb/libusb/releases/download/v1.0.23/libusb-1.0.23.7z
+          # Extract libusb-1.0.23.7z to rfone_host directory
+          7z x libusb-1.0.23.7z
+          # Verify we have rfone_host/libusb-1.0.23 with proper structure
+          ls -la libusb-1.0.23/
+          
+          # Download pthreads as specified in README
+          wget -nv https://gcc.gnu.org/pub/pthreads-win32/pthreads-w32-2-9-1-release.zip
+          # Extract pthreads-w32-2-9-1-release.zip to rfone_host directory as libpthread-2-9-1-win
+          unzip -q pthreads-w32-2-9-1-release.zip
+          mv pthreads-w32-2-9-1-release libpthread-2-9-1-win
+          # Verify we have rfone_host/libpthread-2-9-1-win with dll, include, lib directories
+          ls -la libpthread-2-9-1-win/
+          
+          # Create build directory and build using MSYS2/MinGW64 as per README
+          mkdir build
+          cd build
+          
+          # Configure with cmake using MSYS Makefiles
+          cmake ../ -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/mingw64/include/libusb-1.0/
+          
+          # Build
+          make -j$(nproc)
+          make install
+
       - name: Install Dependencies
         run: |
           pip install wheel
@@ -71,23 +121,6 @@ jobs:
           elif [[ $OS == windows* ]]
           then
             pip install pywin32 pyaudio
-            ## installing HydraSDR dependencies
-            # Install MSYS2 and required packages
-            choco install msys2 --no-progress
-            C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-            C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm cmake mingw-w64-x86_64-libusb mingw-w64-x86_64-gcc mingw-w64-x86_64-make"
-            
-            # Clone and build rfone_host
-            git clone https://github.com/hydrasdr/rfone_host.git
-            cd rfone_host
-            mkdir build
-            cd build
-            
-            # Build using MSYS2
-            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && cmake ../ -G 'MSYS Makefiles' -DLIBUSB_INCLUDE_DIR=/mingw64/include/libusb-1.0/"
-            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && make"
-            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && make install"
-            ## End of HydraSDR deps
           elif [[ $OS == mac* ]] 
           then
             brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd

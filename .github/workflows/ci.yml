@@ -71,6 +71,23 @@ jobs:
           elif [[ $OS == windows* ]]
           then
             pip install pywin32 pyaudio
+            ## installing HydraSDR dependencies
+            # Install MSYS2 and required packages
+            choco install msys2 --no-progress
+            C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+            C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm cmake mingw-w64-x86_64-libusb mingw-w64-x86_64-gcc mingw-w64-x86_64-make"
+            
+            # Clone and build rfone_host
+            git clone https://github.com/hydrasdr/rfone_host.git
+            cd rfone_host
+            mkdir build
+            cd build
+            
+            # Build using MSYS2
+            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && cmake ../ -G 'MSYS Makefiles' -DLIBUSB_INCLUDE_DIR=/mingw64/include/libusb-1.0/"
+            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && make"
+            C:\tools\msys64\usr\bin\bash.exe -lc "cd /d/a/*/rfone_host/build && make install"
+            ## End of HydraSDR deps
           elif [[ $OS == mac* ]] 
           then
             brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd

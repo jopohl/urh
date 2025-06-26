@@ -46,6 +46,12 @@ jobs:
           wget -nv -O windrivers.zip https://github.com/jopohl/sdrbuild/releases/download/v1.1/win-$ARCH.zip
           7z x windrivers.zip -osrc/urh/dev/native/lib/shared
           ls src/urh/dev/native/lib/shared
+          if [[ $ARCH == x64* ]]
+            # install HydraSDR librtlsdr
+            wget -nv -O hydrasdr-host.zip https://github.com/hydrasdr/rfone_host/releases/download/v1.0.1/hydrasdr-host-tools-Windows-x64-v1.0.1.zip
+            7z x hydrasdr-host.zip -osrc/urh/dev/native/lib/shared
+            ls src/urh/dev/native/lib/shared
+          fi
         shell: bash
         env:
           ARCH: ${{ matrix.architecture }}
@@ -65,40 +71,6 @@ jobs:
             wget
             unzip
             p7zip
-
-      - name: Build rfone_host (Windows)
-        if: startsWith(matrix.os, 'windows')
-        shell: msys2 {0}
-        run: |
-          # Clone rfone_host
-          git clone https://github.com/hydrasdr/rfone_host.git
-          cd rfone_host
-          
-          # Download libusb as specified in README
-          wget -nv https://github.com/libusb/libusb/releases/download/v1.0.23/libusb-1.0.23.7z
-          # Extract libusb-1.0.23.7z to rfone_host directory
-          7z x libusb-1.0.23.7z
-          # Verify we have rfone_host/libusb-1.0.23 with proper structure
-          ls -la libusb-1.0.23/
-          
-          # Download pthreads as specified in README
-          wget -nv https://gcc.gnu.org/pub/pthreads-win32/pthreads-w32-2-9-1-release.zip
-          # Extract pthreads-w32-2-9-1-release.zip to rfone_host directory as libpthread-2-9-1-win
-          unzip -q pthreads-w32-2-9-1-release.zip
-          mv pthreads-w32-2-9-1-release libpthread-2-9-1-win
-          # Verify we have rfone_host/libpthread-2-9-1-win with dll, include, lib directories
-          ls -la libpthread-2-9-1-win/
-          
-          # Create build directory and build using MSYS2/MinGW64 as per README
-          mkdir build
-          cd build
-          
-          # Configure with cmake using MSYS Makefiles
-          cmake ../ -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/mingw64/include/libusb-1.0/
-          
-          # Build
-          make -j$(nproc)
-          make install
 
       - name: Install Dependencies
         run: |

@@ -49,7 +49,7 @@ jobs:
           if [[ $ARCH == x64* ]]; then
             # install HydraSDR librtlsdr
             wget -nv -O hydrasdr-host.zip https://github.com/hydrasdr/rfone_host/releases/download/v1.0.1/hydrasdr-host-tools-Windows-x64-v1.0.1.zip
-            7z x hydrasdr-host.zip -osrc/urh/dev/native/lib/shared
+            7z x -y hydrasdr-host.zip -osrc/urh/dev/native/lib/shared
             ls src/urh/dev/native/lib/shared
           fi
         shell: bash

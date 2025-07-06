@@ -54,6 +54,10 @@ DEVICES = {
         "lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
         "test_function": "mir_sdr_ApiVersion",
     },
+    "harogic": {
+        "lib": "htraapi",
+        "test_function": "Device_Open"
+    },
 }
 
 

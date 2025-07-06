@@ -95,6 +95,7 @@ class BackendHandler(object):
         "BladeRF",
         "FUNcube",
         "HackRF",
+        "Harogic",
         "HydraSDR",
         "Rad1o",
         "LimeSDR",
@@ -223,6 +224,14 @@ class BackendHandler(object):
             return False
 
     @property
+    def __harogic_native_enabled(self) -> bool:
+        try:
+            from urh.dev.native.lib import harogic
+            return True
+        except ImportError:
+            return False
+
+    @property
     def __lime_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import limesdr
@@ -332,6 +341,10 @@ class BackendHandler(object):
 
         if devname.lower().startswith("hydrasdr") and self.__hydrasdr_native_enabled:
             supports_rx, supports_tx = True, False
+            backends.add(Backends.native)
+
+        if devname.lower().startswith("harogic") and self.__harogic_native_enabled:
+            supports_rx, supports_tx = True, False # RX only for now
             backends.add(Backends.native)
 
         if (

@@ -130,7 +130,7 @@ class Device(object):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
-    def prepare_sync_receive(cls, ctrl_connection: Connection):
+    def prepare_sync_receive(cls, ctrl_connection: Connection, dev_parameters: OrderedDict):
         raise NotImplementedError("Overwrite this method in subclass!")
 
     @classmethod
@@ -172,7 +172,7 @@ class Device(object):
         if cls.ASYNCHRONOUS:
             ret = cls.enter_async_receive_mode(data_connection, ctrl_connection)
         else:
-            ret = cls.prepare_sync_receive(ctrl_connection)
+            ret = cls.prepare_sync_receive(ctrl_connection, dev_parameters)
 
         if ret != 0:
             ctrl_connection.send("failed to start rx mode")

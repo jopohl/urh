@@ -54,7 +54,7 @@ cdef extern from "libhackrf/hackrf.h":
         uint32_t part_id[2]
         uint32_t serial_no[4]
 
-    ctypedef struct hackrf_device_list:
+    ctypedef struct c_hackrf_device_list "hackrf_device_list":
         char ** serial_numbers
         hackrf_usb_board_id * usb_board_ids
         int *usb_device_index
@@ -63,7 +63,7 @@ cdef extern from "libhackrf/hackrf.h":
         void ** usb_devices
         int usb_devicecount
 
-    ctypedef hackrf_device_list hackrf_device_list_t;
+    ctypedef c_hackrf_device_list hackrf_device_list_t;
 
     ctypedef int (*hackrf_sample_block_cb_fn)(hackrf_transfer* transfer)
 

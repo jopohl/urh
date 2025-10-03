@@ -2,8 +2,8 @@ cimport urh.dev.native.lib.csdrplay as csdrplay
 import time
 from libc.stdlib cimport malloc, free
 
-ctypedef csdrplay.mir_sdr_DeviceT device_type
-ctypedef csdrplay.mir_sdr_ErrT error_t
+ctypedef csdrplay.sdrplay_api_DeviceT device_type
+ctypedef csdrplay.sdrplay_api_ErrT error_t
 
 cdef extern from "Python.h":
     ctypedef enum PyGILState_STATE:
@@ -14,7 +14,7 @@ cdef extern from "Python.h":
 
 
 
-cdef csdrplay.mir_sdr_SetGrModeT set_gr_mode=csdrplay.mir_sdr_USE_RSP_SET_GR
+cdef csdrplay.sdrplay_api_SetGrModeT set_gr_mode=csdrplay.sdrplay_api_USE_RSP_SET_GR
 
 global reset_rx, reset_rx_request_received
 reset_rx = False
@@ -56,20 +56,20 @@ cdef void _gain_change_callback(unsigned int gRdB, unsigned int lnaGRdB, void *c
 cpdef void set_gr_mode_for_dev_model(int dev_model):
     global set_gr_mode
     if dev_model == 1:
-        set_gr_mode = csdrplay.mir_sdr_USE_SET_GR_ALT_MODE
+        set_gr_mode = csdrplay.sdrplay_api_USE_SET_GR_ALT_MODE
     else:
-        set_gr_mode = csdrplay.mir_sdr_USE_RSP_SET_GR
+        set_gr_mode = csdrplay.sdrplay_api_USE_RSP_SET_GR
 
 cpdef float get_api_version():
     cdef float version = 0.0
-    csdrplay.mir_sdr_ApiVersion(&version)
+    csdrplay.sdrplay_api_ApiVersion(&version)
     return version
 
 cpdef error_t set_device_index(unsigned int index):
-    return csdrplay.mir_sdr_SetDeviceIdx(index)
+    return csdrplay.sdrplay_api_SetDeviceIdx(index)
 
 cpdef error_t release_device_index():
-    return csdrplay.mir_sdr_ReleaseDeviceIdx()
+    return csdrplay.sdrplay_api_ReleaseDeviceIdx()
 
 cpdef get_devices():
     cdef device_type *devs = <device_type*> malloc(256 * sizeof(device_type))
@@ -79,7 +79,7 @@ cpdef get_devices():
 
     cdef unsigned int num_devs = 0
     try:
-        csdrplay.mir_sdr_GetDevices(devs, &num_devs, 256)
+        csdrplay.sdrplay_api_GetDevices(devs, &num_devs, 256)
 
         result = []
 
@@ -101,18 +101,18 @@ cdef int calculate_gain_reduction(int gain):
     gain = max(20, min(gain, 59))
     return 79 - gain
 
-cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):
+cdef csdrplay.sdrplay_api_Bw_MHzT get_nearest_bandwidth(double bandwidth):
     # get nearest bwtype
-    bandwidths = {200e3: csdrplay.mir_sdr_BW_0_200,
-                  300e3: csdrplay.mir_sdr_BW_0_300,
-                  600e3: csdrplay.mir_sdr_BW_0_600,
-                  1536e3: csdrplay.mir_sdr_BW_1_536,
-                  5000e3: csdrplay.mir_sdr_BW_5_000,
-                  6000e3: csdrplay.mir_sdr_BW_6_000,
-                  7000e3: csdrplay.mir_sdr_BW_7_000,
-                  8000e3: csdrplay.mir_sdr_BW_8_000}
+    bandwidths = {200e3: csdrplay.sdrplay_api_BW_0_200,
+                  300e3: csdrplay.sdrplay_api_BW_0_300,
+                  600e3: csdrplay.sdrplay_api_BW_0_600,
+                  1536e3: csdrplay.sdrplay_api_BW_1_536,
+                  5000e3: csdrplay.sdrplay_api_BW_5_000,
+                  6000e3: csdrplay.sdrplay_api_BW_6_000,
+                  7000e3: csdrplay.sdrplay_api_BW_7_000,
+                  8000e3: csdrplay.sdrplay_api_BW_8_000}
 
-    cdef csdrplay.mir_sdr_Bw_MHzT bw_type = csdrplay.mir_sdr_Bw_MHzT.mir_sdr_BW_0_200
+    cdef csdrplay.sdrplay_api_Bw_MHzT bw_type = csdrplay.sdrplay_api_Bw_MHzT.sdrplay_api_BW_0_200
     best_match = 0
     for bw in bandwidths:
         if abs(bw - bandwidth) < abs(best_match - bandwidth):
@@ -120,13 +120,13 @@ cdef csdrplay.mir_sdr_Bw_MHzT get_nearest_bandwidth(double bandwidth):
     bw_type = bandwidths[best_match]
     return bw_type
 
-cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
-    cdef csdrplay.mir_sdr_If_kHzT if_type = csdrplay.mir_sdr_If_kHzT.mir_sdr_IF_Zero
+cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
+    cdef csdrplay.sdrplay_api_If_kHzT if_type = csdrplay.sdrplay_api_If_kHzT.sdrplay_api_IF_Zero
     best_match = 0
-    if_types = {0: csdrplay.mir_sdr_IF_Zero,
-                450: csdrplay.mir_sdr_IF_0_450,
-                1620: csdrplay.mir_sdr_IF_1_620,
-                2048: csdrplay.mir_sdr_IF_2_048}
+    if_types = {0: csdrplay.sdrplay_api_IF_Zero,
+                450: csdrplay.sdrplay_api_IF_0_450,
+                1620: csdrplay.sdrplay_api_IF_1_620,
+                2048: csdrplay.sdrplay_api_IF_2_048}
     for i in if_types:
         if abs(i - if_gain) < abs(best_match - if_gain):
             best_match = i
@@ -137,60 +137,60 @@ cdef csdrplay.mir_sdr_If_kHzT get_nearest_if_gain(double if_gain):
 cpdef init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
     global set_gr_mode
 
-    cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+    cdef csdrplay.sdrplay_api_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
     # get nearest ifgain
-    cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
+    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
 
     lna_state = 0
     cdef int gRdBsystem = 0
     cdef int samples_per_packet = 0
 
     cdef int gain_reduction = calculate_gain_reduction(gain)
-    return csdrplay.mir_sdr_StreamInit(&gain_reduction, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
+    return csdrplay.sdrplay_api_StreamInit(&gain_reduction, sample_rate / 1e6, center_freq / 1e6, bw_type, if_type, lna_state,
                                        &gRdBsystem, set_gr_mode, &samples_per_packet, _rx_stream_callback,
                                        _gain_change_callback, <void *> func)
 
 cpdef error_t set_center_freq(double frequency):
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_RF_FREQ, frequency=frequency)
+    return reinit_stream(csdrplay.sdrplay_api_CHANGE_RF_FREQ, frequency=frequency)
 
 cpdef error_t set_sample_rate(double sample_rate):
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_FS_FREQ, sample_rate=sample_rate)
+    return reinit_stream(csdrplay.sdrplay_api_CHANGE_FS_FREQ, sample_rate=sample_rate)
 
 cpdef error_t set_bandwidth(double bandwidth):
-    cdef csdrplay.mir_sdr_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_BW_TYPE, bw_type=bw_type)
+    cdef csdrplay.sdrplay_api_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
+    return reinit_stream(csdrplay.sdrplay_api_CHANGE_BW_TYPE, bw_type=bw_type)
 
 cpdef error_t set_gain(int gain):
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_GR, gain=calculate_gain_reduction(gain))
+    return reinit_stream(csdrplay.sdrplay_api_CHANGE_GR, gain=calculate_gain_reduction(gain))
 
 cpdef error_t set_if_gain(double if_gain):
-    cdef csdrplay.mir_sdr_If_kHzT if_type = get_nearest_if_gain(if_gain)
-    return reinit_stream(csdrplay.mir_sdr_CHANGE_IF_TYPE, if_type=if_type)
+    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
+    return reinit_stream(csdrplay.sdrplay_api_CHANGE_IF_TYPE, if_type=if_type)
 
 cpdef error_t set_antenna(int antenna):
-    cdef csdrplay.mir_sdr_RSPII_AntennaSelectT antenna_select
+    cdef csdrplay.sdrplay_api_RSPII_AntennaSelectT antenna_select
     if antenna == 0 or antenna == 1:
-        result = csdrplay.mir_sdr_AmPortSelect(0)
-        if result != csdrplay.mir_sdr_Success:
+        result = csdrplay.sdrplay_api_AmPortSelect(0)
+        if result != csdrplay.sdrplay_api_Success:
             return result
 
         if antenna == 0:
-            antenna_select = csdrplay.mir_sdr_RSPII_ANTENNA_A
+            antenna_select = csdrplay.sdrplay_api_RSPII_ANTENNA_A
         else:
-            antenna_select = csdrplay.mir_sdr_RSPII_ANTENNA_B
+            antenna_select = csdrplay.sdrplay_api_RSPII_ANTENNA_B
 
-        return csdrplay.mir_sdr_RSPII_AntennaControl(antenna_select)
+        return csdrplay.sdrplay_api_RSPII_AntennaControl(antenna_select)
     elif antenna == 2:
         print("hiz")
-        return csdrplay.mir_sdr_AmPortSelect(1)
+        return csdrplay.sdrplay_api_AmPortSelect(1)
 
 
-cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
+cpdef error_t reinit_stream(csdrplay.sdrplay_api_ReasonForReinitT reason_for_reinit,
                             double sample_rate=0, double frequency=0,
-                            csdrplay.mir_sdr_Bw_MHzT bw_type=csdrplay.mir_sdr_BW_Undefined,
+                            csdrplay.sdrplay_api_Bw_MHzT bw_type=csdrplay.sdrplay_api_BW_Undefined,
                             int gain=0,
-                            csdrplay.mir_sdr_If_kHzT if_type=csdrplay.mir_sdr_IF_Undefined,
-                            csdrplay.mir_sdr_LoModeT lo_mode=csdrplay.mir_sdr_LO_Undefined,
+                            csdrplay.sdrplay_api_If_kHzT if_type=csdrplay.sdrplay_api_IF_Undefined,
+                            csdrplay.sdrplay_api_LoModeT lo_mode=csdrplay.sdrplay_api_LO_Undefined,
                             int lna_state=0):
     cdef int gRdBsystem, samplesPerPacket
     global reset_rx, reset_rx_request_received, set_gr_mode
@@ -200,10 +200,10 @@ cpdef error_t reinit_stream(csdrplay.mir_sdr_ReasonForReinitT reason_for_reinit,
         time.sleep(0.01)
 
     try:
-        return csdrplay.mir_sdr_Reinit(&gain, sample_rate / 1e6, frequency / 1e6, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
+        return csdrplay.sdrplay_api_Reinit(&gain, sample_rate / 1e6, frequency / 1e6, bw_type, if_type, lo_mode, lna_state, &gRdBsystem, set_gr_mode, &samplesPerPacket, reason_for_reinit)
     finally:
         reset_rx = False
         reset_rx_request_received = False
 
 cpdef error_t close_stream():
-    csdrplay.mir_sdr_StreamUninit()
+    csdrplay.sdrplay_api_StreamUninit()

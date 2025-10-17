@@ -81,7 +81,10 @@ class SDRPlay(Device):
 
     @classmethod
     def get_device_list(cls):
-        return [cls.device_dict_to_string(d) for d in sdrplay.get_devices()]
+        sdrplay.open_api()
+        devs = [cls.device_dict_to_string(d) for d in sdrplay.get_devices()]
+        sdrplay.close_api()
+        return devs
 
     @classmethod
     def enter_async_receive_mode(
@@ -115,6 +118,13 @@ class SDRPlay(Device):
     ) -> bool:
         identifier = parameters["identifier"]
 
+        # Open the API session first
+        ret = sdrplay.open_api()
+        if ret != 0:
+            ctrl_connection.send("FAILED TO OPEN SDRPLAY API: {}".format(ret))
+            return False
+        ctrl_connection.send("OPENED SDRPLAY API: SUCCESS")
+
         try:
             device_list = sdrplay.get_devices()
             device_number = int(identifier)
@@ -127,8 +137,12 @@ class SDRPlay(Device):
             ctrl_connection.send(
                 "SET DEVICE NUMBER to {}:{}".format(device_number, ret)
             )
+            if ret != 0:
+                sdrplay.close_api()
+                return False
         except (TypeError, ValueError) as e:
             logger.exception(e)
+            sdrplay.close_api()
             return False
 
         device_model = device_list[device_number]["hw_version"]
@@ -160,6 +174,9 @@ class SDRPlay(Device):
         if cls.sdrplay_device_index is not None:
             ret = sdrplay.release_device_index()
             ctrl_connection.send("RELEASE DEVICE:" + str(ret))
+
+        ret = sdrplay.close_api()
+        ctrl_connection.send("CLOSE API:" + str(ret))
 
     @staticmethod
     def bytes_to_iq(buffer):

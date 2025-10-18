@@ -11,7 +11,7 @@ cdef csdrplay.sdrplay_api_DeviceParamsT* g_devParams = NULL
 cdef csdrplay.sdrplay_api_TunerSelectT g_tuner = csdrplay.sdrplay_api_Tuner_A
 cdef bool reset_rx = False
 
-cdef void __rx_stream_callback(short *xi, short *xq, csdrplay.sdrplay_api_StreamCbParamsT *params, unsigned int numSamples, unsigned int reset, void *cbContext) nogil:
+cdef void __rx_stream_callback(short *xi, short *xq, csdrplay.sdrplay_api_StreamCbParamsT *params, unsigned int numSamples, unsigned int reset, void *cbContext) noexcept nogil:
     global reset_rx
     if reset_rx:
         return
@@ -72,19 +72,19 @@ cpdef error_t set_gr_mode_for_dev_model(int dev_model):
         csdrplay.sdrplay_api_Update_Ext1_None
     )
 
-cpdef float get_api_version() nogil:
+cpdef float get_api_version() noexcept nogil:
     cdef float version = 0.0
     csdrplay.sdrplay_api_ApiVersion(&version)
     return version
 
-cpdef error_t open_api() nogil:
+cpdef error_t open_api() noexcept nogil:
     """
     Explicitly open the SDRPlay API session.
     Should be called before any device operations.
     """
     return csdrplay.sdrplay_api_Open()
 
-cpdef error_t close_api() nogil:
+cpdef error_t close_api() noexcept nogil:
     """
     Explicitly close the SDRPlay API session.
     Should be called after all device operations are complete.
@@ -129,7 +129,7 @@ cpdef error_t set_device_index(unsigned int index):
     finally:
         free(devs)
 
-cpdef error_t release_device_index() nogil:
+cpdef error_t release_device_index() noexcept nogil:
     return csdrplay.sdrplay_api_ReleaseDevice(&g_device)
 
 cpdef get_devices():
@@ -315,7 +315,7 @@ cpdef error_t update_params(
     err = csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT> reason_flags, csdrplay.sdrplay_api_Update_Ext1_None)
     return err
 
-cpdef error_t close_stream() nogil:
+cpdef error_t close_stream() noexcept nogil:
     global reset_rx
     if g_device.dev == NULL:
         return csdrplay.sdrplay_api_NotInitialised

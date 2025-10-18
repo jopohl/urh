@@ -255,10 +255,10 @@ cpdef error_t set_bandwidth(double bandwidth):
     g_devParams.rxChannelA.tunerParams.bwType = bw_type
     return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_BwType, csdrplay.sdrplay_api_Update_Ext1_None)
 
-cpdef error_t set_gain(int gain_ui):
+cpdef error_t set_gain(int gain):
     if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
-    cdef int gRdB = calculate_gain_reduction(gain_ui)
+    cdef int gRdB = calculate_gain_reduction(gain)
     g_devParams.rxChannelA.tunerParams.gain.gRdB = gRdB
     return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_Gr, csdrplay.sdrplay_api_Update_Ext1_None)
 

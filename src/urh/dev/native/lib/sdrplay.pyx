@@ -10,12 +10,10 @@ cdef device_type g_device
 cdef csdrplay.sdrplay_api_DeviceParamsT* g_devParams = NULL
 cdef csdrplay.sdrplay_api_TunerSelectT g_tuner = csdrplay.sdrplay_api_Tuner_A
 cdef bool reset_rx = False
-cdef bool reset_rx_request_received = False
 
 cdef void __rx_stream_callback(short *xi, short *xq, csdrplay.sdrplay_api_StreamCbParamsT *params, unsigned int numSamples, unsigned int reset, void *cbContext) nogil:
-    global reset_rx, reset_rx_request_received
+    global reset_rx
     if reset_rx:
-        reset_rx_request_received = True
         return
 
     cdef short* data = <short *>malloc(2*numSamples * sizeof(short))
@@ -318,10 +316,8 @@ cpdef error_t update_params(
     return err
 
 cpdef error_t close_stream() nogil:
-    global reset_rx, reset_rx_request_received
+    global reset_rx
     if g_device.dev == NULL:
         return csdrplay.sdrplay_api_NotInitialised
     reset_rx = True
-    # while not reset_rx_request_received:
-    #     time.sleep(0.01)
     return csdrplay.sdrplay_api_Uninit(g_device.dev)

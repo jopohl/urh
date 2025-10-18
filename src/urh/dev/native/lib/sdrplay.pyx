@@ -184,7 +184,7 @@ cdef csdrplay.sdrplay_api_Bw_MHzT get_nearest_bandwidth(double bandwidth):
     bw_type = bandwidths[best_match]
     return bw_type
 
-cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
+cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_mode(double if_mode):
     cdef csdrplay.sdrplay_api_If_kHzT if_type = csdrplay.sdrplay_api_If_kHzT.sdrplay_api_IF_Zero
     best_match = 0
     if_types = {0: csdrplay.sdrplay_api_IF_Zero,
@@ -192,7 +192,7 @@ cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
                 1620: csdrplay.sdrplay_api_IF_1_620,
                 2048: csdrplay.sdrplay_api_IF_2_048}
     for i in if_types:
-        if abs(i - if_gain) < abs(best_match - if_gain):
+        if abs(i - if_mode) < abs(best_match - if_mode):
             best_match = i
 
     if_type = if_types[best_match]
@@ -206,13 +206,13 @@ cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
 # (fsHz == 2000000) && (bwType <= sdrplay_api_BW_0_300) && (ifType == sdrplay_api_IF_0_450)
 # (fsHz == 2000000) && (bwType == sdrplay_api_BW_0_600) && (ifType == sdrplay_api_IF_0_450)
 # (fsHz == 6000000) && (bwType <= sdrplay_api_BW_1_536) && (ifType == sdrplay_api_IF_1_620)
-cpdef error_t init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
+cpdef error_t init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_mode, object func):
     if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
 
     # Calculate the nearest BW / IF
     cdef csdrplay.sdrplay_api_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
-    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
+    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_mode(if_mode)
 
     # Write initial parameters into the parameter tree (v3 unit is Hz, not MHz)
     g_devParams.devParams.fsFreq.fsHz              = sample_rate
@@ -262,10 +262,10 @@ cpdef error_t set_gain(int gain):
     g_devParams.rxChannelA.tunerParams.gain.gRdB = gRdB
     return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_Gr, csdrplay.sdrplay_api_Update_Ext1_None)
 
-cpdef error_t set_if_gain(double if_gain):
+cpdef error_t set_if_gain(double if_mode):
     if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
-    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
+    cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_mode(if_mode)
     g_devParams.rxChannelA.tunerParams.ifType = if_type
     return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_IfType, csdrplay.sdrplay_api_Update_Ext1_None)
 

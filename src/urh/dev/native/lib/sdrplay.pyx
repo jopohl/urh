@@ -237,22 +237,37 @@ cpdef error_t init_stream(int gain, double sample_rate, double center_freq, doub
     return csdrplay.sdrplay_api_Init(g_device.dev, &cbs, <void*> func)
 
 cpdef error_t set_center_freq(double frequency):
-    return update_params(csdrplay.sdrplay_api_Update_Tuner_Frf, frequency=frequency)
+    if g_device.dev == NULL or g_devParams == NULL:
+        return csdrplay.sdrplay_api_NotInitialised
+    g_devParams.rxChannelA.tunerParams.rfFreq.rfHz = frequency
+    return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_Frf, csdrplay.sdrplay_api_Update_Ext1_None)
 
 cpdef error_t set_sample_rate(double sample_rate):
-    return update_params(csdrplay.sdrplay_api_Update_Dev_Fs, sample_rate=sample_rate)
+    if g_device.dev == NULL or g_devParams == NULL:
+        return csdrplay.sdrplay_api_NotInitialised
+    g_devParams.devParams.fsFreq.fsHz = sample_rate
+    return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Dev_Fs, csdrplay.sdrplay_api_Update_Ext1_None)
 
 cpdef error_t set_bandwidth(double bandwidth):
+    if g_device.dev == NULL or g_devParams == NULL:
+        return csdrplay.sdrplay_api_NotInitialised
     cdef csdrplay.sdrplay_api_Bw_MHzT bw_type = get_nearest_bandwidth(bandwidth)
-    return update_params(csdrplay.sdrplay_api_Update_Tuner_BwType, bw_type=bw_type)
+    g_devParams.rxChannelA.tunerParams.bwType = bw_type
+    return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_BwType, csdrplay.sdrplay_api_Update_Ext1_None)
 
 cpdef error_t set_gain(int gain_ui):
+    if g_device.dev == NULL or g_devParams == NULL:
+        return csdrplay.sdrplay_api_NotInitialised
     cdef int gRdB = calculate_gain_reduction(gain_ui)
-    return update_params(csdrplay.sdrplay_api_Update_Tuner_Gr, gain=gRdB)
+    g_devParams.rxChannelA.tunerParams.gain.gRdB = gRdB
+    return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_Gr, csdrplay.sdrplay_api_Update_Ext1_None)
 
 cpdef error_t set_if_gain(double if_gain):
+    if g_device.dev == NULL or g_devParams == NULL:
+        return csdrplay.sdrplay_api_NotInitialised
     cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
-    return update_params(csdrplay.sdrplay_api_Update_Tuner_IfType, if_type=if_type)
+    g_devParams.rxChannelA.tunerParams.ifType = if_type
+    return csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, csdrplay.sdrplay_api_Update_Tuner_IfType, csdrplay.sdrplay_api_Update_Ext1_None)
 
 cpdef error_t set_antenna(int antenna):
     if g_device.dev == NULL or g_devParams == NULL:
@@ -282,46 +297,6 @@ cpdef error_t set_antenna(int antenna):
         g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT>reason, csdrplay.sdrplay_api_Update_Ext1_None
     )
 
-cpdef error_t update_params(
-    unsigned int reason_flags,
-    double sample_rate=0,
-    double frequency=0,
-    csdrplay.sdrplay_api_Bw_MHzT bw_type=csdrplay.sdrplay_api_BW_Undefined,
-    int gain=0,
-    csdrplay.sdrplay_api_If_kHzT if_type=csdrplay.sdrplay_api_IF_Undefined,
-    csdrplay.sdrplay_api_LoModeT lo_mode=csdrplay.sdrplay_api_LO_Undefined,
-    int lna_state=-1,        # -1 means no change
-):
-    cdef error_t err
-
-    if g_device.dev == NULL or g_devParams == NULL:
-        return csdrplay.sdrplay_api_NotInitialised
-
-    # First write the parameters into the parameter tree
-    if reason_flags & csdrplay.sdrplay_api_Update_Dev_Fs:
-        g_devParams.devParams.fsFreq.fsHz = sample_rate
-
-    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_Frf:
-        g_devParams.rxChannelA.tunerParams.rfFreq.rfHz = frequency
-
-    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_BwType and bw_type != csdrplay.sdrplay_api_BW_Undefined:
-        g_devParams.rxChannelA.tunerParams.bwType = bw_type
-
-    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_IfType and if_type != csdrplay.sdrplay_api_IF_Undefined:
-        g_devParams.rxChannelA.tunerParams.ifType = if_type
-
-    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_LoMode and lo_mode != csdrplay.sdrplay_api_LO_Undefined:
-        g_devParams.rxChannelA.tunerParams.loMode = lo_mode
-
-    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_Gr:
-        if gain != 0:  # The input is "gain reduction" (gRdB)
-            g_devParams.rxChannelA.tunerParams.gain.gRdB = gain
-        if lna_state != -1:
-            g_devParams.rxChannelA.tunerParams.gain.LNAstate = lna_state
-
-    # Then apply them all at once
-    err = csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT> reason_flags, csdrplay.sdrplay_api_Update_Ext1_None)
-    return err
 
 cpdef error_t close_stream() noexcept nogil:
     global reset_rx

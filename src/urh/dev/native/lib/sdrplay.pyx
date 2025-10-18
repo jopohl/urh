@@ -198,6 +198,14 @@ cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
     if_type = if_types[best_match]
     return if_type
 
+# According to SDRPlay API v3 docs:
+# Conditions for LIF down-conversion to be enabled for RSP1, RSP1a, RSP2a and RSPduo in single tuner mode:
+# (fsHz == 8192000) && (bwType == sdrplay_api_BW_1_536) && (ifType == sdrplay_api_IF_2_048)
+# (fsHz == 8000000) && (bwType == sdrplay_api_BW_1_536) && (ifType == sdrplay_api_IF_2_048)
+# (fsHz == 8000000) && (bwType == sdrplay_api_BW_5_000) && (ifType == sdrplay_api_IF_2_048)
+# (fsHz == 2000000) && (bwType <= sdrplay_api_BW_0_300) && (ifType == sdrplay_api_IF_0_450)
+# (fsHz == 2000000) && (bwType == sdrplay_api_BW_0_600) && (ifType == sdrplay_api_IF_0_450)
+# (fsHz == 6000000) && (bwType <= sdrplay_api_BW_1_536) && (ifType == sdrplay_api_IF_1_620)
 cpdef error_t init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
     if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised

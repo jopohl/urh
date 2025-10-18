@@ -370,15 +370,15 @@ cdef extern from "sdrplay_api.h":
       sdrplay_api_StreamCallback_t StreamBCbFn
       sdrplay_api_EventCallback_t  EventCbFn
 
-    sdrplay_api_ErrT sdrplay_api_Open()
-    sdrplay_api_ErrT sdrplay_api_Close()
-    sdrplay_api_ErrT sdrplay_api_ApiVersion(float *version)
-    sdrplay_api_ErrT sdrplay_api_SelectDevice(sdrplay_api_DeviceT *device)
-    sdrplay_api_ErrT sdrplay_api_ReleaseDevice(sdrplay_api_DeviceT *device)
-    sdrplay_api_ErrT sdrplay_api_Init(HANDLE dev, sdrplay_api_CallbackFnsT *callbackFns, void *cbContext)
-    sdrplay_api_ErrT sdrplay_api_Uninit(HANDLE dev)
+    sdrplay_api_ErrT sdrplay_api_Open() nogil
+    sdrplay_api_ErrT sdrplay_api_Close() nogil
+    sdrplay_api_ErrT sdrplay_api_ApiVersion(float *version) nogil
+    sdrplay_api_ErrT sdrplay_api_SelectDevice(sdrplay_api_DeviceT *device) nogil
+    sdrplay_api_ErrT sdrplay_api_ReleaseDevice(sdrplay_api_DeviceT *device) nogil
+    sdrplay_api_ErrT sdrplay_api_Init(HANDLE dev, sdrplay_api_CallbackFnsT *callbackFns, void *cbContext) nogil
+    sdrplay_api_ErrT sdrplay_api_Uninit(HANDLE dev) nogil
     sdrplay_api_ErrT sdrplay_api_GetDeviceParams(HANDLE dev,
-                                                 sdrplay_api_DeviceParamsT **deviceParams)
-    sdrplay_api_ErrT sdrplay_api_GetDevices(sdrplay_api_DeviceT *devices, unsigned int *numDevs, unsigned int maxDevs)
+                                                 sdrplay_api_DeviceParamsT **deviceParams) nogil
+    sdrplay_api_ErrT sdrplay_api_GetDevices(sdrplay_api_DeviceT *devices, unsigned int *numDevs, unsigned int maxDevs) nogil
     sdrplay_api_ErrT sdrplay_api_Update(HANDLE dev, sdrplay_api_TunerSelectT tuner,
-                                        sdrplay_api_ReasonForUpdateT reasonForUpdate, sdrplay_api_ReasonForUpdateExtension1T reasonForUpdateExt1)
+                                        sdrplay_api_ReasonForUpdateT reasonForUpdate, sdrplay_api_ReasonForUpdateExtension1T reasonForUpdateExt1) nogil

@@ -1,49 +1,36 @@
 cimport urh.dev.native.lib.csdrplay as csdrplay
 import time
 from libc.stdlib cimport malloc, free
+from libcpp cimport bool
 
 ctypedef csdrplay.sdrplay_api_DeviceT device_type
 ctypedef csdrplay.sdrplay_api_ErrT error_t
 
-cdef extern from "Python.h":
-    ctypedef enum PyGILState_STATE:
-        PyGILState_LOCKED
-        PyGILState_UNLOCKED
-    PyGILState_STATE PyGILState_Ensure()
-    void PyGILState_Release(PyGILState_STATE)
-
-
-cdef csdrplay.HANDLE g_dev = NULL
 cdef device_type g_device
 cdef csdrplay.sdrplay_api_DeviceParamsT* g_devParams = NULL
 cdef csdrplay.sdrplay_api_TunerSelectT g_tuner = csdrplay.sdrplay_api_Tuner_A
+cdef bool reset_rx = False
+cdef bool reset_rx_request_received = False
 
-global reset_rx, reset_rx_request_received
-reset_rx = False
-reset_rx_request_received = False
+cdef void __rx_stream_callback(short *xi, short *xq, csdrplay.sdrplay_api_StreamCbParamsT *params, unsigned int numSamples, unsigned int reset, void *cbContext) nogil:
+    global reset_rx, reset_rx_request_received
+    if reset_rx:
+        reset_rx_request_received = True
+        return
 
-cdef void __rx_stream_callback(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, void *cbContext) nogil:
     cdef short* data = <short *>malloc(2*numSamples * sizeof(short))
     if data == NULL:
         return
     cdef unsigned int i = 0
     cdef unsigned int j = 0
-
-    global reset_rx, reset_rx_request_received
-    with gil:
-        if reset_rx:
-            reset_rx_request_received = True
-            return
+    for i in range(0, numSamples):
+        data[j] = xi[i]
+        data[j+1] = xq[i]
+        j += 2
 
     try:
-        for i in range(0, numSamples):
-            data[j] = xi[i]
-            data[j+1] = xq[i]
-            j += 2
-
         with gil:
-            conn = <object> cbContext
-            conn.send_bytes(<short[:2*numSamples]>data)  # python callback
+            (<object> cbContext).send_bytes(<short[:2*numSamples]>data)  # python callback
     finally:
         free(data)
 
@@ -52,9 +39,7 @@ cdef void _stream_a_callback(short *xi, short *xq,
                              unsigned int numSamples,
                              unsigned int reset,
                              void *cbContext) noexcept nogil:
-    __rx_stream_callback(xi, xq,
-                         params.firstSampleNum,
-                         params.grChanged, params.rfChanged, params.fsChanged,
+    __rx_stream_callback(xi, xq, params,
                          numSamples, reset, cbContext)
 
 cdef void _stream_b_callback(short* xi, short* xq,
@@ -72,8 +57,8 @@ cdef void _event_callback(csdrplay.sdrplay_api_EventT eventId,
 
 # Keep the old interface name, internally do the v3 equivalent (set minimum gain range)
 cpdef error_t set_gr_mode_for_dev_model(int dev_model):
-    # Requires global g_dev / g_devParams / g_tuner (which we have already established)
-    if g_dev == NULL or g_devParams == NULL:
+    # Requires global g_device / g_devParams / g_tuner (which we have already established)
+    if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
 
     # Convention: dev_model == 1 means RSP1
@@ -83,25 +68,25 @@ cpdef error_t set_gr_mode_for_dev_model(int dev_model):
         g_devParams.rxChannelA.tunerParams.gain.minGr = csdrplay.sdrplay_api_NORMAL_MIN_GR
 
     return csdrplay.sdrplay_api_Update(
-        g_dev,
+        g_device.dev,
         g_tuner,
         <csdrplay.sdrplay_api_ReasonForUpdateT> csdrplay.sdrplay_api_Update_Tuner_GrLimits,
         csdrplay.sdrplay_api_Update_Ext1_None
     )
 
-cpdef float get_api_version():
+cpdef float get_api_version() nogil:
     cdef float version = 0.0
     csdrplay.sdrplay_api_ApiVersion(&version)
     return version
 
-cpdef error_t open_api():
+cpdef error_t open_api() nogil:
     """
     Explicitly open the SDRPlay API session.
     Should be called before any device operations.
     """
     return csdrplay.sdrplay_api_Open()
 
-cpdef error_t close_api():
+cpdef error_t close_api() nogil:
     """
     Explicitly close the SDRPlay API session.
     Should be called after all device operations are complete.
@@ -112,16 +97,15 @@ cpdef error_t set_device_index(unsigned int index):
     """
     Select and lock a device by index.
     Requires open_api() to be called first.
-    If a device is already selected (g_dev != NULL), uninitializes and releases it first.
     """
-    global g_dev, g_devParams, g_device
-    cdef unsigned int num_devs = 0
+    global g_device, g_devParams
     cdef device_type* devs = <device_type*> malloc(16 * sizeof(device_type))
     cdef error_t err
 
     if not devs:
         raise MemoryError()
 
+    cdef unsigned int num_devs = 0
     try:
         err = csdrplay.sdrplay_api_GetDevices(devs, &num_devs, 16)
         if err != csdrplay.sdrplay_api_Success:
@@ -136,12 +120,10 @@ cpdef error_t set_device_index(unsigned int index):
             return err
 
         # Save the handle and get the parameter tree
-        g_dev = g_device.dev
-        err = csdrplay.sdrplay_api_GetDeviceParams(g_dev, &g_devParams)
+        err = csdrplay.sdrplay_api_GetDeviceParams(g_device.dev, &g_devParams)
         if err != csdrplay.sdrplay_api_Success:
             # If it fails, release the device to avoid occupying it
             csdrplay.sdrplay_api_ReleaseDevice(&g_device)
-            g_dev = NULL
             g_devParams = NULL
             return err
 
@@ -149,17 +131,17 @@ cpdef error_t set_device_index(unsigned int index):
     finally:
         free(devs)
 
-cpdef error_t release_device_index():
+cpdef error_t release_device_index() nogil:
     return csdrplay.sdrplay_api_ReleaseDevice(&g_device)
 
 cpdef get_devices():
-    cdef unsigned int num_devs = 0
     cdef device_type *devs = <device_type*> malloc(16 * sizeof(device_type))
     cdef error_t err
 
     if not devs:
         raise MemoryError()
 
+    cdef unsigned int num_devs = 0
     try:
         err = csdrplay.sdrplay_api_GetDevices(devs, &num_devs, 16)
         if err != csdrplay.sdrplay_api_Success:
@@ -219,7 +201,7 @@ cdef csdrplay.sdrplay_api_If_kHzT get_nearest_if_gain(double if_gain):
     return if_type
 
 cpdef error_t init_stream(int gain, double sample_rate, double center_freq, double bandwidth, double if_gain, object func):
-    if g_dev == NULL or g_devParams == NULL:
+    if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
 
     # Calculate the nearest BW / IF
@@ -227,11 +209,11 @@ cpdef error_t init_stream(int gain, double sample_rate, double center_freq, doub
     cdef csdrplay.sdrplay_api_If_kHzT if_type = get_nearest_if_gain(if_gain)
 
     # Write initial parameters into the parameter tree (v3 unit is Hz, not MHz)
-    g_devParams.devParams.fsFreq.fsHz             = sample_rate
-    g_devParams.rxChannelA.tunerParams.rfFreq.rfHz= center_freq
-    g_devParams.rxChannelA.tunerParams.bwType     = bw_type
-    g_devParams.rxChannelA.tunerParams.ifType     = if_type
-    g_devParams.rxChannelA.tunerParams.loMode     = csdrplay.sdrplay_api_LO_Auto  # Common default
+    g_devParams.devParams.fsFreq.fsHz              = sample_rate
+    g_devParams.rxChannelA.tunerParams.rfFreq.rfHz = center_freq
+    g_devParams.rxChannelA.tunerParams.bwType      = bw_type
+    g_devParams.rxChannelA.tunerParams.ifType      = if_type
+    g_devParams.rxChannelA.tunerParams.loMode      = csdrplay.sdrplay_api_LO_Auto  # Common default
 
     # Gain: map UI "gain" to gRdB (IF attenuation, the larger the value, the smaller the gain)
     cdef int gRdB = calculate_gain_reduction(gain)
@@ -246,7 +228,7 @@ cpdef error_t init_stream(int gain, double sample_rate, double center_freq, doub
     cbs.EventCbFn   = _event_callback
 
     # Init: start the stream processing thread according to the current parameter tree
-    return csdrplay.sdrplay_api_Init(g_dev, &cbs, <void*> func)
+    return csdrplay.sdrplay_api_Init(g_device.dev, &cbs, <void*> func)
 
 cpdef error_t set_center_freq(double frequency):
     return update_params(csdrplay.sdrplay_api_Update_Tuner_Frf, frequency=frequency)
@@ -267,7 +249,7 @@ cpdef error_t set_if_gain(double if_gain):
     return update_params(csdrplay.sdrplay_api_Update_Tuner_IfType, if_type=if_type)
 
 cpdef error_t set_antenna(int antenna):
-    if g_dev == NULL or g_devParams == NULL:
+    if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
 
     cdef unsigned int reason = 0
@@ -291,7 +273,7 @@ cpdef error_t set_antenna(int antenna):
         return csdrplay.sdrplay_api_OutOfRange
 
     return csdrplay.sdrplay_api_Update(
-        g_dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT>reason, csdrplay.sdrplay_api_Update_Ext1_None
+        g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT>reason, csdrplay.sdrplay_api_Update_Ext1_None
     )
 
 cpdef error_t update_params(
@@ -306,7 +288,7 @@ cpdef error_t update_params(
 ):
     cdef error_t err
 
-    if g_dev == NULL or g_devParams == NULL:
+    if g_device.dev == NULL or g_devParams == NULL:
         return csdrplay.sdrplay_api_NotInitialised
 
     # First write the parameters into the parameter tree
@@ -332,10 +314,14 @@ cpdef error_t update_params(
             g_devParams.rxChannelA.tunerParams.gain.LNAstate = lna_state
 
     # Then apply them all at once
-    err = csdrplay.sdrplay_api_Update(g_dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT> reason_flags, csdrplay.sdrplay_api_Update_Ext1_None)
+    err = csdrplay.sdrplay_api_Update(g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT> reason_flags, csdrplay.sdrplay_api_Update_Ext1_None)
     return err
 
-cpdef error_t close_stream():
-    if g_dev == NULL:
+cpdef error_t close_stream() nogil:
+    global reset_rx, reset_rx_request_received
+    if g_device.dev == NULL:
         return csdrplay.sdrplay_api_NotInitialised
-    return csdrplay.sdrplay_api_Uninit(g_dev)
+    reset_rx = True
+    # while not reset_rx_request_received:
+    #     time.sleep(0.01)
+    return csdrplay.sdrplay_api_Uninit(g_device.dev)

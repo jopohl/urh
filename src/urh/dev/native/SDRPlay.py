@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from multiprocessing.connection import Connection
 
+import time
 import numpy as np
 
 from urh.dev.native.Device import Device
@@ -168,15 +169,26 @@ class SDRPlay(Device):
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):
         logger.debug("SDRPLAY: closing device")
+        start_time = time.time()
         ret = sdrplay.close_stream()
+        logger.debug(
+            "SDRPLAY: closed stream after {:.2f} seconds".format(time.time() - start_time)
+        )
         ctrl_connection.send("CLOSE STREAM:" + str(ret))
 
         if cls.sdrplay_device_index is not None:
             ret = sdrplay.release_device_index()
             ctrl_connection.send("RELEASE DEVICE:" + str(ret))
 
+        logger.debug(
+            "SDRPLAY: closed device after {:.2f} seconds".format(time.time() - start_time)
+        )
         ret = sdrplay.close_api()
         ctrl_connection.send("CLOSE API:" + str(ret))
+
+        logger.debug(
+            "SDRPLAY: closed API after {:.2f} seconds".format(time.time() - start_time)
+        )
 
     @staticmethod
     def bytes_to_iq(buffer):

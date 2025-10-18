@@ -186,14 +186,14 @@ parts:
   sdrplay:
     plugin: dump
     source: /lib
-    stage: [libmirsdrapi-rsp.so.2.13]
+    stage: [libsdrplay_api.so.3.15]
     override-build: |
-      wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-2.13.1.run -O sdrplay.run
+      wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run -O sdrplay.run
       bash sdrplay.run --tar xf
       cp mirsdrapi-rsp.h /usr/include
       cp x86_64/* /lib
       cp x86_64/* .
-      ln -sf /lib/libmirsdrapi-rsp.so.2.13 /lib/libmirsdrapi-rsp.so
+      ln -sf /lib/libsdrplay_api.so.3.15 /lib/libsdrplay_api.so
       snapcraftctl build
 
   bladerf-fpga:

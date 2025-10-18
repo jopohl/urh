@@ -18,11 +18,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
                        libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev \
  && python3 -m pip install setuptools cython \
  && mkdir /tmp/sdrplay \
- && wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-2.13.1.run -O /tmp/sdrplay/sdrplay.run \
+ && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run -O /tmp/sdrplay/sdrplay.run \
  && cd /tmp/sdrplay && bash sdrplay.run --tar xf \
  && cp mirsdrapi-rsp.h /usr/local/include \
- && cp x86_64/libmirsdrapi-rsp.so.2.13 /usr/lib/x86_64-linux-gnu/ \
- && ln -s /usr/lib/x86_64-linux-gnu/libmirsdrapi-rsp.so.2.13 /usr/lib/x86_64-linux-gnu/libmirsdrapi-rsp.so \
+ && cp x86_64/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/ \
+ && ln -s /usr/lib/x86_64-linux-gnu/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/libsdrplay_api.so \
  && rm -rf /tmp/sdrplay \
  \
  && cd /tmp && git clone --depth=1 https://github.com/jopohl/urh \

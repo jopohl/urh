@@ -5,7 +5,7 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && export BLADERF_VERSION="2022.11" \
  && export LIMESUITE_VERSION="20.01.0" \
  && export HACKRF_VERSION="v2023.01.1" \
- && export SDRPLAY_VERSION="2.13" \
+ && export SDRPLAY_VERSION="3.15" \
  && export RTLSDR_VERSION="0.6.0" \
  && export UHD_VERSION="4.5.0.0" \
  # HackRF
@@ -44,10 +44,10 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && make -j$(nproc) -C /tmp/build_rtlsdr \
  && make -C /tmp/build_rtlsdr install \
  # SDRPLAY
- && wget http://www.sdrplay.com/software/SDRplay_RSP_API-Linux-$SDRPLAY_VERSION.1.run -O /tmp/sdrplay.run \
+ && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-$SDRPLAY_VERSION.2.run -O /tmp/sdrplay.run \
  && bash /tmp/sdrplay.run --tar xf -C /tmp \
  && mv /tmp/mirsdrapi-rsp.h /usr/include \
  && mv /tmp/x86_64/* /usr/lib64 \
- && ln -s /usr/lib64/libmirsdrapi-rsp.so.$SDRPLAY_VERSION /usr/lib64/libmirsdrapi-rsp.so \
+ && ln -s /usr/lib64/libsdrplay_api.so.$SDRPLAY_VERSION /usr/lib64/libsdrplay_api.so \
  && rm -rf /tmp/* \
  && yum clean all

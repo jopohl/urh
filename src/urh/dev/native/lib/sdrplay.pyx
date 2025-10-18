@@ -9,8 +9,13 @@ ctypedef csdrplay.sdrplay_api_ErrT error_t
 cdef device_type g_device
 cdef csdrplay.sdrplay_api_DeviceParamsT* g_devParams = NULL
 cdef csdrplay.sdrplay_api_TunerSelectT g_tuner = csdrplay.sdrplay_api_Tuner_A
+cdef bool reset_rx = False
 
 cdef void __rx_stream_callback(short *xi, short *xq, csdrplay.sdrplay_api_StreamCbParamsT *params, unsigned int numSamples, unsigned int reset, void *cbContext) noexcept nogil:
+    global reset_rx
+    if reset_rx:
+        return
+
     cdef short* data = <short *>malloc(2*numSamples * sizeof(short))
     if data == NULL:
         return
@@ -300,7 +305,7 @@ cpdef error_t update_params(
     if reason_flags & csdrplay.sdrplay_api_Update_Tuner_LoMode and lo_mode != csdrplay.sdrplay_api_LO_Undefined:
         g_devParams.rxChannelA.tunerParams.loMode = lo_mode
 
-    if (reason_flags & csdrplay.sdrplay_api_Update_Tuner_Gr):
+    if reason_flags & csdrplay.sdrplay_api_Update_Tuner_Gr:
         if gain != 0:  # The input is "gain reduction" (gRdB)
             g_devParams.rxChannelA.tunerParams.gain.gRdB = gain
         if lna_state != -1:
@@ -311,6 +316,8 @@ cpdef error_t update_params(
     return err
 
 cpdef error_t close_stream() noexcept nogil:
+    global reset_rx
     if g_device.dev == NULL:
         return csdrplay.sdrplay_api_NotInitialised
+    reset_rx = True
     return csdrplay.sdrplay_api_Uninit(g_device.dev)

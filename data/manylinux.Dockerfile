@@ -82,8 +82,10 @@ RUN wget -nv https://github.com/osmocom/rtl-sdr/archive/${RTLSDR_VERSION}.tar.gz
 
 # Install SDRplay API
 RUN wget -nv https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-${SDRPLAY_VERSION}.2.run -O /tmp/sdrplay.run \
-    && bash /tmp/sdrplay.run --tar xf -C /tmp \
-    && mv /tmp/inc/sdrplay_*.h /usr/include \
-    && mv /tmp/amd64/* /usr/lib64 \
-    && ln -s /usr/lib64/libsdrplay_api.so.${SDRPLAY_VERSION} /usr/lib64/libsdrplay_api.so \
-    && rm -rf /tmp/*
+    && mkdir /tmp/sdrplay \
+    && bash /tmp/sdrplay.run --tar xf -C /tmp/sdrplay \
+    && mv /tmp/sdrplay/inc/sdrplay_*.h /usr/local/include \
+    && mv /tmp/sdrplay/amd64/libsdrplay_api.so.${SDRPLAY_VERSION} /usr/local/lib \
+    && ln -s /usr/local/lib/libsdrplay_api.so.${SDRPLAY_VERSION} /usr/local/lib/libsdrplay_api.so.3 \
+    && ln -s /usr/local/lib/libsdrplay_api.so.3 /usr/local/lib/libsdrplay_api.so \
+    && rm -rf /tmp/sdrplay*

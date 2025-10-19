@@ -193,7 +193,7 @@ parts:
       cp inc/sdrplay_*.h /usr/include
       cp amd64/* /lib
       cp amd64/* .
-      ln -sf /lib/libsdrplay_api.so.3.15 /lib/libsdrplay_api.so
+      ln -sf /lib/libsdrplay_api.so.3.15 /lib/libsdrplay_api.so.3
       snapcraftctl build
 
   bladerf-fpga:

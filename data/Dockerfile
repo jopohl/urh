@@ -17,13 +17,14 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
                        gr-osmosdr \
                        libhackrf-dev liblimesuite-dev libbladerf-dev librtlsdr-dev libairspy-dev libuhd-dev libiio-dev \
  && python3 -m pip install setuptools cython \
+ && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run -O /tmp/sdrplay.run \
  && mkdir /tmp/sdrplay \
- && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run -O /tmp/sdrplay/sdrplay.run \
- && cd /tmp/sdrplay && bash sdrplay.run --tar xf \
- && cp inc/sdrplay_*.h /usr/local/include \
- && cp amd64/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/ \
- && ln -s /usr/lib/x86_64-linux-gnu/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/libsdrplay_api.so \
- && rm -rf /tmp/sdrplay \
+ && bash /tmp/sdrplay.run --tar xf -C /tmp/sdrplay \
+ && mv /tmp/sdrplay/inc/sdrplay_*.h /usr/local/include \
+ && mv /tmp/sdrplay/amd64/libsdrplay_api.so.3.15 /usr/local/lib \
+ && ln -s /usr/local/lib/libsdrplay_api.so.3.15 /usr/local/lib/libsdrplay_api.so.3 \
+ && ln -s /usr/local/lib/libsdrplay_api.so.3 /usr/local/lib/libsdrplay_api.so \
+ && rm -rf /tmp/sdrplay* \
  \
  && cd /tmp && git clone --depth=1 https://github.com/jopohl/urh \
  && cd /tmp/urh \

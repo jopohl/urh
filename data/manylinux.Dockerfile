@@ -28,7 +28,7 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && make -C /tmp/build_airspy install \
  # BladeRF
  && git clone --branch $BLADERF_VERSION --recursive https://github.com/Nuand/bladeRF /tmp/bladeRF-$BLADERF_VERSION \
- && cmake -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \
+ && cmake -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade -DCMAKE_C_FLAGS="-Wno-error=calloc-transposed-args" \
  && make -j$(nproc) -C /tmp/build_blade \
  && make -C /tmp/build_blade install \
  # Lime
@@ -46,8 +46,8 @@ RUN export AIRSPY_VERSION="1.0.9" \
  # SDRPLAY
  && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-$SDRPLAY_VERSION.2.run -O /tmp/sdrplay.run \
  && bash /tmp/sdrplay.run --tar xf -C /tmp \
- && mv /tmp/mirsdrapi-rsp.h /usr/include \
- && mv /tmp/x86_64/* /usr/lib64 \
+ && mv /tmp/inc/sdrplay_*.h /usr/include \
+ && mv /tmp/amd64/* /usr/lib64 \
  && ln -s /usr/lib64/libsdrplay_api.so.$SDRPLAY_VERSION /usr/lib64/libsdrplay_api.so \
  && rm -rf /tmp/* \
  && yum clean all

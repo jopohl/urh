@@ -20,8 +20,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
  && mkdir /tmp/sdrplay \
  && wget https://www.sdrplay.com/software/SDRplay_RSP_API-Linux-3.15.2.run -O /tmp/sdrplay/sdrplay.run \
  && cd /tmp/sdrplay && bash sdrplay.run --tar xf \
- && cp mirsdrapi-rsp.h /usr/local/include \
- && cp x86_64/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/ \
+ && cp inc/sdrplay_*.h /usr/local/include \
+ && cp amd64/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/ \
  && ln -s /usr/lib/x86_64-linux-gnu/libsdrplay_api.so.3.15 /usr/lib/x86_64-linux-gnu/libsdrplay_api.so \
  && rm -rf /tmp/sdrplay \
  \

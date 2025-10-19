@@ -1,152 +1,384 @@
-cdef extern from "mirsdrapi-rsp.h":
-    ctypedef struct mir_sdr_DeviceT:
-       char *SerNo
-       char *DevNm
-       unsigned char hwVer
-       unsigned char devAvail
+cdef extern from "sdrplay_api.h":
+    ctypedef void* HANDLE
 
-    ctypedef enum mir_sdr_Bw_MHzT:
-      mir_sdr_BW_Undefined = 0
-      mir_sdr_BW_0_200     = 200
-      mir_sdr_BW_0_300     = 300
-      mir_sdr_BW_0_600     = 600
-      mir_sdr_BW_1_536     = 1536
-      mir_sdr_BW_5_000     = 5000
-      mir_sdr_BW_6_000     = 6000
-      mir_sdr_BW_7_000     = 7000
-      mir_sdr_BW_8_000     = 8000
+    ctypedef enum sdrplay_api_TunerSelectT:
+      sdrplay_api_Tuner_Neither = 0
+      sdrplay_api_Tuner_A       = 1
+      sdrplay_api_Tuner_B       = 2
+      sdrplay_api_Tuner_Both    = 3
 
-    ctypedef enum mir_sdr_If_kHzT:
-      mir_sdr_IF_Undefined = -1
-      mir_sdr_IF_Zero      = 0
-      mir_sdr_IF_0_450     = 450
-      mir_sdr_IF_1_620     = 1620
-      mir_sdr_IF_2_048     = 2048
+    ctypedef enum sdrplay_api_Rsp2_AntennaSelectT:
+      sdrplay_api_Rsp2_ANTENNA_A = 5
+      sdrplay_api_Rsp2_ANTENNA_B = 6
 
-    ctypedef enum mir_sdr_ErrT:
-      mir_sdr_Success            = 0
-      mir_sdr_Fail               = 1
-      mir_sdr_InvalidParam       = 2
-      mir_sdr_OutOfRange         = 3
-      mir_sdr_GainUpdateError    = 4
-      mir_sdr_RfUpdateError      = 5
-      mir_sdr_FsUpdateError      = 6
-      mir_sdr_HwError            = 7
-      mir_sdr_AliasingError      = 8
-      mir_sdr_AlreadyInitialised = 9
-      mir_sdr_NotInitialised     = 10
-      mir_sdr_NotEnabled         = 11
-      mir_sdr_HwVerError         = 12
-      mir_sdr_OutOfMemError      = 13
+    ctypedef enum sdrplay_api_Rsp2_AmPortSelectT:
+      sdrplay_api_Rsp2_AMPORT_1 = 1
+      sdrplay_api_Rsp2_AMPORT_2 = 0
 
-    ctypedef enum mir_sdr_TransferModeT:
-      mir_sdr_ISOCH = 0
-      mir_sdr_BULK  = 1
+    ctypedef enum sdrplay_api_ReasonForUpdateT:
+      sdrplay_api_Update_None                        = 0x00000000
 
-    ctypedef enum mir_sdr_ReasonForReinitT:
-      mir_sdr_CHANGE_NONE    = 0x00
-      mir_sdr_CHANGE_GR      = 0x01
-      mir_sdr_CHANGE_FS_FREQ = 0x02
-      mir_sdr_CHANGE_RF_FREQ = 0x04
-      mir_sdr_CHANGE_BW_TYPE = 0x08
-      mir_sdr_CHANGE_IF_TYPE = 0x10
-      mir_sdr_CHANGE_LO_MODE = 0x20
-      mir_sdr_CHANGE_AM_PORT = 0x40
+      # Reasons for master only mode
+      sdrplay_api_Update_Dev_Fs                      = 0x00000001
+      sdrplay_api_Update_Dev_Ppm                     = 0x00000002
+      sdrplay_api_Update_Dev_SyncUpdate              = 0x00000004
+      sdrplay_api_Update_Dev_ResetFlags              = 0x00000008
 
-    ctypedef enum mir_sdr_LoModeT:
-      mir_sdr_LO_Undefined = 0
-      mir_sdr_LO_Auto      = 1
-      mir_sdr_LO_120MHz    = 2
-      mir_sdr_LO_144MHz    = 3
-      mir_sdr_LO_168MHz    = 4
+      sdrplay_api_Update_Rsp1a_BiasTControl          = 0x00000010
+      sdrplay_api_Update_Rsp1a_RfNotchControl        = 0x00000020
+      sdrplay_api_Update_Rsp1a_RfDabNotchControl     = 0x00000040
 
-    ctypedef enum mir_sdr_BandT:
-      mir_sdr_BAND_AM_LO   = 0
-      mir_sdr_BAND_AM_MID  = 1
-      mir_sdr_BAND_AM_HI   = 2
-      mir_sdr_BAND_VHF     = 3
-      mir_sdr_BAND_3       = 4
-      mir_sdr_BAND_X       = 5
-      mir_sdr_BAND_4_5     = 6
-      mir_sdr_BAND_L       = 7
+      sdrplay_api_Update_Rsp2_BiasTControl           = 0x00000080
+      sdrplay_api_Update_Rsp2_AmPortSelect           = 0x00000100
+      sdrplay_api_Update_Rsp2_AntennaControl         = 0x00000200
+      sdrplay_api_Update_Rsp2_RfNotchControl         = 0x00000400
+      sdrplay_api_Update_Rsp2_ExtRefControl          = 0x00000800
 
-    ctypedef enum mir_sdr_SetGrModeT:
-      mir_sdr_USE_SET_GR                = 0
-      mir_sdr_USE_SET_GR_ALT_MODE       = 1
-      mir_sdr_USE_RSP_SET_GR            = 2
+      sdrplay_api_Update_RspDuo_ExtRefControl        = 0x00001000
 
-    ctypedef enum mir_sdr_RSPII_BandT:
-      mir_sdr_RSPII_BAND_UNKNOWN = 0
-      mir_sdr_RSPII_BAND_AM_LO   = 1
-      mir_sdr_RSPII_BAND_AM_MID  = 2
-      mir_sdr_RSPII_BAND_AM_HI   = 3
-      mir_sdr_RSPII_BAND_VHF     = 4
-      mir_sdr_RSPII_BAND_3       = 5
-      mir_sdr_RSPII_BAND_X_LO    = 6
-      mir_sdr_RSPII_BAND_X_MID   = 7
-      mir_sdr_RSPII_BAND_X_HI    = 8
-      mir_sdr_RSPII_BAND_4_5     = 9
-      mir_sdr_RSPII_BAND_L       = 10
+      sdrplay_api_Update_Master_Spare_1              = 0x00002000
+      sdrplay_api_Update_Master_Spare_2              = 0x00004000
 
-    ctypedef enum mir_sdr_RSPII_AntennaSelectT:
-      mir_sdr_RSPII_ANTENNA_A = 5
-      mir_sdr_RSPII_ANTENNA_B = 6
+      # Reasons for master and slave mode
+      # Note: sdrplay_api_Update_Tuner_Gr MUST be the first value defined in this section!
+      sdrplay_api_Update_Tuner_Gr                    = 0x00008000
+      sdrplay_api_Update_Tuner_GrLimits              = 0x00010000
+      sdrplay_api_Update_Tuner_Frf                   = 0x00020000
+      sdrplay_api_Update_Tuner_BwType                = 0x00040000
+      sdrplay_api_Update_Tuner_IfType                = 0x00080000
+      sdrplay_api_Update_Tuner_DcOffset              = 0x00100000
+      sdrplay_api_Update_Tuner_LoMode                = 0x00200000
 
-    ctypedef enum mir_sdr_AgcControlT:
-      mir_sdr_AGC_DISABLE  = 0
-      mir_sdr_AGC_100HZ    = 1
-      mir_sdr_AGC_50HZ     = 2
-      mir_sdr_AGC_5HZ      = 3
+      sdrplay_api_Update_Ctrl_DCoffsetIQimbalance    = 0x00400000
+      sdrplay_api_Update_Ctrl_Decimation             = 0x00800000
+      sdrplay_api_Update_Ctrl_Agc                    = 0x01000000
+      sdrplay_api_Update_Ctrl_AdsbMode               = 0x02000000
+      sdrplay_api_Update_Ctrl_OverloadMsgAck         = 0x04000000
 
-    ctypedef enum mir_sdr_GainMessageIdT:
-      mir_sdr_GAIN_MESSAGE_START_ID  = 0x80000000
-      mir_sdr_ADC_OVERLOAD_DETECTED  = mir_sdr_GAIN_MESSAGE_START_ID + 1
-      mir_sdr_ADC_OVERLOAD_CORRECTED = mir_sdr_GAIN_MESSAGE_START_ID + 2
+      sdrplay_api_Update_RspDuo_BiasTControl         = 0x08000000
+      sdrplay_api_Update_RspDuo_AmPortSelect         = 0x10000000
+      sdrplay_api_Update_RspDuo_Tuner1AmNotchControl = 0x20000000
+      sdrplay_api_Update_RspDuo_RfNotchControl       = 0x40000000
+      sdrplay_api_Update_RspDuo_RfDabNotchControl    = 0x80000000
 
-    ctypedef enum mir_sdr_MinGainReductionT:
-      mir_sdr_EXTENDED_MIN_GR = 0
-      mir_sdr_NORMAL_MIN_GR   = 20
+    ctypedef enum sdrplay_api_MinGainReductionT:
+      sdrplay_api_EXTENDED_MIN_GR = 0
+      sdrplay_api_NORMAL_MIN_GR   = 20
 
-    ctypedef struct mir_sdr_GainValuesT:
-       float curr;
-       float max;
-       float min;
+    ctypedef struct sdrplay_api_GainValuesT:
+      float curr
+      float max
+      float min
 
-    ctypedef void mir_sdr_StreamCallback_t(short *xi, short *xq, unsigned int firstSampleNum, int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset, unsigned int hwRemoved, void *cbContext)
-    ctypedef void mir_sdr_GainChangeCallback_t(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext)
+    ctypedef struct sdrplay_api_GainT:
+      int gRdB
+      unsigned char LNAstate
+      unsigned char syncUpdate
+      sdrplay_api_MinGainReductionT minGr
+      sdrplay_api_GainValuesT gainVals
 
-    mir_sdr_ErrT mir_sdr_ReadPacket(short *xi, short *xq, unsigned int *firstSampleNum, int *grChanged, int *rfChanged, int *fsChanged)
-    mir_sdr_ErrT mir_sdr_SetRf(double drfHz, int abs, int syncUpdate)
-    mir_sdr_ErrT mir_sdr_SetFs(double dfsHz, int abs, int syncUpdate, int reCal)
-    mir_sdr_ErrT mir_sdr_SetGr(int gRdB, int abs, int syncUpdate)
-    mir_sdr_ErrT mir_sdr_SetGrParams(int minimumGr, int lnaGrThreshold)
-    mir_sdr_ErrT mir_sdr_SetDcMode(int dcCal, int speedUp)
-    mir_sdr_ErrT mir_sdr_SetDcTrackTime(int trackTime)
-    mir_sdr_ErrT mir_sdr_SetSyncUpdateSampleNum(unsigned int sampleNum)
-    mir_sdr_ErrT mir_sdr_SetSyncUpdatePeriod(unsigned int period)
-    mir_sdr_ErrT mir_sdr_ApiVersion(float *version)
-    mir_sdr_ErrT mir_sdr_ResetUpdateFlags(int resetGainUpdate, int resetRfUpdate, int resetFsUpdate)
-    mir_sdr_ErrT mir_sdr_SetParam(unsigned int id, unsigned int value)
-    mir_sdr_ErrT mir_sdr_SetPpm(double ppm)
-    mir_sdr_ErrT mir_sdr_SetGrAltMode(int *gRidx, int LNAstate, int *gRdBsystem, int abs, int syncUpdate)
-    mir_sdr_ErrT mir_sdr_DCoffsetIQimbalanceControl(unsigned int DCenable, unsigned int IQenable)
-    mir_sdr_ErrT mir_sdr_DecimateControl(unsigned int enable, unsigned int decimationFactor, unsigned int wideBandSignal)
+    ctypedef struct sdrplay_api_RfFreqT:
+      double rfHz
+      unsigned char syncUpdate
 
-    mir_sdr_ErrT mir_sdr_StreamInit(int *gRdB, double fsMHz, double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, int LNAstate, int *gRdBsystem, mir_sdr_SetGrModeT setGrMode, int *samplesPerPacket, mir_sdr_StreamCallback_t StreamCbFn, mir_sdr_GainChangeCallback_t GainChangeCbFn, void *cbContext)
-    mir_sdr_ErrT mir_sdr_StreamUninit()
-    mir_sdr_ErrT mir_sdr_Reinit(int *gRdB, double fsMHz, double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, mir_sdr_LoModeT loMode, int LNAstate, int *gRdBsystem, mir_sdr_SetGrModeT setGrMode, int *samplesPerPacket, mir_sdr_ReasonForReinitT reasonForReinit)
-    mir_sdr_ErrT mir_sdr_DebugEnable(unsigned int enable)
+    ctypedef struct sdrplay_api_DcOffsetTunerT:
+      unsigned char dcCal
+      unsigned char speedUp
+      int trackTime
+      int refreshRateTime
 
-    mir_sdr_ErrT mir_sdr_GetDevices(mir_sdr_DeviceT *devices, unsigned int *numDevs, unsigned int maxDevs)
-    mir_sdr_ErrT mir_sdr_SetDeviceIdx(unsigned int idx)
-    mir_sdr_ErrT mir_sdr_ReleaseDeviceIdx()
-    mir_sdr_ErrT mir_sdr_GetHwVersion(unsigned char *ver)
-    mir_sdr_ErrT mir_sdr_RSPII_AntennaControl(mir_sdr_RSPII_AntennaSelectT select)
-    mir_sdr_ErrT mir_sdr_RSPII_ExternalReferenceControl(unsigned int output_enable)
-    mir_sdr_ErrT mir_sdr_RSPII_BiasTControl(unsigned int enable)
-    mir_sdr_ErrT mir_sdr_RSPII_RfNotchEnable(unsigned int enable)
+    ctypedef struct sdrplay_api_TunerParamsT:
+      sdrplay_api_Bw_MHzT        bwType
+      sdrplay_api_If_kHzT        ifType
+      sdrplay_api_LoModeT        loMode
+      sdrplay_api_GainT          gain
+      sdrplay_api_RfFreqT        rfFreq
+      sdrplay_api_DcOffsetTunerT dcOffsetTuner
 
-    mir_sdr_ErrT mir_sdr_RSP_SetGr(int gRdB, int LNAstate, int abs, int syncUpdate)
-    mir_sdr_ErrT mir_sdr_RSP_SetGrLimits(mir_sdr_MinGainReductionT minGr)
+    ctypedef struct sdrplay_api_AgcT:
+      sdrplay_api_AgcControlT enable
+      int setPoint_dBfs
+      unsigned short attack_ms
+      unsigned short decay_ms
+      unsigned short decay_delay_ms
+      unsigned short decay_threshold_dB
+      int syncUpdate
 
-    mir_sdr_ErrT mir_sdr_AmPortSelect(int port)
+    ctypedef enum sdrplay_api_AdsbModeT:
+      sdrplay_api_ADSB_DECIMATION                  = 0
+      sdrplay_api_ADSB_NO_DECIMATION_LOWPASS       = 1
+      sdrplay_api_ADSB_NO_DECIMATION_BANDPASS_2MHZ = 2
+      sdrplay_api_ADSB_NO_DECIMATION_BANDPASS_3MHZ = 3
+
+    ctypedef struct sdrplay_api_DecimationT:
+      unsigned char enable
+      unsigned char decimationFactor
+      unsigned char wideBandSignal
+
+    ctypedef struct sdrplay_api_DcOffsetT:
+      unsigned char DCenable
+      unsigned char IQenable
+
+    ctypedef struct sdrplay_api_ControlParamsT:
+      sdrplay_api_DcOffsetT dcOffset
+      sdrplay_api_DecimationT decimation
+      sdrplay_api_AgcT agc
+      sdrplay_api_AdsbModeT adsbMode
+
+    ctypedef struct sdrplay_api_Rsp1aTunerParamsT:
+      unsigned char biasTEnable
+
+    ctypedef struct sdrplay_api_Rsp2TunerParamsT:
+      unsigned char biasTEnable
+      sdrplay_api_Rsp2_AmPortSelectT amPortSel
+      sdrplay_api_Rsp2_AntennaSelectT antennaSel
+      unsigned char rfNotchEnable
+
+    ctypedef struct sdrplay_api_RspDuo_ResetSlaveFlagsT:
+      unsigned char resetGainUpdate
+      unsigned char resetRfUpdate
+
+    ctypedef enum sdrplay_api_RspDuo_AmPortSelectT:
+      sdrplay_api_RspDuo_AMPORT_1 = 1
+      sdrplay_api_RspDuo_AMPORT_2 = 0
+
+    ctypedef struct sdrplay_api_RspDuoTunerParamsT:
+      unsigned char biasTEnable
+      sdrplay_api_RspDuo_AmPortSelectT tuner1AmPortSel
+      unsigned char tuner1AmNotchEnable
+      unsigned char rfNotchEnable
+      unsigned char rfDabNotchEnable
+      sdrplay_api_RspDuo_ResetSlaveFlagsT resetSlaveFlags
+
+    ctypedef enum sdrplay_api_RspDx_HdrModeBwT:
+      sdrplay_api_RspDx_HDRMODE_BW_0_200 = 0
+      sdrplay_api_RspDx_HDRMODE_BW_0_500 = 1
+      sdrplay_api_RspDx_HDRMODE_BW_1_200 = 2
+      sdrplay_api_RspDx_HDRMODE_BW_1_700 = 3
+
+    ctypedef struct sdrplay_api_RspDxTunerParamsT:
+      sdrplay_api_RspDx_HdrModeBwT hdrBw
+
+    ctypedef struct sdrplay_api_RxChannelParamsT:
+      sdrplay_api_TunerParamsT        tunerParams
+      sdrplay_api_ControlParamsT      ctrlParams
+      sdrplay_api_Rsp1aTunerParamsT   rsp1aTunerParams
+      sdrplay_api_Rsp2TunerParamsT    rsp2TunerParams
+      sdrplay_api_RspDuoTunerParamsT  rspDuoTunerParams
+      sdrplay_api_RspDxTunerParamsT   rspDxTunerParams
+
+    ctypedef struct sdrplay_api_FsFreqT:
+      double fsHz
+      unsigned char syncUpdate
+      unsigned char reCal
+
+    ctypedef struct sdrplay_api_SyncUpdateT:
+      unsigned int sampleNum
+      unsigned int period
+
+    ctypedef struct sdrplay_api_ResetFlagsT:
+      unsigned char resetGainUpdate
+      unsigned char resetRfUpdate
+      unsigned char resetFsUpdate
+
+    ctypedef enum sdrplay_api_TransferModeT:
+      sdrplay_api_ISOCH = 0
+      sdrplay_api_BULK  = 1
+
+    ctypedef struct sdrplay_api_Rsp1aParamsT:
+      unsigned char rfNotchEnable
+      unsigned char rfDabNotchEnable
+
+    ctypedef struct sdrplay_api_Rsp2ParamsT:
+      unsigned char extRefOutputEn
+
+    ctypedef struct sdrplay_api_RspDuoParamsT:
+      int extRefOutputEn
+
+    ctypedef enum sdrplay_api_RspDx_AntennaSelectT:
+      sdrplay_api_RspDx_ANTENNA_A = 0
+      sdrplay_api_RspDx_ANTENNA_B = 1
+      sdrplay_api_RspDx_ANTENNA_C = 2
+
+    ctypedef struct sdrplay_api_RspDxParamsT:
+      unsigned char hdrEnable
+      unsigned char biasTEnable
+      sdrplay_api_RspDx_AntennaSelectT antennaSel
+      unsigned char rfNotchEnable
+      unsigned char rfDabNotchEnable
+
+    ctypedef struct sdrplay_api_DevParamsT:
+      double ppm
+      sdrplay_api_FsFreqT fsFreq
+      sdrplay_api_SyncUpdateT syncUpdate
+      sdrplay_api_ResetFlagsT resetFlags
+      sdrplay_api_TransferModeT mode
+      unsigned int samplesPerPkt
+      sdrplay_api_Rsp1aParamsT rsp1aParams
+      sdrplay_api_Rsp2ParamsT rsp2Params
+      sdrplay_api_RspDuoParamsT rspDuoParams
+      sdrplay_api_RspDxParamsT rspDxParams
+
+    ctypedef struct sdrplay_api_DeviceParamsT:
+      sdrplay_api_DevParamsT*       devParams
+      sdrplay_api_RxChannelParamsT* rxChannelA
+      sdrplay_api_RxChannelParamsT* rxChannelB
+
+    ctypedef enum sdrplay_api_ReasonForUpdateExtension1T:
+      sdrplay_api_Update_Ext1_None                   = 0x00000000
+
+      # Reasons for master only mode
+      sdrplay_api_Update_RspDx_HdrEnable             = 0x00000001
+      sdrplay_api_Update_RspDx_BiasTControl          = 0x00000002
+      sdrplay_api_Update_RspDx_AntennaControl        = 0x00000004
+      sdrplay_api_Update_RspDx_RfNotchControl        = 0x00000008
+      sdrplay_api_Update_RspDx_RfDabNotchControl     = 0x00000010
+      sdrplay_api_Update_RspDx_HdrBw                 = 0x00000020
+      sdrplay_api_Update_RspDuo_ResetSlaveFlags      = 0x00000040
+
+    ctypedef enum sdrplay_api_RspDuoModeT:
+      sdrplay_api_RspDuoMode_Unknown      = 0
+      sdrplay_api_RspDuoMode_Single_Tuner = 1
+      sdrplay_api_RspDuoMode_Dual_Tuner   = 2
+      sdrplay_api_RspDuoMode_Master       = 4
+      sdrplay_api_RspDuoMode_Slave        = 8
+
+    ctypedef struct sdrplay_api_DeviceT:
+      char SerNo[64]
+      unsigned char hwVer
+      sdrplay_api_TunerSelectT tuner
+      sdrplay_api_RspDuoModeT rspDuoMode
+      unsigned char valid
+      double rspDuoSampleFreq
+      HANDLE dev
+
+    ctypedef enum sdrplay_api_Bw_MHzT:
+      sdrplay_api_BW_Undefined = 0
+      sdrplay_api_BW_0_200     = 200
+      sdrplay_api_BW_0_300     = 300
+      sdrplay_api_BW_0_600     = 600
+      sdrplay_api_BW_1_536     = 1536
+      sdrplay_api_BW_5_000     = 5000
+      sdrplay_api_BW_6_000     = 6000
+      sdrplay_api_BW_7_000     = 7000
+      sdrplay_api_BW_8_000     = 8000
+
+    ctypedef enum sdrplay_api_If_kHzT:
+      sdrplay_api_IF_Undefined = -1
+      sdrplay_api_IF_Zero      = 0
+      sdrplay_api_IF_0_450     = 450
+      sdrplay_api_IF_1_620     = 1620
+      sdrplay_api_IF_2_048     = 2048
+
+    ctypedef enum sdrplay_api_ErrT:
+      sdrplay_api_Success               = 0
+      sdrplay_api_Fail                  = 1
+      sdrplay_api_InvalidParam          = 2
+      sdrplay_api_OutOfRange            = 3
+      sdrplay_api_GainUpdateError       = 4
+      sdrplay_api_RfUpdateError         = 5
+      sdrplay_api_FsUpdateError         = 6
+      sdrplay_api_HwError               = 7
+      sdrplay_api_AliasingError         = 8
+      sdrplay_api_AlreadyInitialised    = 9
+      sdrplay_api_NotInitialised        = 10
+      sdrplay_api_NotEnabled            = 11
+      sdrplay_api_HwVerError            = 12
+      sdrplay_api_OutOfMemError         = 13
+      sdrplay_api_ServiceNotResponding  = 14
+      sdrplay_api_StartPending          = 15
+      sdrplay_api_StopPending           = 16
+      sdrplay_api_InvalidMode           = 17
+      sdrplay_api_FailedVerification1   = 18
+      sdrplay_api_FailedVerification2   = 19
+      sdrplay_api_FailedVerification3   = 20
+      sdrplay_api_FailedVerification4   = 21
+      sdrplay_api_FailedVerification5   = 22
+      sdrplay_api_FailedVerification6   = 23
+      sdrplay_api_InvalidServiceVersion = 24
+
+    ctypedef enum sdrplay_api_LoModeT:
+      sdrplay_api_LO_Undefined = 0
+      sdrplay_api_LO_Auto      = 1
+      sdrplay_api_LO_120MHz    = 2
+      sdrplay_api_LO_144MHz    = 3
+      sdrplay_api_LO_168MHz    = 4
+
+    ctypedef enum sdrplay_api_AgcControlT:
+      sdrplay_api_AGC_DISABLE  = 0
+      sdrplay_api_AGC_100HZ    = 1
+      sdrplay_api_AGC_50HZ     = 2
+      sdrplay_api_AGC_5HZ      = 3
+      sdrplay_api_AGC_CTRL_EN  = 4
+
+    ctypedef struct sdrplay_api_StreamCbParamsT:
+      unsigned int firstSampleNum
+      int          grChanged
+      int          rfChanged
+      int          fsChanged
+      unsigned int numSamples
+
+    ctypedef enum sdrplay_api_EventT:
+      sdrplay_api_GainChange            = 0
+      sdrplay_api_PowerOverloadChange   = 1
+      sdrplay_api_DeviceRemoved         = 2
+      sdrplay_api_RspDuoModeChange      = 3
+      sdrplay_api_DeviceFailure         = 4
+
+    ctypedef struct sdrplay_api_GainCbParamT:
+      unsigned int gRdB
+      unsigned int lnaGRdB
+      double currGain
+
+    ctypedef enum sdrplay_api_PowerOverloadCbEventIdT:
+      sdrplay_api_Overload_Detected  = 0
+      sdrplay_api_Overload_Corrected = 1
+
+    ctypedef struct sdrplay_api_PowerOverloadCbParamT:
+      sdrplay_api_PowerOverloadCbEventIdT powerOverloadChangeType
+
+    ctypedef enum sdrplay_api_RspDuoModeCbEventIdT:
+      sdrplay_api_MasterInitialised      = 0
+      sdrplay_api_SlaveAttached          = 1
+      sdrplay_api_SlaveDetached          = 2
+      sdrplay_api_SlaveInitialised       = 3
+      sdrplay_api_SlaveUninitialised     = 4
+      sdrplay_api_MasterDllDisappeared   = 5
+      sdrplay_api_SlaveDllDisappeared    = 6
+
+    ctypedef struct sdrplay_api_RspDuoModeCbParamT:
+      sdrplay_api_RspDuoModeCbEventIdT modeChangeType
+
+    ctypedef union sdrplay_api_EventParamsT:
+      sdrplay_api_GainCbParamT          gainParams
+      sdrplay_api_PowerOverloadCbParamT powerOverloadParams
+      sdrplay_api_RspDuoModeCbParamT    rspDuoModeParams
+
+    ctypedef void (*sdrplay_api_StreamCallback_t)(short *xi,
+                                                  short *xq,
+                                                  sdrplay_api_StreamCbParamsT *params,
+                                                  unsigned int numSamples,
+                                                  unsigned int reset,
+                                                  void *cbContext)
+    ctypedef void (*sdrplay_api_EventCallback_t)(sdrplay_api_EventT eventId,
+                                                 sdrplay_api_TunerSelectT tuner,
+                                                 sdrplay_api_EventParamsT* params,
+                                                 void *cbContext)
+
+    ctypedef struct sdrplay_api_CallbackFnsT:
+      sdrplay_api_StreamCallback_t StreamACbFn
+      sdrplay_api_StreamCallback_t StreamBCbFn
+      sdrplay_api_EventCallback_t  EventCbFn
+
+    sdrplay_api_ErrT sdrplay_api_Open() nogil
+    sdrplay_api_ErrT sdrplay_api_Close() nogil
+    sdrplay_api_ErrT sdrplay_api_ApiVersion(float *version) nogil
+    sdrplay_api_ErrT sdrplay_api_SelectDevice(sdrplay_api_DeviceT *device) nogil
+    sdrplay_api_ErrT sdrplay_api_ReleaseDevice(sdrplay_api_DeviceT *device) nogil
+    sdrplay_api_ErrT sdrplay_api_Init(HANDLE dev, sdrplay_api_CallbackFnsT *callbackFns, void *cbContext) nogil
+    sdrplay_api_ErrT sdrplay_api_Uninit(HANDLE dev) nogil
+    sdrplay_api_ErrT sdrplay_api_GetDeviceParams(HANDLE dev,
+                                                 sdrplay_api_DeviceParamsT **deviceParams) nogil
+    sdrplay_api_ErrT sdrplay_api_GetDevices(sdrplay_api_DeviceT *devices, unsigned int *numDevs, unsigned int maxDevs) nogil
+    sdrplay_api_ErrT sdrplay_api_Update(HANDLE dev, sdrplay_api_TunerSelectT tuner,
+                                        sdrplay_api_ReasonForUpdateT reasonForUpdate, sdrplay_api_ReasonForUpdateExtension1T reasonForUpdateExt1) nogil

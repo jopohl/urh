@@ -297,7 +297,6 @@ cpdef error_t set_antenna(int antenna):
         g_device.dev, g_tuner, <csdrplay.sdrplay_api_ReasonForUpdateT>reason, csdrplay.sdrplay_api_Update_Ext1_None
     )
 
-
 cpdef error_t close_stream() noexcept nogil:
     global reset_rx
     if g_device.dev == NULL:

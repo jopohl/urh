@@ -172,7 +172,9 @@ class SDRPlay(Device):
         start_time = time.time()
         ret = sdrplay.close_stream()
         logger.debug(
-            "SDRPLAY: closed stream after {:.2f} seconds".format(time.time() - start_time)
+            "SDRPLAY: closed stream after {:.2f} seconds".format(
+                time.time() - start_time
+            )
         )
         ctrl_connection.send("CLOSE STREAM:" + str(ret))
 
@@ -181,7 +183,9 @@ class SDRPlay(Device):
             ctrl_connection.send("RELEASE DEVICE:" + str(ret))
 
         logger.debug(
-            "SDRPLAY: closed device after {:.2f} seconds".format(time.time() - start_time)
+            "SDRPLAY: closed device after {:.2f} seconds".format(
+                time.time() - start_time
+            )
         )
         ret = sdrplay.close_api()
         ctrl_connection.send("CLOSE API:" + str(ret))

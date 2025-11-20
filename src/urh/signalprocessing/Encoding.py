@@ -646,6 +646,31 @@ class Encoding(object):
         return output, errors, self.ErrorState.SUCCESS
 
     def code_substitution(self, decoding, inpt):
+        byte_data = inpt.tobytes()
+        src = self.src
+        dst = self.dst
+
+        if len(src) < 1 or len(dst) < 1:
+            return [], 1, self.ErrorState.WRONG_INPUT
+        if not decoding:
+            src, dst = dst, src
+
+        mapping = sorted(zip(src, dst), key=lambda x: len(x[0]), reverse=True)
+        final_replacements = []
+        current_token_val = 255
+
+        for s, d in mapping:
+            token = bytes([current_token_val])
+            final_replacements.append((token, d.tobytes()))
+            byte_data = byte_data.replace(s.tobytes(), token)
+            current_token_val -= 1
+
+        for token, dst_bytes in final_replacements:
+            byte_data = byte_data.replace(token, dst_bytes)
+
+        return array.array('B', byte_data), 0, self.ErrorState.SUCCESS
+
+    def code_substitution_old(self, decoding, inpt):
         padded_inpt = copy.copy(inpt)
         output = array.array("B", [])
 

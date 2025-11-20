@@ -668,7 +668,7 @@ class Encoding(object):
         for token, dst_bytes in final_replacements:
             byte_data = byte_data.replace(token, dst_bytes)
 
-        return array.array('B', byte_data), 0, self.ErrorState.SUCCESS
+        return array.array("B", byte_data), 0, self.ErrorState.SUCCESS
 
     def code_substitution_old(self, decoding, inpt):
         padded_inpt = copy.copy(inpt)

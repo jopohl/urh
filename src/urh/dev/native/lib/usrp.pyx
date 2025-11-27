@@ -113,26 +113,39 @@ cpdef uhd_error recv_stream(connection, int num_samples):
     if not result:
         raise MemoryError()
 
-    cdef int current_index = 0
+    cdef size_t current_index = 0
     cdef int i = 0
 
 
     cdef float* buff = <float *>malloc(max_num_rx_samples * 2 * sizeof(float))
     if not buff:
+        free(result)
         raise MemoryError()
 
     cdef void ** buffs = <void **> &buff
     cdef size_t items_received
+    cdef size_t items_to_copy
+    cdef size_t buffer_size = 2 * num_samples
 
 
     try:
-        while current_index < 2*num_samples:
+        while current_index < buffer_size:
             uhd_rx_streamer_recv(rx_streamer_handle, buffs, max_num_rx_samples, &rx_metadata_handle, 3.0, False, &items_received)
-            memcpy(&result[current_index], &buff[0], 2 * items_received * sizeof(float))
+            
+            # Calculate how many items we can safely copy without buffer overflow
+            items_to_copy = 2 * items_received
+            if current_index + items_to_copy > buffer_size:
+                items_to_copy = buffer_size - current_index
+            
+            memcpy(&result[current_index], &buff[0], items_to_copy * sizeof(float))
             #for i in range(current_index, current_index+2*items_received):
             #    result[i] = buff[i-current_index]
 
-            current_index += 2*items_received
+            current_index += items_to_copy
+            
+            # Break if we've filled the buffer
+            if current_index >= buffer_size:
+                break
 
         connection.send_bytes(<float[:2*num_samples]>result)
     finally:

@@ -20,6 +20,7 @@ COMPILER_DIRECTIVES = {
 }
 
 DEVICES = {
+    "hydrasdr": {"lib": "hydrasdr", "test_function": "open"},
     "airspy": {"lib": "airspy", "test_function": "open"},
     "bladerf": {
         "lib": "bladeRF",
@@ -52,6 +53,10 @@ DEVICES = {
     "sdrplay": {
         "lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
         "test_function": "mir_sdr_ApiVersion",
+    },
+    "harogic": {
+        "lib": "htraapi",
+        "test_function": "Device_Open"
     },
 }
 

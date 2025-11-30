@@ -137,6 +137,34 @@ DEVICE_CONFIG["AirSpy Mini"] = {
     "rx_baseband_gain": list(range(0, 16)),
 }
 
+# https://hydrasdr.com/
+
+DEVICE_CONFIG["HydraSDR"] = {
+    "center_freq": dev_range(start=24, stop=1800 * M, step=1),
+    "sample_rate": [
+        10 * M,
+        10 * M,
+    ],  # This device always uses 10M, no matter what is configured.
+    "bandwidth": [10 * M, 10 * M],
+    "rx_rf_gain": list(range(0, 16)),
+    "rx_if_gain": list(range(0, 16)),
+    "rx_baseband_gain": list(range(0, 16)),
+}
+
+# https://www.harogic.com/
+DEVICE_CONFIG["Harogic"] = {
+    "center_freq": dev_range(start=9 * K, stop=40 * G, step=1),
+    "sample_rate": [122.88e6, 61.44e6, 30.72e6, 15.36e6, 7.68e6, 3.84e6, 1.92e6, 0.96e6],
+    "bandwidth": [100 * M, 100*M], # Not adjustable in IQS mode
+    "rx_rf_gain": list(range(-100, 8)), # Maps to Ref Level
+    "rx_if_gain": [0, 1], # Maps to IF AGC Off/On
+    "rx_baseband_gain": [0, 1], # Maps to Preamp ForcedOff/AutoOn
+    "rx_antenna": ["Complex 8-bit (uint8)", "Complex 16-bit (int16)", "Complex 32-bit (int32)"],
+    "rx_antenna_default_index": 1,
+    "default_sample_rate": 0.96e6,
+    "default_rx_rf_gain": -10,
+}
+
 DEVICE_CONFIG["SDRPlay"] = {
     "center_freq": dev_range(start=1 * K, stop=2 * G, step=1),
     "sample_rate": dev_range(start=2 * M, stop=10 * M, step=1),

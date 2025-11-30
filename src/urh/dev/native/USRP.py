@@ -74,7 +74,7 @@ class USRP(Device):
         return True
 
     @classmethod
-    def prepare_sync_receive(cls, ctrl_connection: Connection):
+    def prepare_sync_receive(cls, ctrl_connection: Connection, dev_parameters: OrderedDict):
         ctrl_connection.send("Initializing stream...")
         usrp.setup_stream()
         return usrp.start_stream(cls.SYNC_RX_CHUNK_SIZE)

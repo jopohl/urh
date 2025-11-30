@@ -26,6 +26,11 @@ RUN export AIRSPY_VERSION="1.0.9" \
  && cmake3 -Wno-dev -S /tmp/airspyone_host-$AIRSPY_VERSION -B /tmp/build_airspy \
  && make -j$(nproc) -C /tmp/build_airspy  \
  && make -C /tmp/build_airspy install \
+ # HydraSDR
+ && git clone https://github.com/hydrasdr/rfone_host.git /tmp/rfone_host
+ && cmake3 -Wno-dev -S /tmp/rfone_host -B /tmp/build_rfone_host \
+ && make -j$(nproc) -C /tmp/build_rfone_host \
+ && make -C /tmp/build_rfone_host install \
  # BladeRF
  && git clone --branch $BLADERF_VERSION --recursive https://github.com/Nuand/bladeRF /tmp/bladeRF-$BLADERF_VERSION \
  && cmake -S /tmp/bladeRF-$BLADERF_VERSION/host -B /tmp/build_blade \

@@ -190,10 +190,15 @@ class Device(object):
             else:
                 cls.receive_sync(data_connection)
             while ctrl_connection.poll():
-                result = cls.process_command(
-                    ctrl_connection.recv(), ctrl_connection, is_tx=False
-                )
-                if result == cls.Command.STOP.name:
+                try:
+                    result = cls.process_command(
+                        ctrl_connection.recv(), ctrl_connection, is_tx=False
+                    )
+                    if result == cls.Command.STOP.name:
+                        exit_requested = True
+                        break
+                except (EOFError, BrokenPipeError, ConnectionResetError):
+                    logger.debug("Control connection closed during receive")
                     exit_requested = True
                     break
 
@@ -242,10 +247,15 @@ class Device(object):
                 cls.send_sync(send_config.get_data_to_send(buffer_size))
 
             while ctrl_connection.poll():
-                result = cls.process_command(
-                    ctrl_connection.recv(), ctrl_connection, is_tx=True
-                )
-                if result == cls.Command.STOP.name:
+                try:
+                    result = cls.process_command(
+                        ctrl_connection.recv(), ctrl_connection, is_tx=True
+                    )
+                    if result == cls.Command.STOP.name:
+                        exit_requested = True
+                        break
+                except (EOFError, BrokenPipeError, ConnectionResetError):
+                    logger.debug("Control connection closed during send")
                     exit_requested = True
                     break
 

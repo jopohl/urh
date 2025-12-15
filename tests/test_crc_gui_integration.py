@@ -164,7 +164,8 @@ class TestCRCGUIIntegration(QtTestCase):
         label_model.setData(
             label_model.index(0, 0),
             checksum_fieldtype.caption,
-            Qt.ItemDataRole.EditRole,
+            Qt.ItemDataRole.EditRole
+        ,
         )
 
         gframe = self.form.generator_tab_controller

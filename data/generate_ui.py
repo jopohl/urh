@@ -15,7 +15,7 @@ def gen(force=False):
         rcc_path = os.path.join(bindir, "pyside6-rcc.exe")
     else:
         uic_path = os.path.join(bindir, "pyuic6")
-        rcc_path = os.path.join(bindir, "pyside6-rcc")
+        rcc_path = os.path.join(bindir, "rcc")
 
     file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ui")
     ui_path = file_dir
@@ -71,7 +71,7 @@ def gen(force=False):
             for line in fileinput.input(out_file_path, inplace=True):
                 print(
                     line.replace(
-                        "from PySide6 import QtCore", "from PyQt6 import QtCore"
+                        "from PySide2 import QtCore", "from PyQt6 import QtCore"
                     ),
                     end="",
                 )

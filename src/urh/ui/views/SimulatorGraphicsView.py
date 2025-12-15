@@ -2,7 +2,11 @@ import copy
 
 from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QIcon, QAction, QActionGroup
-from PyQt6.QtWidgets import QGraphicsView, QMenu, QAbstractItemView, QInputDialog
+from PyQt6.QtWidgets import (QGraphicsView,
+    QMenu,
+    QAbstractItemView,
+    QInputDialog,
+)
 
 from urh.signalprocessing.MessageType import MessageType
 from urh.simulator.GraphicsItem import GraphicsItem

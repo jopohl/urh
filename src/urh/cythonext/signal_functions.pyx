@@ -238,8 +238,8 @@ cdef np.ndarray[np.float32_t, ndim=1] gauss_fir(float sample_rate, uint32_t samp
                                                 int(filter_width * samples_per_symbol) + 1,
                                                 dtype=np.float32)
     cdef float ts = samples_per_symbol / sample_rate  # symbol time
-    cdef np.ndarray[np.float32_t] h = np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
-        -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))
+    cdef np.ndarray[np.float32_t] h = (np.sqrt((2 * np.pi) / (np.log(2))) * bt / ts * np.exp(
+        -(((np.sqrt(2) * np.pi) / np.sqrt(np.log(2)) * bt * k / samples_per_symbol) ** 2))).astype(np.float32)
     return h / h.sum()
 
 cdef float clamp(float x) nogil:

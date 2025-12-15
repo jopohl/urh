@@ -360,12 +360,14 @@ class TestSimulatorTabGUI(QtTestCase):
         self.assertFalse(self.form.project_manager.participants[0].simulate)
         self.assertEqual(
             model.data(model.index(0, 0), role=Qt.ItemDataRole.CheckStateRole),
-            Qt.CheckState.Unchecked,
+            Qt.CheckState.Unchecked
+        ,
         )
         self.assertFalse(self.form.project_manager.participants[1].simulate)
         self.assertEqual(
             model.data(model.index(1, 0), role=Qt.ItemDataRole.CheckStateRole),
-            Qt.CheckState.Unchecked,
+            Qt.CheckState.Unchecked
+        ,
         )
 
         model.setData(
@@ -426,7 +428,8 @@ class TestSimulatorTabGUI(QtTestCase):
         list_model.setData(
             list_model.createIndex(1, 0),
             Qt.CheckState.Checked,
-            role=Qt.ItemDataRole.CheckStateRole,
+            role=Qt.ItemDataRole.CheckStateRole
+        ,
         )
 
         dialog = stc.get_simulator_dialog()

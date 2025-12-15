@@ -15,30 +15,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2019, macos-11]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        os: [ubuntu-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
         architecture: [x64]
-        exclude:
-          - os: windows-2019
-            python-version: '3.8'
-          - os: windows-2019
-            python-version: '3.9'
-          - os: windows-2019
-            python-version: '3.10'
-          - os: macOS-11
-            python-version: '3.7'
-          - os: macOS-11
-            python-version: '3.8'
-          - os: macOS-11
-            python-version: '3.10'
-
+        include:
+          - os: windows-latest
+            python-version: '3.12'
+            architecture: x86
+          - os: windows-latest
+            python-version: '3.12'
+            architecture: x64
+          - os: macOS-13
+            python-version: '3.12'
+            architecture: x64
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
@@ -68,7 +64,6 @@ jobs:
             pip install pywin32 pyaudio
           elif [[ $OS == mac* ]] 
           then
-            brew tap pothosware/homebrew-pothos
             brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd
             
             wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg
@@ -85,7 +80,7 @@ jobs:
             pip install pyaudio
             pip install pillow
           fi
-          pip install twine setuptools pytest pytest-xvfb pytest-cov pytest-faulthandler six appdirs packaging pyinstaller
+          pip install twine setuptools pytest pytest-xvfb pytest-cov appdirs packaging pyinstaller
           python -c "import tempfile, os; open(os.path.join(tempfile.gettempdir(), 'urh_releasing'), 'w').close()"
         shell: bash
         env:
@@ -95,7 +90,7 @@ jobs:
         run: python src/urh/cythonext/build.py
 
       - name: Create sdist
-        if: ${{ matrix.python-version == '3.9' && startsWith(matrix.os, 'ubuntu') }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.12' }}
         run: python setup.py sdist
 
       - run: python setup.py bdist_wheel
@@ -146,13 +141,13 @@ jobs:
                          dist/Universal.Radio.Hacker-"$(python src/urh/version.py)".dmg
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.os }}
+          name: dist-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.architecture }}
           path: dist
 
       - name: Run pytest with coverage
-        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.9' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') && matrix.python-version == '3.12' }}
         run: |
           touch tests/show_gui
           cp tests/.coveragerc .
@@ -161,7 +156,7 @@ jobs:
           coverage html
 
       - name: Run pytest without coverage
-        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.9' }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu') || matrix.python-version != '3.12' }}
         run: pytest -s -v --junitxml=junit/test-results.xml tests
 
       - uses: ncipollo/release-action@v1

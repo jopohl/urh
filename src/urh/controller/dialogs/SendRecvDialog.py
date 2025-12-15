@@ -157,6 +157,7 @@ class SendRecvDialog(QDialog):
     def reset(self):
         self.device.current_index = 0
         self.device.current_iteration = 0
+        self.device.reset_data_timestamp()
         self.ui.lSamplesCaptured.setText("0")
         self.ui.lSignalSize.setText("0")
         self.ui.lTime.setText("0")

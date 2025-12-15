@@ -141,6 +141,7 @@ class TestDecodingGUI(QtTestCase):
             timer.stop()
             message_box = next(
                 w for w in QApplication.topLevelWidgets() if isinstance(w, QMessageBox)
+
             )
             message_box.button(QMessageBox.StandardButton.Yes).click()
 

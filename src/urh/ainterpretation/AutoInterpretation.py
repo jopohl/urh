@@ -1,7 +1,5 @@
-import fractions
 import itertools
 import math
-import sys
 from collections import Counter
 
 import numpy as np
@@ -334,7 +332,7 @@ def get_tolerant_greatest_common_divisor(numbers):
     Calculate each gcd of each pair of numbers and return the most common one
 
     """
-    gcd = math.gcd if sys.version_info >= (3, 5) else fractions.gcd
+    gcd = math.gcd
 
     gcds = [gcd(x, y) for x, y in itertools.combinations(numbers, 2) if gcd(x, y) != 1]
     if len(gcds) == 0:

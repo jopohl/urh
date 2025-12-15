@@ -355,13 +355,15 @@ class TestAnalysisTabGUI(QtTestCase):
         for i in range(20, 24):
             self.assertIn(
                 "Expected",
-                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole)
+            ,
             )
 
         for i in range(0, 20):
             self.assertNotIn(
                 "Expected",
-                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole)
+            ,
             )
 
     def test_protocol_tree_context_menu(self):

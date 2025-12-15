@@ -70,7 +70,6 @@ class ModulationParametersDialog(QDialog):
 
 if __name__ == "__main__":
     from PyQt6.QtWidgets import QApplication
-
     app = QApplication(["urh"])
 
     dialog = ModulationParametersDialog([0, 100.0], "ASK")

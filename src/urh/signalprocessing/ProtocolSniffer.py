@@ -236,6 +236,9 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
 
         # clear cache and start a new message
         self.signal.iq_array = IQArray(self.__buffer[0 : self.__current_buffer_index])
+        self.signal.timestamp = time.time() - (
+            len(self.signal.iq_array) / self.rcv_device.sample_rate
+        )  # timestamp of the first sample in our buffer
         self.__clear_buffer()
         self.signal._qad = None
 
@@ -259,19 +262,25 @@ class ProtocolSniffer(ProtocolAnalyzer, QObject):
             ppseq,
             samples_per_symbol,
             self.signal.bits_per_symbol,
-            write_bit_sample_pos=False,
+            write_bit_sample_pos=True,
         )
 
+        i = 0
         for bits, pause in zip(bit_data, pauses):
+            message_timestamp = self.signal.timestamp + (
+                bit_sample_pos[i][0] / self.rcv_device.sample_rate
+            )
             message = Message(
                 bits,
                 pause,
                 samples_per_symbol=samples_per_symbol,
                 message_type=self.default_message_type,
                 decoder=self.decoder,
+                timestamp=message_timestamp,
             )
             self.messages.append(message)
             self.message_sniffed.emit(len(self.messages) - 1)
+            i += 1
 
     def stop(self):
         self.is_running = False

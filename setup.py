@@ -2,8 +2,8 @@ import os
 import sys
 import tempfile
 
-if sys.version_info < (3, 4):
-    print("You need at least Python 3.4 for this application!")
+if sys.version_info < (3, 9):
+    print("You need at least Python 3.9 for this application!")
     if sys.version_info[0] < 3:
         print("try running with python3 {}".format(" ".join(sys.argv)))
     sys.exit(1)
@@ -51,12 +51,21 @@ except ImportError:
     sys.exit(1)
 
 
+def set_builtin(name, value):
+    if isinstance(__builtins__, dict):
+        __builtins__[name] = value
+    else:
+        # to support https://github.com/pypa/build
+        # see https://github.com/jopohl/urh/issues/1106
+        setattr(__builtins__, name, value)
+
+
 class build_ext(_build_ext):
     def finalize_options(self):
         print("Finalizing options")
         _build_ext.finalize_options(self)
         # Prevent numpy from thinking it is still in its setup process:
-        __builtins__.__NUMPY_SETUP__ = False
+        set_builtin("__NUMPY_SETUP__", False)
         import numpy
 
         self.include_dirs.append(numpy.get_include())
@@ -133,7 +142,7 @@ def read_long_description():
         return ""
 
 
-install_requires = ["numpy", "psutil", "cython<3.0.0"]
+install_requires = ["numpy<3.0", "psutil", "cython", "setuptools"]
 if IS_RELEASE:
     install_requires.append("PyQt6")
 else:
@@ -141,9 +150,6 @@ else:
         import PyQt6
     except ImportError:
         install_requires.append("PyQt6")
-
-if sys.version_info < (3, 4):
-    install_requires.append("enum34")
 
 setup(
     name="urh",
@@ -159,7 +165,8 @@ setup(
     license="GNU General Public License (GPL)",
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=install_requires,
-    setup_requires=["numpy"],
+    setup_requires=["numpy<3.0"],
+    python_requires=">=3.9",
     packages=get_packages(),
     ext_modules=get_extensions(),
     cmdclass={"build_ext": build_ext},

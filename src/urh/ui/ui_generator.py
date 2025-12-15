@@ -25,16 +25,14 @@ class Ui_GeneratorTab(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.splitter = QtWidgets.QSplitter(parent=self.scrollAreaWidgetContents)
-        self.splitter.setStyleSheet(
-            "QSplitter::handle:horizontal {\n"
-            "margin: 4px 0px;\n"
-            "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
-            "stop:0 rgba(255, 255, 255, 0), \n"
-            "stop:0.5 rgba(100, 100, 100, 100), \n"
-            "stop:1 rgba(255, 255, 255, 0));\n"
-            "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
-            "}"
-        )
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
@@ -44,10 +42,7 @@ class Ui_GeneratorTab(object):
         self.verticalLayout.setContentsMargins(11, 11, 11, 11)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget = QtWidgets.QTabWidget(parent=self.layoutWidget_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -62,15 +57,10 @@ class Ui_GeneratorTab(object):
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.treeProtocols = GeneratorTreeView(parent=self.tab_proto)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.treeProtocols.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.treeProtocols.sizePolicy().hasHeightForWidth())
         self.treeProtocols.setSizePolicy(sizePolicy)
         self.treeProtocols.setObjectName("treeProtocols")
         self.treeProtocols.header().setDefaultSectionSize(57)
@@ -82,22 +72,14 @@ class Ui_GeneratorTab(object):
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.lWPauses = GeneratorListWidget(parent=self.tab_pauses)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lWPauses.sizePolicy().hasHeightForWidth())
         self.lWPauses.setSizePolicy(sizePolicy)
-        self.lWPauses.setEditTriggers(
-            QtWidgets.QAbstractItemView.EditTrigger.DoubleClicked
-            | QtWidgets.QAbstractItemView.EditTrigger.EditKeyPressed
-        )
+        self.lWPauses.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.DoubleClicked|QtWidgets.QAbstractItemView.EditTrigger.EditKeyPressed)
         self.lWPauses.setProperty("showDropIndicator", False)
-        self.lWPauses.setDragDropMode(
-            QtWidgets.QAbstractItemView.DragDropMode.NoDragDrop
-        )
+        self.lWPauses.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.NoDragDrop)
         self.lWPauses.setObjectName("lWPauses")
         self.gridLayout_5.addWidget(self.lWPauses, 0, 0, 1, 2)
         self.tabWidget.addTab(self.tab_pauses, "")
@@ -108,19 +90,12 @@ class Ui_GeneratorTab(object):
         self.verticalLayout_9.setSpacing(6)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.listViewProtoLabels = GeneratorListView(parent=self.tab_fuzzing)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.listViewProtoLabels.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.listViewProtoLabels.sizePolicy().hasHeightForWidth())
         self.listViewProtoLabels.setSizePolicy(sizePolicy)
-        self.listViewProtoLabels.setEditTriggers(
-            QtWidgets.QAbstractItemView.EditTrigger.EditKeyPressed
-        )
+        self.listViewProtoLabels.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.EditKeyPressed)
         self.listViewProtoLabels.setObjectName("listViewProtoLabels")
         self.verticalLayout_9.addWidget(self.listViewProtoLabels)
         self.groupBox = QtWidgets.QGroupBox(parent=self.tab_fuzzing)
@@ -128,14 +103,10 @@ class Ui_GeneratorTab(object):
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.groupBox)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.stackedWidgetFuzzing = QtWidgets.QStackedWidget(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stackedWidgetFuzzing.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.stackedWidgetFuzzing.sizePolicy().hasHeightForWidth())
         self.stackedWidgetFuzzing.setSizePolicy(sizePolicy)
         self.stackedWidgetFuzzing.setObjectName("stackedWidgetFuzzing")
         self.pageFuzzingUI = QtWidgets.QWidget()
@@ -160,9 +131,7 @@ class Ui_GeneratorTab(object):
         self.pageFuzzingProgressBar.setObjectName("pageFuzzingProgressBar")
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.pageFuzzingProgressBar)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.progressBarFuzzing = QtWidgets.QProgressBar(
-            parent=self.pageFuzzingProgressBar
-        )
+        self.progressBarFuzzing = QtWidgets.QProgressBar(parent=self.pageFuzzingProgressBar)
         self.progressBarFuzzing.setProperty("value", 24)
         self.progressBarFuzzing.setObjectName("progressBarFuzzing")
         self.horizontalLayout_7.addWidget(self.progressBarFuzzing)
@@ -206,15 +175,10 @@ class Ui_GeneratorTab(object):
         self.lEncoding.setObjectName("lEncoding")
         self.modulationLayout_2.addWidget(self.lEncoding, 0, 0, 1, 1)
         self.lEncodingValue = QtWidgets.QLabel(parent=self.layoutWidget_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lEncodingValue.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lEncodingValue.sizePolicy().hasHeightForWidth())
         self.lEncodingValue.setSizePolicy(sizePolicy)
         self.lEncodingValue.setObjectName("lEncodingValue")
         self.modulationLayout_2.addWidget(self.lEncodingValue, 0, 1, 1, 1)
@@ -250,14 +214,10 @@ class Ui_GeneratorTab(object):
         self.cBoxModulations.addItem("")
         self.gridLayout_6.addWidget(self.cBoxModulations, 2, 1, 1, 1)
         self.prBarGeneration = QtWidgets.QProgressBar(parent=self.layoutWidget_2)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.prBarGeneration.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.prBarGeneration.sizePolicy().hasHeightForWidth())
         self.prBarGeneration.setSizePolicy(sizePolicy)
         self.prBarGeneration.setProperty("value", 0)
         self.prBarGeneration.setObjectName("prBarGeneration")
@@ -291,20 +251,12 @@ class Ui_GeneratorTab(object):
         self.tableMessages.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.tableMessages.setDragEnabled(False)
         self.tableMessages.setDragDropOverwriteMode(False)
-        self.tableMessages.setDragDropMode(
-            QtWidgets.QAbstractItemView.DragDropMode.DropOnly
-        )
+        self.tableMessages.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DropOnly)
         self.tableMessages.setDefaultDropAction(QtCore.Qt.DropAction.CopyAction)
         self.tableMessages.setAlternatingRowColors(True)
-        self.tableMessages.setSelectionBehavior(
-            QtWidgets.QAbstractItemView.SelectionBehavior.SelectItems
-        )
-        self.tableMessages.setVerticalScrollMode(
-            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
-        )
-        self.tableMessages.setHorizontalScrollMode(
-            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
-        )
+        self.tableMessages.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectItems)
+        self.tableMessages.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableMessages.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableMessages.setShowGrid(False)
         self.tableMessages.setObjectName("tableMessages")
         self.tableMessages.horizontalHeader().setHighlightSections(False)
@@ -316,12 +268,7 @@ class Ui_GeneratorTab(object):
         self.btnNetworkSDRSend.setCheckable(True)
         self.btnNetworkSDRSend.setObjectName("btnNetworkSDRSend")
         self.gridLayout_2.addWidget(self.btnNetworkSDRSend, 2, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(
-            38,
-            22,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem = QtWidgets.QSpacerItem(38, 22, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 2, 4, 1, 2)
         self.cbViewType = QtWidgets.QComboBox(parent=self.layoutWidget)
         self.cbViewType.setObjectName("cbViewType")
@@ -330,9 +277,7 @@ class Ui_GeneratorTab(object):
         self.cbViewType.addItem("")
         self.gridLayout_2.addWidget(self.cbViewType, 2, 7, 1, 1)
         self.lViewType = QtWidgets.QLabel(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lViewType.sizePolicy().hasHeightForWidth())
@@ -348,15 +293,10 @@ class Ui_GeneratorTab(object):
         self.horizontalLayout.setContentsMargins(-1, 0, -1, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.labelGeneratedData = QtWidgets.QLabel(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.labelGeneratedData.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.labelGeneratedData.sizePolicy().hasHeightForWidth())
         self.labelGeneratedData.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -366,9 +306,7 @@ class Ui_GeneratorTab(object):
         self.labelGeneratedData.setObjectName("labelGeneratedData")
         self.horizontalLayout.addWidget(self.labelGeneratedData)
         self.btnSave = QtWidgets.QToolButton(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnSave.sizePolicy().hasHeightForWidth())
@@ -378,9 +316,7 @@ class Ui_GeneratorTab(object):
         self.btnSave.setObjectName("btnSave")
         self.horizontalLayout.addWidget(self.btnSave)
         self.btnOpen = QtWidgets.QToolButton(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnOpen.sizePolicy().hasHeightForWidth())
@@ -409,56 +345,20 @@ class Ui_GeneratorTab(object):
     def retranslateUi(self, GeneratorTab):
         _translate = QtCore.QCoreApplication.translate
         GeneratorTab.setWindowTitle(_translate("GeneratorTab", "Form"))
-        self.treeProtocols.setToolTip(
-            _translate(
-                "GeneratorTab",
-                "<html><head/><body><p>Drag&amp;Drop Protocols to the table on the right to fill the generation table.</p></body></html>",
-            )
-        )
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_proto),
-            _translate("GeneratorTab", "Protocols"),
-        )
-        self.lWPauses.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p>The pauses will be added automatically when you drag a protocol from the tree above to the table on the right.<br/></p><p>You can see the <span style=" font-weight:600;">position</span> of each pause by <span style=" font-weight:600;">selecting it</span>. There will be drawn a line in the table indicating the position of the pause.<br/></p><p>Use context menu or double click to <span style=" font-weight:600;">edit a pauses\' length</span>.</p></body></html>',
-            )
-        )
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_pauses),
-            _translate("GeneratorTab", "Pauses"),
-        )
-        self.groupBox.setTitle(
-            _translate("GeneratorTab", "Add fuzzing values to generated data")
-        )
+        self.treeProtocols.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>Drag&amp;Drop Protocols to the table on the right to fill the generation table.</p></body></html>"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_proto), _translate("GeneratorTab", "Protocols"))
+        self.lWPauses.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>The pauses will be added automatically when you drag a protocol from the tree above to the table on the right.<br/></p><p>You can see the <span style=\" font-weight:600;\">position</span> of each pause by <span style=\" font-weight:600;\">selecting it</span>. There will be drawn a line in the table indicating the position of the pause.<br/></p><p>Use context menu or double click to <span style=\" font-weight:600;\">edit a pauses\' length</span>.</p></body></html>"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_pauses), _translate("GeneratorTab", "Pauses"))
+        self.groupBox.setTitle(_translate("GeneratorTab", "Add fuzzing values to generated data"))
         self.btnFuzz.setText(_translate("GeneratorTab", "Fuzz"))
-        self.rBSuccessive.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p>For multiple labels per message the fuzzed values are inserted <span style=" font-weight:600;">one-by-one</span>.</p></body></html>',
-            )
-        )
+        self.rBSuccessive.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>For multiple labels per message the fuzzed values are inserted <span style=\" font-weight:600;\">one-by-one</span>.</p></body></html>"))
         self.rBSuccessive.setText(_translate("GeneratorTab", "S&uccessive"))
-        self.rbConcurrent.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p>For multiple labels per message the labels are fuzzed <span style=" font-weight:600;">at the same time</span>.</p></body></html>',
-            )
-        )
+        self.rbConcurrent.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>For multiple labels per message the labels are fuzzed <span style=\" font-weight:600;\">at the same time</span>.</p></body></html>"))
         self.rbConcurrent.setText(_translate("GeneratorTab", "&Concurrent"))
-        self.rBExhaustive.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p>For multiple labels per message the fuzzed values are inserted in <span style=" font-weight:600;">all possible combinations</span>.</p></body></html>',
-            )
-        )
+        self.rBExhaustive.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>For multiple labels per message the fuzzed values are inserted in <span style=\" font-weight:600;\">all possible combinations</span>.</p></body></html>"))
         self.rBExhaustive.setText(_translate("GeneratorTab", "E&xhaustive"))
         self.progressBarFuzzing.setFormat(_translate("GeneratorTab", "%v/%m"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_fuzzing),
-            _translate("GeneratorTab", "Fuzzing"),
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_fuzzing), _translate("GeneratorTab", "Fuzzing"))
         self.lCarrierFreqValue.setText(_translate("GeneratorTab", "TextLabel"))
         self.lModType.setText(_translate("GeneratorTab", "Modulation Type:"))
         self.lModTypeValue.setText(_translate("GeneratorTab", "TextLabel"))
@@ -480,48 +380,24 @@ class Ui_GeneratorTab(object):
         self.btnSend.setText(_translate("GeneratorTab", "Send data..."))
         self.btnEditModulation.setText(_translate("GeneratorTab", "Edit ..."))
         self.lModulation.setText(_translate("GeneratorTab", "Modulation:"))
-        self.btnGenerate.setToolTip(
-            _translate(
-                "GeneratorTab",
-                "Generate the complex file of the modulated signal, after tuning all parameters above.",
-            )
-        )
+        self.btnGenerate.setToolTip(_translate("GeneratorTab", "Generate the complex file of the modulated signal, after tuning all parameters above."))
         self.btnGenerate.setText(_translate("GeneratorTab", "Generate file..."))
-        self.btnNetworkSDRSend.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p><span style=" font-weight:600;">Send encoded data to your external application via TCP.</span></p></body></html>',
-            )
-        )
+        self.btnNetworkSDRSend.setToolTip(_translate("GeneratorTab", "<html><head/><body><p><span style=\" font-weight:600;\">Send encoded data to your external application via TCP.</span></p></body></html>"))
         self.btnNetworkSDRSend.setText(_translate("GeneratorTab", "Send via Network"))
         self.cbViewType.setItemText(0, _translate("GeneratorTab", "Bit"))
         self.cbViewType.setItemText(1, _translate("GeneratorTab", "Hex"))
         self.cbViewType.setItemText(2, _translate("GeneratorTab", "ASCII"))
         self.lViewType.setText(_translate("GeneratorTab", "Viewtype:"))
-        self.btnRfCatSend.setToolTip(
-            _translate(
-                "GeneratorTab",
-                '<html><head/><body><p><span style=" font-weight:600;">Send encoded data via RfCat. </span></p><p><span style=" font-style:italic;">Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:</span></p><p><span style=" font-style:italic;">Edit-&gt;Options-&gt;Device-&gt;\'Device sending repetitions\'</span></p></body></html>',
-            )
-        )
+        self.btnRfCatSend.setToolTip(_translate("GeneratorTab", "<html><head/><body><p><span style=\" font-weight:600;\">Send encoded data via RfCat. </span></p><p><span style=\" font-style:italic;\">Hit again for stopping the sending process. Note that you can set the number of repetitions (from 1 to infinite) in:</span></p><p><span style=\" font-style:italic;\">Edit-&gt;Options-&gt;Device-&gt;\'Device sending repetitions\'</span></p></body></html>"))
         self.btnRfCatSend.setText(_translate("GeneratorTab", "Send via RfCat"))
         self.labelGeneratedData.setText(_translate("GeneratorTab", "Generated Data"))
-        self.btnSave.setToolTip(
-            _translate("GeneratorTab", "Save current fuzz profile.")
-        )
+        self.btnSave.setToolTip(_translate("GeneratorTab", "Save current fuzz profile."))
         self.btnSave.setText(_translate("GeneratorTab", "..."))
         self.btnOpen.setToolTip(_translate("GeneratorTab", "Load a fuzz profile."))
         self.btnOpen.setText(_translate("GeneratorTab", "..."))
-        self.lEstimatedTime.setToolTip(
-            _translate(
-                "GeneratorTab",
-                "<html><head/><body><p>The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.</p></body></html>",
-            )
-        )
+        self.lEstimatedTime.setToolTip(_translate("GeneratorTab", "<html><head/><body><p>The estimated average time is based on the average number of bits per message and average sample rate, you set for the modulations.</p></body></html>"))
         self.lEstimatedTime.setText(_translate("GeneratorTab", "Estimated Time: "))
         self.btnFZSave.setText(_translate("GeneratorTab", "Save as FlipperZero SubGHz"))
-
-
 from urh.ui.ElidedLabel import ElidedLabel
 from urh.ui.GeneratorListWidget import GeneratorListWidget
 from urh.ui.views.GeneratorListView import GeneratorListView

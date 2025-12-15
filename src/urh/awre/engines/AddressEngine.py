@@ -73,7 +73,7 @@ class AddressEngine(Engine):
 
     def find(self):
         addresses_by_participant = {
-            p: [addr.tostring()]
+            p: [addr.tobytes()]
             for p, addr in self.known_addresses_by_participant.items()
         }
         addresses_by_participant.update(self.find_addresses())
@@ -208,7 +208,7 @@ class AddressEngine(Engine):
             for rng in sorted(ranges, key=lambda r: r.score, reverse=True):
                 rng.field_type = (
                     "source address"
-                    if rng.value.tostring() == address
+                    if rng.value.tobytes() == address
                     else "destination address"
                 )
                 if len(result) == 0:
@@ -315,7 +315,7 @@ class AddressEngine(Engine):
 
         for participant, addresses in addresses_by_participant.items():
             if participant in self.known_addresses_by_participant:
-                address = self.known_addresses_by_participant[participant].tostring()
+                address = self.known_addresses_by_participant[participant].tobytes()
                 scored_participants_addresses[participant][address] = 9999999999
                 continue
 
@@ -323,11 +323,11 @@ class AddressEngine(Engine):
                 matching = [
                     rng
                     for rng in high_scored_ranges_by_participant[participant]
-                    if i in rng.message_indices and rng.value.tostring() in addresses
+                    if i in rng.message_indices and rng.value.tobytes() in addresses
                 ]
 
                 if len(matching) == 1:
-                    address = matching[0].value.tostring()
+                    address = matching[0].value.tobytes()
                     # only one address, so probably a destination and not a source
                     scored_participants_addresses[participant][address] *= 0.9
 
@@ -340,11 +340,11 @@ class AddressEngine(Engine):
                                 prev_participant
                             ]
                             if i - 1 in rng.message_indices
-                            and rng.value.tostring() in addresses
+                            and rng.value.tobytes() in addresses
                         ]
                         if len(prev_matching) > 1:
                             for prev_rng in filter(
-                                lambda r: r.value.tostring() == address, prev_matching
+                                lambda r: r.value.tobytes() == address, prev_matching
                             ):
                                 scored_participants_addresses[prev_participant][
                                     address
@@ -354,7 +354,7 @@ class AddressEngine(Engine):
                     # more than one address, so there must be a source address included
                     for rng in matching:
                         scored_participants_addresses[participant][
-                            rng.value.tostring()
+                            rng.value.tobytes()
                         ] += rng.score
 
         minimum_score = 0.5
@@ -531,18 +531,18 @@ class AddressEngine(Engine):
                     if addr_len is not None and len(val) != addr_len:
                         continue
                     if not p1_already_assigned and not p2_already_assigned:
-                        result[p1].add(val.tostring())
-                        result[p2].add(val.tostring())
+                        result[p1].add(val.tobytes())
+                        result[p2].add(val.tobytes())
                     elif (
                         p1_already_assigned
                         and val.tostring()
-                        != self.known_addresses_by_participant[p1].tostring()
+                        != self.known_addresses_by_participant[p1].tobytes()
                     ):
                         result[p2].add(val.tostring())
                     elif (
                         p2_already_assigned
                         and val.tostring()
-                        != self.known_addresses_by_participant[p2].tostring()
+                        != self.known_addresses_by_participant[p2].tobytes()
                     ):
                         result[p1].add(val.tostring())
         return result

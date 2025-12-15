@@ -1,4 +1,5 @@
-numpy
+numpy<3.0
 PyQt6
 psutil
-cython<3.0.0
+cython
+setuptools

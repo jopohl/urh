@@ -65,8 +65,8 @@ def fix_windows_stdout_stderr():
 def main():
     fix_windows_stdout_stderr()
 
-    if sys.version_info < (3, 4):
-        print("You need at least Python 3.4 for this application!")
+    if sys.version_info < (3, 9):
+        print("You need at least Python 3.9 for this application!")
         sys.exit(1)
 
     urh_exe = sys.executable if hasattr(sys, "frozen") else sys.argv[0]

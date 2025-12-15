@@ -22,6 +22,6 @@ about: Create a report to help us improve
 ##### Platform Specifications
 <!-- please complete the following information -->
  - OS: [e.g. Arch Linux]
- - URH version: [e.g. 2.4.2]
- - Python version: [e.g. 3.7]
+ - URH version: [e.g. 2.9.8]
+ - Python version: [e.g. 3.11]
  - Installed via [e.g. pip]

@@ -341,7 +341,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      <x>0</x>
      <y>0</y>
      <width>798</width>
-     <height>27</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -358,6 +358,11 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
      </property>
      <addaction name="actionSamples_from_csv"/>
     </widget>
+    <widget class="QMenu" name="menuRecent">
+     <property name="title">
+      <string>Recent</string>
+     </property>
+    </widget>
     <addaction name="actionNew_Project"/>
     <addaction name="actionProject_settings"/>
     <addaction name="actionSave_project"/>
@@ -365,6 +370,7 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_directory"/>
+    <addaction name="menuRecent"/>
     <addaction name="menuImport"/>
     <addaction name="separator"/>
     <addaction name="actionSpectrum_Analyzer"/>
@@ -375,6 +381,8 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
     <addaction name="actionCloseAllFiles"/>
     <addaction name="separator"/>
     <addaction name="actionConvert_Folder_to_Project"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit_URH"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -820,6 +828,20 @@ image: url(:/icons/icons/splitter_handle_vertical.svg);
    </property>
    <property name="text">
     <string>100% (disables demodulation)</string>
+   </property>
+  </action>
+  <action name="actionExit_URH">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Exit URH</string>
+   </property>
+  </action>
+  <action name="actionPlaceholder">
+   <property name="text">
+    <string>Placeholder</string>
    </property>
   </action>
  </widget>

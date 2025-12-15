@@ -11,9 +11,7 @@ class Ui_SignalFrame(object):
     def setupUi(self, SignalFrame):
         SignalFrame.setObjectName("SignalFrame")
         SignalFrame.resize(1057, 652)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(SignalFrame.sizePolicy().hasHeightForWidth())
@@ -32,19 +30,13 @@ class Ui_SignalFrame(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(SignalFrame)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.gridLayout_2 = QtWidgets.QGridLayout()
-        self.gridLayout_2.setSizeConstraint(
-            QtWidgets.QLayout.SizeConstraint.SetFixedSize
-        )
+        self.gridLayout_2.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetFixedSize)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.lSignalViewText = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lSignalViewText.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lSignalViewText.sizePolicy().hasHeightForWidth())
         self.lSignalViewText.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setUnderline(False)
@@ -65,22 +57,13 @@ class Ui_SignalFrame(object):
         self.btnSaveSignal.setIcon(icon)
         self.btnSaveSignal.setObjectName("btnSaveSignal")
         self.gridLayout.addWidget(self.btnSaveSignal, 0, 3, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(
-            10,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout.addItem(spacerItem, 0, 2, 1, 1)
         self.btnCloseSignal = QtWidgets.QToolButton(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btnCloseSignal.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btnCloseSignal.sizePolicy().hasHeightForWidth())
         self.btnCloseSignal.setSizePolicy(sizePolicy)
         self.btnCloseSignal.setMinimumSize(QtCore.QSize(24, 24))
         self.btnCloseSignal.setMaximumSize(QtCore.QSize(24, 24))
@@ -90,9 +73,7 @@ class Ui_SignalFrame(object):
         self.btnCloseSignal.setObjectName("btnCloseSignal")
         self.gridLayout.addWidget(self.btnCloseSignal, 0, 9, 1, 1)
         self.lSignalTyp = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSignalTyp.sizePolicy().hasHeightForWidth())
@@ -100,9 +81,7 @@ class Ui_SignalFrame(object):
         self.lSignalTyp.setObjectName("lSignalTyp")
         self.gridLayout.addWidget(self.lSignalTyp, 0, 1, 1, 1)
         self.lSignalNr = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSignalNr.sizePolicy().hasHeightForWidth())
@@ -143,43 +122,29 @@ class Ui_SignalFrame(object):
         self.spinBoxTolerance.setObjectName("spinBoxTolerance")
         self.gridLayout_2.addWidget(self.spinBoxTolerance, 8, 1, 1, 1)
         self.lSamplesPerSymbol = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lSamplesPerSymbol.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lSamplesPerSymbol.sizePolicy().hasHeightForWidth())
         self.lSamplesPerSymbol.setSizePolicy(sizePolicy)
-        self.lSamplesPerSymbol.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-        )
+        self.lSamplesPerSymbol.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse)
         self.lSamplesPerSymbol.setObjectName("lSamplesPerSymbol")
         self.gridLayout_2.addWidget(self.lSamplesPerSymbol, 5, 0, 1, 1)
         self.lErrorTolerance = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lErrorTolerance.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lErrorTolerance.sizePolicy().hasHeightForWidth())
         self.lErrorTolerance.setSizePolicy(sizePolicy)
         self.lErrorTolerance.setMinimumSize(QtCore.QSize(0, 0))
         self.lErrorTolerance.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.lErrorTolerance.setObjectName("lErrorTolerance")
         self.gridLayout_2.addWidget(self.lErrorTolerance, 8, 0, 1, 1)
         self.lCenterOffset = QtWidgets.QLabel(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lCenterOffset.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lCenterOffset.sizePolicy().hasHeightForWidth())
         self.lCenterOffset.setSizePolicy(sizePolicy)
         self.lCenterOffset.setMinimumSize(QtCore.QSize(0, 0))
         self.lCenterOffset.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -190,9 +155,7 @@ class Ui_SignalFrame(object):
         self.labelModulation.setObjectName("labelModulation")
         self.gridLayout_2.addWidget(self.labelModulation, 10, 0, 1, 1)
         self.cbSignalView = QtWidgets.QComboBox(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cbSignalView.sizePolicy().hasHeightForWidth())
@@ -219,14 +182,10 @@ class Ui_SignalFrame(object):
         self.spinBoxCenterSpacing.setObjectName("spinBoxCenterSpacing")
         self.gridLayout_2.addWidget(self.spinBoxCenterSpacing, 4, 1, 1, 1)
         self.lineEditSignalName = QtWidgets.QLineEdit(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lineEditSignalName.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lineEditSignalName.sizePolicy().hasHeightForWidth())
         self.lineEditSignalName.setSizePolicy(sizePolicy)
         self.lineEditSignalName.setMinimumSize(QtCore.QSize(214, 0))
         self.lineEditSignalName.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -246,9 +205,7 @@ class Ui_SignalFrame(object):
         icon = QtGui.QIcon.fromTheme("configure")
         self.btnAdvancedModulationSettings.setIcon(icon)
         self.btnAdvancedModulationSettings.setIconSize(QtCore.QSize(16, 16))
-        self.btnAdvancedModulationSettings.setObjectName(
-            "btnAdvancedModulationSettings"
-        )
+        self.btnAdvancedModulationSettings.setObjectName("btnAdvancedModulationSettings")
         self.horizontalLayout_5.addWidget(self.btnAdvancedModulationSettings)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 10, 1, 1, 1)
         self.chkBoxSyncSelection = QtWidgets.QCheckBox(parent=SignalFrame)
@@ -271,21 +228,15 @@ class Ui_SignalFrame(object):
         self.spinBoxSamplesPerSymbol.setObjectName("spinBoxSamplesPerSymbol")
         self.gridLayout_2.addWidget(self.spinBoxSamplesPerSymbol, 5, 1, 1, 1)
         self.btnAutoDetect = QtWidgets.QToolButton(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btnAutoDetect.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btnAutoDetect.sizePolicy().hasHeightForWidth())
         self.btnAutoDetect.setSizePolicy(sizePolicy)
         self.btnAutoDetect.setIconSize(QtCore.QSize(16, 16))
         self.btnAutoDetect.setCheckable(False)
         self.btnAutoDetect.setChecked(False)
-        self.btnAutoDetect.setPopupMode(
-            QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup
-        )
+        self.btnAutoDetect.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.btnAutoDetect.setArrowType(QtCore.Qt.ArrowType.NoArrow)
         self.btnAutoDetect.setObjectName("btnAutoDetect")
         self.gridLayout_2.addWidget(self.btnAutoDetect, 13, 0, 1, 2)
@@ -295,14 +246,10 @@ class Ui_SignalFrame(object):
         self.line.setObjectName("line")
         self.gridLayout_2.addWidget(self.line, 15, 0, 1, 2)
         self.sliderSpectrogramMin = QtWidgets.QSlider(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sliderSpectrogramMin.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sliderSpectrogramMin.sizePolicy().hasHeightForWidth())
         self.sliderSpectrogramMin.setSizePolicy(sizePolicy)
         self.sliderSpectrogramMin.setMinimum(-150)
         self.sliderSpectrogramMin.setMaximum(10)
@@ -313,14 +260,10 @@ class Ui_SignalFrame(object):
         self.labelFFTWindowSize.setObjectName("labelFFTWindowSize")
         self.gridLayout_2.addWidget(self.labelFFTWindowSize, 20, 0, 1, 1)
         self.sliderSpectrogramMax = QtWidgets.QSlider(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sliderSpectrogramMax.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sliderSpectrogramMax.sizePolicy().hasHeightForWidth())
         self.sliderSpectrogramMax.setSizePolicy(sizePolicy)
         self.sliderSpectrogramMax.setMinimum(-150)
         self.sliderSpectrogramMax.setMaximum(10)
@@ -339,22 +282,13 @@ class Ui_SignalFrame(object):
         self.labelNoise = QtWidgets.QLabel(parent=SignalFrame)
         self.labelNoise.setObjectName("labelNoise")
         self.gridLayout_2.addWidget(self.labelNoise, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.gridLayout_2.addItem(spacerItem1, 14, 0, 1, 1)
         self.sliderFFTWindowSize = QtWidgets.QSlider(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.sliderFFTWindowSize.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.sliderFFTWindowSize.sizePolicy().hasHeightForWidth())
         self.sliderFFTWindowSize.setSizePolicy(sizePolicy)
         self.sliderFFTWindowSize.setMinimum(6)
         self.sliderFFTWindowSize.setMaximum(15)
@@ -366,24 +300,19 @@ class Ui_SignalFrame(object):
         self.gridLayout_2.addWidget(self.lBitsPerSymbol, 11, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout_2)
         self.splitter = QtWidgets.QSplitter(parent=SignalFrame)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
         self.splitter.setSizePolicy(sizePolicy)
-        self.splitter.setStyleSheet(
-            "QSplitter::handle:vertical {\n"
-            "margin: 4px 0px;\n"
-            "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
-            "stop:0 rgba(255, 255, 255, 0), \n"
-            "stop:0.5 rgba(100, 100, 100, 100), \n"
-            "stop:1 rgba(255, 255, 255, 0));\n"
-            "    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
-            "}"
-        )
+        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"    image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+"}")
         self.splitter.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.splitter.setLineWidth(1)
         self.splitter.setOrientation(QtCore.Qt.Orientation.Vertical)
@@ -393,9 +322,7 @@ class Ui_SignalFrame(object):
         self.layoutWidget = QtWidgets.QWidget(parent=self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout.setSizeConstraint(
-            QtWidgets.QLayout.SizeConstraint.SetDefaultConstraint
-        )
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -411,10 +338,7 @@ class Ui_SignalFrame(object):
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.gvSignal = EpicGraphicView(parent=self.pageSignal)
         self.gvSignal.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.gvSignal.sizePolicy().hasHeightForWidth())
@@ -423,34 +347,19 @@ class Ui_SignalFrame(object):
         self.gvSignal.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.gvSignal.setMouseTracking(True)
         self.gvSignal.setFocusPolicy(QtCore.Qt.FocusPolicy.WheelFocus)
-        self.gvSignal.setContextMenuPolicy(
-            QtCore.Qt.ContextMenuPolicy.DefaultContextMenu
-        )
+        self.gvSignal.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
         self.gvSignal.setAutoFillBackground(False)
         self.gvSignal.setStyleSheet("")
         self.gvSignal.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.gvSignal.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.gvSignal.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn
-        )
-        self.gvSignal.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn
-        )
+        self.gvSignal.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.gvSignal.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.gvSignal.setInteractive(False)
-        self.gvSignal.setRenderHints(
-            QtGui.QPainter.RenderHint.Antialiasing
-            | QtGui.QPainter.RenderHint.TextAntialiasing
-        )
-        self.gvSignal.setTransformationAnchor(
-            QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor
-        )
+        self.gvSignal.setRenderHints(QtGui.QPainter.RenderHint.Antialiasing|QtGui.QPainter.RenderHint.TextAntialiasing)
+        self.gvSignal.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
         self.gvSignal.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
-        self.gvSignal.setViewportUpdateMode(
-            QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate
-        )
-        self.gvSignal.setRubberBandSelectionMode(
-            QtCore.Qt.ItemSelectionMode.ContainsItemShape
-        )
+        self.gvSignal.setViewportUpdateMode(QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate)
+        self.gvSignal.setRubberBandSelectionMode(QtCore.Qt.ItemSelectionMode.ContainsItemShape)
         self.gvSignal.setObjectName("gvSignal")
         self.horizontalLayout_6.addWidget(self.gvSignal)
         self.stackedWidget.addWidget(self.pageSignal)
@@ -465,12 +374,8 @@ class Ui_SignalFrame(object):
         self.gvSpectrogram.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.gvSpectrogram.setInteractive(False)
         self.gvSpectrogram.setRenderHints(QtGui.QPainter.RenderHint.TextAntialiasing)
-        self.gvSpectrogram.setTransformationAnchor(
-            QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor
-        )
-        self.gvSpectrogram.setViewportUpdateMode(
-            QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate
-        )
+        self.gvSpectrogram.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
+        self.gvSpectrogram.setViewportUpdateMode(QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate)
         self.gvSpectrogram.setObjectName("gvSpectrogram")
         self.horizontalLayout_4.addWidget(self.gvSpectrogram)
         self.stackedWidget.addWidget(self.pageSpectrogram)
@@ -483,20 +388,14 @@ class Ui_SignalFrame(object):
         font.setPointSize(12)
         self.labelLoadingAutoInterpretation.setFont(font)
         self.labelLoadingAutoInterpretation.setWordWrap(True)
-        self.labelLoadingAutoInterpretation.setObjectName(
-            "labelLoadingAutoInterpretation"
-        )
+        self.labelLoadingAutoInterpretation.setObjectName("labelLoadingAutoInterpretation")
         self.verticalLayout_2.addWidget(self.labelLoadingAutoInterpretation)
         self.stackedWidget.addWidget(self.pageLoading)
         self.horizontalLayout_2.addWidget(self.stackedWidget)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.lYScale = QtWidgets.QLabel(parent=self.layoutWidget)
-        self.lYScale.setLocale(
-            QtCore.QLocale(
-                QtCore.QLocale.Language.English, QtCore.QLocale.Country.UnitedStates
-            )
-        )
+        self.lYScale.setLocale(QtCore.QLocale(QtCore.QLocale.Language.English, QtCore.QLocale.Country.UnitedStates))
         self.lYScale.setObjectName("lYScale")
         self.verticalLayout_5.addWidget(self.lYScale)
         self.sliderYScale = QtWidgets.QSlider(parent=self.layoutWidget)
@@ -511,14 +410,10 @@ class Ui_SignalFrame(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.btnShowHideStartEnd = QtWidgets.QToolButton(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.btnShowHideStartEnd.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.btnShowHideStartEnd.sizePolicy().hasHeightForWidth())
         self.btnShowHideStartEnd.setSizePolicy(sizePolicy)
         self.btnShowHideStartEnd.setAutoFillBackground(False)
         self.btnShowHideStartEnd.setStyleSheet("")
@@ -550,22 +445,13 @@ class Ui_SignalFrame(object):
         self.labelRSSI = QtWidgets.QLabel(parent=self.layoutWidget)
         self.labelRSSI.setObjectName("labelRSSI")
         self.horizontalLayout_3.addWidget(self.labelRSSI)
-        spacerItem2 = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.btnFilter = QtWidgets.QToolButton(parent=self.layoutWidget)
         icon = QtGui.QIcon.fromTheme("view-filter")
         self.btnFilter.setIcon(icon)
-        self.btnFilter.setPopupMode(
-            QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup
-        )
-        self.btnFilter.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon
-        )
+        self.btnFilter.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup)
+        self.btnFilter.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.btnFilter.setArrowType(QtCore.Qt.ArrowType.NoArrow)
         self.btnFilter.setObjectName("btnFilter")
         self.horizontalLayout_3.addWidget(self.btnFilter)
@@ -588,17 +474,10 @@ class Ui_SignalFrame(object):
         self.spinBoxSelectionEnd.setMaximum(99999999)
         self.spinBoxSelectionEnd.setObjectName("spinBoxSelectionEnd")
         self.additionalInfos.addWidget(self.spinBoxSelectionEnd)
-        spacerItem3 = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.additionalInfos.addItem(spacerItem3)
         self.lZoomText = QtWidgets.QLabel(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lZoomText.sizePolicy().hasHeightForWidth())
@@ -610,11 +489,7 @@ class Ui_SignalFrame(object):
         font.setUnderline(False)
         self.lZoomText.setFont(font)
         self.lZoomText.setTextFormat(QtCore.Qt.TextFormat.PlainText)
-        self.lZoomText.setAlignment(
-            QtCore.Qt.AlignmentFlag.AlignLeading
-            | QtCore.Qt.AlignmentFlag.AlignLeft
-            | QtCore.Qt.AlignmentFlag.AlignVCenter
-        )
+        self.lZoomText.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.lZoomText.setObjectName("lZoomText")
         self.additionalInfos.addWidget(self.lZoomText)
         self.spinBoxXZoom = QtWidgets.QSpinBox(parent=self.layoutWidget)
@@ -622,12 +497,7 @@ class Ui_SignalFrame(object):
         self.spinBoxXZoom.setMaximum(999999999)
         self.spinBoxXZoom.setObjectName("spinBoxXZoom")
         self.additionalInfos.addWidget(self.spinBoxXZoom)
-        spacerItem4 = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.additionalInfos.addItem(spacerItem4)
         self.lSamplesInView = QtWidgets.QLabel(parent=self.layoutWidget)
         self.lSamplesInView.setObjectName("lSamplesInView")
@@ -643,10 +513,7 @@ class Ui_SignalFrame(object):
         self.additionalInfos.addWidget(self.lSamplesViewText)
         self.verticalLayout.addLayout(self.additionalInfos)
         self.txtEdProto = TextEditProtocolView(parent=self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.MinimumExpanding,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.txtEdProto.sizePolicy().hasHeightForWidth())
@@ -654,9 +521,7 @@ class Ui_SignalFrame(object):
         self.txtEdProto.setMinimumSize(QtCore.QSize(0, 80))
         self.txtEdProto.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.txtEdProto.setBaseSize(QtCore.QSize(0, 0))
-        self.txtEdProto.setContextMenuPolicy(
-            QtCore.Qt.ContextMenuPolicy.DefaultContextMenu
-        )
+        self.txtEdProto.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
         self.txtEdProto.setAcceptDrops(False)
         self.txtEdProto.setObjectName("txtEdProto")
         self.horizontalLayout.addWidget(self.splitter)
@@ -675,12 +540,8 @@ class Ui_SignalFrame(object):
         SignalFrame.setTabOrder(self.spinBoxSamplesPerSymbol, self.spinBoxTolerance)
         SignalFrame.setTabOrder(self.spinBoxTolerance, self.cbModulationType)
         SignalFrame.setTabOrder(self.cbModulationType, self.spinBoxBitsPerSymbol)
-        SignalFrame.setTabOrder(
-            self.spinBoxBitsPerSymbol, self.btnAdvancedModulationSettings
-        )
-        SignalFrame.setTabOrder(
-            self.btnAdvancedModulationSettings, self.btnShowHideStartEnd
-        )
+        SignalFrame.setTabOrder(self.spinBoxBitsPerSymbol, self.btnAdvancedModulationSettings)
+        SignalFrame.setTabOrder(self.btnAdvancedModulationSettings, self.btnShowHideStartEnd)
         SignalFrame.setTabOrder(self.btnShowHideStartEnd, self.btnAutoDetect)
         SignalFrame.setTabOrder(self.btnAutoDetect, self.txtEdProto)
         SignalFrame.setTabOrder(self.txtEdProto, self.cbSignalView)
@@ -701,12 +562,7 @@ class Ui_SignalFrame(object):
         _translate = QtCore.QCoreApplication.translate
         SignalFrame.setWindowTitle(_translate("SignalFrame", "Frame"))
         self.lSignalViewText.setText(_translate("SignalFrame", "Signal view:"))
-        self.spinBoxBitsPerSymbol.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p><span style=" font-weight:600;">Higher order</span> modulations can carry <span style=" font-weight:600;">multiple</span> bits with <span style=" font-weight:600;">each</span> symbol. Configure <span style=" font-weight:600;">how many</span> bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)</p></body></html>',
-            )
-        )
+        self.spinBoxBitsPerSymbol.setToolTip(_translate("SignalFrame", "<html><head/><body><p><span style=\" font-weight:600;\">Higher order</span> modulations can carry <span style=\" font-weight:600;\">multiple</span> bits with <span style=\" font-weight:600;\">each</span> symbol. Configure <span style=\" font-weight:600;\">how many</span> bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)</p></body></html>"))
         self.btnSaveSignal.setText(_translate("SignalFrame", "..."))
         self.btnCloseSignal.setText(_translate("SignalFrame", "X"))
         self.lSignalTyp.setText(_translate("SignalFrame", "<Signaltyp>"))
@@ -716,183 +572,68 @@ class Ui_SignalFrame(object):
         self.cbProtoView.setItemText(0, _translate("SignalFrame", "Bits"))
         self.cbProtoView.setItemText(1, _translate("SignalFrame", "Hex"))
         self.cbProtoView.setItemText(2, _translate("SignalFrame", "ASCII"))
-        self.lCenterSpacing.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>For <span style=" font-weight:600;">higher order</span> modulations (&gt; 1 Bits/Symbol), there are <span style=" font-weight:600;">multiple</span> centers. We assume that the <span style=" font-weight:600;">spacing</span> between all possible symbols is <span style=" font-weight:600;">constant</span>. Therefore you configure the spacing between centers.</p></body></html>',
-            )
-        )
+        self.lCenterSpacing.setToolTip(_translate("SignalFrame", "<html><head/><body><p>For <span style=\" font-weight:600;\">higher order</span> modulations (&gt; 1 Bits/Symbol), there are <span style=\" font-weight:600;\">multiple</span> centers. We assume that the <span style=\" font-weight:600;\">spacing</span> between all possible symbols is <span style=\" font-weight:600;\">constant</span>. Therefore you configure the spacing between centers.</p></body></html>"))
         self.lCenterSpacing.setText(_translate("SignalFrame", "Center spacing:"))
-        self.spinBoxTolerance.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the error tolerance for determining the <span style=" font-weight:600;">pulse lengths</span> in the demodulated signal.</p><p><span style=" font-weight:400; font-style:italic;">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=" font-weight:600;">spiky data</span> after demodulation.</p></body></html>',
-            )
-        )
-        self.lSamplesPerSymbol.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the length of one symbol <span style=" font-weight:600;">in samples</span>. For <span style=" font-weight:600;">binary modulations </span>(default) this is the <span style=" font-weight:600;">bit length</span>.</p></body></html>',
-            )
-        )
+        self.spinBoxTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" font-weight:400; font-style:italic;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
+        self.lSamplesPerSymbol.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the length of one symbol <span style=\" font-weight:600;\">in samples</span>. For <span style=\" font-weight:600;\">binary modulations </span>(default) this is the <span style=\" font-weight:600;\">bit length</span>.</p></body></html>"))
         self.lSamplesPerSymbol.setText(_translate("SignalFrame", "Samples/Symbol:"))
-        self.lErrorTolerance.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the error tolerance for determining the <span style=" font-weight:600;">pulse lengths</span> in the demodulated signal.</p><p><span style=" font-weight:400; font-style:italic;">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=" font-weight:600;">spiky data</span> after demodulation.</p></body></html>',
-            )
-        )
+        self.lErrorTolerance.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the error tolerance for determining the <span style=\" font-weight:600;\">pulse lengths</span> in the demodulated signal.</p><p><span style=\" font-weight:400; font-style:italic;\">Example:</span> Say, we are reading a ones pulse and the tolerance value was set to 5. Then 5 errors (which must follow sequentially) are accepted.</p><p>Tune this value if you have <span style=\" font-weight:600;\">spiky data</span> after demodulation.</p></body></html>"))
         self.lErrorTolerance.setText(_translate("SignalFrame", "Error tolerance:"))
-        self.lCenterOffset.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the threshold used for determining if a <span style=" font-weight:600;">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=" font-style:italic;">Quadrature Demod View.</span></p></body></html>',
-            )
-        )
+        self.lCenterOffset.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the threshold used for determining if a <span style=\" font-weight:600;\">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=\" font-style:italic;\">Quadrature Demod View.</span></p></body></html>"))
         self.lCenterOffset.setText(_translate("SignalFrame", "Center:"))
-        self.labelModulation.setToolTip(
-            _translate(
-                "SignalFrame",
-                "<html><head/><body><p>Choose signals modulation:</p><ul><li>Amplitude Shift Keying (ASK)</li><li>Frequency Shift Keying (FSK)</li><li>Phase Shift Keying (PSK)</li></ul></body></html>",
-            )
-        )
+        self.labelModulation.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose signals modulation:</p><ul><li>Amplitude Shift Keying (ASK)</li><li>Frequency Shift Keying (FSK)</li><li>Phase Shift Keying (PSK)</li></ul></body></html>"))
         self.labelModulation.setText(_translate("SignalFrame", "Modulation:"))
-        self.cbSignalView.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Choose the view of your signal. Analog, Demodulated, Spectrogram or I/Q view.</p><p>The quadrature demodulation uses a <span style=" font-weight:600;">threshold of magnitudes,</span> to <span style=" font-weight:600;">suppress noise</span>. All samples with a magnitude lower than this threshold will be eliminated after demodulation.</p><p>Tune this value by selecting a <span style=" font-style:italic;">noisy area</span> and mark it as noise using <span style=" font-weight:600;">context menu</span>.</p><p><span style=" font-weight:600;">Signal colors</span>:<br/>I =&gt; <span style=" font-weight:600; color:#3232e1;">blue</span><br/>Q =&gt; <span style=" font-weight:600;">black</span></p></body></html>',
-            )
-        )
+        self.cbSignalView.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose the view of your signal. Analog, Demodulated, Spectrogram or I/Q view.</p><p>The quadrature demodulation uses a <span style=\" font-weight:600;\">threshold of magnitudes,</span> to <span style=\" font-weight:600;\">suppress noise</span>. All samples with a magnitude lower than this threshold will be eliminated after demodulation.</p><p>Tune this value by selecting a <span style=\" font-style:italic;\">noisy area</span> and mark it as noise using <span style=\" font-weight:600;\">context menu</span>.</p><p><span style=\" font-weight:600;\">Signal colors</span>:<br/>I =&gt; <span style=\" font-weight:600; color:#3232e1;\">blue</span><br/>Q =&gt; <span style=\" font-weight:600;\">black</span></p></body></html>"))
         self.cbSignalView.setItemText(0, _translate("SignalFrame", "Analog"))
         self.cbSignalView.setItemText(1, _translate("SignalFrame", "Demodulated"))
         self.cbSignalView.setItemText(2, _translate("SignalFrame", "Spectrogram"))
         self.cbSignalView.setItemText(3, _translate("SignalFrame", "I/Q view"))
-        self.spinBoxNoiseTreshold.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Set the <span style=" font-weight:600;">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>',
-            )
-        )
-        self.spinBoxCenterSpacing.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>For <span style=" font-weight:600;">higher order</span> modulations (&gt; 1 Bits/Symbol), there are <span style=" font-weight:600;">multiple</span> centers. We assume that the <span style=" font-weight:600;">spacing</span> between all possible symbols is <span style=" font-weight:600;">constant</span>. Therefore you configure the spacing between centers.</p></body></html>',
-            )
-        )
+        self.spinBoxNoiseTreshold.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Set the <span style=\" font-weight:600;\">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>"))
+        self.spinBoxCenterSpacing.setToolTip(_translate("SignalFrame", "<html><head/><body><p>For <span style=\" font-weight:600;\">higher order</span> modulations (&gt; 1 Bits/Symbol), there are <span style=\" font-weight:600;\">multiple</span> centers. We assume that the <span style=\" font-weight:600;\">spacing</span> between all possible symbols is <span style=\" font-weight:600;\">constant</span>. Therefore you configure the spacing between centers.</p></body></html>"))
         self.lineEditSignalName.setText(_translate("SignalFrame", "SignalName"))
-        self.cbModulationType.setToolTip(
-            _translate(
-                "SignalFrame",
-                "<html><head/><body><p>Choose signals modulation:</p><ul><li>Amplitude Shift Keying (ASK)</li><li>Frequency Shift Keying (FSK)</li><li>Phase Shift Keying (PSK)</li></ul></body></html>",
-            )
-        )
+        self.cbModulationType.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Choose signals modulation:</p><ul><li>Amplitude Shift Keying (ASK)</li><li>Frequency Shift Keying (FSK)</li><li>Phase Shift Keying (PSK)</li></ul></body></html>"))
         self.cbModulationType.setItemText(0, _translate("SignalFrame", "ASK"))
         self.cbModulationType.setItemText(1, _translate("SignalFrame", "FSK"))
         self.cbModulationType.setItemText(2, _translate("SignalFrame", "PSK"))
         self.btnAdvancedModulationSettings.setText(_translate("SignalFrame", "..."))
-        self.chkBoxSyncSelection.setToolTip(
-            _translate(
-                "SignalFrame",
-                "If this is set to true, your selected protocol bits will show up in the signal view, and vice versa.",
-            )
-        )
+        self.chkBoxSyncSelection.setToolTip(_translate("SignalFrame", "If this is set to true, your selected protocol bits will show up in the signal view, and vice versa."))
         self.chkBoxSyncSelection.setText(_translate("SignalFrame", "Sync selection"))
-        self.labelSpectrogramMin.setText(
-            _translate("SignalFrame", "Data<sub>min</sub>:")
-        )
-        self.labelSpectrogramMax.setText(
-            _translate("SignalFrame", "Data<sub>max</sub>:")
-        )
-        self.chkBoxShowProtocol.setToolTip(
-            _translate(
-                "SignalFrame",
-                "Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).\n"
-                "\n"
-                "If you want your protocol to be better separated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView.",
-            )
-        )
+        self.labelSpectrogramMin.setText(_translate("SignalFrame", "Data<sub>min</sub>:"))
+        self.labelSpectrogramMax.setText(_translate("SignalFrame", "Data<sub>max</sub>:"))
+        self.chkBoxShowProtocol.setToolTip(_translate("SignalFrame", "Show the extracted protocol based on the parameters InfoLen, PauseLen and ZeroTreshold (in QuadratureDemod-View).\n"
+"\n"
+"If you want your protocol to be better separated, edit the PauseLen using right-click menu from a selection in SignalView or ProtocolView."))
         self.chkBoxShowProtocol.setText(_translate("SignalFrame", "Show data as"))
-        self.spinBoxSamplesPerSymbol.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the length of one symbol <span style=" font-weight:600;">in samples</span>. For <span style=" font-weight:600;">binary modulations </span>(default) this is the <span style=" font-weight:600;">bit length</span>.</p></body></html>',
-            )
-        )
-        self.btnAutoDetect.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Automatically detect <span style=" font-weight:600;">center</span>, <span style=" font-weight:600;">bit length</span> and <span style=" font-weight:600;">tolerance</span>. You can also choose to additionally detect the <span style=" font-weight:600;">noise</span> and <span style=" font-weight:600;">modulation</span> when clicking this button.</p></body></html>',
-            )
-        )
+        self.spinBoxSamplesPerSymbol.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the length of one symbol <span style=\" font-weight:600;\">in samples</span>. For <span style=\" font-weight:600;\">binary modulations </span>(default) this is the <span style=\" font-weight:600;\">bit length</span>.</p></body></html>"))
+        self.btnAutoDetect.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Automatically detect <span style=\" font-weight:600;\">center</span>, <span style=\" font-weight:600;\">bit length</span> and <span style=\" font-weight:600;\">tolerance</span>. You can also choose to additionally detect the <span style=\" font-weight:600;\">noise</span> and <span style=\" font-weight:600;\">modulation</span> when clicking this button.</p></body></html>"))
         self.btnAutoDetect.setText(_translate("SignalFrame", "Autodetect parameters"))
         self.labelFFTWindowSize.setText(_translate("SignalFrame", "FFT window size:"))
-        self.spinBoxCenterOffset.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>This is the threshold used for determining if a <span style=" font-weight:600;">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=" font-style:italic;">Quadrature Demod View</span>.</p></body></html>',
-            )
-        )
-        self.labelNoise.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Set the <span style=" font-weight:600;">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>',
-            )
-        )
+        self.spinBoxCenterOffset.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the threshold used for determining if a <span style=\" font-weight:600;\">bit is one or zero</span>. You can set it here or grab the middle of the area in <span style=\" font-style:italic;\">Quadrature Demod View</span>.</p></body></html>"))
+        self.labelNoise.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Set the <span style=\" font-weight:600;\">noise magnitude</span> of your signal. You can tune this value to mute noise in your signal and reveal the true data.</p></body></html>"))
         self.labelNoise.setText(_translate("SignalFrame", "Noise:"))
-        self.lBitsPerSymbol.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p><span style=" font-weight:600;">Higher order</span> modulations can carry <span style=" font-weight:600;">multiple</span> bits with <span style=" font-weight:600;">each</span> symbol. Configure <span style=" font-weight:600;">how many</span> bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)</p></body></html>',
-            )
-        )
+        self.lBitsPerSymbol.setToolTip(_translate("SignalFrame", "<html><head/><body><p><span style=\" font-weight:600;\">Higher order</span> modulations can carry <span style=\" font-weight:600;\">multiple</span> bits with <span style=\" font-weight:600;\">each</span> symbol. Configure <span style=\" font-weight:600;\">how many</span> bits are represented by a symbol. (Default = Binary modulation with one bit per symbol)</p></body></html>"))
         self.lBitsPerSymbol.setText(_translate("SignalFrame", "Bits/Symbol:"))
-        self.labelLoadingAutoInterpretation.setText(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Running automatic detecting of demodulation parameters.</p><p>You can disable this behaviour for newly loaded signals by unchecking <span style=" font-weight:600;">Edit</span> -&gt; <span style=" font-weight:600;">Auto detect signals on loading</span>.</p></body></html>',
-            )
-        )
+        self.labelLoadingAutoInterpretation.setText(_translate("SignalFrame", "<html><head/><body><p>Running automatic detecting of demodulation parameters.</p><p>You can disable this behaviour for newly loaded signals by unchecking <span style=\" font-weight:600;\">Edit</span> -&gt; <span style=\" font-weight:600;\">Auto detect signals on loading</span>.</p></body></html>"))
         self.lYScale.setText(_translate("SignalFrame", "Y-Scale"))
         self.btnShowHideStartEnd.setText(_translate("SignalFrame", "-"))
-        self.lNumSelectedSamples.setToolTip(
-            _translate("SignalFrame", "Number of currently selected samples.")
-        )
+        self.lNumSelectedSamples.setToolTip(_translate("SignalFrame", "Number of currently selected samples."))
         self.lNumSelectedSamples.setText(_translate("SignalFrame", "0"))
-        self.lTextSelectedSamples.setToolTip(
-            _translate("SignalFrame", "Number of currently selected samples.")
-        )
+        self.lTextSelectedSamples.setToolTip(_translate("SignalFrame", "Number of currently selected samples."))
         self.lTextSelectedSamples.setText(_translate("SignalFrame", "selected"))
         self.lDuration.setText(_translate("SignalFrame", "42 µs"))
-        self.labelRSSI.setToolTip(
-            _translate(
-                "SignalFrame",
-                "<html><head/><body><p>This is the average signal power of the selection. The closer this value is to zero, the stronger the selected signal is.</p></body></html>",
-            )
-        )
+        self.labelRSSI.setToolTip(_translate("SignalFrame", "<html><head/><body><p>This is the average signal power of the selection. The closer this value is to zero, the stronger the selected signal is.</p></body></html>"))
         self.labelRSSI.setText(_translate("SignalFrame", "0,434 dBm"))
         self.btnFilter.setText(_translate("SignalFrame", "Filter (moving average)"))
         self.lStart.setText(_translate("SignalFrame", "Start:"))
         self.lEnd.setText(_translate("SignalFrame", "End:"))
-        self.lZoomText.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Current (relative) Zoom. Standard is 100%, if you zoom in, this factor increases. You can directly set a value in the spinbox or use the <span style=" font-weight:600;">mousewheel to zoom</span>.</p></body></html>',
-            )
-        )
+        self.lZoomText.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Current (relative) Zoom. Standard is 100%, if you zoom in, this factor increases. You can directly set a value in the spinbox or use the <span style=\" font-weight:600;\">mousewheel to zoom</span>.</p></body></html>"))
         self.lZoomText.setText(_translate("SignalFrame", "X-Zoom:"))
-        self.spinBoxXZoom.setToolTip(
-            _translate(
-                "SignalFrame",
-                '<html><head/><body><p>Current (relative) Zoom. Standard is 100%, if you zoom in, this factor increases. You can directly set a value in the spinbox or use the <span style=" font-weight:600;">mousewheel to zoom</span>.</p></body></html>',
-            )
-        )
+        self.spinBoxXZoom.setToolTip(_translate("SignalFrame", "<html><head/><body><p>Current (relative) Zoom. Standard is 100%, if you zoom in, this factor increases. You can directly set a value in the spinbox or use the <span style=\" font-weight:600;\">mousewheel to zoom</span>.</p></body></html>"))
         self.spinBoxXZoom.setSuffix(_translate("SignalFrame", "%"))
         self.lSamplesInView.setText(_translate("SignalFrame", "0"))
         self.lStrich.setText(_translate("SignalFrame", "/"))
         self.lSamplesTotal.setText(_translate("SignalFrame", "0"))
         self.lSamplesViewText.setText(_translate("SignalFrame", "Samples in view"))
-
-
 from urh.ui.views.EpicGraphicView import EpicGraphicView
 from urh.ui.views.SpectrogramGraphicView import SpectrogramGraphicView
 from urh.ui.views.TextEditProtocolView import TextEditProtocolView

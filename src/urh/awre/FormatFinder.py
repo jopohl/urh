@@ -486,13 +486,13 @@ class FormatFinder(object):
                 possible_solutions.append(solution)
 
             # Take solution that maximizes score. In case of tie, choose solution with shorter total length.
-            # if there is still a tie prefer solution that contains a length field as is is very likely to be correct
+            # if there is still a tie prefer solution that contains a length field as it is very likely to be correct
             # if nothing else helps break tie by names of field types to prevent randomness
             best_solution = max(
                 possible_solutions,
                 key=lambda sol: (
                     sum(r.score for r in sol),
-                    -sum(r.length_in_bits for r in sol),
+                    -sum(int(r.length_in_bits) for r in sol),
                     "length" in {r.field_type for r in sol},
                     "".join(r.field_type[0] for r in sol),
                 ),

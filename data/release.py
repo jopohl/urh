@@ -58,7 +58,7 @@ def release():
 
     for line in fileinput.input(version_file, inplace=True):
         if line.startswith("VERSION"):
-            line = 'VERSION = "{0}" \n'.format(cur_version)
+            line = 'VERSION = "{0}"\n'.format(cur_version)
         print(line, end="")
 
     # Publish new version number

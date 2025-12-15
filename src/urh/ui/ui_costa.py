@@ -14,11 +14,7 @@ class Ui_DialogCosta(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(DialogCosta)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(parent=DialogCosta)
-        self.label.setAlignment(
-            QtCore.Qt.AlignmentFlag.AlignLeading
-            | QtCore.Qt.AlignmentFlag.AlignLeft
-            | QtCore.Qt.AlignmentFlag.AlignTop
-        )
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
@@ -34,31 +30,18 @@ class Ui_DialogCosta(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.buttonBox = QtWidgets.QDialogButtonBox(parent=DialogCosta)
         self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(
-            QtWidgets.QDialogButtonBox.StandardButton.Cancel
-            | QtWidgets.QDialogButtonBox.StandardButton.Ok
-        )
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel|QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
-        spacerItem = QtWidgets.QSpacerItem(
-            20,
-            40,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(DialogCosta)
-        self.buttonBox.accepted.connect(DialogCosta.accept)  # type: ignore
-        self.buttonBox.rejected.connect(DialogCosta.reject)  # type: ignore
+        self.buttonBox.accepted.connect(DialogCosta.accept) # type: ignore
+        self.buttonBox.rejected.connect(DialogCosta.reject) # type: ignore
 
     def retranslateUi(self, DialogCosta):
         _translate = QtCore.QCoreApplication.translate
         DialogCosta.setWindowTitle(_translate("DialogCosta", "Configure Costas Loop"))
-        self.label.setText(
-            _translate(
-                "DialogCosta",
-                "URH uses a Costas loop for PSK demodulation. Configure the loop bandwidth below.",
-            )
-        )
+        self.label.setText(_translate("DialogCosta", "URH uses a Costas loop for PSK demodulation. Configure the loop bandwidth below."))
         self.labelLoopBandwidth.setText(_translate("DialogCosta", "Loop Bandwidth:"))

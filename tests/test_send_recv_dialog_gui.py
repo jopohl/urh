@@ -163,7 +163,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         sock.connect(("127.0.0.1", port))
-        sock.sendall(data.tostring())
+        sock.sendall(data.tobytes())
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 
@@ -198,7 +198,7 @@ class TestSendRecvDialog(QtTestCase):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         sock.connect(("127.0.0.1", port))
-        sock.sendall(data.tostring())
+        sock.sendall(data.tobytes())
         sock.shutdown(socket.SHUT_RDWR)
         sock.close()
 

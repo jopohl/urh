@@ -15,18 +15,13 @@ class Ui_SignalDetails(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.gridLayout.addItem(spacerItem, 2, 2, 1, 1)
         self.dsb_sample_rate = KillerDoubleSpinBox(parent=SignalDetails)
         self.dsb_sample_rate.setWrapping(False)
         self.dsb_sample_rate.setProperty("showGroupSeparator", False)
         self.dsb_sample_rate.setMinimum(0.01)
-        self.dsb_sample_rate.setMaximum(1e33)
+        self.dsb_sample_rate.setMaximum(1e+33)
         self.dsb_sample_rate.setProperty("value", 1000000.0)
         self.dsb_sample_rate.setObjectName("dsb_sample_rate")
         self.gridLayout.addWidget(self.dsb_sample_rate, 5, 1, 1, 1)
@@ -34,19 +29,12 @@ class Ui_SignalDetails(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.lblFile = QtWidgets.QLabel(parent=SignalDetails)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblFile.sizePolicy().hasHeightForWidth())
         self.lblFile.setSizePolicy(sizePolicy)
-        self.lblFile.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
-        )
+        self.lblFile.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse|QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard|QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
         self.lblFile.setObjectName("lblFile")
         self.gridLayout.addWidget(self.lblFile, 1, 1, 1, 1)
         self.label_2 = QtWidgets.QLabel(parent=SignalDetails)
@@ -65,19 +53,12 @@ class Ui_SignalDetails(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
         self.lblName = QtWidgets.QLabel(parent=SignalDetails)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lblName.sizePolicy().hasHeightForWidth())
         self.lblName.setSizePolicy(sizePolicy)
-        self.lblName.setTextInteractionFlags(
-            QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard
-            | QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
-        )
+        self.lblName.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse|QtCore.Qt.TextInteractionFlag.TextSelectableByKeyboard|QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
         self.lblName.setObjectName("lblName")
         self.gridLayout.addWidget(self.lblName, 0, 1, 1, 1)
         self.lblFileSize = QtWidgets.QLabel(parent=SignalDetails)
@@ -96,12 +77,7 @@ class Ui_SignalDetails(object):
         self.lDuration.setObjectName("lDuration")
         self.gridLayout.addWidget(self.lDuration, 6, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
-        spacerItem1 = QtWidgets.QSpacerItem(
-            20,
-            135,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-        )
+        spacerItem1 = QtWidgets.QSpacerItem(20, 135, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
 
         self.retranslateUi(SignalDetails)
@@ -122,6 +98,4 @@ class Ui_SignalDetails(object):
         self.lFileCreated.setText(_translate("SignalDetails", "TextLabel"))
         self.label_7.setText(_translate("SignalDetails", "Duration:"))
         self.lDuration.setText(_translate("SignalDetails", "42s"))
-
-
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox

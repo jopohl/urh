@@ -68,6 +68,7 @@ def set_shared_library_path():
             current_path = os.environ.get("PATH", "")
             if not current_path.startswith(shared_lib_dir):
                 os.environ["PATH"] = shared_lib_dir + os.pathsep + current_path
+            os.add_dll_directory(shared_lib_dir)
         else:
             # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
             exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]

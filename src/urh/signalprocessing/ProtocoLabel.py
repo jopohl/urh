@@ -271,6 +271,7 @@ class ProtocolLabel(object):
         result.apply_decoding = (
             True if tag.get("apply_decoding", "True") == "True" else False
         )
+
         result.show = (
             Qt.CheckState.Checked
             if Formatter.str2val(tag.get("show", 0), int)

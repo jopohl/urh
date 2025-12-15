@@ -16,16 +16,14 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(SendRecvDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(parent=SendRecvDialog)
-        self.splitter.setStyleSheet(
-            "QSplitter::handle:horizontal {\n"
-            "margin: 4px 0px;\n"
-            "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
-            "stop:0 rgba(255, 255, 255, 0), \n"
-            "stop:0.5 rgba(100, 100, 100, 100), \n"
-            "stop:1 rgba(255, 255, 255, 0));\n"
-            "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
-            "}"
-        )
+        self.splitter.setStyleSheet("QSplitter::handle:horizontal {\n"
+"margin: 4px 0px;\n"
+"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+"stop:0 rgba(255, 255, 255, 0), \n"
+"stop:0.5 rgba(100, 100, 100, 100), \n"
+"stop:1 rgba(255, 255, 255, 0));\n"
+"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
+"}")
         self.splitter.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitter.setObjectName("splitter")
         self.scrollArea = QtWidgets.QScrollArea(parent=self.splitter)
@@ -38,7 +36,10 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.groupBox = QtWidgets.QGroupBox(parent=self.scrollAreaWidgetContents_2)
-        self.groupBox.setStyleSheet("QGroupBox\n" "{\n" " border: none;\n" "}")
+        self.groupBox.setStyleSheet("QGroupBox\n"
+"{\n"
+" border: none;\n"
+"}")
         self.groupBox.setTitle("")
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox)
@@ -65,39 +66,26 @@ class Ui_SendRecvDialog(object):
         self.lTimeText.setObjectName("lTimeText")
         self.gridLayout_2.addWidget(self.lTimeText, 12, 0, 1, 1)
         self.lSamplesCapturedText = QtWidgets.QLabel(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lSamplesCapturedText.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lSamplesCapturedText.sizePolicy().hasHeightForWidth())
         self.lSamplesCapturedText.setSizePolicy(sizePolicy)
         self.lSamplesCapturedText.setObjectName("lSamplesCapturedText")
         self.gridLayout_2.addWidget(self.lSamplesCapturedText, 5, 0, 1, 1)
         self.lSignalSizeText = QtWidgets.QLabel(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lSignalSizeText.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lSignalSizeText.sizePolicy().hasHeightForWidth())
         self.lSignalSizeText.setSizePolicy(sizePolicy)
         self.lSignalSizeText.setObjectName("lSignalSizeText")
         self.gridLayout_2.addWidget(self.lSignalSizeText, 9, 0, 1, 1)
         self.lSamplesCaptured = QtWidgets.QLabel(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lSamplesCaptured.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.lSamplesCaptured.sizePolicy().hasHeightForWidth())
         self.lSamplesCaptured.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -115,10 +103,7 @@ class Ui_SendRecvDialog(object):
         self.lTime.setObjectName("lTime")
         self.gridLayout_2.addWidget(self.lTime, 15, 0, 1, 2)
         self.lSignalSize = QtWidgets.QLabel(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lSignalSize.sizePolicy().hasHeightForWidth())
@@ -142,15 +127,10 @@ class Ui_SendRecvDialog(object):
         self.lblCurrentRepeatValue.setObjectName("lblCurrentRepeatValue")
         self.gridLayout_2.addWidget(self.lblCurrentRepeatValue, 17, 0, 1, 1)
         self.labelReceiveBufferFull = QtWidgets.QLabel(parent=self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Preferred,
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.labelReceiveBufferFull.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.labelReceiveBufferFull.sizePolicy().hasHeightForWidth())
         self.labelReceiveBufferFull.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -161,21 +141,14 @@ class Ui_SendRecvDialog(object):
         self.gridLayout_2.addWidget(self.labelReceiveBufferFull, 8, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.btnStart = QtWidgets.QToolButton(parent=self.groupBox)
         self.btnStart.setMinimumSize(QtCore.QSize(64, 64))
         icon = QtGui.QIcon.fromTheme("media-record")
         self.btnStart.setIcon(icon)
         self.btnStart.setIconSize(QtCore.QSize(32, 32))
-        self.btnStart.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
-        )
+        self.btnStart.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.btnStart.setObjectName("btnStart")
         self.horizontalLayout.addWidget(self.btnStart)
         self.btnStop = QtWidgets.QToolButton(parent=self.groupBox)
@@ -183,9 +156,7 @@ class Ui_SendRecvDialog(object):
         icon = QtGui.QIcon.fromTheme("media-playback-stop")
         self.btnStop.setIcon(icon)
         self.btnStop.setIconSize(QtCore.QSize(32, 32))
-        self.btnStop.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
-        )
+        self.btnStop.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.btnStop.setObjectName("btnStop")
         self.horizontalLayout.addWidget(self.btnStop)
         self.btnSave = QtWidgets.QToolButton(parent=self.groupBox)
@@ -193,9 +164,7 @@ class Ui_SendRecvDialog(object):
         icon = QtGui.QIcon.fromTheme("document-save")
         self.btnSave.setIcon(icon)
         self.btnSave.setIconSize(QtCore.QSize(32, 32))
-        self.btnSave.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
-        )
+        self.btnSave.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.btnSave.setObjectName("btnSave")
         self.horizontalLayout.addWidget(self.btnSave)
         self.btnClear = QtWidgets.QToolButton(parent=self.groupBox)
@@ -203,25 +172,13 @@ class Ui_SendRecvDialog(object):
         icon = QtGui.QIcon.fromTheme("view-refresh")
         self.btnClear.setIcon(icon)
         self.btnClear.setIconSize(QtCore.QSize(32, 32))
-        self.btnClear.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
-        )
+        self.btnClear.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
         self.btnClear.setObjectName("btnClear")
         self.horizontalLayout.addWidget(self.btnClear)
-        spacerItem1 = QtWidgets.QSpacerItem(
-            40,
-            20,
-            QtWidgets.QSizePolicy.Policy.Expanding,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-        )
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.gridLayout_2.addLayout(self.horizontalLayout, 1, 0, 1, 2)
-        spacerItem2 = QtWidgets.QSpacerItem(
-            20,
-            10,
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Fixed,
-        )
+        spacerItem2 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
         self.gridLayout_2.addItem(spacerItem2, 2, 0, 1, 1)
         self.verticalLayout_8.addWidget(self.groupBox)
         self.txtEditErrors = QtWidgets.QTextEdit(parent=self.scrollAreaWidgetContents_2)
@@ -241,12 +198,8 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.page_receive)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.graphicsViewReceive = LiveGraphicView(parent=self.page_receive)
-        self.graphicsViewReceive.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
-        self.graphicsViewReceive.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded
-        )
+        self.graphicsViewReceive.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.graphicsViewReceive.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.graphicsViewReceive.setObjectName("graphicsViewReceive")
         self.verticalLayout_2.addWidget(self.graphicsViewReceive)
         self.stackedWidget.addWidget(self.page_receive)
@@ -256,16 +209,9 @@ class Ui_SendRecvDialog(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.graphicsViewSend = EditableGraphicView(parent=self.page_send)
         self.graphicsViewSend.setMouseTracking(True)
-        self.graphicsViewSend.setRenderHints(
-            QtGui.QPainter.RenderHint.Antialiasing
-            | QtGui.QPainter.RenderHint.TextAntialiasing
-        )
-        self.graphicsViewSend.setTransformationAnchor(
-            QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor
-        )
-        self.graphicsViewSend.setResizeAnchor(
-            QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor
-        )
+        self.graphicsViewSend.setRenderHints(QtGui.QPainter.RenderHint.Antialiasing|QtGui.QPainter.RenderHint.TextAntialiasing)
+        self.graphicsViewSend.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
+        self.graphicsViewSend.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.NoAnchor)
         self.graphicsViewSend.setObjectName("graphicsViewSend")
         self.verticalLayout_3.addWidget(self.graphicsViewSend)
         self.label_7 = QtWidgets.QLabel(parent=self.page_send)
@@ -279,13 +225,8 @@ class Ui_SendRecvDialog(object):
         self.page_continuous_send.setObjectName("page_continuous_send")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_continuous_send)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.graphicsViewContinuousSend = LiveGraphicView(
-            parent=self.page_continuous_send
-        )
-        self.graphicsViewContinuousSend.setRenderHints(
-            QtGui.QPainter.RenderHint.Antialiasing
-            | QtGui.QPainter.RenderHint.TextAntialiasing
-        )
+        self.graphicsViewContinuousSend = LiveGraphicView(parent=self.page_continuous_send)
+        self.graphicsViewContinuousSend.setRenderHints(QtGui.QPainter.RenderHint.Antialiasing|QtGui.QPainter.RenderHint.TextAntialiasing)
         self.graphicsViewContinuousSend.setObjectName("graphicsViewContinuousSend")
         self.verticalLayout_6.addWidget(self.graphicsViewContinuousSend)
         self.stackedWidget.addWidget(self.page_continuous_send)
@@ -296,22 +237,11 @@ class Ui_SendRecvDialog(object):
         self.graphicsViewFFT = LiveGraphicView(parent=self.page_spectrum)
         self.graphicsViewFFT.setObjectName("graphicsViewFFT")
         self.verticalLayout_7.addWidget(self.graphicsViewFFT)
-        self.graphicsViewSpectrogram = QtWidgets.QGraphicsView(
-            parent=self.page_spectrum
-        )
-        self.graphicsViewSpectrogram.setVerticalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded
-        )
-        self.graphicsViewSpectrogram.setHorizontalScrollBarPolicy(
-            QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
-        self.graphicsViewSpectrogram.setRenderHints(
-            QtGui.QPainter.RenderHint.SmoothPixmapTransform
-            | QtGui.QPainter.RenderHint.TextAntialiasing
-        )
-        self.graphicsViewSpectrogram.setViewportUpdateMode(
-            QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate
-        )
+        self.graphicsViewSpectrogram = QtWidgets.QGraphicsView(parent=self.page_spectrum)
+        self.graphicsViewSpectrogram.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.graphicsViewSpectrogram.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.graphicsViewSpectrogram.setRenderHints(QtGui.QPainter.RenderHint.SmoothPixmapTransform|QtGui.QPainter.RenderHint.TextAntialiasing)
+        self.graphicsViewSpectrogram.setViewportUpdateMode(QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate)
         self.graphicsViewSpectrogram.setObjectName("graphicsViewSpectrogram")
         self.verticalLayout_7.addWidget(self.graphicsViewSpectrogram)
         self.verticalLayout_7.setStretch(0, 1)
@@ -325,9 +255,7 @@ class Ui_SendRecvDialog(object):
         self.graphicsView_sniff_Preview.setObjectName("graphicsView_sniff_Preview")
         self.verticalLayout_4.addWidget(self.graphicsView_sniff_Preview)
         self.txtEd_sniff_Preview = QtWidgets.QPlainTextEdit(parent=self.page_sniff)
-        self.txtEd_sniff_Preview.setLineWrapMode(
-            QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap
-        )
+        self.txtEd_sniff_Preview.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
         self.txtEd_sniff_Preview.setReadOnly(True)
         self.txtEd_sniff_Preview.setMaximumBlockCount(100)
         self.txtEd_sniff_Preview.setObjectName("txtEd_sniff_Preview")
@@ -370,21 +298,13 @@ class Ui_SendRecvDialog(object):
         _translate = QtCore.QCoreApplication.translate
         SendRecvDialog.setWindowTitle(_translate("SendRecvDialog", "Record Signal"))
         self.progressBarMessage.setFormat(_translate("SendRecvDialog", "%v/%m"))
-        self.labelCurrentMessage.setText(
-            _translate("SendRecvDialog", "Current message:")
-        )
-        self.lReceiveBufferFullText.setText(
-            _translate("SendRecvDialog", "Receive buffer full:")
-        )
+        self.labelCurrentMessage.setText(_translate("SendRecvDialog", "Current message:"))
+        self.lReceiveBufferFullText.setText(_translate("SendRecvDialog", "Receive buffer full:"))
         self.progressBarSample.setFormat(_translate("SendRecvDialog", "%v/%m"))
         self.lSamplesSentText.setText(_translate("SendRecvDialog", "Current sample:"))
         self.lTimeText.setText(_translate("SendRecvDialog", "Time (in seconds):"))
-        self.lSamplesCapturedText.setText(
-            _translate("SendRecvDialog", "Samples captured:")
-        )
-        self.lSignalSizeText.setText(
-            _translate("SendRecvDialog", "Signal size (in MiB):")
-        )
+        self.lSamplesCapturedText.setText(_translate("SendRecvDialog", "Samples captured:"))
+        self.lSignalSizeText.setText(_translate("SendRecvDialog", "Signal size (in MiB):"))
         self.lSamplesCaptured.setText(_translate("SendRecvDialog", "0"))
         self.lTime.setText(_translate("SendRecvDialog", "0"))
         self.lSignalSize.setText(_translate("SendRecvDialog", "0"))
@@ -398,22 +318,9 @@ class Ui_SendRecvDialog(object):
         self.btnSave.setText(_translate("SendRecvDialog", "Save..."))
         self.btnClear.setToolTip(_translate("SendRecvDialog", "Clear"))
         self.btnClear.setText(_translate("SendRecvDialog", "Clear"))
-        self.label_7.setText(
-            _translate(
-                "SendRecvDialog", "Hint: You can edit the raw signal before sending."
-            )
-        )
-        self.btnAccept.setToolTip(
-            _translate(
-                "SendRecvDialog",
-                '<html><head/><body><p>Accept the sniffed data and load it into <span style=" font-weight:600;">Analysis</span> tab.</p></body></html>',
-            )
-        )
-        self.btnAccept.setText(
-            _translate("SendRecvDialog", "Accept data (Open in Analysis)")
-        )
+        self.label_7.setText(_translate("SendRecvDialog", "Hint: You can edit the raw signal before sending."))
+        self.btnAccept.setToolTip(_translate("SendRecvDialog", "<html><head/><body><p>Accept the sniffed data and load it into <span style=\" font-weight:600;\">Analysis</span> tab.</p></body></html>"))
+        self.btnAccept.setText(_translate("SendRecvDialog", "Accept data (Open in Analysis)"))
         self.label_y_scale.setText(_translate("SendRecvDialog", "Y-Scale"))
-
-
 from urh.ui.views.EditableGraphicView import EditableGraphicView
 from urh.ui.views.LiveGraphicView import LiveGraphicView

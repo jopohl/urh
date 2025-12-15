@@ -9,10 +9,12 @@ from urh.ui.painting.LiveSceneManager import LiveSceneManager
 from urh.util import FileOperator
 from urh.util.Formatter import Formatter
 from datetime import datetime
+from urh.signalprocessing.RecordedFile import RecordedFile
+
 
 
 class ReceiveDialog(SendRecvDialog):
-    files_recorded = pyqtSignal(list, float)
+    files_recorded = pyqtSignal(list)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):
         try:
@@ -55,12 +57,7 @@ class ReceiveDialog(SendRecvDialog):
             elif reply == QMessageBox.StandardButton.Abort:
                 return False
 
-        try:
-            sample_rate = self.device.sample_rate
-        except:
-            sample_rate = 1e6
-
-        self.files_recorded.emit(self.recorded_files, sample_rate)
+        self.files_recorded.emit(self.recorded_files)
         return True
 
     def update_view(self):
@@ -111,9 +108,9 @@ class ReceiveDialog(SendRecvDialog):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp_str = datetime.fromtimestamp(dev.data_timestamp).strftime("%Y%m%d_%H%M%S")
         initial_name = "{0}-{1}-{2}Hz-{3}Sps".format(
-            dev.name, timestamp, big_val(dev.frequency), big_val(dev.sample_rate)
+            dev.name, timestamp_str, big_val(dev.frequency), big_val(dev.sample_rate)
         )
 
         if dev.bandwidth_is_adjustable:
@@ -127,5 +124,9 @@ class ReceiveDialog(SendRecvDialog):
             initial_name, data, sample_rate=dev.sample_rate, parent=self
         )
         self.already_saved = True
-        if filename is not None and filename not in self.recorded_files:
-            self.recorded_files.append(filename)
+        if filename is not None and filename not in (
+            x.filename for x in self.recorded_files
+        ):
+            self.recorded_files.append(
+                RecordedFile(filename, dev.sample_rate, dev.data_timestamp)
+            )

@@ -22,9 +22,9 @@ jobs:
           - os: windows-latest
             python-version: '3.13'
             architecture: x64
-          - os: macos-latest
+          - os: macos-15-intel
             python-version: '3.13'
-            architecture: arm64
+            architecture: x86
       fail-fast: false
 
     steps:

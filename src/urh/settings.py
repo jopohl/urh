@@ -10,13 +10,17 @@ from urh.util.Logger import logger
 
 
 global __qt_settings
+
+
 def __get_qt_settings():
     global __qt_settings
 
     try:
         __qt_settings.fileName()
     except:
-        __qt_settings = QSettings(QSettings.Format.IniFormat, QSettings.Scope.UserScope, 'urh', 'urh')
+        __qt_settings = QSettings(
+            QSettings.Format.IniFormat, QSettings.Scope.UserScope, "urh", "urh"
+        )
 
     return __qt_settings
 
@@ -30,8 +34,8 @@ ZOOM_TICKS = 10
 
 PIXELS_PER_PATH = 5000
 
-SPECTRUM_BUFFER_SIZE = 2 ** 15
-SNIFF_BUFFER_SIZE = 5 * 10 ** 7
+SPECTRUM_BUFFER_SIZE = 2**15
+SNIFF_BUFFER_SIZE = 5 * 10**7
 CONTINUOUS_BUFFER_SIZE_MB = 50
 
 PAUSE_TRESHOLD = 10
@@ -61,7 +65,7 @@ NOISE_OPACITY = 0.33
 ONES_AREA_COLOR = Qt.GlobalColor.green
 ZEROS_AREA_COLOR = Qt.GlobalColor.magenta
 SEPARATION_OPACITY = 0.15
-SEPARATION_PADDING = .05  # percent
+SEPARATION_PADDING = 0.05  # percent
 
 # PROTOCOL TABLE COLORS
 SELECTED_ROW_COLOR = QColor.fromRgb(0, 0, 255)
@@ -74,7 +78,9 @@ SEPARATION_ROW_HEIGHT = 30
 
 PROJECT_FILE = "URHProject.xml"
 DECODINGS_FILE = "decodings.txt"
-FIELD_TYPE_SETTINGS = os.path.realpath(os.path.join(get_qt_settings_filename(), "..", "fieldtypes.xml"))
+FIELD_TYPE_SETTINGS = os.path.realpath(
+    os.path.join(get_qt_settings_filename(), "..", "fieldtypes.xml")
+)
 
 # DEVICE SETTINGS
 DEFAULT_IP_USRP = "192.168.10.2"
@@ -95,35 +101,38 @@ DECODING_CUT = "Cut before/after"
 DECODING_MORSE = "Morse Code"
 DECODING_DISABLED_PREFIX = "[Disabled] "
 
-LABEL_COLORS = [QColor.fromRgb(217, 240, 27, 125),  # yellow
-                QColor.fromRgb(41, 172, 81, 125),  # green
-                QColor.fromRgb(245, 12, 12, 125),  # red
-                QColor.fromRgb(12, 12, 242, 125),  # blue
-                QColor.fromRgb(67, 44, 14, 125),  # brown
-                QColor.fromRgb(146, 49, 49, 125),  # dark red
-                QColor.fromRgb(9, 9, 54, 125),  # dark blue
-                QColor.fromRgb(17, 49, 27, 125),  # dark green
-                QColor.fromRgb(244, 246, 36, 125),  # strong yellow
-                QColor.fromRgb(61, 67, 67, 125),  # gray 3
-                QColor.fromRgb(58, 60, 100, 125),  # halfdark blue
-                QColor.fromRgb(139, 148, 148, 125),  # gray 2
-                QColor.fromRgb(153, 207, 206, 125),  # light blue green
-                QColor.fromRgb(207, 223, 223, 125),  # gray 1
-                QColor.fromRgb(106, 10, 10, 125),  # darker red
-                QColor.fromRgb(12, 142, 242, 125),  # light blue
-                QColor.fromRgb(213, 212, 134, 125),  # light yellow
-                QColor.fromRgb(240, 238, 244, 125),  # gray 0
-                QColor.fromRgb(201, 121, 18, 125),  # orange
-                QColor.fromRgb(155, 170, 224, 125),  # lighter blue
-                QColor.fromRgb(12, 242, 201, 125),  # blue green
-                QColor.fromRgb(7, 237, 78, 125),  # light green
-                QColor.fromRgb(154, 37, 111, 125),  # pink
-                QColor.fromRgb(159, 237, 7, 125),  # yellow green
-                QColor.fromRgb(231, 136, 242, 125),  # light pink
-                ]
+LABEL_COLORS = [
+    QColor.fromRgb(217, 240, 27, 125),  # yellow
+    QColor.fromRgb(41, 172, 81, 125),  # green
+    QColor.fromRgb(245, 12, 12, 125),  # red
+    QColor.fromRgb(12, 12, 242, 125),  # blue
+    QColor.fromRgb(67, 44, 14, 125),  # brown
+    QColor.fromRgb(146, 49, 49, 125),  # dark red
+    QColor.fromRgb(9, 9, 54, 125),  # dark blue
+    QColor.fromRgb(17, 49, 27, 125),  # dark green
+    QColor.fromRgb(244, 246, 36, 125),  # strong yellow
+    QColor.fromRgb(61, 67, 67, 125),  # gray 3
+    QColor.fromRgb(58, 60, 100, 125),  # halfdark blue
+    QColor.fromRgb(139, 148, 148, 125),  # gray 2
+    QColor.fromRgb(153, 207, 206, 125),  # light blue green
+    QColor.fromRgb(207, 223, 223, 125),  # gray 1
+    QColor.fromRgb(106, 10, 10, 125),  # darker red
+    QColor.fromRgb(12, 142, 242, 125),  # light blue
+    QColor.fromRgb(213, 212, 134, 125),  # light yellow
+    QColor.fromRgb(240, 238, 244, 125),  # gray 0
+    QColor.fromRgb(201, 121, 18, 125),  # orange
+    QColor.fromRgb(155, 170, 224, 125),  # lighter blue
+    QColor.fromRgb(12, 242, 201, 125),  # blue green
+    QColor.fromRgb(7, 237, 78, 125),  # light green
+    QColor.fromRgb(154, 37, 111, 125),  # pink
+    QColor.fromRgb(159, 237, 7, 125),  # yellow green
+    QColor.fromRgb(231, 136, 242, 125),  # light pink
+]
 
 # full alpha for participant colors, since its used in text html view (signal frame)
-PARTICIPANT_COLORS = [QColor.fromRgb(lc.red(), lc.green(), lc.blue()) for lc in LABEL_COLORS]
+PARTICIPANT_COLORS = [
+    QColor.fromRgb(lc.red(), lc.green(), lc.blue()) for lc in LABEL_COLORS
+]
 
 BG_COLOR_CORRECT = QColor(0, 255, 0, 150)
 BG_COLOR_WRONG = QColor(255, 0, 0, 150)
@@ -175,7 +184,9 @@ def sync():
 OVERWRITE_RECEIVE_BUFFER_SIZE = None  # for unit tests
 
 
-def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: bool) -> int:
+def get_receive_buffer_size(
+    resume_on_full_receive_buffer: bool, spectrum_mode: bool
+) -> int:
     if OVERWRITE_RECEIVE_BUFFER_SIZE:
         return OVERWRITE_RECEIVE_BUFFER_SIZE
 
@@ -186,7 +197,7 @@ def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: 
             num_samples = SNIFF_BUFFER_SIZE
     else:
         # Take 60% of avail memory
-        threshold = read('ram_threshold', 0.6, float)
+        threshold = read("ram_threshold", 0.6, float)
         num_samples = threshold * (psutil.virtual_memory().available / 8)
 
     # Do not let it allocate too much memory on 32 bit
@@ -194,5 +205,9 @@ def get_receive_buffer_size(resume_on_full_receive_buffer: bool, spectrum_mode: 
         num_samples = sys.maxsize // (8 * 2 * 1.5)
         logger.info("Correcting buffer size to {}".format(num_samples))
 
-    logger.info("Allocate receive buffer with {0}B".format(Formatter.big_value_with_suffix(num_samples * 8)))
+    logger.info(
+        "Allocate receive buffer with {0}B".format(
+            Formatter.big_value_with_suffix(num_samples * 8)
+        )
+    )
     return int(num_samples)

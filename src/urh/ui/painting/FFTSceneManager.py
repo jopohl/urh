@@ -16,9 +16,13 @@ class FFTSceneManager(SceneManager):
         self.scene = GridScene(parent=graphic_view)
         self.scene.setBackgroundBrush(settings.BGCOLOR)
 
-        self.peak_item = self.scene.addPath(QPainterPath(), QPen(settings.PEAK_COLOR, 0))  # type: QGraphicsPathItem
+        self.peak_item = self.scene.addPath(
+            QPainterPath(), QPen(settings.PEAK_COLOR, 0)
+        )  # type: QGraphicsPathItem
 
-    def show_scene_section(self, x1: float, x2: float, subpath_ranges=None, colors=None):
+    def show_scene_section(
+        self, x1: float, x2: float, subpath_ranges=None, colors=None
+    ):
         start = int(x1) if x1 > 0 else 0
         end = int(x2) if x2 < self.num_samples else self.num_samples
         paths = path_creator.create_path(np.log10(self.plot_data), start, end)
@@ -34,7 +38,11 @@ class FFTSceneManager(SceneManager):
     def init_scene(self, draw_grid=True):
         self.scene.draw_grid = draw_grid
 
-        self.peak = self.plot_data if len(self.peak) < self.num_samples else np.maximum(self.peak, self.plot_data)
+        self.peak = (
+            self.plot_data
+            if len(self.peak) < self.num_samples
+            else np.maximum(self.peak, self.plot_data)
+        )
         self.scene.setSceneRect(0, -5, self.num_samples, 10)
 
     def clear_path(self):

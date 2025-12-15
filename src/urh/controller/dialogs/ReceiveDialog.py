@@ -10,12 +10,15 @@ from urh.util import FileOperator
 from urh.util.Formatter import Formatter
 from datetime import datetime
 
+
 class ReceiveDialog(SendRecvDialog):
     files_recorded = pyqtSignal(list, float)
 
     def __init__(self, project_manager, parent=None, testing_mode=False):
         try:
-            super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
+            super().__init__(
+                project_manager, is_tx=False, parent=parent, testing_mode=testing_mode
+            )
         except ValueError:
             return
 
@@ -39,9 +42,14 @@ class ReceiveDialog(SendRecvDialog):
 
     def save_before_close(self):
         if not self.already_saved and self.device.current_index > 0:
-            reply = QMessageBox.question(self, self.tr("Save data?"),
-                                         self.tr("Do you want to save the data you have captured so far?"),
-                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Abort)
+            reply = QMessageBox.question(
+                self,
+                self.tr("Save data?"),
+                self.tr("Do you want to save the data you have captured so far?"),
+                QMessageBox.StandardButton.Yes
+                | QMessageBox.StandardButton.No
+                | QMessageBox.StandardButton.Abort,
+            )
             if reply == QMessageBox.StandardButton.Yes:
                 self.on_save_clicked()
             elif reply == QMessageBox.StandardButton.Abort:
@@ -63,10 +71,17 @@ class ReceiveDialog(SendRecvDialog):
             self.graphics_view.update()
 
     def init_device(self):
-        self.device = VirtualDevice(self.backend_handler, self.selected_device_name, Mode.receive,
-                                    device_ip="192.168.10.2", parent=self)
+        self.device = VirtualDevice(
+            self.backend_handler,
+            self.selected_device_name,
+            Mode.receive,
+            device_ip="192.168.10.2",
+            parent=self,
+        )
         self._create_device_connects()
-        self.scene_manager = LiveSceneManager(np.array([], dtype=self.device.data_type), parent=self)
+        self.scene_manager = LiveSceneManager(
+            np.array([], dtype=self.device.data_type), parent=self
+        )
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -75,7 +90,9 @@ class ReceiveDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_device_started(self):
-        self.scene_manager.plot_data = self.device.data.real if self.device.data is not None else None
+        self.scene_manager.plot_data = (
+            self.device.data.real if self.device.data is not None else None
+        )
 
         super().on_device_started()
 
@@ -90,21 +107,25 @@ class ReceiveDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_save_clicked(self):
-        data = self.device.data[:self.device.current_index]
+        data = self.device.data[: self.device.current_index]
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        initial_name = "{0}-{1}-{2}Hz-{3}Sps".format(dev.name, timestamp,
-                                                     big_val(dev.frequency), big_val(dev.sample_rate))
+        initial_name = "{0}-{1}-{2}Hz-{3}Sps".format(
+            dev.name, timestamp, big_val(dev.frequency), big_val(dev.sample_rate)
+        )
 
         if dev.bandwidth_is_adjustable:
             initial_name += "-{}Hz".format(big_val(dev.bandwidth))
 
-        initial_name = initial_name.replace(Formatter.local_decimal_seperator(), "_").replace("_000", "")
+        initial_name = initial_name.replace(
+            Formatter.local_decimal_seperator(), "_"
+        ).replace("_000", "")
 
-        filename = FileOperator.ask_signal_file_name_and_save(initial_name, data,
-                                                              sample_rate=dev.sample_rate, parent=self)
+        filename = FileOperator.ask_signal_file_name_and_save(
+            initial_name, data, sample_rate=dev.sample_rate, parent=self
+        )
         self.already_saved = True
         if filename is not None and filename not in self.recorded_files:
             self.recorded_files.append(filename)

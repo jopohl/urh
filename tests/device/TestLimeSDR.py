@@ -3,6 +3,7 @@ import sys
 
 import os
 from multiprocessing import Pipe
+
 f = os.readlink(__file__) if os.path.islink(__file__) else __file__
 path = os.path.realpath(os.path.join(f, "..", "..", "src"))
 
@@ -28,7 +29,7 @@ class TestLimeSDR(unittest.TestCase):
         print("Init", limesdr.init())
         limesdr.set_tx(True)
         self.assertTrue(limesdr.get_tx())
-        #print(limesdr.IS_TX)
+        # print(limesdr.IS_TX)
         print("Num Channels TX:", limesdr.get_num_channels())
         print("TX antennas", limesdr.get_antenna_list())
         limesdr.set_tx(False)
@@ -38,12 +39,19 @@ class TestLimeSDR(unittest.TestCase):
         limesdr.CHANNEL = 0
         print("Enable RX Channel 0:", limesdr.enable_channel(True, False, 0))
 
-        #path = os.path.realpath(os.path.join(__file__, "..", "..", "src", "urh", "dev", "native", "lime.ini"))
-        #print(path)
-        #limesdr.load_config(path)
-        #limesdr.save_config("/tmp/lime_test.ini")
+        # path = os.path.realpath(os.path.join(__file__, "..", "..", "src", "urh", "dev", "native", "lime.ini"))
+        # print(path)
+        # limesdr.load_config(path)
+        # limesdr.save_config("/tmp/lime_test.ini")
 
-        clocks = ["LMS_CLOCK_REF", "LMS_CLOCK_SXR", "LMS_CLOCK_SXT", "LMS_CLOCK_CGEN", "LMS_CLOCK_RXTSP", "LMS_CLOCK_TXTSP"]
+        clocks = [
+            "LMS_CLOCK_REF",
+            "LMS_CLOCK_SXR",
+            "LMS_CLOCK_SXT",
+            "LMS_CLOCK_CGEN",
+            "LMS_CLOCK_RXTSP",
+            "LMS_CLOCK_TXTSP",
+        ]
 
         for i, clock in enumerate(clocks):
             print(clock, limesdr.get_clock_freq(i))
@@ -77,7 +85,11 @@ class TestLimeSDR(unittest.TestCase):
         limesdr.print_last_error()
         antenna_list = limesdr.get_antenna_list()
         print("RX 0 antenna list", antenna_list)
-        print("RX 0 current antenna", limesdr.get_antenna(), antenna_list[limesdr.get_antenna()])
+        print(
+            "RX 0 current antenna",
+            limesdr.get_antenna(),
+            antenna_list[limesdr.get_antenna()],
+        )
         print("RX 0 current antenna BW", limesdr.get_antenna_bw(limesdr.get_antenna()))
 
         print("Chip Temperature", limesdr.get_chip_temperature())
@@ -101,12 +113,16 @@ class TestLimeSDR(unittest.TestCase):
             limesdr.print_last_error()
             print("Setup stream", limesdr.setup_stream(4000000000))
             print("Start stream", limesdr.start_stream())
-            print("Send samples", limesdr.send_stream(samples_to_send.view(np.float32), 100))
+            print(
+                "Send samples",
+                limesdr.send_stream(samples_to_send.view(np.float32), 100),
+            )
             print("Stop stream", limesdr.stop_stream())
             print("Destroy stream", limesdr.destroy_stream())
 
         print("-" * 20)
         print("Close:", limesdr.close())
+
 
 if __name__ == "__main__":
     unittest.main()

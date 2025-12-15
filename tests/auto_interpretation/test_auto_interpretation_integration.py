@@ -12,29 +12,46 @@ from urh.signalprocessing.Signal import Signal
 
 class TestAutoInterpretationIntegration(unittest.TestCase):
     def test_auto_interpretation_fsk(self):
-        fsk_signal = np.fromfile(get_path_for_data_file("fsk.complex"), dtype=np.float32)
+        fsk_signal = np.fromfile(
+            get_path_for_data_file("fsk.complex"), dtype=np.float32
+        )
         result = AutoInterpretation.estimate(fsk_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
         self.assertGreater(tolerance, 0)
         self.assertLessEqual(tolerance, 5)
 
-        self.assertEqual(demodulate(fsk_signal, mod_type, bit_length, center, noise, tolerance)[0],
-                         "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18")
+        self.assertEqual(
+            demodulate(fsk_signal, mod_type, bit_length, center, noise, tolerance)[0],
+            "aaaaaaaac626c626f4dc1d98eef7a427999cd239d3f18",
+        )
 
     def test_auto_interpretation_ask(self):
-        ask_signal = np.fromfile(get_path_for_data_file("ask.complex"), dtype=np.float32)
+        ask_signal = np.fromfile(
+            get_path_for_data_file("ask.complex"), dtype=np.float32
+        )
         result = AutoInterpretation.estimate(ask_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
         self.assertEqual(mod_type, "ASK")
         self.assertEqual(bit_length, 300)
         self.assertGreater(tolerance, 0)
         self.assertLessEqual(tolerance, 6)
 
-        self.assertEqual(demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0], "b25b6db6c80")
+        self.assertEqual(
+            demodulate(ask_signal, mod_type, bit_length, center, noise, tolerance)[0],
+            "b25b6db6c80",
+        )
 
     def test_auto_interpretation_overshoot_ook(self):
         data = Signal(get_path_for_data_file("ook_overshoot.complex16s"), "").iq_array
@@ -43,18 +60,31 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         self.assertEqual(result["bit_length"], 500)
 
     def test_auto_interpretation_enocean(self):
-        enocean_signal = np.fromfile(get_path_for_data_file("enocean.complex"), dtype=np.float32)
+        enocean_signal = np.fromfile(
+            get_path_for_data_file("enocean.complex"), dtype=np.float32
+        )
         result = AutoInterpretation.estimate(enocean_signal)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
         self.assertEqual(mod_type, "ASK")
         self.assertGreaterEqual(center, 0.0077)
         self.assertLessEqual(center, 0.0465)
         self.assertLessEqual(tolerance, 5)
         self.assertEqual(bit_length, 40)
 
-        demod = demodulate(enocean_signal, mod_type, bit_length, center, noise, tolerance,
-                           decoding=Encoding(["WSP", settings.DECODING_ENOCEAN]))
+        demod = demodulate(
+            enocean_signal,
+            mod_type,
+            bit_length,
+            center,
+            noise,
+            tolerance,
+            decoding=Encoding(["WSP", settings.DECODING_ENOCEAN]),
+        )
         self.assertEqual(len(demod), 3)
         self.assertEqual(demod[0], demod[2])
         self.assertEqual(demod[0], "aa9610002c1c024b")
@@ -63,11 +93,17 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         signal = Signal(get_path_for_data_file("xavax.coco"), "")
         result = AutoInterpretation.estimate(signal.iq_array.data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
 
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)
-        demod = demodulate(signal.iq_array.data, mod_type, bit_length, center, noise, tolerance)
+        demod = demodulate(
+            signal.iq_array.data, mod_type, bit_length, center, noise, tolerance
+        )
         self.assertGreaterEqual(len(demod), 5)
 
         for i in range(1, len(demod)):
@@ -78,12 +114,18 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
         result = AutoInterpretation.estimate(data)
 
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
 
         self.assertEqual(mod_type, "ASK")
         self.assertEqual(bit_length, 600)
 
-        demodulated = demodulate(data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8)
+        demodulated = demodulate(
+            data, mod_type, bit_length, center, noise, tolerance, pause_threshold=8
+        )
         self.assertEqual(len(demodulated), 11)
         for i in range(11):
             self.assertTrue(demodulated[i].startswith("8"))
@@ -93,7 +135,11 @@ class TestAutoInterpretationIntegration(unittest.TestCase):
 
         result = AutoInterpretation.estimate(data)
         mod_type, bit_length = result["modulation_type"], result["bit_length"]
-        center, noise, tolerance = result["center"], result["noise"], result["tolerance"]
+        center, noise, tolerance = (
+            result["center"],
+            result["noise"],
+            result["tolerance"],
+        )
 
         self.assertEqual(mod_type, "FSK")
         self.assertEqual(bit_length, 100)

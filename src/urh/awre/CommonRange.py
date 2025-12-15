@@ -8,8 +8,17 @@ from urh.util.GenericCRC import GenericCRC
 
 
 class CommonRange(object):
-    def __init__(self, start, length, value: np.ndarray = None, score=0, field_type="Generic", message_indices=None,
-                 range_type="bit", byte_order="big"):
+    def __init__(
+        self,
+        start,
+        length,
+        value: np.ndarray = None,
+        score=0,
+        field_type="Generic",
+        message_indices=None,
+        range_type="bit",
+        byte_order="big",
+    ):
         """
 
         :param start:
@@ -31,7 +40,9 @@ class CommonRange(object):
 
         self.range_type = range_type.lower()  # one of bit/hex/byte
 
-        self.message_indices = set() if message_indices is None else set(message_indices)
+        self.message_indices = (
+            set() if message_indices is None else set(message_indices)
+        )
         """
         Set of message indices, this range applies to
         """
@@ -46,7 +57,12 @@ class CommonRange(object):
 
     @property
     def bit_end(self):
-        return self.__convert_number(self.start) + self.__convert_number(self.length) - 1 + self.sync_end
+        return (
+            self.__convert_number(self.start)
+            + self.__convert_number(self.length)
+            - 1
+            + self.sync_end
+        )
 
     @property
     def length_in_bits(self):
@@ -85,9 +101,11 @@ class CommonRange(object):
         return self.__byte_order is None
 
     def matches(self, start: int, value: np.ndarray):
-        return self.start == start and \
-               self.length == len(value) and \
-               self.value.tobytes() == value.tobytes()
+        return (
+            self.start == start
+            and self.length == len(value)
+            and self.value.tobytes() == value.tobytes()
+        )
 
     def __convert_number(self, n):
         if self.range_type == "bit":
@@ -100,22 +118,31 @@ class CommonRange(object):
             raise ValueError("Unknown range type {}".format(self.range_type))
 
     def __repr__(self):
-        result = "{} {}-{} ({} {})".format(self.field_type, self.bit_start,
-                                           self.bit_end, self.length, self.range_type)
+        result = "{} {}-{} ({} {})".format(
+            self.field_type, self.bit_start, self.bit_end, self.length, self.range_type
+        )
 
-        result += " Values: " + " ".join(map(util.convert_numbers_to_hex_string, self.values))
+        result += " Values: " + " ".join(
+            map(util.convert_numbers_to_hex_string, self.values)
+        )
         if self.score is not None:
             result += " Score: " + str(self.score)
-        result += " Message indices: {" + ",".join(map(str, sorted(self.message_indices))) + "}"
+        result += (
+            " Message indices: {"
+            + ",".join(map(str, sorted(self.message_indices)))
+            + "}"
+        )
         return result
 
     def __eq__(self, other):
         if not isinstance(other, CommonRange):
             return False
 
-        return self.bit_start == other.bit_start and \
-               self.bit_end == other.bit_end and \
-               self.field_type == other.field_type
+        return (
+            self.bit_start == other.bit_start
+            and self.bit_end == other.bit_end
+            and self.field_type == other.field_type
+        )
 
     def __hash__(self):
         return hash((self.start, self.length, self.field_type))
@@ -126,8 +153,10 @@ class CommonRange(object):
     def overlaps_with(self, other) -> bool:
         if not isinstance(other, CommonRange):
             raise ValueError("Need another bit range to compare")
-        return any(i in range(self.bit_start, self.bit_end)
-                   for i in range(other.bit_start, other.bit_end))
+        return any(
+            i in range(self.bit_start, self.bit_end)
+            for i in range(other.bit_start, other.bit_end)
+        )
 
     def ensure_not_overlaps(self, start: int, end: int):
         """
@@ -145,14 +174,16 @@ class CommonRange(object):
             result = copy.deepcopy(self)
             result.length -= end - result.start
             result.start = end
-            result.value = result.value[result.start-self.start:(result.start-self.start)+result.length]
+            result.value = result.value[
+                result.start - self.start : (result.start - self.start) + result.length
+            ]
             return [result]
 
         if self.start < start <= self.end <= end:
             # overlaps on the right
             result = copy.deepcopy(self)
             result.length -= self.end + 1 - start
-            result.value = result.value[:result.length]
+            result.value = result.value[: result.length]
             return [result]
 
         if self.start < start and self.end > end:
@@ -160,21 +191,36 @@ class CommonRange(object):
             left = copy.deepcopy(self)
             right = copy.deepcopy(self)
 
-            left.length -= (left.end + 1 - start)
-            left.value = self.value[:left.length]
+            left.length -= left.end + 1 - start
+            left.value = self.value[: left.length]
 
             right.start = end + 1
             right.length = self.end - end
-            right.value = self.value[right.start-self.start:(right.start-self.start)+right.length]
+            right.value = self.value[
+                right.start - self.start : (right.start - self.start) + right.length
+            ]
             return [left, right]
 
         return []
 
 
 class ChecksumRange(CommonRange):
-    def __init__(self, start, length, crc: GenericCRC, data_range_start, data_range_end, value: np.ndarray = None,
-                 score=0, field_type="Generic", message_indices=None, range_type="bit"):
-        super().__init__(start, length, value, score, field_type, message_indices, range_type)
+    def __init__(
+        self,
+        start,
+        length,
+        crc: GenericCRC,
+        data_range_start,
+        data_range_end,
+        value: np.ndarray = None,
+        score=0,
+        field_type="Generic",
+        message_indices=None,
+        range_type="bit",
+    ):
+        super().__init__(
+            start, length, value, score, field_type, message_indices, range_type
+        )
         self.data_range_start = data_range_start
         self.data_range_end = data_range_end
         self.crc = crc
@@ -188,18 +234,31 @@ class ChecksumRange(CommonRange):
         return self.data_range_end + self.sync_end
 
     def __eq__(self, other):
-        return super().__eq__(other) \
-               and self.data_range_start == other.data_range_start \
-               and self.data_range_end == other.data_range_end \
-               and self.crc == other.crc
+        return (
+            super().__eq__(other)
+            and self.data_range_start == other.data_range_start
+            and self.data_range_end == other.data_range_end
+            and self.crc == other.crc
+        )
 
     def __hash__(self):
-        return hash((self.start, self.length, self.data_range_start, self.data_range_end, self.crc))
+        return hash(
+            (
+                self.start,
+                self.length,
+                self.data_range_start,
+                self.data_range_end,
+                self.crc,
+            )
+        )
 
     def __repr__(self):
-        return super().__repr__() + " \t" + \
-               "{}".format(self.crc.caption) + \
-               " Datarange: {}-{} ".format(self.data_range_start, self.data_range_end)
+        return (
+            super().__repr__()
+            + " \t"
+            + "{}".format(self.crc.caption)
+            + " Datarange: {}-{} ".format(self.data_range_start, self.data_range_end)
+        )
 
 
 class EmptyCommonRange(CommonRange):
@@ -212,8 +271,9 @@ class EmptyCommonRange(CommonRange):
         self.field_type = field_type
 
     def __eq__(self, other):
-        return isinstance(other, EmptyCommonRange) \
-               and other.field_type == self.field_type
+        return (
+            isinstance(other, EmptyCommonRange) and other.field_type == self.field_type
+        )
 
     def __repr__(self):
         return "No " + self.field_type
@@ -229,7 +289,6 @@ class CommonRangeContainer(object):
     """
 
     def __init__(self, ranges: list, message_indices: set = None):
-
         assert isinstance(ranges, list)
 
         self.__ranges = ranges  # type: list[CommonRange]
@@ -287,10 +346,14 @@ class CommonRangeContainer(object):
 
     def __repr__(self):
         from pprint import pformat
+
         return pformat(self.__ranges)
 
     def __eq__(self, other):
         if not isinstance(other, CommonRangeContainer):
             return False
 
-        return self.__ranges == other.__ranges and self.message_indices == other.message_indices
+        return (
+            self.__ranges == other.__ranges
+            and self.message_indices == other.message_indices
+        )

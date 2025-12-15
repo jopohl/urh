@@ -24,15 +24,19 @@ class Ui_SimulatorTab(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.splitterLeftRight = QtWidgets.QSplitter(parent=self.scrollAreaWidgetContents)
-        self.splitterLeftRight.setStyleSheet("QSplitter::handle:horizontal {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
-"}")
+        self.splitterLeftRight = QtWidgets.QSplitter(
+            parent=self.scrollAreaWidgetContents
+        )
+        self.splitterLeftRight.setStyleSheet(
+            "QSplitter::handle:horizontal {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "image: url(:/icons/icons/splitter_handle_vertical.svg);\n"
+            "}"
+        )
         self.splitterLeftRight.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.splitterLeftRight.setHandleWidth(6)
         self.splitterLeftRight.setObjectName("splitterLeftRight")
@@ -60,10 +64,14 @@ class Ui_SimulatorTab(object):
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 0, 0, 1, 1)
         self.spinBoxNRepeat = QtWidgets.QSpinBox(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxNRepeat.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxNRepeat.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxNRepeat.setSizePolicy(sizePolicy)
         self.spinBoxNRepeat.setMaximum(9999999)
         self.spinBoxNRepeat.setObjectName("spinBoxNRepeat")
@@ -72,10 +80,14 @@ class Ui_SimulatorTab(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
         self.spinBoxTimeout = QtWidgets.QSpinBox(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.spinBoxTimeout.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.spinBoxTimeout.sizePolicy().hasHeightForWidth()
+        )
         self.spinBoxTimeout.setSizePolicy(sizePolicy)
         self.spinBoxTimeout.setMinimum(1)
         self.spinBoxTimeout.setMaximum(9999999)
@@ -85,10 +97,14 @@ class Ui_SimulatorTab(object):
         self.label_7.setObjectName("label_7")
         self.gridLayout.addWidget(self.label_7, 2, 0, 1, 1)
         self.comboBoxError = QtWidgets.QComboBox(parent=self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxError.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.comboBoxError.sizePolicy().hasHeightForWidth()
+        )
         self.comboBoxError.setSizePolicy(sizePolicy)
         self.comboBoxError.setObjectName("comboBoxError")
         self.comboBoxError.addItem("")
@@ -111,14 +127,16 @@ class Ui_SimulatorTab(object):
         self.btnStartSim.setObjectName("btnStartSim")
         self.verticalLayout_3.addWidget(self.btnStartSim)
         self.splitter = QtWidgets.QSplitter(parent=self.splitterLeftRight)
-        self.splitter.setStyleSheet("QSplitter::handle:vertical {\n"
-"margin: 4px 0px;\n"
-"    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
-"stop:0 rgba(255, 255, 255, 0), \n"
-"stop:0.5 rgba(100, 100, 100, 100), \n"
-"stop:1 rgba(255, 255, 255, 0));\n"
-"image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
-"}")
+        self.splitter.setStyleSheet(
+            "QSplitter::handle:vertical {\n"
+            "margin: 4px 0px;\n"
+            "    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, \n"
+            "stop:0 rgba(255, 255, 255, 0), \n"
+            "stop:0.5 rgba(100, 100, 100, 100), \n"
+            "stop:1 rgba(255, 255, 255, 0));\n"
+            "image: url(:/icons/icons/splitter_handle_horizontal.svg);\n"
+            "}"
+        )
         self.splitter.setOrientation(QtCore.Qt.Orientation.Vertical)
         self.splitter.setHandleWidth(6)
         self.splitter.setObjectName("splitter")
@@ -128,7 +146,10 @@ class Ui_SimulatorTab(object):
         self.verticalLayout_2.setContentsMargins(11, 11, 11, 11)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tabWidget = QtWidgets.QTabWidget(parent=self.layoutWidget_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -144,7 +165,10 @@ class Ui_SimulatorTab(object):
         self.verticalLayout.setSpacing(7)
         self.verticalLayout.setObjectName("verticalLayout")
         self.gvSimulator = SimulatorGraphicsView(parent=self.tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.gvSimulator.sizePolicy().hasHeightForWidth())
@@ -158,14 +182,23 @@ class Ui_SimulatorTab(object):
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.tblViewMessage = SimulatorMessageTableView(parent=self.tab_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.tblViewMessage.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.tblViewMessage.sizePolicy().hasHeightForWidth()
+        )
         self.tblViewMessage.setSizePolicy(sizePolicy)
         self.tblViewMessage.setAlternatingRowColors(True)
-        self.tblViewMessage.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
-        self.tblViewMessage.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tblViewMessage.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
+        )
+        self.tblViewMessage.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
+        )
         self.tblViewMessage.setShowGrid(False)
         self.tblViewMessage.setObjectName("tblViewMessage")
         self.tblViewMessage.horizontalHeader().setHighlightSections(False)
@@ -174,13 +207,22 @@ class Ui_SimulatorTab(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.lNumSelectedColumns = QtWidgets.QLabel(parent=self.tab_2)
-        self.lNumSelectedColumns.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.lNumSelectedColumns.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.lNumSelectedColumns.setObjectName("lNumSelectedColumns")
         self.horizontalLayout_3.addWidget(self.lNumSelectedColumns)
         self.lColumnsSelectedText = QtWidgets.QLabel(parent=self.tab_2)
         self.lColumnsSelectedText.setObjectName("lColumnsSelectedText")
         self.horizontalLayout_3.addWidget(self.lColumnsSelectedText)
-        spacerItem = QtWidgets.QSpacerItem(138, 33, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            138,
+            33,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+        )
         self.horizontalLayout_3.addItem(spacerItem)
         self.label_5 = QtWidgets.QLabel(parent=self.tab_2)
         self.label_5.setObjectName("label_5")
@@ -223,7 +265,12 @@ class Ui_SimulatorTab(object):
         self.btnDown.setIcon(icon)
         self.btnDown.setObjectName("btnDown")
         self.verticalLayout_9.addWidget(self.btnDown)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.verticalLayout_9.addItem(spacerItem1)
         self.horizontalLayout.addLayout(self.verticalLayout_9)
         self.tabWidget.addTab(self.tabParticipants, "")
@@ -234,10 +281,14 @@ class Ui_SimulatorTab(object):
         self.verticalLayout_4.setContentsMargins(11, 11, 11, 11)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.lblMsgFieldsValues = QtWidgets.QLabel(parent=self.layoutWidget_3)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lblMsgFieldsValues.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lblMsgFieldsValues.sizePolicy().hasHeightForWidth()
+        )
         self.lblMsgFieldsValues.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(True)
@@ -261,9 +312,19 @@ class Ui_SimulatorTab(object):
         self.goto_combobox = QtWidgets.QComboBox(parent=self.page_goto_action)
         self.goto_combobox.setObjectName("goto_combobox")
         self.verticalLayout_7.addWidget(self.goto_combobox, 0, 1, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            40,
+            20,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+        )
         self.verticalLayout_7.addItem(spacerItem2, 0, 2, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.verticalLayout_7.addItem(spacerItem3, 1, 0, 1, 3)
         self.detail_view_widget.addWidget(self.page_goto_action)
         self.page_message = QtWidgets.QWidget()
@@ -271,7 +332,10 @@ class Ui_SimulatorTab(object):
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_message)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.label_10 = QtWidgets.QLabel(parent=self.page_message)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
@@ -287,12 +351,19 @@ class Ui_SimulatorTab(object):
         self.tblViewFieldValues.verticalHeader().setVisible(False)
         self.gridLayout_6.addWidget(self.tblViewFieldValues, 2, 2, 1, 1)
         self.label_11 = QtWidgets.QLabel(parent=self.page_message)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
+        self.label_11.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignTop
+        )
         self.label_11.setObjectName("label_11")
         self.gridLayout_6.addWidget(self.label_11, 2, 0, 1, 1)
         self.spinBoxRepeat = QtWidgets.QSpinBox(parent=self.page_message)
@@ -313,7 +384,12 @@ class Ui_SimulatorTab(object):
         self.label_12 = QtWidgets.QLabel(parent=self.page_rule)
         self.label_12.setObjectName("label_12")
         self.gridLayout_3.addWidget(self.label_12, 0, 0, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.gridLayout_3.addItem(spacerItem4, 1, 0, 1, 2)
         self.ruleCondLineEdit = ExpressionLineEdit(parent=self.page_rule)
         self.ruleCondLineEdit.setObjectName("ruleCondLineEdit")
@@ -323,20 +399,29 @@ class Ui_SimulatorTab(object):
         self.page_ext_prog_action.setObjectName("page_ext_prog_action")
         self.gridLayout_9 = QtWidgets.QGridLayout(self.page_ext_prog_action)
         self.gridLayout_9.setObjectName("gridLayout_9")
-        self.checkBoxPassTranscriptSTDIN = QtWidgets.QCheckBox(parent=self.page_ext_prog_action)
+        self.checkBoxPassTranscriptSTDIN = QtWidgets.QCheckBox(
+            parent=self.page_ext_prog_action
+        )
         self.checkBoxPassTranscriptSTDIN.setObjectName("checkBoxPassTranscriptSTDIN")
         self.gridLayout_9.addWidget(self.checkBoxPassTranscriptSTDIN, 2, 0, 1, 4)
         self.label_14 = QtWidgets.QLabel(parent=self.page_ext_prog_action)
         self.label_14.setObjectName("label_14")
         self.gridLayout_9.addWidget(self.label_14, 1, 0, 1, 1)
-        self.lineEditTriggerCommand = QtWidgets.QLineEdit(parent=self.page_ext_prog_action)
+        self.lineEditTriggerCommand = QtWidgets.QLineEdit(
+            parent=self.page_ext_prog_action
+        )
         self.lineEditTriggerCommand.setReadOnly(False)
         self.lineEditTriggerCommand.setObjectName("lineEditTriggerCommand")
         self.gridLayout_9.addWidget(self.lineEditTriggerCommand, 1, 1, 1, 1)
         self.btnChooseCommand = QtWidgets.QToolButton(parent=self.page_ext_prog_action)
         self.btnChooseCommand.setObjectName("btnChooseCommand")
         self.gridLayout_9.addWidget(self.btnChooseCommand, 1, 2, 1, 2)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20,
+            40,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.gridLayout_9.addItem(spacerItem5, 4, 0, 1, 4)
         self.label_18 = QtWidgets.QLabel(parent=self.page_ext_prog_action)
         self.label_18.setWordWrap(True)
@@ -359,7 +444,12 @@ class Ui_SimulatorTab(object):
         self.doubleSpinBoxSleep.setObjectName("doubleSpinBoxSleep")
         self.horizontalLayout_2.addWidget(self.doubleSpinBoxSleep)
         self.verticalLayout_10.addLayout(self.horizontalLayout_2)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 231, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem6 = QtWidgets.QSpacerItem(
+            20,
+            231,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.verticalLayout_10.addItem(spacerItem6)
         self.detail_view_widget.addWidget(self.page_sleep)
         self.page = QtWidgets.QWidget()
@@ -388,7 +478,12 @@ class Ui_SimulatorTab(object):
         self.label_17.setWordWrap(True)
         self.label_17.setObjectName("label_17")
         self.verticalLayout_11.addWidget(self.label_17)
-        spacerItem7 = QtWidgets.QSpacerItem(20, 36, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem7 = QtWidgets.QSpacerItem(
+            20,
+            36,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.verticalLayout_11.addItem(spacerItem7)
         self.detail_view_widget.addWidget(self.page)
         self.verticalLayout_4.addWidget(self.detail_view_widget)
@@ -403,53 +498,101 @@ class Ui_SimulatorTab(object):
     def retranslateUi(self, SimulatorTab):
         _translate = QtCore.QCoreApplication.translate
         SimulatorTab.setWindowTitle(_translate("SimulatorTab", "Form"))
-        self.label.setText(_translate("SimulatorTab", "Protocols (Drag&Drop to Flow Graph):"))
+        self.label.setText(
+            _translate("SimulatorTab", "Protocols (Drag&Drop to Flow Graph):")
+        )
         self.label_6.setText(_translate("SimulatorTab", "Simulate these participants:"))
-        self.label_4.setText(_translate("SimulatorTab", "Repeat simulation this often:"))
+        self.label_4.setText(
+            _translate("SimulatorTab", "Repeat simulation this often:")
+        )
         self.spinBoxNRepeat.setSpecialValueText(_translate("SimulatorTab", "Infinite"))
         self.label_3.setText(_translate("SimulatorTab", "Timeout:"))
         self.spinBoxTimeout.setSuffix(_translate("SimulatorTab", "ms"))
-        self.label_7.setText(_translate("SimulatorTab", "In case of an overdue response:"))
-        self.comboBoxError.setItemText(0, _translate("SimulatorTab", "Resend last message"))
+        self.label_7.setText(
+            _translate("SimulatorTab", "In case of an overdue response:")
+        )
+        self.comboBoxError.setItemText(
+            0, _translate("SimulatorTab", "Resend last message")
+        )
         self.comboBoxError.setItemText(1, _translate("SimulatorTab", "Stop simulation"))
-        self.comboBoxError.setItemText(2, _translate("SimulatorTab", "Restart simulation"))
+        self.comboBoxError.setItemText(
+            2, _translate("SimulatorTab", "Restart simulation")
+        )
         self.label_8.setText(_translate("SimulatorTab", "Maximum retries:"))
         self.btnStartSim.setText(_translate("SimulatorTab", "Simulate..."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("SimulatorTab", "Flow Graph"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab), _translate("SimulatorTab", "Flow Graph")
+        )
         self.lNumSelectedColumns.setText(_translate("SimulatorTab", "0"))
-        self.lColumnsSelectedText.setText(_translate("SimulatorTab", "column(s) selected"))
+        self.lColumnsSelectedText.setText(
+            _translate("SimulatorTab", "column(s) selected")
+        )
         self.label_5.setText(_translate("SimulatorTab", "Viewtype:"))
         self.cbViewType.setItemText(0, _translate("SimulatorTab", "Bit"))
         self.cbViewType.setItemText(1, _translate("SimulatorTab", "Hex"))
         self.cbViewType.setItemText(2, _translate("SimulatorTab", "ASCII"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("SimulatorTab", "Messages"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2), _translate("SimulatorTab", "Messages")
+        )
         self.btnAddParticipant.setToolTip(_translate("SimulatorTab", "Add participant"))
         self.btnAddParticipant.setText(_translate("SimulatorTab", "Add"))
-        self.btnRemoveParticipant.setToolTip(_translate("SimulatorTab", "Remove participant"))
+        self.btnRemoveParticipant.setToolTip(
+            _translate("SimulatorTab", "Remove participant")
+        )
         self.btnRemoveParticipant.setText(_translate("SimulatorTab", "Remove"))
-        self.btnUp.setToolTip(_translate("SimulatorTab", "Move selected participants up"))
+        self.btnUp.setToolTip(
+            _translate("SimulatorTab", "Move selected participants up")
+        )
         self.btnUp.setText(_translate("SimulatorTab", "..."))
-        self.btnDown.setToolTip(_translate("SimulatorTab", "Move selected participants down"))
+        self.btnDown.setToolTip(
+            _translate("SimulatorTab", "Move selected participants down")
+        )
         self.btnDown.setText(_translate("SimulatorTab", "..."))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabParticipants), _translate("SimulatorTab", "Participants"))
-        self.lblMsgFieldsValues.setText(_translate("SimulatorTab", "Detail view for item"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tabParticipants),
+            _translate("SimulatorTab", "Participants"),
+        )
+        self.lblMsgFieldsValues.setText(
+            _translate("SimulatorTab", "Detail view for item")
+        )
         self.label_9.setText(_translate("SimulatorTab", "Goto:"))
         self.label_10.setText(_translate("SimulatorTab", "Copies:"))
         self.label_11.setText(_translate("SimulatorTab", "Labels:"))
         self.label_2.setText(_translate("SimulatorTab", "Coding:"))
         self.lblEncodingDecoding.setText(_translate("SimulatorTab", "-"))
         self.label_12.setText(_translate("SimulatorTab", "Condition:"))
-        self.ruleCondLineEdit.setPlaceholderText(_translate("SimulatorTab", "not (item1.crc == 0b1010 and item2.length >=3)"))
-        self.checkBoxPassTranscriptSTDIN.setText(_translate("SimulatorTab", "Pass transcript to STDIN"))
+        self.ruleCondLineEdit.setPlaceholderText(
+            _translate("SimulatorTab", "not (item1.crc == 0b1010 and item2.length >=3)")
+        )
+        self.checkBoxPassTranscriptSTDIN.setText(
+            _translate("SimulatorTab", "Pass transcript to STDIN")
+        )
         self.label_14.setText(_translate("SimulatorTab", "Command:"))
-        self.lineEditTriggerCommand.setPlaceholderText(_translate("SimulatorTab", "Path [+arguments] to external command e.g. mail or sendsms"))
+        self.lineEditTriggerCommand.setPlaceholderText(
+            _translate(
+                "SimulatorTab",
+                "Path [+arguments] to external command e.g. mail or sendsms",
+            )
+        )
         self.btnChooseCommand.setText(_translate("SimulatorTab", "..."))
-        self.label_18.setText(_translate("SimulatorTab", "<html><head/><body><p>You can access the return code of this item in formulas and rules using the item identifier followed by <span style=\" font-style:italic;\">.rc</span> e.g.<span style=\" font-style:italic;\"> item5.rc</span>.</p></body></html>"))
+        self.label_18.setText(
+            _translate(
+                "SimulatorTab",
+                '<html><head/><body><p>You can access the return code of this item in formulas and rules using the item identifier followed by <span style=" font-style:italic;">.rc</span> e.g.<span style=" font-style:italic;"> item5.rc</span>.</p></body></html>',
+            )
+        )
         self.label_13.setText(_translate("SimulatorTab", "Sleep for:"))
         self.doubleSpinBoxSleep.setSuffix(_translate("SimulatorTab", "s"))
         self.label_15.setText(_translate("SimulatorTab", "Start:"))
         self.label_16.setText(_translate("SimulatorTab", "Step:"))
-        self.label_17.setText(_translate("SimulatorTab", "<html><head/><body><p>This counter will increase by <span style=\" font-weight:600;\">step</span> each time it gets hit during simulation. It will preserve it\'s value during simulation repeats and retries. To reset all counters stop the simulation and start it again.</p><p>Access the value of this counter using item&lt;Number&gt;.counter_value in <span style=\" font-weight:600;\">Formulas</span> or as parameter in <span style=\" font-weight:600;\">external programs</span> e.g. <span style=\" font-style:italic;\">external_py -c item5.counter_value</span>. The value of this counter will be inserted during simulation time.</p></body></html>"))
+        self.label_17.setText(
+            _translate(
+                "SimulatorTab",
+                '<html><head/><body><p>This counter will increase by <span style=" font-weight:600;">step</span> each time it gets hit during simulation. It will preserve it\'s value during simulation repeats and retries. To reset all counters stop the simulation and start it again.</p><p>Access the value of this counter using item&lt;Number&gt;.counter_value in <span style=" font-weight:600;">Formulas</span> or as parameter in <span style=" font-weight:600;">external programs</span> e.g. <span style=" font-style:italic;">external_py -c item5.counter_value</span>. The value of this counter will be inserted during simulation time.</p></body></html>',
+            )
+        )
+
+
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.views.GeneratorTreeView import GeneratorTreeView
 from urh.ui.views.ParticipantTableView import ParticipantTableView

@@ -18,12 +18,22 @@ class MessageBreakAction(QUndoCommand):
 
     def redo(self):
         message = self.proto_analyzer.messages[self.msg_nr]
-        message1 = Message(plain_bits=message.plain_bits[:self.pos], pause=0,
-                           rssi=message.rssi, decoder=message.decoder, message_type=message.message_type,
-                           samples_per_symbol=message.samples_per_symbol)
-        message2 = Message(plain_bits=message.plain_bits[self.pos:], pause=message.pause,
-                           rssi=message.rssi, decoder=message.decoder, message_type=message.message_type,
-                           samples_per_symbol=message.samples_per_symbol)
+        message1 = Message(
+            plain_bits=message.plain_bits[: self.pos],
+            pause=0,
+            rssi=message.rssi,
+            decoder=message.decoder,
+            message_type=message.message_type,
+            samples_per_symbol=message.samples_per_symbol,
+        )
+        message2 = Message(
+            plain_bits=message.plain_bits[self.pos :],
+            pause=message.pause,
+            rssi=message.rssi,
+            decoder=message.decoder,
+            message_type=message.message_type,
+            samples_per_symbol=message.samples_per_symbol,
+        )
         self.proto_analyzer.messages[self.msg_nr] = message1
         self.proto_analyzer.messages.insert(self.msg_nr + 1, message2)
 

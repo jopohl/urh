@@ -19,17 +19,33 @@ class TestSimulatorDialog(QtTestCase):
         self.form.project_manager.project_updated.emit()
 
         mt = self.form.compare_frame_controller.proto_analyzer.default_message_type
-        msg1 = SimulatorMessage(source=bob, destination=alice, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
-        msg2 = SimulatorMessage(source=alice, destination=bob, plain_bits=array("B", [1, 0, 1, 1]), pause=100, message_type=mt)
+        msg1 = SimulatorMessage(
+            source=bob,
+            destination=alice,
+            plain_bits=array("B", [1, 0, 1, 1]),
+            pause=100,
+            message_type=mt,
+        )
+        msg2 = SimulatorMessage(
+            source=alice,
+            destination=bob,
+            plain_bits=array("B", [1, 0, 1, 1]),
+            pause=100,
+            message_type=mt,
+        )
 
         simulator_manager = self.form.simulator_tab_controller.simulator_config
         simulator_manager.add_items([msg1, msg2], 0, simulator_manager.rootItem)
-        simulator_manager.add_label(5, 15, "test", parent_item=simulator_manager.rootItem.children[0])
+        simulator_manager.add_label(
+            5, 15, "test", parent_item=simulator_manager.rootItem.children[0]
+        )
 
-        self.dialog = SimulatorDialog(self.form.simulator_tab_controller.simulator_config,
-                                      self.form.generator_tab_controller.modulators,
-                                      self.form.simulator_tab_controller.sim_expression_parser,
-                                      self.form.project_manager)
+        self.dialog = SimulatorDialog(
+            self.form.simulator_tab_controller.simulator_config,
+            self.form.generator_tab_controller.modulators,
+            self.form.simulator_tab_controller.sim_expression_parser,
+            self.form.project_manager,
+        )
 
         if self.SHOW:
             self.dialog.show()
@@ -73,7 +89,9 @@ class TestSimulatorDialog(QtTestCase):
     def test_set_sniff_parameters(self):
         sniff_settings_widget = self.dialog.sniff_settings_widget
         simulator = self.dialog.simulator
-        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol, 111)
+        self.__edit_spinbox_value(
+            sniff_settings_widget.ui.spinbox_sniff_SamplesPerSymbol, 111
+        )
         self.assertEqual(simulator.sniffer.signal.samples_per_symbol, 111)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Center, 0.1337)
@@ -82,7 +100,9 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxCenterSpacing, 0.4)
         self.assertEqual(simulator.sniffer.signal.center_spacing, 0.4)
 
-        self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_ErrorTolerance, 13)
+        self.__edit_spinbox_value(
+            sniff_settings_widget.ui.spinbox_sniff_ErrorTolerance, 13
+        )
         self.assertEqual(simulator.sniffer.signal.tolerance, 13)
 
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinbox_sniff_Noise, 0.1234)
@@ -94,8 +114,10 @@ class TestSimulatorDialog(QtTestCase):
         self.__edit_spinbox_value(sniff_settings_widget.ui.spinBoxBitsPerSymbol, 5)
         self.assertEqual(simulator.sniffer.signal.bits_per_symbol, 5)
 
-        decodings = [sniff_settings_widget.ui.comboBox_sniff_encoding.itemText(i) for i in
-                     range(sniff_settings_widget.ui.comboBox_sniff_encoding.count())]
+        decodings = [
+            sniff_settings_widget.ui.comboBox_sniff_encoding.itemText(i)
+            for i in range(sniff_settings_widget.ui.comboBox_sniff_encoding.count())
+        ]
         sniff_settings_widget.ui.comboBox_sniff_encoding.setCurrentIndex(2)
         self.assertEqual(simulator.sniffer.decoder.name, decodings[2])
 

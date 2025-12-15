@@ -38,7 +38,7 @@ class TestAirSpy(unittest.TestCase):
         print("Set start rx", airspy.error_name(result), result)
 
         time.sleep(0.01)
-        print(np.fromstring(parent_conn.recv_bytes(8*65536), dtype=np.complex64))
+        print(np.fromstring(parent_conn.recv_bytes(8 * 65536), dtype=np.complex64))
 
         print("Closing")
 
@@ -52,5 +52,5 @@ class TestAirSpy(unittest.TestCase):
         print("Close:", airspy.error_name(result), result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

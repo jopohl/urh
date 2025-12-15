@@ -11,14 +11,14 @@ from urh.util import util
 
 
 class SimulatorMessageFieldModel(QAbstractTableModel):
-    header_labels = ['Name', 'Display format', 'Value type', 'Value']
+    header_labels = ["Name", "Display format", "Value type", "Value"]
 
     protocol_label_updated = pyqtSignal(SimulatorProtocolLabel)
 
     def __init__(self, controller, parent=None):
         super().__init__(parent)
 
-        self.controller = controller # type: SimulatorTabController
+        self.controller = controller  # type: SimulatorTabController
         self.message_type = None  # type: MessageType
 
     def update(self):
@@ -26,14 +26,17 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
         self.message_type = self.controller.active_item.message_type
         self.endResetModel()
 
-    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.header_labels)
 
-    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.message_type) if self.message_type is not None else 0
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         elif role == Qt.ItemDataRole.TextAlignmentRole:
             return Qt.AlignmentFlag.AlignLeft
@@ -59,11 +62,13 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                     message = lbl.parent()
 
                     try:
-                        data = message.plain_bits[lbl.start:lbl.end]
+                        data = message.plain_bits[lbl.start : lbl.end]
                     except IndexError:
                         return None
 
-                    return util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True)
+                    return util.convert_bits_to_string(
+                        data, lbl.display_format_index, pad_zeros=True
+                    )
                 elif lbl.value_type_index == 1:
                     return "-"
                 elif lbl.value_type_index == 2:
@@ -71,7 +76,12 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 elif lbl.value_type_index == 3:
                     return lbl.external_program
                 elif lbl.value_type_index == 4:
-                    return "Range (Decimal): " + str(lbl.random_min) + " - " + str(lbl.random_max)
+                    return (
+                        "Range (Decimal): "
+                        + str(lbl.random_min)
+                        + " - "
+                        + str(lbl.random_max)
+                    )
         elif role == Qt.ItemDataRole.EditRole:
             if j == 0:
                 return lbl.name
@@ -99,8 +109,12 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
             if j == 0:
                 return settings.LABEL_COLORS[lbl.color_index]
             elif j == 3:
-                if (lbl.value_type_index == 2 and
-                        not self.controller.sim_expression_parser.validate_expression(lbl.formula)[0]):
+                if (
+                    lbl.value_type_index == 2
+                    and not self.controller.sim_expression_parser.validate_expression(
+                        lbl.formula
+                    )[0]
+                ):
                     return settings.ERROR_BG_COLOR
         elif role == Qt.ItemDataRole.ForegroundRole:
             if self.link_index(index):
@@ -122,7 +136,9 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
             if j == 0:
                 label.name = value
-                ft = self.controller.field_types_by_caption.get(value, FieldType("Custom", FieldType.Function.CUSTOM))
+                ft = self.controller.field_types_by_caption.get(
+                    value, FieldType("Custom", FieldType.Function.CUSTOM)
+                )
                 label.field_type = ft
             elif j == 1:
                 label.display_format_index = value
@@ -132,10 +148,13 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 if label.value_type_index == 0:
                     message = label.parent()
                     try:
-                        bits = util.convert_string_to_bits(value, label.display_format_index,
-                                                           target_num_bits=label.end-label.start)
+                        bits = util.convert_string_to_bits(
+                            value,
+                            label.display_format_index,
+                            target_num_bits=label.end - label.start,
+                        )
 
-                        message.plain_bits[label.start:label.end] = bits
+                        message.plain_bits[label.start : label.end] = bits
                     except ValueError:
                         pass
                 elif label.value_type_index == 2:
@@ -145,8 +164,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
                 elif label.value_type_index == 4:
                     label.random_min = value[0]
                     label.random_max = value[1]
-            self.dataChanged.emit(self.index(i, 0),
-                                  self.index(i, self.columnCount()))
+            self.dataChanged.emit(self.index(i, 0), self.index(i, self.columnCount()))
             self.protocol_label_updated.emit(label)
 
         return True
@@ -160,7 +178,7 @@ class SimulatorMessageFieldModel(QAbstractTableModel):
 
         flags = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
-        if not(col == 3 and label.value_type_index == 1):
+        if not (col == 3 and label.value_type_index == 1):
             flags |= Qt.ItemFlag.ItemIsEditable
 
         return flags

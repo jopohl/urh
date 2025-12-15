@@ -5,7 +5,6 @@ from urh.simulator.SimulatorConfiguration import SimulatorConfiguration
 
 
 class SimulatorParticipantListModel(QAbstractListModel):
-
     participant_simulate_changed = pyqtSignal(Participant)
 
     def __init__(self, config: SimulatorConfiguration, parent=None):
@@ -29,7 +28,11 @@ class SimulatorParticipantListModel(QAbstractListModel):
         if role == Qt.ItemDataRole.DisplayRole:
             return participant.name + " (" + participant.shortname + ")"
         elif role == Qt.ItemDataRole.CheckStateRole:
-            return Qt.CheckState.Checked if participant.simulate else Qt.CheckState.Unchecked
+            return (
+                Qt.CheckState.Checked
+                if participant.simulate
+                else Qt.CheckState.Unchecked
+            )
 
     def setData(self, index: QModelIndex, value, role=None):
         i = index.row()
@@ -42,4 +45,8 @@ class SimulatorParticipantListModel(QAbstractListModel):
         return True
 
     def flags(self, index: QModelIndex):
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsUserCheckable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )

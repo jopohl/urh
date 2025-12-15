@@ -12,10 +12,12 @@ class Rad1o(Device):
     DEVICE_LIB = hackrf
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
-    DEVICE_METHODS.update({
-        Device.Command.SET_FREQUENCY.name: "set_freq",
-        Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth"
-    })
+    DEVICE_METHODS.update(
+        {
+            Device.Command.SET_FREQUENCY.name: "set_freq",
+            Device.Command.SET_BANDWIDTH.name: "set_baseband_filter_bandwidth",
+        }
+    )
 
     DATA_TYPE = np.int8
 
@@ -55,7 +57,9 @@ class Rad1o(Device):
         return True
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+    def enter_async_receive_mode(
+        cls, data_connection: Connection, ctrl_connection: Connection
+    ):
         ret = hackrf.start_rx_mode(data_connection.send_bytes)
         ctrl_connection.send("Start RX MODE:" + str(ret))
         return ret
@@ -64,11 +68,25 @@ class Rad1o(Device):
     def enter_async_send_mode(cls, callback):
         return hackrf.start_tx_mode(callback)
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            center_freq=center_freq,
+            sample_rate=sample_rate,
+            bandwidth=bandwidth,
+            gain=gain,
+            if_gain=if_gain,
+            baseband_gain=baseband_gain,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
         self.success = 0
 
         self.error_codes = {
@@ -85,18 +103,22 @@ class Rad1o(Device):
             -1003: "Rad1o_ERROR_STREAMING_STOPPED",
             -1004: "Rad1o_ERROR_STREAMING_EXIT_CALLED",
             -4242: "Rad1o NOT OPEN",
-            -9999: "Rad1o_ERROR_OTHER"
+            -9999: "Rad1o_ERROR_OTHER",
         }
 
     @property
     def device_parameters(self) -> OrderedDict:
-        return OrderedDict([(self.Command.SET_FREQUENCY.name, self.frequency),
-                            (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            (self.Command.SET_BANDWIDTH.name, self.bandwidth),
-                            (self.Command.SET_RF_GAIN.name, self.gain),
-                            (self.Command.SET_IF_GAIN.name, self.if_gain),
-                            (self.Command.SET_BB_GAIN.name, self.baseband_gain),
-                            ("identifier", self.device_serial)])
+        return OrderedDict(
+            [
+                (self.Command.SET_FREQUENCY.name, self.frequency),
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                (self.Command.SET_BANDWIDTH.name, self.bandwidth),
+                (self.Command.SET_RF_GAIN.name, self.gain),
+                (self.Command.SET_IF_GAIN.name, self.if_gain),
+                (self.Command.SET_BB_GAIN.name, self.baseband_gain),
+                ("identifier", self.device_serial),
+            ]
+        )
 
     @property
     def has_multi_device_support(self):

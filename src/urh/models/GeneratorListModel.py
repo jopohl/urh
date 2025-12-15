@@ -12,14 +12,14 @@ class GeneratorListModel(QAbstractListModel):
     def __init__(self, message: Message, parent=None):
         super().__init__(parent)
         self.__message = message
-    
+
     @property
     def labels(self):
         if self.message:
             return self.message.message_type
         else:
             return []
-    
+
     @property
     def message(self):
         return self.__message
@@ -50,9 +50,8 @@ class GeneratorListModel(QAbstractListModel):
                 return ""
         elif role == Qt.ItemDataRole.CheckStateRole:
             return self.labels[row].fuzz_me
-        elif role ==Qt.ItemDataRole.BackgroundRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             return settings.LABEL_COLORS[self.labels[row].color_index]
-
 
     def setData(self, index: QModelIndex, value, role=Qt.ItemDataRole.DisplayRole):
         if role == Qt.ItemDataRole.CheckStateRole:
@@ -86,7 +85,11 @@ class GeneratorListModel(QAbstractListModel):
         self.endResetModel()
 
     def flags(self, index):
-        flags = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable
+        flags = (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEditable
+        )
 
         try:
             lbl = self.labels[index.row()]

@@ -13,7 +13,6 @@ class SimulatorLabelTableView(ProtocolLabelTableView):
         self.setMouseTracking(True)
         self.clicked.connect(self.on_clicked)
 
-
     def model(self) -> SimulatorMessageFieldModel:
         return super().model()
 

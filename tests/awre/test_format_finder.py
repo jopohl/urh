@@ -44,14 +44,22 @@ class TestFormatFinder(AWRETestCase):
     def test_retransform_message_indices(self):
         sync_ends = np.array([12, 12, 12, 14, 14])
 
-        rng = CommonRange(0, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2, 3, 4})
-        retransformed_ranges = FormatFinder.retransform_message_indices([rng], [0, 1, 2, 3, 4], sync_ends)
+        rng = CommonRange(
+            0, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2, 3, 4}
+        )
+        retransformed_ranges = FormatFinder.retransform_message_indices(
+            [rng], [0, 1, 2, 3, 4], sync_ends
+        )
 
         # two different sync ends
         self.assertEqual(len(retransformed_ranges), 2)
 
-        expected1 = CommonRange(12, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2})
-        expected2 = CommonRange(14, 8, "1" * 8, score=1, field_type="length", message_indices={3, 4})
+        expected1 = CommonRange(
+            12, 8, "1" * 8, score=1, field_type="length", message_indices={0, 1, 2}
+        )
+        expected2 = CommonRange(
+            14, 8, "1" * 8, score=1, field_type="length", message_indices={3, 4}
+        )
 
         self.assertIn(expected1, retransformed_ranges)
         self.assertIn(expected2, retransformed_ranges)

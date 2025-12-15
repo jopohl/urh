@@ -19,11 +19,14 @@ faulthandler.enable()
 
 
 class QtTestCase(unittest.TestCase):
-    SHOW = os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui"))
+    SHOW = os.path.exists(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "show_gui")
+    )
 
     @classmethod
     def setUpClass(cls):
         import multiprocessing as mp
+
         try:
             mp.set_start_method("spawn")
         except RuntimeError:
@@ -68,18 +71,31 @@ class QtTestCase(unittest.TestCase):
         item = gframe.tree_model.rootItem.children[0].children[signal_index]
         index = gframe.tree_model.createIndex(signal_index, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)
-        QTest.mousePress(gframe.ui.treeProtocols.viewport(), Qt.MouseButton.LeftButton, pos=rect.center())
+        QTest.mousePress(
+            gframe.ui.treeProtocols.viewport(),
+            Qt.MouseButton.LeftButton,
+            pos=rect.center(),
+        )
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
-        gframe.table_model.dropMimeData(mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0))
+        gframe.table_model.dropMimeData(
+            mimedata, 1, -1, -1, gframe.table_model.createIndex(0, 0)
+        )
 
     def add_all_signals_to_simulator(self):
         assert isinstance(self.form, MainController)
         sim_frame = self.form.simulator_tab_controller
         sim_frame.ui.treeProtocols.selectAll()
         self.assertGreater(len(sim_frame.ui.treeProtocols.selectedIndexes()), 0)
-        mimedata = sim_frame.tree_model.mimeData(sim_frame.ui.treeProtocols.selectedIndexes())
-        drop_event = QDropEvent(sim_frame.ui.gvSimulator.rect().center().toPointF(), Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
-                                mimedata, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier)
+        mimedata = sim_frame.tree_model.mimeData(
+            sim_frame.ui.treeProtocols.selectedIndexes()
+        )
+        drop_event = QDropEvent(
+            sim_frame.ui.gvSimulator.rect().center().toPointF(),
+            Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
+            mimedata,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)

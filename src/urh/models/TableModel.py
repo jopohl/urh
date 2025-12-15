@@ -77,7 +77,9 @@ class TableModel(QAbstractTableModel):
 
     def get_alignment_offset_at(self, index: int):
         f = 1 if self.proto_view == 0 else 4 if self.proto_view == 1 else 8
-        alignment_offset = int(math.ceil(self.protocol.messages[index].alignment_offset / f))
+        alignment_offset = int(
+            math.ceil(self.protocol.messages[index].alignment_offset / f)
+        )
         return alignment_offset
 
     def __pad_until_index(self, row: int, bit_pos: int):
@@ -86,14 +88,23 @@ class TableModel(QAbstractTableModel):
         :return:
         """
         try:
-            new_bits = array.array("B", [0] * max(0, bit_pos - len(self.protocol.messages[row])))
+            new_bits = array.array(
+                "B", [0] * max(0, bit_pos - len(self.protocol.messages[row]))
+            )
             if len(new_bits) == 0:
                 return True
 
-            self.protocol.messages[row].plain_bits = self.protocol.messages[row].plain_bits + new_bits
+            self.protocol.messages[row].plain_bits = (
+                self.protocol.messages[row].plain_bits + new_bits
+            )
             msg = self.protocol.messages[row]
-            self.display_data[
-                row] = msg.plain_bits if self.proto_view == 0 else msg.plain_hex_array if self.proto_view == 1 else msg.plain_ascii_array
+            self.display_data[row] = (
+                msg.plain_bits
+                if self.proto_view == 0
+                else msg.plain_hex_array
+                if self.proto_view == 1
+                else msg.plain_ascii_array
+            )
         except IndexError:
             return False
 
@@ -103,13 +114,17 @@ class TableModel(QAbstractTableModel):
         if orientation == Qt.Orientation.Vertical:
             if role == Qt.ItemDataRole.DisplayRole:
                 return self.vertical_header_text[section]
-            elif role ==Qt.ItemDataRole.BackgroundRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 return self.vertical_header_colors[section]
             elif role == Qt.ItemDataRole.ForegroundRole:
                 color = self.vertical_header_colors[section]
                 if color:
                     red, green, blue = color.red(), color.green(), color.blue()
-                    return QColor("black") if (red * 0.299 + green * 0.587 + blue * 0.114) > 186 else QColor("white")
+                    return (
+                        QColor("black")
+                        if (red * 0.299 + green * 0.587 + blue * 0.114) > 186
+                        else QColor("white")
+                    )
                 else:
                     return None
 
@@ -121,26 +136,45 @@ class TableModel(QAbstractTableModel):
         if self.protocol.num_messages > 0:
             if self.decode:
                 if self.proto_view == 0:
-                    self.display_data = [msg.decoded_bits for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.decoded_bits for msg in self.protocol.messages
+                    ]
                 elif self.proto_view == 1:
-                    self.display_data = [msg.decoded_hex_array for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.decoded_hex_array for msg in self.protocol.messages
+                    ]
                 elif self.proto_view == 2:
-                    self.display_data = [msg.decoded_ascii_array for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.decoded_ascii_array for msg in self.protocol.messages
+                    ]
             else:
                 # Generator Model
                 if self.proto_view == 0:
-                    self.display_data = [msg.plain_bits for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.plain_bits for msg in self.protocol.messages
+                    ]
                 elif self.proto_view == 1:
-                    self.display_data = [msg.plain_hex_array for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.plain_hex_array for msg in self.protocol.messages
+                    ]
                 else:
-                    self.display_data = [msg.plain_ascii_array for msg in self.protocol.messages]
+                    self.display_data = [
+                        msg.plain_ascii_array for msg in self.protocol.messages
+                    ]
 
-            visible_messages = [msg for i, msg in enumerate(self.display_data) if i not in self.hidden_rows]
+            visible_messages = [
+                msg
+                for i, msg in enumerate(self.display_data)
+                if i not in self.hidden_rows
+            ]
             if len(visible_messages) == 0:
                 self.col_count = 0
             else:
-                self.col_count = max(len(msg) + self.get_alignment_offset_at(i)
-                                     for i, msg in enumerate(self.display_data) if i not in self.hidden_rows)
+                self.col_count = max(
+                    len(msg) + self.get_alignment_offset_at(i)
+                    for i, msg in enumerate(self.display_data)
+                    if i not in self.hidden_rows
+                )
 
             if self._refindex >= 0:
                 self._diffs = self.find_differences(self._refindex)
@@ -206,8 +240,12 @@ class TableModel(QAbstractTableModel):
             except IndexError:
                 participant = None
             if participant:
-                self.vertical_header_text[i] = "{0} ({1})".format(i + 1, participant.shortname)
-                self.vertical_header_colors[i] = settings.PARTICIPANT_COLORS[participant.color_index]
+                self.vertical_header_text[i] = "{0} ({1})".format(
+                    i + 1, participant.shortname
+                )
+                self.vertical_header_colors[i] = settings.PARTICIPANT_COLORS[
+                    participant.color_index
+                ]
                 use_colors = True
             else:
                 self.vertical_header_text[i] = str(i + 1)
@@ -241,7 +279,7 @@ class TableModel(QAbstractTableModel):
             else:
                 return Qt.AlignmentFlag.AlignCenter
 
-        elif role ==Qt.ItemDataRole.BackgroundRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             return self.background_colors[i, j]
 
         elif role == Qt.ItemDataRole.FontRole:
@@ -261,19 +299,27 @@ class TableModel(QAbstractTableModel):
     def get_tooltip(self, row: int, column: int) -> str:
         msg = self.protocol.messages[row]
         try:
-            lbl = next(lbl for lbl in msg.message_type
-                       if column in range(*msg.get_label_range(lbl, self.proto_view, self.decode)))
+            lbl = next(
+                lbl
+                for lbl in msg.message_type
+                if column
+                in range(*msg.get_label_range(lbl, self.proto_view, self.decode))
+            )
         except StopIteration:
             return ""
 
         result = lbl.name
         if isinstance(lbl, ChecksumLabel):
-            calculated_crc = lbl.calculate_checksum_for_message(msg, use_decoded_bits=self.decode)
+            calculated_crc = lbl.calculate_checksum_for_message(
+                msg, use_decoded_bits=self.decode
+            )
             start, end = msg.get_label_range(lbl=lbl, view=0, decode=self.decode)
             bits = msg.decoded_bits if self.decode else msg.plain_bits
             color = "green" if bits[start:end] == calculated_crc else "red"
             expected = util.convert_bits_to_string(calculated_crc, self.proto_view)
-            result += '<br><font color="{}">Expected <b>{}</b></font>'.format(color, expected)
+            result += '<br><font color="{}">Expected <b>{}</b></font>'.format(
+                color, expected
+            )
 
         return result
 
@@ -285,22 +331,55 @@ class TableModel(QAbstractTableModel):
         j = index.column()
         a = self.get_alignment_offset_at(i)
         j -= a
-        hex_chars = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")
+        hex_chars = (
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+        )
 
         if i >= len(self.protocol.messages):
             return False
 
-        if self.proto_view == 0 and value in ("0", "1") and self.__pad_until_index(i, j + 1):
+        if (
+            self.proto_view == 0
+            and value in ("0", "1")
+            and self.__pad_until_index(i, j + 1)
+        ):
             self.protocol.messages[i][j] = bool(int(value))
             self.display_data[i][j] = int(value)
-        elif self.proto_view == 1 and value in hex_chars and self.__pad_until_index(i, (j + 1) * 4):
-            converted_j = self.protocol.convert_index(j, 1, 0, self.decode, message_indx=i)[0]
+        elif (
+            self.proto_view == 1
+            and value in hex_chars
+            and self.__pad_until_index(i, (j + 1) * 4)
+        ):
+            converted_j = self.protocol.convert_index(
+                j, 1, 0, self.decode, message_indx=i
+            )[0]
             bits = "{0:04b}".format(int(value, 16))
             for k in range(4):
                 self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
             self.display_data[i][j] = int(value, 16)
-        elif self.proto_view == 2 and len(value) == 1 and self.__pad_until_index(i, (j + 1) * 8):
-            converted_j = self.protocol.convert_index(j, 2, 0, self.decode, message_indx=i)[0]
+        elif (
+            self.proto_view == 2
+            and len(value) == 1
+            and self.__pad_until_index(i, (j + 1) * 8)
+        ):
+            converted_j = self.protocol.convert_index(
+                j, 2, 0, self.decode, message_indx=i
+            )[0]
             bits = "{0:08b}".format(ord(value))
             for k in range(8):
                 self.protocol.messages[i][converted_j + k] = bool(int(bits[k]))
@@ -362,10 +441,13 @@ class TableModel(QAbstractTableModel):
                 continue
 
             msg_offset = self.get_alignment_offset_at(i)
-            short, long = sorted([len(ref_message) + ref_offset, len(message) + msg_offset])
+            short, long = sorted(
+                [len(ref_message) + ref_offset, len(message) + msg_offset]
+            )
 
             differences[i] = {
-                j for j in range(max(msg_offset, ref_offset), long)
+                j
+                for j in range(max(msg_offset, ref_offset), long)
                 if j >= short or message[j - msg_offset] != ref_message[j - ref_offset]
             }
 

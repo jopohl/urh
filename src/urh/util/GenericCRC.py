@@ -9,49 +9,73 @@ from urh.util import util
 
 class GenericCRC(object):
     # https://en.wikipedia.org/wiki/Polynomial_representations_of_cyclic_redundancy_checks
-    DEFAULT_POLYNOMIALS = OrderedDict([
-        # x^8 + x^7 + x^6 + x^4 + x^2 + 1
-        ("8_standard", array.array("B", [1,
-                                         1, 1, 0, 1, 0, 1, 0, 1])),
+    DEFAULT_POLYNOMIALS = OrderedDict(
+        [
+            # x^8 + x^7 + x^6 + x^4 + x^2 + 1
+            ("8_standard", array.array("B", [1, 1, 1, 0, 1, 0, 1, 0, 1])),
+            # x^16+x^15+x^2+x^0
+            (
+                "16_standard",
+                array.array("B", [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]),
+            ),
+            # x^16+x^12+x^5+x^0
+            (
+                "16_ccitt",
+                array.array("B", [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]),
+            ),
+            # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
+            (
+                "16_dnp",
+                array.array("B", [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1]),
+            ),
+            # x^8 + x^2 + x + 1
+            ("8_ccitt", array.array("B", [1, 0, 0, 0, 0, 0, 1, 1, 1])),
+        ]
+    )
 
-        # x^16+x^15+x^2+x^0
-        ("16_standard", array.array("B", [1,
-                                          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1])),
+    STANDARD_CHECKSUMS = OrderedDict(
+        [
+            # see method guess_standard_parameters_and_datarange for default parameters
+            # Links:
+            #  - https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+            #  - http://reveng.sourceforge.net/crc-catalogue/1-15.htm
+            #  - https://crccalc.com/
+            ("CRC8 (default)", dict(polynomial="0xD5")),
+            ("CRC8 CCITT", dict(polynomial="0x07")),
+            ("CRC8 Bluetooth", dict(polynomial="0xA7", ref_in=True, ref_out=True)),
+            ("CRC8 DARC", dict(polynomial="0x39", ref_in=True, ref_out=True)),
+            ("CRC8 NRSC-5", dict(polynomial="0x31", start_value=1)),
+            ("CRC16 (default)", dict(polynomial="0x8005", ref_in=True, ref_out=True)),
+            ("CRC16 CCITT", dict(polynomial="0x1021", ref_in=True, ref_out=True)),
+            (
+                "CRC16 NRSC-5",
+                dict(polynomial="0x080B", start_value=1, ref_in=True, ref_out=True),
+            ),
+            ("CRC16 CC1101", dict(polynomial="0x8005", start_value=1)),
+            ("CRC16 CDMA2000", dict(polynomial="0xC867", start_value=1)),
+            (
+                "CRC32 (default)",
+                dict(
+                    polynomial="0x04C11DB7",
+                    start_value=1,
+                    final_xor=1,
+                    ref_in=True,
+                    ref_out=True,
+                ),
+            ),
+        ]
+    )
 
-        # x^16+x^12+x^5+x^0
-        ("16_ccitt", array.array("B", [1,
-                                       0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])),
-
-        # x^16+x^13+x^12+x^11+x^10+x^8+x^6+x^5+x^2+x^0
-        ("16_dnp", array.array("B", [1,
-                                     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1])),
-
-        # x^8 + x^2 + x + 1
-        ("8_ccitt", array.array("B", [1,
-                                      0, 0, 0, 0, 0, 1, 1, 1]))
-    ])
-
-    STANDARD_CHECKSUMS = OrderedDict([
-        # see method guess_standard_parameters_and_datarange for default parameters
-        # Links:
-        #  - https://en.wikipedia.org/wiki/Cyclic_redundancy_check
-        #  - http://reveng.sourceforge.net/crc-catalogue/1-15.htm
-        #  - https://crccalc.com/
-        ("CRC8 (default)", dict(polynomial="0xD5")),
-        ("CRC8 CCITT", dict(polynomial="0x07")),
-        ("CRC8 Bluetooth", dict(polynomial="0xA7", ref_in=True, ref_out=True)),
-        ("CRC8 DARC", dict(polynomial="0x39", ref_in=True, ref_out=True)),
-        ("CRC8 NRSC-5", dict(polynomial="0x31", start_value=1)),
-        ("CRC16 (default)", dict(polynomial="0x8005", ref_in=True, ref_out=True)),
-        ("CRC16 CCITT", dict(polynomial="0x1021", ref_in=True, ref_out=True)),
-        ("CRC16 NRSC-5", dict(polynomial="0x080B", start_value=1, ref_in=True, ref_out=True)),
-        ("CRC16 CC1101", dict(polynomial="0x8005", start_value=1)),
-        ("CRC16 CDMA2000", dict(polynomial="0xC867", start_value=1)),
-        ("CRC32 (default)", dict(polynomial="0x04C11DB7", start_value=1, final_xor=1, ref_in=True, ref_out=True)),
-    ])
-
-    def __init__(self, polynomial="16_standard", start_value=False, final_xor=False, reverse_polynomial=False,
-                 reverse_all=False, little_endian=False, lsb_first=False):
+    def __init__(
+        self,
+        polynomial="16_standard",
+        start_value=False,
+        final_xor=False,
+        reverse_polynomial=False,
+        reverse_all=False,
+        little_endian=False,
+        lsb_first=False,
+    ):
         if isinstance(polynomial, str):
             self.caption = polynomial
         else:
@@ -70,24 +94,42 @@ class GenericCRC(object):
 
     def __read_parameter(self, value):
         if isinstance(value, bool) or isinstance(value, int):
-            return array.array('B', [value] * (self.poly_order - 1))
+            return array.array("B", [value] * (self.poly_order - 1))
         else:
             if len(value) == self.poly_order - 1:
                 return value
             else:
-                return array.array('B', value[0] * (self.poly_order - 1))
+                return array.array("B", value[0] * (self.poly_order - 1))
 
     def __eq__(self, other):
         if not isinstance(other, GenericCRC):
             return False
 
-        return all(getattr(self, attrib) == getattr(other, attrib) for attrib in (
-            "polynomial", "reverse_polynomial", "reverse_all", "little_endian", "lsb_first", "start_value",
-            "final_xor"))
+        return all(
+            getattr(self, attrib) == getattr(other, attrib)
+            for attrib in (
+                "polynomial",
+                "reverse_polynomial",
+                "reverse_all",
+                "little_endian",
+                "lsb_first",
+                "start_value",
+                "final_xor",
+            )
+        )
 
     def __hash__(self):
-        return hash((self.polynomial.tobytes(), self.reverse_polynomial, self.reverse_all, self.little_endian,
-                     self.lsb_first, self.start_value.tobytes(), self.final_xor.tobytes()))
+        return hash(
+            (
+                self.polynomial.tobytes(),
+                self.reverse_polynomial,
+                self.reverse_all,
+                self.little_endian,
+                self.lsb_first,
+                self.start_value.tobytes(),
+                self.final_xor.tobytes(),
+            )
+        )
 
     @property
     def poly_order(self):
@@ -133,27 +175,44 @@ class GenericCRC(object):
             return polynomial
 
     def get_parameters(self):
-        return self.polynomial, self.start_value, self.final_xor, \
-               self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian
+        return (
+            self.polynomial,
+            self.start_value,
+            self.final_xor,
+            self.lsb_first,
+            self.reverse_polynomial,
+            self.reverse_all,
+            self.little_endian,
+        )
 
     def crc(self, inpt):
-        result = c_util.crc(array.array("B", inpt),
-                            array.array("B", self.polynomial),
-                            array.array("B", self.start_value),
-                            array.array("B", self.final_xor),
-                            self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        result = c_util.crc(
+            array.array("B", inpt),
+            array.array("B", self.polynomial),
+            array.array("B", self.start_value),
+            array.array("B", self.final_xor),
+            self.lsb_first,
+            self.reverse_polynomial,
+            self.reverse_all,
+            self.little_endian,
+        )
         return util.number_to_bits(result, self.poly_order - 1)
 
     def cached_crc(self, inpt, bits=8):
         if len(self.cache) == 0:
             self.calculate_cache(bits)
-        result = c_util.cached_crc(self.cache,
-                                   self.__cache_bits,
-                                   array.array("B", inpt),
-                                   array.array("B", self.polynomial),
-                                   array.array("B", self.start_value),
-                                   array.array("B", self.final_xor),
-                                   self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        result = c_util.cached_crc(
+            self.cache,
+            self.__cache_bits,
+            array.array("B", inpt),
+            array.array("B", self.polynomial),
+            array.array("B", self.start_value),
+            array.array("B", self.final_xor),
+            self.lsb_first,
+            self.reverse_polynomial,
+            self.reverse_all,
+            self.little_endian,
+        )
         return util.number_to_bits(result, self.poly_order - 1)
 
     def calculate_cache(self, bits=8):
@@ -161,26 +220,33 @@ class GenericCRC(object):
             self.__cache_bits = bits
         else:
             self.__cache_bits = 8 if self.poly_order > 8 else self.poly_order - 1
-        self.cache = c_util.calculate_cache(array.array("B", self.polynomial), self.reverse_polynomial,
-                                            self.__cache_bits)
+        self.cache = c_util.calculate_cache(
+            array.array("B", self.polynomial),
+            self.reverse_polynomial,
+            self.__cache_bits,
+        )
 
     def get_crc_datarange(self, inpt, vrfy_crc_start):
-        return c_util.get_crc_datarange(array.array("B", inpt),
-                                        array.array("B", self.polynomial),
-                                        vrfy_crc_start,
-                                        array.array("B", self.start_value),
-                                        array.array("B", self.final_xor),
-                                        self.lsb_first, self.reverse_polynomial, self.reverse_all, self.little_endian)
+        return c_util.get_crc_datarange(
+            array.array("B", inpt),
+            array.array("B", self.polynomial),
+            vrfy_crc_start,
+            array.array("B", self.start_value),
+            array.array("B", self.final_xor),
+            self.lsb_first,
+            self.reverse_polynomial,
+            self.reverse_all,
+            self.little_endian,
+        )
 
     def reference_crc(self, inpt):
         len_inpt = len(inpt)
         if len(self.start_value) < self.poly_order - 1:
             return False
-        crc = copy.copy(self.start_value[0:(self.poly_order - 1)])
+        crc = copy.copy(self.start_value[0 : (self.poly_order - 1)])
 
         for i in range(0, len_inpt + 7, 8):
             for j in range(0, 8):
-
                 if self.lsb_first:
                     idx = i + (7 - j)
                 else:
@@ -190,7 +256,9 @@ class GenericCRC(object):
                     break
 
                 if crc[0] != inpt[idx]:
-                    crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
+                    crc[0 : self.poly_order - 2] = crc[
+                        1 : self.poly_order - 1
+                    ]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
                     for x in range(0, self.poly_order - 1):
                         if self.reverse_polynomial:
@@ -198,7 +266,9 @@ class GenericCRC(object):
                         else:
                             crc[x] ^= self.polynomial[x + 1]
                 else:
-                    crc[0:self.poly_order - 2] = crc[1:self.poly_order - 1]  # crc = crc << 1
+                    crc[0 : self.poly_order - 2] = crc[
+                        1 : self.poly_order - 1
+                    ]  # crc = crc << 1
                     crc[self.poly_order - 2] = False
 
         for i in range(0, self.poly_order - 1):
@@ -227,8 +297,10 @@ class GenericCRC(object):
 
     @staticmethod
     def __swap_bytes(array, pos1: int, pos2: int):
-        array[pos1 * 8:pos1 * 8 + 8], array[pos2 * 8:pos2 * 8 + 8] = \
-            array[pos2 * 8: pos2 * 8 + 8], array[pos1 * 8:pos1 * 8 + 8]
+        array[pos1 * 8 : pos1 * 8 + 8], array[pos2 * 8 : pos2 * 8 + 8] = (
+            array[pos2 * 8 : pos2 * 8 + 8],
+            array[pos1 * 8 : pos1 * 8 + 8],
+        )
 
     @staticmethod
     def from_standard_checksum(name: str):
@@ -237,8 +309,16 @@ class GenericCRC(object):
         result.caption = name
         return result
 
-    def set_individual_parameters(self, polynomial, start_value=0, final_xor=0, ref_in=False, ref_out=False,
-                                  little_endian=False, reverse_polynomial=False):
+    def set_individual_parameters(
+        self,
+        polynomial,
+        start_value=0,
+        final_xor=0,
+        ref_in=False,
+        ref_out=False,
+        little_endian=False,
+        reverse_polynomial=False,
+    ):
         # Set polynomial from hex or bit array
         old = self.polynomial
         if isinstance(polynomial, str):
@@ -253,7 +333,10 @@ class GenericCRC(object):
         # Set start value completely or 0000/FFFF
         if isinstance(start_value, int):
             self.start_value = array.array("B", [start_value] * (self.poly_order - 1))
-        elif isinstance(start_value, array.array) and len(start_value) == self.poly_order - 1:
+        elif (
+            isinstance(start_value, array.array)
+            and len(start_value) == self.poly_order - 1
+        ):
             self.start_value = start_value
         else:
             raise ValueError("Invalid start value length")
@@ -261,7 +344,9 @@ class GenericCRC(object):
         # Set final xor completely or 0000/FFFF
         if isinstance(final_xor, int):
             self.final_xor = array.array("B", [final_xor] * (self.poly_order - 1))
-        elif isinstance(final_xor, array.array) and len(final_xor) == self.poly_order - 1:
+        elif (
+            isinstance(final_xor, array.array) and len(final_xor) == self.poly_order - 1
+        ):
             self.final_xor = final_xor
         else:
             raise ValueError("Invalid final xor length")
@@ -283,7 +368,7 @@ class GenericCRC(object):
         old = self.polynomial
         self.polynomial = self.choose_polynomial(val)
         poly_order = len(self.polynomial)
-        if (self.polynomial != old):
+        if self.polynomial != old:
             self.cache = []
             self.__cache_bits = 8
 
@@ -302,7 +387,7 @@ class GenericCRC(object):
             self.reverse_polynomial = False
         else:
             self.reverse_polynomial = True
-        if (self.reverse_polynomial != old_reverse):
+        if self.reverse_polynomial != old_reverse:
             self.cache = []
             self.__cache_bits = 8
 
@@ -342,7 +427,9 @@ class GenericCRC(object):
                 start_val = 0
 
             if isinstance(start_val, int):
-                cls.STANDARD_CHECKSUMS[name]["start_value"] = array.array("B", [start_val] * n)
+                cls.STANDARD_CHECKSUMS[name]["start_value"] = array.array(
+                    "B", [start_val] * n
+                )
 
             try:
                 final_xor = cls.STANDARD_CHECKSUMS[name]["final_xor"]
@@ -350,7 +437,9 @@ class GenericCRC(object):
                 final_xor = 0
 
             if isinstance(final_xor, int):
-                cls.STANDARD_CHECKSUMS[name]["final_xor"] = array.array("B", [final_xor] * n)
+                cls.STANDARD_CHECKSUMS[name]["final_xor"] = array.array(
+                    "B", [final_xor] * n
+                )
 
     def guess_all(self, bits, trash_max=7, ignore_positions: set = None):
         """
@@ -386,7 +475,7 @@ class GenericCRC(object):
     def guess_standard_parameters(self, inpt, vrfy_crc):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed.
         # Note: vfry_crc is included inpt!
-        for i in range(0, 2 ** 8):
+        for i in range(0, 2**8):
             self.set_crc_parameters(i)
             if len(vrfy_crc) == self.poly_order and self.crc(inpt) == vrfy_crc:
                 return i
@@ -399,20 +488,23 @@ class GenericCRC(object):
         Note: vfry_crc is included inpt!
         """
         # Test longer polynomials first, because smaller polynomials have higher risk of false positive
-        for name, parameters in sorted(self.STANDARD_CHECKSUMS.items(),
-                                       key=lambda x: len(x[1]["polynomial"]),
-                                       reverse=True):
+        for name, parameters in sorted(
+            self.STANDARD_CHECKSUMS.items(),
+            key=lambda x: len(x[1]["polynomial"]),
+            reverse=True,
+        ):
             self.caption = name
-            data_begin, data_end = c_util.get_crc_datarange(inpt,
-                                                            parameters["polynomial"],
-                                                            max(0,
-                                                                len(inpt) - trash - len(parameters["polynomial"])) + 1,
-                                                            parameters["start_value"],
-                                                            parameters["final_xor"],
-                                                            parameters.get("ref_in", False),
-                                                            parameters.get("reverse_polynomial", False),
-                                                            parameters.get("ref_out", False),
-                                                            parameters.get("little_endian", False))
+            data_begin, data_end = c_util.get_crc_datarange(
+                inpt,
+                parameters["polynomial"],
+                max(0, len(inpt) - trash - len(parameters["polynomial"])) + 1,
+                parameters["start_value"],
+                parameters["final_xor"],
+                parameters.get("ref_in", False),
+                parameters.get("reverse_polynomial", False),
+                parameters.get("ref_out", False),
+                parameters.get("little_endian", False),
+            )
             if (data_begin, data_end) != (0, 0):
                 self.set_individual_parameters(**parameters)
                 return self, data_begin, data_end
@@ -422,7 +514,7 @@ class GenericCRC(object):
         # Tests all standard parameters and return parameter_value (else False), if a valid CRC could be computed
         # and determines start and end of crc datarange (end is set before crc)
         # Note: vfry_crc is included inpt!
-        for i in range(0, 2 ** 8):
+        for i in range(0, 2**8):
             self.set_crc_parameters(i)
             data_begin, data_end = self.get_crc_datarange(inpt, vrfy_crc_start)
             if (data_begin, data_end) != (0, 0):
@@ -440,7 +532,9 @@ class GenericCRC(object):
         one_bitter_crc = []
         for i in range(0, setlen):
             for j in range(i + 1, setlen):
-                if len(dataset[i]) == len(dataset[j]) and len(crcset[i]) == len(crcset[j]):
+                if len(dataset[i]) == len(dataset[j]) and len(crcset[i]) == len(
+                    crcset[j]
+                ):
                     count = 0
                     tmp = -1
                     for x in range(0, len(dataset[i])):
@@ -460,7 +554,11 @@ class GenericCRC(object):
         setlen = len(one_bitter)
         for i in range(0, setlen):
             for j in range(0, setlen):
-                if i != j and one_bitter[i] + 1 == one_bitter[j] and one_bitter_crc[j][0] == True:
+                if (
+                    i != j
+                    and one_bitter[i] + 1 == one_bitter[j]
+                    and one_bitter_crc[j][0] == True
+                ):
                     # Compute Polynomial
                     polynomial = one_bitter_crc[i].copy()
                     for x in range(0, len(one_bitter_crc[i]) - 1):
@@ -484,9 +582,13 @@ class GenericCRC(object):
         final_xor = tag.get("final_xor", "0000")
         ref_in = bool(int(tag.get("ref_in", "0")))
         ref_out = bool(int(tag.get("ref_out", "0")))
-        return GenericCRC(polynomial=util.string2bits(polynomial),
-                          start_value=util.string2bits(start_value), final_xor=util.string2bits(final_xor),
-                          lsb_first=ref_in, reverse_all=ref_out)
+        return GenericCRC(
+            polynomial=util.string2bits(polynomial),
+            start_value=util.string2bits(start_value),
+            final_xor=util.string2bits(final_xor),
+            lsb_first=ref_in,
+            reverse_all=ref_out,
+        )
 
     @staticmethod
     def bit2str(inpt):
@@ -498,7 +600,7 @@ class GenericCRC(object):
 
     @staticmethod
     def int2bit(inpt):
-        return [True if x == "1" else False for x in '{0:08b}'.format(inpt)]
+        return [True if x == "1" else False for x in "{0:08b}".format(inpt)]
 
     @staticmethod
     def str2arr(inpt):
@@ -511,4 +613,4 @@ class GenericCRC(object):
     @staticmethod
     def hex2str(inpt):
         bitstring = bin(int(inpt, base=16))[2:]
-        return "0" * (4 * len(inpt.lstrip('0x')) - len(bitstring)) + bitstring
+        return "0" * (4 * len(inpt.lstrip("0x")) - len(bitstring)) + bitstring

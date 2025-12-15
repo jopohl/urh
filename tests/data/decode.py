@@ -5,5 +5,6 @@ Simply removes every second bit
 """
 
 import sys
+
 bits = sys.argv[1]
 print("".join(b for b in bits[::2]))

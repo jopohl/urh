@@ -20,7 +20,12 @@ class ActionItem(GraphicsItem):
 
     def update_flags(self):
         if self.scene().mode == 0:
-            self.set_flags(is_selectable=True, is_movable=True, accept_hover_events=True, accept_drops=True)
+            self.set_flags(
+                is_selectable=True,
+                is_movable=True,
+                accept_hover_events=True,
+                accept_drops=True,
+            )
 
     def update_position(self, x_pos, y_pos):
         self.setPos(x_pos, y_pos)
@@ -31,7 +36,9 @@ class ActionItem(GraphicsItem):
 
         width = self.scene().items_width()
         self.prepareGeometryChange()
-        self.bounding_rect = QRectF(0, 0, width, self.childrenBoundingRect().height() + 5)
+        self.bounding_rect = QRectF(
+            0, 0, width, self.childrenBoundingRect().height() + 5
+        )
 
     def labels_width(self):
         width = self.number.boundingRect().width()
@@ -46,7 +53,11 @@ class GotoActionItem(ActionItem):
 
     def refresh(self):
         text = "[Goto: "
-        text += "..." if self.model_item.goto_target is None else self.model_item.goto_target
+        text += (
+            "..."
+            if self.model_item.goto_target is None
+            else self.model_item.goto_target
+        )
         text += "]"
         self.text.setPlainText(text)
 

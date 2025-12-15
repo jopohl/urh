@@ -23,14 +23,19 @@ class TestLengthEngine(AWRETestCase):
         mb.add_label(FieldType.Function.LENGTH, 8)
 
         num_messages_by_data_length = {8: 5, 16: 10, 32: 15}
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"})
+        pg = ProtocolGenerator(
+            [mb.message_type], syncs_by_mt={mb.message_type: "0x9a9d"}
+        )
         random.seed(0)
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(data_length)]))
+                pg.generate_message(
+                    data="".join(
+                        [random.choice(["0", "1"]) for _ in range(data_length)]
+                    )
+                )
 
-        #self.save_protocol("simple_length", pg)
+        # self.save_protocol("simple_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -59,9 +64,11 @@ class TestLengthEngine(AWRETestCase):
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
         num_messages_by_data_length = {32: 10, 64: 15, 16: 5, 24: 7}
-        pg = ProtocolGenerator([mb.message_type],
-                               preambles_by_mt={mb.message_type: "10" * 8},
-                               syncs_by_mt={mb.message_type: "0xcafe"})
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            preambles_by_mt={mb.message_type: "10" * 8},
+            syncs_by_mt={mb.message_type: "0xcafe"},
+        )
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
                 if i % 4 == 0:
@@ -75,7 +82,7 @@ class TestLengthEngine(AWRETestCase):
 
                 pg.generate_message(data=data)
 
-        #self.save_protocol("easy_length", pg)
+        # self.save_protocol("easy_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -108,16 +115,20 @@ class TestLengthEngine(AWRETestCase):
         mb2.add_label(FieldType.Function.PREAMBLE, 8)
         mb2.add_label(FieldType.Function.SYNC, 8)
 
-        pg = ProtocolGenerator([mb1.message_type, mb2.message_type],
-                               syncs_by_mt={mb1.message_type: "11110011",
-                                            mb2.message_type: "11110011"})
+        pg = ProtocolGenerator(
+            [mb1.message_type, mb2.message_type],
+            syncs_by_mt={mb1.message_type: "11110011", mb2.message_type: "11110011"},
+        )
         num_messages_by_data_length = {8: 5, 16: 10, 32: 5}
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data=pg.decimal_to_bits(10 * i, data_length), message_type=mb1.message_type)
+                pg.generate_message(
+                    data=pg.decimal_to_bits(10 * i, data_length),
+                    message_type=mb1.message_type,
+                )
                 pg.generate_message(message_type=mb2.message_type, data="0xaf")
 
-        #self.save_protocol("medium_length", pg)
+        # self.save_protocol("medium_length", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)
@@ -125,7 +136,10 @@ class TestLengthEngine(AWRETestCase):
         ff.perform_iteration()
         self.assertEqual(len(ff.message_types), 2)
         length_mt = next(
-            mt for mt in ff.message_types if mt.get_first_label_with_type(FieldType.Function.LENGTH) is not None)
+            mt
+            for mt in ff.message_types
+            if mt.get_first_label_with_type(FieldType.Function.LENGTH) is not None
+        )
         length_label = length_mt.get_first_label_with_type(FieldType.Function.LENGTH)
 
         for i, sync_end in enumerate(ff.sync_ends):
@@ -140,17 +154,23 @@ class TestLengthEngine(AWRETestCase):
         mb.add_label(FieldType.Function.SYNC, 16)
         mb.add_label(FieldType.Function.LENGTH, 16)
 
-        num_messages_by_data_length = {256*8: 5, 16: 4, 512: 2}
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a9d"},
-                               little_endian=True)
+        num_messages_by_data_length = {256 * 8: 5, 16: 4, 512: 2}
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x9a9d"},
+            little_endian=True,
+        )
 
         random.seed(0)
         for data_length, num_messages in num_messages_by_data_length.items():
             for i in range(num_messages):
-                pg.generate_message(data="".join([random.choice(["0", "1"]) for _ in range(data_length)]))
+                pg.generate_message(
+                    data="".join(
+                        [random.choice(["0", "1"]) for _ in range(data_length)]
+                    )
+                )
 
-        #self.save_protocol("little_endian_16_length_test", pg)
+        # self.save_protocol("little_endian_16_length_test", pg)
 
         self.clear_message_types(pg.protocol.messages)
         ff = FormatFinder(pg.protocol.messages)

@@ -17,20 +17,39 @@ class LabelValueTableView(QTableView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setItemDelegateForColumn(1, ComboBoxDelegate([""] * len(settings.LABEL_COLORS),
-                                                          colors=settings.LABEL_COLORS,
-                                                          parent=self))
-        self.setItemDelegateForColumn(2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self))
+        self.setItemDelegateForColumn(
+            1,
+            ComboBoxDelegate(
+                [""] * len(settings.LABEL_COLORS),
+                colors=settings.LABEL_COLORS,
+                parent=self,
+            ),
+        )
+        self.setItemDelegateForColumn(
+            2, ComboBoxDelegate(ProtocolLabel.DISPLAY_FORMATS, parent=self)
+        )
 
-        orders = OrderedDict([("Big Endian (BE)", [bo + "/BE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS]),
-                              ("Little Endian (LE)", [bo + "/LE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS])])
+        orders = OrderedDict(
+            [
+                (
+                    "Big Endian (BE)",
+                    [bo + "/BE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS],
+                ),
+                (
+                    "Little Endian (LE)",
+                    [bo + "/LE" for bo in ProtocolLabel.DISPLAY_BIT_ORDERS],
+                ),
+            ]
+        )
 
         self.setItemDelegateForColumn(3, SectionComboBoxDelegate(orders, parent=self))
 
         self.del_rows_action = QAction("Delete selected labels", self)
         self.del_rows_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.del_rows_action.setIcon(QIcon.fromTheme("edit-delete"))
-        self.del_rows_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.del_rows_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.del_rows_action.triggered.connect(self.delete_rows)
 
         self.addAction(self.del_rows_action)
@@ -54,16 +73,22 @@ class LabelValueTableView(QTableView):
 
             if len(self.model().controller.proto_analyzer.message_types) > 1:
                 msg_type_menu = menu.addMenu("Copy to message type")
-                for i, message_type in enumerate(self.model().controller.proto_analyzer.message_types):
+                for i, message_type in enumerate(
+                    self.model().controller.proto_analyzer.message_types
+                ):
                     if message_type != self.model().controller.active_message_type:
                         msg_type_action = msg_type_menu.addAction(message_type.name)
                         msg_type_action.setData(i)
-                        msg_type_action.triggered.connect(self.on_copy_to_msg_type_action_triggered)
+                        msg_type_action.triggered.connect(
+                            self.on_copy_to_msg_type_action_triggered
+                        )
 
             menu.addAction(self.del_rows_action)
         menu.addSeparator()
         configure_field_types_action = menu.addAction("Configure field types...")
-        configure_field_types_action.triggered.connect(self.configure_field_types_action_triggered.emit)
+        configure_field_types_action.triggered.connect(
+            self.configure_field_types_action_triggered.emit
+        )
 
         return menu
 
@@ -86,4 +111,6 @@ class LabelValueTableView(QTableView):
     @pyqtSlot()
     def on_copy_to_msg_type_action_triggered(self):
         min_row, max_row = self.selected_min_max_row
-        self.model().add_labels_to_message_type(min_row, max_row, int(self.sender().data()))
+        self.model().add_labels_to_message_type(
+            min_row, max_row, int(self.sender().data())
+        )

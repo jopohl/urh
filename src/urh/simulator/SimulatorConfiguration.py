@@ -15,7 +15,11 @@ from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRuleCondition, ConditionType, SimulatorRule
+from urh.simulator.SimulatorRule import (
+    SimulatorRuleCondition,
+    ConditionType,
+    SimulatorRule,
+)
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.util.ProjectManager import ProjectManager
@@ -35,8 +39,12 @@ class SimulatorConfiguration(QObject):
         super().__init__()
         self.rootItem = SimulatorItem()
         self.project_manager = project_manager
-        self.broadcast_part = Participant("Broadcast", "Broadcast",
-                                          self.project_manager.broadcast_address_hex, id="broadcast_participant")
+        self.broadcast_part = Participant(
+            "Broadcast",
+            "Broadcast",
+            self.project_manager.broadcast_address_hex,
+            id="broadcast_participant",
+        )
         self.__active_participants = None
 
         self.item_dict = OrderedDict()
@@ -68,11 +76,17 @@ class SimulatorConfiguration(QObject):
 
     @property
     def rx_needed(self) -> bool:
-        return any(hasattr(msg.destination, "simulate") and msg.destination.simulate for msg in self.get_all_messages())
+        return any(
+            hasattr(msg.destination, "simulate") and msg.destination.simulate
+            for msg in self.get_all_messages()
+        )
 
     @property
     def tx_needed(self) -> bool:
-        return any(hasattr(msg.source, "simulate") and msg.source.simulate for msg in self.get_all_messages())
+        return any(
+            hasattr(msg.source, "simulate") and msg.source.simulate
+            for msg in self.get_all_messages()
+        )
 
     def update_item_dict(self):
         self.item_dict.clear()
@@ -137,8 +151,10 @@ class SimulatorConfiguration(QObject):
 
     def delete_items(self, items):
         for i, item in enumerate(items):
-            if (isinstance(item, SimulatorRuleCondition) and
-                    item.type == ConditionType.IF):
+            if (
+                isinstance(item, SimulatorRuleCondition)
+                and item.type == ConditionType.IF
+            ):
                 items[i] = item.parent()
 
             items[i].delete()
@@ -158,13 +174,22 @@ class SimulatorConfiguration(QObject):
 
         self.items_moved.emit(items)
 
-    def add_label(self, start: int, end: int, name: str = None, color_index: int = None,
-                  type: FieldType = None, parent_item: SimulatorMessage = None):
+    def add_label(
+        self,
+        start: int,
+        end: int,
+        name: str = None,
+        color_index: int = None,
+        type: FieldType = None,
+        parent_item: SimulatorMessage = None,
+    ):
         assert isinstance(parent_item, SimulatorMessage)
 
         name = "" if not name else name
         used_colors = [p.color_index for p in parent_item.message_type]
-        avail_colors = [i for i, _ in enumerate(settings.LABEL_COLORS) if i not in used_colors]
+        avail_colors = [
+            i for i, _ in enumerate(settings.LABEL_COLORS) if i not in used_colors
+        ]
 
         if color_index is None:
             if len(avail_colors) > 0:
@@ -185,7 +210,9 @@ class SimulatorConfiguration(QObject):
         active_participants = []
 
         for part in self.project_manager.participants:
-            if any(msg.participant == part or msg.destination == part for msg in messages):
+            if any(
+                msg.participant == part or msg.destination == part for msg in messages
+            ):
                 active_participants.append(part)
 
         self.__active_participants = active_participants
@@ -202,8 +229,10 @@ class SimulatorConfiguration(QObject):
                 current_msg = current_item
                 repeat_counter = 0
 
-                while (isinstance(current_msg.next_sibling(), SimulatorMessage) and
-                       current_item.plain_bits == current_msg.next_sibling().plain_bits):
+                while (
+                    isinstance(current_msg.next_sibling(), SimulatorMessage)
+                    and current_item.plain_bits == current_msg.next_sibling().plain_bits
+                ):
                     repeat_counter += 1
                     current_msg = current_msg.next_sibling()
                     redundant_messages.append(current_msg)
@@ -224,7 +253,9 @@ class SimulatorConfiguration(QObject):
 
         :rtype: list[SimulatorMessage]
         """
-        return [item for item in self.get_all_items() if isinstance(item, SimulatorMessage)]
+        return [
+            item for item in self.get_all_items() if isinstance(item, SimulatorMessage)
+        ]
 
     def load_from_xml(self, xml_tag: ET.Element, message_types):
         assert xml_tag.tag == "simulator_config"
@@ -232,26 +263,36 @@ class SimulatorConfiguration(QObject):
 
         modulators_tag = xml_tag.find("modulators")
         if modulators_tag:
-            self.project_manager.modulators = Modulator.modulators_from_xml_tag(modulators_tag)
+            self.project_manager.modulators = Modulator.modulators_from_xml_tag(
+                modulators_tag
+            )
 
         participants_tag = xml_tag.find("participants")
         if participants_tag:
-            for participant in Participant.read_participants_from_xml_tag(participants_tag):
+            for participant in Participant.read_participants_from_xml_tag(
+                participants_tag
+            ):
                 if participant not in self.project_manager.participants:
                     self.project_manager.participants.append(participant)
             self.participants_changed.emit()
 
         decodings_tag = xml_tag.find("decodings")
         if decodings_tag:
-            self.project_manager.decodings = Encoding.read_decoders_from_xml_tag(decodings_tag)
+            self.project_manager.decodings = Encoding.read_decoders_from_xml_tag(
+                decodings_tag
+            )
 
         rx_config_tag = xml_tag.find("simulator_rx_conf")
         if rx_config_tag:
-            ProjectManager.read_device_conf_dict(rx_config_tag, self.project_manager.simulator_rx_conf)
+            ProjectManager.read_device_conf_dict(
+                rx_config_tag, self.project_manager.simulator_rx_conf
+            )
 
         tx_config_tag = xml_tag.find("simulator_tx_conf")
         if tx_config_tag:
-            ProjectManager.read_device_conf_dict(tx_config_tag, self.project_manager.simulator_tx_conf)
+            ProjectManager.read_device_conf_dict(
+                tx_config_tag, self.project_manager.simulator_tx_conf
+            )
 
         for child_tag in xml_tag.find("items"):
             items.append(self.load_item_from_xml(child_tag, message_types))
@@ -260,10 +301,16 @@ class SimulatorConfiguration(QObject):
 
     def load_item_from_xml(self, xml_tag: ET.Element, message_types) -> SimulatorItem:
         if xml_tag.tag == "simulator_message":
-            item = SimulatorMessage.new_from_xml(xml_tag, self.participants, self.project_manager.decodings,
-                                                 message_types)
+            item = SimulatorMessage.new_from_xml(
+                xml_tag,
+                self.participants,
+                self.project_manager.decodings,
+                message_types,
+            )
         elif xml_tag.tag == "simulator_label":
-            item = SimulatorProtocolLabel.from_xml(xml_tag, self.project_manager.field_types_by_caption)
+            item = SimulatorProtocolLabel.from_xml(
+                xml_tag, self.project_manager.field_types_by_caption
+            )
         elif xml_tag.tag == "simulator_trigger_command_action":
             item = SimulatorTriggerCommandAction.from_xml(xml_tag)
         elif xml_tag.tag == "simulator_sleep_action":
@@ -292,9 +339,13 @@ class SimulatorConfiguration(QObject):
         result = ET.Element("simulator_config")
 
         if standalone:
-            result.append(Modulator.modulators_to_xml_tag(self.project_manager.modulators))
+            result.append(
+                Modulator.modulators_to_xml_tag(self.project_manager.modulators)
+            )
             result.append(Encoding.decodings_to_xml_tag(self.project_manager.decodings))
-            result.append(Participant.participants_to_xml_tag(self.project_manager.participants))
+            result.append(
+                Participant.participants_to_xml_tag(self.project_manager.participants)
+            )
             result.append(self.project_manager.simulator_rx_conf_to_xml())
             result.append(self.project_manager.simulator_tx_conf_to_xml())
 
@@ -306,7 +357,11 @@ class SimulatorConfiguration(QObject):
 
     def __save_item_to_xml(self, tag: ET.Element, item):
         if isinstance(item, SimulatorMessage):
-            child_tag = item.to_xml(decoders=self.project_manager.decodings, include_message_type=True, write_bits=True)
+            child_tag = item.to_xml(
+                decoders=self.project_manager.decodings,
+                include_message_type=True,
+                write_bits=True,
+            )
         else:
             child_tag = item.to_xml()
 

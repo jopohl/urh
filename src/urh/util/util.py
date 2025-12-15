@@ -21,7 +21,9 @@ from urh.util.Logger import logger
 PROJECT_PATH = None  # for referencing in external program calls
 
 BCD_ERROR_SYMBOL = "?"
-BCD_LUT = {"{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)}
+BCD_LUT = {
+    "{0:04b}".format(i): str(i) if i < 10 else BCD_ERROR_SYMBOL for i in range(16)
+}
 BCD_REVERSE_LUT = {str(i): "{0:04b}".format(i) for i in range(10)}
 BCD_REVERSE_LUT[BCD_ERROR_SYMBOL] = "0000"
 
@@ -42,6 +44,7 @@ def set_icon_theme():
     if sys.platform != "linux" or settings.read("icon_theme_index", 0, int) == 0:
         # noinspection PyUnresolvedReferences
         import urh.ui.xtra_icons_rc
+
         QIcon.setThemeName("oxy")
     else:
         QIcon.setThemeName("")
@@ -49,6 +52,7 @@ def set_icon_theme():
 
 def get_free_port():
     import socket
+
     s = socket.socket()
     s.bind(("", 0))
     port = s.getsockname()[1]
@@ -60,15 +64,15 @@ def set_shared_library_path():
     shared_lib_dir = get_shared_library_path()
 
     if shared_lib_dir:
-
         if sys.platform == "win32":
-            current_path = os.environ.get("PATH", '')
+            current_path = os.environ.get("PATH", "")
             if not current_path.startswith(shared_lib_dir):
                 os.environ["PATH"] = shared_lib_dir + os.pathsep + current_path
         else:
             # LD_LIBRARY_PATH will not be considered at runtime so we explicitly load the .so's we need
             exts = [".so"] if sys.platform == "linux" else [".so", ".dylib"]
             import ctypes
+
             libs = sorted(os.listdir(shared_lib_dir))
             libusb = next((lib for lib in libs if "libusb" in lib), None)
             if libusb:
@@ -89,19 +93,26 @@ def get_shared_library_path():
     if hasattr(sys, "frozen"):
         return os.path.dirname(sys.executable)
 
-    util_dir = os.path.dirname(os.path.realpath(__file__)) if not os.path.islink(__file__) \
+    util_dir = (
+        os.path.dirname(os.path.realpath(__file__))
+        if not os.path.islink(__file__)
         else os.path.dirname(os.path.realpath(os.readlink(__file__)))
+    )
     urh_dir = os.path.realpath(os.path.join(util_dir, ".."))
     assert os.path.isdir(urh_dir)
 
-    shared_lib_dir = os.path.realpath(os.path.join(urh_dir, "dev", "native", "lib", "shared"))
+    shared_lib_dir = os.path.realpath(
+        os.path.join(urh_dir, "dev", "native", "lib", "shared")
+    )
     if os.path.isdir(shared_lib_dir):
         return shared_lib_dir
     else:
         return ""
 
 
-def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"):
+def convert_bits_to_string(
+    bits, output_view_type: int, pad_zeros=False, lsb=False, lsd=False, endianness="big"
+):
     """
     Convert bit array to string
     :param endianness: Endianness little or big
@@ -129,17 +140,31 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
 
     if endianness == "little":
         # reverse byte wise
-        bits_str = "".join(bits_str[max(i - 8, 0):i] for i in range(len(bits_str), 0, -8))
+        bits_str = "".join(
+            bits_str[max(i - 8, 0) : i] for i in range(len(bits_str), 0, -8)
+        )
 
     if output_view_type == 0:  # bit
         result = bits_str
 
     elif output_view_type == 1:  # hex
-        result = "".join(["{0:x}".format(int(bits_str[i:i + 4], 2)) for i in range(0, len(bits_str), 4)])
+        result = "".join(
+            [
+                "{0:x}".format(int(bits_str[i : i + 4], 2))
+                for i in range(0, len(bits_str), 4)
+            ]
+        )
 
     elif output_view_type == 2:  # ascii
-        result = "".join(map(chr,
-                             [int("".join(bits_str[i:i + 8]), 2) for i in range(0, len(bits_str), 8)]))
+        result = "".join(
+            map(
+                chr,
+                [
+                    int("".join(bits_str[i : i + 8]), 2)
+                    for i in range(0, len(bits_str), 8)
+                ],
+            )
+        )
 
     elif output_view_type == 3:  # decimal
         try:
@@ -147,7 +172,9 @@ def convert_bits_to_string(bits, output_view_type: int, pad_zeros=False, lsb=Fal
         except ValueError:
             return None
     elif output_view_type == 4:  # bcd
-        result = "".join([BCD_LUT[bits_str[i:i + 4]] for i in range(0, len(bits_str), 4)])
+        result = "".join(
+            [BCD_LUT[bits_str[i : i + 4]] for i in range(0, len(bits_str), 4)]
+        )
     else:
         raise ValueError("Unknown view type")
 
@@ -208,7 +235,9 @@ def bcd2bit(value: str) -> array.array:
         return array.array("B", [])
 
 
-def convert_string_to_bits(value: str, display_format: int, target_num_bits: int) -> array.array:
+def convert_string_to_bits(
+    value: str, display_format: int, target_num_bits: int
+) -> array.array:
     if display_format == 0:
         result = string2bits(value)
     elif display_format == 1:
@@ -340,9 +369,20 @@ def get_default_windows_program_for_extension(extension: str):
         return DEFAULT_PROGRAMS_WINDOWS[extension]
 
     try:
-        assoc = subprocess.check_output("assoc " + extension, shell=True, stderr=subprocess.PIPE).decode().split("=")[1]
-        ftype = subprocess.check_output("ftype " + assoc, shell=True).decode().split("=")[1].split(" ")[0]
-        ftype = ftype.replace('"', '')
+        assoc = (
+            subprocess.check_output(
+                "assoc " + extension, shell=True, stderr=subprocess.PIPE
+            )
+            .decode()
+            .split("=")[1]
+        )
+        ftype = (
+            subprocess.check_output("ftype " + assoc, shell=True)
+            .decode()
+            .split("=")[1]
+            .split(" ")[0]
+        )
+        ftype = ftype.replace('"', "")
         assert shutil.which(ftype) is not None
     except Exception:
         return None
@@ -357,7 +397,7 @@ def parse_command(command: str):
         splitted = shlex.split(command, posix=posix)
         # strip quotations
         if not posix:
-            splitted = [s.replace('"', '').replace("'", "") for s in splitted]
+            splitted = [s.replace('"', "").replace("'", "") for s in splitted]
     except ValueError:
         splitted = []  # e.g. when missing matching "
 
@@ -365,7 +405,11 @@ def parse_command(command: str):
         return "", []
 
     cmd = splitted.pop(0)
-    if PROJECT_PATH is not None and not os.path.isabs(cmd) and shutil.which(cmd) is None:
+    if (
+        PROJECT_PATH is not None
+        and not os.path.isabs(cmd)
+        and shutil.which(cmd) is None
+    ):
         # Path relative to project path
         cmd = os.path.normpath(os.path.join(PROJECT_PATH, cmd))
     cmd = [cmd]
@@ -377,14 +421,16 @@ def parse_command(command: str):
     return " ".join(cmd), splitted
 
 
-def run_command(command, param: str = None, use_stdin=False, detailed_output=False, return_rc=False):
+def run_command(
+    command, param: str = None, use_stdin=False, detailed_output=False, return_rc=False
+):
     cmd, arg = parse_command(command)
     if shutil.which(cmd) is None:
         logger.error("Could not find {}".format(cmd))
         return ""
 
     startupinfo = None
-    if os.name == 'nt':
+    if os.name == "nt":
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         if "." in cmd:
@@ -399,7 +445,12 @@ def run_command(command, param: str = None, use_stdin=False, detailed_output=Fal
             if param is not None:
                 call_list.append(param)
 
-            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo)
+            p = subprocess.Popen(
+                call_list,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                startupinfo=startupinfo,
+            )
             out, err = p.communicate()
             result = "{} exited with {}".format(" ".join(call_list), p.returncode)
             if out.decode():
@@ -412,8 +463,13 @@ def run_command(command, param: str = None, use_stdin=False, detailed_output=Fal
             else:
                 return result
         elif use_stdin:
-            p = subprocess.Popen(call_list, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
-                                 startupinfo=startupinfo)
+            p = subprocess.Popen(
+                call_list,
+                stdout=subprocess.PIPE,
+                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                startupinfo=startupinfo,
+            )
             param = param.encode() if param is not None else None
             out, _ = p.communicate(param)
             if return_rc:
@@ -427,7 +483,9 @@ def run_command(command, param: str = None, use_stdin=False, detailed_output=Fal
             if return_rc:
                 raise ValueError("Return Code not supported for this configuration")
 
-            return subprocess.check_output(call_list, stderr=subprocess.PIPE, startupinfo=startupinfo).decode()
+            return subprocess.check_output(
+                call_list, stderr=subprocess.PIPE, startupinfo=startupinfo
+            ).decode()
     except Exception as e:
         msg = "Could not run {} ({})".format(cmd, e)
         logger.error(msg)
@@ -449,18 +507,20 @@ def set_splitter_stylesheet(splitter: QSplitter):
     splitter.setHandleWidth(4)
     bgcolor = settings.BGCOLOR.lighter(150)
     r, g, b, a = bgcolor.red(), bgcolor.green(), bgcolor.blue(), bgcolor.alpha()
-    splitter.setStyleSheet("QSplitter::handle:vertical {{margin: 4px 0px; "
-                           "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
-                           "stop:0.2 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
-                           "stop:0.8 rgba(255, 255, 255, 0));"
-                           "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
-                           "QSplitter::handle:horizontal {{margin: 4px 0px; "
-                           "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
-                           "stop:0.2 rgba(255, 255, 255, 0),"
-                           "stop:0.5 rgba({0}, {1}, {2}, {3}),"
-                           "stop:0.8 rgba(255, 255, 255, 0));"
-                           "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b, a))
+    splitter.setStyleSheet(
+        "QSplitter::handle:vertical {{margin: 4px 0px; "
+        "background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, "
+        "stop:0.2 rgba(255, 255, 255, 0),"
+        "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+        "stop:0.8 rgba(255, 255, 255, 0));"
+        "image: url(:/icons/icons/splitter_handle_horizontal.svg);}}"
+        "QSplitter::handle:horizontal {{margin: 4px 0px; "
+        "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, "
+        "stop:0.2 rgba(255, 255, 255, 0),"
+        "stop:0.5 rgba({0}, {1}, {2}, {3}),"
+        "stop:0.8 rgba(255, 255, 255, 0));"
+        "image: url(:/icons/icons/splitter_handle_vertical.svg);}}".format(r, g, b, a)
+    )
 
 
 def calc_x_y_scale(rect, parent):

@@ -11,9 +11,11 @@ class AirSpy(Device):
     DEVICE_LIB = airspy
     ASYNCHRONOUS = True
     DEVICE_METHODS = Device.DEVICE_METHODS.copy()
-    DEVICE_METHODS.update({
-        Device.Command.SET_FREQUENCY.name: "set_center_frequency",
-    })
+    DEVICE_METHODS.update(
+        {
+            Device.Command.SET_FREQUENCY.name: "set_center_frequency",
+        }
+    )
     del DEVICE_METHODS[Device.Command.SET_BANDWIDTH.name]
 
     DATA_TYPE = np.float32
@@ -36,16 +38,32 @@ class AirSpy(Device):
         return True
 
     @classmethod
-    def enter_async_receive_mode(cls, data_connection: Connection, ctrl_connection: Connection):
+    def enter_async_receive_mode(
+        cls, data_connection: Connection, ctrl_connection: Connection
+    ):
         ret = airspy.start_rx(data_connection.send_bytes)
         ctrl_connection.send("Start RX MODE:" + str(ret))
         return ret
 
-    def __init__(self, center_freq, sample_rate, bandwidth, gain, if_gain=1, baseband_gain=1,
-                 resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=center_freq, sample_rate=sample_rate, bandwidth=bandwidth,
-                         gain=gain, if_gain=if_gain, baseband_gain=baseband_gain,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+    def __init__(
+        self,
+        center_freq,
+        sample_rate,
+        bandwidth,
+        gain,
+        if_gain=1,
+        baseband_gain=1,
+        resume_on_full_receive_buffer=False,
+    ):
+        super().__init__(
+            center_freq=center_freq,
+            sample_rate=sample_rate,
+            bandwidth=bandwidth,
+            gain=gain,
+            if_gain=if_gain,
+            baseband_gain=baseband_gain,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
         self.success = 0
 
         self.bandwidth_is_adjustable = False

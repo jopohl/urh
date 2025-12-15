@@ -24,12 +24,14 @@ class PlotTests(unittest.TestCase):
 
         modulated_samples = modulator.modulate([True, False, True, False, False], 77)
         data = copy.deepcopy(modulated_samples)
-        modulated_samples = modulator.modulate([False, True, True, True, True, False, True], 100, start=len(data))
+        modulated_samples = modulator.modulate(
+            [False, True, True, True, True, False, True], 100, start=len(data)
+        )
         data = np.concatenate((data, modulated_samples))
 
         plt.subplot(2, 1, 1)
         axes = plt.gca()
-        axes.set_ylim([-2,2])
+        axes.set_ylim([-2, 2])
         plt.plot(data.real)
         plt.title("Modulated Wave")
 
@@ -48,7 +50,11 @@ class PlotTests(unittest.TestCase):
         signal.samples_per_symbol = 25
         pa = ProtocolAnalyzer(signal)
         pa.get_protocol_from_signal()
-        start, num_samples = pa.get_samplepos_of_bitseq(0, 0, 0, 999999, include_pause=False)
+        start, num_samples = pa.get_samplepos_of_bitseq(
+            0, 0, 0, 999999, include_pause=False
+        )
 
         print("-----------")
-        print(signal.estimate_frequency(start, end=start+num_samples, sample_rate=2e6))
+        print(
+            signal.estimate_frequency(start, end=start + num_samples, sample_rate=2e6)
+        )

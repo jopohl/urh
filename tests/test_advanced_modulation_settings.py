@@ -20,7 +20,9 @@ class TestAdvancedModulationSettings(QtTestCase):
         assert isinstance(self.form, MainController)
         self.form.ui.actionAuto_detect_new_signals.setChecked(False)
         self.add_signal_to_form("pwm.complex16s")
-        signal_frame = self.form.signal_tab_controller.signal_frames[0]  # type: SignalFrame
+        signal_frame = self.form.signal_tab_controller.signal_frames[
+            0
+        ]  # type: SignalFrame
         signal_frame.ui.spinBoxNoiseTreshold.setValue(0.0525)
         signal_frame.ui.cbModulationType.setCurrentText("ASK")
         signal_frame.ui.spinBoxCenterOffset.setValue(0.01807)
@@ -44,5 +46,8 @@ class TestAdvancedModulationSettings(QtTestCase):
         self.assertEqual(signal_frame.signal.message_length_divisor, 4)
         for i in range(3):
             self.assertEqual(protocol.plain_bits_str[i], bits + "000", msg=str(i))
-            self.assertEqual(protocol.messages[i].pause, pauses[i] - 3 * signal_frame.signal.samples_per_symbol,
-                             msg=str(i))
+            self.assertEqual(
+                protocol.messages[i].pause,
+                pauses[i] - 3 * signal_frame.signal.samples_per_symbol,
+                msg=str(i),
+            )

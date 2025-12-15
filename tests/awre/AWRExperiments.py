@@ -23,7 +23,9 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.util.GenericCRC import GenericCRC
 
 
-def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_runs: int) -> list:
+def run_for_num_broken(
+    protocol_nr, num_broken: list, num_messages: int, num_runs: int
+) -> list:
     random.seed(0)
     np.random.seed(0)
 
@@ -32,14 +34,20 @@ def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_run
         tmp_accuracies = np.empty(num_runs, dtype=np.float64)
         tmp_accuracies_without_broken = np.empty(num_runs, dtype=np.float64)
         for i in range(num_runs):
-            protocol, expected_labels = AWRExperiments.get_protocol(protocol_nr,
-                                                                    num_messages=num_messages,
-                                                                    num_broken_messages=broken,
-                                                                    silent=True)
+            protocol, expected_labels = AWRExperiments.get_protocol(
+                protocol_nr,
+                num_messages=num_messages,
+                num_broken_messages=broken,
+                silent=True,
+            )
 
             AWRExperiments.run_format_finder_for_protocol(protocol)
-            accuracy = AWRExperiments.calculate_accuracy(protocol.messages, expected_labels)
-            accuracy_without_broken = AWRExperiments.calculate_accuracy(protocol.messages, expected_labels, broken)
+            accuracy = AWRExperiments.calculate_accuracy(
+                protocol.messages, expected_labels
+            )
+            accuracy_without_broken = AWRExperiments.calculate_accuracy(
+                protocol.messages, expected_labels, broken
+            )
             tmp_accuracies[i] = accuracy
             tmp_accuracies_without_broken[i] = accuracy_without_broken
 
@@ -47,8 +55,11 @@ def run_for_num_broken(protocol_nr, num_broken: list, num_messages: int, num_run
         avg_accuracy_without_broken = np.mean(tmp_accuracies_without_broken)
 
         result.append((avg_accuracy, avg_accuracy_without_broken))
-        print("Protocol {} with {} broken: {:>3}% {:>3}%".format(protocol_nr, broken, int(avg_accuracy),
-                                                                 int(avg_accuracy_without_broken)))
+        print(
+            "Protocol {} with {} broken: {:>3}% {:>3}%".format(
+                protocol_nr, broken, int(avg_accuracy), int(avg_accuracy_without_broken)
+            )
+        )
 
     return result
 
@@ -67,9 +78,11 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x1337"},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x1337"},
+            participants=[alice, bob],
+        )
         return pg
 
     @staticmethod
@@ -85,11 +98,13 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.DST_ADDRESS, 24)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x1337"},
-                               preambles_by_mt={mb.message_type: "10" * 36},
-                               sequence_number_increment=32,
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x1337"},
+            preambles_by_mt={mb.message_type: "10" * 36},
+            sequence_number_increment=32,
+            participants=[alice, bob],
+        )
 
         return pg
 
@@ -117,10 +132,12 @@ class AWRExperiments(AWRETestCase):
         mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
         mb_ack.add_checksum_label(8, checksum)
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
-                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+            preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+            participants=[alice, bob],
+        )
 
         return pg
 
@@ -160,10 +177,12 @@ class AWRExperiments(AWRETestCase):
 
         preamble = "10001000" * 2
 
-        pg = ProtocolGenerator([mt1, mt2, mt3],
-                               syncs_by_mt={mt1: "0x9a7d", mt2: "0x9a7d", mt3: "0x9a7d"},
-                               preambles_by_mt={mt1: preamble, mt2: preamble, mt3: preamble},
-                               participants=[alice, bob])
+        pg = ProtocolGenerator(
+            [mt1, mt2, mt3],
+            syncs_by_mt={mt1: "0x9a7d", mt2: "0x9a7d", mt3: "0x9a7d"},
+            preambles_by_mt={mt1: preamble, mt2: preamble, mt3: preamble},
+            participants=[alice, bob],
+        )
 
         return pg
 
@@ -187,10 +206,12 @@ class AWRExperiments(AWRETestCase):
         mb_ack.add_label(FieldType.Function.LENGTH, 8)
         mb_ack.add_label(FieldType.Function.DST_ADDRESS, 16)
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type],
-                               syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
-                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
-                               participants=[alice, bob, carl])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type],
+            syncs_by_mt={mb.message_type: "0x9a7d", mb_ack.message_type: "0x9a7d"},
+            preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 8},
+            participants=[alice, bob, carl],
+        )
 
         return pg
 
@@ -205,10 +226,12 @@ class AWRExperiments(AWRETestCase):
         mb.add_label(FieldType.Function.SRC_ADDRESS, 8)
         mb.add_label(FieldType.Function.SEQUENCE_NUMBER, 8)
 
-        pg = ProtocolGenerator([mb.message_type],
-                               syncs_by_mt={mb.message_type: "0x8e88"},
-                               preambles_by_mt={mb.message_type: "10" * 8},
-                               participants=[alice, broadcast])
+        pg = ProtocolGenerator(
+            [mb.message_type],
+            syncs_by_mt={mb.message_type: "0x8e88"},
+            preambles_by_mt={mb.message_type: "10" * 8},
+            participants=[alice, broadcast],
+        )
 
         return pg
 
@@ -245,12 +268,20 @@ class AWRExperiments(AWRETestCase):
         mb_kex.add_label(FieldType.Function.DATA, 64 * 8)
         mb_kex.add_checksum_label(16, checksum)
 
-        pg = ProtocolGenerator([mb.message_type, mb_ack.message_type, mb_kex.message_type],
-                               syncs_by_mt={mb.message_type: "0x0420", mb_ack.message_type: "0x2222",
-                                            mb_kex.message_type: "0x6767"},
-                               preambles_by_mt={mb.message_type: "10" * 8, mb_ack.message_type: "10" * 4,
-                                                mb_kex.message_type: "10" * 12},
-                               participants=[alice, bob, charly, daniel])
+        pg = ProtocolGenerator(
+            [mb.message_type, mb_ack.message_type, mb_kex.message_type],
+            syncs_by_mt={
+                mb.message_type: "0x0420",
+                mb_ack.message_type: "0x2222",
+                mb_kex.message_type: "0x6767",
+            },
+            preambles_by_mt={
+                mb.message_type: "10" * 8,
+                mb_ack.message_type: "10" * 4,
+                mb_kex.message_type: "10" * 12,
+            },
+            participants=[alice, bob, charly, daniel],
+        )
 
         return pg
 
@@ -272,12 +303,14 @@ class AWRExperiments(AWRETestCase):
         mb2.add_label(FieldType.Function.SEQUENCE_NUMBER, 16)
         mb2.add_label(FieldType.Function.DATA, 8 * 260)
 
-        pg = ProtocolGenerator([mb.message_type, mb2.message_type],
-                               syncs_by_mt={mb.message_type: "0x9", mb2.message_type: "0x9"},
-                               preambles_by_mt={mb.message_type: "10" * 2, mb2.message_type: "10" * 2},
-                               sequence_number_increment=32,
-                               participants=[alice],
-                               little_endian=True)
+        pg = ProtocolGenerator(
+            [mb.message_type, mb2.message_type],
+            syncs_by_mt={mb.message_type: "0x9", mb2.message_type: "0x9"},
+            preambles_by_mt={mb.message_type: "10" * 2, mb2.message_type: "10" * 2},
+            sequence_number_increment=32,
+            participants=[alice],
+            little_endian=True,
+        )
 
         return pg
 
@@ -291,7 +324,9 @@ class AWRExperiments(AWRETestCase):
             pg.export_to_latex(filename, i)
 
     @classmethod
-    def get_protocol(cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False):
+    def get_protocol(
+        cls, protocol_number: int, num_messages, num_broken_messages=0, silent=False
+    ):
         if protocol_number == 1:
             pg = cls._prepare_protocol_1()
         elif protocol_number == 2:
@@ -311,8 +346,11 @@ class AWRExperiments(AWRETestCase):
         else:
             raise ValueError("Unknown protocol number")
 
-        messages_types_with_data_field = [mt for mt in pg.protocol.message_types
-                                          if mt.get_first_label_with_type(FieldType.Function.DATA)]
+        messages_types_with_data_field = [
+            mt
+            for mt in pg.protocol.message_types
+            if mt.get_first_label_with_type(FieldType.Function.DATA)
+        ]
         i = -1
         while len(pg.protocol.messages) < num_messages:
             i += 1
@@ -330,25 +368,47 @@ class AWRExperiments(AWRETestCase):
                 pg.generate_message(data=data, source=source, destination=destination)
             else:
                 # search for message type with right data length
-                mt = messages_types_with_data_field[i % len(messages_types_with_data_field)]
-                data_length = mt.get_first_label_with_type(FieldType.Function.DATA).length
+                mt = messages_types_with_data_field[
+                    i % len(messages_types_with_data_field)
+                ]
+                data_length = mt.get_first_label_with_type(
+                    FieldType.Function.DATA
+                ).length
                 data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
-                pg.generate_message(message_type=mt, data=data, source=source, destination=destination)
+                pg.generate_message(
+                    message_type=mt, data=data, source=source, destination=destination
+                )
 
-            ack_message_type = next((mt for mt in pg.protocol.message_types if "ack" in mt.name), None)
+            ack_message_type = next(
+                (mt for mt in pg.protocol.message_types if "ack" in mt.name), None
+            )
             if ack_message_type:
-                pg.generate_message(message_type=ack_message_type, data="", source=destination, destination=source)
+                pg.generate_message(
+                    message_type=ack_message_type,
+                    data="",
+                    source=destination,
+                    destination=source,
+                )
 
         for i in range(num_broken_messages):
             msg = pg.protocol.messages[i]
             pos = random.randint(0, len(msg.plain_bits) // 2)
-            msg.plain_bits[pos:] = array.array("B",
-                                               [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)])
+            msg.plain_bits[pos:] = array.array(
+                "B", [random.randint(0, 1) for _ in range(len(msg.plain_bits) - pos)]
+            )
 
         if num_broken_messages == 0:
-            cls.save_protocol("protocol{}_{}_messages".format(protocol_number, num_messages), pg, silent=silent)
+            cls.save_protocol(
+                "protocol{}_{}_messages".format(protocol_number, num_messages),
+                pg,
+                silent=silent,
+            )
         else:
-            cls.save_protocol("protocol{}_{}_broken".format(protocol_number, num_broken_messages), pg, silent=silent)
+            cls.save_protocol(
+                "protocol{}_{}_broken".format(protocol_number, num_broken_messages),
+                pg,
+                silent=silent,
+            )
 
         expected_message_types = [msg.message_type for msg in pg.protocol.messages]
 
@@ -374,10 +434,13 @@ class AWRExperiments(AWRETestCase):
         :type expected_labels: list of MessageType
         :return:
         """
-        accuracy = sum(len(set(expected_labels[i]) & set(messages[i].message_type)) / len(expected_labels[i])
-                       for i in range(num_broken_messages, len(messages)))
+        accuracy = sum(
+            len(set(expected_labels[i]) & set(messages[i].message_type))
+            / len(expected_labels[i])
+            for i in range(num_broken_messages, len(messages))
+        )
         try:
-            accuracy /= (len(messages) - num_broken_messages)
+            accuracy /= len(messages) - num_broken_messages
         except ZeroDivisionError:
             accuracy = 0
 
@@ -393,13 +456,21 @@ class AWRExperiments(AWRETestCase):
         np.random.seed(0)
         for protocol_nr in protocols:
             for n in num_messages:
-                protocol, expected_labels = self.get_protocol(protocol_nr, num_messages=n)
+                protocol, expected_labels = self.get_protocol(
+                    protocol_nr, num_messages=n
+                )
                 self.run_format_finder_for_protocol(protocol)
 
                 accuracy = self.calculate_accuracy(protocol.messages, expected_labels)
                 accuracies["protocol {}".format(protocol_nr)].append(accuracy)
 
-        self.__plot(num_messages, accuracies, xlabel="Number of messages", ylabel="Accuracy in %", grid=True)
+        self.__plot(
+            num_messages,
+            accuracies,
+            xlabel="Number of messages",
+            ylabel="Accuracy in %",
+            grid=True,
+        )
         self.__export_to_csv("/tmp/accuray-vs-messages", num_messages, accuracies)
 
     def test_against_error(self):
@@ -419,23 +490,44 @@ class AWRExperiments(AWRETestCase):
         np.random.seed(0)
 
         with multiprocessing.Pool() as p:
-            result = p.starmap(run_for_num_broken,
-                               [(i, num_broken_messages, num_messages, num_runs) for i in protocols])
+            result = p.starmap(
+                run_for_num_broken,
+                [(i, num_broken_messages, num_messages, num_runs) for i in protocols],
+            )
             for i, acc in enumerate(result):
                 accuracies["protocol {}".format(i + 1)] = [a[0] for a in acc]
-                accuracies_without_broken["protocol {}".format(i + 1)] = [a[1] for a in acc]
+                accuracies_without_broken["protocol {}".format(i + 1)] = [
+                    a[1] for a in acc
+                ]
 
-        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies,
-                    title="Overall Accuracy vs percentage of broken messages",
-                    xlabel="Broken messages in %",
-                    ylabel="Accuracy in %", grid=True)
-        self.__plot(100 * np.array(num_broken_messages) / num_messages, accuracies_without_broken,
-                    title=" Accuracy of unbroken vs percentage of broken messages",
-                    xlabel="Broken messages in %",
-                    ylabel="Accuracy in %", grid=True)
-        self.__export_to_csv("/tmp/accuray-vs-error", num_broken_messages, accuracies, relative=num_messages)
-        self.__export_to_csv("/tmp/accuray-vs-error-without-broken", num_broken_messages, accuracies_without_broken,
-                             relative=num_messages)
+        self.__plot(
+            100 * np.array(num_broken_messages) / num_messages,
+            accuracies,
+            title="Overall Accuracy vs percentage of broken messages",
+            xlabel="Broken messages in %",
+            ylabel="Accuracy in %",
+            grid=True,
+        )
+        self.__plot(
+            100 * np.array(num_broken_messages) / num_messages,
+            accuracies_without_broken,
+            title=" Accuracy of unbroken vs percentage of broken messages",
+            xlabel="Broken messages in %",
+            ylabel="Accuracy in %",
+            grid=True,
+        )
+        self.__export_to_csv(
+            "/tmp/accuray-vs-error",
+            num_broken_messages,
+            accuracies,
+            relative=num_messages,
+        )
+        self.__export_to_csv(
+            "/tmp/accuray-vs-error-without-broken",
+            num_broken_messages,
+            accuracies_without_broken,
+            relative=num_messages,
+        )
 
     def test_performance(self):
         Engine._DEBUG_ = False
@@ -487,8 +579,13 @@ class AWRExperiments(AWRETestCase):
 
                 tmp_performances = np.empty(num_runs, dtype=np.float64)
                 for i in range(num_runs):
-                    print("\r{0} with {1:02d} messages ({2}/{3} runs)".format(protocol_name, messages, i + 1, num_runs),
-                          flush=True, end="")
+                    print(
+                        "\r{0} with {1:02d} messages ({2}/{3} runs)".format(
+                            protocol_name, messages, i + 1, num_runs
+                        ),
+                        flush=True,
+                        end="",
+                    )
 
                     t = time.time()
                     self.run_format_finder_for_protocol(protocol)
@@ -499,7 +596,13 @@ class AWRExperiments(AWRETestCase):
                 print(" {:.2f}s".format(mean_performance))
                 performances["{}".format(protocol_name)].append(mean_performance)
 
-        self.__plot(num_messages, performances, xlabel="Number of messages", ylabel="Time in seconds", grid=True)
+        self.__plot(
+            num_messages,
+            performances,
+            xlabel="Number of messages",
+            ylabel="Time in seconds",
+            grid=True,
+        )
         self.__export_to_csv("/tmp/performance.csv", num_messages, performances)
 
     @staticmethod
@@ -558,7 +661,10 @@ class AWRExperiments(AWRETestCase):
         mb_r_frame = MessageTypeBuilder("rframe")
         mb_a_frame = MessageTypeBuilder("aframe")
 
-        participants = [Participant("CCU", address_hex="3927cc"), Participant("Switch", address_hex="3101cc")]
+        participants = [
+            Participant("CCU", address_hex="3927cc"),
+            Participant("Switch", address_hex="3101cc"),
+        ]
 
         checksum = GenericCRC.from_standard_checksum("CRC16 CC1101")
         for mb_builder in [mb_m_frame, mb_c_frame, mb_r_frame, mb_a_frame]:
@@ -572,32 +678,50 @@ class AWRExperiments(AWRETestCase):
             if mb_builder.name == "mframe":
                 mb_builder.add_label(FieldType.Function.DATA, 16, name="command")
             elif mb_builder.name == "cframe":
-                mb_builder.add_label(FieldType.Function.DATA, 16 * 4, name="command+challenge+magic")
+                mb_builder.add_label(
+                    FieldType.Function.DATA, 16 * 4, name="command+challenge+magic"
+                )
             elif mb_builder.name == "rframe":
                 mb_builder.add_label(FieldType.Function.DATA, 32 * 4, name="cipher")
             elif mb_builder.name == "aframe":
-                mb_builder.add_label(FieldType.Function.DATA, 10 * 4, name="command + auth")
+                mb_builder.add_label(
+                    FieldType.Function.DATA, 10 * 4, name="command + auth"
+                )
             mb_builder.add_checksum_label(16, checksum)
 
-        message_types = [mb_m_frame.message_type, mb_c_frame.message_type, mb_r_frame.message_type,
-                         mb_a_frame.message_type]
+        message_types = [
+            mb_m_frame.message_type,
+            mb_c_frame.message_type,
+            mb_r_frame.message_type,
+            mb_a_frame.message_type,
+        ]
         preamble = "0xaaaaaaaa"
         sync = "0xe9cae9ca"
         initial_sequence_number = 36
-        pg = ProtocolGenerator(message_types, participants,
-                               preambles_by_mt={mt: preamble for mt in message_types},
-                               syncs_by_mt={mt: sync for mt in message_types},
-                               sequence_numbers={mt: initial_sequence_number for mt in message_types},
-                               message_type_codes={mb_m_frame.message_type: 42560,
-                                                   mb_c_frame.message_type: 40962,
-                                                   mb_r_frame.message_type: 40963,
-                                                   mb_a_frame.message_type: 32770})
+        pg = ProtocolGenerator(
+            message_types,
+            participants,
+            preambles_by_mt={mt: preamble for mt in message_types},
+            syncs_by_mt={mt: sync for mt in message_types},
+            sequence_numbers={mt: initial_sequence_number for mt in message_types},
+            message_type_codes={
+                mb_m_frame.message_type: 42560,
+                mb_c_frame.message_type: 40962,
+                mb_r_frame.message_type: 40963,
+                mb_a_frame.message_type: 32770,
+            },
+        )
 
         for i in range(num_messages):
             mt = pg.message_types[i % 4]
             data_length = mt.get_first_label_with_type(FieldType.Function.DATA).length
             data = "".join(random.choice(["0", "1"]) for _ in range(data_length))
-            pg.generate_message(mt, data, source=pg.participants[i % 2], destination=pg.participants[(i + 1) % 2])
+            pg.generate_message(
+                mt,
+                data,
+                source=pg.participants[i % 2],
+                destination=pg.participants[(i + 1) % 2],
+            )
 
         if save_protocol:
             cls.save_protocol("homematic", pg)
@@ -656,7 +780,7 @@ class AWRExperiments(AWRETestCase):
             5: "three participants with ack frame",
             6: "short address",
             7: "four participants, varying preamble size, varying sync words",
-            8: "nibble fields + LE"
+            8: "nibble fields + LE",
         }
 
         bold = {i: defaultdict(bool) for i in range(1, 9)}
@@ -678,35 +802,42 @@ class AWRExperiments(AWRETestCase):
         bold[8][FieldType.Function.PREAMBLE] = True
         bold[8][FieldType.Function.SYNC] = True
 
-        filename = os.path.expanduser("~/GIT/publications/awre/USENIX/protocol_table.tex")
+        filename = os.path.expanduser(
+            "~/GIT/publications/awre/USENIX/protocol_table.tex"
+        )
         rowcolors = [r"\rowcolor{black!10}", r"\rowcolor{black!20}"]
 
         with open(filename, "w") as f:
             f.write(r"\begin{table*}[!h]" + "\n")
             f.write(
-                "\t" + r"\caption{Properties of tested protocols whereby $\times$ means field is not present and $N_P$ is the number of participants.}" + "\n")
+                "\t"
+                + r"\caption{Properties of tested protocols whereby $\times$ means field is not present and $N_P$ is the number of participants.}"
+                + "\n"
+            )
             f.write("\t" + r"\label{tab:protocols}" + "\n")
             f.write("\t" + r"\centering" + "\n")
             f.write("\t" + r"\begin{tabularx}{\linewidth}{cp{2.5cm}llcccccccc}" + "\n")
             f.write("\t\t" + r"\hline" + "\n")
             f.write("\t\t" + r"\rowcolor{black!90}" + "\n")
-            f.write("\t\t" + r"\textcolor{white}{\textbf{\#}} & "
-                             r"\textcolor{white}{\textbf{Comment}} & "
-                             r"\textcolor{white}{$\mathbf{ N_P }$} & "
-                             r"\textcolor{white}{\textbf{Message}} & "
-                             r"\textcolor{white}{\textbf{Even/odd}} & "
-                             r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
-                             "\n\t\t"
-                             r"\rowcolor{black!90}"
-                             "\n\t\t"
-                             r"& & & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{message data}} &"
-                             r"\textcolor{white}{Preamble} & "
-                             r"\textcolor{white}{Sync} & "
-                             r"\textcolor{white}{Length}  & "
-                             r"\textcolor{white}{SRC} & "
-                             r"\textcolor{white}{DST} & "
-                             r"\textcolor{white}{SEQ Nr} & "
-                             r"\textcolor{white}{CRC}  \\" + "\n")
+            f.write(
+                "\t\t" + r"\textcolor{white}{\textbf{\#}} & "
+                r"\textcolor{white}{\textbf{Comment}} & "
+                r"\textcolor{white}{$\mathbf{ N_P }$} & "
+                r"\textcolor{white}{\textbf{Message}} & "
+                r"\textcolor{white}{\textbf{Even/odd}} & "
+                r"\multicolumn{7}{c}{\textcolor{white}{\textbf{Size of field in bit (BE=Big Endian, LE=Little Endian)}}}\\"
+                "\n\t\t"
+                r"\rowcolor{black!90}"
+                "\n\t\t"
+                r"& & & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{message data}} &"
+                r"\textcolor{white}{Preamble} & "
+                r"\textcolor{white}{Sync} & "
+                r"\textcolor{white}{Length}  & "
+                r"\textcolor{white}{SRC} & "
+                r"\textcolor{white}{DST} & "
+                r"\textcolor{white}{SEQ Nr} & "
+                r"\textcolor{white}{CRC}  \\" + "\n"
+            )
             f.write("\t\t" + r"\hline" + "\n")
 
             rowcolor_index = 0
@@ -718,8 +849,14 @@ class AWRExperiments(AWRETestCase):
                     data1 = next(mt for mt in pg.message_types if mt.name == "data1")
                     data2 = next(mt for mt in pg.message_types if mt.name == "data2")
 
-                    data1_len = data1.get_first_label_with_type(FieldType.Function.DATA).length // 8
-                    data2_len = data2.get_first_label_with_type(FieldType.Function.DATA).length // 8
+                    data1_len = (
+                        data1.get_first_label_with_type(FieldType.Function.DATA).length
+                        // 8
+                    )
+                    data2_len = (
+                        data2.get_first_label_with_type(FieldType.Function.DATA).length
+                        // 8
+                    )
 
                 except StopIteration:
                     data1_len, data2_len = 8, 64
@@ -741,18 +878,33 @@ class AWRExperiments(AWRETestCase):
                     f.write("\t\t" + rowcolor + "\n")
 
                     if len(pg.message_types) == 1 or (
-                            mt.name == "data1" and "ack" not in {m.name for m in pg.message_types}):
-                        f.write("\t\t{} & {} & {} & {} &".format(protocol_nr, comments[i], participants,
-                                                                 mt.name.replace("1", "")))
+                        mt.name == "data1"
+                        and "ack" not in {m.name for m in pg.message_types}
+                    ):
+                        f.write(
+                            "\t\t{} & {} & {} & {} &".format(
+                                protocol_nr,
+                                comments[i],
+                                participants,
+                                mt.name.replace("1", ""),
+                            )
+                        )
                     elif j == len(pg.message_types) - 1:
                         f.write(
-                            "\t\t{} & \\multirow{{{}}}{{\\linewidth}}{{{}}} & {} & {} &".format(protocol_nr, -rowcount,
-                                                                                                comments[i],
-                                                                                                participants,
-                                                                                                mt.name.replace("1",
-                                                                                                                "")))
+                            "\t\t{} & \\multirow{{{}}}{{\\linewidth}}{{{}}} & {} & {} &".format(
+                                protocol_nr,
+                                -rowcount,
+                                comments[i],
+                                participants,
+                                mt.name.replace("1", ""),
+                            )
+                        )
                     else:
-                        f.write("\t\t{} & & {} & {} &".format(protocol_nr, participants, mt.name.replace("1", "")))
+                        f.write(
+                            "\t\t{} & & {} & {} &".format(
+                                protocol_nr, participants, mt.name.replace("1", "")
+                            )
+                        )
                     data_lbl = mt.get_first_label_with_type(FieldType.Function.DATA)
 
                     if mt.name == "data1" or mt.name == "data2":
@@ -764,18 +916,30 @@ class AWRExperiments(AWRETestCase):
                     else:
                         f.write(r"$ \times $ & ")
 
-                    for t in (FieldType.Function.PREAMBLE, FieldType.Function.SYNC, FieldType.Function.LENGTH,
-                              FieldType.Function.SRC_ADDRESS, FieldType.Function.DST_ADDRESS,
-                              FieldType.Function.SEQUENCE_NUMBER,
-                              FieldType.Function.CHECKSUM):
+                    for t in (
+                        FieldType.Function.PREAMBLE,
+                        FieldType.Function.SYNC,
+                        FieldType.Function.LENGTH,
+                        FieldType.Function.SRC_ADDRESS,
+                        FieldType.Function.DST_ADDRESS,
+                        FieldType.Function.SEQUENCE_NUMBER,
+                        FieldType.Function.CHECKSUM,
+                    ):
                         lbl = mt.get_first_label_with_type(t)
                         if lbl is not None:
                             if bold[i][lbl.field_type.function]:
                                 f.write(bold_latex(lbl.length))
                             else:
                                 f.write(str(lbl.length))
-                            if lbl.length > 8 and t in (FieldType.Function.LENGTH, FieldType.Function.SEQUENCE_NUMBER):
-                                f.write(" ({})".format(bold_latex("LE") if pg.little_endian else "BE"))
+                            if lbl.length > 8 and t in (
+                                FieldType.Function.LENGTH,
+                                FieldType.Function.SEQUENCE_NUMBER,
+                            ):
+                                f.write(
+                                    " ({})".format(
+                                        bold_latex("LE") if pg.little_endian else "BE"
+                                    )
+                                )
                         else:
                             f.write(r"$ \times $")
 

@@ -21,7 +21,11 @@ from urh.simulator.SimulatorExpressionParser import SimulatorExpressionParser
 from urh.simulator.SimulatorGotoAction import SimulatorGotoAction
 from urh.simulator.SimulatorMessage import SimulatorMessage
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorRule import (
+    SimulatorRule,
+    SimulatorRuleCondition,
+    ConditionType,
+)
 from urh.simulator.SimulatorSleepAction import SimulatorSleepAction
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 from urh.simulator.Transcript import Transcript
@@ -34,9 +38,15 @@ class Simulator(QObject):
     simulation_started = pyqtSignal()
     simulation_stopped = pyqtSignal()
 
-    def __init__(self, simulator_config: SimulatorConfiguration, modulators,
-                 expression_parser: SimulatorExpressionParser, project_manager: ProjectManager,
-                 sniffer: ProtocolSniffer, sender: EndlessSender):
+    def __init__(
+        self,
+        simulator_config: SimulatorConfiguration,
+        modulators,
+        expression_parser: SimulatorExpressionParser,
+        project_manager: ProjectManager,
+        sniffer: ProtocolSniffer,
+        sender: EndlessSender,
+    ):
         super().__init__()
         self.simulator_config = simulator_config
         self.project_manager = project_manager
@@ -115,7 +125,9 @@ class Simulator(QObject):
         self.simulation_stopped.emit()
 
         if self.is_simulating:
-            self.log_message("Stop simulation" + (" ({})".format(msg.strip()) if msg else ""))
+            self.log_message(
+                "Stop simulation" + (" ({})".format(msg.strip()) if msg else "")
+            )
             self.is_simulating = False
             self.do_restart = False
             self.simulation_thread.join(2.5)
@@ -189,7 +201,9 @@ class Simulator(QObject):
 
     def __wait_for_devices(self):
         for i in range(10):
-            if (self.sniffer is None or self.sniffer_ready) and (self.sender is None or self.sender_ready):
+            if (self.sniffer is None or self.sniffer_ready) and (
+                self.sender is None or self.sender_ready
+            ):
                 return True
             if self.fatal_device_error_occurred:
                 return False
@@ -243,18 +257,34 @@ class Simulator(QObject):
                 command = self.__fill_counter_values(self.current_item.command)
                 self.log_message("Calling {}".format(command))
                 if self.current_item.pass_transcript:
-                    transcript = "\n".join(self.transcript.get_for_all_participants(all_rounds=False))
-                    result, rc = util.run_command(command, transcript, use_stdin=True, return_rc=True)
+                    transcript = "\n".join(
+                        self.transcript.get_for_all_participants(all_rounds=False)
+                    )
+                    result, rc = util.run_command(
+                        command, transcript, use_stdin=True, return_rc=True
+                    )
                 else:
-                    result, rc = util.run_command(command, param=None, detailed_output=True, return_rc=True)
+                    result, rc = util.run_command(
+                        command, param=None, detailed_output=True, return_rc=True
+                    )
                 self.current_item.return_code = rc
                 self.log_message(result)
 
             elif isinstance(self.current_item, SimulatorRule):
                 condition = self.current_item.get_first_applying_condition()
 
-                if condition is not None and condition.logging_active and condition.type != ConditionType.ELSE:
-                    self.log_message("Rule condition " + condition.index() + " (" + condition.condition + ") applied")
+                if (
+                    condition is not None
+                    and condition.logging_active
+                    and condition.type != ConditionType.ELSE
+                ):
+                    self.log_message(
+                        "Rule condition "
+                        + condition.index()
+                        + " ("
+                        + condition.condition
+                        + ") applied"
+                    )
 
                 if condition is not None and condition.child_count() > 0:
                     next_item = condition.children[0]
@@ -274,7 +304,11 @@ class Simulator(QObject):
 
             elif isinstance(self.current_item, SimulatorCounterAction):
                 self.current_item.progress_value()
-                self.log_message("Increase counter by {} to {}".format(self.current_item.step, self.current_item.value))
+                self.log_message(
+                    "Increase counter by {} to {}".format(
+                        self.current_item.step, self.current_item.value
+                    )
+                )
                 next_item = self.current_item.next()
 
             elif self.current_item is None:
@@ -310,13 +344,20 @@ class Simulator(QObject):
 
             for lbl in new_message.message_type:
                 if isinstance(lbl.label, ChecksumLabel):
-                    checksum = lbl.label.calculate_checksum_for_message(new_message, use_decoded_bits=False)
-                    label_range = new_message.get_label_range(lbl=lbl.label, view=0, decode=False)
+                    checksum = lbl.label.calculate_checksum_for_message(
+                        new_message, use_decoded_bits=False
+                    )
+                    label_range = new_message.get_label_range(
+                        lbl=lbl.label, view=0, decode=False
+                    )
                     start, end = label_range[0], label_range[1]
-                    new_message.plain_bits[start:end] = checksum + array.array("B", [0] * (
-                            (end - start) - len(checksum)))
+                    new_message.plain_bits[start:end] = checksum + array.array(
+                        "B", [0] * ((end - start) - len(checksum))
+                    )
 
-            self.transcript.append(msg.source, msg.destination, new_message, msg.index())
+            self.transcript.append(
+                msg.source, msg.destination, new_message, msg.index()
+            )
             self.send_message(new_message, msg.repeat, sender, msg.modulator_index)
             self.log_message("Sending message " + msg.index())
             self.log_message_labels(new_message)
@@ -333,7 +374,11 @@ class Simulator(QObject):
             retry = 0
 
             max_retries = self.project_manager.simulator_retries
-            while self.is_simulating and not self.simulation_is_finished() and retry < max_retries:
+            while (
+                self.is_simulating
+                and not self.simulation_is_finished()
+                and retry < max_retries
+            ):
                 received_msg = self.receive_message(sniffer)
                 self.log_message("  Received {} data bits".format(len(received_msg)))
 
@@ -356,14 +401,21 @@ class Simulator(QObject):
                 received_msg.message_type = new_message.message_type
 
                 self.log_message("  Check whether received data matches")
-                check_result, error_msg = self.check_message(received_msg, new_message, retry=retry,
-                                                             msg_index=msg.index())
+                check_result, error_msg = self.check_message(
+                    received_msg, new_message, retry=retry, msg_index=msg.index()
+                )
 
                 if check_result:
-                    decoded_msg = Message(received_msg.decoded_bits, 0,
-                                          received_msg.message_type, decoder=received_msg.decoder)
+                    decoded_msg = Message(
+                        received_msg.decoded_bits,
+                        0,
+                        received_msg.message_type,
+                        decoder=received_msg.decoder,
+                    )
                     msg.send_recv_messages.append(decoded_msg)
-                    self.transcript.append(msg.source, msg.destination, decoded_msg, msg.index())
+                    self.transcript.append(
+                        msg.source, msg.destination, decoded_msg, msg.index()
+                    )
                     self.log_message("Received message " + msg.index() + ": ")
                     self.log_message_labels(decoded_msg)
                     return
@@ -377,7 +429,9 @@ class Simulator(QObject):
                 self.stop()
 
     def log_message(self, message):
-        timestamp = '{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}'.format(datetime.datetime.now())
+        timestamp = "{0:%b} {0.day} {0:%H}:{0:%M}:{0:%S}.{0:%f}".format(
+            datetime.datetime.now()
+        )
 
         if isinstance(message, list) and len(message) > 0:
             self.log_messages.append(timestamp + ": " + message[0])
@@ -387,7 +441,9 @@ class Simulator(QObject):
             self.log_messages.append(timestamp + ": " + message)
             logger.debug(message)
 
-    def check_message(self, received_msg, expected_msg, retry: int, msg_index: int) -> (bool, str):
+    def check_message(
+        self, received_msg, expected_msg, retry: int, msg_index: int
+    ) -> (bool, str):
         if len(received_msg.decoded_bits) == 0:
             return False, "Failed to decode message {}".format(msg_index)
 
@@ -400,7 +456,9 @@ class Simulator(QObject):
             start_exp, end_exp = expected_msg.get_label_range(lbl.label, 0, False)
 
             if isinstance(lbl.label, ChecksumLabel):
-                expected = lbl.label.calculate_checksum_for_message(received_msg, use_decoded_bits=True)
+                expected = lbl.label.calculate_checksum_for_message(
+                    received_msg, use_decoded_bits=True
+                )
                 start, end = received_msg.get_label_range(lbl.label, 0, True)
                 actual = received_msg.decoded_bits[start:end]
             else:
@@ -409,12 +467,27 @@ class Simulator(QObject):
 
             if actual != expected:
                 log_msg = []
-                log_msg.append("Attempt for message {} [{}/{}]".format(msg_index, retry + 1,
-                                                                       self.project_manager.simulator_retries))
-                log_msg.append(HTMLFormatter.indent_string("Mismatch for label: <b>{}</b>".format(lbl.name)))
-                expected_str = util.convert_bits_to_string(expected, lbl.label.display_format_index)
-                got_str = util.convert_bits_to_string(actual, lbl.label.display_format_index)
-                log_msg.append(HTMLFormatter.align_expected_and_got_value(expected_str, got_str, align_depth=2))
+                log_msg.append(
+                    "Attempt for message {} [{}/{}]".format(
+                        msg_index, retry + 1, self.project_manager.simulator_retries
+                    )
+                )
+                log_msg.append(
+                    HTMLFormatter.indent_string(
+                        "Mismatch for label: <b>{}</b>".format(lbl.name)
+                    )
+                )
+                expected_str = util.convert_bits_to_string(
+                    expected, lbl.label.display_format_index
+                )
+                got_str = util.convert_bits_to_string(
+                    actual, lbl.label.display_format_index
+                )
+                log_msg.append(
+                    HTMLFormatter.align_expected_and_got_value(
+                        expected_str, got_str, align_depth=2
+                    )
+                )
                 return False, log_msg
 
         return True, ""
@@ -426,14 +499,16 @@ class Simulator(QObject):
                 continue
 
             try:
-                data = message.plain_bits[lbl.start:lbl.end]
+                data = message.plain_bits[lbl.start : lbl.end]
             except IndexError:
                 return None
 
             lsb = lbl.display_bit_order_index == 1
             lsd = lbl.display_bit_order_index == 2
 
-            data = util.convert_bits_to_string(data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd)
+            data = util.convert_bits_to_string(
+                data, lbl.display_format_index, pad_zeros=True, lsb=lsb, lsd=lsd
+            )
             if data is None:
                 continue
 
@@ -448,11 +523,17 @@ class Simulator(QObject):
             return
 
         sender = self.sender
-        self.send_message(lsm.send_recv_messages[-1], lsm.repeat, sender, lsm.modulator_index)
+        self.send_message(
+            lsm.send_recv_messages[-1], lsm.repeat, sender, lsm.modulator_index
+        )
 
     def send_message(self, message, repeat, sender, modulator_index):
         modulator = self.modulators[modulator_index]
-        modulated = modulator.modulate(message.encoded_bits, pause=message.pause, dtype=self.sender.device.data_type)
+        modulated = modulator.modulate(
+            message.encoded_bits,
+            pause=message.pause,
+            dtype=self.sender.device.data_type,
+        )
 
         curr_repeat = 0
 
@@ -464,7 +545,9 @@ class Simulator(QObject):
         if len(sniffer.messages) > 0:
             return sniffer.messages.pop(0)
 
-        if QSignalSpy(sniffer.message_sniffed).wait(self.project_manager.simulator_timeout_ms):
+        if QSignalSpy(sniffer.message_sniffed).wait(
+            self.project_manager.simulator_timeout_ms
+        ):
             try:
                 return sniffer.messages.pop(0)
             except IndexError:
@@ -479,14 +562,23 @@ class Simulator(QObject):
         for source, destination, msg, msg_index in self.transcript[start:]:
             try:
                 data = msg.plain_bits_str if use_bit else msg.plain_hex_str
-                result.append(self.TRANSCRIPT_FORMAT.format(msg_index, source.shortname, destination.shortname, data))
+                result.append(
+                    self.TRANSCRIPT_FORMAT.format(
+                        msg_index, source.shortname, destination.shortname, data
+                    )
+                )
             except AttributeError:
                 result.append("")
         return result
 
     def generate_message_from_template(self, template_msg: SimulatorMessage):
-        new_message = Message(template_msg.plain_bits, pause=template_msg.pause, rssi=0,
-                              message_type=template_msg.message_type, decoder=template_msg.decoder)
+        new_message = Message(
+            template_msg.plain_bits,
+            pause=template_msg.pause,
+            rssi=0,
+            message_type=template_msg.message_type,
+            decoder=template_msg.decoder,
+        )
 
         for lbl in template_msg.children:  # type: SimulatorProtocolLabel
             if lbl.value_type_index == 2:
@@ -495,9 +587,11 @@ class Simulator(QObject):
                 assert valid
                 result = self.expression_parser.evaluate_node(node)
             elif lbl.value_type_index == 3:
-                transcript = self.transcript.get_for_participant(template_msg.source
-                                                                 if template_msg.source.simulate
-                                                                 else template_msg.destination)
+                transcript = self.transcript.get_for_participant(
+                    template_msg.source
+                    if template_msg.source.simulate
+                    else template_msg.destination
+                )
 
                 if template_msg.destination.simulate:
                     direction = "->" if template_msg.source.simulate else "<-"
@@ -507,13 +601,19 @@ class Simulator(QObject):
                 result = util.run_command(cmd, transcript, use_stdin=True)
                 if len(result) != lbl.end - lbl.start:
                     log_msg = "Result value of external program {}: {} ({}) does not match label length {}"
-                    logger.error(log_msg.format(cmd, result, len(result), lbl.end - lbl.start))
+                    logger.error(
+                        log_msg.format(cmd, result, len(result), lbl.end - lbl.start)
+                    )
                     continue
 
                 try:
-                    new_message[lbl.start:lbl.end] = array.array("B", (map(bool, map(int, result))))
+                    new_message[lbl.start : lbl.end] = array.array(
+                        "B", (map(bool, map(int, result)))
+                    )
                 except Exception as e:
-                    log_msg = "Could not assign {} to range because {}".format(result, e)
+                    log_msg = "Could not assign {} to range because {}".format(
+                        result, e
+                    )
                     logger.error(log_msg)
 
                 continue
@@ -534,7 +634,11 @@ class Simulator(QObject):
         bits = f_string.format(decimal_value)
 
         if len(bits) > lbl_len:
-            logger.warning("Value {0} too big for label {1}, bits truncated".format(decimal_value, label.name))
+            logger.warning(
+                "Value {0} too big for label {1}, bits truncated".format(
+                    decimal_value, label.name
+                )
+            )
 
         for i in range(lbl_len):
             message[label.start + i] = bool(int(bits[i]))

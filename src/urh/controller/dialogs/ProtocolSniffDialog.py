@@ -12,8 +12,17 @@ from urh.util import util
 class ProtocolSniffDialog(SendRecvDialog):
     protocol_accepted = pyqtSignal(list)
 
-    def __init__(self, project_manager, signal=None, signals=None, parent=None, testing_mode=False):
-        super().__init__(project_manager, is_tx=False, parent=parent, testing_mode=testing_mode)
+    def __init__(
+        self,
+        project_manager,
+        signal=None,
+        signals=None,
+        parent=None,
+        testing_mode=False,
+    ):
+        super().__init__(
+            project_manager, is_tx=False, parent=parent, testing_mode=testing_mode
+        )
 
         self.graphics_view = self.ui.graphicsView_sniff_Preview
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_sniff)
@@ -24,11 +33,16 @@ class ProtocolSniffDialog(SendRecvDialog):
 
         signals = [] if signals is None else signals
 
-        self.sniff_settings_widget = SniffSettingsWidget(project_manager=project_manager,
-                                                         device_name=self.selected_device_name,
-                                                         signal=signal, signals=signals,
-                                                         backend_handler=self.backend_handler)
-        self.ui.scrollAreaWidgetContents_2.layout().insertWidget(1, self.sniff_settings_widget)
+        self.sniff_settings_widget = SniffSettingsWidget(
+            project_manager=project_manager,
+            device_name=self.selected_device_name,
+            signal=signal,
+            signals=signals,
+            backend_handler=self.backend_handler,
+        )
+        self.ui.scrollAreaWidgetContents_2.layout().insertWidget(
+            1, self.sniff_settings_widget
+        )
         self.sniff_settings_widget.ui.btn_sniff_use_signal.setAutoDefault(False)
 
         self.sniffer = self.sniff_settings_widget.sniffer
@@ -57,19 +71,27 @@ class ProtocolSniffDialog(SendRecvDialog):
     def create_connects(self):
         super().create_connects()
         self.ui.btnAccept.clicked.connect(self.on_btn_accept_clicked)
-        self.sniff_settings_widget.sniff_parameters_changed.connect(self.device_parameters_changed.emit)
+        self.sniff_settings_widget.sniff_parameters_changed.connect(
+            self.device_parameters_changed.emit
+        )
 
-        self.sniff_settings_widget.sniff_setting_edited.connect(self.on_sniff_setting_edited)
+        self.sniff_settings_widget.sniff_setting_edited.connect(
+            self.on_sniff_setting_edited
+        )
         self.sniff_settings_widget.sniff_file_edited.connect(self.on_sniff_file_edited)
         self.sniffer.message_sniffed.connect(self.on_message_sniffed)
-        self.sniffer.qt_signals.sniff_device_errors_changed.connect(self.on_device_errors_changed)
+        self.sniffer.qt_signals.sniff_device_errors_changed.connect(
+            self.on_device_errors_changed
+        )
 
     def init_device(self):
         self.sniffer.device_name = self.selected_device_name
         self.device = self.sniffer.rcv_device
 
         self._create_device_connects()
-        self.scene_manager = SniffSceneManager(np.array([], dtype=self.device.data_type), parent=self)
+        self.scene_manager = SniffSceneManager(
+            np.array([], dtype=self.device.data_type), parent=self
+        )
 
     def emit_editing_finished_signals(self):
         super().emit_editing_finished_signals()
@@ -84,7 +106,9 @@ class ProtocolSniffDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_device_started(self):
-        self.scene_manager.data_array = self.device.data.real if hasattr(self.device.data, "real") else None
+        self.scene_manager.data_array = (
+            self.device.data.real if hasattr(self.device.data, "real") else None
+        )
 
         super().on_device_started()
 
@@ -93,8 +117,11 @@ class ProtocolSniffDialog(SendRecvDialog):
 
     @pyqtSlot()
     def on_sniff_setting_edited(self):
-        self.ui.txtEd_sniff_Preview.setPlainText(self.sniffer.decoded_to_string(self.view_type,
-                                                                                include_timestamps=self.show_timestamp))
+        self.ui.txtEd_sniff_Preview.setPlainText(
+            self.sniffer.decoded_to_string(
+                self.view_type, include_timestamps=self.show_timestamp
+            )
+        )
 
     @pyqtSlot()
     def on_start_clicked(self):
@@ -118,11 +145,14 @@ class ProtocolSniffDialog(SendRecvDialog):
             msg = self.sniffer.messages[index]
         except IndexError:
             return
-        new_data = self.sniffer.message_to_string(msg, self.view_type, include_timestamps=self.show_timestamp)
+        new_data = self.sniffer.message_to_string(
+            msg, self.view_type, include_timestamps=self.show_timestamp
+        )
         if new_data.strip():
             self.ui.txtEd_sniff_Preview.appendPlainText(new_data)
             self.ui.txtEd_sniff_Preview.verticalScrollBar().setValue(
-                self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum())
+                self.ui.txtEd_sniff_Preview.verticalScrollBar().maximum()
+            )
 
     @pyqtSlot()
     def on_btn_accept_clicked(self):

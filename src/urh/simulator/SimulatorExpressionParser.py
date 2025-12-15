@@ -26,7 +26,7 @@ class SimulatorExpressionParser(QObject):
         ast.BitAnd: op.and_,
         ast.LShift: op.lshift,
         ast.RShift: op.rshift,
-        ast.Invert: op.invert
+        ast.Invert: op.invert,
     }
 
     op_cond = {
@@ -38,7 +38,7 @@ class SimulatorExpressionParser(QObject):
         ast.Lt: op.lt,
         ast.LtE: op.le,
         ast.Gt: op.gt,
-        ast.GtE: op.ge
+        ast.GtE: op.ge,
     }
 
     operators = {}
@@ -55,11 +55,20 @@ class SimulatorExpressionParser(QObject):
         node = None
 
         try:
-            node = ast.parse(expr, mode='eval').body
-            self.validate_formula_node(node) if is_formula else self.validate_condition_node(node)
+            node = ast.parse(expr, mode="eval").body
+            self.validate_formula_node(
+                node
+            ) if is_formula else self.validate_condition_node(node)
         except SyntaxError as err:
             valid = False
-            message = "<pre>" + html.escape(expr) + "<br/>" + " " * err.offset + "^</pre>" + str(err)
+            message = (
+                "<pre>"
+                + html.escape(expr)
+                + "<br/>"
+                + " " * err.offset
+                + "^</pre>"
+                + str(err)
+            )
         else:
             message = self.formula_help if is_formula else self.rule_condition_help
 
@@ -67,15 +76,18 @@ class SimulatorExpressionParser(QObject):
 
     def evaluate_node(self, node):
         if isinstance(node, ast.BinOp):
-            return self.operators[type(node.op)](self.evaluate_node(node.left),
-                                                 self.evaluate_node(node.right))
+            return self.operators[type(node.op)](
+                self.evaluate_node(node.left), self.evaluate_node(node.right)
+            )
         elif isinstance(node, ast.UnaryOp):
             return self.operators[type(node.op)](self.evaluate_node(node.operand))
         elif isinstance(node, ast.Compare):
             to_string = isinstance(node.comparators[0], ast.Str)
 
-            return self.operators[type(node.ops[0])](self.evaluate_attribute_node(node.left, to_string),
-                                                     self.evaluate_node(node.comparators[0]))
+            return self.operators[type(node.ops[0])](
+                self.evaluate_attribute_node(node.left, to_string),
+                self.evaluate_node(node.comparators[0]),
+            )
         elif isinstance(node, ast.BoolOp):
             func = all if isinstance(node.op, ast.And) else any
             return func(self.evaluate_node(value) for value in node.values)
@@ -90,15 +102,25 @@ class SimulatorExpressionParser(QObject):
 
     def evaluate_attribute_node(self, node, to_string=False):
         identifier = node.value.id + "." + node.attr
-        if isinstance(self.simulator_config.item_dict[identifier], SimulatorProtocolLabel):
+        if isinstance(
+            self.simulator_config.item_dict[identifier], SimulatorProtocolLabel
+        ):
             label = self.simulator_config.item_dict[identifier]
             message = label.parent()
 
             start, end = message.get_label_range(label, 2 if to_string else 0, False)
-            return message.plain_ascii_str[start:end] if to_string else int(message.plain_bits_str[start:end], 2)
-        elif isinstance(self.simulator_config.item_dict[identifier], SimulatorCounterAction):
+            return (
+                message.plain_ascii_str[start:end]
+                if to_string
+                else int(message.plain_bits_str[start:end], 2)
+            )
+        elif isinstance(
+            self.simulator_config.item_dict[identifier], SimulatorCounterAction
+        ):
             return self.simulator_config.item_dict[identifier].value
-        elif isinstance(self.simulator_config.item_dict[identifier], SimulatorTriggerCommandAction):
+        elif isinstance(
+            self.simulator_config.item_dict[identifier], SimulatorTriggerCommandAction
+        ):
             return self.simulator_config.item_dict[identifier].return_code
 
     def validate_formula_node(self, node):
@@ -106,13 +128,17 @@ class SimulatorExpressionParser(QObject):
             return
         elif isinstance(node, ast.BinOp):
             if type(node.op) not in self.op_formula:
-                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+                self.raise_syntax_error(
+                    "unknown operator", node.lineno, node.col_offset
+                )
 
             self.validate_formula_node(node.left)
             self.validate_formula_node(node.right)
         elif isinstance(node, ast.UnaryOp):
             if type(node.op) not in self.op_formula:
-                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+                self.raise_syntax_error(
+                    "unknown operator", node.lineno, node.col_offset
+                )
 
             self.validate_formula_node(node.operand)
         elif isinstance(node, ast.Attribute):
@@ -123,7 +149,9 @@ class SimulatorExpressionParser(QObject):
     def validate_condition_node(self, node):
         if isinstance(node, ast.UnaryOp):
             if type(node.op) not in self.op_cond:
-                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+                self.raise_syntax_error(
+                    "unknown operator", node.lineno, node.col_offset
+                )
 
             self.validate_condition_node(node.operand)
         elif isinstance(node, ast.Compare):
@@ -131,7 +159,9 @@ class SimulatorExpressionParser(QObject):
                 self.raise_syntax_error("", node.lineno, node.col_offset)
 
             if type(node.ops[0]) not in self.op_cond:
-                self.raise_syntax_error("unknown operator", node.lineno, node.col_offset)
+                self.raise_syntax_error(
+                    "unknown operator", node.lineno, node.col_offset
+                )
 
             self.validate_compare_nodes(node.left, node.comparators[0])
         elif isinstance(node, ast.BoolOp):
@@ -142,15 +172,20 @@ class SimulatorExpressionParser(QObject):
 
     def validate_compare_nodes(self, left, right):
         if not isinstance(left, ast.Attribute):
-            self.raise_syntax_error("the left-hand side of a comparison must be a label identifier",
-                                    left.lineno, left.col_offset)
+            self.raise_syntax_error(
+                "the left-hand side of a comparison must be a label identifier",
+                left.lineno,
+                left.col_offset,
+            )
 
         self.validate_attribute_node(left)
 
         if not isinstance(right, (ast.Num, ast.Str, ast.Attribute)):
             self.raise_syntax_error(
                 "the right-hand side of a comparison must be a number, a string or a label identifier",
-                right.lineno, right.col_offset)
+                right.lineno,
+                right.col_offset,
+            )
 
         if isinstance(right, ast.Attribute):
             self.validate_attribute_node(right)
@@ -162,20 +197,32 @@ class SimulatorExpressionParser(QObject):
         identifier = node.value.id + "." + node.attr
 
         if not self.is_valid_identifier(identifier):
-            self.raise_syntax_error("'" + identifier + "' is not a valid label identifier",
-                                    node.lineno, node.col_offset)
+            self.raise_syntax_error(
+                "'" + identifier + "' is not a valid label identifier",
+                node.lineno,
+                node.col_offset,
+            )
 
     def is_valid_identifier(self, identifier):
         try:
             item = self.simulator_config.item_dict[identifier]
-            return isinstance(item, SimulatorProtocolLabel) or\
-                   isinstance(item, SimulatorCounterAction) or \
-                   (isinstance(item, SimulatorTriggerCommandAction) and identifier.endswith("rc"))
+            return (
+                isinstance(item, SimulatorProtocolLabel)
+                or isinstance(item, SimulatorCounterAction)
+                or (
+                    isinstance(item, SimulatorTriggerCommandAction)
+                    and identifier.endswith("rc")
+                )
+            )
         except KeyError:
             return False
 
     def get_identifiers(self):
-        return [identifier for identifier in self.simulator_config.item_dict if self.is_valid_identifier(identifier)]
+        return [
+            identifier
+            for identifier in self.simulator_config.item_dict
+            if self.is_valid_identifier(identifier)
+        ]
 
     def raise_syntax_error(self, message, lineno, col_offset):
         if message == "":

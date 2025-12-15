@@ -28,7 +28,12 @@ class Ui_Decoder(object):
         self.saveas = QtWidgets.QPushButton(parent=Decoder)
         self.saveas.setObjectName("saveas")
         self.horizontalLayout_2.addWidget(self.saveas)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40,
+            20,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -39,26 +44,38 @@ class Ui_Decoder(object):
         self.label_8.setObjectName("label_8")
         self.verticalLayout_2.addWidget(self.label_8)
         self.basefunctions = QtWidgets.QListWidget(parent=Decoder)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.basefunctions.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.basefunctions.sizePolicy().hasHeightForWidth()
+        )
         self.basefunctions.setSizePolicy(sizePolicy)
         self.basefunctions.setDragEnabled(True)
-        self.basefunctions.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragOnly)
+        self.basefunctions.setDragDropMode(
+            QtWidgets.QAbstractItemView.DragDropMode.DragOnly
+        )
         self.basefunctions.setObjectName("basefunctions")
         self.verticalLayout_2.addWidget(self.basefunctions)
         self.label_9 = QtWidgets.QLabel(parent=Decoder)
         self.label_9.setObjectName("label_9")
         self.verticalLayout_2.addWidget(self.label_9)
         self.additionalfunctions = QtWidgets.QListWidget(parent=Decoder)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.additionalfunctions.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.additionalfunctions.sizePolicy().hasHeightForWidth()
+        )
         self.additionalfunctions.setSizePolicy(sizePolicy)
         self.additionalfunctions.setDragEnabled(True)
-        self.additionalfunctions.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragOnly)
+        self.additionalfunctions.setDragDropMode(
+            QtWidgets.QAbstractItemView.DragDropMode.DragOnly
+        )
         self.additionalfunctions.setObjectName("additionalfunctions")
         self.verticalLayout_2.addWidget(self.additionalfunctions)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
@@ -74,14 +91,18 @@ class Ui_Decoder(object):
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.decoderchain = ListWidget(parent=Decoder)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.decoderchain.sizePolicy().hasHeightForWidth())
         self.decoderchain.setSizePolicy(sizePolicy)
         self.decoderchain.setAcceptDrops(True)
         self.decoderchain.setDragEnabled(True)
-        self.decoderchain.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragDrop)
+        self.decoderchain.setDragDropMode(
+            QtWidgets.QAbstractItemView.DragDropMode.DragDrop
+        )
         self.decoderchain.setDefaultDropAction(QtCore.Qt.DropAction.MoveAction)
         self.decoderchain.setTextElideMode(QtCore.Qt.TextElideMode.ElideMiddle)
         self.decoderchain.setResizeMode(QtWidgets.QListView.ResizeMode.Fixed)
@@ -92,16 +113,24 @@ class Ui_Decoder(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.gb_infoandoptions = QtWidgets.QGroupBox(parent=Decoder)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.gb_infoandoptions.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.gb_infoandoptions.sizePolicy().hasHeightForWidth()
+        )
         self.gb_infoandoptions.setSizePolicy(sizePolicy)
         self.gb_infoandoptions.setObjectName("gb_infoandoptions")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.gb_infoandoptions)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.info = QtWidgets.QLabel(parent=self.gb_infoandoptions)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.info.sizePolicy().hasHeightForWidth())
@@ -110,12 +139,19 @@ class Ui_Decoder(object):
         font.setItalic(True)
         self.info.setFont(font)
         self.info.setTextFormat(QtCore.Qt.TextFormat.PlainText)
-        self.info.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
+        self.info.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignTop
+        )
         self.info.setWordWrap(True)
         self.info.setObjectName("info")
         self.verticalLayout_5.addWidget(self.info)
         self.optionWidget = QtWidgets.QStackedWidget(parent=self.gb_infoandoptions)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.optionWidget.sizePolicy().hasHeightForWidth())
@@ -157,8 +193,12 @@ class Ui_Decoder(object):
         self.label_10.setObjectName("label_10")
         self.gridLayout.addWidget(self.label_10, 0, 1, 1, 1)
         self.substitution = QtWidgets.QTableWidget(parent=self.page_substitution)
-        self.substitution.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
-        self.substitution.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.substitution.setVerticalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
+        )
+        self.substitution.setHorizontalScrollMode(
+            QtWidgets.QAbstractItemView.ScrollMode.ScrollPerPixel
+        )
         self.substitution.setObjectName("substitution")
         self.substitution.setColumnCount(0)
         self.substitution.setRowCount(0)
@@ -192,7 +232,12 @@ class Ui_Decoder(object):
         self.btnChooseEncoder.setObjectName("btnChooseEncoder")
         self.horizontalLayout_4.addWidget(self.btnChooseEncoder)
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 158, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20,
+            158,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.verticalLayout_6.addItem(spacerItem1)
         self.optionWidget.addWidget(self.page_external)
         self.page_data_whitening = QtWidgets.QWidget()
@@ -203,13 +248,17 @@ class Ui_Decoder(object):
         self.label_13 = QtWidgets.QLabel(parent=self.page_data_whitening)
         self.label_13.setGeometry(QtCore.QRect(180, 0, 1461, 20))
         self.label_13.setObjectName("label_13")
-        self.datawhitening_polynomial = QtWidgets.QLineEdit(parent=self.page_data_whitening)
+        self.datawhitening_polynomial = QtWidgets.QLineEdit(
+            parent=self.page_data_whitening
+        )
         self.datawhitening_polynomial.setGeometry(QtCore.QRect(0, 30, 171, 23))
         self.datawhitening_polynomial.setObjectName("datawhitening_polynomial")
         self.label_14 = QtWidgets.QLabel(parent=self.page_data_whitening)
         self.label_14.setGeometry(QtCore.QRect(180, 30, 1461, 21))
         self.label_14.setObjectName("label_14")
-        self.datawhitening_overwrite_crc = QtWidgets.QCheckBox(parent=self.page_data_whitening)
+        self.datawhitening_overwrite_crc = QtWidgets.QCheckBox(
+            parent=self.page_data_whitening
+        )
         self.datawhitening_overwrite_crc.setGeometry(QtCore.QRect(0, 60, 1641, 31))
         self.datawhitening_overwrite_crc.setObjectName("datawhitening_overwrite_crc")
         self.optionWidget.addWidget(self.page_data_whitening)
@@ -280,7 +329,12 @@ class Ui_Decoder(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout)
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            40,
+            20,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+        )
         self.gridLayout_2.addItem(spacerItem2, 0, 1, 1, 1)
         self.inpt = QtWidgets.QLineEdit(parent=Decoder)
         self.inpt.setInputMethodHints(QtCore.Qt.InputMethodHint.ImhDigitsOnly)
@@ -308,7 +362,11 @@ class Ui_Decoder(object):
         self.gridLayout_2.addWidget(self.label_3, 3, 0, 1, 1)
         self.verticalLayout_4.addLayout(self.gridLayout_2)
         self.decoding_errors_label = QtWidgets.QLabel(parent=Decoder)
-        self.decoding_errors_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.decoding_errors_label.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignRight
+            | QtCore.Qt.AlignmentFlag.AlignTrailing
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.decoding_errors_label.setObjectName("decoding_errors_label")
         self.verticalLayout_4.addWidget(self.decoding_errors_label)
 
@@ -318,25 +376,44 @@ class Ui_Decoder(object):
     def retranslateUi(self, Decoder):
         _translate = QtCore.QCoreApplication.translate
         Decoder.setWindowTitle(_translate("Decoder", "Decoding"))
-        self.combobox_decodings.setItemText(0, _translate("Decoder", "Non Return to Zero (NRZ)"))
+        self.combobox_decodings.setItemText(
+            0, _translate("Decoder", "Non Return to Zero (NRZ)")
+        )
         self.combobox_decodings.setItemText(1, _translate("Decoder", "Empty"))
         self.delete_decoding.setText(_translate("Decoder", "Delete"))
         self.saveas.setText(_translate("Decoder", "Save as..."))
         self.label_8.setText(_translate("Decoder", "Base Functions"))
         self.label_9.setText(_translate("Decoder", "Additional Functions"))
         self.label.setText(_translate("Decoder", "Your Decoding"))
-        self.gb_infoandoptions.setTitle(_translate("Decoder", "Information and Options"))
-        self.info.setText(_translate("Decoder", "Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information."))
+        self.gb_infoandoptions.setTitle(
+            _translate("Decoder", "Information and Options")
+        )
+        self.info.setText(
+            _translate(
+                "Decoder",
+                "Please drag functions from the categories base and additional to the decoding process (Decoder). You can reorder functions by drag and drop and remove functions by dropping them outside the Decoder box. Click on every function for detailed information.",
+            )
+        )
         self.label_5.setText(_translate("Decoder", "Number of redundant bits"))
-        self.label_6.setText(_translate("Decoder", "Carrier (\'1_\' -> 1_1_1_...)"))
+        self.label_6.setText(_translate("Decoder", "Carrier ('1_' -> 1_1_1_...)"))
         self.label_10.setText(_translate("Decoder", "Rows"))
         self.label_11.setText(_translate("Decoder", "Decoder"))
         self.btnChooseDecoder.setText(_translate("Decoder", "..."))
         self.label_12.setText(_translate("Decoder", "Encoder"))
         self.btnChooseEncoder.setText(_translate("Decoder", "..."))
-        self.label_13.setText(_translate("Decoder", "Synchronization bytes (hex coded)"))
-        self.label_14.setText(_translate("Decoder", "Data whitening polynomial (LFSR, hex, w/o first bit)"))
-        self.datawhitening_overwrite_crc.setText(_translate("Decoder", "Overwrite CRC16 field with correct value when encoding"))
+        self.label_13.setText(
+            _translate("Decoder", "Synchronization bytes (hex coded)")
+        )
+        self.label_14.setText(
+            _translate(
+                "Decoder", "Data whitening polynomial (LFSR, hex, w/o first bit)"
+            )
+        )
+        self.datawhitening_overwrite_crc.setText(
+            _translate(
+                "Decoder", "Overwrite CRC16 field with correct value when encoding"
+            )
+        )
         self.cutmark.setText(_translate("Decoder", "1010"))
         self.label_15.setText(_translate("Decoder", "Sequence"))
         self.rB_delbefore.setText(_translate("Decoder", "&Cut before"))
@@ -344,13 +421,25 @@ class Ui_Decoder(object):
         self.rB_delbeforepos.setText(_translate("Decoder", "Cut before"))
         self.rB_delafterpos.setText(_translate("Decoder", "Cut after"))
         self.label_16.setText(_translate("Decoder", "Position (in bit)"))
-        self.label_17.setText(_translate("Decoder", "Maximum (<=) length of 1-sequence for: Low (0)"))
-        self.label_18.setText(_translate("Decoder", "Minimum (>=) length of 1-sequence for: High (1)"))
-        self.label_19.setText(_translate("Decoder", "Number of 0s between 1-sequences (just for encoding)"))
+        self.label_17.setText(
+            _translate("Decoder", "Maximum (<=) length of 1-sequence for: Low (0)")
+        )
+        self.label_18.setText(
+            _translate("Decoder", "Minimum (>=) length of 1-sequence for: High (1)")
+        )
+        self.label_19.setText(
+            _translate(
+                "Decoder", "Number of 0s between 1-sequences (just for encoding)"
+            )
+        )
         self.btnAddtoYourDecoding.setText(_translate("Decoder", "Add to Your Decoding"))
         self.combobox_signals.setItemText(0, _translate("Decoder", "Test"))
         self.label_2.setText(_translate("Decoder", "Signal {0,1}:"))
         self.label_3.setText(_translate("Decoder", "Decoded Bits:"))
-        self.decoding_errors_label.setText(_translate("Decoder", "[Decoding Errors = 0]"))
+        self.decoding_errors_label.setText(
+            _translate("Decoder", "[Decoding Errors = 0]")
+        )
+
+
 from urh.ui.ListWidget import ListWidget
 from urh.ui.views.ZoomableGraphicView import ZoomableGraphicView

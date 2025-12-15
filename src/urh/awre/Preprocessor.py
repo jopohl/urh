@@ -22,7 +22,9 @@ class Preprocessor(object):
 
     def __init__(self, bitvectors: list, existing_message_types: dict = None):
         self.bitvectors = bitvectors  # type: list[np.ndarray]
-        self.existing_message_types = existing_message_types if existing_message_types is not None else dict()
+        self.existing_message_types = (
+            existing_message_types if existing_message_types is not None else dict()
+        )
 
     def preprocess(self) -> (np.ndarray, int):
         raw_preamble_positions = self.get_raw_preamble_positions()
@@ -34,11 +36,15 @@ class Preprocessor(object):
             sync_words = existing_sync_words
 
         preamble_starts = raw_preamble_positions[:, 0]
-        preamble_lengths = self.get_preamble_lengths_from_sync_words(sync_words, preamble_starts=preamble_starts)
+        preamble_lengths = self.get_preamble_lengths_from_sync_words(
+            sync_words, preamble_starts=preamble_starts
+        )
         sync_len = len(sync_words[0]) if len(sync_words) > 0 else 0
         return preamble_starts, preamble_lengths, sync_len
 
-    def get_preamble_lengths_from_sync_words(self, sync_words: list, preamble_starts: np.ndarray):
+    def get_preamble_lengths_from_sync_words(
+        self, sync_words: list, preamble_starts: np.ndarray
+    ):
         """
         Get the preamble lengths based on the found sync words for all messages.
         If there should be more than one sync word in a message, use the first one.
@@ -65,7 +71,9 @@ class Preprocessor(object):
                         preamble_lengths.append(sync_start - preamble_starts[i])
 
                     # Consider case where sync word starts with preamble pattern
-                    sync_start = bits.find(sync_word, sync_start + 1, sync_start + 2 * len(sync_word))
+                    sync_start = bits.find(
+                        sync_word, sync_start + 1, sync_start + 2 * len(sync_word)
+                    )
 
                     if sync_start != -1:
                         if sync_start - preamble_starts[i] >= 2:
@@ -79,12 +87,18 @@ class Preprocessor(object):
                 result[i] = preamble_lengths[0]
             else:
                 # consider all indices not more than one byte before first one
-                preamble_lengths = list(filter(lambda x: x < preamble_lengths[0] + 7, preamble_lengths))
+                preamble_lengths = list(
+                    filter(lambda x: x < preamble_lengths[0] + 7, preamble_lengths)
+                )
 
                 # take the smallest preamble_length, but prefer a greater one if it is divisible by 8 (or 4)
-                preamble_length = next((pl for pl in preamble_lengths if pl % 8 == 0), None)
+                preamble_length = next(
+                    (pl for pl in preamble_lengths if pl % 8 == 0), None
+                )
                 if preamble_length is None:
-                    preamble_length = next((pl for pl in preamble_lengths if pl % 4 == 0), None)
+                    preamble_length = next(
+                        (pl for pl in preamble_lengths if pl % 4 == 0), None
+                    )
                 if preamble_length is None:
                     preamble_length = preamble_lengths[0]
                 result[i] = preamble_length
@@ -95,7 +109,9 @@ class Preprocessor(object):
         difference_matrix = self.get_difference_matrix()
         if raw_preamble_positions is None:
             raw_preamble_positions = self.get_raw_preamble_positions()
-        return self.determine_sync_candidates(raw_preamble_positions, difference_matrix, n_gram_length=4)
+        return self.determine_sync_candidates(
+            raw_preamble_positions, difference_matrix, n_gram_length=4
+        )
 
     @staticmethod
     def merge_possible_sync_words(possible_sync_words: dict, n_gram_length: int):
@@ -112,25 +128,31 @@ class Preprocessor(object):
         for sync1, sync2 in itertools.combinations(possible_sync_words, 2):
             common_prefix = os.path.commonprefix([sync1, sync2])
             if len(common_prefix) > n_gram_length:
-                result[common_prefix] += possible_sync_words[sync1] + possible_sync_words[sync2]
+                result[common_prefix] += (
+                    possible_sync_words[sync1] + possible_sync_words[sync2]
+                )
             else:
                 result[sync1] += possible_sync_words[sync1]
                 result[sync2] += possible_sync_words[sync2]
         return result
 
-    def determine_sync_candidates(self,
-                                  raw_preamble_positions: np.ndarray,
-                                  difference_matrix: np.ndarray,
-                                  n_gram_length=4) -> list:
-
-        possible_sync_words = awre_util.find_possible_sync_words(difference_matrix, raw_preamble_positions,
-                                                                 self.bitvectors, n_gram_length)
+    def determine_sync_candidates(
+        self,
+        raw_preamble_positions: np.ndarray,
+        difference_matrix: np.ndarray,
+        n_gram_length=4,
+    ) -> list:
+        possible_sync_words = awre_util.find_possible_sync_words(
+            difference_matrix, raw_preamble_positions, self.bitvectors, n_gram_length
+        )
 
         self.__debug("Possible sync words", possible_sync_words)
         if len(possible_sync_words) == 0:
             return []
 
-        possible_sync_words = self.merge_possible_sync_words(possible_sync_words, n_gram_length)
+        possible_sync_words = self.merge_possible_sync_words(
+            possible_sync_words, n_gram_length
+        )
         self.__debug("Merged sync words", possible_sync_words)
 
         scores = self.__score_sync_lengths(possible_sync_words)
@@ -138,17 +160,24 @@ class Preprocessor(object):
         sorted_scores = sorted(scores, reverse=True, key=scores.get)
         estimated_sync_length = sorted_scores[0]
         if estimated_sync_length % 8 != 0:
-            for other in filter(lambda x: 0 < estimated_sync_length-x < 7, sorted_scores):
+            for other in filter(
+                lambda x: 0 < estimated_sync_length - x < 7, sorted_scores
+            ):
                 if other % 8 == 0:
                     estimated_sync_length = other
                     break
 
         # Now we look at all possible sync words with this length
-        sync_words = {word: frequency for word, frequency in possible_sync_words.items()
-                      if len(word) == estimated_sync_length}
+        sync_words = {
+            word: frequency
+            for word, frequency in possible_sync_words.items()
+            if len(word) == estimated_sync_length
+        }
         self.__debug("Sync words", sync_words)
 
-        additional_syncs = self.__find_additional_sync_words(estimated_sync_length, sync_words, possible_sync_words)
+        additional_syncs = self.__find_additional_sync_words(
+            estimated_sync_length, sync_words, possible_sync_words
+        )
 
         if additional_syncs:
             self.__debug("Found additional sync words", additional_syncs)
@@ -161,7 +190,9 @@ class Preprocessor(object):
 
         return result
 
-    def __find_additional_sync_words(self, sync_length: int, present_sync_words, possible_sync_words) -> dict:
+    def __find_additional_sync_words(
+        self, sync_length: int, present_sync_words, possible_sync_words
+    ) -> dict:
         """
         Look for additional sync words, in case we had varying preamble lengths and multiple sync words
         (see test_with_three_syncs_different_preamble_lengths for an example)
@@ -171,29 +202,48 @@ class Preprocessor(object):
         :type possible_sync_words: dict
         :return:
         """
-        np_syn = [np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
-                  for sync_word in present_sync_words]
+        np_syn = [
+            np.fromiter(map(int, sync_word), dtype=np.uint8, count=len(sync_word))
+            for sync_word in present_sync_words
+        ]
 
-        messages_without_sync = [i for i, bv in enumerate(self.bitvectors)
-                                 if not any(awre_util.find_occurrences(bv, s, return_after_first=True) for s in np_syn)]
+        messages_without_sync = [
+            i
+            for i, bv in enumerate(self.bitvectors)
+            if not any(
+                awre_util.find_occurrences(bv, s, return_after_first=True)
+                for s in np_syn
+            )
+        ]
 
         result = dict()
         if len(messages_without_sync) == 0:
             return result
 
         # Is there another sync word that applies to all messages without sync?
-        additional_candidates = {word: score for word, score in possible_sync_words.items()
-                                 if len(word) > sync_length and not any(s in word for s in present_sync_words)}
+        additional_candidates = {
+            word: score
+            for word, score in possible_sync_words.items()
+            if len(word) > sync_length
+            and not any(s in word for s in present_sync_words)
+        }
 
-        for sync in sorted(additional_candidates, key=additional_candidates.get, reverse=True):
+        for sync in sorted(
+            additional_candidates, key=additional_candidates.get, reverse=True
+        ):
             if len(messages_without_sync) == 0:
                 break
 
             score = additional_candidates[sync]
             s = sync[:sync_length]
             np_s = np.fromiter(s, dtype=np.uint8, count=len(s))
-            matching = [i for i in messages_without_sync
-                        if awre_util.find_occurrences(self.bitvectors[i], np_s, return_after_first=True)]
+            matching = [
+                i
+                for i in messages_without_sync
+                if awre_util.find_occurrences(
+                    self.bitvectors[i], np_s, return_after_first=True
+                )
+            ]
             if matching:
                 result[s] = score
                 for m in matching:
@@ -210,7 +260,9 @@ class Preprocessor(object):
 
         for i, bitvector in enumerate(self.bitvectors):
             if i in self.existing_message_types:
-                preamble_label = self.existing_message_types[i].get_first_label_with_type(FieldType.Function.PREAMBLE)
+                preamble_label = self.existing_message_types[
+                    i
+                ].get_first_label_with_type(FieldType.Function.PREAMBLE)
             else:
                 preamble_label = None
 
@@ -218,7 +270,11 @@ class Preprocessor(object):
                 start, lower, upper = awre_util.get_raw_preamble_position(bitvector)
             else:
                 # If this message is already labeled with a preamble we just use it's values
-                start, lower, upper = preamble_label.start, preamble_label.end, preamble_label.end
+                start, lower, upper = (
+                    preamble_label.start,
+                    preamble_label.end,
+                    preamble_label.end,
+                )
 
             result[i, 0] = start
             result[i, 1] = lower - start
@@ -246,12 +302,16 @@ class Preprocessor(object):
         result = []
         for i, bitvector in enumerate(self.bitvectors):
             if i in self.existing_message_types:
-                sync_label = self.existing_message_types[i].get_first_label_with_type(FieldType.Function.SYNC)
+                sync_label = self.existing_message_types[i].get_first_label_with_type(
+                    FieldType.Function.SYNC
+                )
             else:
                 sync_label = None
 
             if sync_label is not None:
-                result.append("".join(map(str, bitvector[sync_label.start:sync_label.end])))
+                result.append(
+                    "".join(map(str, bitvector[sync_label.start : sync_label.end]))
+                )
         return result
 
     def __debug(self, *args):

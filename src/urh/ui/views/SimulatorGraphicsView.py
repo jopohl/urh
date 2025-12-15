@@ -30,27 +30,37 @@ class SimulatorGraphicsView(QGraphicsView):
         self.delete_action = QAction(self.tr("Delete selected items"), self)
         self.delete_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
-        self.delete_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.addAction(self.delete_action)
 
         self.select_all_action = QAction(self.tr("Select all"), self)
         self.select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         self.select_all_action.triggered.connect(self.on_select_all_action_triggered)
-        self.delete_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.addAction(self.select_all_action)
 
-        self.copy_action = QAction(self.tr("Copy selected items"), self)  # type: QAction
+        self.copy_action = QAction(
+            self.tr("Copy selected items"), self
+        )  # type: QAction
         self.copy_action.setShortcut(QKeySequence.StandardKey.Copy)
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
-        self.copy_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.copy_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.addAction(self.copy_action)
 
         self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
         self.paste_action.setShortcut(QKeySequence.StandardKey.Paste)
         self.paste_action.triggered.connect(self.on_paste_action_triggered)
-        self.paste_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.paste_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.paste_action.setIcon(QIcon.fromTheme("edit-paste"))
         self.addAction(self.paste_action)
 
@@ -59,9 +69,13 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_add_message_action_triggered(self):
-        num_bits, ok = QInputDialog.getInt(self,
-                                           self.tr("How many bits shall the new message have?"),
-                                           self.tr("Number of bits:"), 42, 1)
+        num_bits, ok = QInputDialog.getInt(
+            self,
+            self.tr("How many bits shall the new message have?"),
+            self.tr("Number of bits:"),
+            42,
+            1,
+        )
 
         if ok:
             self.add_empty_message(num_bits)
@@ -77,44 +91,64 @@ class SimulatorGraphicsView(QGraphicsView):
         else:
             position = QAbstractItemView.DropIndicatorPosition.BelowItem
 
-        message = self.scene().add_message(plain_bits=[0] * num_bits,
-                                           pause=0,
-                                           message_type=message_type,
-                                           ref_item=ref_item,
-                                           position=position)
+        message = self.scene().add_message(
+            plain_bits=[0] * num_bits,
+            pause=0,
+            message_type=message_type,
+            ref_item=ref_item,
+            position=position,
+        )
         self.jump_to_item(message)
 
     @pyqtSlot()
     def on_add_rule_action_triggered(self):
-        rule = self.scene().add_rule(self.context_menu_item, QAbstractItemView.DropIndicatorPosition.BelowItem)
+        rule = self.scene().add_rule(
+            self.context_menu_item, QAbstractItemView.DropIndicatorPosition.BelowItem
+        )
         if_cond = rule.children[0]
         self.jump_to_item(if_cond)
 
     @pyqtSlot()
     def on_add_goto_action_triggered(self):
         ref_item = self.context_menu_item
-        position = QAbstractItemView.DropIndicatorPosition.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.DropIndicatorPosition.BelowItem
+        position = (
+            QAbstractItemView.DropIndicatorPosition.OnItem
+            if isinstance(ref_item, RuleConditionItem)
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
+        )
         ga = self.scene().add_goto_action(ref_item, position)
         self.jump_to_item(ga)
 
     @pyqtSlot()
     def on_add_sleep_action_triggered(self):
         ref_item = self.context_menu_item
-        position = QAbstractItemView.DropIndicatorPosition.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.DropIndicatorPosition.BelowItem
+        position = (
+            QAbstractItemView.DropIndicatorPosition.OnItem
+            if isinstance(ref_item, RuleConditionItem)
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
+        )
         sa = self.scene().add_sleep_action(ref_item, position)
         self.jump_to_item(sa)
 
     @pyqtSlot()
     def on_add_counter_action_triggered(self):
         ref_item = self.context_menu_item
-        position = QAbstractItemView.DropIndicatorPosition.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.DropIndicatorPosition.BelowItem
+        position = (
+            QAbstractItemView.DropIndicatorPosition.OnItem
+            if isinstance(ref_item, RuleConditionItem)
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
+        )
         ca = self.scene().add_counter_action(ref_item, position)
         self.jump_to_item(ca)
 
     @pyqtSlot()
     def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
-        position = QAbstractItemView.DropIndicatorPosition.OnItem if isinstance(ref_item, RuleConditionItem) else QAbstractItemView.DropIndicatorPosition.BelowItem
+        position = (
+            QAbstractItemView.DropIndicatorPosition.OnItem
+            if isinstance(ref_item, RuleConditionItem)
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
+        )
         pa = self.scene().add_trigger_command_action(ref_item, position)
         self.jump_to_item(pa)
 
@@ -180,7 +214,9 @@ class SimulatorGraphicsView(QGraphicsView):
         self.scene().select_messages_with_participant(self.sender().data())
 
     def on_select_to_action_triggered(self):
-        self.scene().select_messages_with_participant(self.sender().data(), from_part=False)
+        self.scene().select_messages_with_participant(
+            self.sender().data(), from_part=False
+        )
 
     def create_context_menu(self):
         menu = QMenu()
@@ -206,17 +242,23 @@ class SimulatorGraphicsView(QGraphicsView):
         add_counter_action = action_menu.addAction("Counter")
         add_counter_action.triggered.connect(self.on_add_counter_action_triggered)
         trigger_command_action = action_menu.addAction("Trigger command")
-        trigger_command_action.triggered.connect(self.on_trigger_command_action_triggered)
+        trigger_command_action.triggered.connect(
+            self.on_trigger_command_action_triggered
+        )
 
         if isinstance(self.context_menu_item, RuleConditionItem):
             menu.addSeparator()
 
             add_else_if_cond_action = menu.addAction("Add else if block")
-            add_else_if_cond_action.triggered.connect(self.on_add_else_if_cond_action_triggered)
+            add_else_if_cond_action.triggered.connect(
+                self.on_add_else_if_cond_action_triggered
+            )
 
             if not self.context_menu_item.parentItem().has_else_condition:
                 add_else_cond_action = menu.addAction("Add else block")
-                add_else_cond_action.triggered.connect(self.on_add_else_cond_action_triggered)
+                add_else_cond_action.triggered.connect(
+                    self.on_add_else_cond_action_triggered
+                )
 
         menu.addSeparator()
         menu.addAction(self.copy_action)
@@ -237,8 +279,12 @@ class SimulatorGraphicsView(QGraphicsView):
                 va.setActionGroup(value_type_group)
                 va.setData(i)
 
-                if all(lbl.value_type_index == i for msg in messages for lbl in msg.message_type
-                       if not lbl.is_checksum_label):
+                if all(
+                    lbl.value_type_index == i
+                    for msg in messages
+                    for lbl in msg.message_type
+                    if not lbl.is_checksum_label
+                ):
                     va.setChecked(True)
 
                 va.triggered.connect(self.on_set_value_type_action_triggered)
@@ -285,24 +331,35 @@ class SimulatorGraphicsView(QGraphicsView):
                 swap_part_action.triggered.connect(self.on_swap_part_action_triggered)
                 swap_part_action.setIcon(QIcon.fromTheme("object-flip-horizontal"))
 
-            pause_action = menu.addAction("Set subsequent pause ({} samples)".format(self.context_menu_item.model_item.pause))
+            pause_action = menu.addAction(
+                "Set subsequent pause ({} samples)".format(
+                    self.context_menu_item.model_item.pause
+                )
+            )
             pause_action.triggered.connect(self.on_pause_action_triggered)
 
         menu.addSeparator()
 
         if len(self.scene().get_all_message_items()) > 1:
             consolidate_messages_action = menu.addAction("Consolidate messages")
-            consolidate_messages_action.triggered.connect(self.on_consolidate_messages_action_triggered)
+            consolidate_messages_action.triggered.connect(
+                self.on_consolidate_messages_action_triggered
+            )
 
-        if len([item for item in self.scene().items() if isinstance(item, GraphicsItem)]):
+        if len(
+            [item for item in self.scene().items() if isinstance(item, GraphicsItem)]
+        ):
             # menu.addAction(self.select_all_action)
             clear_all_action = menu.addAction("Clear all")
             clear_all_action.triggered.connect(self.on_clear_all_action_triggered)
             clear_all_action.setIcon(QIcon.fromTheme("edit-clear"))
 
-        self.add_select_actions_to_menu(menu, self.scene(),
-                                        select_to_trigger=self.on_select_to_action_triggered,
-                                        select_from_trigger=self.on_select_from_action_triggered)
+        self.add_select_actions_to_menu(
+            menu,
+            self.scene(),
+            select_to_trigger=self.on_select_to_action_triggered,
+            select_from_trigger=self.on_select_from_action_triggered,
+        )
 
         return menu
 
@@ -332,7 +389,11 @@ class SimulatorGraphicsView(QGraphicsView):
             item.setSelected(True)
 
     def contextMenuEvent(self, event):
-        items = [item for item in self.items(event.pos()) if isinstance(item, GraphicsItem) and item.is_selectable()]
+        items = [
+            item
+            for item in self.items(event.pos())
+            if isinstance(item, GraphicsItem) and item.is_selectable()
+        ]
         self.context_menu_item = None if len(items) == 0 else items[0]
         menu = self.create_context_menu()
         menu.exec(event.globalPos())
@@ -349,15 +410,22 @@ class SimulatorGraphicsView(QGraphicsView):
 
     @pyqtSlot()
     def on_pause_action_triggered(self):
-        p = self.context_menu_item.model_item.pause if isinstance(self.context_menu_item, MessageItem) else 0
-        pause, ok = QInputDialog.getInt(self, self.tr("Enter new pause"),
-                                        self.tr("Pause in samples:"), p, 0)
+        p = (
+            self.context_menu_item.model_item.pause
+            if isinstance(self.context_menu_item, MessageItem)
+            else 0
+        )
+        pause, ok = QInputDialog.getInt(
+            self, self.tr("Enter new pause"), self.tr("Pause in samples:"), p, 0
+        )
         if ok:
             for msg in self.scene().get_selected_messages():
                 msg.pause = pause
 
     @classmethod
-    def add_select_actions_to_menu(cls, menu, scene: SimulatorScene, select_to_trigger, select_from_trigger):
+    def add_select_actions_to_menu(
+        cls, menu, scene: SimulatorScene, select_to_trigger, select_from_trigger
+    ):
         if len(scene.visible_participants) == 0:
             return
 
@@ -387,5 +455,6 @@ class SimulatorGraphicsView(QGraphicsView):
             assert isinstance(item, GraphicsItem)
             parent = item.model_item.parent()
             pos = parent.child_count() if parent is not None else 0
-            self.scene().simulator_config.add_items([copy.deepcopy(item.model_item)], pos, parent)
-
+            self.scene().simulator_config.add_items(
+                [copy.deepcopy(item.model_item)], pos, parent
+            )

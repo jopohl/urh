@@ -8,23 +8,31 @@ from urh.plugins.PluginManager import PluginManager
 class TestOptionsGUI(QtTestCase):
     def setUp(self):
         super().setUp()
-        self.dialog = OptionsDialog(self.form.plugin_manager.installed_plugins, parent=self.form)
+        self.dialog = OptionsDialog(
+            self.form.plugin_manager.installed_plugins, parent=self.form
+        )
 
         if self.SHOW:
             self.dialog.show()
 
     def test_generation_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(0)
-        self.assertEqual(self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
-                         self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
+        self.assertEqual(
+            self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
+            self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled(),
+        )
 
         self.dialog.ui.checkBoxDefaultFuzzingPause.click()
-        self.assertEqual(self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
-                         self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
+        self.assertEqual(
+            self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
+            self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled(),
+        )
 
         self.dialog.ui.checkBoxDefaultFuzzingPause.click()
-        self.assertEqual(self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
-                         self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled())
+        self.assertEqual(
+            self.dialog.ui.checkBoxDefaultFuzzingPause.isChecked(),
+            self.dialog.ui.doubleSpinBoxFuzzingPause.isEnabled(),
+        )
 
     def test_plugins_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(3)
@@ -36,16 +44,23 @@ class TestOptionsGUI(QtTestCase):
         self.assertEqual(model.rowCount(), len(PluginManager().installed_plugins))
 
         for i in range(model.rowCount()):
-            descr = self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText()
+            descr = (
+                self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText()
+            )
             list_view.setCurrentIndex(model.index(i, 0))
-            self.assertNotEqual(descr, self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText())
+            self.assertNotEqual(
+                descr,
+                self.dialog.plugin_controller.ui.txtEditPluginDescription.toPlainText(),
+            )
 
     def test_device_tab(self):
         self.dialog.ui.tabWidget.setCurrentIndex(4)
         self.assertEqual(self.dialog.ui.tabWidget.tabText(4), "Device")
 
-        self.assertEqual(self.dialog.ui.tblDevices.model().rowCount(), len(BackendHandler.DEVICE_NAMES))
-
+        self.assertEqual(
+            self.dialog.ui.tblDevices.model().rowCount(),
+            len(BackendHandler.DEVICE_NAMES),
+        )
 
     def test_field_type_tab(self):
         self.dialog.ui.tabWidget.setCurrentWidget(self.dialog.ui.tabFieldtypes)

@@ -23,10 +23,18 @@ class EditAction(Enum):
 
 
 class EditSignalAction(QUndoCommand):
-    def __init__(self, signal: Signal, mode: EditAction,
-                 start: int = 0, end: int = 0, position: int = 0,
-                 data_to_insert: np.ndarray=None, dsp_filter: Filter=None,
-                 protocol: ProtocolAnalyzer=None, cache_qad=True):
+    def __init__(
+        self,
+        signal: Signal,
+        mode: EditAction,
+        start: int = 0,
+        end: int = 0,
+        position: int = 0,
+        data_to_insert: np.ndarray = None,
+        dsp_filter: Filter = None,
+        protocol: ProtocolAnalyzer = None,
+        cache_qad=True,
+    ):
         """
 
         :param signal: Signal to change
@@ -55,24 +63,24 @@ class EditSignalAction(QUndoCommand):
 
         if self.mode == EditAction.crop:
             self.setText("Crop Signal")
-            self.pre_crop_data = self.signal.iq_array[0:self.start]
-            self.post_crop_data = self.signal.iq_array[self.end:]
+            self.pre_crop_data = self.signal.iq_array[0 : self.start]
+            self.post_crop_data = self.signal.iq_array[self.end :]
             if self.cache_qad:
-                self.pre_crop_qad = self.signal._qad[0:self.start]
-                self.post_crop_qad = self.signal._qad[self.end:]
+                self.pre_crop_qad = self.signal._qad[0 : self.start]
+                self.post_crop_qad = self.signal._qad[self.end :]
         elif self.mode == EditAction.mute or self.mode == EditAction.filter:
             if self.mode == EditAction.mute:
                 self.setText("Mute Signal")
             elif self.mode == EditAction.filter:
                 self.setText("Filter Signal")
-            self.orig_data_part = copy.copy(self.signal.iq_array[self.start:self.end])
+            self.orig_data_part = copy.copy(self.signal.iq_array[self.start : self.end])
             if self.cache_qad and self.signal._qad is not None:
-                self.orig_qad_part = copy.copy(self.signal._qad[self.start:self.end])
+                self.orig_qad_part = copy.copy(self.signal._qad[self.start : self.end])
         elif self.mode == EditAction.delete:
             self.setText("Delete Range")
-            self.orig_data_part = self.signal.iq_array[self.start:self.end]
+            self.orig_data_part = self.signal.iq_array[self.start : self.end]
             if self.cache_qad and self.signal._qad is not None:
-                self.orig_qad_part = self.signal._qad[self.start:self.end]
+                self.orig_qad_part = self.signal._qad[self.start : self.end]
         elif self.mode == EditAction.paste:
             self.setText("Paste")
         elif self.mode == EditAction.insert:
@@ -89,7 +97,9 @@ class EditSignalAction(QUndoCommand):
         keep_msg_indices = {}
 
         if self.mode in (EditAction.delete, EditAction.mute) and self.protocol:
-            removed_msg_indices = self.__find_message_indices_in_sample_range(self.start, self.end)
+            removed_msg_indices = self.__find_message_indices_in_sample_range(
+                self.start, self.end
+            )
             if removed_msg_indices:
                 for i in range(self.protocol.num_messages):
                     if i < removed_msg_indices[0]:
@@ -100,9 +110,13 @@ class EditSignalAction(QUndoCommand):
                 keep_msg_indices = {i: i for i in range(self.protocol.num_messages)}
         elif self.mode == EditAction.crop and self.protocol:
             removed_left = self.__find_message_indices_in_sample_range(0, self.start)
-            removed_right = self.__find_message_indices_in_sample_range(self.end, self.signal.num_samples)
+            removed_right = self.__find_message_indices_in_sample_range(
+                self.end, self.signal.num_samples
+            )
             last_removed_left = removed_left[-1] if removed_left else -1
-            first_removed_right = removed_right[0] if removed_right else self.protocol.num_messages + 1
+            first_removed_right = (
+                removed_right[0] if removed_right else self.protocol.num_messages + 1
+            )
 
             for i in range(self.protocol.num_messages):
                 if last_removed_left < i < first_removed_right:
@@ -141,33 +155,41 @@ class EditSignalAction(QUndoCommand):
             self.signal.iq_array.insert_subarray(self.start, self.orig_data_part)
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
-                    self.signal._qad = np.insert(self.signal._qad, self.start, self.orig_qad_part)
+                    self.signal._qad = np.insert(
+                        self.signal._qad, self.start, self.orig_qad_part
+                    )
                 except ValueError:
                     self.signal._qad = None
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.mute or self.mode == EditAction.filter:
-            self.signal.iq_array[self.start:self.end] = self.orig_data_part
+            self.signal.iq_array[self.start : self.end] = self.orig_data_part
             if self.cache_qad and self.orig_qad_part is not None:
                 try:
-                    self.signal._qad[self.start:self.end] = self.orig_qad_part
+                    self.signal._qad[self.start : self.end] = self.orig_qad_part
                 except (ValueError, TypeError):
                     self.signal._qad = None
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.crop:
             self.signal.iq_array = IQArray(
-                np.concatenate((self.pre_crop_data, self.signal.iq_array.data, self.post_crop_data))
+                np.concatenate(
+                    (self.pre_crop_data, self.signal.iq_array.data, self.post_crop_data)
+                )
             )
             if self.cache_qad:
                 try:
-                    self.signal._qad = np.concatenate((self.pre_crop_qad, self.signal._qad, self.post_crop_qad))
+                    self.signal._qad = np.concatenate(
+                        (self.pre_crop_qad, self.signal._qad, self.post_crop_qad)
+                    )
                 except ValueError:
                     self.signal._qad = None
                     logger.warning("Could not restore cached qad.")
 
         elif self.mode == EditAction.paste or self.mode == EditAction.insert:
-            self.signal.delete_range(self.position, self.position+len(self.data_to_insert))
+            self.signal.delete_range(
+                self.position, self.position + len(self.data_to_insert)
+            )
 
         self.signal.parameter_cache = self.orig_parameter_cache
 
@@ -191,13 +213,16 @@ class EditSignalAction(QUndoCommand):
         keep_msg_indices = {i: i for i in range(len(self.orig_messages))}
 
         try:
-            paste_start_index = self.__find_message_indices_in_sample_range(self.position, self.signal.num_samples)[0]
+            paste_start_index = self.__find_message_indices_in_sample_range(
+                self.position, self.signal.num_samples
+            )[0]
         except IndexError:
             paste_start_index = 0
 
         try:
-            paste_end_index = self.__find_message_indices_in_sample_range(self.position + len(self.data_to_insert),
-                                                                          self.signal.num_samples)[0]
+            paste_end_index = self.__find_message_indices_in_sample_range(
+                self.position + len(self.data_to_insert), self.signal.num_samples
+            )[0]
         except IndexError:
             paste_end_index = 0
 

@@ -23,11 +23,17 @@ class DirectoryTreeView(QTreeView):
             return
 
         model = self.model().sourceModel()
-        dir_name, ok = QInputDialog.getText(self, self.tr("Create Directory"), self.tr("Directory name"))
+        dir_name, ok = QInputDialog.getText(
+            self, self.tr("Create Directory"), self.tr("Directory name")
+        )
 
         if ok and len(dir_name) > 0:
             if not model.mkdir(index, dir_name).isValid():
-                QMessageBox.information(self, self.tr("Create Directory"), self.tr("Failed to create the directory"))
+                QMessageBox.information(
+                    self,
+                    self.tr("Create Directory"),
+                    self.tr("Failed to create the directory"),
+                )
 
     def remove(self):
         index = self.model().mapToSource(self.currentIndex())  # type: QModelIndex
@@ -41,16 +47,23 @@ class DirectoryTreeView(QTreeView):
             ok = model.remove(index)
 
         if not ok:
-            QMessageBox.information(self, self.tr("Remove"),
-                                    self.tr("Failed to remove {0}".format(model.fileName(index))))
+            QMessageBox.information(
+                self,
+                self.tr("Remove"),
+                self.tr("Failed to remove {0}".format(model.fileName(index))),
+            )
 
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
         index = self.model().mapToSource(self.currentIndex())  # type: QModelIndex
         if index.isValid():
-            current_index_info = self.model().sourceModel().fileInfo(index)  # type: QFileInfo
+            current_index_info = (
+                self.model().sourceModel().fileInfo(index)
+            )  # type: QFileInfo
             if current_index_info.isDir():
-                if os.path.isfile(os.path.join(current_index_info.filePath(), settings.PROJECT_FILE)):
+                if os.path.isfile(
+                    os.path.join(current_index_info.filePath(), settings.PROJECT_FILE)
+                ):
                     open_action = menu.addAction("Open project")
                     open_action.setIcon(QIcon(":/icons/icons/appicon.png"))
                 else:
@@ -68,7 +81,9 @@ class DirectoryTreeView(QTreeView):
 
         menu.addSeparator()
         open_in_explorer_action = menu.addAction("Open in file manager...")
-        open_in_explorer_action.triggered.connect(self.on_open_explorer_action_triggered)
+        open_in_explorer_action.triggered.connect(
+            self.on_open_explorer_action_triggered
+        )
 
         return menu
 

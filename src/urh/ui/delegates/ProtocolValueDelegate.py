@@ -1,6 +1,14 @@
 from PyQt6.QtCore import QModelIndex, QAbstractItemModel, Qt
-from PyQt6.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QLineEdit, QHBoxLayout, \
-    QCompleter, QLabel, QSpinBox
+from PyQt6.QtWidgets import (
+    QStyledItemDelegate,
+    QWidget,
+    QStyleOptionViewItem,
+    QLineEdit,
+    QHBoxLayout,
+    QCompleter,
+    QLabel,
+    QSpinBox,
+)
 from PyQt6.QtGui import QFileSystemModel
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
@@ -15,7 +23,9 @@ class ExternalProgramWidget(QWidget):
         completer.setModel(QFileSystemModel(completer))
         self.line_edit_external_program = QLineEdit()
         self.line_edit_external_program.setCompleter(completer)
-        self.line_edit_external_program.setPlaceholderText("Type in a path to external program.")
+        self.line_edit_external_program.setPlaceholderText(
+            "Type in a path to external program."
+        )
 
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -57,7 +67,9 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         super().__init__(parent)
         self.controller = controller
 
-    def createEditor(self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ):
         model = index.model()
         row = index.row()
         lbl = model.message_type[row]
@@ -65,8 +77,12 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         if lbl.value_type_index == 2:
             line_edit = ExpressionLineEdit(parent)
             line_edit.setPlaceholderText("(item1.length + 3) ^ 0x12")
-            line_edit.setCompleter(QCompleter(self.controller.completer_model, line_edit))
-            line_edit.setValidator(RuleExpressionValidator(self.controller.sim_expression_parser))
+            line_edit.setCompleter(
+                QCompleter(self.controller.completer_model, line_edit)
+            )
+            line_edit.setValidator(
+                RuleExpressionValidator(self.controller.sim_expression_parser)
+            )
             line_edit.setToolTip(self.controller.sim_expression_parser.formula_help)
             return line_edit
         elif lbl.value_type_index == 3:
@@ -92,10 +108,20 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         else:
             super().setEditorData(editor, index)
 
-    def setModelData(self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex):
+    def setModelData(
+        self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
+    ):
         if isinstance(editor, ExternalProgramWidget):
-            model.setData(index, editor.line_edit_external_program.text(), Qt.ItemDataRole.EditRole)
+            model.setData(
+                index,
+                editor.line_edit_external_program.text(),
+                Qt.ItemDataRole.EditRole,
+            )
         elif isinstance(editor, RandomValueWidget):
-            model.setData(index, [editor.spinbox_random_min.value(), editor.spinbox_random_max.value()], Qt.ItemDataRole.EditRole)
+            model.setData(
+                index,
+                [editor.spinbox_random_min.value(), editor.spinbox_random_max.value()],
+                Qt.ItemDataRole.EditRole,
+            )
         else:
             super().setModelData(editor, model, index)

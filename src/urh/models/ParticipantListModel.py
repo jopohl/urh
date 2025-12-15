@@ -24,16 +24,24 @@ class ParticipantListModel(QAbstractListModel):
                 return "not assigned"
             else:
                 try:
-                    return str(self.participants[row-1])
+                    return str(self.participants[row - 1])
                 except IndexError:
                     return None
 
         elif role == Qt.ItemDataRole.CheckStateRole:
             if row == 0:
-                return Qt.CheckState.Checked if self.show_unassigned else Qt.CheckState.Unchecked
+                return (
+                    Qt.CheckState.Checked
+                    if self.show_unassigned
+                    else Qt.CheckState.Unchecked
+                )
             else:
                 try:
-                    return Qt.CheckState.Checked if self.participants[row-1].show else Qt.CheckState.Unchecked
+                    return (
+                        Qt.CheckState.Checked
+                        if self.participants[row - 1].show
+                        else Qt.CheckState.Unchecked
+                    )
                 except IndexError:
                     return None
 
@@ -45,8 +53,8 @@ class ParticipantListModel(QAbstractListModel):
 
         elif role == Qt.ItemDataRole.CheckStateRole:
             try:
-                if self.participants[index.row()-1].show != value:
-                    self.participants[index.row()-1].show = value
+                if self.participants[index.row() - 1].show != value:
+                    self.participants[index.row() - 1].show = value
                     self.show_state_changed.emit()
             except IndexError:
                 return False
@@ -54,7 +62,11 @@ class ParticipantListModel(QAbstractListModel):
         return True
 
     def flags(self, index):
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsUserCheckable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )
 
     def update(self):
         self.beginResetModel()

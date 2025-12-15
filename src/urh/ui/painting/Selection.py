@@ -91,7 +91,9 @@ class Selection(QGraphicsRectItem):
     def end(self, value):
         raise NotImplementedError("Overwrite in subclass")
 
-    def _get_selected_edge(self, pos: QPointF, transform: QTransform, horizontal_selection: bool):
+    def _get_selected_edge(
+        self, pos: QPointF, transform: QTransform, horizontal_selection: bool
+    ):
         x1, x2 = self.x, self.x + self.width
         y1, y2 = self.y, self.y + self.height
         x, y = pos.x(), pos.y()

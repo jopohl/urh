@@ -5,7 +5,7 @@ from urh.signalprocessing.FieldType import FieldType
 
 
 class FieldTypeTableModel(QAbstractTableModel):
-    header_labels = ["Caption", 'Function', "Default display type"]
+    header_labels = ["Caption", "Function", "Default display type"]
 
     def __init__(self, fieldtypes, parent=None):
         """
@@ -27,7 +27,10 @@ class FieldTypeTableModel(QAbstractTableModel):
         return len(self.field_types)
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
@@ -69,4 +72,8 @@ class FieldTypeTableModel(QAbstractTableModel):
             return True
 
     def flags(self, index: QModelIndex):
-        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
+        return (
+            Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsEditable
+        )

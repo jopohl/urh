@@ -2,8 +2,8 @@ import unittest
 
 from urh.dev.native.RTLSDRTCP import RTLSDRTCP
 
-class TestRTLSDRTCP(unittest.TestCase):
 
+class TestRTLSDRTCP(unittest.TestCase):
     def test_device_communication(self):
         error = 0
         sdr = RTLSDRTCP(0, 0, 0, device_number=0)

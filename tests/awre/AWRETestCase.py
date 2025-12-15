@@ -20,7 +20,9 @@ class AWRETestCase(unittest.TestCase):
         numpy.set_printoptions(linewidth=80)
         self.field_types = self.__init_field_types()
 
-    def get_format_finder_from_protocol_file(self, filename: str, clear_participant_addresses=True, return_messages=False):
+    def get_format_finder_from_protocol_file(
+        self, filename: str, clear_participant_addresses=True, return_messages=False
+    ):
         proto_file = get_path_for_data_file(filename)
         protocol = ProtocolAnalyzer(signal=None, filename=proto_file)
         protocol.from_xml_file(filename=proto_file, read_bits=True)
@@ -55,8 +57,12 @@ class AWRETestCase(unittest.TestCase):
         if isinstance(protocol_generator, ProtocolGenerator):
             protocol_generator.to_file(filename)
         elif isinstance(protocol_generator, ProtocolAnalyzer):
-            participants = list(set(msg.participant for msg in protocol_generator.messages))
-            protocol_generator.to_xml_file(filename, [], participants=participants, write_bits=True)
+            participants = list(
+                set(msg.participant for msg in protocol_generator.messages)
+            )
+            protocol_generator.to_xml_file(
+                filename, [], participants=participants, write_bits=True
+            )
         info = "Protocol written to " + filename
         if not silent:
             print()

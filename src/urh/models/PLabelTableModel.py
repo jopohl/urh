@@ -58,7 +58,10 @@ class PLabelTableModel(QAbstractTableModel):
         return len(self.message_type)
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
@@ -72,9 +75,16 @@ class PLabelTableModel(QAbstractTableModel):
             if j == 0:
                 return lbl.name
             elif j == 1:
-                return self.message.get_label_range(lbl, view=self.proto_view, decode=True)[0] + 1
+                return (
+                    self.message.get_label_range(
+                        lbl, view=self.proto_view, decode=True
+                    )[0]
+                    + 1
+                )
             elif j == 2:
-                return self.message.get_label_range(lbl, view=self.proto_view, decode=True)[1]
+                return self.message.get_label_range(
+                    lbl, view=self.proto_view, decode=True
+                )[1]
             elif j == 3:
                 return lbl.color_index
             elif j == 4:
@@ -98,7 +108,9 @@ class PLabelTableModel(QAbstractTableModel):
         if j == 0:
             lbl.name = value
             type_before = type(lbl)
-            self.message_type.change_field_type_of_label(lbl, self.field_types_by_caption.get(value, None))
+            self.message_type.change_field_type_of_label(
+                lbl, self.field_types_by_caption.get(value, None)
+            )
 
             lbl = self.__get_label_at(i)
 
@@ -106,10 +118,13 @@ class PLabelTableModel(QAbstractTableModel):
                 self.special_status_label_changed.emit(lbl)
 
         elif j == 1:
-            lbl.start = self.message.convert_index(int(value - 1), from_view=self.proto_view, to_view=0, decoded=True)[
-                0]
+            lbl.start = self.message.convert_index(
+                int(value - 1), from_view=self.proto_view, to_view=0, decoded=True
+            )[0]
         elif j == 2:
-            lbl.end = self.message.convert_index(int(value), from_view=self.proto_view, to_view=0, decoded=True)[0]
+            lbl.end = self.message.convert_index(
+                int(value), from_view=self.proto_view, to_view=0, decoded=True
+            )[0]
         elif j == 3:
             lbl.color_index = value
         elif j == 4:
@@ -128,7 +143,11 @@ class PLabelTableModel(QAbstractTableModel):
         except IndexError:
             return Qt.ItemFlag.NoItemFlags
 
-        return Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+        return (
+            Qt.ItemFlag.ItemIsEditable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+        )
 
     def remove_label(self, label):
         self.message_type.remove(label)

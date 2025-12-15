@@ -1,7 +1,12 @@
 from PyQt6.QtCore import QRectF, Qt, QLineF
 from PyQt6.QtGui import QFont, QDropEvent, QPen, QColor, QBrush
-from PyQt6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsTextItem, QGraphicsSceneDragDropEvent, \
-    QAbstractItemView
+from PyQt6.QtWidgets import (
+    QGraphicsObject,
+    QGraphicsItem,
+    QGraphicsTextItem,
+    QGraphicsSceneDragDropEvent,
+    QAbstractItemView,
+)
 
 from urh import settings
 from urh.simulator.SimulatorItem import SimulatorItem
@@ -31,7 +36,13 @@ class GraphicsItem(QGraphicsObject):
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIgnoresParentOpacity, True)
 
-    def set_flags(self, is_selectable=False, is_movable=False, accept_hover_events=False, accept_drops=False):
+    def set_flags(
+        self,
+        is_selectable=False,
+        is_movable=False,
+        accept_hover_events=False,
+        accept_drops=False,
+    ):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, is_selectable)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, is_movable)
         self.setAcceptHoverEvents(accept_hover_events)
@@ -64,7 +75,9 @@ class GraphicsItem(QGraphicsObject):
         self.update_drop_indicator(event.position().toPoint())
 
     def get_scene_children(self):
-        return [self.scene().model_to_scene(child) for child in self.model_item.children]
+        return [
+            self.scene().model_to_scene(child) for child in self.model_item.children
+        ]
 
     def is_selectable(self):
         return self.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsSelectable
@@ -87,8 +100,9 @@ class GraphicsItem(QGraphicsObject):
         while next_item is not None:
             next_item = next_item.next()
 
-            if (not isinstance(next_item, SimulatorProtocolLabel) and
-                    not isinstance(next_item, SimulatorRule)):
+            if not isinstance(next_item, SimulatorProtocolLabel) and not isinstance(
+                next_item, SimulatorRule
+            ):
                 break
 
         return self.scene().model_to_scene(next_item)
@@ -99,8 +113,9 @@ class GraphicsItem(QGraphicsObject):
         while prev_item is not None:
             prev_item = prev_item.prev()
 
-            if (not isinstance(prev_item, SimulatorProtocolLabel) and
-                    not isinstance(prev_item, SimulatorRule)):
+            if not isinstance(prev_item, SimulatorProtocolLabel) and not isinstance(
+                prev_item, SimulatorRule
+            ):
                 break
 
         return self.scene().model_to_scene(prev_item)
@@ -112,9 +127,13 @@ class GraphicsItem(QGraphicsObject):
         rect = self.boundingRect()
 
         if pos.y() - rect.top() < rect.height() / 2:
-            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.AboveItem
+            self.drop_indicator_position = (
+                QAbstractItemView.DropIndicatorPosition.AboveItem
+            )
         else:
-            self.drop_indicator_position = QAbstractItemView.DropIndicatorPosition.BelowItem
+            self.drop_indicator_position = (
+                QAbstractItemView.DropIndicatorPosition.BelowItem
+            )
 
         self.update()
 
@@ -142,7 +161,10 @@ class GraphicsItem(QGraphicsObject):
         painter.setPen(pen)
         rect = self.boundingRect()
 
-        if self.drop_indicator_position == QAbstractItemView.DropIndicatorPosition.AboveItem:
+        if (
+            self.drop_indicator_position
+            == QAbstractItemView.DropIndicatorPosition.AboveItem
+        ):
             painter.drawLine(QLineF(rect.topLeft(), rect.topRight()))
         else:
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))
@@ -181,7 +203,9 @@ class GraphicsItem(QGraphicsObject):
                 self.item_under_mouse = item
                 self.item_under_mouse.dragEnterEvent(None)
         elif self.item_under_mouse and self.item_under_mouse == item:
-            self.item_under_mouse.update_drop_indicator(self.mapToItem(self.item_under_mouse, event.pos()))
+            self.item_under_mouse.update_drop_indicator(
+                self.mapToItem(self.item_under_mouse, event.pos())
+            )
         elif item:
             self.item_under_mouse = item
             self.item_under_mouse.dragEnterEvent(None)

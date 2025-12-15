@@ -24,7 +24,12 @@ class Ui_ProjectDialog(object):
         self.lblName = QtWidgets.QLabel(parent=ProjectDialog)
         self.lblName.setObjectName("lblName")
         self.verticalLayout.addWidget(self.lblName)
-        spacerItem = QtWidgets.QSpacerItem(17, 10, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        spacerItem = QtWidgets.QSpacerItem(
+            17,
+            10,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Fixed,
+        )
         self.verticalLayout.addItem(spacerItem)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
@@ -42,14 +47,21 @@ class Ui_ProjectDialog(object):
         self.lblNewPath = QtWidgets.QLabel(parent=ProjectDialog)
         self.lblNewPath.setObjectName("lblNewPath")
         self.gridLayout.addWidget(self.lblNewPath, 1, 3, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 57, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20,
+            57,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Expanding,
+        )
         self.gridLayout.addItem(spacerItem1, 15, 4, 1, 2)
         self.txtEdDescription = QtWidgets.QPlainTextEdit(parent=ProjectDialog)
         self.txtEdDescription.setObjectName("txtEdDescription")
         self.gridLayout.addWidget(self.txtEdDescription, 10, 3, 1, 1)
         self.tblParticipants = ParticipantTableView(parent=ProjectDialog)
         self.tblParticipants.setAlternatingRowColors(True)
-        self.tblParticipants.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.tblParticipants.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
+        )
         self.tblParticipants.setObjectName("tblParticipants")
         self.tblParticipants.horizontalHeader().setCascadingSectionResizes(False)
         self.tblParticipants.horizontalHeader().setDefaultSectionSize(100)
@@ -116,7 +128,9 @@ class Ui_ProjectDialog(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 3, 0, 1, 2)
         self.label = QtWidgets.QLabel(parent=ProjectDialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
@@ -137,7 +151,11 @@ class Ui_ProjectDialog(object):
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 16, 0, 1, 2)
         self.label_8 = QtWidgets.QLabel(parent=ProjectDialog)
-        self.label_8.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.label_8.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.label_8.setObjectName("label_8")
         self.gridLayout.addWidget(self.label_8, 10, 0, 1, 2)
         self.label_12 = QtWidgets.QLabel(parent=ProjectDialog)
@@ -165,7 +183,10 @@ class Ui_ProjectDialog(object):
         self.btnDown.setObjectName("btnDown")
         self.gridLayout.addWidget(self.btnDown, 14, 4, 1, 1)
         self.buttonBox = QtWidgets.QDialogButtonBox(parent=ProjectDialog)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel|QtWidgets.QDialogButtonBox.StandardButton.Ok)
+        self.buttonBox.setStandardButtons(
+            QtWidgets.QDialogButtonBox.StandardButton.Cancel
+            | QtWidgets.QDialogButtonBox.StandardButton.Ok
+        )
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 17, 3, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
@@ -180,36 +201,65 @@ class Ui_ProjectDialog(object):
         ProjectDialog.setTabOrder(self.txtEdDescription, self.tblParticipants)
         ProjectDialog.setTabOrder(self.tblParticipants, self.btnAddParticipant)
         ProjectDialog.setTabOrder(self.btnAddParticipant, self.btnRemoveParticipant)
-        ProjectDialog.setTabOrder(self.btnRemoveParticipant, self.lineEditBroadcastAddress)
+        ProjectDialog.setTabOrder(
+            self.btnRemoveParticipant, self.lineEditBroadcastAddress
+        )
 
     def retranslateUi(self, ProjectDialog):
         _translate = QtCore.QCoreApplication.translate
-        ProjectDialog.setWindowTitle(_translate("ProjectDialog", "Create a new project"))
+        ProjectDialog.setWindowTitle(
+            _translate("ProjectDialog", "Create a new project")
+        )
         self.lNewProject.setText(_translate("ProjectDialog", "New Project"))
         self.lblName.setText(_translate("ProjectDialog", "<Name>"))
         self.label_5.setText(_translate("ProjectDialog", "Sps"))
-        self.lblNewPath.setText(_translate("ProjectDialog", "<html><head/><body><p><span style=\" font-style:italic;\">Note: A new directory will be created.</span></p></body></html>"))
+        self.lblNewPath.setText(
+            _translate(
+                "ProjectDialog",
+                '<html><head/><body><p><span style=" font-style:italic;">Note: A new directory will be created.</span></p></body></html>',
+            )
+        )
         self.label_3.setText(_translate("ProjectDialog", "Default frequency:"))
-        self.lineEditBroadcastAddress.setToolTip(_translate("ProjectDialog", "<html><head/><body><p>Enter the broadcast address of your protocol in <span style=\" font-weight:600;\">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>"))
+        self.lineEditBroadcastAddress.setToolTip(
+            _translate(
+                "ProjectDialog",
+                '<html><head/><body><p>Enter the broadcast address of your protocol in <span style=" font-weight:600;">hex</span>. If you do not know what to enter here, just leave the default.</p></body></html>',
+            )
+        )
         self.lineEditBroadcastAddress.setText(_translate("ProjectDialog", "ffff"))
         self.label_10.setText(_translate("ProjectDialog", "Default bandwidth:"))
-        self.btnAddParticipant.setToolTip(_translate("ProjectDialog", "Add participant"))
+        self.btnAddParticipant.setToolTip(
+            _translate("ProjectDialog", "Add participant")
+        )
         self.btnAddParticipant.setText(_translate("ProjectDialog", "..."))
         self.btnSelectPath.setText(_translate("ProjectDialog", "..."))
         self.label_6.setText(_translate("ProjectDialog", "Hz"))
         self.label_2.setText(_translate("ProjectDialog", "Default sample rate:"))
         self.label.setText(_translate("ProjectDialog", "Choose a path:"))
-        self.btnRemoveParticipant.setToolTip(_translate("ProjectDialog", "Remove participant"))
+        self.btnRemoveParticipant.setToolTip(
+            _translate("ProjectDialog", "Remove participant")
+        )
         self.btnRemoveParticipant.setText(_translate("ProjectDialog", "..."))
         self.label_4.setText(_translate("ProjectDialog", "Broadcast address (hex):"))
         self.label_8.setText(_translate("ProjectDialog", "Description:"))
         self.label_12.setText(_translate("ProjectDialog", "Hz"))
         self.label_11.setText(_translate("ProjectDialog", "Default gain:"))
-        self.btnUp.setToolTip(_translate("ProjectDialog", "Move selected participants up"))
+        self.btnUp.setToolTip(
+            _translate("ProjectDialog", "Move selected participants up")
+        )
         self.btnUp.setText(_translate("ProjectDialog", "..."))
-        self.lOpenSpectrumAnalyzer.setText(_translate("ProjectDialog", "<html><head/><body><p>Tip: Open <a href=\"open_spectrum_analyzer\">spectrum analyzer</a> to find these values.</p></body></html>"))
+        self.lOpenSpectrumAnalyzer.setText(
+            _translate(
+                "ProjectDialog",
+                '<html><head/><body><p>Tip: Open <a href="open_spectrum_analyzer">spectrum analyzer</a> to find these values.</p></body></html>',
+            )
+        )
         self.label_9.setText(_translate("ProjectDialog", "Participants:"))
-        self.btnDown.setToolTip(_translate("ProjectDialog", "Move selected participants down"))
+        self.btnDown.setToolTip(
+            _translate("ProjectDialog", "Move selected participants down")
+        )
         self.btnDown.setText(_translate("ProjectDialog", "..."))
+
+
 from urh.ui.KillerDoubleSpinBox import KillerDoubleSpinBox
 from urh.ui.views.ParticipantTableView import ParticipantTableView

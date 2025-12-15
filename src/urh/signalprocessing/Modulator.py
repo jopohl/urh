@@ -18,19 +18,21 @@ class Modulator(object):
     FORCE_DTYPE = None
 
     MODULATION_TYPES = ["ASK", "FSK", "PSK", "GFSK", "OQPSK"]
-    MODULATION_TYPES_VERBOSE = {"ASK": "Amplitude Shift Keying (ASK)",
-                                "FSK": "Frequency Shift Keying (FSK)",
-                                "PSK": "Phase Shift Keying (PSK)",
-                                "OQPSK": "Offset Quadrature Phase Shift Keying (OQPSK)",
-                                "GFSK": "Gaussian Frequeny Shift Keying (GFSK)"}
+    MODULATION_TYPES_VERBOSE = {
+        "ASK": "Amplitude Shift Keying (ASK)",
+        "FSK": "Frequency Shift Keying (FSK)",
+        "PSK": "Phase Shift Keying (PSK)",
+        "OQPSK": "Offset Quadrature Phase Shift Keying (OQPSK)",
+        "GFSK": "Gaussian Frequeny Shift Keying (GFSK)",
+    }
 
     def __init__(self, name: str):
-        self.carrier_freq_hz = 40 * 10 ** 3
+        self.carrier_freq_hz = 40 * 10**3
         self.carrier_amplitude = 1
         self.carrier_phase_deg = 0
         self.data = [True, False, True, False]
         self.samples_per_symbol = 100
-        self.default_sample_rate = 10 ** 6
+        self.default_sample_rate = 10**6
         self.__sample_rate = None
         self.__modulation_type = "ASK"
 
@@ -41,18 +43,22 @@ class Modulator(object):
         self.gauss_bt = 0.5  # bt product for gaussian filter (GFSK)
         self.gauss_filter_width = 1  # filter width for gaussian filter (GFSK)
 
-        self.parameters = array.array("f", [0, 100])  # Freq, Amplitude (0..100%) or Phase (0..360)
+        self.parameters = array.array(
+            "f", [0, 100]
+        )  # Freq, Amplitude (0..100%) or Phase (0..360)
 
     def __eq__(self, other):
-        return self.carrier_freq_hz == other.carrier_freq_hz and \
-               self.carrier_amplitude == other.carrier_amplitude and \
-               self.carrier_phase_deg == other.carrier_phase_deg and \
-               self.name == other.name and \
-               self.modulation_type == other.modulation_type and \
-               self.samples_per_symbol == other.samples_per_symbol and \
-               self.bits_per_symbol == other.bits_per_symbol and \
-               self.sample_rate == other.sample_rate and \
-               self.parameters == other.parameters
+        return (
+            self.carrier_freq_hz == other.carrier_freq_hz
+            and self.carrier_amplitude == other.carrier_amplitude
+            and self.carrier_phase_deg == other.carrier_phase_deg
+            and self.name == other.name
+            and self.modulation_type == other.modulation_type
+            and self.samples_per_symbol == other.samples_per_symbol
+            and self.bits_per_symbol == other.bits_per_symbol
+            and self.sample_rate == other.sample_rate
+            and self.parameters == other.parameters
+        )
 
     @staticmethod
     def get_dtype():
@@ -108,7 +114,7 @@ class Modulator(object):
 
     @property
     def modulation_order(self):
-        return 2 ** self.bits_per_symbol
+        return 2**self.bits_per_symbol
 
     @property
     def parameter_type_str(self) -> str:
@@ -176,7 +182,9 @@ class Modulator(object):
         num_samples = len(self.display_bits) * self.samples_per_symbol
         carrier_phase_rad = self.carrier_phase_deg * (np.pi / 180)
         t = (np.arange(0, num_samples) / self.sample_rate).astype(np.float32)
-        arg = (2 * np.pi * self.carrier_freq_hz * t + carrier_phase_rad).astype(np.float32)
+        arg = (2 * np.pi * self.carrier_freq_hz * t + carrier_phase_rad).astype(
+            np.float32
+        )
         y = self.carrier_amplitude * np.sin(arg)  # type: np.ndarray
 
         return y.astype(np.float32)
@@ -188,7 +196,9 @@ class Modulator(object):
 
         for i, bit in enumerate(self.display_bits):
             if bit == "0":
-                y[i*self.samples_per_symbol:(i + 1) * self.samples_per_symbol] = -1.0
+                y[
+                    i * self.samples_per_symbol : (i + 1) * self.samples_per_symbol
+                ] = -1.0
 
         x = np.arange(0, n).astype(np.int64)
 
@@ -222,16 +232,26 @@ class Modulator(object):
 
         parameters = self.parameters
         if self.modulation_type == "ASK":
-            parameters = array.array("f", [a*p/100 for p in parameters])
+            parameters = array.array("f", [a * p / 100 for p in parameters])
         elif self.modulation_type == "PSK":
             parameters = array.array("f", [p * (math.pi / 180) for p in parameters])
 
-        result = signal_functions.modulate_c(data, self.samples_per_symbol,
-                                             self.modulation_type, parameters, self.bits_per_symbol,
-                                             a, self.carrier_freq_hz,
-                                             self.carrier_phase_deg * (np.pi / 180),
-                                             self.sample_rate, pause, start, dtype,
-                                             self.gauss_bt, self.gauss_filter_width)
+        result = signal_functions.modulate_c(
+            data,
+            self.samples_per_symbol,
+            self.modulation_type,
+            parameters,
+            self.bits_per_symbol,
+            a,
+            self.carrier_freq_hz,
+            self.carrier_phase_deg * (np.pi / 180),
+            self.sample_rate,
+            pause,
+            start,
+            dtype,
+            self.gauss_bt,
+            self.gauss_filter_width,
+        )
         return IQArray(result)
 
     def get_default_parameters(self) -> array.array:
@@ -240,12 +260,16 @@ class Modulator(object):
         elif self.is_frequency_based:
             parameters = []
             for i in range(self.modulation_order):
-                parameters.append((i + 1) * self.carrier_freq_hz / self.modulation_order)
+                parameters.append(
+                    (i + 1) * self.carrier_freq_hz / self.modulation_order
+                )
         elif self.is_phase_based:
             step = 360 / self.modulation_order
             parameters = np.arange(step / 2, 360, step) - 180
             if self.modulation_type == "OQPSK":
-                parameters = parameters[(self.__get_gray_code_indices(self.modulation_order))]
+                parameters = parameters[
+                    (self.__get_gray_code_indices(self.modulation_order))
+                ]
         else:
             return None
 
@@ -262,8 +286,14 @@ class Modulator(object):
         root = ET.Element("modulator")
 
         for attr, val in vars(self).items():
-            if attr not in ("data", "_Modulator__sample_rate", "_Modulator__modulation_type",
-                            "_Modulator__bits_per_symbol", "default_sample_rate", "parameters"):
+            if attr not in (
+                "data",
+                "_Modulator__sample_rate",
+                "_Modulator__modulation_type",
+                "_Modulator__bits_per_symbol",
+                "default_sample_rate",
+                "parameters",
+            ):
                 root.set(attr, str(val))
 
         root.set("sample_rate", str(self.__sample_rate))
@@ -298,7 +328,9 @@ class Modulator(object):
                 # samples_per_bit as legacy support for older project files
                 result.samples_per_symbol = Formatter.str2val(value, int, 100)
             elif attrib == "sample_rate":
-                result.sample_rate = Formatter.str2val(value, float, 1e6) if value != "None" else None
+                result.sample_rate = (
+                    Formatter.str2val(value, float, 1e6) if value != "None" else None
+                )
             elif attrib == "param_for_zero":
                 result.parameters[0] = Formatter.str2val(value, float, 0)  # legacy
             elif attrib == "param_for_one":
@@ -341,13 +373,17 @@ class Modulator(object):
     def get_value_with_suffix(value, unit=""):
         decimal_point = locale.localeconv()["decimal_point"]
 
-        if abs(value) >= 10 ** 9:
-            target_val, suffix = value / 10 ** 9, "G"
-        elif abs(value) >= 10 ** 6:
-            target_val, suffix = value / 10 ** 6, "M"
-        elif abs(value) >= 10 ** 3:
-            target_val, suffix = value / 10 ** 3, "k"
+        if abs(value) >= 10**9:
+            target_val, suffix = value / 10**9, "G"
+        elif abs(value) >= 10**6:
+            target_val, suffix = value / 10**6, "M"
+        elif abs(value) >= 10**3:
+            target_val, suffix = value / 10**3, "k"
         else:
             target_val, suffix = value, ""
 
-        return locale.format_string("%.3f", target_val).rstrip("0").rstrip(decimal_point) + suffix + unit
+        return (
+            locale.format_string("%.3f", target_val).rstrip("0").rstrip(decimal_point)
+            + suffix
+            + unit
+        )

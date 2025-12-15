@@ -31,7 +31,11 @@ else:
     NO_NUMPY_WARNINGS_FLAG = "-Wno-cpp"
 
 UI_SUBDIRS = ("actions", "delegates", "views")
-PLUGINS = [path for path in os.listdir("src/urh/plugins") if os.path.isdir(os.path.join("src/urh/plugins", path))]
+PLUGINS = [
+    path
+    for path in os.listdir("src/urh/plugins")
+    if os.path.isdir(os.path.join("src/urh/plugins", path))
+]
 URH_DIR = "urh"
 
 IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing"))
@@ -39,9 +43,11 @@ IS_RELEASE = os.path.isfile(os.path.join(tempfile.gettempdir(), "urh_releasing")
 try:
     from Cython.Build import cythonize
 except ImportError:
-    print("You need Cython to build URH's extensions!\n"
-          "You can get it e.g. with python3 -m pip install cython.",
-          file=sys.stderr)
+    print(
+        "You need Cython to build URH's extensions!\n"
+        "You can get it e.g. with python3 -m pip install cython.",
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 
@@ -52,6 +58,7 @@ class build_ext(_build_ext):
         # Prevent numpy from thinking it is still in its setup process:
         __builtins__.__NUMPY_SETUP__ = False
         import numpy
+
         self.include_dirs.append(numpy.get_include())
 
 
@@ -59,7 +66,9 @@ def get_packages():
     packages = [URH_DIR]
     separator = os.path.normpath("/")
     for dirpath, dirnames, filenames in os.walk(os.path.join("./src/", URH_DIR)):
-        package_path = os.path.relpath(dirpath, os.path.join("./src/", URH_DIR)).replace(separator, ".")
+        package_path = os.path.relpath(
+            dirpath, os.path.join("./src/", URH_DIR)
+        ).replace(separator, ".")
         if len(package_path) > 1:
             packages.append(URH_DIR + "." + package_path)
 
@@ -69,7 +78,7 @@ def get_packages():
 def get_package_data():
     package_data = {"urh.cythonext": ["*.pyx", "*.pxd"]}
     for plugin in PLUGINS:
-        package_data["urh.plugins." + plugin] = ['*.ui', "*.txt"]
+        package_data["urh.plugins." + plugin] = ["*.ui", "*.txt"]
 
     package_data["urh.dev.native.lib"] = ["*.pyx", "*.pxd"]
 
@@ -80,21 +89,38 @@ def get_package_data():
 
 
 def get_extensions():
-    filenames = [os.path.splitext(f)[0] for f in os.listdir("src/urh/cythonext") if f.endswith(".pyx")]
-    extensions = [Extension("urh.cythonext." + f, ["src/urh/cythonext/" + f + ".pyx"],
-                            extra_compile_args=[OPEN_MP_FLAG],
-                            extra_link_args=[OPEN_MP_FLAG],
-                            language="c++") for f in filenames]
+    filenames = [
+        os.path.splitext(f)[0]
+        for f in os.listdir("src/urh/cythonext")
+        if f.endswith(".pyx")
+    ]
+    extensions = [
+        Extension(
+            "urh.cythonext." + f,
+            ["src/urh/cythonext/" + f + ".pyx"],
+            extra_compile_args=[OPEN_MP_FLAG],
+            extra_link_args=[OPEN_MP_FLAG],
+            language="c++",
+        )
+        for f in filenames
+    ]
 
     ExtensionHelper.USE_RELATIVE_PATHS = True
-    device_extensions, device_extras = ExtensionHelper.get_device_extensions_and_extras()
+    (
+        device_extensions,
+        device_extras,
+    ) = ExtensionHelper.get_device_extensions_and_extras()
     extensions += device_extensions
 
     if NO_NUMPY_WARNINGS_FLAG:
         for extension in extensions:
             extension.extra_compile_args.append(NO_NUMPY_WARNINGS_FLAG)
 
-    extensions = cythonize(extensions, compiler_directives=COMPILER_DIRECTIVES, compile_time_env=device_extras)
+    extensions = cythonize(
+        extensions,
+        compiler_directives=COMPILER_DIRECTIVES,
+        compile_time_env=device_extras,
+    )
     return extensions
 
 
@@ -117,7 +143,7 @@ else:
         install_requires.append("PyQt6")
 
 if sys.version_info < (3, 4):
-    install_requires.append('enum34')
+    install_requires.append("enum34")
 
 setup(
     name="urh",
@@ -133,14 +159,15 @@ setup(
     license="GNU General Public License (GPL)",
     download_url="https://github.com/jopohl/urh/tarball/v" + str(version.VERSION),
     install_requires=install_requires,
-    setup_requires=['numpy'],
+    setup_requires=["numpy"],
     packages=get_packages(),
     ext_modules=get_extensions(),
-    cmdclass={'build_ext': build_ext},
+    cmdclass={"build_ext": build_ext},
     zip_safe=False,
     entry_points={
-        'console_scripts': [
-            'urh = urh.main:main',
-            'urh_cli = urh.cli.urh_cli:main',
-        ]}
+        "console_scripts": [
+            "urh = urh.main:main",
+            "urh_cli = urh.cli.urh_cli:main",
+        ]
+    },
 )

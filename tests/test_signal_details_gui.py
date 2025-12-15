@@ -15,10 +15,14 @@ class TestSignalDetailsGUI(QtTestCase):
             self.dialog.show()
 
     def test_set_sample_rate(self):
-        self.assertEqual(Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
-                         self.dialog.ui.lDuration.text())
+        self.assertEqual(
+            Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
+            self.dialog.ui.lDuration.text(),
+        )
 
         self.dialog.ui.dsb_sample_rate.setValue(5e6)
         self.assertEqual(self.signal.sample_rate, 5e6)
-        self.assertEqual(Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
-                         self.dialog.ui.lDuration.text())
+        self.assertEqual(
+            Formatter.science_time(self.signal.num_samples / self.signal.sample_rate),
+            self.dialog.ui.lDuration.text(),
+        )

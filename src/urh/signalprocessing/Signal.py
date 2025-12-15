@@ -39,7 +39,14 @@ class Signal(QObject):
     protocol_needs_update = pyqtSignal()
     data_edited = pyqtSignal()  # On Crop/Mute/Delete etc.
 
-    def __init__(self, filename: str, name="Signal", modulation: str = None, sample_rate: float = 1e6, parent=None):
+    def __init__(
+        self,
+        filename: str,
+        name="Signal",
+        modulation: str = None,
+        sample_rate: float = 1e6,
+        parent=None,
+    ):
         super().__init__(parent)
         self.__name = name
         self.__tolerance = 5
@@ -66,7 +73,10 @@ class Signal(QObject):
         self.__bits_per_symbol = 1
         self.__center_spacing = 1  # required for higher order modulations
 
-        self.__parameter_cache = {mod: {"center": None, "samples_per_symbol": None} for mod in self.MODULATION_TYPES}
+        self.__parameter_cache = {
+            mod: {"center": None, "samples_per_symbol": None}
+            for mod in self.MODULATION_TYPES
+        }
 
         self.__already_demodulated = False
 
@@ -82,11 +92,17 @@ class Signal(QObject):
 
             self.filename = filename
 
-            default_noise_threshold = settings.read("default_noise_threshold", "automatic")
+            default_noise_threshold = settings.read(
+                "default_noise_threshold", "automatic"
+            )
             if default_noise_threshold == "automatic":
-                self.noise_threshold = AutoInterpretation.detect_noise_level(self.iq_array.magnitudes)
+                self.noise_threshold = AutoInterpretation.detect_noise_level(
+                    self.iq_array.magnitudes
+                )
             else:
-                self.noise_threshold = float(default_noise_threshold) / 100 * self.max_magnitude
+                self.noise_threshold = (
+                    float(default_noise_threshold) / 100 * self.max_magnitude
+                )
         else:
             self.filename = ""
 
@@ -95,7 +111,14 @@ class Signal(QObject):
 
     def __load_wav_file(self, filename: str):
         wav = wave.open(filename, "r")
-        num_channels, sample_width, sample_rate, num_frames, comptype, compname = wav.getparams()
+        (
+            num_channels,
+            sample_width,
+            sample_rate,
+            num_frames,
+            comptype,
+            compname,
+        ) = wav.getparams()
 
         if sample_width == 1:
             params = {"min": 0, "max": 255, "fmt": np.uint8}  # Unsigned Byte
@@ -116,20 +139,32 @@ class Signal(QObject):
             arr = np.empty((num_samples, num_channels, 4), dtype=np.uint8)
             raw_bytes = np.frombuffer(byte_frames, dtype=np.uint8)
             arr[:, :, :sample_width] = raw_bytes.reshape(-1, num_channels, sample_width)
-            arr[:, :, sample_width:] = (arr[:, :, sample_width - 1:sample_width] >> 7) * 255
+            arr[:, :, sample_width:] = (
+                arr[:, :, sample_width - 1 : sample_width] >> 7
+            ) * 255
             data = arr.view(np.int32).flatten()
         else:
             data = np.frombuffer(byte_frames, dtype=params["fmt"])
 
         self.iq_array = IQArray(None, np.float32, n=num_frames)
         if num_channels == 1:
-            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data, params["center"]))
+            self.iq_array.real = np.multiply(
+                1 / params["max"], np.subtract(data, params["center"])
+            )
             self.__already_demodulated = True
         elif num_channels == 2:
-            self.iq_array.real = np.multiply(1 / params["max"], np.subtract(data[0::2], params["center"]))
-            self.iq_array.imag = np.multiply(1 / params["max"], np.subtract(data[1::2], params["center"]))
+            self.iq_array.real = np.multiply(
+                1 / params["max"], np.subtract(data[0::2], params["center"])
+            )
+            self.iq_array.imag = np.multiply(
+                1 / params["max"], np.subtract(data[1::2], params["center"])
+            )
         else:
-            raise ValueError("Can't handle {0} channels. Only 1 and 2 are supported.".format(num_channels))
+            raise ValueError(
+                "Can't handle {0} channels. Only 1 and 2 are supported.".format(
+                    num_channels
+                )
+            )
 
         wav.close()
 
@@ -141,22 +176,30 @@ class Signal(QObject):
         params = {"min": 0, "max": 255, "fmt": np.uint8}
         params["center"] = (params["min"] + params["max"]) / 2
         arr = []
-        with open(filename, 'r') as subfile:
+        with open(filename, "r") as subfile:
             for line in subfile:
-                dataline = re.match(r'RAW_Data:\s*([-0-9 ]+)\s*$', line)
+                dataline = re.match(r"RAW_Data:\s*([-0-9 ]+)\s*$", line)
                 if dataline:
-                    values = dataline[1].strip().split(' ')
+                    values = dataline[1].strip().split(" ")
                     for value in values:
                         try:
                             intval = int(value)
                             if intval > 0:
-                                arr.extend(np.full(intval, params["max"], dtype=params["fmt"]))
+                                arr.extend(
+                                    np.full(intval, params["max"], dtype=params["fmt"])
+                                )
                             else:
                                 arr.extend(np.zeros(-intval, dtype=params["fmt"]))
                         except ValueError:
-                            logger.warning("Skipped invalid value {0} in sub file {1}.\nLine <{2}>\nValues:<{3}>\n".format(value, filename, line, values))
+                            logger.warning(
+                                "Skipped invalid value {0} in sub file {1}.\nLine <{2}>\nValues:<{3}>\n".format(
+                                    value, filename, line, values
+                                )
+                            )
         self.iq_array = IQArray(None, np.float32, n=len(arr))
-        self.iq_array.real = np.multiply(1 / params["max"], np.subtract(arr, params["center"]))
+        self.iq_array.real = np.multiply(
+            1 / params["max"], np.subtract(arr, params["center"])
+        )
         self.__already_demodulated = True
 
     def __load_compressed_complex(self, filename: str):
@@ -237,7 +280,7 @@ class Signal(QObject):
 
     @property
     def modulation_order(self):
-        return 2 ** self.bits_per_symbol
+        return 2**self.bits_per_symbol
 
     @property
     def tolerance(self):
@@ -339,7 +382,7 @@ class Signal(QObject):
             self.clear_parameter_cache()
             self._noise_threshold = value
 
-            middle = 0.5*sum(IQArray.min_max_for_dtype(self.iq_array.dtype))
+            middle = 0.5 * sum(IQArray.min_max_for_dtype(self.iq_array.dtype))
             a = self.max_amplitude * value / self.max_magnitude
             self.noise_min_plot = middle - a
             self.noise_max_plot = middle + a
@@ -350,7 +393,7 @@ class Signal(QObject):
     @property
     def max_magnitude(self):
         mi, ma = IQArray.min_max_for_dtype(self.iq_array.dtype)
-        return (2 * max(mi**2, ma**2))**0.5
+        return (2 * max(mi**2, ma**2)) ** 0.5
 
     @property
     def max_amplitude(self):
@@ -369,7 +412,9 @@ class Signal(QObject):
     def qad(self):
         if self._qad is None:
             if self.already_demodulated:
-                self._qad = np.ascontiguousarray(self.real_plot_data, dtype=self.real_plot_data.dtype)
+                self._qad = np.ascontiguousarray(
+                    self.real_plot_data, dtype=self.real_plot_data.dtype
+                )
             else:
                 self._qad = self.quad_demod()
 
@@ -418,13 +463,19 @@ class Signal(QObject):
 
     def quad_demod(self):
         if self.noise_threshold < self.max_magnitude:
-            return signal_functions.afp_demod(self.iq_array.data, self.noise_threshold,
-                                              self.modulation_type, self.modulation_order,
-                                              self.costas_loop_bandwidth)
+            return signal_functions.afp_demod(
+                self.iq_array.data,
+                self.noise_threshold,
+                self.modulation_type,
+                self.modulation_order,
+                self.costas_loop_bandwidth,
+            )
         else:
             return np.zeros(2, dtype=np.float32)
 
-    def calc_relative_noise_threshold_from_range(self, noise_start: int, noise_end: int):
+    def calc_relative_noise_threshold_from_range(
+        self, noise_start: int, noise_end: int
+    ):
         num_digits = 4
         noise_start, noise_end = int(noise_start), int(noise_end)
 
@@ -432,10 +483,16 @@ class Signal(QObject):
             noise_start, noise_end = noise_end, noise_start
 
         try:
-            maximum = np.max(self.iq_array.subarray(noise_start, noise_end).magnitudes_normalized)
-            return np.ceil(maximum * 10 ** num_digits) / 10 ** num_digits
+            maximum = np.max(
+                self.iq_array.subarray(noise_start, noise_end).magnitudes_normalized
+            )
+            return np.ceil(maximum * 10**num_digits) / 10**num_digits
         except ValueError:
-            logger.warning("Could not calculate noise threshold for range {}-{}".format(noise_start, noise_end))
+            logger.warning(
+                "Could not calculate noise threshold for range {}-{}".format(
+                    noise_start, noise_end
+                )
+            )
             return self.noise_threshold_relative
 
     def create_new(self, start=0, end=0, new_data=None):
@@ -461,13 +518,21 @@ class Signal(QObject):
 
     def get_thresholds_for_center(self, center: float, spacing=None):
         spacing = self.center_spacing if spacing is None else spacing
-        return signal_functions.get_center_thresholds(center, spacing, self.modulation_order)
+        return signal_functions.get_center_thresholds(
+            center, spacing, self.modulation_order
+        )
 
-    def auto_detect(self, emit_update=True, detect_modulation=True, detect_noise=False) -> bool:
-        kwargs = {"noise": None if detect_noise else self.noise_threshold,
-                  "modulation": None if detect_modulation
-                  else "OOK" if self.bits_per_symbol == 1 and self.modulation_type == "ASK"
-                  else self.modulation_type}
+    def auto_detect(
+        self, emit_update=True, detect_modulation=True, detect_noise=False
+    ) -> bool:
+        kwargs = {
+            "noise": None if detect_noise else self.noise_threshold,
+            "modulation": None
+            if detect_modulation
+            else "OOK"
+            if self.bits_per_symbol == 1 and self.modulation_type == "ASK"
+            else self.modulation_type,
+        }
 
         estimated_params = AutoInterpretation.estimate(self.iq_array, **kwargs)
         if estimated_params is None:
@@ -509,7 +574,7 @@ class Signal(QObject):
         """
         # ensure power of 2 for faster fft
         length = 2 ** int(math.log2(end - start))
-        data = self.iq_array.as_complex64()[start:start + length]
+        data = self.iq_array.as_complex64()[start : start + length]
 
         try:
             w = np.fft.fft(data)
@@ -564,11 +629,13 @@ class Signal(QObject):
 
     def filter_range(self, start: int, end: int, fir_filter: Filter):
         self.iq_array[start:end] = fir_filter.work(self.iq_array[start:end])
-        self._qad[start:end] = signal_functions.afp_demod(self.iq_array[start:end],
-                                                          self.noise_threshold,
-                                                          self.modulation_type,
-                                                          self.modulation_order,
-                                                          self.costas_loop_bandwidth)
+        self._qad[start:end] = signal_functions.afp_demod(
+            self.iq_array[start:end],
+            self.noise_threshold,
+            self.modulation_type,
+            self.modulation_order,
+            self.costas_loop_bandwidth,
+        )
         self.__invalidate_after_edit()
 
     def __invalidate_after_edit(self):

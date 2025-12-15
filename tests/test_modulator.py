@@ -15,11 +15,15 @@ from urh.signalprocessing.Signal import Signal
 
 class TestModulator(unittest.TestCase):
     def setUp(self):
-        self.modulation_data = array.array("B", [True, False, False, False, True, True, False, True])
+        self.modulation_data = array.array(
+            "B", [True, False, False, False, True, True, False, True]
+        )
         self.samples_per_symbol = 100
         self.pause = 1000
 
-        self.total_samples = len(self.modulation_data) * self.samples_per_symbol + self.pause
+        self.total_samples = (
+            len(self.modulation_data) * self.samples_per_symbol + self.pause
+        )
 
     def test_ask_fsk_psk_modulation(self):
         modulations = ["ASK", "FSK", "PSK"]
@@ -57,7 +61,9 @@ class TestModulator(unittest.TestCase):
             pa = ProtocolAnalyzer(signal)
             pa.get_protocol_from_signal()
             self.assertEqual(1, len(pa.messages), msg=modulation)
-            self.assertEqual(self.modulation_data, pa.messages[0].plain_bits, msg=modulation)
+            self.assertEqual(
+                self.modulation_data, pa.messages[0].plain_bits, msg=modulation
+            )
 
     def test_gfsk(self):
         target_file = os.path.join(tempfile.gettempdir(), "test.complex")
@@ -69,8 +75,8 @@ class TestModulator(unittest.TestCase):
         modulator.parameters[1] = 20e3
         modulator.parameters[0] = -10e3
         data1 = modulator.modulate([True, False, False, True, False], 9437)
-        data2 = modulator.modulate([True, False, True], 9845) #, start=len(s))
-        data3 = modulator.modulate([True, False, True, False], 8458) #, start=len(s))
+        data2 = modulator.modulate([True, False, True], 9845)  # , start=len(s))
+        data3 = modulator.modulate([True, False, True, False], 8458)  # , start=len(s))
         s = np.concatenate((data1, data2, data3))
 
         s.tofile(target_file)
@@ -91,7 +97,7 @@ class TestModulator(unittest.TestCase):
         parameters = array.array("f", [0, 0.25, 0.5, 1])
         result = modulate_c(bits, 100, "ASK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
 
-        #result.tofile("/tmp/test.complex")
+        # result.tofile("/tmp/test.complex")
 
     def test_c_modulation_method_fsk(self):
         bits = array.array("B", [1, 0, 1, 0, 1, 1, 0, 0, 0, 1])
@@ -102,7 +108,9 @@ class TestModulator(unittest.TestCase):
 
     def test_c_modulation_method_psk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])
-        parameters = array.array("f", [np.pi/4, 3*np.pi/4, 5*np.pi/4, 7*np.pi/4])
+        parameters = array.array(
+            "f", [np.pi / 4, 3 * np.pi / 4, 5 * np.pi / 4, 7 * np.pi / 4]
+        )
         result = modulate_c(bits, 100, "PSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
 
         # result.tofile("/tmp/test_psk.complex")
@@ -129,11 +137,16 @@ class TestModulator(unittest.TestCase):
 
         self.assertEqual(oqpsk_bits[0], 1)
         self.assertEqual(oqpsk_bits[-1], 1)
-        self.assertEqual(array.array("B", [0, 1, 0, 1, 1, 0,  0, 0]), array.array("B", oqpsk_bits[2:-2]))
+        self.assertEqual(
+            array.array("B", [0, 1, 0, 1, 1, 0, 0, 0]),
+            array.array("B", oqpsk_bits[2:-2]),
+        )
 
     def test_c_modulation_method_oqpsk(self):
         bits = array.array("B", [0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1])
-        parameters = array.array("f", [np.pi/4, 3*np.pi/4, 5*np.pi/4, 7*np.pi/4])
+        parameters = array.array(
+            "f", [np.pi / 4, 3 * np.pi / 4, 5 * np.pi / 4, 7 * np.pi / 4]
+        )
         result = modulate_c(bits, 100, "OQPSK", parameters, 2, 1, 40e3, 0, 1e6, 1000, 0)
 
         # result.tofile("/tmp/test_oqpsk.complex")

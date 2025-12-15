@@ -4,7 +4,7 @@ from urh.signalprocessing.Ruleset import Ruleset, Rule
 
 
 class RulesetTableModel(QAbstractTableModel):
-    header_labels = ["Start", 'End', "Viewtype", "Operator", 'Value']
+    header_labels = ["Start", "End", "Viewtype", "Operator", "Value"]
 
     def __init__(self, ruleset: Ruleset, operator_descriptions: list, parent=None):
         self.ruleset = ruleset
@@ -15,14 +15,17 @@ class RulesetTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.endResetModel()
 
-    def columnCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def columnCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.header_labels)
 
-    def rowCount(self, parent: QModelIndex=None, *args, **kwargs):
+    def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.ruleset)
 
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
-        if role == Qt.ItemDataRole.DisplayRole and orientation == Qt.Orientation.Horizontal:
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
@@ -68,4 +71,8 @@ class RulesetTableModel(QAbstractTableModel):
             return True
 
     def flags(self, index: QModelIndex):
-        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
+        return (
+            Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsEditable
+        )

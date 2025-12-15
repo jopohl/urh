@@ -18,8 +18,8 @@ class TestHackRF(unittest.TestCase):
         print(buffer)
         for i in range(0, len(buffer), 4):
             try:
-                r = np.fromstring(buffer[i:i + 2], dtype=np.float16) / 32767.5
-                i = np.fromstring(buffer[i + 2:i + 4], dtype=np.float16) / 32767.5
+                r = np.fromstring(buffer[i : i + 2], dtype=np.float16) / 32767.5
+                i = np.fromstring(buffer[i + 2 : i + 4], dtype=np.float16) / 32767.5
             except ValueError:
                 continue
             if r and i:
@@ -29,15 +29,15 @@ class TestHackRF(unittest.TestCase):
         return 0
 
     def test_fromstring(self):
-        buffer = b'\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe'
+        buffer = b"\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe"
         r = np.empty(len(buffer) // 2, dtype=np.float32)
         i = np.empty(len(buffer) // 2, dtype=np.float32)
         c = np.empty(len(buffer) // 2, dtype=np.complex64)
 
         # dtype  =
-        unpacked = np.frombuffer(buffer, dtype=[('r', np.uint8), ('i', np.uint8)])
-        ru = unpacked['r'] / 128.0
-        iu = unpacked['i'] / 128.0
+        unpacked = np.frombuffer(buffer, dtype=[("r", np.uint8), ("i", np.uint8)])
+        ru = unpacked["r"] / 128.0
+        iu = unpacked["i"] / 128.0
 
         # for j in range(0, len(buffer)-1, 2):
         #    r[j//2] = np.frombuffer(buffer[j:j + 1], dtype=np.int8) / 128.0
@@ -49,15 +49,15 @@ class TestHackRF(unittest.TestCase):
         # x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
 
     def test_fromstring2(self):
-        buffer = b'\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe'
+        buffer = b"\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xff\xfd\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe\xfd\xfe\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfd\xfe"
         c = np.empty(len(buffer) // 2, dtype=np.complex64)
 
         # dtype  =
-        unpacked = np.frombuffer(buffer, dtype="<h") # cast in short
+        unpacked = np.frombuffer(buffer, dtype="<h")  # cast in short
         print(unpacked)
-        f = 1.0/32767.5
-        for i in range(0, len(unpacked)-1,2):
-            c[i] = complex(float(unpacked[i]*f), float(unpacked[i+1]*f))
+        f = 1.0 / 32767.5
+        for i in range(0, len(unpacked) - 1, 2):
+            c[i] = complex(float(unpacked[i] * f), float(unpacked[i + 1] * f))
 
         print(c)
         # x,y = np.frombuffer(buffer, dtype=[('x', np.float16), ('y', np.float16)])
@@ -67,10 +67,10 @@ class TestHackRF(unittest.TestCase):
         hfc.start_rx_mode()
         i = 0
         TIME_TOTAL = 5
-        while i <TIME_TOTAL:
-            print("{0}/{1}".format(i+1, TIME_TOTAL))
+        while i < TIME_TOTAL:
+            print("{0}/{1}".format(i + 1, TIME_TOTAL))
             time.sleep(1)
-            i+=1
+            i += 1
         print("{0:,}".format(hfc.current_recv_index))
         hfc.received_data.tofile(os.path.join(tempfile.gettempdir(), "hackrf.complex"))
         print("Wrote Data")
@@ -78,12 +78,21 @@ class TestHackRF(unittest.TestCase):
 
     def test_hackrf_class_send(self):
         hfc = HackRF(433.92e6, 1e6, 1e6, 20)
-        hfc.start_tx_mode(np.fromfile(os.path.join(tempfile.gettempdir(), "hackrf.complex"),
-                                      dtype=np.complex64), repeats=1)
+        hfc.start_tx_mode(
+            np.fromfile(
+                os.path.join(tempfile.gettempdir(), "hackrf.complex"),
+                dtype=np.complex64,
+            ),
+            repeats=1,
+        )
         while not hfc.sending_finished:
-            print("Repeat: {0} Current Sample: {1}/{2}".format(hfc.current_sending_repeat+1,
-                                                               hfc.current_sent_sample,
-                                                               len(hfc.samples_to_send)))
+            print(
+                "Repeat: {0} Current Sample: {1}/{2}".format(
+                    hfc.current_sending_repeat + 1,
+                    hfc.current_sent_sample,
+                    len(hfc.samples_to_send),
+                )
+            )
             time.sleep(1)
         hfc.stop_tx_mode("Test finished")
 

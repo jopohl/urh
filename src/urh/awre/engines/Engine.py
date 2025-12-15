@@ -13,7 +13,9 @@ class Engine(object):
             print("[{}]".format(self.__class__.__name__), *args)
 
     @staticmethod
-    def find_common_ranges_by_cluster(msg_vectors, clustered_bitvectors, alpha=0.95, range_type="bit"):
+    def find_common_ranges_by_cluster(
+        msg_vectors, clustered_bitvectors, alpha=0.95, range_type="bit"
+    ):
         """
 
         :param alpha: How many percent of values must be equal per range?
@@ -36,13 +38,22 @@ class Engine(object):
         return common_ranges_by_cluster
 
     @staticmethod
-    def find_common_ranges_exhaustive(msg_vectors, msg_indices, range_type="bit") -> list:
+    def find_common_ranges_exhaustive(
+        msg_vectors, msg_indices, range_type="bit"
+    ) -> list:
         result = []
 
         for i, j in itertools.combinations(msg_indices, 2):
-            for rng in Histogram(msg_vectors, indices=[i, j]).find_common_ranges(alpha=1, range_type=range_type):
+            for rng in Histogram(msg_vectors, indices=[i, j]).find_common_ranges(
+                alpha=1, range_type=range_type
+            ):
                 try:
-                    common_range = next(cr for cr in result if cr.start == rng.start and cr.value.tobytes() == rng.value.tobytes())
+                    common_range = next(
+                        cr
+                        for cr in result
+                        if cr.start == rng.start
+                        and cr.value.tobytes() == rng.value.tobytes()
+                    )
                     common_range.message_indices.update({i, j})
                 except StopIteration:
                     result.append(rng)

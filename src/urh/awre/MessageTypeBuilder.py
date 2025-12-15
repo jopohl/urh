@@ -10,7 +10,7 @@ class MessageTypeBuilder(object):
         self.name = name
         self.message_type = MessageType(name)
 
-    def add_label(self, label_type: FieldType.Function, length: int, name: str=None):
+    def add_label(self, label_type: FieldType.Function, length: int, name: str = None):
         try:
             start = self.message_type[-1].end
             color_index = self.message_type[-1].color_index + 1
@@ -20,10 +20,18 @@ class MessageTypeBuilder(object):
         if name is None:
             name = label_type.value
 
-        lbl = ProtocolLabel(name, start, start+length-1, color_index, field_type=FieldType(label_type.name, label_type))
+        lbl = ProtocolLabel(
+            name,
+            start,
+            start + length - 1,
+            color_index,
+            field_type=FieldType(label_type.name, label_type),
+        )
         self.message_type.append(lbl)
 
-    def add_checksum_label(self, length, checksum, data_start=None, data_end=None, name: str=None):
+    def add_checksum_label(
+        self, length, checksum, data_start=None, data_end=None, name: str = None
+    ):
         label_type = FieldType.Function.CHECKSUM
         try:
             start = self.message_type[-1].end
@@ -36,11 +44,15 @@ class MessageTypeBuilder(object):
 
         if data_start is None:
             # End of sync or preamble
-            sync_label = self.message_type.get_first_label_with_type(FieldType.Function.SYNC)
+            sync_label = self.message_type.get_first_label_with_type(
+                FieldType.Function.SYNC
+            )
             if sync_label:
                 data_start = sync_label.end
             else:
-                preamble_label = self.message_type.get_first_label_with_type(FieldType.Function.PREAMBLE)
+                preamble_label = self.message_type.get_first_label_with_type(
+                    FieldType.Function.PREAMBLE
+                )
                 if preamble_label:
                     data_start = preamble_label.end
                 else:
@@ -49,7 +61,13 @@ class MessageTypeBuilder(object):
         if data_end is None:
             data_end = start
 
-        lbl = ChecksumLabel(name, start, start+length-1, color_index, field_type=FieldType(label_type.name, label_type))
+        lbl = ChecksumLabel(
+            name,
+            start,
+            start + length - 1,
+            color_index,
+            field_type=FieldType(label_type.name, label_type),
+        )
         lbl.data_ranges = [(data_start, data_end)]
         lbl.checksum = checksum
         self.message_type.append(lbl)

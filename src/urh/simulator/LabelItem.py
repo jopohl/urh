@@ -25,7 +25,11 @@ class LabelItem(GraphicsItem):
         pass
 
     def paint(self, painter: QPainter, option, widget):
-        style = Qt.PenStyle.DotLine if self.model_item.has_live_input else Qt.PenStyle.SolidLine
+        style = (
+            Qt.PenStyle.DotLine
+            if self.model_item.has_live_input
+            else Qt.PenStyle.SolidLine
+        )
         pen = QPen(settings.LINECOLOR, 1, style)
         painter.setPen(pen)
         painter.setBrush(settings.LABEL_COLORS[self.model_item.color_index])
@@ -42,6 +46,8 @@ class LabelItem(GraphicsItem):
         if self.model_item.is_checksum_label:
             value_type = "Checksum"
         else:
-            value_type = SimulatorProtocolLabel.VALUE_TYPES[self.model_item.value_type_index]
+            value_type = SimulatorProtocolLabel.VALUE_TYPES[
+                self.model_item.value_type_index
+            ]
         tooltip = "Value type:<br><b>{}</b>".format(value_type)
         self.setToolTip(tooltip)

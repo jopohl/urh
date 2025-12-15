@@ -26,7 +26,7 @@ def get_used_icon_names():
         with open(sourcefile, "r") as f:
             for line in f:
                 if "QIcon.fromTheme" in line:
-                    icon = line[line.find("QIcon.fromTheme"):]
+                    icon = line[line.find("QIcon.fromTheme") :]
                     icon = icon.replace('"', "'")
                     start = icon.find("'") + 1
                     end = icon.find("'", start)
@@ -36,7 +36,11 @@ def get_used_icon_names():
 
 def copy_icons(icon_names: set):
     target_dir = "/tmp/oxy"
-    sizes = [s for s in os.listdir(OXYGEN_PATH) if os.path.isdir(os.path.join(OXYGEN_PATH, s))]  # 8x8, 22x22 ...
+    sizes = [
+        s
+        for s in os.listdir(OXYGEN_PATH)
+        if os.path.isdir(os.path.join(OXYGEN_PATH, s))
+    ]  # 8x8, 22x22 ...
     for size in sizes:
         target_size_dir = os.path.join(target_dir, size)
         os.makedirs(target_size_dir, exist_ok=True)
@@ -60,7 +64,7 @@ def copy_icons(icon_names: set):
         for size in sizes:
             f.write("\n")
             f.write("[" + size + "]\n")
-            f.write("Size=" + size[:size.index("x")] + "\n")
+            f.write("Size=" + size[: size.index("x")] + "\n")
             f.write("\n")
 
     root = ET.Element("RCC")
@@ -78,9 +82,21 @@ def copy_icons(icon_names: set):
 
     tree = ET.ElementTree(root)
     tree.write("/tmp/xtra_icons.qrc")
-    call(["pyside6-rcc", "-g", "python", "/tmp/xtra_icons.qrc", "-o", "/tmp/xtra_icons_rc.py"])
+    call(
+        [
+            "pyside6-rcc",
+            "-g",
+            "python",
+            "/tmp/xtra_icons.qrc",
+            "-o",
+            "/tmp/xtra_icons_rc.py",
+        ]
+    )
     for line in fileinput.input("/tmp/xtra_icons_rc.py", inplace=True):
-        print(line.replace("from PySide6 import QtCore", "from PyQt6 import QtCore"), end="")
+        print(
+            line.replace("from PySide6 import QtCore", "from PyQt6 import QtCore"),
+            end="",
+        )
     tar_path = os.path.dirname(os.path.join(os.path.dirname(__file__), "..", ".."))
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.copy("/tmp/xtra_icons_rc.py", tar_path)

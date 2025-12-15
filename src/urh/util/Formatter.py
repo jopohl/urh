@@ -8,7 +8,9 @@ class Formatter:
         return locale.localeconv()["decimal_point"]
 
     @staticmethod
-    def science_time(time_in_seconds: float, decimals=2, append_seconds=True, remove_spaces=False) -> str:
+    def science_time(
+        time_in_seconds: float, decimals=2, append_seconds=True, remove_spaces=False
+    ) -> str:
         if time_in_seconds < 1e-6:
             suffix = "n"
             value = time_in_seconds * 1e9
@@ -51,11 +53,14 @@ class Formatter:
 
         return result + suffix
 
-
     @staticmethod
     def str2val(str_val, dtype, default=0):
         try:
             return dtype(str_val)
         except (ValueError, TypeError):
-            logger.warning("The {0} is not a valid {1}, assuming {2}".format(str_val, str(dtype), str(default)))
+            logger.warning(
+                "The {0} is not a valid {1}, assuming {2}".format(
+                    str_val, str(dtype), str(default)
+                )
+            )
             return default

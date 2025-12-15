@@ -6,6 +6,7 @@ def test_sounddevice_lib():
 
     import numpy as np
     from sounddevice import InputStream, OutputStream, sleep as sd_sleep
+
     """ 
     if no portaudio installed:
     Traceback (most recent call last):
@@ -21,7 +22,7 @@ def test_sounddevice_lib():
 
     duration = 2.5  # seconds
 
-    rx_buffer = np.ones((10 ** 6, 2), dtype=np.float32)
+    rx_buffer = np.ones((10**6, 2), dtype=np.float32)
     global current_rx, current_tx
     current_rx = 0
     current_tx = 0
@@ -31,7 +32,7 @@ def test_sounddevice_lib():
         if status:
             print(status)
 
-        rx_buffer[current_rx:current_rx + frames] = indata
+        rx_buffer[current_rx : current_rx + frames] = indata
         current_rx += frames
 
     def tx_callback(outdata: np.ndarray, frames: int, time, status):
@@ -39,7 +40,7 @@ def test_sounddevice_lib():
         if status:
             print(status)
 
-        outdata[:] = rx_buffer[current_tx:current_tx + frames]
+        outdata[:] = rx_buffer[current_tx : current_tx + frames]
         current_tx += frames
 
     with InputStream(channels=2, callback=rx_callback):
@@ -59,11 +60,13 @@ def test_pyaudio():
     CHUNK = 1024
     p = pyaudio.PyAudio()
 
-    stream = p.open(format=pyaudio.paFloat32,
-                    channels=2,
-                    rate=48000,
-                    input=True,
-                    frames_per_buffer=CHUNK)
+    stream = p.open(
+        format=pyaudio.paFloat32,
+        channels=2,
+        rate=48000,
+        input=True,
+        frames_per_buffer=CHUNK,
+    )
 
     print("* recording")
 
@@ -78,19 +81,20 @@ def test_pyaudio():
     stream.stop_stream()
     stream.close()
     p.terminate()
-    data = b''.join(frames)
+    data = b"".join(frames)
 
     print("* playing")
 
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paFloat32,
-                    channels=2,
-                    rate=48000,
-                    output=True,
-                    )
+    stream = p.open(
+        format=pyaudio.paFloat32,
+        channels=2,
+        rate=48000,
+        output=True,
+    )
 
     for i in range(0, len(data), CHUNK):
-        stream.write(data[i:i+CHUNK])
+        stream.write(data[i : i + CHUNK])
 
     stream.stop_stream()
     stream.close()
@@ -100,6 +104,6 @@ def test_pyaudio():
     print("* done playing")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # test_sounddevice_lib()
     test_pyaudio()

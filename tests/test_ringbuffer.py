@@ -44,7 +44,11 @@ class TestRingBuffer(unittest.TestCase):
         ring_buffer.push(add4)
         self.assertFalse(ring_buffer.will_fit(1))
 
-        self.assertTrue(np.array_equal(np.concatenate((add3.data[1:], add4.data)), ring_buffer.pop(5)))
+        self.assertTrue(
+            np.array_equal(
+                np.concatenate((add3.data[1:], add4.data)), ring_buffer.pop(5)
+            )
+        )
 
     def test_continuous_pop(self):
         ring_buffer = RingBuffer(size=10)
@@ -60,7 +64,9 @@ class TestRingBuffer(unittest.TestCase):
     def test_big_buffer(self):
         ring_buffer = RingBuffer(size=5)
         try:
-            ring_buffer.push(IQArray(np.array([1, 2, 3, 4, 5, 6, 7], dtype=np.complex64)))
+            ring_buffer.push(
+                IQArray(np.array([1, 2, 3, 4, 5, 6, 7], dtype=np.complex64))
+            )
             self.assertTrue(False)
         except ValueError:
             self.assertTrue(True)
@@ -78,5 +84,5 @@ class TestRingBuffer(unittest.TestCase):
         self.assertFalse(ring_buffer.will_fit(5))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

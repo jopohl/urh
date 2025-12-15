@@ -8,7 +8,9 @@ from urh.signalprocessing.Spectrogram import Spectrogram
 
 class TestSpectrogram(QtTestCase):
     def setUp(self):
-        self.signal = Signal(self.get_path_for_filename("two_participants.complex16s"), "test")
+        self.signal = Signal(
+            self.get_path_for_filename("two_participants.complex16s"), "test"
+        )
         self.spectrogram = Spectrogram(self.signal.iq_array.data)
 
     def test_create_spectrogram_image(self):
@@ -29,9 +31,30 @@ class TestSpectrogram(QtTestCase):
         signal_frame = self.form.signal_tab_controller.signal_frames[0]
         self.__prepare_channel_separation(signal_frame)
 
-        self.__test_extract_channel(signal_frame, freq1=650, freq2=850, bandwidth="195,312KHz", target_bits="11001101", center=0.1)
-        self.__test_extract_channel(signal_frame, freq1=500, freq2=620, bandwidth="117,188KHz", target_bits="10101001", center=0.1)
-        self.__test_extract_channel(signal_frame, freq1=217, freq2=324, bandwidth="104,492KHz", target_bits="10010111", center=0.1)
+        self.__test_extract_channel(
+            signal_frame,
+            freq1=650,
+            freq2=850,
+            bandwidth="195,312KHz",
+            target_bits="11001101",
+            center=0.1,
+        )
+        self.__test_extract_channel(
+            signal_frame,
+            freq1=500,
+            freq2=620,
+            bandwidth="117,188KHz",
+            target_bits="10101001",
+            center=0.1,
+        )
+        self.__test_extract_channel(
+            signal_frame,
+            freq1=217,
+            freq2=324,
+            bandwidth="104,492KHz",
+            target_bits="10010111",
+            center=0.1,
+        )
 
     def test_cancel_filtering(self):
         super().setUp()
@@ -41,7 +64,9 @@ class TestSpectrogram(QtTestCase):
         signal_frame.ui.spinBoxSelectionStart.setValue(100)
         signal_frame.ui.spinBoxSelectionEnd.setValue(200)
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
+        create_action = next(
+            action for action in menu.actions() if "bandpass filter" in action.text()
+        )
         timer = QTimer(self.form)
         timer.setSingleShot(True)
         timer.timeout.connect(self.form.cancel_action.trigger)
@@ -61,7 +86,9 @@ class TestSpectrogram(QtTestCase):
         signal_frame.ui.cbSignalView.setCurrentIndex(2)
         self.assertTrue(signal_frame.spectrogram_is_active)
 
-    def __test_extract_channel(self, signal_frame, freq1, freq2, bandwidth: str, target_bits: str, center=None):
+    def __test_extract_channel(
+        self, signal_frame, freq1, freq2, bandwidth: str, target_bits: str, center=None
+    ):
         num_frames = self.form.signal_tab_controller.num_frames
 
         signal_frame.ui.spinBoxSelectionStart.setValue(freq1)
@@ -71,7 +98,9 @@ class TestSpectrogram(QtTestCase):
         self.assertEqual(signal_frame.ui.lNumSelectedSamples.text(), str(freq2 - freq1))
         self.assertEqual(signal_frame.ui.lDuration.text().replace(".", ","), bandwidth)
         menu = signal_frame.ui.gvSpectrogram.create_context_menu()
-        create_action = next(action for action in menu.actions() if "bandpass filter" in action.text())
+        create_action = next(
+            action for action in menu.actions() if "bandpass filter" in action.text()
+        )
         create_action.trigger()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, num_frames + 1)

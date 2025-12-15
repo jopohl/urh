@@ -26,7 +26,9 @@ class SoundCard(Device):
     DATA_TYPE = np.float32
 
     @classmethod
-    def init_device(cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict) -> bool:
+    def init_device(
+        cls, ctrl_connection: Connection, is_tx: bool, parameters: OrderedDict
+    ) -> bool:
         try:
             cls.SAMPLE_RATE = int(parameters[cls.Command.SET_SAMPLE_RATE.name])
         except (KeyError, ValueError):
@@ -47,11 +49,13 @@ class SoundCard(Device):
     @classmethod
     def prepare_sync_receive(cls, ctrl_connection: Connection):
         try:
-            cls.pyaudio_stream = cls.pyaudio_handle.open(format=pyaudio.paFloat32,
-                                                         channels=2,
-                                                         rate=cls.SAMPLE_RATE,
-                                                         input=True,
-                                                         frames_per_buffer=cls.CHUNK_SIZE)
+            cls.pyaudio_stream = cls.pyaudio_handle.open(
+                format=pyaudio.paFloat32,
+                channels=2,
+                rate=cls.SAMPLE_RATE,
+                input=True,
+                frames_per_buffer=cls.CHUNK_SIZE,
+            )
             ctrl_connection.send("Successfully started pyaudio stream")
             return 0
         except Exception as e:
@@ -61,11 +65,13 @@ class SoundCard(Device):
     @classmethod
     def prepare_sync_send(cls, ctrl_connection: Connection):
         try:
-            cls.pyaudio_stream = cls.pyaudio_handle.open(format=pyaudio.paFloat32,
-                                                         channels=2,
-                                                         rate=cls.SAMPLE_RATE,
-                                                         frames_per_buffer=cls.CHUNK_SIZE,
-                                                         output=True)
+            cls.pyaudio_stream = cls.pyaudio_handle.open(
+                format=pyaudio.paFloat32,
+                channels=2,
+                rate=cls.SAMPLE_RATE,
+                frames_per_buffer=cls.CHUNK_SIZE,
+                output=True,
+            )
             ctrl_connection.send("Successfully started pyaudio stream")
             return 0
         except Exception as e:
@@ -75,14 +81,18 @@ class SoundCard(Device):
     @classmethod
     def receive_sync(cls, data_conn: Connection):
         if cls.pyaudio_stream:
-            data_conn.send_bytes(cls.pyaudio_stream.read(cls.CHUNK_SIZE, exception_on_overflow=False))
+            data_conn.send_bytes(
+                cls.pyaudio_stream.read(cls.CHUNK_SIZE, exception_on_overflow=False)
+            )
 
     @classmethod
     def send_sync(cls, data):
         if cls.pyaudio_stream:
-            data_bytes = data.tostring() if isinstance(data, np.ndarray) else bytes(data)
+            data_bytes = (
+                data.tostring() if isinstance(data, np.ndarray) else bytes(data)
+            )
             # pad with zeros if smaller than chunk size
-            cls.pyaudio_stream.write(data_bytes.ljust(cls.CHUNK_SIZE*8, b'\0'))
+            cls.pyaudio_stream.write(data_bytes.ljust(cls.CHUNK_SIZE * 8, b"\0"))
 
     @classmethod
     def shutdown_device(cls, ctrl_connection, is_tx: bool):
@@ -99,17 +109,27 @@ class SoundCard(Device):
             ctrl_connection.send("Failed to shut down pyaudio")
 
     def __init__(self, sample_rate, resume_on_full_receive_buffer=False):
-        super().__init__(center_freq=0, sample_rate=sample_rate, bandwidth=0,
-                         gain=1, if_gain=1, baseband_gain=1,
-                         resume_on_full_receive_buffer=resume_on_full_receive_buffer)
+        super().__init__(
+            center_freq=0,
+            sample_rate=sample_rate,
+            bandwidth=0,
+            gain=1,
+            if_gain=1,
+            baseband_gain=1,
+            resume_on_full_receive_buffer=resume_on_full_receive_buffer,
+        )
 
         self.success = 0
         self.bandwidth_is_adjustable = False
 
     @property
     def device_parameters(self) -> OrderedDict:
-        return OrderedDict([(self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
-                            ("identifier", None)])
+        return OrderedDict(
+            [
+                (self.Command.SET_SAMPLE_RATE.name, self.sample_rate),
+                ("identifier", None),
+            ]
+        )
 
     @staticmethod
     def bytes_to_iq(buffer):

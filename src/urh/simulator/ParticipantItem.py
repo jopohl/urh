@@ -15,7 +15,15 @@ class ParticipantItem(QGraphicsItem):
         self.text = QGraphicsTextItem(self)
 
         self.line = QGraphicsLineItem(self)
-        self.line.setPen(QPen(Qt.GlobalColor.darkGray, 1, Qt.PenStyle.DashLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+        self.line.setPen(
+            QPen(
+                Qt.GlobalColor.darkGray,
+                1,
+                Qt.PenStyle.DashLine,
+                Qt.PenCapStyle.RoundCap,
+                Qt.PenJoinStyle.RoundJoin,
+            )
+        )
 
         self.refresh()
 
@@ -36,17 +44,35 @@ class ParticipantItem(QGraphicsItem):
         return self.boundingRect().width()
 
     def refresh(self):
-        self.text.setPlainText("?" if not self.model_item else self.model_item.shortname)
+        self.text.setPlainText(
+            "?" if not self.model_item else self.model_item.shortname
+        )
         if hasattr(self.model_item, "simulate") and self.model_item.simulate:
             font = QFont()
             font.setBold(True)
             self.text.setFont(font)
             self.text.setDefaultTextColor(Qt.GlobalColor.darkGreen)
-            self.line.setPen(QPen(Qt.GlobalColor.darkGreen, 2, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+            self.line.setPen(
+                QPen(
+                    Qt.GlobalColor.darkGreen,
+                    2,
+                    Qt.PenStyle.SolidLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                )
+            )
         else:
             self.text.setFont(QFont())
             self.text.setDefaultTextColor(settings.LINECOLOR)
-            self.line.setPen(QPen(Qt.GlobalColor.darkGray, 1, Qt.PenStyle.DashLine, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+            self.line.setPen(
+                QPen(
+                    Qt.GlobalColor.darkGray,
+                    1,
+                    Qt.PenStyle.DashLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                )
+            )
 
     def boundingRect(self):
         return self.childrenBoundingRect()

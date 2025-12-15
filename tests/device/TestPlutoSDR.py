@@ -2,6 +2,7 @@ from multiprocessing import Pipe
 
 from urh.util import util
 import numpy as np
+
 util.set_shared_library_path()
 
 from urh.dev.native.lib import plutosdr
@@ -43,5 +44,5 @@ def test_cython_wrapper():
     print("Close", plutosdr.close())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_cython_wrapper()

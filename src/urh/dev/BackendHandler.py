@@ -18,7 +18,9 @@ class BackendContainer(object):
     def __init__(self, name, avail_backends: set, supports_rx: bool, supports_tx: bool):
         self.name = name
         self.avail_backends = avail_backends
-        self.selected_backend = Backends[settings.read(name + "_selected_backend", "none")]
+        self.selected_backend = Backends[
+            settings.read(name + "_selected_backend", "none")
+        ]
         if self.selected_backend not in self.avail_backends:
             self.selected_backend = Backends.none
 
@@ -35,7 +37,12 @@ class BackendContainer(object):
             self.is_enabled = False
 
     def __repr__(self):
-        return "avail backends: " + str(self.avail_backends) + "| selected backend:" + str(self.selected_backend)
+        return (
+            "avail backends: "
+            + str(self.avail_backends)
+            + "| selected backend:"
+            + str(self.selected_backend)
+        )
 
     @property
     def supports_rx(self) -> bool:
@@ -81,18 +88,31 @@ class BackendHandler(object):
     3) Manage the selection of devices backend
 
     """
-    DEVICE_NAMES = ("AirSpy R2", "AirSpy Mini", "BladeRF", "FUNcube", "HackRF", "Rad1o",
-                    "LimeSDR", "PlutoSDR", "RTL-SDR", "RTL-TCP", "SDRPlay", "SoundCard", "USRP")
+
+    DEVICE_NAMES = (
+        "AirSpy R2",
+        "AirSpy Mini",
+        "BladeRF",
+        "FUNcube",
+        "HackRF",
+        "Rad1o",
+        "LimeSDR",
+        "PlutoSDR",
+        "RTL-SDR",
+        "RTL-TCP",
+        "SDRPlay",
+        "SoundCard",
+        "USRP",
+    )
 
     def __init__(self):
-
-        self.__gr_python_interpreter = settings.read('gr_python_interpreter', '')
+        self.__gr_python_interpreter = settings.read("gr_python_interpreter", "")
         if not self.__gr_python_interpreter:
-            self.__gr_python_interpreter = settings.read("python2_exe", '')  # legacy
+            self.__gr_python_interpreter = settings.read("python2_exe", "")  # legacy
 
         self.set_gnuradio_installed_status()
 
-        if not hasattr(sys, 'frozen'):
+        if not hasattr(sys, "frozen"):
             self.path = os.path.dirname(os.path.realpath(__file__))
         else:
             self.path = os.path.dirname(sys.executable)
@@ -115,13 +135,20 @@ class BackendHandler(object):
 
     @property
     def num_native_backends(self):
-        return len([dev for dev, backend_container in self.device_backends.items()
-                    if Backends.native in backend_container.avail_backends and dev.lower() != "rtl-tcp"])
+        return len(
+            [
+                dev
+                for dev, backend_container in self.device_backends.items()
+                if Backends.native in backend_container.avail_backends
+                and dev.lower() != "rtl-tcp"
+            ]
+        )
 
     @property
     def __plutosdr_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import plutosdr
+
             return True
         except ImportError:
             return False
@@ -130,6 +157,7 @@ class BackendHandler(object):
     def __bladerf_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import bladerf
+
             return True
         except ImportError:
             return False
@@ -138,6 +166,7 @@ class BackendHandler(object):
     def __hackrf_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import hackrf
+
             return True
         except ImportError:
             return False
@@ -148,13 +177,14 @@ class BackendHandler(object):
         try:
             try:
                 # Redirect stderr to /dev/null to hide USRP messages
-                devnull = open(os.devnull, 'w')
+                devnull = open(os.devnull, "w")
                 old_stdout = os.dup(sys.stdout.fileno())
                 os.dup2(devnull.fileno(), sys.stdout.fileno())
             except:
                 pass
 
             from urh.dev.native.lib import usrp
+
             return True
         except ImportError:
             return False
@@ -168,6 +198,7 @@ class BackendHandler(object):
     def __soundcard_enabled(self) -> bool:
         try:
             import pyaudio
+
             return True
         except ImportError:
             return False
@@ -176,6 +207,7 @@ class BackendHandler(object):
     def __airspy_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import airspy
+
             return True
         except ImportError:
             return False
@@ -184,6 +216,7 @@ class BackendHandler(object):
     def __lime_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import limesdr
+
             return True
         except ImportError:
             return False
@@ -192,6 +225,7 @@ class BackendHandler(object):
     def __rtlsdr_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import rtlsdr
+
             return True
         except ImportError:
             return False
@@ -200,23 +234,35 @@ class BackendHandler(object):
     def __sdrplay_native_enabled(self) -> bool:
         try:
             from urh.dev.native.lib import sdrplay
+
             return True
         except ImportError:
             return False
 
     def __check_gr_python_interpreter(self, interpreter):
         # Use shell=True to prevent console window popping up on windows
-        return call('"{0}" -c "import gnuradio"'.format(interpreter), shell=True, stderr=DEVNULL) == 0
+        return (
+            call(
+                '"{0}" -c "import gnuradio"'.format(interpreter),
+                shell=True,
+                stderr=DEVNULL,
+            )
+            == 0
+        )
 
     def set_gnuradio_installed_status(self, force=False):
-        current_setting = settings.read('gnuradio_is_installed', -1, int)
+        current_setting = settings.read("gnuradio_is_installed", -1, int)
         if not force and current_setting != -1:
             self.gnuradio_is_installed = bool(current_setting)
             return
 
-        if os.path.isfile(self.gr_python_interpreter) and os.access(self.gr_python_interpreter, os.X_OK):
+        if os.path.isfile(self.gr_python_interpreter) and os.access(
+            self.gr_python_interpreter, os.X_OK
+        ):
             try:
-                self.gnuradio_is_installed = self.__check_gr_python_interpreter(self.gr_python_interpreter)
+                self.gnuradio_is_installed = self.__check_gr_python_interpreter(
+                    self.gr_python_interpreter
+                )
             except OSError:
                 self.gnuradio_is_installed = False
         else:
@@ -274,7 +320,10 @@ class BackendHandler(object):
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
-        if devname.lower().replace("-", "") == "rtlsdr" and self.__rtlsdr_native_enabled:
+        if (
+            devname.lower().replace("-", "") == "rtlsdr"
+            and self.__rtlsdr_native_enabled
+        ):
             supports_rx, supports_tx = True, False
             backends.add(Backends.native)
 
@@ -312,6 +361,7 @@ class BackendHandler(object):
         result = "SoundCard -- "
         try:
             import pyaudio
+
             return result + "OK"
         except Exception as e:
             return result + str(e)

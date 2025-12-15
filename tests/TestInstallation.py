@@ -7,9 +7,15 @@ from tests.docker import docker_util
 
 
 class VMHelper(object):
-    def __init__(self, vm_name: str, shell: str = "", ssh_username: str = None, ssh_port: str = None):
+    def __init__(
+        self,
+        vm_name: str,
+        shell: str = "",
+        ssh_username: str = None,
+        ssh_port: str = None,
+    ):
         self.vm_name = vm_name
-        self.shell = shell # like cmd.exe /c
+        self.shell = shell  # like cmd.exe /c
         self.ssh_username = ssh_username
         self.ssh_port = ssh_port
 
@@ -21,12 +27,17 @@ class VMHelper(object):
 
     def stop_vm(self, save=True):
         if save:
-            call('VBoxManage controlvm "{0}" savestate'.format(self.vm_name), shell=True)
+            call(
+                'VBoxManage controlvm "{0}" savestate'.format(self.vm_name), shell=True
+            )
             return
         if self.use_ssh:
             self.send_command("sudo shutdown -h now")
         else:
-            call('VBoxManage controlvm "{0}" acpipowerbutton'.format(self.vm_name), shell=True)
+            call(
+                'VBoxManage controlvm "{0}" acpipowerbutton'.format(self.vm_name),
+                shell=True,
+            )
 
     def wait_for_vm_up(self):
         if not self.__vm_is_up:
@@ -34,7 +45,9 @@ class VMHelper(object):
             command = "ping -c 1" if self.use_ssh else "ping -n 1"
             command += " github.com"
 
-            while self.__send_command(command, hide_output=True, print_command=False) != 0:
+            while (
+                self.__send_command(command, hide_output=True, print_command=False) != 0
+            ):
                 time.sleep(1)
 
             self.__vm_is_up = True
@@ -43,13 +56,23 @@ class VMHelper(object):
         self.wait_for_vm_up()
         return self.__send_command(command)
 
-    def __send_command(self, command: str, hide_output=False, print_command=True) -> int:
+    def __send_command(
+        self, command: str, hide_output=False, print_command=True
+    ) -> int:
         if self.use_ssh:
-            fullcmd = ["ssh", "-p", str(self.ssh_port), "{0}@127.0.0.1".format(self.ssh_username),  '"{0}"'.format(command)]
+            fullcmd = [
+                "ssh",
+                "-p",
+                str(self.ssh_port),
+                "{0}@127.0.0.1".format(self.ssh_username),
+                '"{0}"'.format(command),
+            ]
         else:
-            fullcmd = ["VBoxManage", "guestcontrol", '"{0}"'.format(self.vm_name), "run"] \
-                      + self.shell.split(" ") \
-                      + ['"{0}"'.format(command)]
+            fullcmd = (
+                ["VBoxManage", "guestcontrol", '"{0}"'.format(self.vm_name), "run"]
+                + self.shell.split(" ")
+                + ['"{0}"'.format(command)]
+            )
 
         kwargs = {"stdout": DEVNULL, "stderr": DEVNULL} if hide_output else {}
 
@@ -62,19 +85,20 @@ class VMHelper(object):
 
 
 class TestInstallation(unittest.TestCase):
-
     def test_linux(self):
         distributions = [
-            #"archlinux",
+            # "archlinux",
             "debian8",
-            #"ubuntu1404",
+            # "ubuntu1404",
             "ubuntu1604",
-            #"kali",
+            # "kali",
             # "gentoo"   # can't test gentoo till this bug is fixed: https://github.com/docker/docker/issues/1916#issuecomment-184356102
         ]
 
         for distribution in distributions:
-            self.assertTrue(docker_util.run_image(distribution, rebuild=False), msg=distribution)
+            self.assertTrue(
+                docker_util.run_image(distribution, rebuild=False), msg=distribution
+            )
 
     def test_windows(self):
         r"""
@@ -136,14 +160,22 @@ class TestInstallation(unittest.TestCase):
         vm_helper.send_command("git clone https://github.com/jopohl/urh " + target_dir)
 
         # Build extensions
-        rc = vm_helper.send_command("{0}python3 {1}/src/urh/cythonext/build.py".format(python_bin_dir, target_dir))
+        rc = vm_helper.send_command(
+            "{0}python3 {1}/src/urh/cythonext/build.py".format(
+                python_bin_dir, target_dir
+            )
+        )
         self.assertEqual(rc, 0)
 
         # Run Unit tests
-        rc = vm_helper.send_command("{1}py.test {0}/tests".format(target_dir, python_bin_dir))
+        rc = vm_helper.send_command(
+            "{1}py.test {0}/tests".format(target_dir, python_bin_dir)
+        )
         self.assertEqual(rc, 0)
 
-        vm_helper.send_command("{0}pip3 --no-cache-dir install urh".format(python_bin_dir))
+        vm_helper.send_command(
+            "{0}pip3 --no-cache-dir install urh".format(python_bin_dir)
+        )
         rc = vm_helper.send_command("{0}urh autoclose".format(python_bin_dir))
         self.assertEqual(rc, 0)
         vm_helper.send_command("{0}pip3 uninstall --yes urh".format(python_bin_dir))

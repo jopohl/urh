@@ -20,17 +20,34 @@ class TestFuzzingProfile(QtTestCase):
 
         pac = ProtocolAnalyzerContainer()
         pac.messages.append(
-            Message([True, False, False, True], 100, decoder=decoders[0], message_type=pac.default_message_type))
+            Message(
+                [True, False, False, True],
+                100,
+                decoder=decoders[0],
+                message_type=pac.default_message_type,
+            )
+        )
         pac.messages.append(
-            Message([False, False, False, False], 200, decoder=decoders[1], message_type=pac.default_message_type))
+            Message(
+                [False, False, False, False],
+                200,
+                decoder=decoders[1],
+                message_type=pac.default_message_type,
+            )
+        )
         pac.create_fuzzing_label(1, 10, 0)
         assert isinstance(self.form, MainController)
-        pac.to_xml_file(filename, decoders=decoders,
-                        participants=self.form.project_manager.participants)
+        pac.to_xml_file(
+            filename,
+            decoders=decoders,
+            participants=self.form.project_manager.participants,
+        )
 
         self.form.add_files([os.path.join(tempfile.gettempdir(), "test.fuzz.xml")])
 
-        self.assertEqual(self.form.ui.tabWidget.currentWidget(), self.form.ui.tab_generator)
+        self.assertEqual(
+            self.form.ui.tabWidget.currentWidget(), self.form.ui.tab_generator
+        )
 
         pac = self.form.generator_tab_controller.table_model.protocol
 

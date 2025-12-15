@@ -3,7 +3,11 @@ import xml.etree.ElementTree as ET
 from urh.simulator.SimulatorCounterAction import SimulatorCounterAction
 from urh.simulator.SimulatorItem import SimulatorItem
 from urh.simulator.SimulatorProtocolLabel import SimulatorProtocolLabel
-from urh.simulator.SimulatorRule import SimulatorRule, SimulatorRuleCondition, ConditionType
+from urh.simulator.SimulatorRule import (
+    SimulatorRule,
+    SimulatorRuleCondition,
+    ConditionType,
+)
 from urh.simulator.SimulatorTriggerCommandAction import SimulatorTriggerCommandAction
 
 
@@ -20,7 +24,11 @@ class SimulatorGotoAction(SimulatorItem):
 
     @property
     def target(self):
-        return self.simulator_config.item_dict[self.goto_target] if self.validate() else None
+        return (
+            self.simulator_config.item_dict[self.goto_target]
+            if self.validate()
+            else None
+        )
 
     def validate(self):
         target = self.simulator_config.item_dict.get(self.goto_target, None)

@@ -44,35 +44,47 @@ class EditableGraphicView(ZoomableGraphicView):
         self.copy_action = QAction(self.tr("Copy selection"), self)  # type: QAction
         self.copy_action.setShortcut(QKeySequence.StandardKey.Copy)
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
-        self.copy_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.copy_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.addAction(self.copy_action)
 
         self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
         self.paste_action.setShortcut(QKeySequence.StandardKey.Paste)
         self.paste_action.triggered.connect(self.on_paste_action_triggered)
-        self.paste_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.paste_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.paste_action.setIcon(QIcon.fromTheme("edit-paste"))
         self.addAction(self.paste_action)
 
         self.delete_action = QAction(self.tr("Delete selection"), self)
         self.delete_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
-        self.delete_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.addAction(self.delete_action)
 
-        self.save_as_action = QAction(self.tr("Save Signal as..."), self)  # type: QAction
+        self.save_as_action = QAction(
+            self.tr("Save Signal as..."), self
+        )  # type: QAction
         self.save_as_action.setIcon(QIcon.fromTheme("document-save-as"))
         self.save_as_action.setShortcut(QKeySequence.StandardKey.SaveAs)
         self.save_as_action.triggered.connect(self.save_as_clicked.emit)
-        self.save_as_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.save_as_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.addAction(self.save_as_action)
 
         self.show_symbol_legend_action = QAction(self.tr("Show symbol legend"), self)
         self.show_symbol_legend_action.setShortcut("L")
         self.show_symbol_legend_action.triggered.connect(self.toggle_symbol_legend)
-        self.show_symbol_legend_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.show_symbol_legend_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.show_symbol_legend_action.setCheckable(True)
         self.show_symbol_legend_action.setChecked(False)
         self.addAction(self.show_symbol_legend_action)
@@ -84,7 +96,9 @@ class EditableGraphicView(ZoomableGraphicView):
         self.insert_sine_action.triggered.connect(self.on_insert_sine_action_triggered)
 
         self.insert_sine_plugin = InsertSinePlugin()
-        self.insert_sine_plugin.insert_sine_wave_clicked.connect(self.on_insert_sine_wave_clicked)
+        self.insert_sine_plugin.insert_sine_wave_clicked.connect(
+            self.on_insert_sine_wave_clicked
+        )
 
     def init_undo_stack(self, undo_stack):
         self.undo_stack = undo_stack
@@ -92,12 +106,16 @@ class EditableGraphicView(ZoomableGraphicView):
         self.undo_action = self.undo_stack.createUndoAction(self)
         self.undo_action.setIcon(QIcon.fromTheme("edit-undo"))
         self.undo_action.setShortcut(QKeySequence.StandardKey.Undo)
-        self.undo_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.undo_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
 
         self.redo_action = self.undo_stack.createRedoAction(self)
         self.redo_action.setIcon(QIcon.fromTheme("edit-redo"))
         self.redo_action.setShortcut(QKeySequence.StandardKey.Redo)
-        self.redo_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.redo_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
 
         self.undo_stack.indexChanged.connect(self.on_undo_stack_index_changed)
 
@@ -183,13 +201,17 @@ class EditableGraphicView(ZoomableGraphicView):
             none_participant_action = participant_menu.addAction("None")
             none_participant_action.setCheckable(True)
             none_participant_action.setActionGroup(participant_group)
-            none_participant_action.triggered.connect(self.on_none_participant_action_triggered)
+            none_participant_action.triggered.connect(
+                self.on_none_participant_action_triggered
+            )
 
             if selected_msg and selected_msg.participant is None:
                 none_participant_action.setChecked(True)
 
             for participant in self.participants:
-                pa = participant_menu.addAction(participant.name + " (" + participant.shortname + ")")
+                pa = participant_menu.addAction(
+                    participant.name + " (" + participant.shortname + ")"
+                )
                 pa.setCheckable(True)
                 pa.setActionGroup(participant_group)
                 if selected_msg and selected_msg.participant == participant:
@@ -227,7 +249,9 @@ class EditableGraphicView(ZoomableGraphicView):
 
     def toggle_symbol_legend(self):
         if self.scene_type == 1 and self.signal is not None:
-            self.scene().always_show_symbols_legend = self.show_symbol_legend_action.isChecked()
+            self.scene().always_show_symbols_legend = (
+                self.show_symbol_legend_action.isChecked()
+            )
             self.scene().draw_sep_area(-self.signal.center_thresholds)
 
     @pyqtSlot()
@@ -242,10 +266,12 @@ class EditableGraphicView(ZoomableGraphicView):
             logger.critical("No data to insert a sine wave to")
             return
 
-        dialog = self.insert_sine_plugin.get_insert_sine_dialog(original_data=original_data,
-                                                                position=self.paste_position,
-                                                                sample_rate=self.sample_rate,
-                                                                num_samples=num_samples)
+        dialog = self.insert_sine_plugin.get_insert_sine_dialog(
+            original_data=original_data,
+            position=self.paste_position,
+            sample_rate=self.sample_rate,
+            num_samples=num_samples,
+        )
         dialog.show()
 
     @pyqtSlot()
@@ -253,26 +279,38 @@ class EditableGraphicView(ZoomableGraphicView):
         if self.insert_sine_plugin.complex_wave is not None and self.signal is not None:
             self.clear_horizontal_selection()
 
-            insert_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                             data_to_insert=self.insert_sine_plugin.complex_wave,
-                                             position=self.paste_position,
-                                             mode=EditAction.insert, cache_qad=self.cache_qad)
+            insert_action = EditSignalAction(
+                signal=self.signal,
+                protocol=self.protocol,
+                data_to_insert=self.insert_sine_plugin.complex_wave,
+                position=self.paste_position,
+                mode=EditAction.insert,
+                cache_qad=self.cache_qad,
+            )
             self.undo_stack.push(insert_action)
 
     @pyqtSlot()
     def on_copy_action_triggered(self):
         if self.something_is_selected:
-            self.stored_item = self.signal.iq_array[int(self.selection_area.start):int(self.selection_area.end)]
+            self.stored_item = self.signal.iq_array[
+                int(self.selection_area.start) : int(self.selection_area.end)
+            ]
 
     @pyqtSlot()
     def on_paste_action_triggered(self):
         if self.stored_item is not None:
             # paste_position is set in ContextMenuEvent
             self.clear_horizontal_selection()
-            paste_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                            start=self.selection_area.start, end=self.selection_area.end,
-                                            data_to_insert=self.stored_item, position=self.paste_position,
-                                            mode=EditAction.paste, cache_qad=self.cache_qad)
+            paste_action = EditSignalAction(
+                signal=self.signal,
+                protocol=self.protocol,
+                start=self.selection_area.start,
+                end=self.selection_area.end,
+                data_to_insert=self.stored_item,
+                position=self.paste_position,
+                mode=EditAction.paste,
+                cache_qad=self.cache_qad,
+            )
             self.undo_stack.push(paste_action)
 
     @pyqtSlot()
@@ -280,9 +318,14 @@ class EditableGraphicView(ZoomableGraphicView):
         if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
             self.clear_horizontal_selection()
-            del_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                          start=start, end=end,
-                                          mode=EditAction.delete, cache_qad=self.cache_qad)
+            del_action = EditSignalAction(
+                signal=self.signal,
+                protocol=self.protocol,
+                start=start,
+                end=end,
+                mode=EditAction.delete,
+                cache_qad=self.cache_qad,
+            )
             self.undo_stack.push(del_action)
 
     @pyqtSlot()
@@ -290,21 +333,33 @@ class EditableGraphicView(ZoomableGraphicView):
         if self.something_is_selected:
             start, end = self.selection_area.start, self.selection_area.end
             self.clear_horizontal_selection()
-            crop_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                           start=start, end=end,
-                                           mode=EditAction.crop, cache_qad=self.cache_qad)
+            crop_action = EditSignalAction(
+                signal=self.signal,
+                protocol=self.protocol,
+                start=start,
+                end=end,
+                mode=EditAction.crop,
+                cache_qad=self.cache_qad,
+            )
             self.undo_stack.push(crop_action)
 
     @pyqtSlot()
     def on_mute_action_triggered(self):
-        mute_action = EditSignalAction(signal=self.signal, protocol=self.protocol,
-                                       start=self.selection_area.start, end=self.selection_area.end,
-                                       mode=EditAction.mute, cache_qad=self.cache_qad)
+        mute_action = EditSignalAction(
+            signal=self.signal,
+            protocol=self.protocol,
+            start=self.selection_area.start,
+            end=self.selection_area.end,
+            mode=EditAction.mute,
+            cache_qad=self.cache_qad,
+        )
         self.undo_stack.push(mute_action)
 
     @pyqtSlot()
     def on_create_action_triggered(self):
-        self.create_clicked.emit(int(self.selection_area.start), int(self.selection_area.end))
+        self.create_clicked.emit(
+            int(self.selection_area.start), int(self.selection_area.end)
+        )
 
     @pyqtSlot()
     def on_none_participant_action_triggered(self):

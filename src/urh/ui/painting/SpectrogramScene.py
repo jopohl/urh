@@ -8,7 +8,9 @@ class SpectrogramScene(ZoomableScene):
         super().__init__(parent)
         self.removeItem(self.selection_area)
 
-        self.selection_area = VerticalSelection(0, 0, 0, 0, fillcolor=settings.SELECTION_COLOR, opacity=0.6)
+        self.selection_area = VerticalSelection(
+            0, 0, 0, 0, fillcolor=settings.SELECTION_COLOR, opacity=0.6
+        )
         self.selection_area.setZValue(1)
         self.addItem(self.selection_area)
 

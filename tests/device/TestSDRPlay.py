@@ -14,19 +14,21 @@ util.set_shared_library_path()
 
 from urh.dev.native.lib import sdrplay
 
+
 def recv(conn: Connection):
     while True:
         t = time.time()
         result = SDRPlay.bytes_to_iq(conn.recv_bytes())
-        print("UNPACK", time.time()-t)
+        print("UNPACK", time.time() - t)
+
 
 class TestSDRPlay(unittest.TestCase):
     def test_c_wrapper(self):
         def pycallback(data):
             arr = np.asarray(data)
-            #result = np.empty(len(arr) // 2, dtype=np.complex64)
-            #result.real = (arr[::2] + 0.5) / 32767.5
-            #result.imag = (arr[1::2] + 0.5) / 32767.5
+            # result = np.empty(len(arr) // 2, dtype=np.complex64)
+            # result.real = (arr[::2] + 0.5) / 32767.5
+            # result.imag = (arr[1::2] + 0.5) / 32767.5
 
         print(sdrplay.get_api_version())
         print(sdrplay.get_devices())
@@ -38,7 +40,9 @@ class TestSDRPlay(unittest.TestCase):
         p.start()
 
         null_ptr = ctypes.POINTER(ctypes.c_voidp)()
-        print("Init stream", sdrplay.init_stream(50, 2e6, 433.92e6, 2e6, 500, child_conn))
+        print(
+            "Init stream", sdrplay.init_stream(50, 2e6, 433.92e6, 2e6, 500, child_conn)
+        )
 
         time.sleep(2)
         print("settings sample rate")

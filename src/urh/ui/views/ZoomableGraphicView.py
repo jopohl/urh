@@ -1,5 +1,12 @@
 from PyQt6.QtCore import QTimer, pyqtSlot, Qt, pyqtSignal
-from PyQt6.QtGui import QIcon, QKeySequence, QWheelEvent, QCursor, QContextMenuEvent, QAction
+from PyQt6.QtGui import (
+    QIcon,
+    QKeySequence,
+    QWheelEvent,
+    QCursor,
+    QContextMenuEvent,
+    QAction,
+)
 from PyQt6.QtWidgets import QMenu
 
 from urh.ui.painting.SceneManager import SceneManager
@@ -25,21 +32,29 @@ class ZoomableGraphicView(SelectableGraphicView):
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
         self.zoom_in_action.setShortcut(QKeySequence.StandardKey.ZoomIn)
         self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
-        self.zoom_in_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
         self.addAction(self.zoom_in_action)
 
         self.zoom_out_action = QAction(self.tr("Zoom out"), self)
         self.zoom_out_action.setShortcut(QKeySequence.StandardKey.ZoomOut)
         self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
-        self.zoom_out_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
 
         self.zoom_original_action = QAction(self.tr("Zoom original"), self)
         self.zoom_original_action.setShortcut("Ctrl+0")
-        self.zoom_original_action.triggered.connect(self.on_zoom_original_action_triggered)
-        self.zoom_original_action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
+        self.zoom_original_action.triggered.connect(
+            self.on_zoom_original_action_triggered
+        )
+        self.zoom_original_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 
@@ -60,7 +75,9 @@ class ZoomableGraphicView(SelectableGraphicView):
             else:
                 return -self.signal.center
         except Exception as e:
-            logger.error("Could not access y_center property: {0}. Falling back to 0".format(e))
+            logger.error(
+                "Could not access y_center property: {0}. Falling back to 0".format(e)
+            )
             return 0
 
     def create_context_menu(self):
@@ -97,7 +114,9 @@ class ZoomableGraphicView(SelectableGraphicView):
             factor = self.view_rect().width() / self.MINIMUM_VIEW_WIDTH
 
         if zoom_to_mouse_cursor:
-            pos = self.mapFromGlobal(QCursor.pos()) if cursor_pos is None else cursor_pos
+            pos = (
+                self.mapFromGlobal(QCursor.pos()) if cursor_pos is None else cursor_pos
+            )
         else:
             pos = None
         old_pos = self.mapToScene(pos) if pos is not None else None
@@ -134,14 +153,19 @@ class ZoomableGraphicView(SelectableGraphicView):
 
         if abs(h_tar) > 0:
             self.scale(1, h_view / h_tar)
-        self.centerOn(self.view_rect().x() + self.view_rect().width() / 2, self.y_center)
+        self.centerOn(
+            self.view_rect().x() + self.view_rect().width() / 2, self.y_center
+        )
 
     def show_full_scene(self, reinitialize=False):
         y_factor = self.transform().m22()
         self.resetTransform()
         # Use full self.width() here to enable show_full_scene when view_rect not yet set e.g. in Record Signal Dialog
-        x_factor = self.width() / (
-        self.sceneRect().width() * self.scene_x_zoom_stretch) if self.sceneRect().width() else 1
+        x_factor = (
+            self.width() / (self.sceneRect().width() * self.scene_x_zoom_stretch)
+            if self.sceneRect().width()
+            else 1
+        )
         self.scale(x_factor, y_factor)
         self.centerOn(0, self.y_center)
 
@@ -172,7 +196,9 @@ class ZoomableGraphicView(SelectableGraphicView):
 
             vr = self.view_rect()
             start, end = vr.x(), vr.x() + vr.width()
-            self.scene_manager.show_scene_section(start, end, *self._get_sub_path_ranges_and_colors(start, end))
+            self.scene_manager.show_scene_section(
+                start, end, *self._get_sub_path_ranges_and_colors(start, end)
+            )
 
             if self.scene_type == 1:
                 self.scene().redraw_legend()

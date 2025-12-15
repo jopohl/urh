@@ -6,14 +6,16 @@ from urh.plugins import Plugin
 
 
 class PluginListModel(QAbstractListModel):
-    def __init__(self, plugins, highlighted_plugins = None, parent=None):
+    def __init__(self, plugins, highlighted_plugins=None, parent=None):
         """
         :type plugins: list of Plugin
         :type highlighted_plugins: list of Plugin
         """
         super().__init__(parent)
         self.plugins = plugins
-        self.highlighted_plugins = highlighted_plugins if highlighted_plugins is not None else []
+        self.highlighted_plugins = (
+            highlighted_plugins if highlighted_plugins is not None else []
+        )
 
     def rowCount(self, QModelIndex_parent=None, *args, **kwargs):
         return len(self.plugins)
@@ -24,11 +26,20 @@ class PluginListModel(QAbstractListModel):
             return self.plugins[row].name
         elif role == Qt.ItemDataRole.CheckStateRole:
             return self.plugins[row].enabled
-        elif role == Qt.ItemDataRole.ForegroundRole and self.plugins[row] in self.highlighted_plugins:
+        elif (
+            role == Qt.ItemDataRole.ForegroundRole
+            and self.plugins[row] in self.highlighted_plugins
+        ):
             return settings.HIGHLIGHT_TEXT_FOREGROUND_COLOR
-        elif role ==Qt.ItemDataRole.BackgroundRole and self.plugins[row] in self.highlighted_plugins:
+        elif (
+            role == Qt.ItemDataRole.BackgroundRole
+            and self.plugins[row] in self.highlighted_plugins
+        ):
             return settings.HIGHLIGHT_TEXT_BACKGROUND_COLOR
-        elif role == Qt.ItemDataRole.FontRole and self.plugins[row] in self.highlighted_plugins:
+        elif (
+            role == Qt.ItemDataRole.FontRole
+            and self.plugins[row] in self.highlighted_plugins
+        ):
             font = QFont()
             font.setBold(True)
             return font
@@ -39,4 +50,8 @@ class PluginListModel(QAbstractListModel):
         return True
 
     def flags(self, index):
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsUserCheckable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )

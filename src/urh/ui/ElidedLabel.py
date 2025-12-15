@@ -10,7 +10,9 @@ class ElidedLabel(QLabel):
 
     def __set_elided_text(self):
         fm = QFontMetrics(self.font())
-        super().setText(fm.elidedText(self.full_text, Qt.TextElideMode.ElideRight, self.width()))
+        super().setText(
+            fm.elidedText(self.full_text, Qt.TextElideMode.ElideRight, self.width())
+        )
 
         self.setToolTip(self.full_text)
 

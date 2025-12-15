@@ -9,7 +9,16 @@ from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 from urh.signalprocessing.Signal import Signal
 
 
-def demodulate(signal_data, mod_type: str, bit_length, center, noise, tolerance, decoding=None, pause_threshold=8):
+def demodulate(
+    signal_data,
+    mod_type: str,
+    bit_length,
+    center,
+    noise,
+    tolerance,
+    decoding=None,
+    pause_threshold=8,
+):
     signal = Signal("", "")
     if isinstance(signal_data, IQArray):
         signal.iq_array = signal_data
@@ -43,7 +52,9 @@ def generate_signal(messages: list, modulator: Modulator, snr_db: int, add_noise
         modulated = modulator.modulate(msg.encoded_bits, msg.pause)
 
         if add_noise:
-            message_powers.append(np.mean(np.abs(modulated[:len(modulated) - msg.pause])))
+            message_powers.append(
+                np.mean(np.abs(modulated[: len(modulated) - msg.pause]))
+            )
 
         result.append(modulated)
 
@@ -51,7 +62,11 @@ def generate_signal(messages: list, modulator: Modulator, snr_db: int, add_noise
     if not add_noise:
         return result
 
-    noise = np.random.normal(loc=0, scale=1, size=2 * len(result)).astype(np.float32).view(np.complex64)
+    noise = (
+        np.random.normal(loc=0, scale=1, size=2 * len(result))
+        .astype(np.float32)
+        .view(np.complex64)
+    )
 
     # https://stackoverflow.com/questions/23690766/proper-way-to-add-noise-to-signal
     snr_ratio = np.power(10, snr_db / 10)
@@ -67,19 +82,31 @@ def generate_message_bits(num_bits=80, preamble="", sync="", eof=""):
     bits_to_generate = num_bits - (len(preamble) + len(sync) + len(eof))
 
     if bits_to_generate < 0:
-        raise ValueError("Preamble and Sync and EOF are together larger than requested num bits")
+        raise ValueError(
+            "Preamble and Sync and EOF are together larger than requested num bits"
+        )
 
     bytes_to_generate = bits_to_generate // 8
     leftover_bits = bits_to_generate % 8
-    return "".join([preamble, sync]
-                   + ["{0:08b}".format(random.choice(range(0, 256))) for _ in range(bytes_to_generate)]
-                   + [random.choice(["0", "1"]) for _ in range(leftover_bits)]
-                   + [eof]
-                   )
+    return "".join(
+        [preamble, sync]
+        + [
+            "{0:08b}".format(random.choice(range(0, 256)))
+            for _ in range(bytes_to_generate)
+        ]
+        + [random.choice(["0", "1"]) for _ in range(leftover_bits)]
+        + [eof]
+    )
 
 
-def generate_random_messages(num_messages: int, num_bits: int,
-                             preamble: str, sync: str, eof: str, message_pause: int):
+def generate_random_messages(
+    num_messages: int,
+    num_bits: int,
+    preamble: str,
+    sync: str,
+    eof: str,
+    message_pause: int,
+):
     return [
         Message.from_plain_bits_str(
             generate_message_bits(num_bits, preamble, sync, eof), pause=message_pause

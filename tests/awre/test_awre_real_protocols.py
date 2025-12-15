@@ -11,6 +11,7 @@ from urh.signalprocessing.Participant import Participant
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
 import numpy as np
 
+
 class TestAWRERealProtocols(AWRETestCase):
     def setUp(self):
         super().setUp()
@@ -22,8 +23,12 @@ class TestAWRERealProtocols(AWRETestCase):
         enocean_protocol = ProtocolAnalyzer(None)
         with open(get_path_for_data_file("enocean_bits.txt")) as f:
             for line in f:
-                enocean_protocol.messages.append(Message.from_plain_bits_str(line.replace("\n", "")))
-                enocean_protocol.messages[-1].message_type = enocean_protocol.default_message_type
+                enocean_protocol.messages.append(
+                    Message.from_plain_bits_str(line.replace("\n", ""))
+                )
+                enocean_protocol.messages[
+                    -1
+                ].message_type = enocean_protocol.default_message_type
 
         ff = FormatFinder(enocean_protocol.messages)
         ff.perform_iteration()
@@ -31,7 +36,9 @@ class TestAWRERealProtocols(AWRETestCase):
         message_types = ff.message_types
         self.assertEqual(len(message_types), 1)
 
-        preamble = message_types[0].get_first_label_with_type(FieldType.Function.PREAMBLE)
+        preamble = message_types[0].get_first_label_with_type(
+            FieldType.Function.PREAMBLE
+        )
         self.assertEqual(preamble.start, 0)
         self.assertEqual(preamble.length, 8)
 
@@ -39,29 +46,54 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertEqual(sync.start, 8)
         self.assertEqual(sync.length, 4)
 
-        checksum = message_types[0].get_first_label_with_type(FieldType.Function.CHECKSUM)
+        checksum = message_types[0].get_first_label_with_type(
+            FieldType.Function.CHECKSUM
+        )
         self.assertEqual(checksum.start, 56)
         self.assertEqual(checksum.length, 4)
 
-        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS))
-        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS))
-        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.LENGTH))
-        self.assertIsNone(message_types[0].get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER))
+        self.assertIsNone(
+            message_types[0].get_first_label_with_type(FieldType.Function.SRC_ADDRESS)
+        )
+        self.assertIsNone(
+            message_types[0].get_first_label_with_type(FieldType.Function.DST_ADDRESS)
+        )
+        self.assertIsNone(
+            message_types[0].get_first_label_with_type(FieldType.Function.LENGTH)
+        )
+        self.assertIsNone(
+            message_types[0].get_first_label_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            )
+        )
 
     def test_format_finding_rwe(self):
-        ff, messages = self.get_format_finder_from_protocol_file("rwe.proto.xml", return_messages=True)
+        ff, messages = self.get_format_finder_from_protocol_file(
+            "rwe.proto.xml", return_messages=True
+        )
         ff.run()
 
         sync1, sync2 = "0x9a7d9a7d", "0x67686768"
 
-        preprocessor = Preprocessor([np.array(msg.plain_bits, dtype=np.uint8) for msg in messages])
+        preprocessor = Preprocessor(
+            [np.array(msg.plain_bits, dtype=np.uint8) for msg in messages]
+        )
         possible_syncs = preprocessor.find_possible_syncs()
         self.assertIn(ProtocolGenerator.to_bits(sync1), possible_syncs)
         self.assertIn(ProtocolGenerator.to_bits(sync2), possible_syncs)
 
         ack_messages = (3, 5, 7, 9, 11, 13, 15, 17, 20)
-        ack_message_type = next(mt for mt, messages in ff.existing_message_types.items() if ack_messages[0] in messages)
-        self.assertTrue(all(ack_msg in ff.existing_message_types[ack_message_type] for ack_msg in ack_messages))
+        ack_message_type = next(
+            mt
+            for mt, messages in ff.existing_message_types.items()
+            if ack_messages[0] in messages
+        )
+        self.assertTrue(
+            all(
+                ack_msg in ff.existing_message_types[ack_message_type]
+                for ack_msg in ack_messages
+            )
+        )
 
         for mt in ff.message_types:
             preamble = mt.get_first_label_with_type(FieldType.Function.PREAMBLE)
@@ -115,7 +147,9 @@ class TestAWRERealProtocols(AWRETestCase):
         self.assertGreater(len(ff.message_types), 0)
 
         for i, message_type in enumerate(ff.message_types):
-            preamble = message_type.get_first_label_with_type(FieldType.Function.PREAMBLE)
+            preamble = message_type.get_first_label_with_type(
+                FieldType.Function.PREAMBLE
+            )
             self.assertEqual(preamble.start, 0)
             self.assertEqual(preamble.length, 32)
 
@@ -127,7 +161,9 @@ class TestAWRERealProtocols(AWRETestCase):
             self.assertEqual(length.start, 64)
             self.assertEqual(length.length, 8)
 
-            seq = message_type.get_first_label_with_type(FieldType.Function.SEQUENCE_NUMBER)
+            seq = message_type.get_first_label_with_type(
+                FieldType.Function.SEQUENCE_NUMBER
+            )
             self.assertEqual(seq.start, 72)
             self.assertEqual(seq.length, 8)
 
@@ -139,11 +175,13 @@ class TestAWRERealProtocols(AWRETestCase):
             self.assertEqual(dst.start, 120)
             self.assertEqual(dst.length, 24)
 
-            checksum = message_type.get_first_label_with_type(FieldType.Function.CHECKSUM)
+            checksum = message_type.get_first_label_with_type(
+                FieldType.Function.CHECKSUM
+            )
             self.assertEqual(checksum.length, 16)
             self.assertIn("CC1101", checksum.checksum.caption)
 
             for msg_index in ff.existing_message_types[message_type]:
                 msg_len = len(protocol.messages[msg_index])
-                self.assertEqual(checksum.start, msg_len-16)
+                self.assertEqual(checksum.start, msg_len - 16)
                 self.assertEqual(checksum.end, msg_len)

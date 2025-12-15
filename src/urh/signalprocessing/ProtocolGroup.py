@@ -93,4 +93,4 @@ class ProtocolGroup(object):
         :type protocol: ProtocolTreeItem
         :return:
         """
-        self.__items.append(protocol_item) # Warning: parent is None!
+        self.__items.append(protocol_item)  # Warning: parent is None!

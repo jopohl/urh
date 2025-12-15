@@ -9,9 +9,23 @@ from urh.ui.painting.ContinuousSceneManager import ContinuousSceneManager
 
 
 class ContinuousSendDialog(SendDialog):
-    def __init__(self, project_manager, messages, modulators, total_samples: int, parent, testing_mode=False):
-        super().__init__(project_manager, modulated_data=None, modulation_msg_indices=None,
-                         continuous_send_mode=True, parent=parent, testing_mode=testing_mode)
+    def __init__(
+        self,
+        project_manager,
+        messages,
+        modulators,
+        total_samples: int,
+        parent,
+        testing_mode=False,
+    ):
+        super().__init__(
+            project_manager,
+            modulated_data=None,
+            modulation_msg_indices=None,
+            continuous_send_mode=True,
+            parent=parent,
+            testing_mode=testing_mode,
+        )
         self.messages = messages
         self.modulators = modulators
 
@@ -24,8 +38,12 @@ class ContinuousSendDialog(SendDialog):
         self.ui.progressBarMessage.setMaximum(len(messages))
 
         num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
-        self.continuous_modulator = ContinuousModulator(messages, modulators, num_repeats=num_repeats)
-        self.scene_manager = ContinuousSceneManager(ring_buffer=self.continuous_modulator.ring_buffer, parent=self)
+        self.continuous_modulator = ContinuousModulator(
+            messages, modulators, num_repeats=num_repeats
+        )
+        self.scene_manager = ContinuousSceneManager(
+            ring_buffer=self.continuous_modulator.ring_buffer, parent=self
+        )
         self.scene_manager.init_scene()
         self.graphics_view.setScene(self.scene_manager.scene)
         self.graphics_view.scene_manager = self.scene_manager
@@ -44,7 +62,9 @@ class ContinuousSendDialog(SendDialog):
 
     def update_view(self):
         super().update_view()
-        self.ui.progressBarMessage.setValue(self.continuous_modulator.current_message_index.value + 1)
+        self.ui.progressBarMessage.setValue(
+            self.continuous_modulator.current_message_index.value + 1
+        )
         self.scene_manager.init_scene()
         self.scene_manager.show_full_scene()
         self.graphics_view.update()
@@ -86,7 +106,9 @@ class ContinuousSendDialog(SendDialog):
     @pyqtSlot()
     def on_num_repeats_changed(self):
         super().on_num_repeats_changed()
-        self.continuous_modulator.num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
+        self.continuous_modulator.num_repeats = (
+            self.device_settings_widget.ui.spinBoxNRepeat.value()
+        )
 
     def on_selected_device_changed(self):
         self.ui.txtEditErrors.clear()
@@ -96,13 +118,21 @@ class ContinuousSendDialog(SendDialog):
         device_name = self.selected_device_name
         num_repeats = self.device_settings_widget.ui.spinBoxNRepeat.value()
 
-        self.device = VirtualDevice(self.backend_handler, device_name, Mode.send,
-                                    device_ip="192.168.10.2", sending_repeats=num_repeats, parent=self)
+        self.device = VirtualDevice(
+            self.backend_handler,
+            device_name,
+            Mode.send,
+            device_ip="192.168.10.2",
+            sending_repeats=num_repeats,
+            parent=self,
+        )
         self.ui.btnStart.setEnabled(True)
 
         try:
             self.device.is_send_continuous = True
-            self.device.continuous_send_ring_buffer = self.continuous_modulator.ring_buffer
+            self.device.continuous_send_ring_buffer = (
+                self.continuous_modulator.ring_buffer
+            )
             self.device.num_samples_to_send = self.total_samples
 
             self._create_device_connects()

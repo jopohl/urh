@@ -41,8 +41,14 @@ class Interval(object):
 
     def find_common_interval(self, other_interval):
         sorted_intervals = sorted([self, other_interval])
-        common_values = set(sorted_intervals[0].range()).intersection(sorted_intervals[1].range())
-        return Interval(min(common_values), max(common_values) + 1) if common_values else None
+        common_values = set(sorted_intervals[0].range()).intersection(
+            sorted_intervals[1].range()
+        )
+        return (
+            Interval(min(common_values), max(common_values) + 1)
+            if common_values
+            else None
+        )
 
     @staticmethod
     def find_greatest(intervals: list):

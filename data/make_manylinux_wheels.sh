@@ -16,8 +16,7 @@ for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
     "${PYBIN}/python3" setup.py build_ext "-j$(nproc)"
 
     echo -e "\033[1mBuilding wheel for $PYBIN\033[0m"
-    # TODO: Remove --no-build-isolation once switched to pyproject.toml
-    "${PYBIN}/pip" wheel --no-deps /io/ -w /wheelhouse/ --no-build-isolation
+    "${PYBIN}/pip" wheel --no-deps /io/ -w /wheelhouse/
 done
 
 # Bundle external libs into wheels

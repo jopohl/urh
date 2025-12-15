@@ -24,7 +24,7 @@ jobs:
             architecture: x64
           - os: macos-15-intel
             python-version: '3.13'
-            architecture: x86
+            architecture: x64
       fail-fast: false
 
     steps:

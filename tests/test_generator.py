@@ -347,8 +347,7 @@ class TestGenerator(QtTestCase):
         model.setData(model.index(0, 0), "test", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(
             "test (empty)",
-            model.data(model.index(0, 0), role=Qt.ItemDataRole.DisplayRole)
-        ,
+            model.data(model.index(0, 0), role=Qt.ItemDataRole.DisplayRole),
         )
 
         lbl.fuzz_values.append("101010")
@@ -356,6 +355,7 @@ class TestGenerator(QtTestCase):
         self.assertEqual(
             "test (1)", model.data(model.index(0, 0), role=Qt.ItemDataRole.DisplayRole)
         )
+
     def __set_model_data(self, model, row, column, value):
         model.setData(
             model.createIndex(row, column), value, role=Qt.ItemDataRole.EditRole

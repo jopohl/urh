@@ -141,8 +141,7 @@ class ModulatorDialog(QDialog):
     def set_ui_for_current_modulator(self):
         index = self.ui.comboBoxModulationType.findText(
             "*(" + self.current_modulator.modulation_type + ")",
-            Qt.MatchFlag.MatchWildcard
-        ,
+            Qt.MatchFlag.MatchWildcard,
         )
         self.ui.comboBoxModulationType.setCurrentIndex(index)
         self.ui.doubleSpinBoxCarrierFreq.setValue(

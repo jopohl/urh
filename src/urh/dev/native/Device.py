@@ -192,8 +192,8 @@ class Device(object):
             while ctrl_connection.poll():
                 try:
                     result = cls.process_command(
-                    ctrl_connection.recv(), ctrl_connection, is_tx=False
-                )
+                        ctrl_connection.recv(), ctrl_connection, is_tx=False
+                    )
                     if result == cls.Command.STOP.name:
                         exit_requested = True
                         break
@@ -249,11 +249,11 @@ class Device(object):
             while ctrl_connection.poll():
                 try:
                     result = cls.process_command(
-                    ctrl_connection.recv(), ctrl_connection, is_tx=True
+                        ctrl_connection.recv(), ctrl_connection, is_tx=True
                     )
                     if result == cls.Command.STOP.name:
-                            exit_requested = True
-                            break
+                        exit_requested = True
+                        break
                 except (EOFError, BrokenPipeError, ConnectionResetError):
                     logger.debug("Control connection closed during send")
                     exit_requested = True

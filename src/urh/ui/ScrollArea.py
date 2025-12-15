@@ -3,7 +3,6 @@ from PyQt6.QtGui import QDropEvent, QDragEnterEvent, QWheelEvent
 from PyQt6.QtWidgets import QScrollArea
 
 
-
 class ScrollArea(QScrollArea):
     files_dropped = pyqtSignal(list)
 

@@ -46,7 +46,8 @@ class RTLSDRTCP(Device):
         gain: int,
         freq_correction: int,
         direct_sampling_mode: int,
-       bias_tee_enabled: bool, device_ip: str,
+        bias_tee_enabled: bool,
+        device_ip: str,
         port: int,
     ):
         # connect and initialize rtl_tcp
@@ -157,7 +158,8 @@ class RTLSDRTCP(Device):
             self.gain,
             self.freq_correction,
             self.direct_sampling_mode,
-           self.bias_tee_enabled, self.device_ip,
+            self.bias_tee_enabled,
+            self.device_ip,
             self.port,
         )
 

@@ -86,8 +86,7 @@ class MessageTypeTableView(QTableView):
             self.model().setData(
                 self.model().index(i, 0),
                 Qt.CheckState.Checked,
-                role=Qt.ItemDataRole.CheckStateRole
-            ,
+                role=Qt.ItemDataRole.CheckStateRole,
             )
 
     @pyqtSlot()
@@ -96,6 +95,5 @@ class MessageTypeTableView(QTableView):
             self.model().setData(
                 self.model().index(i, 0),
                 Qt.CheckState.Unchecked,
-                role=Qt.ItemDataRole.CheckStateRole
-            ,
+                role=Qt.ItemDataRole.CheckStateRole,
             )

@@ -12,7 +12,6 @@ from datetime import datetime
 from urh.signalprocessing.RecordedFile import RecordedFile
 
 
-
 class ReceiveDialog(SendRecvDialog):
     files_recorded = pyqtSignal(list)
 
@@ -108,7 +107,9 @@ class ReceiveDialog(SendRecvDialog):
 
         dev = self.device
         big_val = Formatter.big_value_with_suffix
-        timestamp_str = datetime.fromtimestamp(dev.data_timestamp).strftime("%Y%m%d_%H%M%S")
+        timestamp_str = datetime.fromtimestamp(dev.data_timestamp).strftime(
+            "%Y%m%d_%H%M%S"
+        )
         initial_name = "{0}-{1}-{2}Hz-{3}Sps".format(
             dev.name, timestamp_str, big_val(dev.frequency), big_val(dev.sample_rate)
         )

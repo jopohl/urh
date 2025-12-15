@@ -76,8 +76,7 @@ class KillerDoubleSpinBox(QDoubleSpinBox):
             rx = QRegularExpression("^(-?[0-9]+)[.]?[0-9]*[{}]?$".format(self.suffix()))
         result = (
             QValidator.State.Acceptable
-            if rx.match(inpt.replace(",", "."))
-           .hasMatch()
+            if rx.match(inpt.replace(",", ".")).hasMatch()
             else QValidator.State.Invalid
         )
         return result, inpt, pos

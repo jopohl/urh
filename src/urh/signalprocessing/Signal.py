@@ -45,7 +45,7 @@ class Signal(QObject):
         name="Signal",
         modulation: str = None,
         sample_rate: float = 1e6,
-       timestamp: float = 0,
+        timestamp: float = 0,
         parent=None,
     ):
         super().__init__(parent)

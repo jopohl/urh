@@ -14,7 +14,7 @@ for PYBIN in /opt/python/$PYVER/bin; do
     "${PYBIN}/python3" setup.py build_ext "-j$(nproc)"
 
     echo -e "\033[1mBuilding wheel for $PYBIN\033[0m"
-    "${PYBIN}/pip" wheel --no-deps /io/ -w /wheelhouse/
+    "${PYBIN}/pip" wheel --no-deps --no-build-isolation /io/ -w /wheelhouse/
 done
 
 # Bundle external libs into wheels

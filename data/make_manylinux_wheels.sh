@@ -7,6 +7,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/:/usr/local/lib/:/usr/l
 touch /tmp/urh_releasing
 for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
     echo -e "\033[1mInstalling requirements for $PYBIN\033[0m"
+    # PyQt6.10+ requires newer glivbc that available the Alma Linux 8 based manylinux_2_28_x86_64
+    "${PYBIN}/pip" install PyQt6==6.9.1
     "${PYBIN}/pip" install -r /io/data/requirements.txt
 
     cd /io || return

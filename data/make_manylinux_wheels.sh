@@ -5,7 +5,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/:/usr/local/lib/:/usr/l
 
 
 touch /tmp/urh_releasing
-for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
+for PYBIN in /opt/python/$PYVER/bin; do
     echo -e "\033[1mInstalling requirements for $PYBIN\033[0m"
     "${PYBIN}/pip" install -r /io/data/requirements.txt
 

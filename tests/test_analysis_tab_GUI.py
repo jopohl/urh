@@ -421,7 +421,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.ui.tblLabelValues.model().rowCount(), 1)
         self.cfc.ui.tblLabelValues.selectAll()
 
-        context_menu =  self.cfc.ui.tblLabelValues.create_context_menu()
+        context_menu = self.cfc.ui.tblLabelValues.create_context_menu()
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit...", names)
 

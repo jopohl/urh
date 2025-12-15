@@ -19,6 +19,7 @@ for sdr in (
     "AirSpy",
     "BladeRF",
     "HackRF",
+    "HydraSDR",
     "RTLSDR",
     "LimeSDR",
     "PlutoSDR",

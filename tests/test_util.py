@@ -163,6 +163,9 @@ class TestUtil(QtTestCase):
         from urh.dev.native.lib import airspy
 
         # noinspection PyUnresolvedReferences
+        from urh.dev.native.lib import hydrasdr
+
+        # noinspection PyUnresolvedReferences
         from urh.dev.native.lib import bladerf
 
         # noinspection PyUnresolvedReferences

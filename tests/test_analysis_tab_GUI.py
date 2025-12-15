@@ -413,22 +413,6 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(lbl.display_endianness, "big")
 
     def test_label_list_view(self):
-        menus_before = [
-            w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
-        ]
-
-        global context_menu
-        context_menu = None  # type: QMenu
-
-        def on_timeout():
-            global context_menu
-            context_menu = next(
-                w
-                for w in QApplication.topLevelWidgets()
-                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before
-            )
-            context_menu.close()
-
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         self.cfc.add_message_type()
         self.assertEqual(self.cfc.message_type_table_model.rowCount(), 2)
@@ -437,15 +421,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.ui.tblLabelValues.model().rowCount(), 1)
         self.cfc.ui.tblLabelValues.selectAll()
 
-        timer = QTimer(self.cfc)
-        timer.setSingleShot(True)
-        timer.timeout.connect(on_timeout)
-        timer.start(1)
-
-        self.cfc.ui.tblLabelValues.contextMenuEvent(
-            QContextMenuEvent(QContextMenuEvent.Reason.Mouse, QPoint(0, 0))
-        )
-
+        context_menu =  self.cfc.ui.tblLabelValues.create_context_menu()
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit...", names)
 

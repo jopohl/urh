@@ -143,7 +143,6 @@ def read_long_description():
 
 
 install_requires = ["numpy<3.0", "psutil", "cython", "setuptools"]
-# # PyQt6.10+ requires newer glivbc that available the Alma Linux 8 based manylinux_2_28_x86_64
 if IS_RELEASE:
     install_requires.append("PyQt6")
 else:

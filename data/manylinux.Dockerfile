@@ -1,6 +1,6 @@
-FROM quay.io/pypa/manylinux_2_28_x86_64:2025.11.02-1
+FROM quay.io/pypa/manylinux_2_34_x86_64:2025.12.07-1
 
-RUN yum -y install wget blas libusb-devel fftw-devel cmake3 boost-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.19/libiio-0.19.g5f5af2e-centos-7-x86_64.rpm
+RUN yum -y install wget blas libusb-devel fftw-devel cmake3 boost-devel https://github.com/analogdevicesinc/libiio/releases/download/v0.26/libiio-0.26.ga0eca0d-Linux-Fedora-28.rpm
 RUN export AIRSPY_VERSION="1.0.9" \
  && export BLADERF_VERSION="2022.11" \
  && export LIMESUITE_VERSION="23.11.0" \

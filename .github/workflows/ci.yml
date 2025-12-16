@@ -98,7 +98,7 @@ jobs:
         run: |
           docker run --rm \
           -e PYVER=$(python -c "import sys; print('cp{0}{1}-cp{0}{1}'.format(sys.version_info.major, sys.version_info.minor))") \
-          -v `pwd`:/io jopohl/urh_manylinux2_28_x86_64:1.0.3 /io/data/make_manylinux_wheels.sh
+          -v `pwd`:/io jopohl/urh_manylinux2_34_x86_64:2025.12.07-2 /io/data/make_manylinux_wheels.sh
 
       - name: Check wheel
         if: startsWith(matrix.os, 'ubuntu')

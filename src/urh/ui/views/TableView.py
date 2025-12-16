@@ -1,7 +1,14 @@
 import numpy as np
-from PyQt5.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeySequence, QKeyEvent, QFontMetrics, QIcon, QContextMenuEvent
-from PyQt5.QtWidgets import QTableView, QApplication, QAction, QStyleFactory, QMenu
+from PyQt6.QtCore import Qt, QItemSelectionModel, QItemSelection, pyqtSlot, pyqtSignal
+from PyQt6.QtGui import (
+    QKeySequence,
+    QKeyEvent,
+    QFontMetrics,
+    QIcon,
+    QContextMenuEvent,
+    QAction,
+)
+from PyQt6.QtWidgets import QTableView, QApplication, QStyleFactory, QMenu
 
 
 class TableView(QTableView):
@@ -14,7 +21,7 @@ class TableView(QTableView):
         self.context_menu_pos = None  # type: QPoint
 
         self.copy_action = QAction("Copy selection", self)
-        self.copy_action.setShortcut(QKeySequence.Copy)
+        self.copy_action.setShortcut(QKeySequence.StandardKey.Copy)
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
 
@@ -27,25 +34,31 @@ class TableView(QTableView):
         }
 
         self.zoom_in_action = QAction(self.tr("Zoom in"), self)
-        self.zoom_in_action.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_action.setShortcut(QKeySequence.StandardKey.ZoomIn)
         self.zoom_in_action.triggered.connect(self.on_zoom_in_action_triggered)
-        self.zoom_in_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_in_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_in_action.setIcon(QIcon.fromTheme("zoom-in"))
         self.addAction(self.zoom_in_action)
 
         self.zoom_out_action = QAction(self.tr("Zoom out"), self)
-        self.zoom_out_action.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_action.setShortcut(QKeySequence.StandardKey.ZoomOut)
         self.zoom_out_action.triggered.connect(self.on_zoom_out_action_triggered)
-        self.zoom_out_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_out_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_out_action.setIcon(QIcon.fromTheme("zoom-out"))
         self.addAction(self.zoom_out_action)
 
         self.zoom_original_action = QAction(self.tr("Zoom original"), self)
-        self.zoom_original_action.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_0))
+        self.zoom_original_action.setShortcut("Ctrl+0")
         self.zoom_original_action.triggered.connect(
             self.on_zoom_original_action_triggered
         )
-        self.zoom_original_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.zoom_original_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.zoom_original_action.setIcon(QIcon.fromTheme("zoom-original"))
         self.addAction(self.zoom_original_action)
 
@@ -167,7 +180,7 @@ class TableView(QTableView):
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_pos = event.pos()
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
         self.context_menu_pos = None
 
@@ -176,28 +189,35 @@ class TableView(QTableView):
         start_index = self.model().index(row_1, col_1)
         end_index = self.model().index(row_2, col_2)
         selection.select(start_index, end_index)
-        self.selectionModel().select(selection, QItemSelectionModel.Select)
+        self.selectionModel().select(
+            selection, QItemSelectionModel.SelectionFlag.Select
+        )
 
     def resize_columns(self):
         if not self.isVisible():
             return
 
-        w = QFontMetrics(self.font()).widthChar("0") + 2
+        w = QFontMetrics(self.font()).averageCharWidth() + 2
         for i in range(10):
             self.setColumnWidth(i, 3 * w)
 
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         for i in range(9, self.model().columnCount()):
             self.setColumnWidth(i, w * (len(str(i + 1)) + 1))
             if i % 10 == 0:
-                QApplication.instance().processEvents()
+                QApplication.processEvents()
 
     def resize_vertical_header(self):
         num_rows = self.model().rowCount()
         if self.isVisible() and num_rows > 0:
             hd = self.model().headerData
             max_len = np.max(
-                [len(str(hd(i, Qt.Vertical, Qt.DisplayRole))) for i in range(num_rows)]
+                [
+                    len(
+                        str(hd(i, Qt.Orientation.Vertical, Qt.ItemDataRole.DisplayRole))
+                    )
+                    for i in range(num_rows)
+                ]
             )
             w = (self.font().pointSize() + 2) * max_len
 
@@ -208,26 +228,26 @@ class TableView(QTableView):
                 self.verticalHeader().resizeSection(i, w)
                 self.setRowHeight(i, rh)
                 if i % 10 == 0:
-                    QApplication.instance().processEvents()
+                    QApplication.processEvents()
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key.Key_Delete:
             min_row, max_row, start, end = self.selection_range()
             if min_row == max_row == start == end == -1:
                 return
 
             self.setEnabled(False)
-            self.setCursor(Qt.WaitCursor)
+            self.setCursor(Qt.CursorShape.WaitCursor)
             self.model().delete_range(min_row, max_row, start, end - 1)
             self.unsetCursor()
             self.setEnabled(True)
             self.setFocus()
 
-        if event.matches(QKeySequence.Copy):
+        if event.matches(QKeySequence.StandardKey.Copy):
             self.on_copy_action_triggered()
             return
 
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key.Key_Space:
             min_row, max_row, start, _ = self.selection_range()
             if start == -1:
                 return
@@ -235,8 +255,9 @@ class TableView(QTableView):
             self.model().insert_column(start, list(range(min_row, max_row + 1)))
 
         if (
-            event.key() not in (Qt.Key_Right, Qt.Key_Left, Qt.Key_Up, Qt.Key_Down)
-            or event.modifiers() == Qt.ShiftModifier
+            event.key()
+            not in (Qt.Key.Key_Right, Qt.Key.Key_Left, Qt.Key.Key_Up, Qt.Key.Key_Down)
+            or event.modifiers() == Qt.KeyboardModifier.ShiftModifier
         ):
             super().keyPressEvent(event)
             return
@@ -249,14 +270,14 @@ class TableView(QTableView):
         max_col -= 1
         scroll_to_start = True
 
-        if event.key() == Qt.Key_Right and max_col < self.model().col_count - 1:
+        if event.key() == Qt.Key.Key_Right and max_col < self.model().col_count - 1:
             max_col += 1
             min_col += 1
             scroll_to_start = False
-        elif event.key() == Qt.Key_Left and min_col > 0:
+        elif event.key() == Qt.Key.Key_Left and min_col > 0:
             min_col -= 1
             max_col -= 1
-        elif event.key() == Qt.Key_Down and max_row < self.model().row_count - 1:
+        elif event.key() == Qt.Key.Key_Down and max_row < self.model().row_count - 1:
             first_unhidden = -1
             for row in range(max_row + 1, self.model().row_count):
                 if not self.isRowHidden(row):
@@ -268,7 +289,7 @@ class TableView(QTableView):
                 max_row = first_unhidden
                 min_row = max_row - sel_len
                 scroll_to_start = False
-        elif event.key() == Qt.Key_Up and min_row > 0:
+        elif event.key() == Qt.Key.Key_Up and min_row > 0:
             first_unhidden = -1
             for row in range(min_row - 1, -1, -1):
                 if not self.isRowHidden(row):
@@ -286,8 +307,12 @@ class TableView(QTableView):
         selection = QItemSelection()
         selection.select(start, end)
         self.setCurrentIndex(start)
-        self.selectionModel().setCurrentIndex(end, QItemSelectionModel.ClearAndSelect)
-        self.selectionModel().select(selection, QItemSelectionModel.ClearAndSelect)
+        self.selectionModel().setCurrentIndex(
+            end, QItemSelectionModel.SelectionFlag.ClearAndSelect
+        )
+        self.selectionModel().select(
+            selection, QItemSelectionModel.SelectionFlag.ClearAndSelect
+        )
         if scroll_to_start:
             self.scrollTo(start)
         else:
@@ -308,7 +333,7 @@ class TableView(QTableView):
             if cell.data() is not None:
                 text += str(cell.data())
 
-        QApplication.instance().clipboard().setText(text)
+        QApplication.clipboard().setText(text)
 
     @pyqtSlot(bool)
     def on_vertical_header_color_status_changed(self, use_colors: bool):

@@ -136,7 +136,7 @@ parts:
       - libpulse-mainloop-glib0
       - libspeechd2
       - python3
-      - python3-pyqt5
+      - python3-pyqt6
       - python3-pyaudio
       - dbus
       - qtwayland5

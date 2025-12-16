@@ -1,5 +1,6 @@
-from PyQt5.QtCore import QPoint, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import QWidget, QSizePolicy, QUndoStack, QCheckBox, QMessageBox
+from PyQt6.QtCore import QPoint, pyqtSignal, pyqtSlot
+from PyQt6.QtWidgets import QWidget, QSizePolicy, QCheckBox, QMessageBox
+from PyQt6.QtGui import QUndoStack
 
 from urh import settings
 from urh.controller.widgets.SignalFrame import SignalFrame
@@ -86,6 +87,9 @@ class SignalTabController(QWidget):
         sig_frame.blockSignals(True)
 
         index = self.num_frames if index == -1 else index
+        sig_frame.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding
+        )
         self.ui.splitter.insertWidget(index, sig_frame)
         sig_frame.blockSignals(False)
 
@@ -119,7 +123,7 @@ class SignalTabController(QWidget):
 
         if not getting_started:
             w = QWidget()
-            w.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+            w.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
             self.ui.splitter.addWidget(w)
 
     def __create_connects_for_signal_frame(self, signal_frame: SignalFrame):
@@ -146,12 +150,12 @@ class SignalTabController(QWidget):
         if not not_show:
             cb = QCheckBox("Don't ask me again.")
             msg_box = QMessageBox(
-                QMessageBox.Question,
+                QMessageBox.Icon.Question,
                 self.tr("Confirm saving all signals"),
                 self.tr("All changed signal files will be overwritten. OK?"),
             )
-            msg_box.addButton(QMessageBox.Yes)
-            msg_box.addButton(QMessageBox.No)
+            msg_box.addButton(QMessageBox.StandardButton.Yes)
+            msg_box.addButton(QMessageBox.StandardButton.No)
             msg_box.setCheckBox(cb)
 
             reply = msg_box.exec()
@@ -159,7 +163,7 @@ class SignalTabController(QWidget):
             settings.write("not_show_save_dialog", not_show_again)
             self.not_show_again_changed.emit()
 
-            if reply != QMessageBox.Yes:
+            if reply != QMessageBox.StandardButton.Yes:
                 return
 
         for f in self.signal_frames:

@@ -1,4 +1,5 @@
 # Build Qt Resource File from custom Icon Theme for Windows
+import fileinput
 import os
 
 import shutil
@@ -81,7 +82,21 @@ def copy_icons(icon_names: set):
 
     tree = ET.ElementTree(root)
     tree.write("/tmp/xtra_icons.qrc")
-    call(["pyrcc5", "/tmp/xtra_icons.qrc", "-o", "/tmp/xtra_icons_rc.py"])
+    call(
+        [
+            "pyside6-rcc",
+            "-g",
+            "python",
+            "/tmp/xtra_icons.qrc",
+            "-o",
+            "/tmp/xtra_icons_rc.py",
+        ]
+    )
+    for line in fileinput.input("/tmp/xtra_icons_rc.py", inplace=True):
+        print(
+            line.replace("from PySide6 import QtCore", "from PyQt6 import QtCore"),
+            end="",
+        )
     tar_path = os.path.dirname(os.path.join(os.path.dirname(__file__), "..", ".."))
     tar_path = os.path.join(tar_path, "src/urh/ui")
     shutil.copy("/tmp/xtra_icons_rc.py", tar_path)

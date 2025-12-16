@@ -5,9 +5,9 @@ import tempfile
 from zipfile import ZipFile
 
 import numpy as np
-from PyQt5.QtCore import QDir
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt6.QtCore import QDir
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication, QFileDialog
 
 from tests.QtTestCase import QtTestCase
 from urh.signalprocessing.IQArray import IQArray
@@ -76,7 +76,7 @@ class TestFileOperator(QtTestCase):
 
     def test_get_open_dialog(self):
         d1 = FileOperator.get_open_dialog(directory_mode=False)
-        self.assertEqual(d1.fileMode(), QFileDialog.ExistingFiles)
+        self.assertEqual(d1.fileMode(), QFileDialog.FileMode.ExistingFiles)
 
         d2 = FileOperator.get_open_dialog(directory_mode=True)
-        self.assertEqual(d2.fileMode(), QFileDialog.Directory)
+        self.assertEqual(d2.fileMode(), QFileDialog.FileMode.Directory)

@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QCloseEvent
+from PyQt6.QtCore import pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QIcon, QCloseEvent
 
 from urh.controller.dialogs.SendRecvDialog import SendRecvDialog
 from urh.controller.widgets.SniffSettingsWidget import SniffSettingsWidget

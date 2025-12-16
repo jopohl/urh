@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, QSizeF, QPointF
-from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QGraphicsLineItem
+from PyQt6.QtCore import QRectF, QSizeF, QPointF
+from PyQt6.QtGui import QPainter, QPen
+from PyQt6.QtWidgets import QGraphicsLineItem
 
 from urh import settings
 
@@ -64,9 +64,9 @@ class LabeledArrow(QGraphicsLineItem):
             QPointF(x1, y2), QPointF(x1 - x_arrowSize / 4, y2 - y_arrowSize / 2)
         )
 
-        painter.setRenderHint(QPainter.HighQualityAntialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         fm = painter.fontMetrics()
-        pixelsWide = fm.width(self.label)
+        pixelsWide = fm.horizontalAdvance(self.label)
         pixelsHigh = fm.height()
         scale_factor = (0.2 * labelheight) / fm.height()
         scale_factor = scale_factor if scale_factor > 0 else 0.0000000000000000001

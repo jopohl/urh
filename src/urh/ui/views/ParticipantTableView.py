@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
-from PyQt5.QtGui import QKeySequence, QIcon, QContextMenuEvent
-from PyQt5.QtWidgets import QTableView, QAction, QMenu
+from PyQt6.QtCore import pyqtSlot, Qt, QItemSelection, QItemSelectionModel
+from PyQt6.QtGui import QKeySequence, QIcon, QContextMenuEvent, QAction
+from PyQt6.QtWidgets import QTableView, QMenu
 
 from urh import settings
 from urh.models.ParticipantTableModel import ParticipantTableModel
@@ -12,9 +12,11 @@ class ParticipantTableView(QTableView):
         super().__init__(parent)
 
         self.remove_action = QAction("Remove selected participants", self)
-        self.remove_action.setShortcut(QKeySequence.Delete)
+        self.remove_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.remove_action.setIcon(QIcon.fromTheme("list-remove"))
-        self.remove_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.remove_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.remove_action.triggered.connect(self.on_remove_action_triggered)
         self.addAction(self.remove_action)
 
@@ -33,7 +35,9 @@ class ParticipantTableView(QTableView):
         start_index = self.model().index(row_1, col_1)
         end_index = self.model().index(row_2, col_2)
         selection.select(start_index, end_index)
-        self.selectionModel().select(selection, QItemSelectionModel.Select)
+        self.selectionModel().select(
+            selection, QItemSelectionModel.SelectionFlag.Select
+        )
 
     def model(self) -> ParticipantTableModel:
         return super().model()
@@ -66,7 +70,7 @@ class ParticipantTableView(QTableView):
         return menu
 
     def contextMenuEvent(self, event: QContextMenuEvent):
-        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
+        self.create_context_menu().exec(self.mapToGlobal(event.pos()))
 
     def refresh_participant_table(self):
         n = len(self.model().participants)

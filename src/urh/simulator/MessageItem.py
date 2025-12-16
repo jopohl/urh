@@ -1,8 +1,8 @@
 import math
 
-from PyQt5.QtCore import QPointF, Qt
-from PyQt5.QtGui import QPen, QPolygonF
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
+from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtGui import QPen, QPolygonF
+from PyQt6.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsLineItem
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
@@ -15,7 +15,7 @@ class MessageItem(GraphicsItem):
         assert isinstance(model_item, SimulatorMessage)
         super().__init__(model_item=model_item, parent=parent)
 
-        self.setFlag(QGraphicsItem.ItemIsPanel, True)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsPanel, True)
         self.arrow = MessageArrowItem(self)
 
         self.repeat_text = QGraphicsTextItem(self)
@@ -141,7 +141,15 @@ class MessageItem(GraphicsItem):
 class MessageArrowItem(QGraphicsLineItem):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setPen(QPen(Qt.black, 1, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        self.setPen(
+            QPen(
+                Qt.GlobalColor.black,
+                1,
+                Qt.PenStyle.SolidLine,
+                Qt.PenCapStyle.RoundCap,
+                Qt.PenJoinStyle.RoundJoin,
+            )
+        )
 
     def boundingRect(self):
         return super().boundingRect().adjusted(0, -5, 0, 5)

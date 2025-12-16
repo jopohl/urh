@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
-from PyQt5.QtWidgets import QListWidget, QMenu
+from PyQt6.QtCore import Qt, QEvent, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QDragEnterEvent, QContextMenuEvent, QIcon, QDropEvent
+from PyQt6.QtWidgets import QListWidget, QMenu
 
 from urh import settings
 
@@ -19,7 +19,7 @@ class ListWidget(QListWidget):
     def dropEvent(self, event: QDropEvent):
         super().dropEvent(event)
         if self.count() > 0:
-            item = self.itemAt(event.pos())
+            item = self.itemAt(event.position().toPoint())
             if item is not None:
                 index = self.indexFromItem(item).row()
                 self.setCurrentRow(index)
@@ -27,16 +27,16 @@ class ListWidget(QListWidget):
                 self.setCurrentRow(self.count() - 1)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
-        self.active_element = self.indexAt(event.pos()).row()
+        self.active_element = self.indexAt(event.position().toPoint()).row()
         event.accept()
         super().dragEnterEvent(event)
 
     def eventFilter(self, sender, event):
-        if event.type() == QEvent.ChildRemoved:
+        if event.type() == QEvent.Type.ChildRemoved:
             self.internalMove.emit()
         elif (
-            event.type() == QEvent.KeyPress
-            and event.key() in (Qt.Key_Delete, Qt.Key_Backspace)
+            event.type() == QEvent.Type.KeyPress
+            and event.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace)
             and self.currentItem() is not None
         ):
             item = self.currentRow()
@@ -73,7 +73,7 @@ class ListWidget(QListWidget):
     def contextMenuEvent(self, event: QContextMenuEvent):
         self.context_menu_pos = event.pos()
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
         self.context_menu_pos = None
 
     @pyqtSlot()

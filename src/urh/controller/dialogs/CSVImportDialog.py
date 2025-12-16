@@ -2,15 +2,9 @@ import csv
 
 import os
 import numpy as np
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtWidgets import (
-    QDialog,
-    QInputDialog,
-    QApplication,
-    QCompleter,
-    QDirModel,
-    QFileDialog,
-)
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QDialog, QInputDialog, QApplication, QCompleter, QFileDialog
+from PyQt6.QtGui import QFileSystemModel
 
 from urh.ui.ui_csv_wizard import Ui_DialogCSVImport
 from urh.util import FileOperator, util
@@ -27,13 +21,13 @@ class CSVImportDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_DialogCSVImport()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.ui.btnAutoDefault.hide()
 
         completer = QCompleter()
-        completer.setModel(QDirModel(completer))
+        completer.setModel(QFileSystemModel(completer))
         self.ui.lineEditFilename.setCompleter(completer)
 
         self.filename = None  # type: str
@@ -245,7 +239,7 @@ class CSVImportDialog(QDialog):
 
     @pyqtSlot()
     def on_accepted(self):
-        QApplication.setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
 
         iq_data, sample_rate = self.parse_csv_file(
             self.filename,
@@ -277,4 +271,4 @@ class CSVImportDialog(QDialog):
 if __name__ == "__main__":
     app = QApplication(["urh"])
     csv_dia = CSVImportDialog()
-    csv_dia.exec_()
+    csv_dia.exec()

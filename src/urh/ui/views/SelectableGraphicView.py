@@ -1,6 +1,6 @@
-from PyQt5.QtCore import QRectF, pyqtSignal, Qt, QPoint
-from PyQt5.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon
-from PyQt5.QtWidgets import QGraphicsView, QAction
+from PyQt6.QtCore import QRectF, pyqtSignal, Qt, QPoint
+from PyQt6.QtGui import QMouseEvent, QKeyEvent, QPainter, QKeySequence, QIcon, QAction
+from PyQt6.QtWidgets import QGraphicsView
 
 from urh import settings
 from urh.ui.painting.HorizontalSelection import HorizontalSelection
@@ -18,9 +18,9 @@ class SelectableGraphicView(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setResizeAnchor(QGraphicsView.NoAnchor)
-        self.setTransformationAnchor(QGraphicsView.NoAnchor)
-        self.setRenderHints(QPainter.Antialiasing)
+        self.setResizeAnchor(QGraphicsView.ViewportAnchor.NoAnchor)
+        self.setTransformationAnchor(QGraphicsView.ViewportAnchor.NoAnchor)
+        self.setRenderHints(QPainter.RenderHint.Antialiasing)
 
         self.scene_manager = None  # type: SceneManager
         self.mouse_press_pos = None  # type: QPoint
@@ -36,9 +36,11 @@ class SelectableGraphicView(QGraphicsView):
         self.shift_mode = False  # Shift Key currently pressed?
 
         self.select_all_action = QAction(self.tr("Select all"), self)
-        self.select_all_action.setShortcut(QKeySequence.SelectAll)
+        self.select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         self.select_all_action.triggered.connect(self.select_all)
-        self.select_all_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.select_all_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.select_all_action.setIcon(QIcon.fromTheme("edit-select-all"))
         self.addAction(self.select_all_action)
 
@@ -81,11 +83,11 @@ class SelectableGraphicView(QGraphicsView):
         return False
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Shift:
+        if event.key() == Qt.Key.Key_Shift:
             self.shift_mode = True
 
             if self.hold_shift_to_drag:
-                self.setCursor(Qt.OpenHandCursor)
+                self.setCursor(Qt.CursorShape.OpenHandCursor)
             else:
                 self.unsetCursor()
                 self.grab_start = None
@@ -93,14 +95,14 @@ class SelectableGraphicView(QGraphicsView):
         super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Shift:
+        if event.key() == Qt.Key.Key_Shift:
             self.shift_mode = False
 
             if self.hold_shift_to_drag:
                 self.unsetCursor()
                 self.grab_start = None
             else:
-                self.setCursor(Qt.OpenHandCursor)
+                self.setCursor(Qt.CursorShape.OpenHandCursor)
 
         super().keyPressEvent(event)
 
@@ -109,21 +111,21 @@ class SelectableGraphicView(QGraphicsView):
             return
 
         cursor = self.cursor().shape()
-        has_shift_modifier = event.modifiers() == Qt.ShiftModifier
+        has_shift_modifier = event.modifiers() == Qt.Modifier.SHIFT
         is_in_shift_mode = (
             (has_shift_modifier and self.hold_shift_to_drag)
             or (not has_shift_modifier and not self.hold_shift_to_drag)
-            and cursor != Qt.SplitHCursor
-            and cursor != Qt.SplitVCursor
+            and cursor != Qt.CursorShape.SplitHCursor
+            and cursor != Qt.CursorShape.SplitVCursor
         )
 
-        if event.buttons() == Qt.LeftButton and is_in_shift_mode:
-            self.setCursor(Qt.ClosedHandCursor)
+        if event.buttons() == Qt.MouseButton.LeftButton and is_in_shift_mode:
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
             self.grab_start = event.pos()
-        elif event.buttons() == Qt.LeftButton:
+        elif event.buttons() == Qt.MouseButton.LeftButton:
             if self.is_pos_in_separea(self.mapToScene(event.pos())):
                 self.separation_area_moving = True
-                self.setCursor(Qt.SplitVCursor)
+                self.setCursor(Qt.CursorShape.SplitVCursor)
 
             elif (
                 self.selection_area.is_empty
@@ -173,26 +175,33 @@ class SelectableGraphicView(QGraphicsView):
                     -self.signal.get_thresholds_for_center(-y_sep), show_symbols=True
                 )
         elif self.is_pos_in_separea(self.mapToScene(event.pos())):
-            self.setCursor(Qt.SplitVCursor)
-        elif cursor == Qt.SplitVCursor and self.has_horizontal_selection:
+            self.setCursor(Qt.CursorShape.SplitVCursor)
+        elif cursor == Qt.CursorShape.SplitVCursor and self.has_horizontal_selection:
             self.unsetCursor()
 
         if self.selection_area.finished and not self.selection_area.resizing:
             pos = self.mapToScene(event.pos())
             roi_edge = self.selection_area.get_selected_edge(pos, self.transform())
             if roi_edge is None:
-                if (cursor == Qt.SplitHCursor and self.has_horizontal_selection) or (
-                    cursor == Qt.SplitVCursor and not self.has_horizontal_selection
+                if (
+                    cursor == Qt.CursorShape.SplitHCursor
+                    and self.has_horizontal_selection
+                ) or (
+                    cursor == Qt.CursorShape.SplitVCursor
+                    and not self.has_horizontal_selection
                 ):
                     self.unsetCursor()
                     return
             elif roi_edge == 0 or roi_edge == 1:
                 if self.has_horizontal_selection:
-                    self.setCursor(Qt.SplitHCursor)
+                    self.setCursor(Qt.CursorShape.SplitHCursor)
                 else:
-                    self.setCursor(Qt.SplitVCursor)
+                    self.setCursor(Qt.CursorShape.SplitVCursor)
 
-        if event.buttons() == Qt.LeftButton and self.selection_area.resizing:
+        if (
+            event.buttons() == Qt.MouseButton.LeftButton
+            and self.selection_area.resizing
+        ):
             if self.selection_area.selected_edge == 0:
                 start = self.mapToScene(event.pos())
                 self.__set_selection_area(x=start.x(), y=start.y())
@@ -215,7 +224,10 @@ class SelectableGraphicView(QGraphicsView):
             return
 
         self.mouse_pos = event.pos()
-        if event.buttons() == Qt.LeftButton and not self.selection_area.finished:
+        if (
+            event.buttons() == Qt.MouseButton.LeftButton
+            and not self.selection_area.finished
+        ):
             start = self.mapToScene(self.mouse_press_pos)
             end = self.mapToScene(self.mouse_pos)
             self.__set_selection_area(w=end.x() - start.x(), h=end.y() - start.y())
@@ -242,9 +254,9 @@ class SelectableGraphicView(QGraphicsView):
             return
 
         cursor = self.cursor().shape()
-        if cursor == Qt.ClosedHandCursor:
+        if cursor == Qt.CursorShape.ClosedHandCursor:
             self.grab_start = None
-            self.setCursor(Qt.OpenHandCursor)
+            self.setCursor(Qt.CursorShape.OpenHandCursor)
 
         elif (
             self.separation_area_moving

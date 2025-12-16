@@ -1,9 +1,9 @@
 import sys
 from collections import OrderedDict
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtGui import QPainter, QStandardItem
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PyQt6.QtGui import QPainter, QStandardItem
+from PyQt6.QtWidgets import (
     QItemDelegate,
     QStyleOptionViewItem,
     QStyle,
@@ -20,16 +20,16 @@ class SectionItemDelegate(QItemDelegate):
     def paint(
         self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
     ):
-        item_type = index.data(Qt.AccessibleDescriptionRole)
+        item_type = index.data(Qt.ItemDataRole.AccessibleDescriptionRole)
         if item_type == "parent":
             parent_option = option
-            parent_option.state |= QStyle.State_Enabled
+            parent_option.state |= QStyle.StateFlag.State_Enabled
             super().paint(painter, parent_option, index)
         elif item_type == "child":
             child_option = option
-            indent = option.fontMetrics.width(4 * " ")
+            indent = option.fontMetrics.horizontalAdvance(4 * " ")
             child_option.rect.adjust(indent, 0, 0, 0)
-            child_option.textElideMode = Qt.ElideNone
+            child_option.textElideMode = Qt.TextElideMode.ElideNone
             super().paint(painter, child_option, index)
         else:
             super().paint(painter, option, index)
@@ -41,8 +41,10 @@ class SectionComboBox(QComboBox):
 
     def add_parent_item(self, text):
         item = QStandardItem(text)
-        item.setFlags(item.flags() & ~(Qt.ItemIsEnabled | Qt.ItemIsSelectable))
-        item.setData("parent", Qt.AccessibleDescriptionRole)
+        item.setFlags(
+            item.flags() & ~(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+        )
+        item.setData("parent", Qt.ItemDataRole.AccessibleDescriptionRole)
 
         font = item.font()
         font.setBold(True)
@@ -52,7 +54,7 @@ class SectionComboBox(QComboBox):
 
     def add_child_item(self, text):
         item = QStandardItem(text)
-        item.setData("child", Qt.AccessibleDescriptionRole)
+        item.setData("child", Qt.ItemDataRole.AccessibleDescriptionRole)
         self.model().appendRow(item)
 
 
@@ -91,7 +93,7 @@ class SectionComboBoxDelegate(QStyledItemDelegate):
     def setModelData(
         self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
     ):
-        model.setData(index, editor.currentText(), Qt.EditRole)
+        model.setData(index, editor.currentText(), Qt.ItemDataRole.EditRole)
 
     def updateEditorGeometry(
         self, editor: QWidget, option: QStyleOptionViewItem, index: QModelIndex

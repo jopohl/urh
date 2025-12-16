@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon, QContextMenuEvent, QKeySequence
-from PyQt5.QtWidgets import QTableView, QMenu, QAction
+from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt6.QtGui import QIcon, QContextMenuEvent, QKeySequence, QAction
+from PyQt6.QtWidgets import QTableView, QMenu
 
 from urh import settings
 from urh.models.LabelValueTableModel import LabelValueTableModel
@@ -45,9 +45,11 @@ class LabelValueTableView(QTableView):
         self.setItemDelegateForColumn(3, SectionComboBoxDelegate(orders, parent=self))
 
         self.del_rows_action = QAction("Delete selected labels", self)
-        self.del_rows_action.setShortcut(QKeySequence.Delete)
+        self.del_rows_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.del_rows_action.setIcon(QIcon.fromTheme("edit-delete"))
-        self.del_rows_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.del_rows_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.del_rows_action.triggered.connect(self.delete_rows)
 
         self.addAction(self.del_rows_action)
@@ -92,7 +94,7 @@ class LabelValueTableView(QTableView):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
     def model(self) -> LabelValueTableModel:
         return super().model()

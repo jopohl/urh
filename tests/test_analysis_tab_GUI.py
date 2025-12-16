@@ -1,10 +1,10 @@
 import copy
 
-from PyQt5.QtCore import QPoint, Qt, QModelIndex
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QContextMenuEvent
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication, QMenu
+from PyQt6.QtCore import QPoint, Qt, QModelIndex
+from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QContextMenuEvent
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication, QMenu
 
 from tests.QtTestCase import QtTestCase
 from urh.controller.CompareFrameController import CompareFrameController
@@ -45,10 +45,10 @@ class TestAnalysisTabGUI(QtTestCase):
         self.add_signal_to_form("enocean.complex")
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxCenterOffset
         w.setValue(0)
-        QTest.keyClick(w, Qt.Key_Enter)
+        QTest.keyClick(w, Qt.Key.Key_Enter)
         w = self.form.signal_tab_controller.signal_frames[1].ui.spinBoxNoiseTreshold
         w.setValue(0.0111)
-        QTest.keyClick(w, Qt.Key_Enter)
+        QTest.keyClick(w, Qt.Key.Key_Enter)
         self.cfc.assign_labels_action.setChecked(True)
         self.cfc.assign_message_type_action.setChecked(True)
         self.cfc.assign_participants_action.setChecked(True)
@@ -59,21 +59,21 @@ class TestAnalysisTabGUI(QtTestCase):
         self.form.ui.tabWidget.setCurrentIndex(1)
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.ui.tblViewProtocol.selectRow(1)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(
             self.cfc.ui.lBitsSelection.text(),
             self.cfc.proto_analyzer.messages[1].plain_bits_str,
         )
 
         self.cfc.ui.tblViewProtocol.clearSelection()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual("", self.cfc.ui.lBitsSelection.text())
 
         self.cfc.ui.tblViewProtocol.select(0, 0, 0, 3)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual("1010", self.cfc.ui.lBitsSelection.text())
         self.cfc.ui.cbProtoView.setCurrentIndex(1)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
         min_row, max_row, start, end = self.cfc.ui.tblViewProtocol.selection_range()
         self.assertEqual(min_row, 0)
@@ -191,11 +191,11 @@ class TestAnalysisTabGUI(QtTestCase):
 
     def test_create_context_menu(self):
         self.cfc.proto_tree_model.rootItem.child(0).show = False
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
         self.assertEqual(self.cfc.protocol_model.rowCount(), 0)
         self.cfc.ui.tblViewProtocol.context_menu_pos = QPoint(0, 0)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
         menu = self.cfc.ui.tblViewProtocol.create_context_menu()
         texts = [a.text() for a in menu.actions()]
@@ -232,9 +232,9 @@ class TestAnalysisTabGUI(QtTestCase):
             self.assertFalse(self.cfc.ui.tblViewProtocol.isRowHidden(msg))
 
         self.form.ui.tabWidget.setCurrentIndex(2)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.form.ui.tabWidget.setCurrentIndex(1)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(self.cfc.protocol_model.rowCount(), num_messages)
         self.assertTrue(self.cfc.ui.tblViewProtocol.isRowHidden(0))
 
@@ -279,11 +279,11 @@ class TestAnalysisTabGUI(QtTestCase):
     def test_tree_view_selection_changed(self):
         self.cfc.proto_tree_model.addGroup()
         self.cfc.proto_tree_model.addGroup()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
         self.cfc.ui.treeViewProtocols.selectAll()
         self.cfc.ui.treeViewProtocols.selection_changed.emit()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(len(self.cfc.active_group_ids), 1)
 
     def test_tree_view_drop_mime_data(self):
@@ -303,7 +303,7 @@ class TestAnalysisTabGUI(QtTestCase):
         group_2_index = model.index(1, 0, QModelIndex())
         self.assertEqual(group_2_index.internalPointer().group.name, "Test group")
         mimedata = model.mimeData([signal_index])
-        model.dropMimeData(mimedata, Qt.MoveAction, 0, 0, group_2_index)
+        model.dropMimeData(mimedata, Qt.DropAction.MoveAction, 0, 0, group_2_index)
         self.assertEqual(self.cfc.groups[0].num_protocols, 0)
         self.assertEqual(self.cfc.groups[1].num_protocols, 1)
 
@@ -311,7 +311,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.groups[0].name, "New Group")
         self.assertEqual(self.cfc.groups[1].name, "Test group")
         mimedata = model.mimeData([group_2_index])
-        model.dropMimeData(mimedata, Qt.MoveAction, 0, 0, group_1_index)
+        model.dropMimeData(mimedata, Qt.DropAction.MoveAction, 0, 0, group_1_index)
         self.assertEqual(self.cfc.groups[0].name, "Test group")
         self.assertEqual(self.cfc.groups[0].num_protocols, 1)
         self.assertEqual(self.cfc.groups[1].name, "New Group")
@@ -327,18 +327,18 @@ class TestAnalysisTabGUI(QtTestCase):
         self.cfc.ui.cbProtoView.setCurrentIndex(0)
         self.cfc.add_protocol_label(0, 16, 2, 0, edit_label_name=False)
         model = self.cfc.label_value_model
-        model.setData(model.index(0, 0), "test", Qt.EditRole)
+        model.setData(model.index(0, 0), "test", Qt.ItemDataRole.EditRole)
         table_model = self.cfc.protocol_model
         for i in range(0, 16):
             self.assertEqual(
-                table_model.data(table_model.index(2, i), Qt.ToolTipRole),
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
                 "test",
                 msg=str(i),
             )
 
         for i in range(17, 100):
             self.assertEqual(
-                table_model.data(table_model.index(2, i), Qt.ToolTipRole),
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
                 "",
                 msg=str(i),
             )
@@ -349,15 +349,19 @@ class TestAnalysisTabGUI(QtTestCase):
             for ft in self.cfc.field_types
             if ft.function == FieldType.Function.CHECKSUM
         )
-        model.setData(model.index(1, 0), checksum_field_type.caption, Qt.EditRole)
+        model.setData(
+            model.index(1, 0), checksum_field_type.caption, Qt.ItemDataRole.EditRole
+        )
         for i in range(20, 24):
             self.assertIn(
-                "Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole)
+                "Expected",
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
             )
 
         for i in range(0, 20):
             self.assertNotIn(
-                "Expected", table_model.data(table_model.index(2, i), Qt.ToolTipRole)
+                "Expected",
+                table_model.data(table_model.index(2, i), Qt.ItemDataRole.ToolTipRole),
             )
 
     def test_protocol_tree_context_menu(self):
@@ -379,48 +383,36 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(model.data(model.index(0, 2)), "Bit")
         self.assertEqual(model.data(model.index(0, 4)), "000011001110")
 
-        model.setData(model.index(0, 2), 1, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 1, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 2)), "Hex")
         self.assertEqual(model.data(model.index(0, 4)), "0ce")
 
-        model.setData(model.index(0, 2), 2, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 2, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 2)), "ASCII")
 
-        model.setData(model.index(0, 2), 3, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 3, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 2)), "Decimal")
         self.assertEqual(model.data(model.index(0, 4)), "206")
 
-        model.setData(model.index(0, 2), 4, role=Qt.EditRole)
+        model.setData(model.index(0, 2), 4, role=Qt.ItemDataRole.EditRole)
         self.assertEqual(model.data(model.index(0, 2)), "BCD")
         self.assertEqual(model.data(model.index(0, 4)), "0??")
 
-        self.assertIn("display type", model.data(model.index(0, 2), Qt.ToolTipRole))
-        self.assertIn("bit order", model.data(model.index(0, 3), Qt.ToolTipRole))
+        self.assertIn(
+            "display type", model.data(model.index(0, 2), Qt.ItemDataRole.ToolTipRole)
+        )
+        self.assertIn(
+            "bit order", model.data(model.index(0, 3), Qt.ItemDataRole.ToolTipRole)
+        )
 
         lbl = self.cfc.proto_analyzer.default_message_type[0]
         self.assertEqual(lbl.display_endianness, "big")
-        model.setData(model.index(0, 3), "MSB/LE", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "MSB/LE", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(lbl.display_endianness, "little")
-        model.setData(model.index(0, 3), "LSB/BE", role=Qt.EditRole)
+        model.setData(model.index(0, 3), "LSB/BE", role=Qt.ItemDataRole.EditRole)
         self.assertEqual(lbl.display_endianness, "big")
 
     def test_label_list_view(self):
-        menus_before = [
-            w for w in QApplication.topLevelWidgets() if isinstance(w, QMenu)
-        ]
-
-        global context_menu
-        context_menu = None  # type: QMenu
-
-        def on_timeout():
-            global context_menu
-            context_menu = next(
-                w
-                for w in QApplication.topLevelWidgets()
-                if w.parent() is None and isinstance(w, QMenu) and w not in menus_before
-            )
-            context_menu.close()
-
         self.cfc.add_protocol_label(10, 20, 0, 0, False)
         self.cfc.add_message_type()
         self.assertEqual(self.cfc.message_type_table_model.rowCount(), 2)
@@ -429,15 +421,7 @@ class TestAnalysisTabGUI(QtTestCase):
         self.assertEqual(self.cfc.ui.tblLabelValues.model().rowCount(), 1)
         self.cfc.ui.tblLabelValues.selectAll()
 
-        timer = QTimer(self.cfc)
-        timer.setSingleShot(True)
-        timer.timeout.connect(on_timeout)
-        timer.start(1)
-
-        self.cfc.ui.tblLabelValues.contextMenuEvent(
-            QContextMenuEvent(QContextMenuEvent.Mouse, QPoint(0, 0))
-        )
-
+        context_menu = self.cfc.ui.tblLabelValues.create_context_menu()
         names = [action.text() for action in context_menu.actions()]
         self.assertIn("Edit...", names)
 

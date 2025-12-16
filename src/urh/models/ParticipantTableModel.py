@@ -1,7 +1,7 @@
 import itertools
 import random
 
-from PyQt5.QtCore import (
+from PyQt6.QtCore import (
     QAbstractTableModel,
     pyqtSignal,
     QModelIndex,
@@ -58,13 +58,16 @@ class ParticipantTableModel(QAbstractTableModel):
     def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.participants)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole or role == Qt.EditRole:
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole:
             i = index.row()
             j = index.column()
             part = self.participants[i]
@@ -79,7 +82,7 @@ class ParticipantTableModel(QAbstractTableModel):
             elif j == 4:
                 return part.address_hex
 
-    def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
+    def setData(self, index: QModelIndex, value, role=Qt.ItemDataRole.DisplayRole):
         i = index.row()
         j = index.column()
         if i >= len(self.participants):
@@ -109,9 +112,13 @@ class ParticipantTableModel(QAbstractTableModel):
 
     def flags(self, index: QModelIndex):
         if not index.isValid():
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return (
+            Qt.ItemFlag.ItemIsEditable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+        )
 
     def __get_initial_name(self) -> (str, str):
         given_names = set(p.name for p in self.participants)

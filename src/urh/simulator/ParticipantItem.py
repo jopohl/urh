@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPen, QFont
-from PyQt5.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPen, QFont
+from PyQt6.QtWidgets import QGraphicsLineItem, QGraphicsTextItem, QGraphicsItem
 
 from urh import settings
 from urh.signalprocessing.Participant import Participant
@@ -15,7 +15,15 @@ class ParticipantItem(QGraphicsItem):
         self.text = QGraphicsTextItem(self)
 
         self.line = QGraphicsLineItem(self)
-        self.line.setPen(QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin))
+        self.line.setPen(
+            QPen(
+                Qt.GlobalColor.darkGray,
+                1,
+                Qt.PenStyle.DashLine,
+                Qt.PenCapStyle.RoundCap,
+                Qt.PenJoinStyle.RoundJoin,
+            )
+        )
 
         self.refresh()
 
@@ -43,15 +51,27 @@ class ParticipantItem(QGraphicsItem):
             font = QFont()
             font.setBold(True)
             self.text.setFont(font)
-            self.text.setDefaultTextColor(Qt.darkGreen)
+            self.text.setDefaultTextColor(Qt.GlobalColor.darkGreen)
             self.line.setPen(
-                QPen(Qt.darkGreen, 2, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
+                QPen(
+                    Qt.GlobalColor.darkGreen,
+                    2,
+                    Qt.PenStyle.SolidLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                )
             )
         else:
             self.text.setFont(QFont())
             self.text.setDefaultTextColor(settings.LINECOLOR)
             self.line.setPen(
-                QPen(Qt.darkGray, 1, Qt.DashLine, Qt.RoundCap, Qt.RoundJoin)
+                QPen(
+                    Qt.GlobalColor.darkGray,
+                    1,
+                    Qt.PenStyle.DashLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                )
             )
 
     def boundingRect(self):

@@ -1,5 +1,5 @@
 numpy<3.0
-pyqt5
+PyQt6
 psutil
 cython
 setuptools

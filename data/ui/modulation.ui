@@ -76,7 +76,7 @@
         <x>0</x>
         <y>0</y>
         <width>965</width>
-        <height>984</height>
+        <height>989</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,1,0,1,0,1,0,0,1,0,0" columnstretch="0,0,0,0">
@@ -220,10 +220,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
+          <set>QPainter::Antialiasing</set>
          </property>
         </widget>
        </item>
@@ -240,8 +237,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>373</width>
-            <height>330</height>
+            <width>313</width>
+            <height>316</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
@@ -485,8 +482,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>373</width>
-            <height>141</height>
+            <width>313</width>
+            <height>149</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -594,8 +591,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>353</width>
-            <height>143</height>
+            <width>313</width>
+            <height>148</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -748,10 +745,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
+          <set>QPainter::Antialiasing</set>
          </property>
         </widget>
        </item>
@@ -786,10 +780,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
+          <set>QPainter::Antialiasing</set>
          </property>
         </widget>
        </item>
@@ -811,10 +802,7 @@
           <enum>Qt::ScrollBarAlwaysOn</enum>
          </property>
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing</set>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::NoDrag</enum>
+          <set>QPainter::Antialiasing</set>
          </property>
         </widget>
        </item>
@@ -831,8 +819,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>353</width>
-            <height>227</height>
+            <width>292</width>
+            <height>202</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -1085,14 +1073,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KillerDoubleSpinBox</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>urh.ui.KillerDoubleSpinBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZoomableGraphicView</class>
    <extends>QGraphicsView</extends>
    <header>urh.ui.views.ZoomableGraphicView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KillerDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>urh.ui.KillerDoubleSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomAndDropableGraphicView</class>

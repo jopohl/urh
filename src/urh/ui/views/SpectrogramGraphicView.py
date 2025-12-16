@@ -1,7 +1,7 @@
 import numpy as np
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QMenu
+from PyQt6.QtCore import pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QIcon, QKeySequence
+from PyQt6.QtWidgets import QMenu
 
 from urh.controller.dialogs.FilterBandwidthDialog import FilterBandwidthDialog
 from urh.signalprocessing.Filter import Filter
@@ -63,7 +63,8 @@ class SpectrogramGraphicView(ZoomableGraphicView):
 
             try:
                 cancel_button = " or ".join(
-                    k.toString() for k in QKeySequence.keyBindings(QKeySequence.Cancel)
+                    k.toString()
+                    for k in QKeySequence.keyBindings(QKeySequence.StandardKey.Cancel)
                 )
             except Exception as e:
                 logger.debug("Error reading cancel button: " + str(e))

@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
-from PyQt5.QtGui import QContextMenuEvent, QIcon, QDesktopServices
-from PyQt5.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
+from PyQt6.QtCore import QModelIndex, pyqtSlot, QFileInfo, pyqtSignal, QUrl
+from PyQt6.QtGui import QContextMenuEvent, QIcon, QDesktopServices
+from PyQt6.QtWidgets import QTreeView, QInputDialog, QMessageBox, QMenu
 
 from urh import settings
 from urh.util import util
@@ -89,7 +89,7 @@ class DirectoryTreeView(QTreeView):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
     @pyqtSlot()
     def on_open_action_triggered(self):

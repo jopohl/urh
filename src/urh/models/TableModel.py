@@ -2,9 +2,8 @@ import array
 import math
 from collections import defaultdict
 
-from PyQt5.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QUndoStack
+from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, pyqtSignal
+from PyQt6.QtGui import QFont, QColor, QUndoStack
 
 from urh import settings
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -111,13 +110,13 @@ class TableModel(QAbstractTableModel):
 
         return True
 
-    def headerData(self, section: int, orientation, role=Qt.DisplayRole):
-        if orientation == Qt.Vertical:
-            if role == Qt.DisplayRole:
+    def headerData(self, section: int, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if orientation == Qt.Orientation.Vertical:
+            if role == Qt.ItemDataRole.DisplayRole:
                 return self.vertical_header_text[section]
-            elif role == Qt.BackgroundColorRole:
+            elif role == Qt.ItemDataRole.BackgroundRole:
                 return self.vertical_header_colors[section]
-            elif role == Qt.TextColorRole:
+            elif role == Qt.ItemDataRole.ForegroundRole:
                 color = self.vertical_header_colors[section]
                 if color:
                     red, green, blue = color.red(), color.green(), color.blue()
@@ -253,13 +252,13 @@ class TableModel(QAbstractTableModel):
 
         self.vertical_header_color_status_changed.emit(use_colors)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
         i = index.row()
         j = index.column()
-        if role == Qt.DisplayRole and self.display_data:
+        if role == Qt.ItemDataRole.DisplayRole and self.display_data:
             try:
                 alignment_offset = self.get_alignment_offset_at(i)
                 if j < alignment_offset:
@@ -274,25 +273,25 @@ class TableModel(QAbstractTableModel):
             except IndexError:
                 return None
 
-        elif role == Qt.TextAlignmentRole:
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
             if i in self.first_messages:
-                return Qt.AlignHCenter + Qt.AlignBottom
+                return Qt.AlignmentFlag.AlignHCenter + Qt.AlignmentFlag.AlignBottom
             else:
-                return Qt.AlignCenter
+                return Qt.AlignmentFlag.AlignCenter
 
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             return self.background_colors[i, j]
 
-        elif role == Qt.FontRole:
+        elif role == Qt.ItemDataRole.FontRole:
             font = QFont()
             font.setBold(self.bold_fonts[i, j])
             font.setItalic(self.italic_fonts[i, j])
             return font
 
-        elif role == Qt.TextColorRole:
+        elif role == Qt.ItemDataRole.ForegroundRole:
             return self.text_colors[i, j]
 
-        elif role == Qt.ToolTipRole:
+        elif role == Qt.ItemDataRole.ToolTipRole:
             return self.get_tooltip(i, j)
         else:
             return None
@@ -324,8 +323,8 @@ class TableModel(QAbstractTableModel):
 
         return result
 
-    def setData(self, index: QModelIndex, value, role=Qt.DisplayRole):
-        if role != Qt.EditRole:
+    def setData(self, index: QModelIndex, value, role=Qt.ItemDataRole.DisplayRole):
+        if role != Qt.ItemDataRole.EditRole:
             return True
 
         i = index.row()

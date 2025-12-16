@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import copy
 
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from urh.signalprocessing.Encoding import Encoding
 from urh.signalprocessing.Message import Message
@@ -74,8 +76,10 @@ class ProtocolTreeItem(object):
             return self.protocol.show
 
     @show.setter
-    def show(self, value: bool):
-        value = Qt.Checked if value else Qt.Unchecked
+    def show(self, value: bool | Qt.CheckState):
+        if isinstance(value, Qt.CheckState):
+            value = value.value
+        value = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
 
         if not self.is_group:
             self.protocol.show = value
@@ -92,14 +96,14 @@ class ProtocolTreeItem(object):
             return None
 
         if self.childCount() == 0:
-            return Qt.Unchecked
+            return Qt.CheckState.Unchecked
 
-        if all(child.show for child in self.children):
-            return Qt.Checked
-        elif any(child.show for child in self.children):
-            return Qt.PartiallyChecked
+        if all(child.show.value for child in self.children):
+            return Qt.CheckState.Checked
+        elif any(child.show.value for child in self.children):
+            return Qt.CheckState.PartiallyChecked
         else:
-            return Qt.Unchecked
+            return Qt.CheckState.Unchecked
 
     @property
     def children(self):

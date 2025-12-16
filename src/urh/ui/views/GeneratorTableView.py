@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import (
+from PyQt6.QtCore import Qt, QRect, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import (
     QDragMoveEvent,
     QDragEnterEvent,
     QPainter,
@@ -8,12 +8,12 @@ from PyQt5.QtGui import (
     QPen,
     QDropEvent,
     QDragLeaveEvent,
-    QContextMenuEvent,
+    QActionGroup,
     QIcon,
 )
-from PyQt5.QtWidgets import QActionGroup, QInputDialog
+from PyQt6.QtWidgets import QInputDialog
 
-from PyQt5.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
+from PyQt6.QtWidgets import QHeaderView, QAbstractItemView, QStyleOption, QMenu
 
 from urh.models.GeneratorTableModel import GeneratorTableModel
 from urh.ui.views.TableView import TableView
@@ -25,8 +25,8 @@ class GeneratorTableView(TableView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
         self.drop_indicator_rect = QRect()
         self.drag_active = False
@@ -41,8 +41,8 @@ class GeneratorTableView(TableView):
         self.drag_active = True
 
     def dragMoveEvent(self, event: QDragMoveEvent):
-        pos = event.pos()
-        row = self.rowAt(pos.y())
+        pos = event.position()
+        row = self.rowAt(int(pos.y()))
 
         index = self.model().createIndex(
             row, 0
@@ -57,9 +57,9 @@ class GeneratorTableView(TableView):
             )
         )  # in case section has been moved
 
-        self.drop_indicator_position = self.position(event.pos(), rect)
+        self.drop_indicator_position = self.position(event.position(), rect)
 
-        if self.drop_indicator_position == self.AboveItem:
+        if self.drop_indicator_position == self.DropIndicatorPosition.AboveItem:
             self.drop_indicator_rect = QRect(
                 rect_left.left(),
                 rect_left.top(),
@@ -67,7 +67,7 @@ class GeneratorTableView(TableView):
                 0,
             )
             event.accept()
-        elif self.drop_indicator_position == self.BelowItem:
+        elif self.drop_indicator_position == self.DropIndicatorPosition.BelowItem:
             self.drop_indicator_rect = QRect(
                 rect_left.left(),
                 rect_left.bottom(),
@@ -75,7 +75,7 @@ class GeneratorTableView(TableView):
                 0,
             )
             event.accept()
-        elif self.drop_indicator_position == self.OnItem:
+        elif self.drop_indicator_position == self.DropIndicatorPosition.OnItem:
             self.drop_indicator_rect = QRect(
                 rect_left.left(),
                 rect_left.bottom(),
@@ -110,17 +110,17 @@ class GeneratorTableView(TableView):
 
     def dropEvent(self, event: QDropEvent):
         self.drag_active = False
-        row = self.rowAt(event.pos().y())
+        row = self.rowAt(int(event.position().y()))
         index = self.model().createIndex(
             row, 0
         )  # this always get the default 0 column index
         rect = self.visualRect(index)
-        drop_indicator_position = self.position(event.pos(), rect)
+        drop_indicator_position = self.position(event.position(), rect)
         if row == -1:
             row = self.model().row_count - 1
         elif (
-            drop_indicator_position == self.BelowItem
-            or drop_indicator_position == self.OnItem
+            drop_indicator_position == self.DropIndicatorPosition.BelowItem
+            or drop_indicator_position == self.DropIndicatorPosition.OnItem
         ):
             row += 1
 
@@ -136,16 +136,16 @@ class GeneratorTableView(TableView):
 
     @staticmethod
     def position(pos, rect):
-        r = QAbstractItemView.OnViewport
+        r = QAbstractItemView.DropIndicatorPosition.OnViewport
         # margin*2 must be smaller than row height, or the drop onItem rect won't show
         margin = 5
         if pos.y() - rect.top() < margin:
-            r = QAbstractItemView.AboveItem
+            r = QAbstractItemView.DropIndicatorPosition.AboveItem
         elif rect.bottom() - pos.y() < margin:
-            r = QAbstractItemView.BelowItem
+            r = QAbstractItemView.DropIndicatorPosition.BelowItem
 
         elif pos.y() - rect.top() > margin and rect.bottom() - pos.y() > margin:
-            r = QAbstractItemView.OnItem
+            r = QAbstractItemView.DropIndicatorPosition.OnItem
 
         return r
 
@@ -163,22 +163,22 @@ class GeneratorTableView(TableView):
             opt.rect = self.drop_indicator_rect
             rect = opt.rect
 
-            brush = QBrush(QColor(Qt.darkRed))
+            brush = QBrush(QColor(Qt.GlobalColor.darkRed))
 
             if rect.height() == 0:
-                pen = QPen(brush, 2, Qt.SolidLine)
+                pen = QPen(brush, 2, Qt.PenStyle.SolidLine)
                 painter.setPen(pen)
                 painter.drawLine(rect.topLeft(), rect.topRight())
             else:
-                pen = QPen(brush, 2, Qt.SolidLine)
+                pen = QPen(brush, 2, Qt.PenStyle.SolidLine)
                 painter.setPen(pen)
                 painter.drawRect(rect)
 
     def paint_pause_indicator(self, painter):
         if self.show_pause_active:
             rect = self.__rect_for_row(self.pause_row)
-            brush = QBrush(QColor(Qt.darkGreen))
-            pen = QPen(brush, 2, Qt.SolidLine)
+            brush = QBrush(QColor(Qt.GlobalColor.darkGreen))
+            pen = QPen(brush, 2, Qt.PenStyle.SolidLine)
             painter.setPen(pen)
             painter.drawLine(rect.topLeft(), rect.topRight())
 
@@ -255,7 +255,7 @@ class GeneratorTableView(TableView):
 
     @pyqtSlot()
     def on_de_bruijn_action_triggered(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
 
         row = self.rowAt(self.context_menu_pos.y())
         _, _, start, end = self.selection_range()

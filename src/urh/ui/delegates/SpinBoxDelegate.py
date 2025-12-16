@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
-from PyQt5.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
+from PyQt6.QtCore import QModelIndex, pyqtSlot, QAbstractItemModel, Qt
+from PyQt6.QtWidgets import QStyledItemDelegate, QWidget, QStyleOptionViewItem, QSpinBox
 
 
 class SpinBoxDelegate(QStyledItemDelegate):
@@ -33,7 +33,7 @@ class SpinBoxDelegate(QStyledItemDelegate):
     def setModelData(
         self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
     ):
-        model.setData(index, editor.value(), Qt.EditRole)
+        model.setData(index, editor.value(), Qt.ItemDataRole.EditRole)
 
     @pyqtSlot()
     def valueChanged(self):

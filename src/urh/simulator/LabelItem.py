@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QPen
-from PyQt5.QtWidgets import QGraphicsTextItem
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPainter, QPen
+from PyQt6.QtWidgets import QGraphicsTextItem
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
@@ -25,7 +25,11 @@ class LabelItem(GraphicsItem):
         pass
 
     def paint(self, painter: QPainter, option, widget):
-        style = Qt.DotLine if self.model_item.has_live_input else Qt.SolidLine
+        style = (
+            Qt.PenStyle.DotLine
+            if self.model_item.has_live_input
+            else Qt.PenStyle.SolidLine
+        )
         pen = QPen(settings.LINECOLOR, 1, style)
         painter.setPen(pen)
         painter.setBrush(settings.LABEL_COLORS[self.model_item.color_index])

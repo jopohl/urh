@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtCore import QDir, QPoint
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import QDir, QPoint
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -33,7 +33,7 @@ class TestSignalTabGUI(QtTestCase):
     def test_zoom(self):
         self.add_signal_to_form("esaver.complex16s")
         frame = self.form.signal_tab_controller.signal_frames[0]
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         x_zoom = frame.ui.spinBoxXZoom.value()
         self.assertIn(x_zoom, range(100, 111))
 
@@ -201,14 +201,14 @@ class TestSignalTabGUI(QtTestCase):
         frame.ui.gvSignal.selection_area.end = 128440
         frame.ui.gvSignal.selection_area.start = 89383
         frame.ui.gvSignal.sel_area_start_end_changed.emit(89383, 128440)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         QTest.qWait(100)
         self.assertEqual(
             frame.proto_analyzer.messages[0].plain_bits_str,
             frame.ui.txtEdProto.selected_text.strip(),
         )
         frame.ui.txtEdProto.show_proto_clicked.emit()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertAlmostEqual(
             (128440 - 89383) / 1000000,
             (frame.ui.gvSignal.view_rect().width()) / 1000000,
@@ -233,7 +233,7 @@ class TestSignalTabGUI(QtTestCase):
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 1)
         frame.ui.gvSignal.on_create_action_triggered()
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
         self.assertEqual(self.form.signal_tab_controller.num_frames, 2)
         self.assertEqual(
@@ -245,7 +245,7 @@ class TestSignalTabGUI(QtTestCase):
         self.add_signal_to_form("esaver.complex16s")
         frame = self.form.signal_tab_controller.signal_frames[0]
         frame.ui.cbSignalView.setCurrentIndex(1)
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(frame.ui.gvSignal.scene_type, 1)
 
     def test_context_menu_text_edit_protocol_view(self):

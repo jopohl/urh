@@ -158,7 +158,7 @@
      </widget>
      <widget class="ZoomableGraphicView" name="graphicsViewSineWave">
       <property name="renderHints">
-       <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
+       <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
       </property>
       <property name="resizeAnchor">
        <enum>QGraphicsView::NoAnchor</enum>

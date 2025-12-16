@@ -1,8 +1,8 @@
 import numpy
-from PyQt5.QtCore import QItemSelection, pyqtSlot
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QKeySequence, QDropEvent, QIcon
-from PyQt5.QtWidgets import QHeaderView, QAction, QActionGroup
+from PyQt6.QtCore import QItemSelection, pyqtSlot
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtGui import QKeySequence, QDropEvent, QIcon, QAction, QActionGroup
+from PyQt6.QtWidgets import QHeaderView
 
 from urh.models.ProtocolTableModel import ProtocolTableModel
 from urh.signalprocessing.MessageType import MessageType
@@ -26,17 +26,21 @@ class ProtocolTableView(TableView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
         self.ref_message_action = QAction(self.tr("Mark as reference message"), self)
         self.ref_message_action.setShortcut(QKeySequence("R"))
-        self.ref_message_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.ref_message_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.ref_message_action.triggered.connect(self.set_ref_message)
 
         self.hide_row_action = QAction("Hide selected rows", self)
         self.hide_row_action.setShortcut(QKeySequence("H"))
-        self.hide_row_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.hide_row_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.hide_row_action.triggered.connect(self.hide_rows)
 
         self.addAction(self.ref_message_action)

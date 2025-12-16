@@ -5,8 +5,8 @@ import tarfile
 import wave
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal, QObject, QDir, Qt
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import pyqtSignal, QObject, QDir, Qt
+from PyQt6.QtWidgets import QApplication
 
 import urh.cythonext.signal_functions as signal_functions
 
@@ -464,12 +464,12 @@ class Signal(QObject):
             self.save_as(self.filename)
 
     def save_as(self, filename: str):
-        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         self.filename = filename
         FileOperator.save_signal(self)
         self.name = os.path.splitext(os.path.basename(filename))[0]
         self.changed = False
-        QApplication.instance().restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
 
     def quad_demod(self):
         if self.noise_threshold < self.max_magnitude:

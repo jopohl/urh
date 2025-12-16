@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
-from PyQt5.QtGui import QColor
+from PyQt6.QtCore import QAbstractListModel, Qt, QModelIndex
+from PyQt6.QtGui import QColor
 
 from urh import settings
 
@@ -18,7 +18,7 @@ class ParticipantLegendListModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role=None):
         row = index.row()
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if row == 0:
                 return "not assigned"
             else:
@@ -26,7 +26,7 @@ class ParticipantLegendListModel(QAbstractListModel):
                     return str(self.participants[row - 1])
                 except IndexError:
                     return None
-        elif role == Qt.BackgroundColorRole:
+        elif role == Qt.ItemDataRole.BackgroundRole:
             if row > 0:
                 try:
                     return settings.PARTICIPANT_COLORS[
@@ -34,7 +34,7 @@ class ParticipantLegendListModel(QAbstractListModel):
                     ]
                 except IndexError:
                     return None
-        elif role == Qt.TextColorRole:
+        elif role == Qt.ItemDataRole.ForegroundRole:
             if row > 0:
                 try:
                     bgcolor = settings.PARTICIPANT_COLORS[
@@ -50,7 +50,7 @@ class ParticipantLegendListModel(QAbstractListModel):
                     return None
 
     def flags(self, index):
-        return Qt.ItemIsEnabled
+        return Qt.ItemFlag.ItemIsEnabled
 
     def update(self):
         self.beginResetModel()

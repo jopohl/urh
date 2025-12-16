@@ -5,16 +5,16 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib64/:/usr/local/lib/:/usr/l
 
 
 touch /tmp/urh_releasing
-for PYBIN in /opt/python/*$PYVER*/bin; do   # for all if PYVER not set
+for PYBIN in /opt/python/$PYVER/bin; do
     echo -e "\033[1mInstalling requirements for $PYBIN\033[0m"
     "${PYBIN}/pip" install -r /io/data/requirements.txt
 
     cd /io || return
-    echo -e "\033[1mBuilding extentions for $PYBIN\033[0m"
+    echo -e "\033[1mBuilding extensions for $PYBIN\033[0m"
     "${PYBIN}/python3" setup.py build_ext "-j$(nproc)"
 
     echo -e "\033[1mBuilding wheel for $PYBIN\033[0m"
-    "${PYBIN}/pip" wheel --no-deps /io/ -w /wheelhouse/
+    "${PYBIN}/pip" wheel --no-deps --no-build-isolation /io/ -w /wheelhouse/
 done
 
 # Bundle external libs into wheels

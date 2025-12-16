@@ -3,8 +3,8 @@ from multiprocessing import Process, Pipe
 from multiprocessing.connection import Connection
 
 import numpy as np
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import (
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import (
     QApplication,
     QFrame,
     QVBoxLayout,
@@ -64,7 +64,7 @@ def go():
                 scene.sceneRect().height(), 1 / (time.time() - speed), time.time() - t
             )
         )
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
 
 
 if __name__ == "__main__":
@@ -82,4 +82,4 @@ if __name__ == "__main__":
     widget.setLayout(layout)
 
     widget.showMaximized()
-    app.exec_()
+    app.exec()

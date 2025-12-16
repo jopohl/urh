@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QValidator
-from PyQt5.QtWidgets import QLineEdit
+from PyQt6.QtGui import QValidator
+from PyQt6.QtWidgets import QLineEdit
 
 from urh import settings
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -25,7 +25,7 @@ class ExpressionLineEdit(QLineEdit):
         super().setValidator(validator)
 
     def on_validation_status_changed(self, status, message):
-        if status == QValidator.Intermediate:
+        if status == QValidator.State.Intermediate:
             col = settings.ERROR_BG_COLOR
             bg_string = "background-color: rgba({}, {}, {}, {})".format(
                 col.red(), col.green(), col.blue(), col.alpha()

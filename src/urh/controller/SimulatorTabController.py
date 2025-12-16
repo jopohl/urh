@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
 
 import numpy
-from PyQt5.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import pyqtSlot, Qt, QDir, QStringListModel, pyqtSignal
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import (
     QWidget,
     QFileDialog,
     QCompleter,
@@ -130,7 +130,9 @@ class SimulatorTabController(QWidget):
             compare_frame_controller.proto_tree_model.rootItem
         )
         self.ui.gvSimulator.setScene(self.simulator_scene)
-        self.ui.gvSimulator.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.ui.gvSimulator.setAlignment(
+            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
+        )
         self.ui.gvSimulator.proto_analyzer = compare_frame_controller.proto_analyzer
 
         self.__active_item = None
@@ -148,7 +150,7 @@ class SimulatorTabController(QWidget):
         # place save/load button at corner of tab widget
         frame = QFrame(parent=self)
         frame.setLayout(QHBoxLayout())
-        frame.setFrameStyle(frame.NoFrame)
+        frame.setFrameStyle(frame.Shape.NoFrame)
         self.ui.btnSave = QToolButton(self.ui.tab)
         self.ui.btnSave.setIcon(QIcon.fromTheme("document-save"))
         frame.layout().addWidget(self.ui.btnSave)
@@ -590,7 +592,7 @@ class SimulatorTabController(QWidget):
                 return
 
         try:
-            self.get_simulator_dialog().exec_()
+            self.get_simulator_dialog().exec()
         except Exception as e:
             Errors.exception(e)
 
@@ -686,7 +688,7 @@ class SimulatorTabController(QWidget):
         dialog = FileOperator.get_open_dialog(
             False, parent=self, name_filter="simulator"
         )
-        if dialog.exec_():
+        if dialog.exec():
             self.load_simulator_file(dialog.selectedFiles()[0])
 
     @pyqtSlot()

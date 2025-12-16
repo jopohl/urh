@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtCore import QRectF, QLineF, QPointF, Qt
-from PyQt5.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
+from PyQt6.QtCore import QRectF, QLineF, QPointF, Qt
+from PyQt6.QtGui import QPainter, QFont, QFontMetrics, QPen, QTransform, QBrush
 
 from urh import settings
 from urh.ui.painting.ZoomableScene import ZoomableScene
@@ -30,7 +30,7 @@ class GridScene(ZoomableScene):
                 else rect
             )
 
-            font_width = self.font_metrics.width(
+            font_width = self.font_metrics.horizontalAdvance(
                 Formatter.big_value_with_suffix(self.center_freq) + "   "
             )
             x_grid_size = int(view_rect.width() / parent_width * font_width)
@@ -64,7 +64,7 @@ class GridScene(ZoomableScene):
             ]
 
             pen = painter.pen()
-            pen.setStyle(Qt.DotLine)
+            pen.setStyle(Qt.PenStyle.DotLine)
             painter.setPen(pen)
             painter.drawLines(lines)
             painter.scale(scale_x, scale_y)
@@ -80,7 +80,7 @@ class GridScene(ZoomableScene):
                     continue
 
                 value = Formatter.big_value_with_suffix(self.center_freq + freq, 2)
-                font_width = self.font_metrics.width(value)
+                font_width = self.font_metrics.horizontalAdvance(value)
                 painter.drawText(
                     QPointF(x / scale_x - font_width / 2, bottom / scale_y), value
                 )
@@ -113,8 +113,8 @@ class GridScene(ZoomableScene):
             "Tune to " + Formatter.big_value_with_suffix(frequency, decimals=3)
         )
         font_metric = QFontMetrics(self.frequency_marker[1].font())
-        text_width = font_metric.width("Tune to") * scale_x
-        text_width += (font_metric.width(" ") * scale_x) / 2
+        text_width = font_metric.horizontalAdvance("Tune to") * scale_x
+        text_width += (font_metric.horizontalAdvance(" ") * scale_x) / 2
         self.frequency_marker[1].setPos(x_pos - text_width, 0.95 * y1)
 
     def clear_frequency_marker(self):

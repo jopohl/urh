@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtWidgets import QTableView, QMenu, QAction, QActionGroup
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence, QIcon, QAction, QActionGroup
+from PyQt6.QtWidgets import QTableView, QMenu
 
 from urh.models.PLabelTableModel import PLabelTableModel
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
@@ -12,9 +12,11 @@ class ProtocolLabelTableView(QTableView):
         super().__init__(parent)
 
         self.delete_action = QAction("Delete selected labels", self)
-        self.delete_action.setShortcut(QKeySequence.Delete)
+        self.delete_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
-        self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.delete_action.triggered.connect(self.delete_selected_rows)
         self.addAction(self.delete_action)
 
@@ -54,7 +56,7 @@ class ProtocolLabelTableView(QTableView):
         return menu
 
     def contextMenuEvent(self, event):
-        self.create_context_menu().exec_(self.mapToGlobal(event.pos()))
+        self.create_context_menu().exec(self.mapToGlobal(event.pos()))
 
     def delete_selected_rows(self):
         for row in sorted(self.selected_rows, reverse=True):

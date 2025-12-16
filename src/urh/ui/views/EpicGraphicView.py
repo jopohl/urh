@@ -1,8 +1,7 @@
 import math
 
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QAction
+from PyQt6.QtCore import Qt, QPoint, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QIcon, QKeySequence, QAction
 
 from urh import settings
 from urh.ui.views.EditableGraphicView import EditableGraphicView
@@ -26,9 +25,11 @@ class EpicGraphicView(EditableGraphicView):
 
         self.save_action = QAction(self.tr("Save"), self)  # type: QAction
         self.save_action.setIcon(QIcon.fromTheme("document-save"))
-        self.save_action.setShortcut(QKeySequence.Save)
+        self.save_action.setShortcut(QKeySequence.StandardKey.Save)
         self.save_action.triggered.connect(self.on_save_action_triggered)
-        self.save_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.save_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.addAction(self.save_action)
 
     @property

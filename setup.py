@@ -144,12 +144,12 @@ def read_long_description():
 
 install_requires = ["numpy<3.0", "psutil", "cython", "setuptools"]
 if IS_RELEASE:
-    install_requires.append("pyqt5")
+    install_requires.append("PyQt6")
 else:
     try:
-        import PyQt5
+        import PyQt6
     except ImportError:
-        install_requires.append("pyqt5")
+        install_requires.append("PyQt6")
 
 setup(
     name="urh",

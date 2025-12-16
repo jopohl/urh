@@ -1,8 +1,8 @@
 import math
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
-from PyQt5.QtWidgets import QStyledItemDelegate, QPushButton
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtGui import QIcon, QPixmap, QPainter, QColor, QPen, QFontMetrics, QBrush
+from PyQt6.QtWidgets import QStyledItemDelegate, QPushButton
 
 from urh.ui.views.MessageTypeTableView import MessageTypeTableView
 from urh.util import util
@@ -51,7 +51,7 @@ class MessageTypeButtonDelegate(QStyledItemDelegate):
         f = QFontMetrics(painter.font())
         indicator_str = str(indicator) if indicator < 10 else "+"
 
-        fw = f.width(indicator_str)
+        fw = f.horizontalAdvance(indicator_str)
         fh = f.height()
         painter.drawText(
             math.ceil(w / 2 - fw / 2), math.ceil(h / 2 + fh / 4), indicator_str

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QAction, QUndoStack, QMessageBox
+from PyQt6.QtGui import QAction, QUndoStack
 
 
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer

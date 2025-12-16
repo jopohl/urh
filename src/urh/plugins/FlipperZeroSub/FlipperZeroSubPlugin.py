@@ -6,7 +6,7 @@ import time
 # from threading import Thread
 
 import numpy as np
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 
 from urh import settings
 from urh.plugins.Plugin import SDRPlugin

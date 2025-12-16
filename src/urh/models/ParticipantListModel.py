@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
+from PyQt6.QtCore import QAbstractListModel, Qt, QModelIndex, pyqtSignal
 from urh.signalprocessing.Participant import Participant
 
 
@@ -19,7 +19,7 @@ class ParticipantListModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role=None):
         row = index.row()
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             if row == 0:
                 return "not assigned"
             else:
@@ -28,24 +28,30 @@ class ParticipantListModel(QAbstractListModel):
                 except IndexError:
                     return None
 
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             if row == 0:
-                return Qt.Checked if self.show_unassigned else Qt.Unchecked
+                return (
+                    Qt.CheckState.Checked
+                    if self.show_unassigned
+                    else Qt.CheckState.Unchecked
+                )
             else:
                 try:
                     return (
-                        Qt.Checked if self.participants[row - 1].show else Qt.Unchecked
+                        Qt.CheckState.Checked
+                        if self.participants[row - 1].show
+                        else Qt.CheckState.Unchecked
                     )
                 except IndexError:
                     return None
 
     def setData(self, index: QModelIndex, value, role=None):
-        if index.row() == 0 and role == Qt.CheckStateRole:
+        if index.row() == 0 and role == Qt.ItemDataRole.CheckStateRole:
             if bool(value) != self.show_unassigned:
                 self.show_unassigned = bool(value)
                 self.show_state_changed.emit()
 
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             try:
                 if self.participants[index.row() - 1].show != value:
                     self.participants[index.row() - 1].show = value
@@ -56,7 +62,11 @@ class ParticipantListModel(QAbstractListModel):
         return True
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )
 
     def update(self):
         self.beginResetModel()

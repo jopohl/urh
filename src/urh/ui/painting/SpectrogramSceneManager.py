@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QApplication
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QGraphicsPixmapItem, QApplication
 
 from urh.signalprocessing.Spectrogram import Spectrogram
 from urh.ui.painting.SceneManager import SceneManager
@@ -67,7 +67,7 @@ class SpectrogramSceneManager(SceneManager):
             item = self.scene.addPixmap(QPixmap.fromImage(image))
             item.setPos(x_pos, 0)
             x_pos += image.width()
-            QApplication.instance().processEvents()
+            QApplication.processEvents()
 
         # Estimated time_bins from update_scene_rect may be too many for small signals so we update the scene rect
         # after we know how wide the spectrogram actually is

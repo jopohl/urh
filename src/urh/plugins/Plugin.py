@@ -1,9 +1,9 @@
 import logging
 import os
 
-from PyQt5 import uic
-from PyQt5.QtCore import QObject, pyqtSignal, Qt, QSettings
-from PyQt5.QtWidgets import QUndoCommand, QUndoStack
+from PyQt6 import uic
+from PyQt6.QtCore import QObject, pyqtSignal, Qt, QSettings
+from PyQt6.QtGui import QUndoCommand, QUndoStack
 
 from urh.util.Logger import logger
 
@@ -13,13 +13,16 @@ class Plugin(QObject):
 
     def __init__(self, name: str):
         super().__init__()
-        self.__enabled = Qt.Unchecked
+        self.__enabled = Qt.CheckState.Unchecked
         self.name = name
         self.plugin_path = ""
         self.description = ""
         self.__settings_frame = None
         self.qsettings = QSettings(
-            QSettings.IniFormat, QSettings.UserScope, "urh", self.name + "-plugin"
+            QSettings.Format.IniFormat,
+            QSettings.Scope.UserScope,
+            "urh",
+            self.name + "-plugin",
         )
 
     @property
@@ -41,7 +44,7 @@ class Plugin(QObject):
     @enabled.setter
     def enabled(self, value: bool):
         if value != self.__enabled:
-            self.__enabled = Qt.Checked if value else Qt.Unchecked
+            self.__enabled = Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
             self.enabled_changed.emit()
 
     def load_description(self):

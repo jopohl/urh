@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import numpy
-from PyQt5.QtCore import (
+from PyQt6.QtCore import (
     pyqtSlot,
     QTimer,
     Qt,
@@ -15,11 +15,10 @@ from PyQt5.QtCore import (
     QLocale,
     QModelIndex,
 )
-from PyQt5.QtGui import QContextMenuEvent, QIcon
-from PyQt5.QtWidgets import (
+from PyQt6.QtGui import QContextMenuEvent, QIcon, QUndoStack
+from PyQt6.QtWidgets import (
     QMessageBox,
     QAbstractItemView,
-    QUndoStack,
     QMenu,
     QWidget,
     QHeaderView,
@@ -147,20 +146,20 @@ class CompareFrameController(QWidget):
             1, MessageTypeButtonDelegate(parent=self.ui.tblViewMessageTypes)
         )
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.Stretch
+            0, QHeaderView.ResizeMode.Stretch
         )
         self.ui.tblViewMessageTypes.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents
+            1, QHeaderView.ResizeMode.ResizeToContents
         )
 
         self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents
+            1, QHeaderView.ResizeMode.ResizeToContents
         )
         self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(
-            2, QHeaderView.ResizeToContents
+            2, QHeaderView.ResizeMode.ResizeToContents
         )
         self.ui.tblLabelValues.horizontalHeader().setSectionResizeMode(
-            3, QHeaderView.ResizeToContents
+            3, QHeaderView.ResizeMode.ResizeToContents
         )
 
         self.selection_timer = QTimer(self)
@@ -461,9 +460,9 @@ class CompareFrameController(QWidget):
                         "Do you want to apply the selected decoding to {} messages?".format(
                             len(messages)
                         ),
-                        QMessageBox.Yes | QMessageBox.No,
+                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                     )
-                    if reply != QMessageBox.Yes:
+                    if reply != QMessageBox.StandardButton.Yes:
                         self.ui.cbDecoding.blockSignals(True)
                         self.ui.cbDecoding.setCurrentText("...")
                         self.ui.cbDecoding.blockSignals(False)
@@ -705,7 +704,7 @@ class CompareFrameController(QWidget):
         for proto in self.protocol_list:
             abs_time = 0
             rel_time = 0
-            if proto.show and proto.messages:
+            if proto.show.value and proto.messages:
                 num_messages = 0
                 for i, message in enumerate(proto.messages):
                     if not message:
@@ -802,7 +801,7 @@ class CompareFrameController(QWidget):
         sel.select(start_index, end_index)
 
         self.ui.tblViewProtocol.selectionModel().select(
-            sel, QItemSelectionModel.ClearAndSelect
+            sel, QItemSelectionModel.SelectionFlag.ClearAndSelect
         )
         self.ui.tblViewProtocol.scrollTo(mid_index)
 
@@ -861,7 +860,7 @@ class CompareFrameController(QWidget):
 
     def show_protocol_label_dialog(self, selected_index=None):
         dialog = self.create_protocol_label_dialog(selected_index=selected_index)
-        dialog.exec_()
+        dialog.exec()
 
     def search(self):
         value = self.ui.lineEditSearch.text()
@@ -891,10 +890,10 @@ class CompareFrameController(QWidget):
             sel.select(startindex, endindex)
 
             self.ui.tblViewProtocol.selectionModel().select(
-                sel, QItemSelectionModel.Select
+                sel, QItemSelectionModel.SelectionFlag.Select
             )
             self.ui.tblViewProtocol.scrollTo(
-                startindex, QAbstractItemView.PositionAtCenter
+                startindex, QAbstractItemView.ScrollHint.PositionAtCenter
             )
 
         self.ui.tblViewProtocol.setFocus()
@@ -905,7 +904,7 @@ class CompareFrameController(QWidget):
             # insert a & at beginning of the string
             return
 
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         if self.ui.lineEditSearch.text():
             self.search()
             self.ui.tblLabelValues.clearSelection()
@@ -983,10 +982,10 @@ class CompareFrameController(QWidget):
             sel.select(startindex, endindex)
 
             self.ui.tblViewProtocol.selectionModel().select(
-                sel, QItemSelectionModel.ClearAndSelect
+                sel, QItemSelectionModel.SelectionFlag.ClearAndSelect
             )
             self.ui.tblViewProtocol.scrollTo(
-                startindex, QAbstractItemView.PositionAtCenter
+                startindex, QAbstractItemView.ScrollHint.PositionAtCenter
             )
 
             self.ui.lSearchCurrent.setText(str(index + 1))
@@ -1014,10 +1013,10 @@ class CompareFrameController(QWidget):
             sel.select(startindex, endindex)
 
             self.ui.tblViewProtocol.selectionModel().select(
-                sel, QItemSelectionModel.ClearAndSelect
+                sel, QItemSelectionModel.SelectionFlag.ClearAndSelect
             )
             self.ui.tblViewProtocol.scrollTo(
-                startindex, QAbstractItemView.PositionAtCenter
+                startindex, QAbstractItemView.ScrollHint.PositionAtCenter
             )
 
             self.ui.lSearchCurrent.setText(str(index + 1))
@@ -1090,9 +1089,9 @@ class CompareFrameController(QWidget):
                     "You want to save this protocol with an encoding different from NRZ.\n"
                     "This may cause loss of information if you load it again.\n\n"
                     "Save anyway?",
-                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 )
-                if reply != QMessageBox.Yes:
+                if reply != QMessageBox.StandardButton.Yes:
                     return
                 else:
                     break
@@ -1337,7 +1336,7 @@ class CompareFrameController(QWidget):
 
     @pyqtSlot()
     def on_btn_analyze_clicked(self):
-        self.setCursor(Qt.WaitCursor)
+        self.setCursor(Qt.CursorShape.WaitCursor)
         self.ui.stackedWidgetLogicAnalysis.setCurrentIndex(1)
 
         self.ui.progressBarLogicAnalyzer.setFormat("%p% (Detecting participants)")
@@ -1468,11 +1467,17 @@ class CompareFrameController(QWidget):
 
         states_by_message_type = defaultdict(list)
         for i, msg in enumerate(self.proto_analyzer.messages):
-            state = Qt.Unchecked if i in self.protocol_model.hidden_rows else Qt.Checked
+            state = (
+                Qt.CheckState.Unchecked
+                if i in self.protocol_model.hidden_rows
+                else Qt.CheckState.Checked
+            )
             states_by_message_type[msg.message_type].append(state)
 
         for msg_type, states in states_by_message_type.items():
-            msg_type.show = states[0] if len(set(states)) == 1 else Qt.PartiallyChecked
+            msg_type.show = (
+                states[0] if len(set(states)) == 1 else Qt.CheckState.PartiallyChecked
+            )
 
         self.message_type_table_model.update()
 
@@ -1640,7 +1645,7 @@ class CompareFrameController(QWidget):
         for item in selected_items:
             if item.is_group:
                 active_group_ids.add(self.proto_tree_model.rootItem.index_of(item))
-            elif item.show:
+            elif item.show.value:
                 active_group_ids.add(
                     self.proto_tree_model.rootItem.index_of(item.parent())
                 )
@@ -1656,7 +1661,7 @@ class CompareFrameController(QWidget):
             self.active_group_ids.sort()
 
         self.ui.tblViewProtocol.selectionModel().select(
-            sel, QItemSelectionModel.ClearAndSelect
+            sel, QItemSelectionModel.SelectionFlag.ClearAndSelect
         )
         self.ui.tblViewProtocol.blockSignals(False)
 

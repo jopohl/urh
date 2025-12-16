@@ -8,7 +8,7 @@ import time
 import numpy as np
 
 # import yappi
-from PyQt5.QtTest import QTest
+from PyQt6.QtTest import QTest
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file

@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QMouseEvent
-from PyQt5.QtCore import Qt, pyqtSlot, QModelIndex, pyqtSignal
+from PyQt6.QtGui import QMouseEvent
+from PyQt6.QtCore import Qt, pyqtSlot, QModelIndex, pyqtSignal
 
 from urh.models.SimulatorMessageFieldModel import SimulatorMessageFieldModel
 from urh.ui.views.ProtocolLabelTableView import ProtocolLabelTableView
@@ -19,7 +19,7 @@ class SimulatorLabelTableView(ProtocolLabelTableView):
     def mouseMoveEvent(self, e: QMouseEvent):
         index = self.indexAt(e.pos())
         if self.model().link_index(index):
-            self.setCursor(Qt.PointingHandCursor)
+            self.setCursor(Qt.CursorShape.PointingHandCursor)
         else:
             self.unsetCursor()
 

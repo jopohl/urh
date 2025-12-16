@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
+from PyQt6.QtCore import QAbstractTableModel, pyqtSignal, Qt, QModelIndex
 
 from urh.signalprocessing.Message import Message
 from urh.signalprocessing.MessageType import MessageType
@@ -57,14 +57,17 @@ class PLabelTableModel(QAbstractTableModel):
     def rowCount(self, parent: QModelIndex = None, *args, **kwargs):
         return len(self.message_type)
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if (
+            role == Qt.ItemDataRole.DisplayRole
+            and orientation == Qt.Orientation.Horizontal
+        ):
             return self.header_labels[section]
         return super().headerData(section, orientation, role)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         i, j = index.row(), index.column()
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             try:
                 lbl = self.message_type[i]
             except IndexError:
@@ -86,12 +89,12 @@ class PLabelTableModel(QAbstractTableModel):
                 return lbl.color_index
             elif j == 4:
                 return lbl.apply_decoding
-        elif role == Qt.TextAlignmentRole:
-            return Qt.AlignCenter
+        elif role == Qt.ItemDataRole.TextAlignmentRole:
+            return Qt.AlignmentFlag.AlignCenter
         else:
             return None
 
-    def setData(self, index: QModelIndex, value, role=Qt.EditRole):
+    def setData(self, index: QModelIndex, value, role=Qt.ItemDataRole.EditRole):
         if value == "":
             return True
 
@@ -133,14 +136,18 @@ class PLabelTableModel(QAbstractTableModel):
 
     def flags(self, index):
         if not index.isValid():
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
         try:
             _ = self.message_type[index.row()]
         except IndexError:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags
 
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        return (
+            Qt.ItemFlag.ItemIsEditable
+            | Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+        )
 
     def remove_label(self, label):
         self.message_type.remove(label)

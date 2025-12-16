@@ -3,14 +3,17 @@ import gc
 import os
 import unittest
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QDropEvent
-from PyQt5.QtTest import QTest
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QDropEvent
+from PyQt6.QtTest import QTest
+from PyQt6.QtWidgets import QApplication
 
 from tests.utils_testing import write_settings, get_path_for_data_file
 from urh.controller.MainController import MainController
 from urh.signalprocessing.ProtocolSniffer import ProtocolSniffer
+
+# noinspection PyUnresolvedReferences
+import urh.ui.urh_rc
 
 faulthandler.enable()
 
@@ -69,7 +72,9 @@ class QtTestCase(unittest.TestCase):
         index = gframe.tree_model.createIndex(signal_index, 0, item)
         rect = gframe.ui.treeProtocols.visualRect(index)
         QTest.mousePress(
-            gframe.ui.treeProtocols.viewport(), Qt.LeftButton, pos=rect.center()
+            gframe.ui.treeProtocols.viewport(),
+            Qt.MouseButton.LeftButton,
+            pos=rect.center(),
         )
         self.assertEqual(gframe.ui.treeProtocols.selectedIndexes()[0], index)
         mimedata = gframe.tree_model.mimeData(gframe.ui.treeProtocols.selectedIndexes())
@@ -86,11 +91,11 @@ class QtTestCase(unittest.TestCase):
             sim_frame.ui.treeProtocols.selectedIndexes()
         )
         drop_event = QDropEvent(
-            sim_frame.ui.gvSimulator.rect().center(),
-            Qt.CopyAction | Qt.MoveAction,
+            sim_frame.ui.gvSimulator.rect().center().toPointF(),
+            Qt.DropAction.CopyAction | Qt.DropAction.MoveAction,
             mimedata,
-            Qt.LeftButton,
-            Qt.NoModifier,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
         )
         drop_event.acceptProposedAction()
         sim_frame.ui.gvSimulator.dropEvent(drop_event)

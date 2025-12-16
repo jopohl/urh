@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QAbstractListModel, Qt, QModelIndex
-from PyQt5.QtGui import QFont
+from PyQt6.QtCore import QAbstractListModel, Qt, QModelIndex
+from PyQt6.QtGui import QFont
 
 from urh import settings
 from urh.plugins import Plugin
@@ -22,26 +22,36 @@ class PluginListModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role=None):
         row = index.row()
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             return self.plugins[row].name
-        elif role == Qt.CheckStateRole:
+        elif role == Qt.ItemDataRole.CheckStateRole:
             return self.plugins[row].enabled
-        elif role == Qt.TextColorRole and self.plugins[row] in self.highlighted_plugins:
+        elif (
+            role == Qt.ItemDataRole.ForegroundRole
+            and self.plugins[row] in self.highlighted_plugins
+        ):
             return settings.HIGHLIGHT_TEXT_FOREGROUND_COLOR
         elif (
-            role == Qt.BackgroundColorRole
+            role == Qt.ItemDataRole.BackgroundRole
             and self.plugins[row] in self.highlighted_plugins
         ):
             return settings.HIGHLIGHT_TEXT_BACKGROUND_COLOR
-        elif role == Qt.FontRole and self.plugins[row] in self.highlighted_plugins:
+        elif (
+            role == Qt.ItemDataRole.FontRole
+            and self.plugins[row] in self.highlighted_plugins
+        ):
             font = QFont()
             font.setBold(True)
             return font
 
     def setData(self, index: QModelIndex, value, role=None):
-        if role == Qt.CheckStateRole:
+        if role == Qt.ItemDataRole.CheckStateRole:
             self.plugins[index.row()].enabled = value
         return True
 
     def flags(self, index):
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsUserCheckable
+        )

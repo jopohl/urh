@@ -1,8 +1,8 @@
 import math
 
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QCloseEvent
-from PyQt5.QtWidgets import QDialog, QInputDialog
+from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtGui import QCloseEvent
+from PyQt6.QtWidgets import QDialog, QInputDialog
 
 from urh import settings
 from urh.models.FuzzingTableModel import FuzzingTableModel
@@ -23,8 +23,8 @@ class FuzzingDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_FuzzingDialog()
         self.ui.setupUi(self)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.protocol = protocol
         msg_index = msg_index if msg_index != -1 else 0

@@ -4,8 +4,8 @@ import tempfile
 import wave
 
 import numpy as np
-from PyQt5.QtCore import QTimer, QDir
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtCore import QTimer, QDir
+from PyQt6.QtWidgets import QApplication
 
 from tests.QtTestCase import QtTestCase
 from tests.utils_testing import get_path_for_data_file
@@ -46,7 +46,7 @@ class TestMaincontrollerGUI(QtTestCase):
     def test_options_changed(self):
         self.add_signal_to_form("esaver.complex16s")
         self.form.on_options_changed({"show_pause_as_time": True, "default_view": 2})
-        QApplication.instance().processEvents()
+        QApplication.processEvents()
         self.assertEqual(
             self.form.signal_tab_controller.signal_frames[
                 0

@@ -1,8 +1,8 @@
 # noinspection PyUnresolvedReferences
 cimport numpy as np
 import numpy as np
-from PyQt5.QtCore import QByteArray, QDataStream
-from PyQt5.QtGui import QPainterPath
+from PyQt6.QtCore import QByteArray, QDataStream
+from PyQt6.QtGui import QPainterPath
 
 # As we do not use any numpy C API functions we do no import_array here,
 # because it can lead to OS X error: https://github.com/jopohl/urh/issues/273
@@ -99,27 +99,22 @@ cpdef array_to_QPath(np.int64_t[:] x, y):
 
      All values are big endian--pack using struct.pack('>d') or struct.pack('>i')
     """
-    cdef long long n = x.shape[0]
-    arr = np.zeros(n + 2, dtype=[('x', '>f8'), ('y', '>f8'), ('c', '>i4')])
+    n = x.shape[0]
+    if n == 0:
+        return QPainterPath()
+    cdef buffer = QByteArray()
+    buffer.resize(4 + n*20 + 8)
+    buffer.replace(0, 4, struct.pack('>i', n))
+    # cStart, fillRule (Qt.FillRule.OddEvenFill)
+    buffer.replace(4+n*20, 8, struct.pack('>ii', 0, 0))
+    arr = np.frombuffer(buffer, dtype=[('c', '>i4'), ('x', '>f8'), ('y', '>f8')], count=n, offset=4)
 
-    byte_view = arr.view(dtype=np.uint8)
-    byte_view[:12] = 0
-    byte_view.data[12:20] = struct.pack('>ii', n, 0)
-
-    arr[1:n+1]['x'] = x
-    arr[1:n+1]['y'] = np.negative(y)  # negate y since coordinate system is inverted
-    arr[1:n+1]['c'] = 1
-
-    cdef long long last_index = 20 * (n + 1)
-    byte_view.data[last_index:last_index + 4] = struct.pack('>i', 0)
-
-    try:
-        buf = QByteArray.fromRawData(byte_view.data[12:last_index + 4])
-    except TypeError:
-        buf = QByteArray(byte_view.data[12:last_index + 4])
+    arr['x'] = x
+    arr['y'] = np.negative(y)  # negate y since coordinate system is inverted
+    arr['c'] = 1
 
     path = QPainterPath()
-    ds = QDataStream(buf)
+    ds = QDataStream(buffer)
     ds >> path
 
     return path

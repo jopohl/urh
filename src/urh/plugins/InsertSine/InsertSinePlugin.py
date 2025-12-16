@@ -2,10 +2,10 @@ import logging
 import os
 
 import numpy as np
-from PyQt5 import uic
-from PyQt5.QtCore import QRegExp, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor, QPen, QRegExpValidator
-from PyQt5.QtWidgets import QApplication, QDialog
+from PyQt6 import uic
+from PyQt6.QtCore import QRegularExpression, Qt, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QBrush, QColor, QPen, QRegularExpressionValidator
+from PyQt6.QtWidgets import QApplication, QDialog
 
 from urh.plugins.Plugin import SignalEditorPlugin
 from urh.signalprocessing.IQArray import IQArray
@@ -50,7 +50,7 @@ class InsertSinePlugin(SignalEditorPlugin):
             )
             logging.getLogger().setLevel(logger.level)
 
-            self.__dialog_ui.setAttribute(Qt.WA_DeleteOnClose)
+            self.__dialog_ui.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
             self.__dialog_ui.setModal(True)
             self.__dialog_ui.doubleSpinBoxAmplitude.setValue(self.__amplitude)
             self.__dialog_ui.doubleSpinBoxFrequency.setValue(self.__frequency)
@@ -58,7 +58,9 @@ class InsertSinePlugin(SignalEditorPlugin):
             self.__dialog_ui.doubleSpinBoxSampleRate.setValue(self.__sample_rate)
             self.__dialog_ui.doubleSpinBoxNSamples.setValue(self.__num_samples)
             self.__dialog_ui.lineEditTime.setValidator(
-                QRegExpValidator(QRegExp(r"[0-9]+([nmµ]?|([\.,][0-9]{1,3}[nmµ]?))?$"))
+                QRegularExpressionValidator(
+                    QRegularExpression(r"[0-9]+([nmµ]?|([\.,][0-9]{1,3}[nmµ]?))?$")
+                )
             )
 
             scene_manager = SceneManager(self.dialog_ui.graphicsViewSineWave)
@@ -68,7 +70,7 @@ class InsertSinePlugin(SignalEditorPlugin):
                 -2,
                 0,
                 4,
-                QPen(QColor(Qt.transparent), 0),
+                QPen(QColor(Qt.GlobalColor.transparent), 0),
                 QBrush(self.INSERT_INDICATOR_COLOR),
             )
             self.insert_indicator.stackBefore(scene_manager.scene.selection_area)
@@ -180,7 +182,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         if self.dialog_ui.graphicsViewSineWave.scene_manager:
             self.dialog_ui.graphicsViewSineWave.scene_manager.clear_path()
 
-        QApplication.instance().setOverrideCursor(Qt.WaitCursor)
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         self.__set_status_of_editable_elements(enabled=False)
 
         t = np.arange(0, self.num_samples) / self.sample_rate
@@ -205,7 +207,7 @@ class InsertSinePlugin(SignalEditorPlugin):
         )
 
         self.__set_status_of_editable_elements(enabled=True)
-        QApplication.instance().restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
         self.dialog_ui.graphicsViewSineWave.plot_data(self.draw_data)
         self.dialog_ui.graphicsViewSineWave.show_full_scene()
 

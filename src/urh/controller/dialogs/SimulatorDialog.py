@@ -1,9 +1,9 @@
 import time
 
 import numpy as np
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
+from PyQt6.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
+from PyQt6.QtGui import QIcon, QCloseEvent
+from PyQt6.QtWidgets import QDialog, QFileDialog, QMessageBox, QGraphicsTextItem
 
 from urh import settings
 from urh.controller.dialogs.ProtocolSniffDialog import ProtocolSniffDialog
@@ -45,8 +45,8 @@ class SimulatorDialog(QDialog):
         self.ui = Ui_DialogSimulator()
         self.ui.setupUi(self)
 
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.simulator_config = simulator_config  # type: SimulatorConfiguration
         self.rx_needed = self.simulator_config.rx_needed

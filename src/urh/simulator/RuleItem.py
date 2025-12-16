@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QRectF, QLineF
-from PyQt5.QtGui import QPen, QColor
-from PyQt5.QtWidgets import QGraphicsTextItem, QAbstractItemView
+from PyQt6.QtCore import Qt, QRectF, QLineF
+from PyQt6.QtGui import QPen, QColor
+from PyQt6.QtWidgets import QGraphicsTextItem, QAbstractItemView
 
 from urh import settings
 from urh.simulator.GraphicsItem import GraphicsItem
@@ -116,11 +116,17 @@ class RuleConditionItem(GraphicsItem):
         rect = self.boundingRect()
 
         if pos.y() - rect.top() < rect.height() / 3:
-            self.drop_indicator_position = QAbstractItemView.AboveItem
+            self.drop_indicator_position = (
+                QAbstractItemView.DropIndicatorPosition.AboveItem
+            )
         elif rect.bottom() - pos.y() < rect.height() / 3:
-            self.drop_indicator_position = QAbstractItemView.BelowItem
+            self.drop_indicator_position = (
+                QAbstractItemView.DropIndicatorPosition.BelowItem
+            )
         else:
-            self.drop_indicator_position = QAbstractItemView.OnItem
+            self.drop_indicator_position = (
+                QAbstractItemView.DropIndicatorPosition.OnItem
+            )
 
         self.update()
 
@@ -144,20 +150,26 @@ class RuleConditionItem(GraphicsItem):
 
         painter.drawRect(QRectF(0, 0, self.boundingRect().width(), height))
 
-        painter.setBrush(Qt.NoBrush)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawRect(self.boundingRect())
 
         if self.drag_over:
             self.paint_drop_indicator(painter)
 
     def paint_drop_indicator(self, painter):
-        painter.setPen(QPen(Qt.darkRed, 2, Qt.SolidLine))
-        painter.setBrush(Qt.NoBrush)
+        painter.setPen(QPen(Qt.GlobalColor.darkRed, 2, Qt.PenStyle.SolidLine))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
         rect = self.boundingRect()
 
-        if self.drop_indicator_position == QAbstractItemView.AboveItem:
+        if (
+            self.drop_indicator_position
+            == QAbstractItemView.DropIndicatorPosition.AboveItem
+        ):
             painter.drawLine(QLineF(rect.topLeft(), rect.topRight()))
-        elif self.drop_indicator_position == QAbstractItemView.OnItem:
+        elif (
+            self.drop_indicator_position
+            == QAbstractItemView.DropIndicatorPosition.OnItem
+        ):
             painter.drawRect(rect)
         else:
             painter.drawLine(QLineF(rect.bottomLeft(), rect.bottomRight()))

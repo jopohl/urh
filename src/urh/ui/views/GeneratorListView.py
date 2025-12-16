@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QContextMenuEvent, QKeyEvent, QIcon
-from PyQt5.QtWidgets import QListView, QMenu
+from PyQt6.QtCore import pyqtSignal, Qt, pyqtSlot
+from PyQt6.QtGui import QContextMenuEvent, QKeyEvent, QIcon
+from PyQt6.QtWidgets import QListView, QMenu
 
 from urh.models.GeneratorListModel import GeneratorListModel
 
@@ -48,7 +48,7 @@ class GeneratorListView(QListView):
         super().selectionChanged(QItemSelection, QItemSelection_1)
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() in (Qt.Key_Enter, Qt.Key_Return):
+        if event.key() in (Qt.Key.Key_Enter, Qt.Key.Key_Return):
             selected = [index.row() for index in self.selectedIndexes()]
             if len(selected) > 0:
                 self.edit_on_item_triggered.emit(min(selected))

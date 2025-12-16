@@ -1,9 +1,9 @@
 import math
 
 import numpy as np
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QPen, QFont, QTransform, QFontMetrics
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QRectF
+from PyQt6.QtGui import QPen, QFont, QTransform, QFontMetrics
+from PyQt6.QtWidgets import (
     QGraphicsScene,
     QGraphicsRectItem,
     QGraphicsSceneDragDropEvent,
@@ -107,14 +107,14 @@ class ZoomableScene(QGraphicsScene):
                 caption.setPos(
                     view_rect.x()
                     + view_rect.width()
-                    - fm.width(caption.text()) * scale_x,
+                    - fm.horizontalAdvance(caption.text()) * scale_x,
                     self.centers[i] + padding,
                 )
             except IndexError:
                 caption.setPos(
                     view_rect.x()
                     + view_rect.width()
-                    - fm.width(caption.text()) * scale_x,
+                    - fm.horizontalAdvance(caption.text()) * scale_x,
                     self.centers[i - 1] - padding - fm.height() * scale_y,
                 )
 

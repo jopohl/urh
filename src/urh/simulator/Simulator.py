@@ -5,8 +5,8 @@ import threading
 import time
 
 import numpy
-from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
-from PyQt5.QtTest import QSignalSpy
+from PyQt6.QtCore import pyqtSignal, QObject, pyqtSlot
+from PyQt6.QtTest import QSignalSpy
 
 from urh.dev.BackendHandler import BackendHandler, Backends
 from urh.dev.EndlessSender import EndlessSender

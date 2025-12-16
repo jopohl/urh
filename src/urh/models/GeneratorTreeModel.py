@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, Qt
-from PyQt5.QtGui import QIcon
+from PyQt6.QtCore import QModelIndex, Qt
+from PyQt6.QtGui import QIcon
 
 from urh.models.ProtocolTreeModel import ProtocolTreeModel
 
@@ -13,13 +13,13 @@ class GeneratorTreeModel(ProtocolTreeModel):
 
     def flags(self, index: QModelIndex):
         if not index.isValid():
-            return Qt.ItemIsEnabled
+            return Qt.ItemFlag.ItemIsEnabled
 
         return (
-            Qt.ItemIsEnabled
-            | Qt.ItemIsSelectable
-            | Qt.ItemIsDragEnabled
-            | Qt.ItemIsDropEnabled
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsDragEnabled
+            | Qt.ItemFlag.ItemIsDropEnabled
         )
 
     def mimeTypes(self):
@@ -27,7 +27,7 @@ class GeneratorTreeModel(ProtocolTreeModel):
 
     def data(self, index: QModelIndex, role=None):
         item = self.getItem(index)
-        if role == Qt.DisplayRole:  #
+        if role == Qt.ItemDataRole.DisplayRole:  #
             return item.data()
-        elif role == Qt.DecorationRole and item.is_group:
+        elif role == Qt.ItemDataRole.DecorationRole and item.is_group:
             return QIcon.fromTheme("folder")

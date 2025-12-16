@@ -2,7 +2,7 @@ import socket
 from multiprocessing import Process
 
 import numpy as np
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 from urh import settings
 from urh.controller.MainController import MainController
@@ -63,6 +63,6 @@ if __name__ == "__main__":
     frequency = 0.1
     divisor = 200
     pos = 0
-    app.exec_()
+    app.exec()
     p.terminate()
     p.join()

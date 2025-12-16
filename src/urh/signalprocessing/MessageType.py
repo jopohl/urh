@@ -3,7 +3,7 @@ import random
 import uuid
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 
 from urh import settings
 from urh.signalprocessing.ChecksumLabel import ChecksumLabel
@@ -33,7 +33,7 @@ class MessageType(list):
         super().__init__(iterable)
 
         self.name = name
-        self.show = Qt.Checked
+        self.show = Qt.CheckState.Checked
         self.__id = str(uuid.uuid4()) if id is None else id
 
         self.assigned_by_logic_analyzer = False

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import pyqtSignal, Qt, pyqtSlot
-from PyQt5.QtGui import QIcon, QKeyEvent, QContextMenuEvent, QTextCursor
-from PyQt5.QtWidgets import QTextEdit, QMenu, QActionGroup
+from PyQt6.QtCore import pyqtSignal, Qt, pyqtSlot
+from PyQt6.QtGui import QIcon, QKeyEvent, QContextMenuEvent, QTextCursor, QActionGroup
+from PyQt6.QtWidgets import QTextEdit, QMenu
 
 
 class TextEditProtocolView(QTextEdit):
@@ -20,7 +20,7 @@ class TextEditProtocolView(QTextEdit):
         return self.textCursor().selectedText().replace("\u2028", "\n")
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key.Key_Delete:
             self.deletion_wanted.emit()
             event.ignore()
         else:
@@ -62,9 +62,9 @@ class TextEditProtocolView(QTextEdit):
         line_wrap = self.sender().isChecked()
 
         if line_wrap:
-            self.setLineWrapMode(QTextEdit.WidgetWidth)
+            self.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
         else:
-            self.setLineWrapMode(QTextEdit.NoWrap)
+            self.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
 
     def create_context_menu(self) -> QMenu:
         menu = QMenu(self)
@@ -142,7 +142,7 @@ class TextEditProtocolView(QTextEdit):
             "Linewrap (may take a while for long protocols)"
         )
         line_wrap_action.setCheckable(True)
-        line_wrap = self.lineWrapMode() == QTextEdit.WidgetWidth
+        line_wrap = self.lineWrapMode() == QTextEdit.LineWrapMode.WidgetWidth
         line_wrap_action.setChecked(line_wrap)
         line_wrap_action.triggered.connect(self.on_line_wrap_action_triggered)
 
@@ -150,7 +150,7 @@ class TextEditProtocolView(QTextEdit):
 
     def contextMenuEvent(self, event: QContextMenuEvent):
         menu = self.create_context_menu()
-        menu.exec_(self.mapToGlobal(event.pos()))
+        menu.exec(self.mapToGlobal(event.pos()))
 
     def textCursor(self) -> QTextCursor:
         return super().textCursor()

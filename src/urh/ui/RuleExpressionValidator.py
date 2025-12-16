@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QValidator
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtGui import QValidator
+from PyQt6.QtCore import pyqtSignal
 
 
 class RuleExpressionValidator(QValidator):
@@ -12,7 +12,7 @@ class RuleExpressionValidator(QValidator):
 
     def validate(self, text, pos):
         valid, message, _ = self.parser.validate_expression(text, self.is_formula)
-        state = QValidator.Acceptable if valid else QValidator.Intermediate
+        state = QValidator.State.Acceptable if valid else QValidator.State.Intermediate
 
         self.validation_status_changed.emit(state, message)
         return (state, text, pos)

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from PyQt5.QtCore import QModelIndex, Qt
+from PyQt6.QtCore import QModelIndex, Qt
 
 from urh.models.TableModel import TableModel
 from urh.signalprocessing.ProtocolAnalyzer import ProtocolAnalyzer
@@ -76,14 +76,14 @@ class SimulatorMessageTableModel(TableModel):
 
         self.parent().simulator_config.delete_items(removable_messages)
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid():
             return None
 
         i = index.row()
         j = index.column()
 
-        if role == Qt.DisplayRole and self.display_data:
+        if role == Qt.ItemDataRole.DisplayRole and self.display_data:
             if self.label_mask[i, j]:
                 return "."
 
@@ -92,8 +92,12 @@ class SimulatorMessageTableModel(TableModel):
     def flags(self, index: QModelIndex):
         if index.isValid():
             if self.is_writeable:
-                return Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable
+                return (
+                    Qt.ItemFlag.ItemIsEnabled
+                    | Qt.ItemFlag.ItemIsEditable
+                    | Qt.ItemFlag.ItemIsSelectable
+                )
             else:
-                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+                return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
         else:
-            return Qt.NoItemFlags
+            return Qt.ItemFlag.NoItemFlags

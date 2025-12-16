@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QGraphicsView, QMenu, QAction
+from PyQt6.QtGui import QKeySequence, QAction
+from PyQt6.QtWidgets import QGraphicsView, QMenu
 
 from urh.ui.views.SimulatorGraphicsView import SimulatorGraphicsView
 
@@ -8,7 +8,7 @@ class LoggingGraphicsView(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setDragMode(QGraphicsView.RubberBandDrag)
+        self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
         self.log_selected_action = QAction(self.tr("Log selected items"), self)
         self.log_selected_action.setShortcut(QKeySequence("L"))
@@ -25,7 +25,7 @@ class LoggingGraphicsView(QGraphicsView):
         )
 
         self.select_all_action = QAction(self.tr("Select all"), self)
-        self.select_all_action.setShortcut(QKeySequence.SelectAll)
+        self.select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         self.select_all_action.triggered.connect(self.on_select_all_action_triggered)
 
         self.addAction(self.log_selected_action)
@@ -34,7 +34,7 @@ class LoggingGraphicsView(QGraphicsView):
 
     def contextMenuEvent(self, event):
         menu = self.create_context_menu()
-        menu.exec_(event.globalPos())
+        menu.exec(event.globalPos())
 
     def create_context_menu(self):
         menu = QMenu()

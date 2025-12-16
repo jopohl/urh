@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeyEvent, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QHeaderView, QAbstractItemView
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QKeyEvent, QCloseEvent
+from PyQt6.QtWidgets import QDialog, QHeaderView, QAbstractItemView
 
 from urh import settings
 from urh.controller.widgets.ChecksumWidget import ChecksumWidget
@@ -60,14 +60,16 @@ class ProtocolLabelDialog(QDialog):
         )
         self.ui.tblViewProtoLabels.setItemDelegateForColumn(4, CheckBoxDelegate(self))
         self.ui.tblViewProtoLabels.setModel(self.model)
-        self.ui.tblViewProtoLabels.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        self.ui.tblViewProtoLabels.setEditTriggers(
+            QAbstractItemView.EditTrigger.AllEditTriggers
+        )
 
         self.ui.tblViewProtoLabels.horizontalHeader().setSectionResizeMode(
-            QHeaderView.Stretch
+            QHeaderView.ResizeMode.Stretch
         )
 
         self.ui.tblViewProtoLabels.resizeColumnsToContents()
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
         self.setWindowTitle(
             self.tr("Edit Protocol Labels From Message Type %s")
             % message.message_type.name
@@ -84,8 +86,8 @@ class ProtocolLabelDialog(QDialog):
             )
 
         self.ui.cbProtoView.setCurrentIndex(viewtype)
-        self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowFlags(Qt.Window)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         self.restoreGeometry(
             settings.read("{}/geometry".format(self.__class__.__name__), type=bytes)
@@ -133,7 +135,7 @@ class ProtocolLabelDialog(QDialog):
         self.ui.tblViewProtoLabels.openPersistentEditor(self.model.index(row, 4))
 
     def keyPressEvent(self, event: QKeyEvent):
-        if event.key() == Qt.Key_Enter:
+        if event.key() == Qt.Key.Key_Enter:
             event.ignore()
         else:
             event.accept()

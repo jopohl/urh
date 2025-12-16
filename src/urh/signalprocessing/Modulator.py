@@ -4,8 +4,8 @@ import math
 import xml.etree.ElementTree as ET
 
 import numpy as np
-from PyQt5.QtGui import QPen
-from PyQt5.QtWidgets import QGraphicsScene
+from PyQt6.QtGui import QPen
+from PyQt6.QtWidgets import QGraphicsScene
 
 from urh import settings
 from urh.cythonext import path_creator, signal_functions

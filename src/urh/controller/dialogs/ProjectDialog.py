@@ -1,9 +1,9 @@
 import os
 
-from PyQt5.QtCore import QRegExp, Qt
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QRegExpValidator, QCloseEvent
-from PyQt5.QtWidgets import QDialog, QCompleter, QDirModel
+from PyQt6.QtCore import QRegularExpression, Qt
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtGui import QRegularExpressionValidator, QCloseEvent, QFileSystemModel
+from PyQt6.QtWidgets import QDialog, QCompleter
 
 from urh import settings
 from urh.controller.dialogs.SpectrumDialogController import SpectrumDialogController
@@ -26,7 +26,7 @@ class ProjectDialog(QDialog):
 
         self.ui = Ui_ProjectDialog()
         self.ui.setupUi(self)
-        self.setWindowFlags(Qt.Window)
+        self.setWindowFlags(Qt.WindowType.Window)
 
         if new_project:
             self.participant_table_model = ParticipantTableModel([])
@@ -58,7 +58,7 @@ class ProjectDialog(QDialog):
         self.participant_table_model.update()
 
         self.ui.lineEditBroadcastAddress.setValidator(
-            QRegExpValidator(QRegExp("([a-fA-F ]|[0-9]){,}"))
+            QRegularExpressionValidator(QRegularExpression("([a-fA-F ]|[0-9]){,}"))
         )
 
         self.sample_rate = self.ui.spinBoxSampleRate.value()
@@ -74,7 +74,7 @@ class ProjectDialog(QDialog):
         self.setModal(True)
 
         completer = QCompleter()
-        completer.setModel(QDirModel(completer))
+        completer.setModel(QFileSystemModel(completer))
         self.ui.lineEdit_Path.setCompleter(completer)
 
         self.create_connects()

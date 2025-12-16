@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, Qt, QSortFilterProxyModel
-from PyQt5.QtGui import QFont, QColor
+from PyQt6.QtCore import QModelIndex, Qt, QSortFilterProxyModel
+from PyQt6.QtGui import QFont, QColor
 
 
 class FileFilterProxyModel(QSortFilterProxyModel):
@@ -15,14 +15,14 @@ class FileFilterProxyModel(QSortFilterProxyModel):
         return self.sourceModel().filePath(self.mapToSource(index))
 
     def data(self, index: QModelIndex, role=None):
-        if role == Qt.FontRole or role == Qt.TextColorRole:
+        if role == Qt.ItemDataRole.FontRole or role == Qt.ItemDataRole.ForegroundRole:
             file_name = self.get_file_path(index)
             if hasattr(self, "open_files") and file_name in self.open_files:
-                if role == Qt.FontRole:
+                if role == Qt.ItemDataRole.FontRole:
                     font = QFont()
                     font.setBold(True)
                     return font
-                elif role == Qt.TextColorRole:
+                elif role == Qt.ItemDataRole.ForegroundRole:
                     return QColor("orange")
 
         return super().data(index, role)

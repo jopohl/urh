@@ -1,11 +1,9 @@
 import copy
 
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QKeySequence, QIcon
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
+from PyQt6.QtGui import QKeySequence, QIcon, QAction, QActionGroup
+from PyQt6.QtWidgets import (
     QGraphicsView,
-    QAction,
-    QActionGroup,
     QMenu,
     QAbstractItemView,
     QInputDialog,
@@ -28,38 +26,46 @@ class SimulatorGraphicsView(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setDragMode(QGraphicsView.RubberBandDrag)
+        self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
         self.proto_analyzer = None
         self.context_menu_item = None
         self.copied_items = []
 
         self.delete_action = QAction(self.tr("Delete selected items"), self)
-        self.delete_action.setShortcut(QKeySequence.Delete)
+        self.delete_action.setShortcut(QKeySequence.StandardKey.Delete)
         self.delete_action.triggered.connect(self.on_delete_action_triggered)
-        self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.delete_action.setIcon(QIcon.fromTheme("edit-delete"))
         self.addAction(self.delete_action)
 
         self.select_all_action = QAction(self.tr("Select all"), self)
-        self.select_all_action.setShortcut(QKeySequence.SelectAll)
+        self.select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         self.select_all_action.triggered.connect(self.on_select_all_action_triggered)
-        self.delete_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.delete_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.addAction(self.select_all_action)
 
         self.copy_action = QAction(
             self.tr("Copy selected items"), self
         )  # type: QAction
-        self.copy_action.setShortcut(QKeySequence.Copy)
+        self.copy_action.setShortcut(QKeySequence.StandardKey.Copy)
         self.copy_action.triggered.connect(self.on_copy_action_triggered)
-        self.copy_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.copy_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.copy_action.setIcon(QIcon.fromTheme("edit-copy"))
         self.addAction(self.copy_action)
 
         self.paste_action = QAction(self.tr("Paste"), self)  # type: QAction
-        self.paste_action.setShortcut(QKeySequence.Paste)
+        self.paste_action.setShortcut(QKeySequence.StandardKey.Paste)
         self.paste_action.triggered.connect(self.on_paste_action_triggered)
-        self.paste_action.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+        self.paste_action.setShortcutContext(
+            Qt.ShortcutContext.WidgetWithChildrenShortcut
+        )
         self.paste_action.setIcon(QIcon.fromTheme("edit-paste"))
         self.addAction(self.paste_action)
 
@@ -86,9 +92,9 @@ class SimulatorGraphicsView(QGraphicsView):
             message_type = MessageType("Default")
         ref_item = self.context_menu_item
         if isinstance(ref_item, RuleConditionItem):
-            position = QAbstractItemView.OnItem
+            position = QAbstractItemView.DropIndicatorPosition.OnItem
         else:
-            position = QAbstractItemView.BelowItem
+            position = QAbstractItemView.DropIndicatorPosition.BelowItem
 
         message = self.scene().add_message(
             plain_bits=[0] * num_bits,
@@ -102,7 +108,7 @@ class SimulatorGraphicsView(QGraphicsView):
     @pyqtSlot()
     def on_add_rule_action_triggered(self):
         rule = self.scene().add_rule(
-            self.context_menu_item, QAbstractItemView.BelowItem
+            self.context_menu_item, QAbstractItemView.DropIndicatorPosition.BelowItem
         )
         if_cond = rule.children[0]
         self.jump_to_item(if_cond)
@@ -111,9 +117,9 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_add_goto_action_triggered(self):
         ref_item = self.context_menu_item
         position = (
-            QAbstractItemView.OnItem
+            QAbstractItemView.DropIndicatorPosition.OnItem
             if isinstance(ref_item, RuleConditionItem)
-            else QAbstractItemView.BelowItem
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
         )
         ga = self.scene().add_goto_action(ref_item, position)
         self.jump_to_item(ga)
@@ -122,9 +128,9 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_add_sleep_action_triggered(self):
         ref_item = self.context_menu_item
         position = (
-            QAbstractItemView.OnItem
+            QAbstractItemView.DropIndicatorPosition.OnItem
             if isinstance(ref_item, RuleConditionItem)
-            else QAbstractItemView.BelowItem
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
         )
         sa = self.scene().add_sleep_action(ref_item, position)
         self.jump_to_item(sa)
@@ -133,9 +139,9 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_add_counter_action_triggered(self):
         ref_item = self.context_menu_item
         position = (
-            QAbstractItemView.OnItem
+            QAbstractItemView.DropIndicatorPosition.OnItem
             if isinstance(ref_item, RuleConditionItem)
-            else QAbstractItemView.BelowItem
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
         )
         ca = self.scene().add_counter_action(ref_item, position)
         self.jump_to_item(ca)
@@ -144,9 +150,9 @@ class SimulatorGraphicsView(QGraphicsView):
     def on_trigger_command_action_triggered(self):
         ref_item = self.context_menu_item
         position = (
-            QAbstractItemView.OnItem
+            QAbstractItemView.DropIndicatorPosition.OnItem
             if isinstance(ref_item, RuleConditionItem)
-            else QAbstractItemView.BelowItem
+            else QAbstractItemView.DropIndicatorPosition.BelowItem
         )
         pa = self.scene().add_trigger_command_action(ref_item, position)
         self.jump_to_item(pa)
@@ -395,14 +401,14 @@ class SimulatorGraphicsView(QGraphicsView):
         ]
         self.context_menu_item = None if len(items) == 0 else items[0]
         menu = self.create_context_menu()
-        menu.exec_(event.globalPos())
+        menu.exec(event.globalPos())
         self.copy_action.setEnabled(True)
         self.paste_action.setEnabled(True)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Up:
+        if event.key() == Qt.Key.Key_Up:
             self.navigate_backward()
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key.Key_Down:
             self.navigate_forward()
         else:
             super().keyPressEvent(event)

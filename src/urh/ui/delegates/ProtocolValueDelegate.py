@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QModelIndex, QAbstractItemModel, Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QModelIndex, QAbstractItemModel, Qt
+from PyQt6.QtWidgets import (
     QStyledItemDelegate,
     QWidget,
     QStyleOptionViewItem,
@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import (
     QCompleter,
     QLabel,
     QSpinBox,
-    QDirModel,
 )
+from PyQt6.QtGui import QFileSystemModel
 
 from urh.ui.ExpressionLineEdit import ExpressionLineEdit
 from urh.ui.RuleExpressionValidator import RuleExpressionValidator
@@ -20,7 +20,7 @@ class ExternalProgramWidget(QWidget):
         super().__init__(parent)
 
         completer = QCompleter()
-        completer.setModel(QDirModel(completer))
+        completer.setModel(QFileSystemModel(completer))
         self.line_edit_external_program = QLineEdit()
         self.line_edit_external_program.setCompleter(completer)
         self.line_edit_external_program.setPlaceholderText(
@@ -102,7 +102,7 @@ class ProtocolValueDelegate(QStyledItemDelegate):
             item = index.model().data(index)
             editor.line_edit_external_program.setText(item)
         elif isinstance(editor, RandomValueWidget):
-            items = index.model().data(index, Qt.EditRole)
+            items = index.model().data(index, Qt.ItemDataRole.EditRole)
             editor.spinbox_random_max.setValue(items[1])
             editor.spinbox_random_min.setValue(items[0])
         else:
@@ -112,12 +112,16 @@ class ProtocolValueDelegate(QStyledItemDelegate):
         self, editor: QWidget, model: QAbstractItemModel, index: QModelIndex
     ):
         if isinstance(editor, ExternalProgramWidget):
-            model.setData(index, editor.line_edit_external_program.text(), Qt.EditRole)
+            model.setData(
+                index,
+                editor.line_edit_external_program.text(),
+                Qt.ItemDataRole.EditRole,
+            )
         elif isinstance(editor, RandomValueWidget):
             model.setData(
                 index,
                 [editor.spinbox_random_min.value(), editor.spinbox_random_max.value()],
-                Qt.EditRole,
+                Qt.ItemDataRole.EditRole,
             )
         else:
             super().setModelData(editor, model, index)

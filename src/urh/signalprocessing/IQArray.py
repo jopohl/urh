@@ -262,7 +262,7 @@ class IQArray(object):
             tmp_name = tempfile.mkstemp()[1]
             self.tofile(tmp_name)
             tar_write.add(tmp_name)
-            os.remove(tmp_name)
+        os.remove(tmp_name)
 
     def export_to_wav(self, filename, num_channels, sample_rate):
         f = wave.open(filename, "w")

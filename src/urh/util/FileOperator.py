@@ -6,9 +6,10 @@ import zipfile
 
 import numpy as np
 from PyQt6.QtCore import QDir
-from PyQt6.QtWidgets import QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QFileDialog
 
 from urh.signalprocessing.IQArray import IQArray
+from urh.util.Errors import Errors
 
 archives = {}
 """:type: dict of [str, str]
@@ -173,7 +174,7 @@ def ask_signal_file_name_and_save(
         try:
             save_data(data, filename, sample_rate=sample_rate)
         except Exception as e:
-            QMessageBox.critical(parent, "Error saving signal", e.args[0])
+            Errors.exception(e)
             filename = None
     else:
         filename = None

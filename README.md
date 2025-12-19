@@ -88,7 +88,7 @@ To execute the Universal Radio Hacker without installation, just run:
 ```commandline
 git clone https://github.com/jopohl/urh/
 cd urh/src/urh
-./main.py
+PYTHONPATH=.. ./main.py
 ```
 
 Note, before first usage the C++ extensions will be built.

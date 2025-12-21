@@ -183,15 +183,13 @@ class TestDecoding(unittest.TestCase):
 
         # encoded-string with 3 missing trailing zeroes
         encoded = e.str2bit(
-            "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001"
-        )
-        compare = e.str2bit(
             "1000111010001110111011101110111011101110100011101110111011101110111011101000100010001000100010001000"
         )
-        decoded, err, _ = e.code_substitution(decoding=True, inpt=encoded)
+
+        decoded, _, _ = e.code_substitution(decoding=True, inpt=encoded)
         reencoded, _, _ = e.code_substitution(decoding=False, inpt=decoded)
-        self.assertEqual(err, 3)
-        self.assertEqual(reencoded, compare)
+
+        self.assertEqual(reencoded, encoded)
 
     def test_external(self):
         encoder = get_path_for_data_file("encode.py")

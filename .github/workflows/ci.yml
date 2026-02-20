@@ -66,7 +66,7 @@ jobs:
           elif [[ $OS == mac* ]] 
           then
             brew install airspy hackrf librtlsdr libbladerf limesuite portaudio uhd
-            
+
             wget -nv https://github.com/analogdevicesinc/libiio/releases/download/v0.23/macOS-10.15.pkg
             sudo installer -pkg macOS-10.15.pkg -target /
             sudo cp /Library/Frameworks/iio.framework/iio /usr/local/lib/libiio.dylib
@@ -74,10 +74,10 @@ jobs:
             file /usr/local/lib/libiio.dylib
             otool -L /usr/local/lib/libiio.dylib
             sudo cp /Library/Frameworks/iio.framework/Versions/0.23/Headers/iio.h /usr/local/include
-            
-            wget -nv https://www.sdrplay.com/software/SDRplay_RSP_API-MacOSX-2.13.2.pkg
-            sudo installer -pkg SDRplay_RSP_API-MacOSX-2.13.2.pkg -target /  
-          
+
+            wget -nv https://www.sdrplay.com/software/SDRplayAPI-macos-installer-universal-3.15.1.pkg
+            sudo installer -pkg SDRplayAPI-macos-installer-universal-3.15.1.pkg -target /
+
             pip install pyaudio
             pip install pillow
           fi
@@ -96,6 +96,11 @@ jobs:
 
       - run: python setup.py bdist_wheel
         if: ${{ !startsWith(matrix.os, 'ubuntu') }}
+
+      - name: Build manylinux Docker image
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          docker build -t urh_manylinux2_28 -f data/manylinux.Dockerfile .
 
       - name: Build manylinux wheels
         if: startsWith(matrix.os, 'ubuntu')

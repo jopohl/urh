@@ -50,8 +50,8 @@ DEVICES = {
     # Use C only for USRP to avoid boost dependency
     "usrp": {"lib": "uhd", "test_function": "uhd_usrp_find", "language": "c"},
     "sdrplay": {
-        "lib": "mir_sdr_api" if sys.platform == "win32" else "mirsdrapi-rsp",
-        "test_function": "mir_sdr_ApiVersion",
+        "lib": "sdrplay_api",
+        "test_function": "sdrplay_api_ApiVersion",
     },
 }
 

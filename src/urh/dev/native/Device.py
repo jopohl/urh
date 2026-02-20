@@ -20,7 +20,7 @@ util.set_shared_library_path()
 
 
 class Device(object):
-    JOIN_TIMEOUT = 1.0
+    JOIN_TIMEOUT = 3.0
 
     SYNC_TX_CHUNK_SIZE = 0
     CONTINUOUS_TX_CHUNK_SIZE = 0
@@ -701,7 +701,13 @@ class Device(object):
         logger.info("{0}: Stopping RX Mode: {1}".format(self.__class__.__name__, msg))
 
         if hasattr(self, "receive_process") and self.receive_process.is_alive():
+            start_time = time.time()
             self.receive_process.join(self.JOIN_TIMEOUT)
+            logger.debug(
+                "{0}: Joined receive process after {1:.2f} seconds".format(
+                    self.__class__.__name__, time.time() - start_time
+                )
+            )
             if self.receive_process.is_alive():
                 logger.warning(
                     "{0}: Receive process is still alive, terminating it".format(
